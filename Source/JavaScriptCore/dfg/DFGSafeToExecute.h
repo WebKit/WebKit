@@ -189,6 +189,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CompareStrictEq:
     case Call:
     case Construct:
+    case ProfiledCall:
+    case ProfiledConstruct:
     case NewObject:
     case NewArray:
     case NewArrayWithSize:

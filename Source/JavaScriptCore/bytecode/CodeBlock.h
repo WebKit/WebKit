@@ -229,7 +229,11 @@ public:
     void unlinkCalls();
         
     void linkIncomingCall(ExecState* callerFrame, CallLinkInfo*);
-    void linkIncomingPolymorphicCall(ExecState* callerFrame, PolymorphicCallNode*);
+        
+    bool isIncomingCallAlreadyLinked(CallLinkInfo* incoming)
+    {
+        return m_incomingCalls.isOnList(incoming);
+    }
 #endif // ENABLE(JIT)
 
     void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
@@ -1073,7 +1077,6 @@ private:
     Vector<ByValInfo> m_byValInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
-    SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
 #endif
     std::unique_ptr<CompactJITCodeMap> m_jitCodeMap;
 #if ENABLE(DFG_JIT)

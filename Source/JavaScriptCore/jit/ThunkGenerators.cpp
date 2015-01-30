@@ -137,27 +137,27 @@ MacroAssemblerCodeRef linkConstructThatPreservesRegsThunkGenerator(VM* vm)
     return linkForThunkGenerator(vm, CodeForConstruct, MustPreserveRegisters);
 }
 
-static MacroAssemblerCodeRef linkPolymorphicCallForThunkGenerator(
+static MacroAssemblerCodeRef linkClosureCallForThunkGenerator(
     VM* vm, RegisterPreservationMode registers)
 {
     CCallHelpers jit(vm);
     
-    slowPathFor(jit, vm, operationLinkPolymorphicCallFor(registers));
+    slowPathFor(jit, vm, operationLinkClosureCallFor(registers));
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, ("Link polymorphic call %s slow path thunk", registers == MustPreserveRegisters ? " that preserves registers" : ""));
+    return FINALIZE_CODE(patchBuffer, ("Link closure call %s slow path thunk", registers == MustPreserveRegisters ? " that preserves registers" : ""));
 }
 
 // For closure optimizations, we only include calls, since if you're using closures for
 // object construction then you're going to lose big time anyway.
-MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM* vm)
+MacroAssemblerCodeRef linkClosureCallThunkGenerator(VM* vm)
 {
-    return linkPolymorphicCallForThunkGenerator(vm, RegisterPreservationNotRequired);
+    return linkClosureCallForThunkGenerator(vm, RegisterPreservationNotRequired);
 }
 
-MacroAssemblerCodeRef linkPolymorphicCallThatPreservesRegsThunkGenerator(VM* vm)
+MacroAssemblerCodeRef linkClosureCallThatPreservesRegsThunkGenerator(VM* vm)
 {
-    return linkPolymorphicCallForThunkGenerator(vm, MustPreserveRegisters);
+    return linkClosureCallForThunkGenerator(vm, MustPreserveRegisters);
 }
 
 static MacroAssemblerCodeRef virtualForThunkGenerator(

@@ -1,3 +1,21 @@
+2015-01-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179357 and r179358.
+        https://bugs.webkit.org/show_bug.cgi?id=141062
+
+        Suspect this caused WebGL tests to start flaking (Requested by
+        kling on #webkit).
+
+        Reverted changesets:
+
+        "Polymorphic call inlining should be based on polymorphic call
+        inline caching rather than logging"
+        https://bugs.webkit.org/show_bug.cgi?id=140660
+        http://trac.webkit.org/changeset/179357
+
+        "Unreviewed, fix no-JIT build."
+        http://trac.webkit.org/changeset/179358
+
 2015-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Removed op_ret_object_or_this

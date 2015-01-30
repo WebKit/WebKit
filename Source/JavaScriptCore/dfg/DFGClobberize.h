@@ -363,6 +363,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArrayPop:
     case Call:
     case Construct:
+    case ProfiledCall:
+    case ProfiledConstruct:
     case NativeCall:
     case NativeConstruct:
     case ToPrimitive:

@@ -332,7 +332,6 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         }
     }
     default:
-        dataLog("Unexpected code block in LLInt: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     }

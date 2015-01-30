@@ -638,9 +638,9 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 
 void SpeculativeJIT::emitCall(Node* node)
 {
-    bool isCall = node->op() == Call;
+    bool isCall = node->op() == Call || node->op() == ProfiledCall;
     if (!isCall)
-        ASSERT(node->op() == Construct);
+        ASSERT(node->op() == Construct || node->op() == ProfiledConstruct);
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
@@ -689,6 +689,11 @@ void SpeculativeJIT::emitCall(Node* node)
     
     CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
 
+    if (node->op() == ProfiledCall || node->op() == ProfiledConstruct) {
+        m_jit.vm()->callEdgeLog->emitLogCode(
+            m_jit, info->callEdgeProfile, callee.jsValueRegs());
+    }
+    
     slowPath.append(branchNotCell(callee.jsValueRegs()));
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
 
@@ -4164,6 +4169,8 @@ void SpeculativeJIT::compile(Node* node)
 
     case Call:
     case Construct:
+    case ProfiledCall:
+    case ProfiledConstruct:
         emitCall(node);
         break;
 

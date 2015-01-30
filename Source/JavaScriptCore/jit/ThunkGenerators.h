@@ -65,16 +65,16 @@ inline ThunkGenerator linkThunkGeneratorFor(
     return 0;
 }
 
-MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM*);
-MacroAssemblerCodeRef linkPolymorphicCallThatPreservesRegsThunkGenerator(VM*);
+MacroAssemblerCodeRef linkClosureCallThunkGenerator(VM*);
+MacroAssemblerCodeRef linkClosureCallThatPreservesRegsThunkGenerator(VM*);
 
-inline ThunkGenerator linkPolymorphicCallThunkGeneratorFor(RegisterPreservationMode registers)
+inline ThunkGenerator linkClosureCallThunkGeneratorFor(RegisterPreservationMode registers)
 {
     switch (registers) {
     case RegisterPreservationNotRequired:
-        return linkPolymorphicCallThunkGenerator;
+        return linkClosureCallThunkGenerator;
     case MustPreserveRegisters:
-        return linkPolymorphicCallThatPreservesRegsThunkGenerator;
+        return linkClosureCallThatPreservesRegsThunkGenerator;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return 0;

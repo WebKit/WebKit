@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -776,12 +776,47 @@ inline char* virtualFor(
     return virtualForWithFunction(execCallee, kind, registers, calleeAsFunctionCellIgnored);
 }
 
-char* JIT_OPERATION operationLinkPolymorphicCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
+static bool attemptToOptimizeClosureCall(
+    ExecState* execCallee, RegisterPreservationMode registers, JSCell* calleeAsFunctionCell,
+    CallLinkInfo& callLinkInfo)
+{
+    if (!calleeAsFunctionCell)
+        return false;
+    
+    JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
+    JSFunction* oldCallee = callLinkInfo.callee.get();
+    
+    if (!oldCallee || oldCallee->executable() != callee->executable())
+        return false;
+    
+    ASSERT(callee->executable()->hasJITCodeForCall());
+    MacroAssemblerCodePtr codePtr =
+        callee->executable()->generatedJITCodeForCall()->addressForCall(
+            *execCallee->callerFrame()->codeBlock()->vm(), callee->executable(),
+            ArityCheckNotRequired, registers);
+    
+    CodeBlock* codeBlock;
+    if (callee->executable()->isHostFunction())
+        codeBlock = 0;
+    else {
+        codeBlock = jsCast<FunctionExecutable*>(callee->executable())->codeBlockForCall();
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs || callLinkInfo.callType == CallLinkInfo::ConstructVarargs)
+            return false;
+    }
+    
+    linkClosureCall(
+        execCallee, callLinkInfo, codeBlock, callee->executable(), codePtr, registers);
+    
+    return true;
+}
+
+char* JIT_OPERATION operationLinkClosureCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
     JSCell* calleeAsFunctionCell;
     char* result = virtualForWithFunction(execCallee, CodeForCall, RegisterPreservationNotRequired, calleeAsFunctionCell);
 
-    linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell), RegisterPreservationNotRequired);
+    if (!attemptToOptimizeClosureCall(execCallee, RegisterPreservationNotRequired, calleeAsFunctionCell, *callLinkInfo))
+        linkSlowFor(execCallee, *callLinkInfo, CodeForCall, RegisterPreservationNotRequired);
     
     return result;
 }
@@ -796,12 +831,13 @@ char* JIT_OPERATION operationVirtualConstruct(ExecState* execCallee, CallLinkInf
     return virtualFor(execCallee, CodeForConstruct, RegisterPreservationNotRequired);
 }
 
-char* JIT_OPERATION operationLinkPolymorphicCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
+char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
     JSCell* calleeAsFunctionCell;
     char* result = virtualForWithFunction(execCallee, CodeForCall, MustPreserveRegisters, calleeAsFunctionCell);
 
-    linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell), MustPreserveRegisters);
+    if (!attemptToOptimizeClosureCall(execCallee, MustPreserveRegisters, calleeAsFunctionCell, *callLinkInfo))
+        linkSlowFor(execCallee, *callLinkInfo, CodeForCall, MustPreserveRegisters);
     
     return result;
 }
@@ -997,10 +1033,6 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
     DeferGCForAWhile deferGC(vm.heap);
     
     CodeBlock* codeBlock = exec->codeBlock();
-    if (codeBlock->jitType() != JITCode::BaselineJIT) {
-        dataLog("Unexpected code block in Baseline->DFG tier-up: ", *codeBlock, "\n");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
     
     if (bytecodeIndex) {
         // If we're attempting to OSR from a loop, assume that this should be

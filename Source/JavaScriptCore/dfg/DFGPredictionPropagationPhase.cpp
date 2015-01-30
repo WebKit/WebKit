@@ -188,6 +188,8 @@ private:
         case GetDirectPname:
         case Call:
         case Construct:
+        case ProfiledCall:
+        case ProfiledConstruct:
         case NativeCall:
         case NativeConstruct:
         case GetGlobalVar:

@@ -217,6 +217,8 @@ namespace JSC { namespace DFG {
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(ProfiledCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(ProfiledConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \

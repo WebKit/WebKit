@@ -141,9 +141,6 @@ public:
         return true;
     }
     
-    // Return true if you are still valid after. Return false if you are now invalid. If you return
-    // false, you will usually not do any clearing because the idea is that you will simply be
-    // destroyed.
     virtual bool visitWeak(RepatchBuffer&);
 
 protected:

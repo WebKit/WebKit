@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -675,7 +675,7 @@ private:
         if (parameterSlots > m_parameterSlots)
             m_parameterSlots = parameterSlots;
 
-        int dummyThisArgument = op == Call || op == NativeCall ? 0 : 1;
+        int dummyThisArgument = op == Call || op == NativeCall || op == ProfiledCall ? 0 : 1;
         for (int i = 0 + dummyThisArgument; i < argCount; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
 
@@ -1044,8 +1044,17 @@ void ByteCodeParser::handleCall(
     if (callTarget->hasConstant())
         callLinkStatus = CallLinkStatus(callTarget->asJSValue()).setIsProved(true);
     
-    if (Options::verboseDFGByteCodeParsing())
-        dataLog("    Handling call at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
+    if ((!callLinkStatus.canOptimize() || callLinkStatus.size() != 1)
+        && !isFTL(m_graph.m_plan.mode) && Options::useFTLJIT()
+        && InlineCallFrame::isNormalCall(kind)
+        && CallEdgeLog::isEnabled()
+        && Options::dfgDoesCallEdgeProfiling()) {
+        ASSERT(op == Call || op == Construct);
+        if (op == Call)
+            op = ProfiledCall;
+        else
+            op = ProfiledConstruct;
+    }
     
     if (!callLinkStatus.canOptimize()) {
         // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
@@ -1067,17 +1076,17 @@ void ByteCodeParser::handleCall(
     
 #if ENABLE(FTL_NATIVE_CALL_INLINING)
     if (isFTL(m_graph.m_plan.mode) && Options::optimizeNativeCalls() && callLinkStatus.size() == 1 && !callLinkStatus.couldTakeSlowPath()) {
-        CallVariant callee = callLinkStatus[0];
+        CallVariant callee = callLinkStatus[0].callee();
         JSFunction* function = callee.function();
         CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
         if (function && function->isHostFunction()) {
             emitFunctionChecks(callee, callTarget, registerOffset, specializationKind);
             callOpInfo = OpInfo(m_graph.freeze(function));
 
-            if (op == Call)
+            if (op == Call || op == ProfiledCall)
                 op = NativeCall;
             else {
-                ASSERT(op == Construct);
+                ASSERT(op == Construct || op == ProfiledConstruct);
                 op = NativeConstruct;
             }
         }
@@ -1417,13 +1426,13 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     // this in cases where we don't need control flow diamonds to check the callee.
     if (!callLinkStatus.couldTakeSlowPath() && callLinkStatus.size() == 1) {
         emitFunctionChecks(
-            callLinkStatus[0], callTargetNode, registerOffset, specializationKind);
+            callLinkStatus[0].callee(), callTargetNode, registerOffset, specializationKind);
         bool result = attemptToInlineCall(
-            callTargetNode, resultOperand, callLinkStatus[0], registerOffset,
+            callTargetNode, resultOperand, callLinkStatus[0].callee(), registerOffset,
             argumentCountIncludingThis, nextOffset, kind, CallerDoesNormalLinking, prediction,
             inliningBalance);
         if (!result && !callLinkStatus.isProved())
-            undoFunctionChecks(callLinkStatus[0]);
+            undoFunctionChecks(callLinkStatus[0].callee());
         if (verbose) {
             dataLog("Done inlining (simple).\n");
             dataLog("Stack: ", currentCodeOrigin(), "\n");
@@ -1453,7 +1462,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     bool allAreClosureCalls = true;
     bool allAreDirectCalls = true;
     for (unsigned i = callLinkStatus.size(); i--;) {
-        if (callLinkStatus[i].isClosureCall())
+        if (callLinkStatus[i].callee().isClosureCall())
             allAreDirectCalls = false;
         else
             allAreClosureCalls = false;
@@ -1466,8 +1475,9 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         thingToSwitchOn = addToGraph(GetExecutable, callTargetNode);
     else {
         // FIXME: We should be able to handle this case, but it's tricky and we don't know of cases
-        // where it would be beneficial. It might be best to handle these cases as if all calls were
-        // closure calls.
+        // where it would be beneficial. Also, CallLinkStatus would make all callees appear like
+        // closure calls if any calls were closure calls - except for calls to internal functions.
+        // So this will only arise if some callees are internal functions and others are closures.
         // https://bugs.webkit.org/show_bug.cgi?id=136020
         if (verbose) {
             dataLog("Bailing inlining (mix).\n");
@@ -1507,7 +1517,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     // to the continuation block, which we create last.
     Vector<BasicBlock*> landingBlocks;
     
-    // We may force this true if we give up on inlining any of the edges.
+    // We make force this true if we give up on inlining any of the edges.
     bool couldTakeSlowPath = callLinkStatus.couldTakeSlowPath();
     
     if (verbose)
@@ -1523,7 +1533,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         Node* myCallTargetNode = getDirect(calleeReg);
         
         bool inliningResult = attemptToInlineCall(
-            myCallTargetNode, resultOperand, callLinkStatus[i], registerOffset,
+            myCallTargetNode, resultOperand, callLinkStatus[i].callee(), registerOffset,
             argumentCountIncludingThis, nextOffset, kind, CallerLinksManually, prediction,
             inliningBalance);
         
@@ -1542,10 +1552,10 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         
         JSCell* thingToCaseOn;
         if (allAreDirectCalls)
-            thingToCaseOn = callLinkStatus[i].nonExecutableCallee();
+            thingToCaseOn = callLinkStatus[i].callee().nonExecutableCallee();
         else {
             ASSERT(allAreClosureCalls);
-            thingToCaseOn = callLinkStatus[i].executable();
+            thingToCaseOn = callLinkStatus[i].callee().executable();
         }
         data.cases.append(SwitchCase(m_graph.freeze(thingToCaseOn), block.get()));
         m_currentIndex = nextOffset;
@@ -1557,7 +1567,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         landingBlocks.append(m_currentBlock);
 
         if (verbose)
-            dataLog("Finished inlining ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
+            dataLog("Finished inlining ", callLinkStatus[i].callee(), " at ", currentCodeOrigin(), ".\n");
     }
     
     RefPtr<BasicBlock> slowPathBlock = adoptRef(

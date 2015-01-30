@@ -278,6 +278,12 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
 
+    if (CallEdgeLog::isEnabled() && shouldEmitProfiling()
+        && Options::baselineDoesCallEdgeProfiling()) {
+        m_vm->ensureCallEdgeLog().emitLogCode(
+            *this, info->callEdgeProfile, JSValueRegs(regT1, regT0));
+    }
+
     if (opcodeID == op_call_eval) {
         compileCallEval(instruction);
         return;

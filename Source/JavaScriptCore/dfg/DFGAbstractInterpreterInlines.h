@@ -1968,6 +1968,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
 
+    case ProfiledCall:
+    case ProfiledConstruct:
+        if (forNode(m_graph.varArgChild(node, 0)).m_value)
+            m_state.setFoundConstants(true);
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).makeHeapTop();
+        break;
+
     case ForceOSRExit:
     case CheckBadCell:
         m_state.setIsValid(false);

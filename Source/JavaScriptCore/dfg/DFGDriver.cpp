@@ -79,17 +79,20 @@ static CompilationResult compileImpl(
     if (mode == DFGMode) {
         vm.getCTIStub(linkCallThunkGenerator);
         vm.getCTIStub(linkConstructThunkGenerator);
-        vm.getCTIStub(linkPolymorphicCallThunkGenerator);
+        vm.getCTIStub(linkClosureCallThunkGenerator);
         vm.getCTIStub(virtualCallThunkGenerator);
         vm.getCTIStub(virtualConstructThunkGenerator);
     } else {
         vm.getCTIStub(linkCallThatPreservesRegsThunkGenerator);
         vm.getCTIStub(linkConstructThatPreservesRegsThunkGenerator);
-        vm.getCTIStub(linkPolymorphicCallThatPreservesRegsThunkGenerator);
+        vm.getCTIStub(linkClosureCallThatPreservesRegsThunkGenerator);
         vm.getCTIStub(virtualCallThatPreservesRegsThunkGenerator);
         vm.getCTIStub(virtualConstructThatPreservesRegsThunkGenerator);
     }
     
+    if (CallEdgeLog::isEnabled())
+        vm.ensureCallEdgeLog().processLog();
+
     if (vm.typeProfiler())
         vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for DFG compilation."));
     

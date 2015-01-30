@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +56,11 @@ namespace JSC {
 //     than the fact that they don't fall into any of the above categories.
 //
 // This class serves as a kind of union over these four things. It does so by just holding a
-// JSCell*. We determine which of the modes its in by doing type checks on the cell. Note that we
-// cannot use WriteBarrier<> here because this gets used inside the compiler.
+// JSCell*. We determine which of the modes its in by doing type checks on the cell. Note that there
+// is no lifecycle management for the cell because this class is always used in contexts where we
+// either do custom weak reference logic over instances of this class (see CallEdgeProfile), or we
+// are inside the compiler and we assume that the compiler runs in between collections and so can
+// touch the heap without notifying anyone.
 
 class CallVariant {
 public:
@@ -177,13 +180,6 @@ struct CallVariantHash {
 };
 
 typedef Vector<CallVariant, 1> CallVariantList;
-
-// Returns a new variant list by attempting to either append the given variant or merge it with one
-// of the variants we already have by despecifying closures.
-CallVariantList variantListWithVariant(const CallVariantList&, CallVariant);
-
-// Returns a new list where every element is despecified, and the list is deduplicated.
-CallVariantList despecifiedVariantList(const CallVariantList&);
 
 } // namespace JSC
 

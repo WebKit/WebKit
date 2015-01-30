@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "AccessorCallJITStubRoutine.h"
-#include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
@@ -1576,17 +1575,12 @@ void repatchIn(
 }
 
 static void linkSlowFor(
-    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
-{
-    repatchBuffer.relink(
-        callLinkInfo.callReturnLocation, vm->getCTIStub(generator).code());
-}
-
-static void linkSlowFor(
     RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo,
     CodeSpecializationKind kind, RegisterPreservationMode registers)
 {
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, virtualThunkGeneratorFor(kind, registers));
+    repatchBuffer.relink(
+        callLinkInfo.callReturnLocation,
+        vm->getCTIStub(virtualThunkGeneratorFor(kind, registers)).code());
 }
 
 void linkFor(
@@ -1598,6 +1592,10 @@ void linkFor(
     
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
 
+    // If you're being call-linked from a DFG caller then you obviously didn't get inlined.
+    if (calleeCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
+        calleeCodeBlock->m_shouldAlwaysBeInlined = false;
+    
     VM* vm = callerCodeBlock->vm();
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
@@ -1613,8 +1611,7 @@ void linkFor(
         calleeCodeBlock->linkIncomingCall(exec->callerFrame(), &callLinkInfo);
     
     if (kind == CodeForCall) {
-        linkSlowFor(
-            repatchBuffer, vm, callLinkInfo, linkPolymorphicCallThunkGeneratorFor(registers));
+        repatchBuffer.relink(callLinkInfo.callReturnLocation, vm->getCTIStub(linkClosureCallThunkGeneratorFor(registers)).code());
         return;
     }
     
@@ -1634,121 +1631,15 @@ void linkSlowFor(
     linkSlowFor(repatchBuffer, vm, callLinkInfo, kind, registers);
 }
 
-static void revertCall(
-    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
-{
-    repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(
-        RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin),
-        static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR), 0);
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, generator);
-    callLinkInfo.hasSeenShouldRepatch = false;
-    callLinkInfo.callee.clear();
-    callLinkInfo.stub.clear();
-    if (callLinkInfo.isOnList())
-        callLinkInfo.remove();
-}
-
-void unlinkFor(
-    RepatchBuffer& repatchBuffer, CallLinkInfo& callLinkInfo,
-    CodeSpecializationKind kind, RegisterPreservationMode registers)
-{
-    if (Options::showDisassembly())
-        dataLog("Unlinking call from ", callLinkInfo.callReturnLocation, " in request from ", pointerDump(repatchBuffer.codeBlock()), "\n");
-    
-    revertCall(
-        repatchBuffer, repatchBuffer.codeBlock()->vm(), callLinkInfo,
-        linkThunkGeneratorFor(kind, registers));
-}
-
-void linkVirtualFor(
-    ExecState* exec, CallLinkInfo& callLinkInfo,
-    CodeSpecializationKind kind, RegisterPreservationMode registers)
-{
-    // FIXME: We could generate a virtual call stub here. This would lead to faster virtual calls
-    // by eliminating the branch prediction bottleneck inside the shared virtual call thunk.
-    
-    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
-    VM* vm = callerCodeBlock->vm();
-    
-    if (shouldShowDisassemblyFor(callerCodeBlock))
-        dataLog("Linking virtual call at ", *callerCodeBlock, " ", exec->callerFrame()->codeOrigin(), "\n");
-    
-    RepatchBuffer repatchBuffer(callerCodeBlock);
-    revertCall(repatchBuffer, vm, callLinkInfo, virtualThunkGeneratorFor(kind, registers));
-}
-
-namespace {
-struct CallToCodePtr {
-    CCallHelpers::Call call;
-    MacroAssemblerCodePtr codePtr;
-};
-} // annonymous namespace
-
-void linkPolymorphicCall(
-    ExecState* exec, CallLinkInfo& callLinkInfo, CallVariant newVariant,
+void linkClosureCall(
+    ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, 
+    ExecutableBase* executable, MacroAssemblerCodePtr codePtr,
     RegisterPreservationMode registers)
 {
-    // Currently we can't do anything for non-function callees.
-    // https://bugs.webkit.org/show_bug.cgi?id=140685
-    if (!newVariant || !newVariant.executable()) {
-        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
-        return;
-    }
+    ASSERT(!callLinkInfo.stub);
     
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
-    
-    CallVariantList list;
-    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub.get())
-        list = stub->variants();
-    else if (JSFunction* oldCallee = callLinkInfo.callee.get())
-        list = CallVariantList{ CallVariant(oldCallee) };
-    
-    list = variantListWithVariant(list, newVariant);
-
-    // If there are any closure calls then it makes sense to treat all of them as closure calls.
-    // This makes switching on callee cheaper. It also produces profiling that's easier on the DFG;
-    // the DFG doesn't really want to deal with a combination of closure and non-closure callees.
-    bool isClosureCall = false;
-    for (CallVariant variant : list)  {
-        if (variant.isClosureCall()) {
-            list = despecifiedVariantList(list);
-            isClosureCall = true;
-            break;
-        }
-    }
-    
-    Vector<PolymorphicCallCase> callCases;
-    
-    // Figure out what our cases are.
-    for (CallVariant variant : list) {
-        CodeBlock* codeBlock;
-        if (variant.executable()->isHostFunction())
-            codeBlock = nullptr;
-        else {
-            codeBlock = jsCast<FunctionExecutable*>(variant.executable())->codeBlockForCall();
-            
-            // If we cannot handle a callee, assume that it's better for this whole thing to be a
-            // virtual call.
-            if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs || callLinkInfo.callType == CallLinkInfo::ConstructVarargs) {
-                linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
-                return;
-            }
-        }
-        
-        callCases.append(PolymorphicCallCase(variant, codeBlock));
-    }
-    
-    // If we are over the limit, just use a normal virtual call.
-    unsigned maxPolymorphicCallVariantListSize;
-    if (callerCodeBlock->jitType() == JITCode::topTierJIT())
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
-    else
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
-    if (list.size() > maxPolymorphicCallVariantListSize) {
-        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
-        return;
-    }
     
     GPRReg calleeGPR = static_cast<GPRReg>(callLinkInfo.calleeGPR);
     
@@ -1764,82 +1655,33 @@ void linkPolymorphicCall(
         stubJit.abortWithReason(RepatchInsaneArgumentCount);
         okArgumentCount.link(&stubJit);
     }
-    
-    GPRReg scratch = AssemblyHelpers::selectScratchGPR(calleeGPR);
-    GPRReg comparisonValueGPR;
-    
-    if (isClosureCall) {
-        // Verify that we have a function and stash the executable in scratch.
 
 #if USE(JSVALUE64)
-        // We can safely clobber everything except the calleeGPR. We can't rely on tagMaskRegister
-        // being set. So we do this the hard way.
-        stubJit.move(MacroAssembler::TrustedImm64(TagMask), scratch);
-        slowPath.append(stubJit.branchTest64(CCallHelpers::NonZero, calleeGPR, scratch));
+    // We can safely clobber everything except the calleeGPR. We can't rely on tagMaskRegister
+    // being set. So we do this the hard way.
+    GPRReg scratch = AssemblyHelpers::selectScratchGPR(calleeGPR);
+    stubJit.move(MacroAssembler::TrustedImm64(TagMask), scratch);
+    slowPath.append(stubJit.branchTest64(CCallHelpers::NonZero, calleeGPR, scratch));
 #else
-        // We would have already checked that the callee is a cell.
+    // We would have already checked that the callee is a cell.
 #endif
     
-        slowPath.append(
-            stubJit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(calleeGPR, JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(JSFunctionType)));
+    slowPath.append(
+        stubJit.branch8(
+            CCallHelpers::NotEqual,
+            CCallHelpers::Address(calleeGPR, JSCell::typeInfoTypeOffset()),
+            CCallHelpers::TrustedImm32(JSFunctionType)));
     
-        stubJit.loadPtr(
+    slowPath.append(
+        stubJit.branchPtr(
+            CCallHelpers::NotEqual,
             CCallHelpers::Address(calleeGPR, JSFunction::offsetOfExecutable()),
-            scratch);
-        
-        comparisonValueGPR = scratch;
-    } else
-        comparisonValueGPR = calleeGPR;
+            CCallHelpers::TrustedImmPtr(executable)));
     
-    Vector<int64_t> caseValues(callCases.size());
-    Vector<CallToCodePtr> calls(callCases.size());
-    std::unique_ptr<uint32_t[]> fastCounts;
-    
-    if (callerCodeBlock->jitType() != JITCode::topTierJIT())
-        fastCounts = std::make_unique<uint32_t[]>(callCases.size());
-    
-    for (size_t i = callCases.size(); i--;) {
-        if (fastCounts)
-            fastCounts[i] = 0;
-        
-        CallVariant variant = callCases[i].variant();
-        if (isClosureCall)
-            caseValues[i] = bitwise_cast<intptr_t>(variant.executable());
-        else
-            caseValues[i] = bitwise_cast<intptr_t>(variant.function());
-    }
-    
-    GPRReg fastCountsBaseGPR =
-        AssemblyHelpers::selectScratchGPR(calleeGPR, comparisonValueGPR, GPRInfo::regT3);
-    stubJit.move(CCallHelpers::TrustedImmPtr(fastCounts.get()), fastCountsBaseGPR);
-    
-    BinarySwitch binarySwitch(comparisonValueGPR, caseValues, BinarySwitch::IntPtr);
-    CCallHelpers::JumpList done;
-    while (binarySwitch.advance(stubJit)) {
-        size_t caseIndex = binarySwitch.caseIndex();
-        
-        CallVariant variant = callCases[caseIndex].variant();
-        
-        ASSERT(variant.executable()->hasJITCodeForCall());
-        MacroAssemblerCodePtr codePtr =
-            variant.executable()->generatedJITCodeForCall()->addressForCall(
-                *vm, variant.executable(), ArityCheckNotRequired, registers);
-        
-        if (fastCounts) {
-            stubJit.add32(
-                CCallHelpers::TrustedImm32(1),
-                CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
-        }
-        calls[caseIndex].call = stubJit.nearCall();
-        calls[caseIndex].codePtr = codePtr;
-        done.append(stubJit.jump());
-    }
+    AssemblyHelpers::Call call = stubJit.nearCall();
+    AssemblyHelpers::Jump done = stubJit.jump();
     
     slowPath.link(&stubJit);
-    binarySwitch.fallThrough().link(&stubJit);
     stubJit.move(calleeGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
     stubJit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
@@ -1849,45 +1691,34 @@ void linkPolymorphicCall(
     
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
-        
+    
     LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock);
     
-    RELEASE_ASSERT(callCases.size() == calls.size());
-    for (CallToCodePtr callToCodePtr : calls) {
-        patchBuffer.link(
-            callToCodePtr.call, FunctionPtr(callToCodePtr.codePtr.executableAddress()));
-    }
+    patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     if (JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
         patchBuffer.link(done, callLinkInfo.callReturnLocation.labelAtOffset(0));
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther.labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(linkPolymorphicCallThunkGeneratorFor(registers)).code()));
+    patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(virtualThunkGeneratorFor(CodeForCall, registers)).code()));
     
-    RefPtr<PolymorphicCallStubRoutine> stubRoutine = adoptRef(new PolymorphicCallStubRoutine(
+    RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer,
-            ("Polymorphic call stub for %s, return point %p, targets %s",
+            ("Closure call stub for %s, return point %p, target %p (%s)",
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
-                toCString(listDump(callCases)).data())),
-        *vm, callerCodeBlock->ownerExecutable(), exec->callerFrame(), callLinkInfo, callCases,
-        WTF::move(fastCounts)));
+                codePtr.executableAddress(), toCString(pointerDump(calleeCodeBlock)).data())),
+        *vm, callerCodeBlock->ownerExecutable(), executable));
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
     
     repatchBuffer.replaceWithJump(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin),
         CodeLocationLabel(stubRoutine->code().code()));
-    // This is weird. The original slow path should no longer be reachable.
     linkSlowFor(repatchBuffer, vm, callLinkInfo, CodeForCall, registers);
     
-    // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
-    // that it's no longer on stack.
     callLinkInfo.stub = stubRoutine.release();
     
-    // The call link info no longer has a call cache apart from the jump to the polymorphic call
-    // stub.
-    if (callLinkInfo.isOnList())
-        callLinkInfo.remove();
+    ASSERT(!calleeCodeBlock || calleeCodeBlock->isIncomingCallAlreadyLinked(&callLinkInfo));
 }
 
 void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)

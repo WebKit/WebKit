@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,37 @@
  */
 
 #include "config.h"
-#include "CallVariant.h"
+#include "ClosureCallStubRoutine.h"
 
+#if ENABLE(JIT)
+
+#include "Executable.h"
+#include "Heap.h"
+#include "VM.h"
 #include "JSCInlines.h"
+#include "SlotVisitor.h"
+#include "Structure.h"
 
 namespace JSC {
 
-void CallVariant::dump(PrintStream& out) const
+ClosureCallStubRoutine::ClosureCallStubRoutine(
+    const MacroAssemblerCodeRef& code, VM& vm, const JSCell* owner,
+    ExecutableBase* executable)
+    : GCAwareJITStubRoutine(code, vm)
+    , m_executable(vm, owner, executable)
 {
-    if (!*this) {
-        out.print("null");
-        return;
-    }
-    
-    if (InternalFunction* internalFunction = this->internalFunction()) {
-        out.print("InternalFunction: ", JSValue(internalFunction));
-        return;
-    }
-    
-    if (JSFunction* function = this->function()) {
-        out.print("(Function: ", JSValue(function), "; Executable: ", *executable(), ")");
-        return;
-    }
-    
-    out.print("Executable: ", *executable());
+}
+
+ClosureCallStubRoutine::~ClosureCallStubRoutine()
+{
+}
+
+void ClosureCallStubRoutine::markRequiredObjectsInternal(SlotVisitor& visitor)
+{
+    visitor.append(&m_executable);
 }
 
 } // namespace JSC
+
+#endif // ENABLE(JIT)
 
