@@ -100,7 +100,7 @@ static void registerUserDefaultsIfNeeded()
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCJITEnabledDefaultsKey];
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCFTLJITEnabledDefaultsKey];
     
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 #endif
 

@@ -1,5 +1,14 @@
 2015-01-29  Beth Dakin  <bdakin@apple.com>
 
+        Another follow-on, spotted this mistake. This used to be 
+        #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090 , so it should now be 
+        COCOA.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
+2015-01-29  Beth Dakin  <bdakin@apple.com>
+
         Follow-on, fixing a bad merge from my last change. 
 
         * Shared/WebPreferencesDefinitions.h:
