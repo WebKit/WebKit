@@ -7,6 +7,8 @@ RUN(inbandTrack1 = video.textTracks[0])
 EXPECTED (video.textTracks.length == '1') OK
 EXPECTED (inbandTrack1.language == 'en') OK
 EXPECTED (inbandTrack1.kind == 'captions') OK
+RUN(inbandTrack1.mode = 'showing')
+EVENT(change)
 RUN(video.play())
 EVENT(seeked)
 

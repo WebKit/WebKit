@@ -1,3 +1,17 @@
+2015-01-29  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (OS X 10.10.2): media/track/track-in-band-style.html frequently times out
+        https://bugs.webkit.org/show_bug.cgi?id=140974
+
+        Reviewed by Brent Fulgham.
+
+        * media/track/track-in-band-style-expected.txt: Updated.
+        * media/track/track-in-band-style.html: Introduce a brief pause between receiving the 'seeked'
+            event and checking caption style to allow for media engine latency. Add additional logging
+            when the test fails to make future failure diagnosis easier.
+
+        * platform/mac/TestExpectations: Remove track-in-band-style.html.
+
 2015-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Implement ES6 class syntax without inheritance support
