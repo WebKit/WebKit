@@ -1,3 +1,30 @@
+2015-01-29  Beth Dakin  <bdakin@apple.com>
+
+        Remove more Mountain Lion code from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=141050
+
+        Reviewed by Anders Carlsson.
+
+        * History/WebHistory.mm:
+        (getDayBoundaries):
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel cancel:]):
+        (-[WebAuthenticationPanel logIn:]):
+        (-[WebAuthenticationPanel runAsSheetOnWindow:withChallenge:]):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebFrameView.mm:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (needsScreenFontsEnabledQuirk):
+        * WebView/WebView.mm:
+        (+[WebView registerForMemoryNotifications]):
+        (-[WebView _preferencesChanged:]):
+        (+[WebView initialize]):
+        (+[WebView _shouldAutomaticQuoteSubstitutionBeEnabled]):
+        (+[WebView _shouldAutomaticDashSubstitutionBeEnabled]):
+        (+[WebView _didChangeAutomaticDashSubstitutionEnabled:]):
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Remove support for screen font substitution

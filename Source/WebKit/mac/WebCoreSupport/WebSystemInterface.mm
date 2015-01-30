@@ -184,11 +184,7 @@ void InitWebCoreSystemInterface(void)
 
 #if !PLATFORM(IOS)
     INIT(CreateVMPressureDispatchOnMainQueue);
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
-#endif
-
     INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 

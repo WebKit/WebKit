@@ -1267,11 +1267,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         [WebView _handleMemoryWarning];
     }, shouldAutoClearPressureOnMemoryRelease);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-#else
-    static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_VM, 0, DISPATCH_VM_PRESSURE, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-#endif
     dispatch_source_set_event_handler(memoryNotificationEventSource, ^{
         // Set memory pressure flag and schedule releasing memory in web thread runloop exit.
         memoryPressureHandler().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMPressure);
@@ -4669,10 +4665,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [defaults registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey]];
-#endif
 
 #if PLATFORM(IOS)
     continuousSpellCheckingEnabled = NO;
@@ -4696,13 +4689,10 @@ static Vector<String> toStringVector(NSArray* patterns)
         name:NSSpellCheckerDidChangeAutomaticTextReplacementNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticSpellingCorrectionEnabled:)
         name:NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification object:nil];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticQuoteSubstitutionEnabled:)
         name:NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeAutomaticDashSubstitutionEnabled:)
         name:NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification object:nil];
-#endif
 #endif
 }
 
@@ -4738,24 +4728,21 @@ static Vector<String> toStringVector(NSArray* patterns)
 + (BOOL)_shouldAutomaticQuoteSubstitutionBeEnabled
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (![defaults objectForKey:WebAutomaticQuoteSubstitutionEnabled])
         return [NSSpellChecker isAutomaticQuoteSubstitutionEnabled];
-#endif
+
     return [defaults boolForKey:WebAutomaticQuoteSubstitutionEnabled];
 }
 
 + (BOOL)_shouldAutomaticDashSubstitutionBeEnabled
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (![defaults objectForKey:WebAutomaticDashSubstitutionEnabled])
         return [NSSpellChecker isAutomaticDashSubstitutionEnabled];
-#endif
+
     return [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 + (void)_didChangeAutomaticQuoteSubstitutionEnabled:(NSNotification *)notification
 {
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
@@ -4767,7 +4754,6 @@ static Vector<String> toStringVector(NSArray* patterns)
     automaticDashSubstitutionEnabled = [self _shouldAutomaticDashSubstitutionBeEnabled];
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
-#endif
 
 + (void)_applicationWillTerminate
 {   

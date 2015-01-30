@@ -100,7 +100,7 @@ using namespace WebCore;
 - (BOOL)_scrollTo:(const NSPoint *)newOrigin animate:(BOOL)animate; // need the boolean result from this method
 @end
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 @interface NSView (Details)
 - (void)setBackgroundColor:(NSColor *)color;
 @end
@@ -546,7 +546,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
 }
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 - (BOOL)wantsUpdateLayer
 {
     return YES;

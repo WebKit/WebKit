@@ -154,7 +154,6 @@ private:
 
 static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
 {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:interval];
     
     NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
@@ -165,17 +164,6 @@ static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningO
     
     beginningOfDay = beginningOfDayDate.timeIntervalSinceReferenceDate;
     beginningOfNextDay = beginningOfDay + dayLength;
-#else
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(interval, timeZone);
-    date.hour = 0;
-    date.minute = 0;
-    date.second = 0;
-    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone);
-    date.day += 1;
-    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone);
-    CFRelease(timeZone);
-#endif
 }
 
 static inline NSTimeInterval beginningOfDay(NSTimeInterval date)
