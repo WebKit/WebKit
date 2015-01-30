@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FloatRect.h"
 
+#if USE(CAIRO)
+
 #include <cairo.h>
 
 namespace WebCore {
@@ -43,3 +45,5 @@ FloatRect::operator cairo_rectangle_t() const
 }
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)

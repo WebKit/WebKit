@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Path.h"
 
+#if USE(CAIRO)
+
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -409,3 +411,5 @@ void Path::transform(const AffineTransform& trans)
 }
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)

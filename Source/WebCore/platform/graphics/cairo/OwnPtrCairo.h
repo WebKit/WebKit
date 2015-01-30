@@ -20,6 +20,8 @@
 #ifndef OwnPtrCairo_h
 #define OwnPtrCairo_h
 
+#if USE(CAIRO)
+
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -41,4 +43,6 @@ template <> void deleteOwnedPtr<cairo_path_t>(cairo_path_t*);
 
 } // namespace WTF
 
-#endif
+#endif // USE(CAIRO)
+
+#endif // OwnPtrCairo_h

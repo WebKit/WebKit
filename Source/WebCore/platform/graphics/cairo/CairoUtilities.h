@@ -27,6 +27,8 @@
 #ifndef CairoUtilities_h
 #define CairoUtilities_h
 
+#if USE(CAIRO)
+
 #include "GraphicsTypes.h"
 #include "IntSize.h"
 #include <cairo.h>
@@ -64,5 +66,7 @@ void cairoSurfaceSetDeviceScale(cairo_surface_t*, double xScale, double yScale);
 void cairoSurfaceGetDeviceScale(cairo_surface_t*, double& xScale, double& yScale);
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // CairoUtilities_h

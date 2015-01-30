@@ -20,6 +20,8 @@
 #include "config.h"
 #include "PlatformPathCairo.h"
 
+#if USE(CAIRO)
+
 #include <cairo.h>
 
 namespace WebCore {
@@ -36,4 +38,6 @@ CairoPath::CairoPath()
 {
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CAIRO)

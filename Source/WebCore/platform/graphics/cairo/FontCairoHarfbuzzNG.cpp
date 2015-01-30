@@ -27,6 +27,8 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#if USE(CAIRO)
+
 #include "Font.h"
 #include "GraphicsContext.h"
 #include "HarfBuzzShaper.h"
@@ -37,7 +39,6 @@
 #include <cairo.h>
 
 namespace WebCore {
-
 
 float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
 {
@@ -50,6 +51,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, i
     // FIXME: Mac returns an initial advance here.
     return 0;
 }
+
 float FontCascade::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
@@ -113,4 +115,6 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
     LOG_ERROR("Shaper couldn't shape text run.");
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CAIRO)

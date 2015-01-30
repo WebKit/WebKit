@@ -19,6 +19,8 @@
 #include "config.h"
 #include "RefPtrCairo.h"
 
+#if USE(CAIRO)
+
 #include <cairo.h>
 
 #if USE(FREETYPE)
@@ -115,4 +117,6 @@ template<> void derefIfNotNull(FcPattern* ptr)
 
 #endif
 
-}
+} // namespace WTF
+
+#endif // USE(CAIRO)

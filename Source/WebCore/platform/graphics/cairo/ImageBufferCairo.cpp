@@ -29,6 +29,8 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#if USE(CAIRO)
+
 #include "BitmapImage.h"
 #include "CairoUtilities.h"
 #include "Color.h"
@@ -418,3 +420,5 @@ PlatformLayer* ImageBuffer::platformLayer() const
 }
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)

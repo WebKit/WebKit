@@ -31,6 +31,8 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#if USE(CAIRO)
+
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
 #include "Font.h"
@@ -355,6 +357,8 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     }
     return result;
 }
-#endif
+#endif // ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
 
-}
+} // namespace WebCore
+
+#endif // USE(CAIRO)

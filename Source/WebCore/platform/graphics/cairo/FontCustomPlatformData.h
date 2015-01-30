@@ -22,6 +22,8 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
+#if USE(CAIRO)
+
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
@@ -50,6 +52,8 @@ private:
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // USE(CAIRO)
+
+#endif // FontCustomPlatformData_h

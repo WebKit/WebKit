@@ -28,6 +28,8 @@
 #include "config.h"
 #include "BitmapImage.h"
 
+#if USE(CAIRO)
+
 #include "CairoUtilities.h"
 #include "ImageObserver.h"
 #include "PlatformContextCairo.h"
@@ -165,3 +167,4 @@ bool FrameData::clear(bool clearMetadata)
 
 } // namespace WebCore
 
+#endif // USE(CAIRO)

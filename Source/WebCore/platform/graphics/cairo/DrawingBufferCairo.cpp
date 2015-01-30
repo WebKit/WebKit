@@ -24,11 +24,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(ACCELERATED_2D_CANVAS) || USE(3D_GRAPHICS)
-
 #include "DrawingBuffer.h"
 
+#if USE(CAIRO) && (ENABLE(ACCELERATED_2D_CANVAS) || USE(3D_GRAPHICS))
 #include "Extensions3D.h"
 
 namespace WebCore {
@@ -44,4 +42,4 @@ void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
 
 }
 
-#endif
+#endif // USE(CAIRO) && (ENABLE(ACCELERATED_2D_CANVAS) || USE(3D_GRAPHICS))

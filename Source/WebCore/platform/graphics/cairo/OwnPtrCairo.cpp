@@ -20,6 +20,8 @@
 #include "config.h"
 #include "OwnPtrCairo.h"
 
+#if USE(CAIRO)
+
 #if USE(FREETYPE)
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
@@ -50,3 +52,5 @@ template <> void deleteOwnedPtr<cairo_path_t>(cairo_path_t* ptr)
 }
 
 } // namespace WTF
+
+#endif // USE(CAIRO)

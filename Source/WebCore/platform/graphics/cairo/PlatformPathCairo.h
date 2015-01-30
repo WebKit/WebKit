@@ -21,6 +21,8 @@
 #ifndef PlatformPathCairo_h
 #define PlatformPathCairo_h
 
+#if USE(CAIRO)
+
 #include "RefPtrCairo.h"
 
 namespace WebCore {
@@ -39,5 +41,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // PlatformPathCairo_h

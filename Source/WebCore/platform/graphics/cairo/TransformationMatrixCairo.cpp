@@ -23,12 +23,13 @@
  */
 
 #include "config.h"
-#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 
+#if USE(CAIRO)
+
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-
 #include <cairo.h>
 
 namespace WebCore {
@@ -61,6 +62,6 @@ AffineTransform::operator cairo_matrix_t() const
     return m;
 }
 
-}
+} // namespace WebCore
 
-// vim: ts=4 sw=4 et
+#endif // USE(CAIRO)

@@ -26,6 +26,8 @@
 #ifndef PlatformContextCairo_h
 #define PlatformContextCairo_h
 
+#if USE(CAIRO)
+
 #include "GraphicsContext.h"
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
@@ -83,5 +85,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // PlatformContextCairo_h

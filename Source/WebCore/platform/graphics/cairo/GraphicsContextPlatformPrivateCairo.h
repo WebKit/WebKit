@@ -30,6 +30,8 @@
 
 #include "GraphicsContext.h"
 
+#if USE(CAIRO)
+
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
@@ -113,5 +115,7 @@ public:
 
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // GraphicsContextPlatformPrivateCairo_h

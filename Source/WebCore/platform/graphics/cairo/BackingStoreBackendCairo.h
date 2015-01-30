@@ -51,8 +51,9 @@ protected:
     IntSize m_size;
 };
 
-#endif // USE(CAIRO)
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // BackingStoreBackendCairo_h

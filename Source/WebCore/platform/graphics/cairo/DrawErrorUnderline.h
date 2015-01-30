@@ -21,10 +21,10 @@
  *
  */
 
-#if USE(CAIRO)
-
 #ifndef DrawErrorUnderline_h
 #define DrawErrorUnderline_h
+
+#if USE(CAIRO)
 
 #include <cairo.h>
 
@@ -101,6 +101,6 @@ static inline void drawErrorUnderline(cairo_t* cr, double x, double y, double wi
     cairo_fill(cr);
 }
 
-#endif // DrawErrorUnderline_h
+#endif // USE(CAIRO)
 
-#endif
+#endif // DrawErrorUnderline_h

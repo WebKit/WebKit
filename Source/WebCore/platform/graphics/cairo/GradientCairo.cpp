@@ -27,6 +27,8 @@
 #include "config.h"
 #include "Gradient.h"
 
+#if USE(CAIRO)
+
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
 #include <cairo.h>
@@ -106,4 +108,6 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
     context->restore();
 }
 
-} //namespace
+} // namespace WebCore
+
+#endif // USE(CAIRO)

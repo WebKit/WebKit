@@ -21,6 +21,8 @@
 #include "config.h"
 #include "IntRect.h"
 
+#if USE(CAIRO)
+
 #include <cairo.h>
 
 namespace WebCore {
@@ -37,4 +39,6 @@ IntRect::operator cairo_rectangle_int_t() const
     return r;
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CAIRO)

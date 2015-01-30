@@ -70,7 +70,8 @@ protected:
     RefPtr<cairo_region_t> m_dirtyRegion;
 };
 
-}
-#endif
-#endif
+} // namespace WebCore
 
+#endif // USE(TILED_BACKING_STORE) && USE(CAIRO)
+
+#endif // TileCairo_h

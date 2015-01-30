@@ -20,6 +20,8 @@
 #ifndef RefPtrCairo_h
 #define RefPtrCairo_h
 
+#if USE(CAIRO)
+
 #include <wtf/RefPtr.h>
 
 typedef struct _cairo cairo_t;
@@ -58,6 +60,8 @@ template<> void refIfNotNull(FcPattern* ptr);
 template<> void derefIfNotNull(FcPattern* ptr);
 #endif
 
-}
+} // namespace WTF
+
+#endif // USE(CAIRO)
 
 #endif // RefPtrCairo_h

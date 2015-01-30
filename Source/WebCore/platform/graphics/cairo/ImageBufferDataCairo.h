@@ -26,6 +26,8 @@
 #ifndef ImageBufferDataCairo_h
 #define ImageBufferDataCairo_h
 
+#if USE(CAIRO)
+
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 
@@ -57,5 +59,7 @@ public:
 };
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)
 
 #endif // ImageBufferDataCairo_h

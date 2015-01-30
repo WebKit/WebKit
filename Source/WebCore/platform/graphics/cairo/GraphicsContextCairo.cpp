@@ -1106,7 +1106,7 @@ void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
 {
     setCTM(transform.toAffineTransform());
 }
-#endif
+#endif // ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
 
 } // namespace WebCore
 

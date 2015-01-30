@@ -28,6 +28,8 @@
 #include "config.h"
 #include "PlatformContextCairo.h"
 
+#if USE(CAIRO)
+
 #include "CairoUtilities.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -339,3 +341,5 @@ void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& sta
 }
 
 } // namespace WebCore
+
+#endif // USE(CAIRO)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Pattern.h"
 
+#if USE(CAIRO)
+
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include <cairo.h>
@@ -50,4 +52,6 @@ cairo_pattern_t* Pattern::createPlatformPattern(const AffineTransform&) const
     return pattern;
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CAIRO)
