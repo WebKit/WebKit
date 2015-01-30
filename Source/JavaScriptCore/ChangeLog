@@ -1,3 +1,22 @@
+2015-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        GC marking threads should clear malloc caches
+        https://bugs.webkit.org/show_bug.cgi?id=141097
+
+        Reviewed by Andreas Kling.
+
+        This is an attempt to ameliorate a potential memory use regression
+        caused by https://bugs.webkit.org/show_bug.cgi?id=140900
+        Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages.
+
+        FastMalloc may accumulate a per-thread cache on each of the 8-ish
+        GC marking threads, which can be expensive.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::waitForNextPhase): Scavenge the current thread before
+        going to sleep. There's probably not too much value to keeping our
+        per-thread cache between GCs, and it has some memory footprint.
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Rename shared() static member functions to singleton() for singleton classes.
