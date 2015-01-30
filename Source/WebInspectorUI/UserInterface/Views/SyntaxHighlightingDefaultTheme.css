@@ -90,3 +90,32 @@
     background-color: rgba(235, 215, 38, 0.2);
     border-bottom: 1px solid rgb(237, 202, 71);
 }
+
+.cm-s-default .basic-block-has-not-executed {
+    color: rgb(153, 153, 153);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-comment {
+    color: hsl(143, 191, 143);
+}
+
+.cm-s-default .basic-block-has-not-executed:matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property) {
+    color: rgb(196, 164, 191);
+}
+
+.cm-s-default .basic-block-has-not-executed:matches(.cm-number, .cm-atom.cm-hex-color) {
+    color: rgb(180, 172, 229);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-string {
+    color: rgb(204, 154, 153);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-meta {
+    color: rgb(210, 210, 210);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-attribute {
+    color: rgb(201, 192, 166);
+}

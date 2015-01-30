@@ -33,7 +33,6 @@ WebInspector.BasicBlockAnnotator = function(sourceCodeTextEditor, script)
 };
 
 WebInspector.BasicBlockAnnotator.HasNotExecutedClassName = "basic-block-has-not-executed";
-WebInspector.BasicBlockAnnotator.HasNotExecutedPrependClassName = "basic-block-has-not-executed-prepend";
 
 WebInspector.BasicBlockAnnotator.prototype = {
     constructor: WebInspector.BasicBlockAnnotator,
@@ -72,7 +71,7 @@ WebInspector.BasicBlockAnnotator.prototype = {
 
             var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
             basicBlocks = basicBlocks.filter(function(block) {
-                return block.startOffset >= startOffset && block.startOffset <= endOffset;
+                return (block.startOffset >= startOffset && block.startOffset <= endOffset) || (block.startOffset <= startOffset && block.endOffset >= endOffset);
             });
 
             for (var block of basicBlocks) {
@@ -82,14 +81,13 @@ WebInspector.BasicBlockAnnotator.prototype = {
                 if (hasKey && hasExecuted)
                     this._clearRangeForBasicBlockMarker(key);
                 else if (!hasKey && !hasExecuted) {
-                    var basicBlockMarker = this._highlightTextForBasicBlock(block);
-                    if (basicBlockMarker)
-                        this._basicBlockMarkers.set(key, basicBlockMarker);
-                }
+                    var marker = this._highlightTextForBasicBlock(block);
+                    this._basicBlockMarkers.set(key, marker);
+                } 
             }
 
             var totalTime = Date.now() - startTime;
-            var timeoutTime = Math.min(Math.max(6500, totalTime), 15 * totalTime);
+            var timeoutTime = Math.min(Math.max(6500, totalTime), 30 * totalTime);
             this._timeoutIdentifier = setTimeout(this.insertAnnotations.bind(this), timeoutTime);
         }.bind(this));
     },
@@ -101,63 +99,11 @@ WebInspector.BasicBlockAnnotator.prototype = {
 
         var startPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.startOffset);
         var endPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.endOffset);
-
-        if (this._isTextRangeOnlyWhitespace(startPosition, endPosition) || this._isTextRangeOnlyClosingBrace(startPosition, endPosition))
+        if (this._isTextRangeOnlyClosingBrace(startPosition, endPosition))
             return null;
 
-        // Gray out the text range.
         var marker = this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WebInspector.BasicBlockAnnotator.HasNotExecutedClassName);
-
-        // When adding a style to the code range in CodeMirror, such as a background color, it will only apply the style
-        // to the area where text is, not to the style of an entire line. But, from a user interface perspective, it looks
-        // cleaner to have entire lines highlighted. The following logic grays out entire lines when the line's range is
-        // not across basic block boundaries.
-        var lineStyles = [];
-        if (endPosition.line > startPosition.line) {
-            var startLineEndPosition = {line: startPosition.line, ch: this.sourceCodeTextEditor.line(startPosition.line).length};
-            if (this._canGrayOutEntireLine(startPosition.line, startPosition, startLineEndPosition)) {
-                this._grayOutLine(startPosition.line);
-                lineStyles.push({line: startPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedClassName});
-            }
-
-            var endLineStartPosition = {line: endPosition.line, ch: 0};
-             
-            if (this._canGrayOutEntireLine(endPosition.line, endLineStartPosition, endPosition)) {
-                this._grayOutLine(endPosition.line);
-                lineStyles.push({line: endPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedClassName});
-            } else {
-                this.sourceCodeTextEditor.addStyleClassToLine(endPosition.line, WebInspector.BasicBlockAnnotator.HasNotExecutedPrependClassName);
-                lineStyles.push({line: endPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedPrependClassName});
-            }
-        } else {
-            console.assert(endPosition.line === startPosition.line);
-            if (this._canGrayOutEntireLine(startPosition.line, startPosition, endPosition)) {
-                this._grayOutLine(startPosition.line);
-                lineStyles.push({line: startPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedClassName});
-            } else if (startPosition.ch === 0) {
-                this.sourceCodeTextEditor.addStyleClassToLine(endPosition.line, WebInspector.BasicBlockAnnotator.HasNotExecutedPrependClassName);
-                lineStyles.push({line: startPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedPrependClassName});
-            }
-        }
-
-        if (endPosition.line - startPosition.line >= 2) {
-            // There is at least one entire line to be grayed out between the start and end position of the basic block:
-            // n  : ...
-            // n+1: ... (This entire line can safely be grayed out).
-            // n+2: ...
-            for (var lineNumber = startPosition.line + 1; lineNumber < endPosition.line; lineNumber++) {
-                this._grayOutLine(lineNumber);
-                lineStyles.push({line: lineNumber, className: WebInspector.BasicBlockAnnotator.HasNotExecutedClassName});
-            }
-        }
-
-        return {marker: marker, lineStyles: lineStyles};
-    },
-
-    _isTextRangeOnlyWhitespace: function(startPosition, endPosition)
-    {
-        var isOnlyWhitespace = /^\s+$/;
-        return isOnlyWhitespace.test(this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition));
+        return marker;
     },
 
     _isTextRangeOnlyClosingBrace: function(startPosition, endPosition)
@@ -166,27 +112,12 @@ WebInspector.BasicBlockAnnotator.prototype = {
         return isOnlyClosingBrace.test(this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition));
     },
 
-    _canGrayOutEntireLine: function(lineNumber, startPosition, endPosition)
-    {
-        console.assert(startPosition.line === endPosition.line);
-        var lineText = this.sourceCodeTextEditor.line(lineNumber);
-        var blockText = this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition);
-        return lineText.trim() === blockText.trim();
-    },
-
-    _grayOutLine: function(lineNumber)
-    {
-        var className = WebInspector.BasicBlockAnnotator.HasNotExecutedClassName;
-        this.sourceCodeTextEditor.addStyleClassToLine(lineNumber, className);
-    },
-
     _clearRangeForBasicBlockMarker: function(key)
     {
         console.assert(this._basicBlockMarkers.has(key));
-        var {marker, lineStyles} = this._basicBlockMarkers.get(key);
-        marker.clear();
-        for (var {line, className} of lineStyles)
-            this.sourceCodeTextEditor.removeStyleClassFromLine(line, className);
+        var marker = this._basicBlockMarkers.get(key);
+        if (marker)
+            marker.clear();
         this._basicBlockMarkers.delete(key);
     }
 };

@@ -1,3 +1,41 @@
+2015-01-29  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Make BasicBlockAnnotator lessen the saturation of syntax highlighting instead of graying out unexecuted code
+        https://bugs.webkit.org/show_bug.cgi?id=141011
+
+        Reviewed by Timothy Hatcher.
+
+        This patch removes a lot of the complicated logic associated around 
+        determining which code can be grayed out by the BasicBlockAnnotator. 
+        Instead, the BasicBlockAnnotator now applies a CSS class to all the
+        code that has not executed which lessens the saturation of the 
+        syntax coloring for the code. This creates both a nicer user
+        interface and a nicer user experience because it makes reading
+        source code with the BasicBlockAnnotator enabled more pleasant.
+
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        (WebInspector.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges.):
+        (WebInspector.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges):
+        (WebInspector.BasicBlockAnnotator.prototype.set _highlightTextForBasicBlock):
+        (WebInspector.BasicBlockAnnotator.prototype._isTextRangeOnlyWhitespace): Deleted.
+        (WebInspector.BasicBlockAnnotator.prototype._isTextRangeOnlyClosingBrace): Deleted.
+        (_canGrayOutEntireLine): Deleted.
+        (_grayOutLine): Deleted.
+        (_clearRangeForBasicBlockMarker.get marker): Deleted.
+        (_clearRangeForBasicBlockMarker): Deleted.
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.hover-menu.color > img):
+        (.basic-block-has-not-executed): Deleted.
+        (.basic-block-has-not-executed-prepend::before): Deleted.
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .basic-block-has-not-executed):
+        (.cm-s-default .basic-block-has-not-executed.cm-comment):
+        (.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property)):
+        (.cm-s-default .basic-block-has-not-executed:matches(.cm-number, .cm-atom.cm-hex-color)):
+        (.cm-s-default .basic-block-has-not-executed.cm-string):
+        (.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-meta):
+        (.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-attribute):
+
 2015-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Console Format for Set and Map Objects (like Arrays)

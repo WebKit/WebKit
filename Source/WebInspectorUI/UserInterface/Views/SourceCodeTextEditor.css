@@ -76,16 +76,3 @@
 
     -webkit-transform: translateY(1px);
 }
-
-.basic-block-has-not-executed {
-    background-color: rgb(240, 240, 240);
-}
-
-.basic-block-has-not-executed-prepend::before {
-    background-color: rgb(240, 240, 240);
-    position: absolute;
-    content: ""; 
-    height: 13px;
-    left: 0px;
-    width: 7px;
-}
