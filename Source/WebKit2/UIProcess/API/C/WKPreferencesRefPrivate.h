@@ -342,6 +342,10 @@ WK_EXPORT bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef preference
 WK_EXPORT void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double);
 WK_EXPORT double WKPreferencesGetMinimumZoomFontSize(WKPreferencesRef preferencesRef);
 
+// Not implemented, should be deleted once Safari no longer uses this function.
+WK_EXPORT void WKPreferencesSetScreenFontSubstitutionEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

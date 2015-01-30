@@ -28,6 +28,7 @@
 #include "APIDictionary.h"
 #include "WKArray.h"
 #include "WKMutableDictionary.h"
+#include "WKPreferencesRefPrivate.h"
 #include "WKSharedAPICast.h"
 
 #if PLATFORM(MAC)
@@ -52,9 +53,6 @@ WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 
 WK_EXPORT void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef);
-
-WK_EXPORT void WKPreferencesSetScreenFontSubstitutionEnabled(WKPreferencesRef, bool);
-WK_EXPORT bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef);
 
 WK_EXPORT bool WKInspectorIsDebuggingJavaScript(WKInspectorRef);
 WK_EXPORT void WKInspectorToggleJavaScriptDebugging(WKInspectorRef);
