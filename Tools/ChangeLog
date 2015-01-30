@@ -1,5 +1,13 @@
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed. Fix Windows build after r179409.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::notifyDone):
+        (TestRunner::queueLoad):
+
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
         Rename shared() static member functions to singleton() for singleton classes.
         https://bugs.webkit.org/show_bug.cgi?id=141088
 
