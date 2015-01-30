@@ -57,11 +57,18 @@ private:
     uintptr_t m_value;
 };
 
-class CopyWorkListSegment : public HeapBlock<CopyWorkListSegment> {
+class CopyWorkListSegment : public DoublyLinkedListNode<CopyWorkListSegment> {
+    friend class WTF::DoublyLinkedListNode<CopyWorkListSegment>;
 public:
-    static CopyWorkListSegment* create(DeadBlock* block)
+    static CopyWorkListSegment* create()
     {
-        return new (NotNull, block) CopyWorkListSegment(block->region());
+        return new (NotNull, fastMalloc(blockSize)) CopyWorkListSegment();
+    }
+    
+    static void destroy(CopyWorkListSegment* segment)
+    {
+        segment->~CopyWorkListSegment();
+        fastFree(segment);
     }
 
     size_t size() { return m_size; }
@@ -78,8 +85,8 @@ public:
     static const size_t blockSize = 512;
 
 private:
-    CopyWorkListSegment(Region* region)
-        : HeapBlock<CopyWorkListSegment>(region)
+    CopyWorkListSegment()
+        : DoublyLinkedListNode<CopyWorkListSegment>()
         , m_size(0)
     {
     }
@@ -87,6 +94,8 @@ private:
     CopyWorklistItem* data() { return reinterpret_cast<CopyWorklistItem*>(this + 1); }
     char* endOfBlock() { return reinterpret_cast<char*>(this) + blockSize; }
 
+    CopyWorkListSegment* m_prev;
+    CopyWorkListSegment* m_next;
     size_t m_size;
 };
 
@@ -143,7 +152,7 @@ class CopyWorkList {
 public:
     typedef CopyWorkListIterator iterator;
 
-    CopyWorkList(BlockAllocator&);
+    CopyWorkList();
     ~CopyWorkList();
 
     void append(CopyWorklistItem);
@@ -152,24 +161,22 @@ public:
 
 private:
     DoublyLinkedList<CopyWorkListSegment> m_segments;
-    BlockAllocator& m_blockAllocator;
 };
 
-inline CopyWorkList::CopyWorkList(BlockAllocator& blockAllocator)
-    : m_blockAllocator(blockAllocator)
+inline CopyWorkList::CopyWorkList()
 {
 }
 
 inline CopyWorkList::~CopyWorkList()
 {
     while (!m_segments.isEmpty())
-        m_blockAllocator.deallocate(CopyWorkListSegment::destroy(m_segments.removeHead()));
+        CopyWorkListSegment::destroy(m_segments.removeHead());
 }
 
 inline void CopyWorkList::append(CopyWorklistItem item)
 {
     if (m_segments.isEmpty() || m_segments.tail()->isFull())
-        m_segments.append(CopyWorkListSegment::create(m_blockAllocator.allocate<CopyWorkListSegment>()));
+        m_segments.append(CopyWorkListSegment::create());
 
     ASSERT(!m_segments.tail()->isFull());
 

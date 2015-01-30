@@ -1,3 +1,22 @@
+2015-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
+        https://bugs.webkit.org/show_bug.cgi?id=140900
+
+        Reviewed by Mark Hahnenberg.
+
+        Re-landing just the CopyWorkListSegment piece of this patch.
+
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/CopyWorkList.h:
+        (JSC::CopyWorkListSegment::create):
+        (JSC::CopyWorkListSegment::destroy):
+        (JSC::CopyWorkListSegment::CopyWorkListSegment):
+        (JSC::CopyWorkList::CopyWorkList):
+        (JSC::CopyWorkList::~CopyWorkList):
+        (JSC::CopyWorkList::append):
+
 2015-01-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179357 and r179358.
