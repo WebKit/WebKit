@@ -1,3 +1,13 @@
+2015-01-30  Antti Koivisto  <antti@apple.com>
+
+        OSObjectPtr does not work with dispatch_data_t on Maverics
+        https://bugs.webkit.org/show_bug.cgi?id=141081
+
+        Reviewed by Pratik Solanki.
+
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtr.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch to Apache on Windows

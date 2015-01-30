@@ -63,4 +63,16 @@ TEST(OSObjectPtr, LeakRef)
     WTF::releaseOSObject(queue);
 }
 
+TEST(OSObjectPtr, DispatchData)
+{
+    uint8_t buffer[1024] { };
+    OSObjectPtr<dispatch_data_t> foo = adoptOSObject(dispatch_data_create(buffer, 1024, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+    {
+        OSObjectPtr<dispatch_data_t> foo2 = foo;
+        EXPECT_EQ(2, CFGetRetainCount(foo.get()));
+    }
+    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+}
+
 } // namespace TestWebKitAPI

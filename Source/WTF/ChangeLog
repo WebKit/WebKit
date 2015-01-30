@@ -1,3 +1,20 @@
+2015-01-30  Antti Koivisto  <antti@apple.com>
+
+        OSObjectPtr does not work with dispatch_data_t on Maverics
+        https://bugs.webkit.org/show_bug.cgi?id=141081
+
+        Reviewed by Pratik Solanki.
+        
+        Trying to use OSObjectPtr<dispatch_data_t> throws 
+        
+        -[OS_dispatch_data _xref_dispose]: unrecognized selector sent to instance 0
+
+        * wtf/OSObjectPtr.h:
+        (WTF::retainOSObject<dispatch_data_t>):
+        (WTF::releaseOSObject<dispatch_data_t>):
+        
+            Add specialization for dispatch_data_t on Maverics.
+
 2015-01-29  Santosh Mahto  <santoshbit2007@gmail.com>
 
         Refactor String::format to handle unreached va_end.

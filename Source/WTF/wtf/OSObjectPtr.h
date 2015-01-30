@@ -32,6 +32,7 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
 
+#include <dispatch/dispatch.h>
 #if __has_include(<os/object_private.h>)
 #include <os/object_private.h>
 #endif
@@ -81,6 +82,18 @@ static inline void releaseOSObject(T ptr)
 #endif
 #endif
 }
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+template<> inline void retainOSObject<dispatch_data_t>(dispatch_data_t ptr)
+{
+    dispatch_retain(ptr);
+}
+
+template<> inline void releaseOSObject<dispatch_data_t>(dispatch_data_t ptr)
+{
+    dispatch_release(ptr);
+}
+#endif
 
 template<typename T> class OSObjectPtr {
 public:
