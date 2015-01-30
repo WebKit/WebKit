@@ -1,3 +1,10 @@
+2015-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip these two tests in the stress testing since the feature isn't enabled.
+
+        * js/script-tests/class-syntax-declaration.js:
+        * js/script-tests/class-syntax-expression.js:
+
 2015-01-29  Eric Carlson  <eric.carlson@apple.com>
 
         media/track/track-in-band-cues-added-once.html fails sometimes

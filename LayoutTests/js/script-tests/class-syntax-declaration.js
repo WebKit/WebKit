@@ -1,3 +1,5 @@
+//@ skip
+
 var constructorCallCount = 0;
 const staticMethodValue = [1];
 const instanceMethodValue = [2];
