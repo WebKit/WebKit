@@ -179,7 +179,7 @@ class HttpServerBase(object):
 
     def _is_server_running_on_all_ports(self):
         """Returns whether the server is running on all the desired ports."""
-        if not self._executive.check_running_pid(self._pid):
+        if not self._port_obj.host.platform.is_win() and not self._executive.check_running_pid(self._pid):
             _log.debug("Server isn't running at all")
             raise ServerError("Server exited")
 

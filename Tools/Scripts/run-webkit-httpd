@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
@@ -83,14 +83,17 @@ print "Press Ctrl+C to stop it.\n\n";
 
 my @args = (
     "-C", "Listen $listen",
-    "-c", "CustomLog |/usr/bin/tee common",
-    "-c", "ErrorLog |/usr/bin/tee",
     # Run in single-process mode, do not detach from the controlling terminal.
     "-X",
     # Disable Keep-Alive support. Makes testing in multiple browsers easier (no need to wait
     # for another browser's connection to expire).
     "-c", "KeepAlive off"
 );
+
+if (!isAnyWindows()) {
+    push(@args, "-c", "CustomLog |/usr/bin/tee common");
+    push(@args, "-c", "ErrorLog |/usr/bin/tee");
+}
 
 my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
 @args = (@defaultArgs, @args);

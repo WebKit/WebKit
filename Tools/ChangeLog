@@ -1,3 +1,36 @@
+2015-01-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch to Apache on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=141060
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update our scripts under Windows (and Cygwin) to locate and use
+        the XAMPP installation of Apache for running tests.
+
+        * Scripts/run-webkit-httpd:
+        * Scripts/webkitperl/httpd.pm:
+        (getHTTPDPath):
+        (getDefaultConfigForTestDirectory):
+        (getHTTPDConfigPathForTestDirectory):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        (LayoutTestApacheHttpd._get_apache_config_file_path):
+        (LayoutTestApacheHttpd._stop_running_server):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._is_server_running_on_all_ports):
+        * Scripts/webkitpy/port/base.py:
+        (Port._apache_config_file_name_for_platform):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (test_apache_config_file_name_for_platform):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.show_results_html_file):
+        (WinPort._uses_apache):
+        (WinPort):
+        (WinPort._path_to_apache):
+
 2015-01-29  Alexey Proskuryakov  <ap@apple.com>
 
         Built result takes too long to be compressed on bots

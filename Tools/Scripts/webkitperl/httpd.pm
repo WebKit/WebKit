@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
@@ -36,6 +36,7 @@ use File::Copy;
 use File::Path;
 use File::Spec;
 use File::Spec::Functions;
+use File::Temp qw(tempdir);
 use IPC::Open2;
 
 use webkitdirs;
@@ -57,6 +58,11 @@ BEGIN {
 }
 
 my $tmpDir = "/tmp";
+if (isAnyWindows()) {
+   $tmpDir = tempdir(CLEANUP => 0);
+   $tmpDir = `cygpath -w $tmpDir`;
+   chomp($tmpDir);
+}
 my $httpdPidDir = File::Spec->catfile($tmpDir, "WebKit");
 my $httpdPidFile = File::Spec->catfile($httpdPidDir, "httpd.pid");
 my $httpdPid;
@@ -72,6 +78,8 @@ sub getHTTPDPath
     my $httpdPath;
     if (isDebianBased()) {
         $httpdPath = "/usr/sbin/apache2";
+    } elsif (isAnyWindows()) {
+        $httpdPath = "httpd";
     } else {
         $httpdPath = "/usr/sbin/httpd";
     }
@@ -97,11 +105,16 @@ sub getDefaultConfigForTestDirectory
     my ($testDirectory) = @_;
     die "No test directory has been specified." unless ($testDirectory);
 
+    if (isAnyWindows()) {
+        $testDirectory = `cygpath -w \"$testDirectory\"`;
+        chomp($testDirectory);
+    }
+
     my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
-    my $documentRoot = "$testDirectory/http/tests";
-    my $jsTestResourcesDirectory = $testDirectory . "/resources";
-    my $mediaResourcesDirectory = $testDirectory . "/media";
-    my $typesConfig = "$testDirectory/http/conf/mime.types";
+    my $documentRoot = File::Spec->catfile($testDirectory, "http", "tests");
+    my $jsTestResourcesDirectory = File::Spec->catfile($testDirectory, "resources");
+    my $mediaResourcesDirectory = File::Spec->catfile($testDirectory, "media");
+    my $typesConfig = File::Spec->catfile($testDirectory, "http", "conf", "mime.types");
     my $httpdLockFile = File::Spec->catfile($httpdPidDir, "httpd.lock");
     my $httpdScoreBoardFile = File::Spec->catfile($httpdPidDir, "httpd.scoreboard");
 
@@ -113,19 +126,20 @@ sub getDefaultConfigForTestDirectory
         "-c", "Alias /media-resources \"$mediaResourcesDirectory\"",
         "-c", "TypesConfig \"$typesConfig\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "User \"#$<\"",
         "-c", "PidFile \"$httpdPidFile\"",
         "-c", "ScoreBoardFile \"$httpdScoreBoardFile\"",
     );
+
+    if (!isAnyWindows()) {
+        push(@httpdArgs, "-c", "User \"#$<\"");
+    }
 
     if (getApacheVersion() eq "2.2") {
         push(@httpdArgs, "-c", "LockFile \"$httpdLockFile\"");
     }
 
-    # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
-    # The version of Apache we use with Cygwin does not support SSL
-    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
-    push(@httpdArgs, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
+    my $sslCertificate = File::Spec->catfile($testDirectory, "http", "conf", "webkit-httpd.pem");
+    push(@httpdArgs, "-c", "SSLCertificateFile \"$sslCertificate\"");
 
     return @httpdArgs;
 
@@ -142,13 +156,7 @@ sub getHTTPDConfigPathForTestDirectory
     my $apacheVersion = getApacheVersion();
 
     if (isCygwin()) {
-        my $libPHP4DllPath = "/usr/lib/apache/libphp4.dll";
-        # FIXME: run-webkit-tests should not modify the user's system, especially not in this method!
-        unless (-x $libPHP4DllPath) {
-            copy("$httpdConfDirectory/libphp4.dll", $libPHP4DllPath);
-            chmod(0755, $libPHP4DllPath);
-        }
-        $httpdConfig = "cygwin-httpd.conf";  # This is an apache 1.3 config.
+        $httpdConfig = "apache$apacheVersion-httpd-win.conf";
     } elsif (isDebianBased()) {
         $httpdConfig = "debian-httpd-$apacheVersion.conf";
     } elsif (isFedoraBased()) {

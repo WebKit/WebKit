@@ -177,7 +177,8 @@ class ExecutiveTest(unittest.TestCase):
         elif sys.platform == "cygwin":
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=98196
             # cygwin seems to give us either SIGABRT or SIGKILL
-            self.assertIn(process.wait(), (-signal.SIGABRT, -signal.SIGKILL))
+            # Native Windows (via Cygwin) returns ENOTBLK (-15)
+            self.assertIn(process.wait(), (-signal.SIGABRT, -signal.SIGKILL, -15))
         else:
             expected_exit_code = -signal.SIGTERM
             self.assertEqual(process.wait(), expected_exit_code)

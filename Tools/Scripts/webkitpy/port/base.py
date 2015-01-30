@@ -1090,8 +1090,8 @@ class Port(object):
 
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
-        if sys_platform == 'cygwin':
-            return 'cygwin-httpd.conf'  # CYGWIN is the only platform to still use Apache 1.3.
+        if sys_platform == 'cygwin' or sys_platform == 'win32':
+            return 'apache' + self._apache_version() + '-httpd-win.conf'
         if sys_platform.startswith('linux'):
             if self._is_redhat_based():
                 return 'fedora-httpd-' + self._apache_version() + '.conf'

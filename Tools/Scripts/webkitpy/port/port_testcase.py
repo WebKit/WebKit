@@ -542,7 +542,7 @@ MOCK output of child process
     def test_apache_config_file_name_for_platform(self):
         port = TestWebKitPort()
         port._apache_version = lambda: '2.2'
-        self._assert_config_file_for_platform(port, 'cygwin', 'cygwin-httpd.conf')
+        self._assert_config_file_for_platform(port, 'cygwin', 'apache2.2-httpd-win.conf')
 
         self._assert_config_file_for_platform(port, 'linux2', 'apache2.2-httpd.conf')
         self._assert_config_file_for_platform(port, 'linux3', 'apache2.2-httpd.conf')
@@ -557,7 +557,7 @@ MOCK output of child process
         self._assert_config_file_for_platform(port, 'linux2', 'debian-httpd-2.2.conf')
 
         self._assert_config_file_for_platform(port, 'mac', 'apache2.2-httpd.conf')
-        self._assert_config_file_for_platform(port, 'win32', 'apache2.2-httpd.conf')  # win32 isn't a supported sys.platform.  AppleWin/WinCairo ports all use cygwin.
+        self._assert_config_file_for_platform(port, 'win32', 'apache2.2-httpd-win.conf')  # win32 isn't a supported sys.platform.  AppleWin/WinCairo ports all use cygwin.
         self._assert_config_file_for_platform(port, 'barf', 'apache2.2-httpd.conf')
 
     def test_path_to_apache_config_file(self):

@@ -99,10 +99,6 @@ class WinPort(ApplePort):
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
 
-    # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
-    # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
-    # We might use setup_environ_for_server for such a hack (or modify apache_http_server.py).
-
     def _runtime_feature_list(self):
         supported_features_command = [self._path_to_driver(), '--print-supported-features']
         try:
@@ -117,9 +113,16 @@ class WinPort(ApplePort):
             return None
         return match_object.group('features_string').split(' ')
 
-    # Note: These are based on the stock Cygwin locations for these files.
+    # Note: These are based on the stock XAMPP locations for these files.
     def _uses_apache(self):
-        return False
+        return True
+
+    def _path_to_apache(self):
+        httpdPath = "C:/xampp/apache/bin/httpd.exe"
+        if self._filesystem.exists(httpdPath):
+            return httpdPath
+        _log.error("Could not find apache. Not installed or unknown path.")
+        return None
 
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"

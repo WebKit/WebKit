@@ -1,3 +1,4 @@
+# Copyright (C) 2015 Apple Inc. All rights reserved.
 # Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,6 +61,13 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         test_dir = self._port_obj.layout_tests_dir()
+
+        if port_obj.host.platform.is_win():
+            # Convert to MSDOS file naming:
+            output_dir = output_dir.replace("/cygdrive/c", "C:")
+            test_dir = test_dir.replace("/cygdrive/c", "C:")
+            self._pid_file = self._pid_file.replace("/tmp", "C:/cygwin/tmp")
+
         js_test_resources_dir = self._filesystem.join(test_dir, "resources")
         media_resources_dir = self._filesystem.join(test_dir, "media")
         mime_types_path = self._filesystem.join(test_dir, "http", "conf", "mime.types")
@@ -79,9 +87,11 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
-            '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", "")),
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "start"]
+
+        if not port_obj.host.platform.is_win():
+            start_cmd.extend(['-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", ""))])
 
         enable_ipv6 = self._port_obj.http_server_supports_ipv6()
         # Perform part of the checks Apache's APR does when trying to listen to
@@ -141,6 +151,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # FIXME: Why do we need to copy the config file since we're not modifying it?
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
+        if self._port_obj.host.platform.is_win():
+            httpd_config_copy = httpd_config_copy.replace("/cygdrive/c", "C:")
+
         return httpd_config_copy
 
     def _spawn_process(self):
@@ -159,11 +172,17 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
     def _stop_running_server(self):
         # If apache was forcefully killed, the pid file will not have been deleted, so check
         # that the process specified by the pid_file no longer exists before deleting the file.
-        if self._pid and not self._executive.check_running_pid(self._pid):
+        if self._pid and not self._port_obj.host.platform.is_win() and not self._executive.check_running_pid(self._pid):
             self._filesystem.remove(self._pid_file)
             return
 
         retval, err = self._run(self._stop_cmd)
+
+        # Windows httpd outputs shutdown status in stderr:
+        if self._port_obj.host.platform.is_win() and not retval and len(err):
+            _log.debug('Shutdown: %s' % err)
+            err = ""
+
         if retval or len(err):
             raise http_server_base.ServerError('Failed to stop %s: %s' % (self._name, err))
 
