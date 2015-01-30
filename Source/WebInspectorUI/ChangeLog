@@ -1,5 +1,31 @@
 2015-01-29  Saam Barati  <saambarati1@gmail.com>
 
+        Web Inspector: Allow text selection when the BasicBlockAnnotator is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=140987
+
+        Reviewed by Timothy Hatcher.
+
+        Because the BasicBlockAnnotator no longer sets the background color of
+        lines that haven't executed to gray, text selection while the
+        BasicBlockAnnotator is enabled no longer results in a bad user interface.
+        This patch both allows text selection while the BasicBlockAnnotator is
+        enabled and also removes the now unused listeners to CodeMirror's focus
+        and blur events.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler.scrollHandler):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler):
+        (WebInspector.SourceCodeTextEditor.prototype.gainedFocus): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.lostFocus): Deleted.
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.gainedFocus): Deleted.
+        (WebInspector.TextEditor.prototype.lostFocus): Deleted.
+
+2015-01-29  Saam Barati  <saambarati1@gmail.com>
+
         Web Inspector: Make BasicBlockAnnotator lessen the saturation of syntax highlighting instead of graying out unexecuted code
         https://bugs.webkit.org/show_bug.cgi?id=141011
 

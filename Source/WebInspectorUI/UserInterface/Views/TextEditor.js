@@ -45,8 +45,6 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
     this._codeMirror.on("change", this._contentChanged.bind(this));
     this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
     this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
-    this._codeMirror.on("focus", this.gainedFocus.bind(this));
-    this._codeMirror.on("blur", this.lostFocus.bind(this));
     this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
 
     this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
@@ -825,16 +823,6 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
-    },
-
-    gainedFocus: function()
-    {
-        // Implemented by subclasses.
-    },
-
-    lostFocus: function()
-    {
-        // Implemented by subclasses.
     },
 
     // Private

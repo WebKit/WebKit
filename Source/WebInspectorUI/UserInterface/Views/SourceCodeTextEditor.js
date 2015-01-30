@@ -42,8 +42,6 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     
     this._isProbablyMinified = false;
 
-    this._hasFocus = false;
-
     // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
     this._updateTokenTrackingControllerState();
 
@@ -277,20 +275,6 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this._typeTokenAnnotator = null;
             this._basicBlockAnnotator = null;
         }
-    },
-
-    gainedFocus: function()
-    {
-        this._hasFocus = true;
-        if (this._basicBlockAnnotator)
-            this._basicBlockAnnotator.clear();
-    },
-
-    lostFocus: function()
-    {
-        this._hasFocus = false;
-        if (this._basicBlockAnnotator && WebInspector.showJavaScriptTypeInformationSetting.value)
-            this._basicBlockAnnotator.resume();
     },
 
     toggleTypeAnnotations: function()
@@ -1595,7 +1579,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
             RuntimeAgent.enableTypeProfiler();
 
             this._typeTokenAnnotator.reset();
-            if (this._basicBlockAnnotator && !this._hasFocus) {
+            if (this._basicBlockAnnotator) {
                 console.assert(!this._basicBlockAnnotator.isActive());
                 this._basicBlockAnnotator.reset();
             }
@@ -1690,7 +1674,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 timeoutIdentifier = null;
                 if (this._typeTokenAnnotator)
                     this._typeTokenAnnotator.resume();
-                if (!this._hasFocus && this._basicBlockAnnotator)
+                if (this._basicBlockAnnotator)
                     this._basicBlockAnnotator.resume();
             }.bind(this), WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
         }
