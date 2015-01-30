@@ -74,14 +74,12 @@ MemoryCache::MemoryCache()
 {
 }
 
-MemoryCache::CachedResourceMap& MemoryCache::getSessionMap(SessionID sessionID)
+MemoryCache::CachedResourceMap& MemoryCache::sessionResources(SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-    CachedResourceMap* map = m_sessionResources.get(sessionID);
-    if (!map) {
-        m_sessionResources.set(sessionID, std::make_unique<CachedResourceMap>());
-        map = m_sessionResources.get(sessionID);
-    }
+    auto& map = m_sessionResources.add(sessionID, nullptr).iterator->value;
+    if (!map)
+        map = std::make_unique<CachedResourceMap>();
     return *map;
 }
 
@@ -106,7 +104,7 @@ bool MemoryCache::add(CachedResource* resource)
 
     ASSERT(WTF::isMainThread());
 
-    CachedResourceMap& resources = getSessionMap(resource->sessionID());
+    CachedResourceMap& resources = sessionResources(resource->sessionID());
 #if ENABLE(CACHE_PARTITIONING)
     CachedResourceItem* originMap = resources.get(resource->url());
     if (!originMap) {
@@ -140,7 +138,7 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
 
     remove(revalidatingResource);
 
-    CachedResourceMap& resources = getSessionMap(resource->sessionID());
+    CachedResourceMap& resources = sessionResources(resource->sessionID());
 #if ENABLE(CACHE_PARTITIONING)
     ASSERT(!resources.get(resource->url()) || !resources.get(resource->url())->get(resource->cachePartition()));
     CachedResourceItem* originMap = resources.get(resource->url());
@@ -183,7 +181,7 @@ CachedResource* MemoryCache::resourceForURL(const URL& resourceURL, SessionID se
 
 CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request, SessionID sessionID)
 {
-    return resourceForRequestImpl(request, getSessionMap(sessionID));
+    return resourceForRequestImpl(request, sessionResources(sessionID));
 }
 
 CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& request, CachedResourceMap& resources)
@@ -250,7 +248,7 @@ bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const St
 
 void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCachePartition)
 {
-    CachedResourceMap& resources = getSessionMap(SessionID::defaultSessionID());
+    CachedResourceMap& resources = sessionResources(SessionID::defaultSessionID());
 #if ENABLE(CACHE_PARTITIONING)
     CachedResource* resource;
     if (CachedResourceItem* item = resources.get(url))
@@ -417,7 +415,7 @@ void MemoryCache::remove(CachedResource* resource)
     LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().string().latin1().data());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
-    CachedResourceMap& resources = getSessionMap(resource->sessionID());
+    CachedResourceMap& resources = sessionResources(resource->sessionID());
     if (resource->inCache()) {
         // Remove from the resource map.
 #if ENABLE(CACHE_PARTITIONING)

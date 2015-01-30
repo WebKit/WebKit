@@ -1,5 +1,26 @@
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
+        Optimize MemoryCache::getSessionMap() a bit
+        https://bugs.webkit.org/show_bug.cgi?id=141069
+
+        Reviewed by Anders Carlsson.
+
+        Optimize MemoryCache::getSessionMap() a bit by doing 1 HashMap lookup
+        instead of previously 3. Also rename the method to sessionResources()
+        as we usually don't use "get" prefix for getters.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::sessionResources):
+        (WebCore::MemoryCache::add):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::resourceForRequest):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::remove):
+        (WebCore::MemoryCache::getSessionMap): Deleted.
+        * loader/cache/MemoryCache.h:
+
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
         Store MemoryCache's live decoded resources in a ListHashSet
         https://bugs.webkit.org/show_bug.cgi?id=141051
 
