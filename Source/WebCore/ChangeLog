@@ -1,3 +1,17 @@
+2015-01-30  Matthew Mirman  <mmirman@apple.com>
+
+        Added ClientRect as an interface that requires attributes 
+        on instance for compatibility.
+        https://bugs.webkit.org/show_bug.cgi?id=141063
+        <rdar://problem/18437653>
+
+        Reviewed by Oliver Hunt.
+
+        Added a new test to LayoutTests/js/resources/JSON-stringify.js
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstanceForCompatibility):
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Optimize MemoryCache::getSessionMap() a bit

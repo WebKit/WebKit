@@ -1,3 +1,16 @@
+2015-01-30  Matthew Mirman  <mmirman@apple.com>
+
+        Added a test for JSON.stringify on ClientRect.
+        https://bugs.webkit.org/show_bug.cgi?id=141063
+        <rdar://problem/18437653>
+
+        Reviewed by Oliver Hunt.
+
+        * js/resources/JSON-stringify.js:
+        (createTests.var):
+        (createTests.result):
+        * js/resources/JSON-stringify-expected.txt:
+
 2015-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch to Apache on Windows

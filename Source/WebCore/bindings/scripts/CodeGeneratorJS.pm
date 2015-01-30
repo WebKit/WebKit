@@ -555,6 +555,7 @@ sub InterfaceRequiresAttributesOnInstanceForCompatibility
     # Needed for compatibility with existing content
     return 1 if $interfaceName =~ "Touch";
     return 1 if $interfaceName =~ "Navigator";
+    return 1 if $interfaceName =~ "ClientRect";
     # FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=134364 is fixed, we can remove this.
     return 1 if $interfaceName =~ "XMLHttpRequest";
 
