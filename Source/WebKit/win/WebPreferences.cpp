@@ -1278,16 +1278,6 @@ HRESULT WebPreferences::setMockScrollbarsEnabled(BOOL enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::screenFontSubstitutionEnabled(BOOL*)
-{
-    return S_OK;
-}
-
-HRESULT WebPreferences::setScreenFontSubstitutionEnabled(BOOL)
-{
-    return S_OK;
-}
-
 HRESULT STDMETHODCALLTYPE WebPreferences::hyperlinkAuditingEnabled(
     /* [in] */ BOOL* enabled)
 {

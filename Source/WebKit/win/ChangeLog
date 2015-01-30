@@ -1,3 +1,15 @@
+2015-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r179368.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::screenFontSubstitutionEnabled): Deleted.
+        (WebPreferences::setScreenFontSubstitutionEnabled): Deleted.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Remove support for screen font substitution

@@ -5135,11 +5135,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setEnableInheritURIQueryComponent(enabled);
 
-    hr = prefsPrivate->screenFontSubstitutionEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setScreenFontSubstitutionEnabled(enabled);
-
     return S_OK;
 }
 

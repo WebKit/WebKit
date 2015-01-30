@@ -414,7 +414,6 @@ EXPORTS
         symbolWithPointer(?setTextAreasAreResizable@Settings@WebCore@@QAEX_N@Z, ?setTextAreasAreResizable@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setShowRepaintCounter@Settings@WebCore@@QAEX_N@Z, ?setShowRepaintCounter@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setShowDebugBorders@Settings@WebCore@@QAEX_N@Z, ?setShowDebugBorders@Settings@WebCore@@QEAAX_N@Z)
-        symbolWithPointer(?setScreenFontSubstitutionEnabled@Settings@WebCore@@QAEX_N@Z, ?setScreenFontSubstitutionEnabled@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setMinimumLogicalFontSize@Settings@WebCore@@QAEXH@Z, ?setMinimumLogicalFontSize@Settings@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setMinimumFontSize@Settings@WebCore@@QAEXH@Z, ?setMinimumFontSize@Settings@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setDefaultFontSize@Settings@WebCore@@QAEXH@Z, ?setDefaultFontSize@Settings@WebCore@@QEAAXH@Z)

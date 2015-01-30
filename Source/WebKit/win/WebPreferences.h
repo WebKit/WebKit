@@ -480,9 +480,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMockScrollbarsEnabled(BOOL);
 
-    virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
-
     virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setEnableInheritURIQueryComponent(BOOL);
 
