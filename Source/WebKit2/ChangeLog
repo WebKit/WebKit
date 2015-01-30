@@ -1,5 +1,11 @@
 2015-01-29  Beth Dakin  <bdakin@apple.com>
 
+        Follow-on, fixing a bad merge from my last change. 
+
+        * Shared/WebPreferencesDefinitions.h:
+
+2015-01-29  Beth Dakin  <bdakin@apple.com>
+
         Remove more Mountain Lion code from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=141052
 
