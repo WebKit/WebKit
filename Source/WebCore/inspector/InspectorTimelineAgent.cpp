@@ -128,7 +128,10 @@ void InspectorTimelineAgent::internalStop()
     if (!m_enabled)
         return;
 
-    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->stop();
+    // The environment's stopwatch could be already stopped if the debugger has paused.
+    auto stopwatch = m_instrumentingAgents->inspectorEnvironment().executionStopwatch();
+    if (stopwatch->isActive())
+        stopwatch->stop();
 
     m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
 

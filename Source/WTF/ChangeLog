@@ -1,3 +1,17 @@
+2015-01-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: ASSERT in InspectorTimelineAgent::internalStop
+        https://bugs.webkit.org/show_bug.cgi?id=141039
+
+        Reviewed by Timothy Hatcher.
+
+        Add messages to Stopwatch assertions, and clean up constructor.
+
+        * wtf/Stopwatch.h:
+        (WTF::Stopwatch::Stopwatch):
+        (WTF::Stopwatch::start):
+        (WTF::Stopwatch::stop):
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Add match_constness<Reference, T> helper struct

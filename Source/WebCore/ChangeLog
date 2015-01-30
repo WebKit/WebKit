@@ -1,3 +1,16 @@
+2015-01-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: ASSERT in InspectorTimelineAgent::internalStop
+        https://bugs.webkit.org/show_bug.cgi?id=141039
+
+        Reviewed by Timothy Hatcher.
+
+        Don't unconditionally stop the environment stopwatch, since it could have
+        already stopped due to the debugger pausing.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStop):
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         When no background-size is specified on the 2nd background layer, it takes the first instead of the initial value

@@ -46,11 +46,7 @@ public:
 
     bool isActive() const { return !isnan(m_lastStartTime); }
 private:
-    Stopwatch()
-        : m_elapsedTime(0.0)
-        , m_lastStartTime(NAN)
-    {
-    }
+    Stopwatch() { reset(); }
 
     double m_elapsedTime;
     double m_lastStartTime;
@@ -64,14 +60,14 @@ inline void Stopwatch::reset()
 
 inline void Stopwatch::start()
 {
-    ASSERT(isnan(m_lastStartTime));
+    ASSERT_WITH_MESSAGE(isnan(m_lastStartTime), "Tried to start the stopwatch, but it is already running.");
 
     m_lastStartTime = monotonicallyIncreasingTime();
 }
 
 inline void Stopwatch::stop()
 {
-    ASSERT(!isnan(m_lastStartTime));
+    ASSERT_WITH_MESSAGE(!isnan(m_lastStartTime), "Tried to stop the stopwatch, but it is not running.");
 
     m_elapsedTime += monotonicallyIncreasingTime() - m_lastStartTime;
     m_lastStartTime = NAN;
