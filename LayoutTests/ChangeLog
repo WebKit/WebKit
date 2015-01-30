@@ -1,3 +1,10 @@
+2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, gardening on EFL port. Unskip tests which don't come to crash or
+        timeout anymore.
+
+        * platform/efl/TestExpectations:
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         More follow up to https://bugs.webkit.org/show_bug.cgi?id=141038

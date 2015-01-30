@@ -1710,7 +1710,6 @@ webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
 
 # Regression(r148748).
 webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114946 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Crash ]
 
 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
@@ -1888,8 +1887,6 @@ webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
 webkit.org/b/128670 batterystatus/window-property.html [ Failure ]
 webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-
-webkit.org/b/128902 media/media-event-listeners.html [ Timeout ]
 
 webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]
 
