@@ -245,12 +245,12 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float)
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    notImplemented();
+    webkitWebViewBaseEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    notImplemented();
+    webkitWebViewBaseExitAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)

@@ -135,7 +135,6 @@ std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(G
 
 RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, std::function<void()> damageNotify)
     : m_display(GDK_DISPLAY_XDISPLAY(gdk_window_get_display(parentWindow)))
-    , m_size(1, 1)
     , m_window(0)
     , m_parentWindow(0)
     , m_pixmap(0)
@@ -169,9 +168,12 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, 
 
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;
+    // Create the window of at last 1x1 since X doesn't allow to create empty windows.
     m_window = XCreateWindow(m_display,
         m_parentWindow,
-        0, 0, m_size.width(), m_size.height(),
+        0, 0,
+        std::max(1, m_size.width()),
+        std::max(1, m_size.height()),
         0,
         CopyFromParent,
         InputOutput,
@@ -215,11 +217,14 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
     if (size == m_size)
         return;
 
-    XResizeWindow(m_display, m_window, size.width(), size.height());
+    // Resize the window to at last 1x1 since X doesn't allow to create empty windows.
+    XResizeWindow(m_display, m_window, std::max(1, size.width()), std::max(1, size.height()));
     XFlush(m_display);
 
     m_size = size;
     m_needsNewPixmapAfterResize = true;
+    if (m_size.isEmpty())
+        cleanupPixmapAndPixmapSurface();
 }
 
 void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
@@ -234,6 +239,9 @@ void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
 
 cairo_surface_t* RedirectedXCompositeWindow::surface()
 {
+    // This should never be called with an empty size (not in Accelerated Compositing mode).
+    ASSERT(!m_size.isEmpty());
+
     if (!m_needsNewPixmapAfterResize && m_surface)
         return m_surface.get();
 

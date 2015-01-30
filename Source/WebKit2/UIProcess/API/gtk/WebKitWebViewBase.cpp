@@ -1308,3 +1308,29 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->clickCounter.reset();
 }
+
+void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
+{
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (!priv->redirectedWindow)
+        return;
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    if (!drawingArea)
+        return;
+    priv->redirectedWindow->resize(drawingArea->size());
+#else
+    UNUSED_PARAM(webkitWebViewBase);
+#endif
+}
+
+void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
+{
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (priv->redirectedWindow)
+        priv->redirectedWindow->resize(IntSize());
+#else
+    UNUSED_PARAM(webkitWebViewBase);
+#endif
+}
