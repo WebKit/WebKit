@@ -301,16 +301,14 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
         currentTime = monotonicallyIncreasingTime();
     
     // Destroy any decoded data in live objects that we can.
-    // Start from the tail, since this is the least recently accessed of the objects.
+    // Start from the head, since this is the least recently accessed of the objects.
 
     // The list might not be sorted by the m_lastDecodedAccessTime. The impact
     // of this weaker invariant is minor as the below if statement to check the
     // elapsedTime will evaluate to false as the currentTime will be a lot
     // greater than the current->m_lastDecodedAccessTime.
     // For more details see: https://bugs.webkit.org/show_bug.cgi?id=30209
-    CachedResource* current = m_liveDecodedResources.m_tail;
-    while (current) {
-        CachedResource* prev = current->m_prevInLiveResourcesList;
+    for (auto* current : m_liveDecodedResources) {
         ASSERT(current->hasClients());
         if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
@@ -318,10 +316,8 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
             if (!shouldDestroyDecodedDataForAllLiveResources && elapsedTime < cMinDelayBeforeLiveDecodedPrune)
                 return;
 
-            if (current->decodedDataIsPurgeable()) {
-                current = prev;
+            if (current->decodedDataIsPurgeable())
                 continue;
-            }
 
             // Destroy our decoded data. This will remove us from 
             // m_liveDecodedResources, and possibly move us to a different LRU 
@@ -331,7 +327,6 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
             if (targetSize && m_liveSize <= targetSize)
                 return;
         }
-        current = prev;
     }
 }
 
@@ -620,69 +615,14 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)
 {
-    // If we've never been accessed, then we're brand new and not in any list.
-    if (!resource->m_inLiveDecodedResourcesList)
-        return;
-    resource->m_inLiveDecodedResourcesList = false;
-
-#if !ASSERT_DISABLED
-    // Verify that we are in fact in this list.
-    bool found = false;
-    for (CachedResource* current = m_liveDecodedResources.m_head; current; current = current->m_nextInLiveResourcesList) {
-        if (current == resource) {
-            found = true;
-            break;
-        }
-    }
-    ASSERT(found);
-#endif
-
-    CachedResource* next = resource->m_nextInLiveResourcesList;
-    CachedResource* prev = resource->m_prevInLiveResourcesList;
-    
-    if (next == 0 && prev == 0 && m_liveDecodedResources.m_head != resource)
-        return;
-    
-    resource->m_nextInLiveResourcesList = 0;
-    resource->m_prevInLiveResourcesList = 0;
-    
-    if (next)
-        next->m_prevInLiveResourcesList = prev;
-    else if (m_liveDecodedResources.m_tail == resource)
-        m_liveDecodedResources.m_tail = prev;
-
-    if (prev)
-        prev->m_nextInLiveResourcesList = next;
-    else if (m_liveDecodedResources.m_head == resource)
-        m_liveDecodedResources.m_head = next;
+    m_liveDecodedResources.remove(resource);
 }
 
 void MemoryCache::insertInLiveDecodedResourcesList(CachedResource* resource)
 {
     // Make sure we aren't in the list already.
-    ASSERT(!resource->m_nextInLiveResourcesList && !resource->m_prevInLiveResourcesList && !resource->m_inLiveDecodedResourcesList);
-    resource->m_inLiveDecodedResourcesList = true;
-
-    resource->m_nextInLiveResourcesList = m_liveDecodedResources.m_head;
-    if (m_liveDecodedResources.m_head)
-        m_liveDecodedResources.m_head->m_prevInLiveResourcesList = resource;
-    m_liveDecodedResources.m_head = resource;
-    
-    if (!resource->m_nextInLiveResourcesList)
-        m_liveDecodedResources.m_tail = resource;
-        
-#if !ASSERT_DISABLED
-    // Verify that we are in now in the list like we should be.
-    bool found = false;
-    for (CachedResource* current = m_liveDecodedResources.m_head; current; current = current->m_nextInLiveResourcesList) {
-        if (current == resource) {
-            found = true;
-            break;
-        }
-    }
-    ASSERT(found);
-#endif
-
+    ASSERT(!m_liveDecodedResources.contains(resource));
+    m_liveDecodedResources.add(resource);
 }
 
 void MemoryCache::addToLiveResourcesSize(CachedResource* resource)

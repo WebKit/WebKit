@@ -1,3 +1,36 @@
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Store MemoryCache's live decoded resources in a ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=141051
+
+        Reviewed by Antti Koivisto.
+
+        Store MemoryCache's live decoded resources in a ListHashSet instead of
+        a linked list. The frequent operations are:
+        1. Add items to one end
+        2. Remove items from the other end or anywhere in the container by value
+
+        Using a ListHashSet instead of a manual linked list results in *much*
+        simpler / shorter code and is fast for all operations (faster than
+        linked list even for removing an given element from the container given
+        its value). The previous implementation required us to keep a lot of
+        pointers up-to-date, which was error prone.
+
+        This is a first step towards simplifying the MemoryCache implementation.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::setDecodedSize):
+        (WebCore::CachedResource::didAccessDecodedData):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::inLiveDecodedResourcesList): Deleted.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        (WebCore::MemoryCache::removeFromLiveDecodedResourcesList):
+        (WebCore::MemoryCache::insertInLiveDecodedResourcesList):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::inLiveDecodedResourcesList):
+
 2015-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cairo] Fix #if guards in platform/graphics/cairo directory

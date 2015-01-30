@@ -187,8 +187,6 @@ public:
     void setInCache(bool inCache) { m_inCache = inCache; }
     bool inCache() const { return m_inCache; }
     
-    bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
-    
     void clearLoader();
 
     SharedBuffer* resourceBuffer() const { return m_data.get(); }
@@ -306,7 +304,6 @@ private:
 
     unsigned m_preloadResult : 2; // PreloadResult
 
-    bool m_inLiveDecodedResourcesList : 1;
     bool m_requestedFromNetworkingLayer : 1;
 
     bool m_inCache : 1;
@@ -324,9 +321,6 @@ private:
 
     CachedResource* m_nextInAllResourcesList;
     CachedResource* m_prevInAllResourcesList;
-    
-    CachedResource* m_nextInLiveResourcesList;
-    CachedResource* m_prevInLiveResourcesList;
 
     CachedResourceLoader* m_owningCachedResourceLoader; // only non-null for resources that are not in the cache
     

@@ -125,7 +125,6 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_handleCount(0)
     , m_preloadCount(0)
     , m_preloadResult(PreloadNotReferenced)
-    , m_inLiveDecodedResourcesList(false)
     , m_requestedFromNetworkingLayer(false)
     , m_inCache(false)
     , m_loading(false)
@@ -138,8 +137,6 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
 #endif
     , m_nextInAllResourcesList(0)
     , m_prevInAllResourcesList(0)
-    , m_nextInLiveResourcesList(0)
-    , m_prevInLiveResourcesList(0)
     , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
@@ -517,9 +514,10 @@ void CachedResource::setDecodedSize(unsigned size)
         // violation of the invariant that the list is to be kept sorted
         // by access time. The weakening of the invariant does not pose
         // a problem. For more details please see: https://bugs.webkit.org/show_bug.cgi?id=30209
-        if (m_decodedSize && !m_inLiveDecodedResourcesList && hasClients())
+        bool inLiveDecodedResourcesList = memoryCache().inLiveDecodedResourcesList(*this);
+        if (m_decodedSize && !inLiveDecodedResourcesList && hasClients())
             memoryCache().insertInLiveDecodedResourcesList(this);
-        else if (!m_decodedSize && m_inLiveDecodedResourcesList)
+        else if (!m_decodedSize && inLiveDecodedResourcesList)
             memoryCache().removeFromLiveDecodedResourcesList(this);
 
         // Update the cache's size totals.
@@ -552,7 +550,7 @@ void CachedResource::didAccessDecodedData(double timeStamp)
     m_lastDecodedAccessTime = timeStamp;
     
     if (inCache()) {
-        if (m_inLiveDecodedResourcesList) {
+        if (memoryCache().inLiveDecodedResourcesList(*this)) {
             memoryCache().removeFromLiveDecodedResourcesList(this);
             memoryCache().insertInLiveDecodedResourcesList(this);
         }

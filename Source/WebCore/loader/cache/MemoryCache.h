@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -138,6 +139,7 @@ public:
     WEBCORE_EXPORT Statistics getStatistics();
     
     void resourceAccessed(CachedResource*);
+    bool inLiveDecodedResourcesList(CachedResource& resource) const { return m_liveDecodedResources.contains(&resource); }
 
     typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
     WEBCORE_EXPORT void removeResourcesWithOrigin(SecurityOrigin*);
@@ -203,7 +205,7 @@ private:
     Vector<LRUList, 32> m_allResources;
     
     // List just for live resources with decoded data.  Access to this list is based off of painting the resource.
-    LRUList m_liveDecodedResources;
+    ListHashSet<CachedResource*> m_liveDecodedResources;
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).
