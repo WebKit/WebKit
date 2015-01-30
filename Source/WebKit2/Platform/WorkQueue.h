@@ -88,9 +88,6 @@ private:
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
 #elif PLATFORM(GTK)
-    static void startWorkQueueThread(WorkQueue*);
-    void workQueueThreadBody();
-
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;
     Mutex m_eventLoopLock;

@@ -1,3 +1,27 @@
+2015-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Runtime critical warnings sometimes at start up when using the network process
+        https://bugs.webkit.org/show_bug.cgi?id=140998
+
+        Reviewed by Žan Doberšek.
+
+        This is caused by the CustomProtocolManager work queue
+        theread. This WorkQueue is created when the CustomProtocolManager
+        object is constructed, but destroyed when it's initialized when
+        the UI process asks to use the network process. In this case,
+        sometimes happens that the work queue thread that runs the main
+        loop is executed once the object has been destroyed and the main
+        loop pointer is nullptr.
+
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::platformInitialize): Use a lambda function for the
+        thread body.
+        (WorkQueue::platformInvalidate): Detach the worker thread before
+        deleting the main loop object.
+        (WorkQueue::startWorkQueueThread): Deleted.
+        (WorkQueue::workQueueThreadBody): Deleted.
+
 2015-01-29  Beth Dakin  <bdakin@apple.com>
 
         Another follow-on, spotted this mistake. This used to be 
