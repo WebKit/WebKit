@@ -1,3 +1,18 @@
+2015-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        GC marking threads should clear malloc caches
+        https://bugs.webkit.org/show_bug.cgi?id=141097
+
+        Reviewed by Andreas Kling.
+
+        Split the scavenging API into per-thread vs global, so that you can
+        request to scavenge your own thread without scavenging the whole heap.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::releaseFastMallocFreeMemoryForThisThread):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/FastMalloc.h:
+
 2015-01-30  Antti Koivisto  <antti@apple.com>
 
         OSObjectPtr does not work with dispatch_data_t on Maverics

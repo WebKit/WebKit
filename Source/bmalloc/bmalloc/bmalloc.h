@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,9 @@
  */
 
 #include "Cache.h"
+#include "Heap.h"
+#include "PerProcess.h"
+#include "StaticMutex.h"
 
 namespace bmalloc {
 namespace api {
@@ -47,10 +50,18 @@ inline void* realloc(void* object, size_t newSize)
 {
     return Cache::reallocate(object, newSize);
 }
-    
-inline void scavenge()
+
+inline void scavengeThisThread()
 {
     Cache::scavenge();
+}
+
+inline void scavenge()
+{
+    scavengeThisThread();
+
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+    PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 
 } // namespace api

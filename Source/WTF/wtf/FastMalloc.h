@@ -77,6 +77,7 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void fastFree(void*);
 
     WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();
+    WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemoryForThisThread();
     
     struct FastMallocStatistics {
         size_t reservedVMBytes;

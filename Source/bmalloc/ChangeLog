@@ -1,3 +1,19 @@
+2015-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        GC marking threads should clear malloc caches
+        https://bugs.webkit.org/show_bug.cgi?id=141097
+
+        Reviewed by Andreas Kling.
+
+        Split the scavenging API into per-thread vs global, so that you can
+        request to scavenge your own thread without scavenging the whole heap.
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::scavenge):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavengeThisThread):
+        (bmalloc::api::scavenge):
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

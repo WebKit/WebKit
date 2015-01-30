@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,6 @@ void Cache::scavenge()
 
     cache->allocator().scavenge();
     cache->deallocator().scavenge();
-
-    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 
 Cache::Cache()

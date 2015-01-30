@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
-// Copyright (C) 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+// Copyright (C) 2005, 2006, 2007, 2008, 2009, 2011, 2015 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -209,6 +209,7 @@ void* fastRealloc(void* p, size_t n)
 }
 
 void releaseFastMallocFreeMemory() { }
+void releaseFastMallocFreeMemoryForThisThread() { }
     
 FastMallocStatistics fastMallocStatistics()
 {
@@ -287,6 +288,11 @@ TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
     return fastCalloc(numElements, elementSize);
 }
     
+void releaseFastMallocFreeMemoryForThisThread()
+{
+    bmalloc::api::scavengeThisThread();
+}
+
 void releaseFastMallocFreeMemory()
 {
     bmalloc::api::scavenge();
@@ -4483,11 +4489,15 @@ void *(*__memalign_hook)(size_t, size_t, const void *) = MemalignOverride;
 #endif
 
 #ifdef WTF_CHANGES
-void releaseFastMallocFreeMemory()
+void releaseFastMallocFreeMemoryForThisThread()
 {
-    // Flush free pages in the current thread cache back to the page heap.
     if (TCMalloc_ThreadCache* threadCache = TCMalloc_ThreadCache::GetCacheIfPresent())
         threadCache->Cleanup();
+}
+
+void releaseFastMallocFreeMemory()
+{
+    releaseFastMallocFreeMemoryForThisThread();
 
     SpinLockHolder h(&pageheap_lock);
     pageheap->ReleaseFreePages();
