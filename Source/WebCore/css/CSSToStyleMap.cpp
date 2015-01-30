@@ -184,47 +184,43 @@ void CSSToStyleMap::mapFillRepeatY(CSSPropertyID, FillLayer& layer, CSSValue& va
     layer.setRepeatY(downcast<CSSPrimitiveValue>(value));
 }
 
+static inline bool convertToLengthSize(const CSSPrimitiveValue& primitiveValue, CSSToLengthConversionData conversionData, LengthSize& size)
+{
+    if (auto* pair = primitiveValue.getPairValue()) {
+        size.setWidth(pair->first()->convertToLength<AnyConversion>(conversionData));
+        size.setHeight(pair->second()->convertToLength<AnyConversion>(conversionData));
+    } else
+        size.setWidth(primitiveValue.convertToLength<AnyConversion>(conversionData));
+
+    return !size.width().isUndefined() && !size.height().isUndefined();
+}
+
 void CSSToStyleMap::mapFillSize(CSSPropertyID, FillLayer& layer, CSSValue& value)
 {
-    if (!is<CSSPrimitiveValue>(value)) {
-        layer.setSizeType(SizeNone);
+    if (value.isInitialValue()) {
+        layer.setSize(FillLayer::initialFillSize(layer.type()));
         return;
     }
+
+    if (!is<CSSPrimitiveValue>(value))
+        return;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueContain)
-        layer.setSizeType(Contain);
-    else if (primitiveValue.getValueID() == CSSValueCover)
-        layer.setSizeType(Cover);
-    else
-        layer.setSizeType(SizeLength);
-
-    LengthSize b = FillLayer::initialFillSizeLength(layer.type());
-
-    if (value.isInitialValue() || primitiveValue.getValueID() == CSSValueContain || primitiveValue.getValueID() == CSSValueCover) {
-        layer.setSizeLength(b);
-        return;
+    FillSize fillSize;
+    switch (primitiveValue.getValueID()) {
+    case CSSValueContain:
+        fillSize.type = Contain;
+        break;
+    case CSSValueCover:
+        fillSize.type = Cover;
+        break;
+    default:
+        ASSERT(fillSize.type == SizeLength);
+        if (!convertToLengthSize(primitiveValue, m_resolver->state().cssToLengthConversionData(), fillSize.size))
+            return;
+        break;
     }
-
-    Length firstLength;
-    Length secondLength;
-
-    if (Pair* pair = primitiveValue.getPairValue()) {
-        CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(pair->first());
-        CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(pair->second());
-        firstLength = first->convertToLength<AnyConversion>(m_resolver->state().cssToLengthConversionData());
-        secondLength = second->convertToLength<AnyConversion>(m_resolver->state().cssToLengthConversionData());
-    } else {
-        firstLength = primitiveValue.convertToLength<AnyConversion>(m_resolver->state().cssToLengthConversionData());
-        secondLength = Length();
-    }
-
-    if (firstLength.isUndefined() || secondLength.isUndefined())
-        return;
-
-    b.setWidth(firstLength);
-    b.setHeight(secondLength);
-    layer.setSizeLength(b);
+    layer.setSize(fillSize);
 }
 
 void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer, CSSValue& value)

@@ -1,3 +1,41 @@
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
+        When no background-size is specified on the 2nd background layer, it takes the first instead of the initial value
+        https://bugs.webkit.org/show_bug.cgi?id=141059
+
+        Reviewed by Antti Koivisto.
+
+        This patch fixes fill size support for 'initial' value.
+
+        Test: fast/css/background-layers-initial-size.html
+
+        * css/CSSToStyleMap.cpp:
+        - Add check for initial values and set fill size to initialFillSize()
+          in this case (which is 'auto'). Previously, we were handling all
+          non CSSPrimitiveValues the same way and setting the fill size type
+          to SizeNone, which means no size (not 'auto').
+        - Clean up the rest of the function (no behavior change).
+
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        - Initialize m_sizeLength to SizeNone instead of calling
+          initialFillSizeType(). There is no behavior change here. However,
+          initialFillSizeType() was not supposed to return SizeNone.
+        - Stop explicitly initializing m_sizeLength to LengthSize() as this
+          is already what happens implicitly.
+
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::initialFillSize):
+        Return FillSize() instead of FillSize(SizeNone, LengthSize()).
+        FillSize() is equivalent to FillSize(SizeLength, LengthSize())
+        which is resolved to 'auto'. SizeNone means no size which isn't
+        what we want as an initial value.
+
+        (WebCore::FillLayer::initialFillSizeType): Deleted.
+        (WebCore::FillLayer::initialFillSizeLength): Deleted.
+        Remove Individual initialFillSizeType() / initialFillSizeLength()
+        functions now that all caller use initialFillSize() instead.
+
 2015-01-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179403.

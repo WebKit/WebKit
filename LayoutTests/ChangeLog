@@ -1,3 +1,16 @@
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
+        When no background-size is specified on the 2nd background layer, it takes the first instead of the initial value
+        https://bugs.webkit.org/show_bug.cgi?id=141059
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test to cover the case where we have 2 background layers, with an explicit
+        size only for the first one.
+
+        * fast/css/background-layers-initial-size-expected.txt: Added.
+        * fast/css/background-layers-initial-size.html: Added.
+
 2015-01-30  Matthew Mirman  <mmirman@apple.com>
 
         Added a test for JSON.stringify on ClientRect.
