@@ -41,22 +41,22 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,119) size 784x18
         RenderText {#text} at (0,0) size 37x18
           text run at (0,0) width 37: "PASS"
-layer at (35,47) size 130x13 scrollX 5 scrollWidth 136
+layer at (35,47) size 130x13 scrollX 3 scrollWidth 134
   RenderBlock {DIV} at (0,0) size 131x13
-    RenderText {#text} at (-5,0) size 137x13
-      text run at (-5,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (16,0) width 20: "she"
-      text run at (35,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (79,0) width 14: "he"
-      text run at (92,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (-3,0) size 135x13
+      text run at (-3,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (18,0) width 20: "she"
+      text run at (37,0) width 44 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (80,0) width 14: "he"
+      text run at (93,0) width 38 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,70) size 196x13
   RenderBlock {DIV} at (0,0) size 196x13
-    RenderText {#text} at (59,0) size 137x13
-      text run at (59,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (81,0) width 20: "she"
-      text run at (100,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (144,0) width 14: "he"
-      text run at (157,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (61,0) size 135x13
+      text run at (61,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (83,0) width 20: "she"
+      text run at (102,0) width 44 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (145,0) width 14: "he"
+      text run at (158,0) width 38 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,93) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body
