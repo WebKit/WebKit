@@ -3,7 +3,6 @@
     <g id="outer"><use id="a"></use></g>
     <use id="b" xlink:href="#outer" />
 <script><![CDATA[
-var useobj = document.getElementById("b").instanceRoot;
 
 function test() {
     var elem = document.getElementById("b");

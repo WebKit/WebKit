@@ -14,10 +14,8 @@ window.onload = function(){
             location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();
         else
             location.hash = "#1";
-        var ir = document.getElementById("use1").instanceRoot;
-        ir.correspondingUseElement.parentElement.removeChild(ir.correspondingUseElement);
+        document.getElementById("use1").parentElement.removeChild(document.getElementById("use1"));
         gc();
-        ir.correspondingUseElement;
         setTimeout(function(){location.reload()},0);
     } else {
         document.getElementById("t1").appendChild(document.createTextNode("PASS: Successfully removed use element."));

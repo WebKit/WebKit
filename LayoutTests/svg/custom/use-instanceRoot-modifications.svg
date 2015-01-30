@@ -16,12 +16,7 @@
 <script>
 function runInstanceRootTest() {
     var useElement = document.getElementsByTagName("use")[1];
-    if (useElement != useElement.instanceRoot.correspondingUseElement)
-        return;
-
-    var element = useElement.instanceRoot.correspondingElement;
-    if (element != document.getElementById("g"))
-        return;
+    var element = document.getElementById("g");
 
     // element.firstChild is a #text node! the next sibling gives the rect
     var rect = element.firstChild.nextSibling;

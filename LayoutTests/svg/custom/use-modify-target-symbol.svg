@@ -13,8 +13,6 @@
 <text font-size="10" id="text" x="30" y="70">You should shapes _above_ this text</text>
 
 <script>
-var useElement = document.getElementsByTagName("use")[1];
-var element = useElement.instanceRoot.correspondingElement;
-element.removeAttribute("viewBox");
+document.getElementById("symbol").removeAttribute("viewBox");
 </script>
 </svg>

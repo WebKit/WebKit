@@ -28,8 +28,6 @@ interface SVGUseElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
     readonly attribute SVGAnimatedLength height;
-
-    readonly attribute SVGElementInstance instanceRoot;
 };
 
 SVGUseElement implements SVGExternalResourcesRequired;

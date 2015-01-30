@@ -1,3 +1,59 @@
+2015-01-29  Darin Adler  <darin@apple.com>
+
+        Remove SVGUseElement.instanceRoot and all tests that depend on it
+        https://bugs.webkit.org/show_bug.cgi?id=141025
+
+        Reviewed by Anders Carlsson.
+
+        * platform/gtk/TestExpectations: Removed expected failure for now-removed test.
+        * platform/ios-simulator-wk2/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+
+        * platform/gtk/svg/custom/use-elementInstance-event-target-expected.png: Removed.
+        * platform/gtk/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-elementInstance-methods-expected.png: Removed.
+        * platform/gtk/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * platform/mac/svg/custom/use-elementInstance-event-target-expected.png: Removed.
+        * platform/mac/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/mac/svg/custom/use-elementInstance-methods-expected.png: Removed.
+        * platform/mac/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * svg/custom/element-instance-held-by-js-crash-expected.txt: Removed.
+        * svg/custom/element-instance-held-by-js-crash.svg: Removed.
+        * svg/custom/resources/use-instanceRoot-event-bubbling.js: Find element by id instead
+        of using use.instanceRoot.correspondingElement.
+        * svg/custom/resources/use-instanceRoot-event-listeners.js: Removed.
+        * svg/custom/use-crash-using-children-before-destroy.svg: Removed a line of code that
+        got at the instanceRoot. It's possible this test no longer has value, and if so, then
+        we could later delete it, but it does no harm.
+        * svg/custom/use-elementInstance-event-target.svg: Removed.
+        * svg/custom/use-elementInstance-methods.svg: Removed.
+        * svg/custom/use-instanceRoot-as-event-target-expected.txt: Removed.
+        * svg/custom/use-instanceRoot-as-event-target.xhtml: Removed.
+        * svg/custom/use-instanceRoot-event-listener-liveness-expected.txt: Removed.
+        * svg/custom/use-instanceRoot-event-listener-liveness.xhtml: Removed.
+        * svg/custom/use-instanceRoot-event-listeners-expected.txt: Removed.
+        * svg/custom/use-instanceRoot-event-listeners.xhtml: Removed.
+        * svg/custom/use-instanceRoot-modifications.svg: Removed the part of this that involved
+        the instanceRoot property. It's possible this test now has reduced value, and if so, we
+        could later delete it but it does no harm.
+        * svg/custom/use-instanceRoot-with-use-removed.svg: Removed the use of instanceRoot
+        and correspondingUseElement. Not certain this remains a useful test. Also converted line
+        endings to LF instead of CRLF.
+        * svg/custom/use-listener-append-crash.html: Get elements by id instead of instanceRoot.
+        * svg/custom/use-modify-target-container.svg: Ditto.
+        * svg/custom/use-modify-target-symbol.svg: Ditto.
+        * svg/custom/use-on-use-with-child-expected.txt: Updated since we don't dump an instance
+        tree any more.
+        * svg/custom/use-on-use-with-child.svg: Removed the part about dumping the instance tree,
+        and added in the part about dragging to make sure it doesn't crash.
+        * svg/dom/use-transform.svg: Get element by id instead of instanceRoot.
+
 2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL port gardening. Some tests have been passed since r172999 though,

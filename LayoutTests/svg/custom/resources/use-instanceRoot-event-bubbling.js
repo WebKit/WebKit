@@ -43,7 +43,7 @@ function finishTest()
 {
     successfullyParsed = true;
 
-    use.instanceRoot.correspondingElement.setAttribute("fill", "green");
+    document.getElementById("rectParent").setAttribute("fill", "green");
     shouldBeTrue("successfullyParsed");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 

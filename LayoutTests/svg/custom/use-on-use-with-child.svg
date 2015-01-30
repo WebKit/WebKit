@@ -14,38 +14,14 @@
     </use> 
     <foreignObject><pre id="console" xmlns="http://www.w3.org/1999/xhtml"/></foreignObject>
     <script>
-        function makeCrash(){
-            if (window.eventSender) {
-                eventSender.dragMode = false;
-                eventSender.mouseMoveTo(300, 300);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-            }
+        if (window.eventSender) {
+            eventSender.dragMode = false;
+            eventSender.mouseMoveTo(300, 300);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
         }
-        // If you like, you can make a crash.
-        // makeCrash();
-
-        var console = document.getElementById("console");
-        function println(string)
-        {
-            console.textContent += string + '\n';
-        }
-
-        function printInstanceTree( obj, indent )
-        {
-            indent += "     ";
-            println(indent + "id = " + obj.correspondingElement.id + "  this = " + obj + "  correspondingElement = " + obj.correspondingElement);
-            for (var m = obj.firstChild; m != null; m = m.nextSibling ) {
-                printInstanceTree(m, indent);
-            }
-        }
-        var useobj = document.getElementById("zoomplus").instanceRoot;
-        println("The instance tree of use element zoomplus:\n");
-        printInstanceTree(useobj,"");
-
-        if (window.testRunner){
+        var console = document.getElementById("console").textContent = "PASS if this did not crash";
+        if (window.testRunner)
             testRunner.dumpAsText();
-        }
-
   </script>
 </svg> 

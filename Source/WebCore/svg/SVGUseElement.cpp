@@ -104,18 +104,6 @@ SVGUseElement::~SVGUseElement()
     clearResourceReferences();
 }
 
-SVGElementInstance* SVGUseElement::instanceRoot()
-{
-    // If there is no element instance tree, force immediate SVGElementInstance tree
-    // creation by asking the document to invoke our recalcStyle function - as we can't
-    // wait for the lazy creation to happen if e.g. JS wants to access the instanceRoot
-    // object right after creating the element on-the-fly
-    if (!m_targetElementInstance)
-        document().updateLayoutIgnorePendingStylesheets();
-
-    return m_targetElementInstance.get();
-}
-
 bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;

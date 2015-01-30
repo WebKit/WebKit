@@ -45,7 +45,6 @@ public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
     virtual ~SVGUseElement();
 
-    SVGElementInstance* instanceRoot();
     SVGElementInstance* instanceForShadowTreeElement(Node*) const;
     void invalidateShadowTree();
     void invalidateDependentShadowTrees();
