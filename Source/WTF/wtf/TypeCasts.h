@@ -66,19 +66,26 @@ inline bool is(ArgType* source)
     return source && TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
 }
 
+// Update T's constness to match Reference's.
+template <typename Reference, typename T>
+struct match_constness {
+    typedef typename std::conditional<std::is_const<Reference>::value, typename std::add_const<T>::type, typename std::remove_const<T>::type>::type type;
+};
+
 // Safe downcasting functions.
 template<typename Target, typename Source>
-inline typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type downcast(Source& source)
+inline typename match_constness<Source, Target>::type& downcast(Source& source)
 {
     static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type>(source);
+    return static_cast<typename match_constness<Source, Target>::type&>(source);
 }
-template<typename Target, typename Source> inline typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type downcast(Source* source)
+template<typename Target, typename Source>
+inline typename match_constness<Source, Target>::type* downcast(Source* source)
 {
     static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
     ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type>(source);
+    return static_cast<typename match_constness<Source, Target>::type*>(source);
 }
 
 // Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.
