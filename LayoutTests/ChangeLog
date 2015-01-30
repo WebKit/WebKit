@@ -1,5 +1,17 @@
 2015-01-29  Eric Carlson  <eric.carlson@apple.com>
 
+        media/track/track-in-band-cues-added-once.html fails sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=138806
+
+        Reviewed by Brent Fulgham.
+
+        * media/track/track-in-band-cues-added-once-expected.txt: Update results.
+        * media/track/track-in-band-cues-added-once.html: Seek before beginning playback so
+            the media engine is more likely to buffer and process the initial cue.
+        * platform/mac/TestExpectations: Unskip track-in-band-cues-added-once.html.
+
+2015-01-29  Eric Carlson  <eric.carlson@apple.com>
+
         REGRESSION (OS X 10.10.2): media/track/track-in-band-style.html frequently times out
         https://bugs.webkit.org/show_bug.cgi?id=140974
 

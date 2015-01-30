@@ -27,44 +27,63 @@
 
             function pollProgress()
             {
-                if (video.currentTime < 2)
-                    return;
+                switch (seekedCount) {
+                case 1:
+                    video.currentTime = 0;
+                    run("video.play()");
+                    consoleWrite("");
+                    break;
 
-                if (!seekedCount && inbandTrack1.cues.length >= 5) {
+                case 2:
+                    if (video.currentTime < 2 || inbandTrack1.cues.length <= 5)
+                        return;
+
                     // Collect the start times of all cues, seek back to the beginning and play
                     // the same segment of the video file.
                     run("video.pause()");
                     for (var i = 0; i < inbandTrack1.cues.length; ++i)
                         cuesStarts.push(inbandTrack1.cues[i].startTime);
-                    run("video.currentTime = 0");
+                    video.currentTime = 0;
                     run("video.play()");
                     consoleWrite("");
-                    return;
-                }
+                    break;
 
-                if (inbandTrack1.cues.length < cuesStarts.length)
-                    return;
-
-                run("video.pause()");
-                var failure = false;
-                for (var i = 0; i < cuesStarts.length; ++i) {
-                    if (cuesStarts[i] != inbandTrack1.cues[i].startTime) {
-                        failure = true;
+                case 3:
+                    if (inbandTrack1.cues.length < cuesStarts.length)
                         break;
-                    }
-                }
-
-                if (failure) {
-                    consoleWrite("<br><i>** FAIL<" + "/i>");
+    
+                    run("video.pause()");
+                    var failure = false;
                     for (var i = 0; i < cuesStarts.length; ++i) {
-                        var oldStart = cuesStarts[i];
-                        var newStart = inbandTrack1.cues[i].startTime;
-                        consoleWrite("Cue " + i + " start time was: " + oldStart + ", is now: " + newStart);
+                        if (cuesStarts[i] != inbandTrack1.cues[i].startTime) {
+                            failure = true;
+                            break;
+                        }
                     }
-                    consoleWrite("");
+    
+                    if (failure) {
+                        consoleWrite("<br><i>** FAIL<" + "/i>");
+                        for (var i = 0; i < cuesStarts.length; ++i) {
+                            var oldStart = cuesStarts[i];
+                            var newStart = inbandTrack1.cues[i].startTime;
+                            consoleWrite("Cue " + i + " start time was: " + oldStart + ", is now: " + newStart);
+                        }
+                        consoleWrite("");
+                    }
+    
+                    endTest();
+                    break;
                 }
+            }
 
-                endTest();
+            function tracksChanged()
+            {
+                setInterval(pollProgress, 100);
+                
+                // We seek to time 0.1 and then back to 0 before starting playback to make it more likely
+                // that the media engine will process the initial media samples and deliver the first
+                // inband cues to WebKit.
+                video.currentTime = 0.1;
             }
 
             function canplaythrough()
@@ -78,14 +97,12 @@
                 testExpected("inbandTrack1.cues", null);
                 testExpected("inbandTrack1.language", "en");
                 testExpected("inbandTrack1.kind", "captions");
-
+                waitForEventOn(video.textTracks, 'change', tracksChanged);
 
                 consoleWrite("");
 
-                waitForEvent('seeked', function() { ++seekedCount; });
-                setInterval(pollProgress, 100);
+                video.addEventListener("seeked", function() { ++seekedCount; });
                 run("inbandTrack1.mode = 'showing'");
-                run("video.play()");
             }
 
             function setup()

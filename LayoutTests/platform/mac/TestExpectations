@@ -1189,8 +1189,6 @@ webkit.org/b/137505 [ Mavericks+ ] media/track/track-forced-subtitles-in-band.ht
 # We should land updated results if we can't get this bug fixed in time.
 [ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
 
-webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html [ Pass Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16802900>)
 [ Yosemite+ ] fast/forms/select-initial-position.html [ Failure ]
 

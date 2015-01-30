@@ -15,12 +15,12 @@ EXPECTED (inbandTrack1.language == 'en') OK
 EXPECTED (inbandTrack1.kind == 'captions') OK
 
 RUN(inbandTrack1.mode = 'showing')
-RUN(video.play())
-RUN(video.pause())
-RUN(video.currentTime = 0)
+EVENT(change)
 RUN(video.play())
 
-EVENT(seeked)
+RUN(video.pause())
+RUN(video.play())
+
 RUN(video.pause())
 END OF TEST
 
