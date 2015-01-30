@@ -186,7 +186,7 @@ private:
     unsigned deadCapacity() const;
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
-    CachedResourceMap& sessionResources(SessionID);
+    CachedResourceMap& getSessionMap(SessionID);
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_inPruneResources;
