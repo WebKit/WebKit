@@ -1,3 +1,9 @@
+2015-01-29  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build with newer Clang.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Try to fix the iOS build.

@@ -118,7 +118,7 @@ public:
     
     WEBCORE_EXPORT virtual void setContentsRect(const FloatRect&) override;
     WEBCORE_EXPORT virtual void setContentsClippingRect(const FloatRoundedRect&) override;
-    WEBCORE_EXPORT virtual bool setMasksToBoundsRect(const FloatRoundedRect&);
+    WEBCORE_EXPORT virtual bool setMasksToBoundsRect(const FloatRoundedRect&) override;
 
     WEBCORE_EXPORT virtual void suspendAnimations(double time) override;
     WEBCORE_EXPORT virtual void resumeAnimations() override;
