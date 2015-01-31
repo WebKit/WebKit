@@ -259,9 +259,6 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     float fontSize = platformData.size();
     CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
     if (platformData.m_isEmoji) {
-        if (!context->emojiDrawingEnabled())
-            return;
-
         // Mimic the positioining of non-bitmap glyphs, which are not subpixel-positioned.
         point.setY(ceilf(point.y()));
 

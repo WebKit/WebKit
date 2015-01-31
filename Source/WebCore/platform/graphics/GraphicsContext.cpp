@@ -749,18 +749,6 @@ BlendMode GraphicsContext::blendModeOperation() const
     return m_state.blendMode;
 }
 
-#if PLATFORM(IOS)
-bool GraphicsContext::emojiDrawingEnabled()
-{
-    return m_state.emojiDrawingEnabled;
-}
-
-void GraphicsContext::setEmojiDrawingEnabled(bool emojiDrawingEnabled)
-{
-    m_state.emojiDrawingEnabled = emojiDrawingEnabled;
-}
-#endif
-
 void GraphicsContext::setDrawLuminanceMask(bool drawLuminanceMask)
 {
     m_state.drawLuminanceMask = drawLuminanceMask;
