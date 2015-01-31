@@ -54,7 +54,6 @@
 #include "LLIntThunks.h"
 #include "LegacyProfiler.h"
 #include "LiteralParser.h"
-#include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include "Parser.h"
@@ -67,6 +66,7 @@
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
+#include "Symbol.h"
 #include "VMEntryScope.h"
 #include "VirtualRegister.h"
 

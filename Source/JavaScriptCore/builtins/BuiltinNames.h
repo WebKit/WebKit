@@ -31,7 +31,7 @@
 
 namespace JSC {
     
-#define INITIALISE_BUILTIN_NAMES(name) , m_##name(vm, #name), m_##name##PrivateName(Identifier::from(PrivateName()))
+#define INITIALISE_BUILTIN_NAMES(name) , m_##name(vm, #name), m_##name##PrivateName(Identifier::from(PrivateName(ASCIILiteral("Symbol." #name))))
 #define DECLARE_BUILTIN_NAMES(name) const Identifier m_##name; const Identifier m_##name##PrivateName;;
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR(name) \
     const Identifier& name##PublicName() const { return m_##name; } \

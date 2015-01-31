@@ -773,9 +773,6 @@
     <ClCompile Include="..\runtime\MapPrototype.cpp" />
     <ClCompile Include="..\runtime\MathObject.cpp" />
     <ClCompile Include="..\runtime\MemoryStatistics.cpp" />
-    <ClCompile Include="..\runtime\NameConstructor.cpp" />
-    <ClCompile Include="..\runtime\NameInstance.cpp" />
-    <ClCompile Include="..\runtime\NamePrototype.cpp" />
     <ClCompile Include="..\runtime\NativeErrorConstructor.cpp" />
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp" />
     <ClCompile Include="..\runtime\NullGetterFunction.cpp" />
@@ -816,6 +813,10 @@
     <ClCompile Include="..\runtime\StructureChain.cpp" />
     <ClCompile Include="..\runtime\StructureIDTable.cpp" />
     <ClCompile Include="..\runtime\StructureRareData.cpp" />
+    <ClCompile Include="..\runtime\Symbol.cpp" />
+    <ClCompile Include="..\runtime\SymbolConstructor.cpp" />
+    <ClCompile Include="..\runtime\SymbolObject.cpp" />
+    <ClCompile Include="..\runtime\SymbolPrototype.cpp" />
     <ClCompile Include="..\runtime\SymbolTable.cpp" />
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp" />
     <ClCompile Include="..\runtime\TypedArrayController.cpp" />
@@ -863,7 +864,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromisePrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\KeywordLookup.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\Lexer.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NamePrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
@@ -872,6 +872,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\StringConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SymbolPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1568,9 +1569,6 @@
     <ClInclude Include="..\runtime\MathObject.h" />
     <ClInclude Include="..\runtime\MemoryStatistics.h" />
     <ClInclude Include="..\runtime\Microtask.h" />
-    <ClInclude Include="..\runtime\NameConstructor.h" />
-    <ClInclude Include="..\runtime\NameInstance.h" />
-    <ClInclude Include="..\runtime\NamePrototype.h" />
     <ClInclude Include="..\runtime\NativeErrorConstructor.h" />
     <ClInclude Include="..\runtime\NativeErrorPrototype.h" />
     <ClInclude Include="..\runtime\NullGetterFunction.h" />
@@ -1625,6 +1623,10 @@
     <ClInclude Include="..\runtime\StructureRareData.h" />
     <ClInclude Include="..\runtime\StructureRareDataInlines.h" />
     <ClInclude Include="..\runtime\StructureTransitionTable.h" />
+    <ClInclude Include="..\runtime\Symbol.h" />
+    <ClInclude Include="..\runtime\SymbolConstructor.h" />
+    <ClInclude Include="..\runtime\SymbolObject.h" />
+    <ClInclude Include="..\runtime\SymbolPrototype.h" />
     <ClInclude Include="..\runtime\SymbolTable.h" />
     <ClInclude Include="..\runtime\TestRunnerUtils.h" />
     <ClInclude Include="..\runtime\Tracing.h" />

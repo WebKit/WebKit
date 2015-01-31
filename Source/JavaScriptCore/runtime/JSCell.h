@@ -85,6 +85,7 @@ protected:
 public:
     // Querying the type.
     bool isString() const;
+    bool isSymbol() const;
     bool isObject() const;
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;

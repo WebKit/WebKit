@@ -94,9 +94,6 @@
 #include "MapPrototype.h"
 #include "MathObject.h"
 #include "Microtask.h"
-#include "NameConstructor.h"
-#include "NameInstance.h"
-#include "NamePrototype.h"
 #include "NativeErrorConstructor.h"
 #include "NativeErrorPrototype.h"
 #include "NullGetterFunction.h"
@@ -118,6 +115,9 @@
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
+#include "Symbol.h"
+#include "SymbolConstructor.h"
+#include "SymbolPrototype.h"
 #include "VariableWatchpointSetInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
@@ -425,15 +425,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
     putDirectWithoutTransition(vm, Identifier(exec, "console"), consoleObject, DontEnum);
     
-    if (m_experimentsEnabled) {
-        NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(vm, this, m_objectPrototype.get()));
-        m_privateNameStructure.set(vm, this, NameInstance::createStructure(vm, this, privateNamePrototype));
-        
-        JSCell* privateNameConstructor = NameConstructor::create(vm, NameConstructor::createStructure(vm, this, m_functionPrototype.get()), privateNamePrototype);
-        privateNamePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, privateNameConstructor, DontEnum);
-        putDirectWithoutTransition(vm, Identifier(exec, "Name"), privateNameConstructor, DontEnum);
-    }
-    
     resetPrototype(vm, prototype());
 }
 
@@ -695,7 +686,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_functionStructure);
     visitor.append(&thisObject->m_boundFunctionStructure);
     visitor.append(&thisObject->m_namedFunctionStructure);
-    visitor.append(&thisObject->m_privateNameStructure);
+    visitor.append(&thisObject->m_symbolObjectStructure);
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
     visitor.append(&thisObject->m_regExpStructure);
     visitor.append(&thisObject->m_consoleStructure);

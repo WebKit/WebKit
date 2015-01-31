@@ -741,15 +741,6 @@
     <ClCompile Include="..\runtime\MathObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\NameConstructor.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\NameInstance.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\NamePrototype.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\NativeErrorConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -859,6 +850,18 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\StructureIDTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\Symbol.cpp">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClCompile Include="..\runtime\SymbolConstructor.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SymbolObject.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SymbolPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SymbolTable.cpp">
@@ -2759,15 +2762,6 @@
     <ClInclude Include="..\runtime\MathObject.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\NameConstructor.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\NameInstance.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\NamePrototype.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\NativeErrorConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2901,6 +2895,18 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\StructureTransitionTable.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Symbol.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SymbolConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SymbolObject.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SymbolPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SymbolTable.h">
@@ -3249,7 +3255,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpObject.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NamePrototype.lut.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SymbolPrototype.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\CodeBlockSet.h">

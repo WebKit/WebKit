@@ -226,7 +226,8 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
             if (name.isObject()) {
                 if (!asObject(name)->inherits(NumberObject::info()) && !asObject(name)->inherits(StringObject::info()))
                     continue;
-            }
+            } else if (!name.isNumber() && !name.isString())
+                continue;
 
             m_arrayReplacerPropertyNames.add(name.toString(exec)->toIdentifier(exec));
         }

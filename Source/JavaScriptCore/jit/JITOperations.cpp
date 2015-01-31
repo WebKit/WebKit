@@ -159,7 +159,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    Identifier ident = uid->isEmptyUnique() ? Identifier::from(PrivateName(uid)) : Identifier(vm, uid);
+    Identifier ident = uid->isUnique() ? Identifier::from(PrivateName(uid)) : Identifier(vm, uid);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
@@ -466,11 +466,8 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
                 object->methodTable(vm)->putByIndex(object, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         } else
             baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
-    } else if (isName(subscript)) {
-        PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
-        baseValue.put(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
-        Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
+        PropertyName property = subscript.toPropertyKey(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
             baseValue.put(callFrame, property, value, slot);
@@ -483,11 +480,8 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
         baseObject->putDirectIndex(callFrame, i, value);
-    } else if (isName(subscript)) {
-        PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
-        baseObject->putDirect(callFrame->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
-        Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
+        PropertyName property = subscript.toPropertyKey(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
             baseObject->putDirect(callFrame->vm(), property, value, slot);
@@ -1467,10 +1461,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, R
         return baseValue.get(exec, i);
     }
 
-    if (isName(subscript))
-        return baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
-
-    Identifier property = subscript.toString(exec)->toIdentifier(exec);
+    PropertyName property = subscript.toPropertyKey(exec);
     return baseValue.get(exec, property);
 }
 
@@ -1605,10 +1596,8 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
             if (!isJSString(baseValue))
                 ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValDefault));
         }
-    } else if (isName(subscript))
-        result = baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
-    else {
-        Identifier property = subscript.toString(exec)->toIdentifier(exec);
+    } else {
+        PropertyName property = subscript.toPropertyKey(exec);
         result = baseValue.get(exec, property);
     }
 

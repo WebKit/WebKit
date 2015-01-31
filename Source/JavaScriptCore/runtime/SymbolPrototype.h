@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +24,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NameConstructor_h
-#define NameConstructor_h
+#ifndef SymbolPrototype_h
+#define SymbolPrototype_h
 
-#include "InternalFunction.h"
-#include "NameInstance.h"
+#include "Symbol.h"
+#include "SymbolObject.h"
 
 namespace JSC {
 
-class NamePrototype;
-
-class NameConstructor : public InternalFunction {
+// In the ES6 spec, Symbol.prototype object is an ordinary JS object, not one of the symbol wrapper object instance.
+class SymbolPrototype : public JSDestructibleObject {
 public:
-    typedef InternalFunction Base;
+    typedef JSDestructibleObject Base;
 
-    static NameConstructor* create(VM& vm, Structure* structure, NamePrototype* prototype)
+    static SymbolPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
-        NameConstructor* constructor = new (NotNull, allocateCell<NameConstructor>(vm.heap)) NameConstructor(vm, structure);
-        constructor->finishCreation(vm, prototype);
-        return constructor;
+        SymbolPrototype* prototype = new (NotNull, allocateCell<SymbolPrototype>(vm.heap)) SymbolPrototype(vm, structure);
+        prototype->finishCreation(vm);
+        return prototype;
     }
 
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-    { 
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
 protected:
-    void finishCreation(VM&, NamePrototype*);
-    
+    SymbolPrototype(VM&, Structure*);
+    void finishCreation(VM&);
+
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
+
 private:
-    NameConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC
 
-#endif // NameConstructor_h
+#endif // SymbolPrototype_h

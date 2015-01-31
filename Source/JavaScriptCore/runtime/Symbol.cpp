@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "Symbol.h"
+
+#include "Error.h"
+#include "JSCInlines.h"
+#include "SymbolObject.h"
+
+namespace JSC {
+
+const ClassInfo Symbol::s_info = { "symbol", nullptr, nullptr, CREATE_METHOD_TABLE(Symbol) };
+
+Symbol::Symbol(VM& vm)
+    : Base(vm, vm.symbolStructure.get())
+    , m_privateName()
+{
+}
+
+Symbol::Symbol(VM& vm, const String& string)
+    : Base(vm, vm.symbolStructure.get())
+    , m_privateName(string)
+{
+}
+
+Symbol::Symbol(VM& vm, AtomicStringImpl* uid)
+    : Base(vm, vm.symbolStructure.get())
+    , m_privateName(uid)
+{
+}
+
+inline SymbolObject* SymbolObject::create(VM& vm, JSGlobalObject* globalObject, Symbol* symbol)
+{
+    SymbolObject* object = new (NotNull, allocateCell<SymbolObject>(vm.heap)) SymbolObject(vm, globalObject->symbolObjectStructure());
+    object->finishCreation(vm, symbol);
+    return object;
+}
+
+JSValue Symbol::toPrimitive(ExecState*, PreferredPrimitiveType) const
+{
+    return const_cast<Symbol*>(this);
+}
+
+bool Symbol::toBoolean() const
+{
+    return true;
+}
+
+bool Symbol::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
+{
+    result = this;
+    number = toNumber(exec);
+    return true;
+}
+
+JSObject* Symbol::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+{
+    return SymbolObject::create(exec->vm(), globalObject, const_cast<Symbol*>(this));
+}
+
+double Symbol::toNumber(ExecState* exec) const
+{
+    throwTypeError(exec);
+    return 0.0;
+}
+
+void Symbol::destroy(JSCell* cell)
+{
+    static_cast<Symbol*>(cell)->Symbol::~Symbol();
+}
+
+String Symbol::descriptiveString() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("Symbol(");
+    builder.append(privateName().uid());
+    builder.append(')');
+    return builder.toString();
+}
+
+} // namespace JSC

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +24,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NameInstance_h
-#define NameInstance_h
+#ifndef SymbolConstructor_h
+#define SymbolConstructor_h
 
-#include "JSDestructibleObject.h"
-#include "PrivateName.h"
+#include "InternalFunction.h"
+#include "Symbol.h"
 
 namespace JSC {
 
-class NameInstance : public JSDestructibleObject {
+class SymbolPrototype;
+
+class SymbolConstructor : public InternalFunction {
 public:
-    typedef JSDestructibleObject Base;
+    typedef InternalFunction Base;
+
+    static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype)
+    {
+        SymbolConstructor* constructor = new (NotNull, allocateCell<SymbolConstructor>(vm.heap)) SymbolConstructor(vm, structure);
+        constructor->finishCreation(vm, prototype);
+        return constructor;
+    }
 
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(NameInstanceType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-
-    static NameInstance* create(VM& vm, Structure* structure, JSString* nameString)
-    {
-        NameInstance* name = new (NotNull, allocateCell<NameInstance>(vm.heap)) NameInstance(vm, structure, nameString);
-        name->finishCreation(vm);
-        return name;
-    }
-
-    const PrivateName& privateName() { return m_privateName; }
-    JSString* nameString() { return m_nameString.get(); }
 
 protected:
-    static void destroy(JSCell*);
+    void finishCreation(VM&, SymbolPrototype*);
 
-    NameInstance(VM&, Structure*, JSString*);
-
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(inherits(info()));
-    }
-
-    PrivateName m_privateName;
-    WriteBarrier<JSString> m_nameString;
+private:
+    SymbolConstructor(VM&, Structure*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
 };
-
-inline bool isName(JSValue v)
-{
-    return v.isCell() && v.asCell()->type() == NameInstanceType;
-}
 
 } // namespace JSC
 
-#endif // NameInstance_h
+#endif // SymbolConstructor_h

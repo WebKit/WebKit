@@ -60,6 +60,12 @@ MapData::Entry* MapData::find(CallFrame* callFrame, KeyType key)
             return 0;
         return &m_entries[iter->value];
     }
+    if (key.value.isSymbol()) {
+        auto iter = m_symbolKeyedTable.find(asSymbol(key.value)->privateName().uid());
+        if (iter == m_symbolKeyedTable.end())
+            return 0;
+        return &m_entries[iter->value];
+    }
     if (key.value.isCell()) {
         auto iter = m_cellKeyedTable.find(key.value.asCell());
         if (iter == m_cellKeyedTable.end())
@@ -107,6 +113,8 @@ MapData::Entry* MapData::add(CallFrame* callFrame, KeyType key)
 {
     if (key.value.isString())
         return add(callFrame, m_stringKeyedTable, asString(key.value)->value(callFrame).impl(), key);
+    if (key.value.isSymbol())
+        return add(callFrame, m_symbolKeyedTable, asSymbol(key.value)->privateName().uid(), key);
     if (key.value.isCell())
         return add(callFrame, m_cellKeyedTable, key.value.asCell(), key);
     return add(callFrame, m_valueKeyedTable, JSValue::encode(key.value), key);
@@ -128,6 +136,12 @@ bool MapData::remove(CallFrame* callFrame, KeyType key)
             return false;
         location = iter->value;
         m_stringKeyedTable.remove(iter);
+    }  else if (key.value.isSymbol()) {
+        auto iter = m_symbolKeyedTable.find(asSymbol(key.value)->privateName().uid());
+        if (iter == m_symbolKeyedTable.end())
+            return false;
+        location = iter->value;
+        m_symbolKeyedTable.remove(iter);
     } else if (key.value.isCell()) {
         auto iter = m_cellKeyedTable.find(key.value.asCell());
         if (iter == m_cellKeyedTable.end())
@@ -172,6 +186,8 @@ void MapData::replaceAndPackBackingStore(Entry* destination, int32_t newCapacity
     for (auto ptr = m_cellKeyedTable.begin(); ptr != m_cellKeyedTable.end(); ++ptr)
         ptr->value = m_entries[ptr->value].value.get().asInt32();
     for (auto ptr = m_stringKeyedTable.begin(); ptr != m_stringKeyedTable.end(); ++ptr)
+        ptr->value = m_entries[ptr->value].value.get().asInt32();
+    for (auto ptr = m_symbolKeyedTable.begin(); ptr != m_symbolKeyedTable.end(); ++ptr)
         ptr->value = m_entries[ptr->value].value.get().asInt32();
 
     ASSERT((m_size - newEnd) == m_deletedCount);

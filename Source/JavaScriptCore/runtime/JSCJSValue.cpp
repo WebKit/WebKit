@@ -99,8 +99,10 @@ JSValue JSValue::toThisSlowCase(ExecState* exec, ECMAMode ecmaMode) const
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 {
     if (isCell()) {
-        ASSERT(isString());
-        return exec->lexicalGlobalObject()->stringPrototype();
+        if (isString())
+            return exec->lexicalGlobalObject()->stringPrototype();
+        ASSERT(isSymbol());
+        return exec->lexicalGlobalObject()->symbolPrototype();
     }
 
     if (isNumber())
@@ -231,7 +233,7 @@ void JSValue::dumpInContextAssumingStructure(
                     out.print(" (atomic)");
                 if (impl->isAtomic())
                     out.print(" (identifier)");
-                if (impl->isEmptyUnique())
+                if (impl->isUnique())
                     out.print(" (unique)");
             } else
                 out.print(" (unresolved)");
@@ -364,6 +366,10 @@ JSString* JSValue::toStringSlowCase(ExecState* exec) const
         return vm.smallStrings.nullString();
     if (isUndefined())
         return vm.smallStrings.undefinedString();
+    if (isSymbol()) {
+        throwTypeError(exec);
+        return jsEmptyString(exec);
+    }
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);

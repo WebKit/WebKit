@@ -65,6 +65,8 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
         return vm.smallStrings.numberString();
     if (v.isString())
         return vm.smallStrings.stringString();
+    if (v.isSymbol())
+        return vm.smallStrings.symbolString();
     if (v.isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
@@ -89,7 +91,7 @@ bool jsIsObjectType(CallFrame* callFrame, JSValue v)
         return v.isNull();
 
     JSType type = v.asCell()->type();
-    if (type == StringType)
+    if (type == StringType || type == SymbolType)
         return false;
     if (type >= ObjectType) {
         if (asObject(v)->structure(callFrame->vm())->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))

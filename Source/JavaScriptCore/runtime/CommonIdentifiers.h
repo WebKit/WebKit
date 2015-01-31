@@ -52,6 +52,7 @@
     macro(Set)\
     macro(SetIterator)\
     macro(String) \
+    macro(Symbol) \
     macro(SyntaxError) \
     macro(TypeError) \
     macro(URIError) \
@@ -219,8 +220,21 @@
     macro(with) \
     macro(yield)
 
-#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
+    macro(hasInstance) \
+    macro(isConcatSpreadable) \
     macro(iterator) \
+    macro(match) \
+    macro(replace) \
+    macro(search) \
+    macro(species) \
+    macro(split) \
+    macro(toPrimitive) \
+    macro(toStringTag) \
+    macro(unscopable)
+
+#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(iteratorNext) \
     macro(resolve) \
     macro(reject) \

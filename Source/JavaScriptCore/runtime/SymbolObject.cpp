@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,58 +25,32 @@
  */
 
 #include "config.h"
-#include "NamePrototype.h"
+#include "SymbolObject.h"
 
-#include "Error.h"
 #include "JSCInlines.h"
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL privateNameProtoFuncToString(ExecState*);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolObject);
 
-}
+const ClassInfo SymbolObject::s_info = { "Symbol", &JSWrapperObject::s_info, nullptr, CREATE_METHOD_TABLE(SymbolObject) };
 
-#include "NamePrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo NamePrototype::s_info = { "Name", &Base::s_info, &privateNamePrototypeTable, CREATE_METHOD_TABLE(NamePrototype) };
-
-/* Source for NamePrototype.lut.h
-@begin privateNamePrototypeTable
-  toString          privateNameProtoFuncToString         DontEnum|Function 0
-@end
-*/
-
-NamePrototype::NamePrototype(ExecState* exec, Structure* structure)
-    : Base(exec->vm(), structure, jsEmptyString(exec))
+SymbolObject::SymbolObject(VM& vm, Structure* structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 
-void NamePrototype::finishCreation(VM& vm)
+void SymbolObject::finishCreation(VM& vm, Symbol* symbol)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+    setInternalValue(vm, symbol);
 }
 
-bool NamePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+JSValue SymbolObject::defaultValue(const JSObject* object, ExecState*, PreferredPrimitiveType)
 {
-    return getStaticFunctionSlot<Base>(exec, privateNamePrototypeTable, jsCast<NamePrototype*>(object), propertyName, slot);
-}
-
-// ------------------------------ Functions ---------------------------
-
-EncodedJSValue JSC_HOST_CALL privateNameProtoFuncToString(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMTypeError(exec);
-
-    JSObject* thisObject = asObject(thisValue);
-    if (!thisObject->inherits(NameInstance::info()))
-        return throwVMTypeError(exec);
-
-    return JSValue::encode(jsCast<NameInstance*>(thisObject)->nameString());
+    const SymbolObject* symbolObject = jsCast<const SymbolObject*>(object);
+    return symbolObject->internalValue();
 }
 
 } // namespace JSC

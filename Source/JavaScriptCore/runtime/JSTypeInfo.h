@@ -77,7 +77,6 @@ public:
     static bool isObject(JSType type) { return type >= ObjectType; }
     bool isFinalObject() const { return type() == FinalObjectType; }
     bool isNumberObject() const { return type() == NumberObjectType; }
-    bool isName() const { return type() == NameInstanceType; }
 
     unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
     bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }

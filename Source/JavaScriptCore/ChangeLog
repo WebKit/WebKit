@@ -1,3 +1,199 @@
+2015-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=140435
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements ES6 Symbol. In this patch, we don't support
+        Symbol.keyFor, Symbol.for, Object.getOwnPropertySymbols. They will be
+        supported in the subsequent patches.
+
+        Since ES6 Symbol is introduced as new primitive value, we implement
+        Symbol as a derived class from JSCell. And now JSValue accepts Symbol*
+        as a new primitive value.
+
+        Symbol has a *unique* flagged StringImpl* as an `uid`. Which pointer
+        value represents the Symbol's identity. So don't compare Symbol's
+        JSCell pointer value for comparison.
+        This enables re-producing Symbol primitive value from StringImpl* uid
+        by executing`Symbol::create(vm, uid)`. This is needed to produce
+        Symbol primitive values from stored StringImpl* in `Object.getOwnPropertySymbols`.
+
+        And Symbol.[[Description]] is folded into the string value of Symbol's uid.
+        By doing so, we can represent ES6 Symbol without extending current PropertyTable key; StringImpl*.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * builtins/BuiltinNames.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        * interpreter/Interpreter.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::synthesizePrototype):
+        (JSC::JSValue::dumpInContextAssumingStructure):
+        (JSC::JSValue::toStringSlowCase):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isSymbol):
+        (JSC::JSValue::isPrimitive):
+        (JSC::JSValue::toPropertyKey):
+
+        It represents ToPropertyKey abstract operation in the ES6 spec.
+        It cleans up the old implementation's `isName` checks.
+        And to prevent performance regressions in
+            js/regress/fold-get-by-id-to-multi-get-by-offset-rare-int.html
+            js/regress/fold-get-by-id-to-multi-get-by-offset.html
+        we annnotate this function as ALWAYS_INLINE.
+
+        (JSC::JSValue::getPropertySlot):
+        (JSC::JSValue::get):
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        (JSC::JSCell::toPrimitive):
+        (JSC::JSCell::getPrimitiveNumber):
+        (JSC::JSCell::toNumber):
+        (JSC::JSCell::toObject):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isSymbol):
+        (JSC::JSCell::toBoolean):
+        (JSC::JSCell::pureToBoolean):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::symbolPrototype):
+        (JSC::JSGlobalObject::symbolObjectStructure):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSType.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::isName): Deleted.
+        * runtime/MapData.cpp:
+        (JSC::MapData::find):
+        (JSC::MapData::add):
+        (JSC::MapData::remove):
+        (JSC::MapData::replaceAndPackBackingStore):
+        * runtime/MapData.h:
+        (JSC::MapData::clear):
+        * runtime/NameInstance.h: Removed.
+        * runtime/NamePrototype.cpp: Removed.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        (JSC::PrivateName::operator==):
+        (JSC::PrivateName::operator!=):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        (JSC::PropertyName::publicName):
+        * runtime/SmallStrings.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::callStringConstructor):
+
+        In ES6, String constructor accepts Symbol to execute `String(symbol)`.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::prototypeForLookup):
+        * runtime/Symbol.cpp: Added.
+        (JSC::Symbol::Symbol):
+        (JSC::SymbolObject::create):
+        (JSC::Symbol::toPrimitive):
+        (JSC::Symbol::toBoolean):
+        (JSC::Symbol::getPrimitiveNumber):
+        (JSC::Symbol::toObject):
+        (JSC::Symbol::toNumber):
+        (JSC::Symbol::destroy):
+        (JSC::Symbol::descriptiveString):
+        * runtime/Symbol.h: Added.
+        (JSC::Symbol::createStructure):
+        (JSC::Symbol::create):
+        (JSC::Symbol::privateName):
+        (JSC::Symbol::finishCreation):
+        (JSC::asSymbol):
+        * runtime/SymbolConstructor.cpp: Renamed from Source/JavaScriptCore/runtime/NameConstructor.cpp.
+        (JSC::SymbolConstructor::SymbolConstructor):
+        (JSC::SymbolConstructor::finishCreation):
+        (JSC::callSymbol):
+        (JSC::SymbolConstructor::getConstructData):
+        (JSC::SymbolConstructor::getCallData):
+        * runtime/SymbolConstructor.h: Renamed from Source/JavaScriptCore/runtime/NameConstructor.h.
+        (JSC::SymbolConstructor::create):
+        (JSC::SymbolConstructor::createStructure):
+        * runtime/SymbolObject.cpp: Renamed from Source/JavaScriptCore/runtime/NameInstance.cpp.
+        (JSC::SymbolObject::SymbolObject):
+        (JSC::SymbolObject::finishCreation):
+        (JSC::SymbolObject::defaultValue):
+
+        Now JSC doesn't support @@toPrimitive. So instead of it, we implement
+        Symbol.prototype[@@toPrimitive] as ES5 Symbol.[[DefaultValue]].
+
+        * runtime/SymbolObject.h: Added.
+        (JSC::SymbolObject::create):
+        (JSC::SymbolObject::internalValue):
+        (JSC::SymbolObject::createStructure):
+        * runtime/SymbolPrototype.cpp: Added.
+        (JSC::SymbolPrototype::SymbolPrototype):
+        (JSC::SymbolPrototype::finishCreation):
+        (JSC::SymbolPrototype::getOwnPropertySlot):
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+        * runtime/SymbolPrototype.h: Renamed from Source/JavaScriptCore/runtime/NamePrototype.h.
+        (JSC::SymbolPrototype::create):
+        (JSC::SymbolPrototype::createStructure):
+
+        SymbolPrototype object is ordinary JS object. Not wrapper object of Symbol.
+        It is tested in js/symbol-prototype-is-ordinary-object.html.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2015-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

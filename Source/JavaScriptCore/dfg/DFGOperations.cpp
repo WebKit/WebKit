@@ -48,11 +48,11 @@
 #include "JSLexicalEnvironment.h"
 #include "VM.h"
 #include "JSNameScope.h"
-#include "NameInstance.h"
 #include "ObjectConstructor.h"
 #include "JSCInlines.h"
 #include "Repatch.h"
 #include "StringConstructor.h"
+#include "Symbol.h"
 #include "TypeProfilerLog.h"
 #include "TypedArrayInlines.h"
 #include <wtf/InlineASM.h>
@@ -110,25 +110,15 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
         }
     }
 
-    if (isName(property)) {
-        PutPropertySlot slot(baseValue, strict);
-        if (direct) {
-            RELEASE_ASSERT(baseValue.isObject());
-            asObject(baseValue)->putDirect(*vm, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
-        } else
-            baseValue.put(exec, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
-        return;
-    }
-
     // Don't put to an object if toString throws an exception.
-    Identifier ident = property.toString(exec)->toIdentifier(exec);
+    PropertyName propertyName = property.toPropertyKey(exec);
     if (!vm->exception()) {
         PutPropertySlot slot(baseValue, strict);
         if (direct) {
             RELEASE_ASSERT(baseValue.isObject());
-            asObject(baseValue)->putDirect(*vm, ident, value, slot);
+            asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
         } else
-            baseValue.put(exec, ident, value, slot);
+            baseValue.put(exec, propertyName, value, slot);
     }
 }
 
@@ -306,11 +296,8 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
-    if (isName(property))
-        return JSValue::encode(baseValue.get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
-
-    Identifier ident = property.toString(exec)->toIdentifier(exec);
-    return JSValue::encode(baseValue.get(exec, ident));
+    PropertyName propertyName = property.toPropertyKey(exec);
+    return JSValue::encode(baseValue.get(exec, propertyName));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base, EncodedJSValue encodedProperty)
@@ -337,11 +324,8 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         }
     }
 
-    if (isName(property))
-        return JSValue::encode(JSValue(base).get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
-
-    Identifier ident = property.toString(exec)->toIdentifier(exec);
-    return JSValue::encode(JSValue(base).get(exec, ident));
+    PropertyName propertyName = property.toPropertyKey(exec);
+    return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
 
 ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int32_t index)

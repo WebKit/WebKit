@@ -33,16 +33,25 @@ namespace JSC {
 class PrivateName {
 public:
     PrivateName()
-        : m_impl(StringImpl::createEmptyUnique())
+        : m_impl(StringImpl::createUniqueEmpty())
     {
+        ASSERT(m_impl->isUnique());
+    }
+    PrivateName(const String& description)
+        : m_impl(StringImpl::createUnique(description.impl()))
+    {
+        ASSERT(m_impl->isUnique());
     }
     explicit PrivateName(StringImpl* uid)
         : m_impl(uid)
     {
-        ASSERT(m_impl->isEmptyUnique());
+        ASSERT(m_impl->isUnique());
     }
 
     AtomicStringImpl* uid() const { return static_cast<AtomicStringImpl*>(m_impl.get()); }
+
+    bool operator==(const PrivateName& other) const { return uid() == other.uid(); }
+    bool operator!=(const PrivateName& other) const { return uid() != other.uid(); }
 
 private:
     RefPtr<StringImpl> m_impl;

@@ -110,7 +110,10 @@ static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())
         return JSValue::encode(jsEmptyString(exec));
-    return JSValue::encode(exec->uncheckedArgument(0).toString(exec));
+    JSValue argument = exec->uncheckedArgument(0);
+    if (argument.isSymbol())
+        return JSValue::encode(jsString(exec, asSymbol(argument)->descriptiveString()));
+    return JSValue::encode(argument.toString(exec));
 }
 
 CallType StringConstructor::getCallData(JSCell*, CallData& callData)

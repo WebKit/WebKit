@@ -1,3 +1,42 @@
+2015-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=140435
+
+        Reviewed by Geoffrey Garen.
+
+        * js/script-tests/symbol-abstract-equality-comparison.js: Added.
+        (Pair):
+        (relationalOperators.forEach):
+        * js/script-tests/symbol-abstract-relational-comparison.js: Added.
+        (relationalOperators.forEach):
+        * js/script-tests/symbol-in-map.js: Added.
+        (set shouldBe):
+        * js/script-tests/symbol-object.js: Added.
+        * js/script-tests/symbol-prototype-is-ordinary-object.js: Added.
+        * js/script-tests/symbol-strict-equality-comparison.js: Added.
+        (Pair):
+        (relationalOperators.forEach):
+        * js/script-tests/symbol-tostring.js: Added.
+        * js/script-tests/symbols.js: Renamed from LayoutTests/js/script-tests/names.js.
+        (forIn):
+        * js/symbol-abstract-equality-comparison-expected.txt: Added.
+        * js/symbol-abstract-equality-comparison.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-abstract-relational-comparison-expected.txt: Added.
+        * js/symbol-abstract-relational-comparison.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-in-map-expected.txt: Added.
+        * js/symbol-in-map.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-object-expected.txt: Added.
+        * js/symbol-object.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-prototype-is-ordinary-object-expected.txt: Added.
+        * js/symbol-prototype-is-ordinary-object.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-strict-equality-comparison-expected.txt: Added.
+        * js/symbol-strict-equality-comparison.html: Copied from LayoutTests/js/names.html.
+        * js/symbol-tostring-expected.txt: Added.
+        * js/symbol-tostring.html: Copied from LayoutTests/js/names.html.
+        * js/symbols-expected.txt: Renamed from LayoutTests/js/names-expected.txt.
+        * js/symbols.html: Renamed from LayoutTests/js/names.html.
+
 2015-01-30  Dariusz Frankiewicz  <d.frankiewic@samsung.com>
 
         [EFL] Gardening: update some accessibility tests as failed

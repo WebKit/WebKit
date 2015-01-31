@@ -280,7 +280,7 @@ private:
         // We expect m_length to be initialized to 0 as we use it
         // to represent a null terminated buffer.
         , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(hashAndFlagsForEmptyUnique())
+        , m_hashAndFlags(hashAndFlagsForUnique(s_hashFlag8BitBuffer | BufferInternal))
     {
         ASSERT(m_data8);
 
@@ -378,10 +378,12 @@ public:
         return constructInternal<T>(resultImpl, length);
     }
 
-    static Ref<StringImpl> createEmptyUnique()
+    ALWAYS_INLINE static Ref<StringImpl> createUniqueEmpty()
     {
         return adoptRef(*new StringImpl(CreateEmptyUnique));
     }
+
+    WTF_EXPORT_STRING_API static Ref<StringImpl> createUnique(PassRefPtr<StringImpl> rep);
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
     // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),
@@ -392,6 +394,7 @@ public:
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static unsigned flagIsAtomic() { return s_hashFlagIsAtomic; }
+    static unsigned flagIsUnique() { return s_hashFlagIsUnique; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
@@ -451,16 +454,13 @@ public:
 
     WTF_EXPORT_STRING_API size_t sizeInBytes() const;
 
-    bool isEmptyUnique() const
-    {
-        return !length() && !isStatic();
-    }
+    bool isUnique() const { return m_hashAndFlags & s_hashFlagIsUnique; }
 
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagIsAtomic; }
     void setIsAtomic(bool isAtomic)
     {
         ASSERT(!isStatic());
-        ASSERT(!isEmptyUnique());
+        ASSERT(!isUnique());
         if (isAtomic)
             m_hashAndFlags |= s_hashFlagIsAtomic;
         else
@@ -772,17 +772,18 @@ private:
     template <typename CharType> static Ref<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
-    WTF_EXPORT_PRIVATE unsigned hashAndFlagsForEmptyUnique();
+    WTF_EXPORT_PRIVATE static unsigned hashAndFlagsForUnique(unsigned flags);
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;
     static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
-    // The bottom 6 bits in the hash are flags.
-    static const unsigned s_flagCount = 6;
+    // The bottom 7 bits in the hash are flags.
+    static const unsigned s_flagCount = 7;
     static const unsigned s_flagMask = (1u << s_flagCount) - 1;
     COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
 
+    static const unsigned s_hashFlagIsUnique = 1u << 6;
     static const unsigned s_hashFlag8BitBuffer = 1u << 5;
     static const unsigned s_hashFlagIsAtomic = 1u << 4;
     static const unsigned s_hashFlagDidReportCost = 1u << 3;

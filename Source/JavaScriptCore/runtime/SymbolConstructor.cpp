@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,45 +25,52 @@
  */
 
 #include "config.h"
-#include "NameConstructor.h"
+#include "SymbolConstructor.h"
 
-#include "JSGlobalObject.h"
-#include "NamePrototype.h"
+#include "Error.h"
 #include "JSCInlines.h"
+#include "JSGlobalObject.h"
+#include "SymbolPrototype.h"
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NameConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolConstructor);
 
-const ClassInfo NameConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(NameConstructor) };
+const ClassInfo SymbolConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(SymbolConstructor) };
 
-NameConstructor::NameConstructor(VM& vm, Structure* structure)
+SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure)
 {
 }
 
-void NameConstructor::finishCreation(VM& vm, NamePrototype* prototype)
+#define INITIALIZE_WELL_KNOWN_SYMBOLS(name) \
+    putDirectWithoutTransition(vm, Identifier(&vm, #name), Symbol::create(vm, vm.propertyNames->name##PrivateName.impl()), DontEnum | DontDelete | ReadOnly);
+
+void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {
     Base::finishCreation(vm, prototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOLS)
 }
 
-static EncodedJSValue JSC_HOST_CALL constructPrivateName(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)
 {
-    JSValue publicName = exec->argument(0);
-    return JSValue::encode(NameInstance::create(exec->vm(), exec->lexicalGlobalObject()->privateNameStructure(), publicName.toString(exec)));
+    JSValue description = exec->argument(0);
+    if (description.isUndefined())
+        return JSValue::encode(Symbol::create(exec->vm()));
+    return JSValue::encode(Symbol::create(exec, description.toString(exec)));
 }
 
-ConstructType NameConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType SymbolConstructor::getConstructData(JSCell*, ConstructData&)
 {
-    constructData.native.function = constructPrivateName;
-    return ConstructTypeHost;
+    return ConstructTypeNone;
 }
 
-CallType NameConstructor::getCallData(JSCell*, CallData& callData)
+CallType SymbolConstructor::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = constructPrivateName;
+    callData.native.function = callSymbol;
     return CallTypeHost;
 }
 

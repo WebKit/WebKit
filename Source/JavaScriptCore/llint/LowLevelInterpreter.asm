@@ -153,8 +153,8 @@ const SlowPutArrayStorageShape = 30
 
 # Type constants.
 const StringType = 6
-const ObjectType = 17
-const FinalObjectType = 18
+const ObjectType = 18
+const FinalObjectType = 19
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1

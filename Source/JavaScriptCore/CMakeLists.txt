@@ -508,9 +508,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/MapPrototype.cpp
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp
-    runtime/NameConstructor.cpp
-    runtime/NameInstance.cpp
-    runtime/NamePrototype.cpp
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
     runtime/NullGetterFunction.cpp
@@ -551,6 +548,10 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/StructureChain.cpp
     runtime/StructureIDTable.cpp
     runtime/StructureRareData.cpp
+    runtime/Symbol.cpp
+    runtime/SymbolObject.cpp
+    runtime/SymbolPrototype.cpp
+    runtime/SymbolConstructor.cpp
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp
     runtime/TypeLocationCache.cpp
@@ -584,7 +585,6 @@ set(JavaScriptCore_LUT_FILES
     runtime/JSONObject.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromisePrototype.cpp
-    runtime/NamePrototype.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp
@@ -592,6 +592,7 @@ set(JavaScriptCore_LUT_FILES
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
     runtime/StringConstructor.cpp
+    runtime/SymbolPrototype.cpp
 )
 
 set(JavaScriptCore_LIBRARIES

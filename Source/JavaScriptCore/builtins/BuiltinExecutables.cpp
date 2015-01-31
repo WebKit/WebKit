@@ -75,7 +75,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
         
         if (closedVariable == m_vm.propertyNames->undefinedKeyword.impl())
             continue;
-        RELEASE_ASSERT(closedVariable->isEmptyUnique());
+        RELEASE_ASSERT(closedVariable->isUnique());
     }
     body->overrideName(name);
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, UnlinkedBuiltinFunction);

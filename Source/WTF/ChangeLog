@@ -1,3 +1,45 @@
+2015-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=140435
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce new unique string mechanizm into StringImpl.
+        It is used for implementing Symbol which holds a [[Description]] value.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addWithStringTableProvider):
+
+        Previously, we checked `isAtomic()` or `!length()`. This guard can filter out EmptyUnique.
+        But now, we introduced new unique StringImpl. Since it has an actual string value, we need to check `isUnique()`.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createUnique):
+
+        In createUnique, we leverage Substring mechanizm to produce a new unique
+        string from an existing string.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createUniqueEmpty):
+        (WTF::StringImpl::flagIsUnique):
+        (WTF::StringImpl::isUnique):
+        (WTF::StringImpl::setIsAtomic):
+        (WTF::StringImpl::createEmptyUnique): Deleted.
+        (WTF::StringImpl::isEmptyUnique): Deleted.
+
+        Instead of EmptyUnique, we introduced new flag to StringImpl, `isUnique`.
+        While EmptyUnique cannot hold any string values except for empty string,
+        the unique StringImpl can hold any String values.
+        We fold the Symbol's descriptiveString value here.
+
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashAndFlagsForUnique):
+        (WTF::StringImpl::hashAndFlagsForEmptyUnique): Deleted.
+
 2015-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

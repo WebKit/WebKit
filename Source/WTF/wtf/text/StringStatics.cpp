@@ -47,17 +47,18 @@ StringImpl* StringImpl::empty()
     return &emptyString.get();
 }
 
-// Set the hash early, so that all empty unique StringImpls have a hash,
+// Set the hash early, so that all unique StringImpls have a hash,
 // and don't use the normal hashing algorithm - the unique nature of these
 // keys means that we don't need them to match any other string (in fact,
 // that's exactly the oposite of what we want!), and the normal hash would
 // lead to lots of conflicts.
-unsigned StringImpl::hashAndFlagsForEmptyUnique()
+unsigned StringImpl::hashAndFlagsForUnique(unsigned flags)
 {
-    static unsigned s_nextHashAndFlagsForEmptyUnique = BufferInternal | s_hashFlag8BitBuffer | s_hashFlagIsAtomic;
-    s_nextHashAndFlagsForEmptyUnique += 1 << s_flagCount;
-    s_nextHashAndFlagsForEmptyUnique |= 1 << 31;
-    return s_nextHashAndFlagsForEmptyUnique;
+    static unsigned s_nextHashAndFlagsForUnique = 0;
+    s_nextHashAndFlagsForUnique += 1 << s_flagCount;
+    s_nextHashAndFlagsForUnique |= 1 << 31;
+    unsigned flagsForUnique = (flags & s_flagMask) | s_hashFlagIsAtomic | s_hashFlagIsUnique;
+    return s_nextHashAndFlagsForUnique | flagsForUnique;
 }
 
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)

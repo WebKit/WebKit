@@ -264,6 +264,7 @@ public:
     Strong<Structure> programExecutableStructure;
     Strong<Structure> functionExecutableStructure;
     Strong<Structure> regExpStructure;
+    Strong<Structure> symbolStructure;
     Strong<Structure> symbolTableStructure;
     Strong<Structure> structureChainStructure;
     Strong<Structure> sparseArrayValueMapStructure;

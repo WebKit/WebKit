@@ -122,6 +122,8 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return exec->vm().smallStrings.booleanString();
     if (value.isNumber())
         return exec->vm().smallStrings.numberString();
+    if (value.isSymbol())
+        return exec->vm().smallStrings.symbolString();
 
     JSObject* object = asObject(value);
     if (object && object->isErrorInstance())

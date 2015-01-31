@@ -1,5 +1,5 @@
 description(
-"This tests an early experimental implementation of ES6-esque private names."
+"This tests an early experimental implementation of ES6-esque Symbols."
 );
 
 function forIn(o)
@@ -10,7 +10,7 @@ function forIn(o)
     return a;
 }
 
-var prop = Name("prop");
+var prop = Symbol("prop");
 var o = {};
 
 shouldBeFalse("prop in o");

@@ -48,7 +48,6 @@ all : \
     JSPromiseConstructor.lut.h \
     KeywordLookup.h \
     Lexer.lut.h \
-    NamePrototype.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
     ObjectConstructor.lut.h \
@@ -57,6 +56,7 @@ all : \
     RegExpJitTables.h \
     RegExpObject.lut.h \
     StringConstructor.lut.h \
+    SymbolPrototype.lut.h \
     udis86_itab.h \
     Bytecodes.h \
     InitBytecodes.asm \

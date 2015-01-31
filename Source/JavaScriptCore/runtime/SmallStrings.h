@@ -38,6 +38,7 @@
     macro(object) \
     macro(undefined) \
     macro(string) \
+    macro(symbol) \
     macro(true)
 
 namespace WTF {

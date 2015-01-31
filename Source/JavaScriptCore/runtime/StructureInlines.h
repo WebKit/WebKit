@@ -168,6 +168,8 @@ inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
 {
     if (isObject())
         return m_prototype.get();
+    if (typeInfo().type() == SymbolType)
+        return globalObject->symbolPrototype();
 
     ASSERT(typeInfo().type() == StringType);
     return globalObject->stringPrototype();

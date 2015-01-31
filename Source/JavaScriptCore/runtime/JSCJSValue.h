@@ -217,6 +217,7 @@ public:
     bool isMachineInt() const;
     bool isNumber() const;
     bool isString() const;
+    bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
@@ -242,6 +243,7 @@ public:
     // been set in the ExecState already.
     double toNumber(ExecState*) const;
     JSString* toString(ExecState*) const;
+    PropertyName toPropertyKey(ExecState*) const;
     WTF::String toWTFString(ExecState*) const;
     WTF::String toWTFStringInline(ExecState*) const;
     JSObject* toObject(ExecState*) const;

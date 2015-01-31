@@ -932,6 +932,14 @@
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
 		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
 		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		705B41AB1A6E501E00716757 /* Symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A31A6E501E00716757 /* Symbol.cpp */; };
+		705B41AC1A6E501E00716757 /* Symbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A41A6E501E00716757 /* Symbol.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		705B41AD1A6E501E00716757 /* SymbolConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A51A6E501E00716757 /* SymbolConstructor.cpp */; };
+		705B41AE1A6E501E00716757 /* SymbolConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A61A6E501E00716757 /* SymbolConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		705B41AF1A6E501E00716757 /* SymbolObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A71A6E501E00716757 /* SymbolObject.cpp */; };
+		705B41B01A6E501E00716757 /* SymbolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A81A6E501E00716757 /* SymbolObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A91A6E501E00716757 /* SymbolPrototype.cpp */; };
+		705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41AA1A6E501E00716757 /* SymbolPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CD2186F8A9300955C24 /* JSPromiseFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */; };
 		7C008CD3186F8A9300955C24 /* JSPromiseFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */; };
@@ -1017,12 +1025,6 @@
 		86E3C61C167BABEE006D760A /* JSVirtualMachine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E3C610167BAB87006D760A /* JSVirtualMachine.mm */; };
 		86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
-		86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2F91560F036008E9222 /* NameConstructor.cpp */; };
-		86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FA1560F036008E9222 /* NameConstructor.h */; };
-		86EBF3011560F06A008E9222 /* NameInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2FB1560F036008E9222 /* NameInstance.cpp */; };
-		86EBF3021560F06A008E9222 /* NameInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FC1560F036008E9222 /* NameInstance.h */; };
-		86EBF3031560F06A008E9222 /* NamePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2FD1560F036008E9222 /* NamePrototype.cpp */; };
-		86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FE1560F036008E9222 /* NamePrototype.h */; };
 		86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */; };
 		86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2599,6 +2601,14 @@
 		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
+		705B41A31A6E501E00716757 /* Symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Symbol.cpp; sourceTree = "<group>"; };
+		705B41A41A6E501E00716757 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
+		705B41A51A6E501E00716757 /* SymbolConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolConstructor.cpp; sourceTree = "<group>"; };
+		705B41A61A6E501E00716757 /* SymbolConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolConstructor.h; sourceTree = "<group>"; };
+		705B41A71A6E501E00716757 /* SymbolObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolObject.cpp; sourceTree = "<group>"; };
+		705B41A81A6E501E00716757 /* SymbolObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolObject.h; sourceTree = "<group>"; };
+		705B41A91A6E501E00716757 /* SymbolPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolPrototype.cpp; sourceTree = "<group>"; };
+		705B41AA1A6E501E00716757 /* SymbolPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.h; sourceTree = "<group>"; };
 		7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = JSPromiseFunctions.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseFunctions.h; sourceTree = "<group>"; };
 		7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseDeferred.cpp; sourceTree = "<group>"; };
@@ -2696,12 +2706,6 @@
 		86E3C610167BAB87006D760A /* JSVirtualMachine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSVirtualMachine.mm; sourceTree = "<group>"; };
 		86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVirtualMachineInternal.h; sourceTree = "<group>"; };
 		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
-		86EBF2F91560F036008E9222 /* NameConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameConstructor.cpp; sourceTree = "<group>"; };
-		86EBF2FA1560F036008E9222 /* NameConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameConstructor.h; sourceTree = "<group>"; };
-		86EBF2FB1560F036008E9222 /* NameInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameInstance.cpp; sourceTree = "<group>"; };
-		86EBF2FC1560F036008E9222 /* NameInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameInstance.h; sourceTree = "<group>"; };
-		86EBF2FD1560F036008E9222 /* NamePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamePrototype.cpp; sourceTree = "<group>"; };
-		86EBF2FE1560F036008E9222 /* NamePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamePrototype.h; sourceTree = "<group>"; };
 		86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGByteCodeParser.cpp; path = dfg/DFGByteCodeParser.cpp; sourceTree = "<group>"; };
 		86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeParser.h; path = dfg/DFGByteCodeParser.h; sourceTree = "<group>"; };
 		86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGenerationInfo.h; path = dfg/DFGGenerationInfo.h; sourceTree = "<group>"; };
@@ -4440,12 +4444,6 @@
 				90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */,
 				90213E3C123A40C200D422F3 /* MemoryStatistics.h */,
 				7C008CE5187631B600955C24 /* Microtask.h */,
-				86EBF2F91560F036008E9222 /* NameConstructor.cpp */,
-				86EBF2FA1560F036008E9222 /* NameConstructor.h */,
-				86EBF2FB1560F036008E9222 /* NameInstance.cpp */,
-				86EBF2FC1560F036008E9222 /* NameInstance.h */,
-				86EBF2FD1560F036008E9222 /* NamePrototype.cpp */,
-				86EBF2FE1560F036008E9222 /* NamePrototype.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
 				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
 				BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */,
@@ -4543,6 +4541,14 @@
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
 				C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */,
 				BC9041470EB9250900FE26FA /* StructureTransitionTable.h */,
+				705B41A31A6E501E00716757 /* Symbol.cpp */,
+				705B41A41A6E501E00716757 /* Symbol.h */,
+				705B41A51A6E501E00716757 /* SymbolConstructor.cpp */,
+				705B41A61A6E501E00716757 /* SymbolConstructor.h */,
+				705B41A71A6E501E00716757 /* SymbolObject.cpp */,
+				705B41A81A6E501E00716757 /* SymbolObject.h */,
+				705B41A91A6E501E00716757 /* SymbolPrototype.cpp */,
+				705B41AA1A6E501E00716757 /* SymbolPrototype.h */,
 				0F919D2715856770004A4E7D /* SymbolTable.cpp */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				0FA2C17917D7CF84009D015F /* TestRunnerUtils.cpp */,
@@ -6053,9 +6059,6 @@
 				0F3D0BBD194A414300FC9CF9 /* ConstantStructureCheck.h in Headers */,
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
-				86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */,
-				86EBF3021560F06A008E9222 /* NameInstance.h in Headers */,
-				86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */,
@@ -6214,6 +6217,10 @@
 				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
 				C2DF44301707AC0100A5CA96 /* SuperRegion.h in Headers */,
+				705B41AC1A6E501E00716757 /* Symbol.h in Headers */,
+				705B41AE1A6E501E00716757 /* SymbolConstructor.h in Headers */,
+				705B41B01A6E501E00716757 /* SymbolObject.h in Headers */,
+				705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */,
 				BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */,
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
 				0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */,
@@ -7180,9 +7187,6 @@
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
-				86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */,
-				86EBF3011560F06A008E9222 /* NameInstance.cpp in Sources */,
-				86EBF3031560F06A008E9222 /* NamePrototype.cpp in Sources */,
 				14469DE0107EC7E700650446 /* NativeErrorConstructor.cpp in Sources */,
 				14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */,
 				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
@@ -7283,6 +7287,10 @@
 				0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				C2DF442F1707AC0100A5CA96 /* SuperRegion.cpp in Sources */,
+				705B41AB1A6E501E00716757 /* Symbol.cpp in Sources */,
+				705B41AD1A6E501E00716757 /* SymbolConstructor.cpp in Sources */,
+				705B41AF1A6E501E00716757 /* SymbolObject.cpp in Sources */,
+				705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */,
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
 				0FC314131814559100033232 /* TempRegisterSet.cpp in Sources */,
 				0FA2C17B17D7CF84009D015F /* TestRunnerUtils.cpp in Sources */,

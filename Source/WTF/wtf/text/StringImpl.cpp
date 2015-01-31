@@ -109,7 +109,7 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtomic() && m_length)
+    if (isAtomic() && length() && !isUnique())
         AtomicString::remove(this);
 
     BufferOwnership ownership = bufferOwnership();
@@ -284,6 +284,16 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
     if (length > std::numeric_limits<unsigned>::max())
         CRASH();
     return create(string, length);
+}
+
+Ref<StringImpl> StringImpl::createUnique(PassRefPtr<StringImpl> rep)
+{
+    unsigned length = rep->length();
+    if (!length)
+        return createUniqueEmpty();
+    Ref<StringImpl> string = createSubstringSharingImpl(rep, 0, length);
+    string->m_hashAndFlags = hashAndFlagsForUnique(string->m_hashAndFlags);
+    return string;
 }
 
 bool StringImpl::containsOnlyWhitespace()

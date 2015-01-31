@@ -112,6 +112,7 @@ private:
     typedef HashMap<JSCell*, int32_t, typename WTF::DefaultHash<JSCell*>::Hash, WTF::HashTraits<JSCell*>, IndexTraits> CellKeyedMap;
     typedef HashMap<EncodedJSValue, int32_t, EncodedJSValueHash, EncodedJSValueHashTraits, IndexTraits> ValueKeyedMap;
     typedef HashMap<StringImpl*, int32_t, typename WTF::DefaultHash<StringImpl*>::Hash, WTF::HashTraits<StringImpl*>, IndexTraits> StringKeyedMap;
+    typedef HashMap<AtomicStringImpl*, int32_t, typename WTF::DefaultHash<AtomicStringImpl*>::Hash, WTF::HashTraits<AtomicStringImpl*>, IndexTraits> SymbolKeyedMap;
 
     size_t capacityInBytes() { return m_capacity * sizeof(Entry); }
 
@@ -134,6 +135,7 @@ private:
     CellKeyedMap m_cellKeyedTable;
     ValueKeyedMap m_valueKeyedTable;
     StringKeyedMap m_stringKeyedTable;
+    SymbolKeyedMap m_symbolKeyedTable;
     int32_t m_capacity;
     int32_t m_size;
     int32_t m_deletedCount;
@@ -146,6 +148,7 @@ ALWAYS_INLINE void MapData::clear()
     m_cellKeyedTable.clear();
     m_valueKeyedTable.clear();
     m_stringKeyedTable.clear();
+    m_symbolKeyedTable.clear();
     m_capacity = 0;
     m_size = 0;
     m_deletedCount = 0;

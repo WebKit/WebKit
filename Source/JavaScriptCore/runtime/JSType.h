@@ -33,6 +33,7 @@ enum JSType : uint8_t {
     // The CellType value must come before any JSType that is a JSCell.
     CellType,
     StringType,
+    SymbolType,
 
     GetterSetterType,
     CustomGetterSetterType,
@@ -52,7 +53,6 @@ enum JSType : uint8_t {
     FinalObjectType,
     JSCalleeType,
     JSFunctionType,
-    NameInstanceType,
     NumberObjectType,
     ErrorInstanceType,
     PureForwardingProxyType,

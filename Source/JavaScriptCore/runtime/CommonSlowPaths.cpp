@@ -486,11 +486,9 @@ SLOW_PATH_DECL(slow_path_del_by_val)
     uint32_t i;
     if (subscript.getUInt32(i))
         couldDelete = baseObject->methodTable()->deletePropertyByIndex(baseObject, exec, i);
-    else if (isName(subscript))
-        couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
     else {
         CHECK_EXCEPTION();
-        Identifier property = subscript.toString(exec)->toIdentifier(exec);
+        PropertyName property = subscript.toPropertyKey(exec);
         CHECK_EXCEPTION();
         couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, property);
     }
@@ -575,7 +573,7 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
     JSValue baseValue = OP_C(2).jsValue();
     JSValue property = OP(3).jsValue();
     ASSERT(property.isString());
-    RETURN(baseValue.get(exec, property.toString(exec)->toIdentifier(exec)));
+    RETURN(baseValue.get(exec, property.toPropertyKey(exec)));
 }
 
 SLOW_PATH_DECL(slow_path_get_structure_property_enumerator)

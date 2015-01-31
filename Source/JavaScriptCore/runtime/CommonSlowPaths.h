@@ -30,8 +30,8 @@
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
 #include "JSStackInlines.h"
-#include "NameInstance.h"
 #include "StackAlignment.h"
+#include "Symbol.h"
 #include "VM.h"
 #include <wtf/StdLibExtras.h>
 
@@ -82,10 +82,7 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     if (propName.getUInt32(i))
         return baseObj->hasProperty(exec, i);
 
-    if (isName(propName))
-        return baseObj->hasProperty(exec, jsCast<NameInstance*>(propName.asCell())->privateName());
-
-    Identifier property = propName.toString(exec)->toIdentifier(exec);
+    PropertyName property = propName.toPropertyKey(exec);
     if (exec->vm().exception())
         return false;
     return baseObj->hasProperty(exec, property);

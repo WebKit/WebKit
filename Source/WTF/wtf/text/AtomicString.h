@@ -184,7 +184,7 @@ public:
     ALWAYS_INLINE static RefPtr<StringImpl> add(StringImpl* string)
     {
         if (!string || string->isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string || !string->length() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+            ASSERT_WITH_MESSAGE(!string || !string->length() || string->isUnique() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
             return string;
         }
         return addSlowCase(*string);
@@ -198,7 +198,7 @@ public:
     ALWAYS_INLINE static RefPtr<StringImpl> addWithStringTableProvider(StringTableProvider& stringTableProvider, StringImpl* string)
     {
         if (!string || string->isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string || !string->length() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+            ASSERT_WITH_MESSAGE(!string || !string->length() || string->isUnique() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
             return string;
         }
         return addSlowCase(*stringTableProvider.atomicStringTable(), *string);

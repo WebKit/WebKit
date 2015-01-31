@@ -35,6 +35,7 @@
 #include "JSString.h"
 #include "MarkedBlock.h"
 #include "Structure.h"
+#include "Symbol.h"
 #include <wtf/CompilationThread.h>
 
 namespace JSC {
@@ -164,6 +165,11 @@ inline bool JSCell::isString() const
     return m_type == StringType;
 }
 
+inline bool JSCell::isSymbol() const
+{
+    return m_type == SymbolType;
+}
+
 inline bool JSCell::isGetterSetter() const
 {
     return m_type == GetterSetterType;
@@ -247,15 +253,19 @@ inline const ClassInfo* JSCell::classInfo() const
 
 inline bool JSCell::toBoolean(ExecState* exec) const
 {
-    if (isString()) 
+    if (isString())
         return static_cast<const JSString*>(this)->toBoolean();
+    if (isSymbol())
+        return static_cast<const Symbol*>(this)->toBoolean();
     return !structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
 }
 
 inline TriState JSCell::pureToBoolean() const
 {
-    if (isString()) 
+    if (isString())
         return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+    if (isSymbol())
+        return static_cast<const Symbol*>(this)->toBoolean() ? TrueTriState : FalseTriState;
     return MixedTriState;
 }
 

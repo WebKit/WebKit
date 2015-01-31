@@ -35,6 +35,7 @@
 #include "StringPrototype.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include "SymbolPrototype.h"
 #include "VM.h"
 #include "Watchpoint.h"
 #include <JavaScriptCore/JSBase.h>
@@ -91,6 +92,7 @@ struct HashTable;
     macro(Map, map, map, JSMap, Map) \
     macro(Date, date, date, DateInstance, Date) \
     macro(String, string, stringObject, StringObject, String) \
+    macro(Symbol, symbol, symbolObject, SymbolObject, Symbol) \
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean) \
     macro(Number, number, numberObject, NumberObject, Number) \
     macro(Error, error, error, ErrorInstance, Error) \
@@ -393,6 +395,7 @@ public:
     ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
     BooleanPrototype* booleanPrototype() const { return m_booleanPrototype.get(); }
     StringPrototype* stringPrototype() const { return m_stringPrototype.get(); }
+    SymbolPrototype* symbolPrototype() const { return m_symbolPrototype.get(); }
     NumberPrototype* numberPrototype() const { return m_numberPrototype.get(); }
     DatePrototype* datePrototype() const { return m_datePrototype.get(); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
@@ -451,6 +454,7 @@ public:
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+    Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultStructure() const { return m_iteratorResultStructure.get(); }
     static ptrdiff_t iteratorResultStructureOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_iteratorResultStructure); }
 
