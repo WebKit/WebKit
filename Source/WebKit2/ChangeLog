@@ -1,3 +1,31 @@
+2015-01-31  Antti Koivisto  <antti@apple.com>
+
+        OSObjectPtr does not work with dispatch_data_t on Maverics
+        https://bugs.webkit.org/show_bug.cgi?id=141081
+
+        Reviewed by Zalan Bujtas.
+
+        Previous attempt to special case dispatch_data_t in OSObjectPtr didn't work in all cases
+        probably due to the context sensitivity of the definition of the dispatch_data_t type.
+
+        For now, add DispatchPtr for the cache code and use it.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::DispatchPtr::DispatchPtr):
+        (WebKit::DispatchPtr::~DispatchPtr):
+        (WebKit::DispatchPtr::operator=):
+        (WebKit::DispatchPtr::get):
+        (WebKit::DispatchPtr::operator bool):
+        (WebKit::adoptDispatch):
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::Data::Data):
+        (WebKit::NetworkCacheStorage::Data::data):
+        (WebKit::NetworkCacheStorage::NetworkCacheStorage):
+        (WebKit::createIOChannelForKey):
+        (WebKit::decodeEntry):
+        (WebKit::encodeEntryMetaData):
+        (WebKit::encodeEntry):
+
 2015-01-30  Tim Horton  <timothy_horton@apple.com>
 
         Add and hook up APINavigationClient

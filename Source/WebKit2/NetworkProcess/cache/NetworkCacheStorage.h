@@ -34,10 +34,6 @@
 #include <wtf/Deque.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
-#endif
-
 namespace WebCore {
 class SharedBuffer;
 }
@@ -51,6 +47,57 @@ namespace WebKit {
 
 class ShareableResource;
 
+#if PLATFORM(COCOA)
+template <typename T> class DispatchPtr;
+template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject);
+
+// FIXME: Use OSObjectPtr instead when it works with dispatch_data_t on all platforms.
+template<typename T> class DispatchPtr {
+public:
+    DispatchPtr()
+        : m_ptr(nullptr)
+    {
+    }
+    DispatchPtr(const DispatchPtr& other)
+        : m_ptr(other.m_ptr)
+    {
+        if (m_ptr)
+            dispatch_retain(m_ptr);
+    }
+    ~DispatchPtr()
+    {
+        if (m_ptr)
+            dispatch_release(m_ptr);
+    }
+
+    DispatchPtr& operator=(const DispatchPtr& other)
+    {
+        auto copy = other;
+        std::swap(m_ptr, copy.m_ptr);
+        return *this;
+    }
+
+    T get() const { return m_ptr; }
+    explicit operator bool() const { return m_ptr; }
+
+    friend DispatchPtr adoptDispatch<T>(T);
+
+private:
+    struct Adopt { };
+    DispatchPtr(Adopt, T data)
+        : m_ptr(data)
+    {
+    }
+
+    T m_ptr;
+};
+
+template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject)
+{
+    return DispatchPtr<T>(typename DispatchPtr<T>::Adopt { }, dispatchObject);
+}
+#endif
+
 class NetworkCacheStorage {
     WTF_MAKE_NONCOPYABLE(NetworkCacheStorage);
 public:
@@ -61,7 +108,7 @@ public:
         Data();
         Data(const uint8_t*, size_t);
 #if PLATFORM(COCOA)
-        explicit Data(OSObjectPtr<dispatch_data_t>);
+        explicit Data(DispatchPtr<dispatch_data_t>);
 #endif
         bool isNull() const;
 
@@ -73,7 +120,7 @@ public:
 #endif
     private:
 #if PLATFORM(COCOA)
-        mutable OSObjectPtr<dispatch_data_t> m_dispatchData;
+        mutable DispatchPtr<dispatch_data_t> m_dispatchData;
 #endif
         mutable const uint8_t* m_data;
         size_t m_size;
@@ -120,8 +167,8 @@ private:
     unsigned m_activeRetrieveOperationCount { 0 };
 
 #if PLATFORM(COCOA)
-    mutable OSObjectPtr<dispatch_queue_t> m_ioQueue;
-    mutable OSObjectPtr<dispatch_queue_t> m_backgroundIOQueue;
+    mutable DispatchPtr<dispatch_queue_t> m_ioQueue;
+    mutable DispatchPtr<dispatch_queue_t> m_backgroundIOQueue;
 #endif
 };
 

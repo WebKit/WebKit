@@ -80,16 +80,16 @@ NetworkCacheStorage::Data::Data()
 }
 
 NetworkCacheStorage::Data::Data(const uint8_t* data, size_t size)
-    : m_dispatchData(adoptOSObject(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
+    : m_dispatchData(adoptDispatch(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
     , m_data(nullptr)
     , m_size(size)
 {
 }
 
-NetworkCacheStorage::Data::Data(OSObjectPtr<dispatch_data_t> dispatchData)
+NetworkCacheStorage::Data::Data(DispatchPtr<dispatch_data_t> dispatchData)
 {
     const void* data;
-    m_dispatchData = adoptOSObject(dispatch_data_create_map(dispatchData.get(), &data, &m_size));
+    m_dispatchData = adoptDispatch(dispatch_data_create_map(dispatchData.get(), &data, &m_size));
     m_data = static_cast<const uint8_t*>(data);
 }
 
@@ -98,7 +98,7 @@ const uint8_t* NetworkCacheStorage::Data::data() const
     if (!m_data) {
         const void* data;
         size_t size;
-        m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
+        m_dispatchData = adoptDispatch(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
         ASSERT(size == m_size);
         m_data = static_cast<const uint8_t*>(data);
     }
@@ -122,8 +122,8 @@ std::unique_ptr<NetworkCacheStorage> NetworkCacheStorage::open(const String& cac
 
 NetworkCacheStorage::NetworkCacheStorage(const String& directoryPath)
     : m_directoryPath(directoryPath)
-    , m_ioQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.Cache.Storage", DISPATCH_QUEUE_CONCURRENT)))
-    , m_backgroundIOQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.Cache.Storage.Background", DISPATCH_QUEUE_CONCURRENT)))
+    , m_ioQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage", DISPATCH_QUEUE_CONCURRENT)))
+    , m_backgroundIOQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage.Background", DISPATCH_QUEUE_CONCURRENT)))
 {
     dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
 
@@ -162,7 +162,7 @@ static String filePathForKey(const NetworkCacheKey& key, const String& cachePath
 }
 
 enum class IOChannelType { Read, Write };
-static OSObjectPtr<dispatch_io_t> createIOChannelForKey(const NetworkCacheKey& key, IOChannelType type, const String& cachePath, int& fd)
+static DispatchPtr<dispatch_io_t> createIOChannelForKey(const NetworkCacheKey& key, IOChannelType type, const String& cachePath, int& fd)
 {
     int oflag;
     mode_t mode;
@@ -183,7 +183,7 @@ static OSObjectPtr<dispatch_io_t> createIOChannelForKey(const NetworkCacheKey& k
 
     LOG(NetworkCacheStorage, "(NetworkProcess) opening %s type=%d", path.data(), type);
 
-    OSObjectPtr<dispatch_io_t> channel = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd, type](int error) {
+    auto channel = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd, type](int error) {
         close(fd);
         if (error)
             LOG(NetworkCacheStorage, "(NetworkProcess) error creating io channel %d", error);
@@ -266,7 +266,7 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
     if (metaData.bodyOffset + metaData.bodySize != dispatch_data_get_size(fileData))
         return nullptr;
 
-    auto headerData = adoptOSObject(dispatch_data_create_subrange(fileData, metaData.headerOffset, metaData.headerSize));
+    auto headerData = adoptDispatch(dispatch_data_create_subrange(fileData, metaData.headerOffset, metaData.headerSize));
     if (metaData.headerChecksum != hashData(headerData.get())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
         return nullptr;
@@ -278,7 +278,7 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
         return nullptr;
     }
 
-    auto bodyData = adoptOSObject(dispatch_data_create(map, metaData.bodySize, dispatch_get_main_queue(), [map, mapSize] {
+    auto bodyData = adoptDispatch(dispatch_data_create(map, metaData.bodySize, dispatch_get_main_queue(), [map, mapSize] {
         munmap(map, mapSize);
     }));
 
@@ -294,7 +294,7 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
     });
 }
 
-static OSObjectPtr<dispatch_data_t> encodeEntryMetaData(const EntryMetaData& entry)
+static DispatchPtr<dispatch_data_t> encodeEntryMetaData(const EntryMetaData& entry)
 {
     NetworkCacheEncoder encoder;
 
@@ -308,10 +308,10 @@ static OSObjectPtr<dispatch_data_t> encodeEntryMetaData(const EntryMetaData& ent
 
     encoder.encodeChecksum();
 
-    return adoptOSObject(dispatch_data_create(encoder.buffer(), encoder.bufferSize(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    return adoptDispatch(dispatch_data_create(encoder.buffer(), encoder.bufferSize(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
 }
 
-static OSObjectPtr<dispatch_data_t> encodeEntry(const NetworkCacheKey& key, const NetworkCacheStorage::Entry& entry)
+static DispatchPtr<dispatch_data_t> encodeEntry(const NetworkCacheKey& key, const NetworkCacheStorage::Entry& entry)
 {
     EntryMetaData metaData(key);
     metaData.timeStamp = entry.timeStamp;
@@ -321,18 +321,18 @@ static OSObjectPtr<dispatch_data_t> encodeEntry(const NetworkCacheKey& key, cons
     metaData.bodySize = entry.body.size();
 
     auto encodedMetaData = encodeEntryMetaData(metaData);
-    auto headerData = adoptOSObject(dispatch_data_create_concat(encodedMetaData.get(), entry.header.dispatchData()));
+    auto headerData = adoptDispatch(dispatch_data_create_concat(encodedMetaData.get(), entry.header.dispatchData()));
     if (!entry.body.size())
         return headerData;
 
     size_t headerSize = dispatch_data_get_size(headerData.get());
     size_t dataOffset = round_page(headerSize);
     Vector<uint8_t, 4096> filler(dataOffset - headerSize, 0);
-    OSObjectPtr<dispatch_data_t> alignmentData = adoptOSObject(dispatch_data_create(filler.data(), filler.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    auto alignmentData = adoptDispatch(dispatch_data_create(filler.data(), filler.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
 
-    OSObjectPtr<dispatch_data_t> headerWithAlignmentData = adoptOSObject(dispatch_data_create_concat(headerData.get(), alignmentData.get()));
+    auto headerWithAlignmentData = adoptDispatch(dispatch_data_create_concat(headerData.get(), alignmentData.get()));
 
-    return adoptOSObject(dispatch_data_create_concat(headerWithAlignmentData.get(), entry.body.dispatchData()));
+    return adoptDispatch(dispatch_data_create_concat(headerWithAlignmentData.get(), entry.body.dispatchData()));
 }
 
 void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
