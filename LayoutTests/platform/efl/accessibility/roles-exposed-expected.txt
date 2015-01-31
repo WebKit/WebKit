@@ -254,52 +254,52 @@ msub
       AXRole: AXSection
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 msup
       AXRole: AXSection
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 msubsup
       AXRole: AXSection
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mmultiscripts
       AXRole: AXSection
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mprescripts
       AXRole: 
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mtext
       AXRole: AXStatic

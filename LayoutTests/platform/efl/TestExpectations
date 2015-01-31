@@ -1586,6 +1586,14 @@ webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Missing ]
 webkit.org/b/98348  accessibility/internal-link-anchors2.html [ Missing ]
 webkit.org/b/98348  accessibility/radio-button-group-members.html [ Missing ]
 
+webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
+webkit.org/b/141075 accessibility/math-multiscript-attributes.html [ Missing ]
+
+webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+webkit.org/b/141073 accessibility/content-editable-as-textarea.html [ Failure ]
+webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
+webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
+
 # isProtocolHandlerRegistered() isn't supported by WK2 yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
