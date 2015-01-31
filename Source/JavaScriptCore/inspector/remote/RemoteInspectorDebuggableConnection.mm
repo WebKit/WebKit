@@ -30,6 +30,7 @@
 
 #import "EventLoop.h"
 #import "RemoteInspector.h"
+#import <dispatch/dispatch.h>
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS)

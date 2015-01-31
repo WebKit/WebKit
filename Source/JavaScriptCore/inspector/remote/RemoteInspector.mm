@@ -33,6 +33,7 @@
 #import "RemoteInspectorDebuggable.h"
 #import "RemoteInspectorDebuggableConnection.h"
 #import <Foundation/Foundation.h>
+#import <dispatch/dispatch.h>
 #import <notify.h>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>

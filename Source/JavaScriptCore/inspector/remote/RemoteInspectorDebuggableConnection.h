@@ -30,7 +30,6 @@
 
 #import "InspectorFrontendChannel.h"
 #import "RemoteInspectorDebuggable.h"
-#import <dispatch/dispatch.h>
 #import <mutex>
 #import <wtf/RetainPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
