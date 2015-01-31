@@ -1,3 +1,17 @@
+2015-01-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179408.
+        https://bugs.webkit.org/show_bug.cgi?id=141117
+
+        This didn't fully fix the issue (Requested by anttik on
+        #webkit).
+
+        Reverted changeset:
+
+        "OSObjectPtr does not work with dispatch_data_t on Maverics"
+        https://bugs.webkit.org/show_bug.cgi?id=141081
+        http://trac.webkit.org/changeset/179408
+
 2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         https://trac.webkit.org/changeset/179439 breaks a python test
