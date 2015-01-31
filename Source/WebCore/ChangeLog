@@ -1,3 +1,46 @@
+2015-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Make LineState fragment handling simpler.
+        https://bugs.webkit.org/show_bug.cgi?id=141100
+
+        Reviewed by Andreas Kling.
+
+        New fragments are appeneded to the Run's last entry
+        instead of accumulating them until after a new run is required. 
+        (whitespace collapse or line end)
+        LineState::appendFragment manages whitespace collapsing now.
+        This makes createLineRuns() logic lighter and no need to "flush"
+        the LineState when the line ends.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp: Make LineState members private and introduce getters.
+        (WebCore::SimpleLineLayout::LineState::setAvailableWidth):
+        (WebCore::SimpleLineLayout::LineState::setLogicalLeftOffset):
+        (WebCore::SimpleLineLayout::LineState::setOverflowedFragment):
+        (WebCore::SimpleLineLayout::LineState::availableWidth):
+        (WebCore::SimpleLineLayout::LineState::logicalLeftOffset):
+        (WebCore::SimpleLineLayout::LineState::overflowedFragment):
+        (WebCore::SimpleLineLayout::LineState::hasTrailingWhitespace):
+        (WebCore::SimpleLineLayout::LineState::isWhitespaceOnly):
+        (WebCore::SimpleLineLayout::LineState::fits):
+        (WebCore::SimpleLineLayout::LineState::firstCharacterFits):
+        (WebCore::SimpleLineLayout::LineState::width):
+        (WebCore::SimpleLineLayout::LineState::appendFragment): Append each fragment to the Run 
+        by either creating a new run or expanding the last one.
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace): Remove trailing whitespace from
+        the Run's and reset the trailing whitespace variables.
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::LineState::createRun): Deleted.
+        (WebCore::SimpleLineLayout::LineState::addFragment): Deleted.
+        (WebCore::SimpleLineLayout::LineState::addWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::LineState::hasWhitespaceOnly): Deleted.
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Drop HistoryItem's m_prev / m_next
