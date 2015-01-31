@@ -332,9 +332,6 @@ webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.htm
 [ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
 webkit.org/b/121628 [ Release ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure ]
 
-# Network process disk cache is not enabled yet
-webkit.org/b/30322 http/tests/cache/disk-cache-validation.html [ Skip ]
-
 webkit.org/b/139634 [ Debug ] fast/selectors/matches-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/nth-child-of-register-requirement.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/not-backtracking.html [ Slow ]
