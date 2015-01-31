@@ -256,8 +256,6 @@ private:
     String m_formContentType;
 
     // PageCache controls these fields.
-    HistoryItem* m_next;
-    HistoryItem* m_prev;
     std::unique_ptr<CachedPage> m_cachedPage;
     PruningReason m_pruningReason;
 

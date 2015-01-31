@@ -1,3 +1,17 @@
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop HistoryItem's m_prev / m_next
+        https://bugs.webkit.org/show_bug.cgi?id=141105
+
+        Reviewed by Zalan Bujtas.
+
+        Drop HistoryItem's m_prev / m_next. Those are no longer needed after
+        the PageCache refactoring in <http://trac.webkit.org/r179347>.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+
 2015-01-30  Jeongmin Kim  <jm86.kim@lge.com>
 
         Update the comment in RenderLayer for clarity as related code location is changed
