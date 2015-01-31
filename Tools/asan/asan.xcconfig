@@ -1,6 +1,5 @@
 TOOLCHAINS[sdk=macosx*] = $(TOOLCHAINS_macosx);
 TOOLCHAINS_macosx = $(TOOLCHAINS_macosx_$(MAC_OS_X_VERSION_MAJOR));
-TOOLCHAINS_macosx_1080 = default;
 TOOLCHAINS_macosx_1090 = default;
 TOOLCHAINS_macosx_101000 = default;
 TOOLCHAINS_macosx_101100 = $(TOOLCHAINS);

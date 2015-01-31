@@ -1141,7 +1141,7 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 
     NSDictionary* attrs = [string attributesAtIndex:0 effectiveRange:nil];
     BOOL misspelled = [[attrs objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue];
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     if (misspelled)
         misspelled = [[attrs objectForKey:NSAccessibilityMarkedMisspelledTextAttribute] boolValue];
 #endif

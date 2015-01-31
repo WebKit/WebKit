@@ -1012,19 +1012,11 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
         graphicsContext.setShouldSmoothFonts(false);
     }
     
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     // It's important to get the clip from the context, because it may be significantly
     // smaller than the layer bounds (e.g. tiled layers)
-    FloatRect clipBounds = CGContextGetClipBoundingBox(context);
-    
-    FloatRect focusRingClipRect = clipBounds;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
-    // Set the focus ring clip rect which needs to be in base coordinates.
-    AffineTransform transform = CGContextGetCTM(context);
-    focusRingClipRect = transform.mapRect(clipBounds);
+    ThemeMac::setFocusRingClipRect(CGContextGetClipBoundingBox(context));
 #endif
-    ThemeMac::setFocusRingClipRect(focusRingClipRect);
-#endif // !PLATFORM(IOS)
     
     for (const auto& rect : dirtyRects) {
         GraphicsContextStateSaver stateSaver(graphicsContext);

@@ -391,7 +391,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080) || PLATFORM(EFL)
+#if PLATFORM(EFL)
     WKContextSetUsesNetworkProcess(m_context.get(), false);
     WKContextSetProcessModel(m_context.get(), kWKProcessModelSharedSecondaryProcess);
 #endif
@@ -758,8 +758,8 @@ const char* TestController::webProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
 #if PLATFORM(IOS)
-    return  "com.apple.WebKit.WebContent";
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
+    return "com.apple.WebKit.WebContent";
+#elif PLATFORM(MAC)
     return "com.apple.WebKit.WebContent.Development";
 #else
     return "WebProcess";

@@ -96,13 +96,7 @@ static BOOL themeWindowHasKeyAppearance;
 {
     if (NSIsEmptyRect(focusRingClipRect))
         return [self visibleRect];
-
-    NSRect rect = focusRingClipRect;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
-    rect.origin.y = [self bounds].size.height - NSMaxY(rect);
-#endif
-
-    return rect;
+    return focusRingClipRect;
 }
 
 - (NSView *)_focusRingClipAncestor

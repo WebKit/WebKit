@@ -337,12 +337,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [alert setInformativeText:message];
     [alert addButtonWithTitle:@"OK"];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
         completionHandler();
         [alert release];
     }];
-#endif
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
@@ -355,12 +353,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [alert addButtonWithTitle:@"OK"];
     [alert addButtonWithTitle:@"Cancel"];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
         completionHandler(response == NSAlertFirstButtonReturn);
         [alert release];
     }];
-#endif
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler
@@ -377,13 +373,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [input setStringValue:defaultText];
     [alert setAccessoryView:input];
     
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
         [input validateEditing];
         completionHandler(response == NSAlertFirstButtonReturn ? [input stringValue] : nil);
         [alert release];
     }];
-#endif
 }
 
 - (void)updateTextFieldFromURL:(NSURL *)URL

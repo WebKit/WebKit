@@ -1,3 +1,17 @@
+2015-01-31  Sam Weinig  <sam@webkit.org>
+
+        Remove even more Mountain Lion support
+        https://bugs.webkit.org/show_bug.cgi?id=141124
+
+        Reviewed by Alexey Proskuryakov.
+
+        * API/tests/DateTests.mm:
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2015-01-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179426.

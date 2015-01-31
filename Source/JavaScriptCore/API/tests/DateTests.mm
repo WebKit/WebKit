@@ -37,11 +37,7 @@ extern "C" void checkResult(NSString *description, bool passed);
 + (void) roundTripThroughObjCDateTest;
 @end
 
-#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000) || (TARGET_OS_MAC && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
 static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCalendarUnitHour | NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear;
-#else
-static unsigned unitFlags = NSSecondCalendarUnit | NSMinuteCalendarUnit | NSHourCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
-#endif
 
 @implementation DateTests
 + (void) NSDateToJSDateTest

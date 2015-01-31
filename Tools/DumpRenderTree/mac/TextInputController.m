@@ -29,15 +29,13 @@
 #import "config.h"
 #import "TextInputController.h"
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 // FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
 
 #import "DumpRenderTreeMac.h"
 #import <AppKit/NSInputManager.h>
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-#define SUPPORT_DICTATION_ALTERNATIVES
 #import <AppKit/NSTextAlternatives.h>
-#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #define SUPPORT_INSERTION_UNDO_GROUPING
 #if __has_include(<AppKit/NSTextInputContext_Private.h>)
@@ -466,7 +464,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 
 - (NSMutableAttributedString*)stringWithUndoGroupingInsertion:(NSString*)aString
 {
-#if defined(SUPPORT_INSERTION_UNDO_GROUPING) && defined(SUPPORT_DICTATION_ALTERNATIVES)
+#if defined(SUPPORT_INSERTION_UNDO_GROUPING)
     NSMutableAttributedString* attributedString = [self dictatedStringWithPrimaryString:aString alternative:@"test" alternativeOffset:0 alternativeLength:1];
     [attributedString addAttribute:NSTextInsertionUndoableAttributeName value:@YES range:NSMakeRange(0, [attributedString length])];
     return attributedString;
@@ -477,7 +475,6 @@ NSString *NSTextInsertionUndoableAttributeName;
 
 - (NSMutableAttributedString*)dictatedStringWithPrimaryString:(NSString*)aString alternative:(NSString*)alternative alternativeOffset:(int)offset alternativeLength:(int)length
 {
-#if defined(SUPPORT_DICTATION_ALTERNATIVES)
     NSMutableAttributedString* dictatedString = [self attributedStringWithString:aString];
     NSRange rangeWithAlternative = NSMakeRange((NSUInteger)offset, (NSUInteger)length);
     NSString* subStringWithAlternative = [aString substringWithRange:rangeWithAlternative];
@@ -491,9 +488,6 @@ NSString *NSTextInsertionUndoableAttributeName;
     [dictatedString addAttribute:NSTextAlternativesAttributeName value:alternativeObject range:rangeWithAlternative];
 
     return dictatedString;
-#else
-    return nil;
-#endif
 }
 
 - (void)setInputMethodHandler:(WebScriptObject *)handler

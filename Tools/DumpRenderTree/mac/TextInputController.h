@@ -28,7 +28,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 // FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
 
 @class WebView;

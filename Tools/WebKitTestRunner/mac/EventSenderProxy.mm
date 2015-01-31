@@ -474,10 +474,6 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
     return;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
-const uint32_t kCGScrollWheelEventMomentumPhase = 123;
-#endif
-
 void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
 {
     RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));

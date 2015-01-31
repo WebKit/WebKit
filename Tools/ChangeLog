@@ -1,3 +1,50 @@
+2015-01-31  Sam Weinig  <sam@webkit.org>
+
+        Remove even more Mountain Lion support
+        https://bugs.webkit.org/show_bug.cgi?id=141124
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateTestingFonts):
+        (prepareConsistentTestingEnvironment):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        (-[EventSendingController contextClick]):
+        * DumpRenderTree/mac/TextInputController.m:
+        * LayoutTestRelay/Configurations/Base.xcconfig:
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _downloadDidFinish:]):
+        * TestWebKitAPI/Tests/mac/StringTruncator.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * WebKitLauncher/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::activateFonts):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::webProcessName):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        * asan/asan.xcconfig:
+
 2015-01-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179408.

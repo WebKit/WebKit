@@ -701,13 +701,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [self mouseScrollByX:x andY:y continuously:NO];
 }
 
-#if !PLATFORM(IOS) && MAC_OS_X_VERSION_MAX_ALLOWED < 1090
-const uint32_t kCGScrollWheelEventMomentumPhase = 123;
-#endif
-
 - (void)mouseScrollByX:(int)x andY:(int)y withWheel:(NSString*)phaseName andMomentumPhases:(NSString*)momentumName
 {
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     uint32_t phase = 0;
     if ([phaseName isEqualToString: @"none"])
         phase = 0;
@@ -756,7 +752,7 @@ const uint32_t kCGScrollWheelEventMomentumPhase = 123;
 
 - (NSArray *)contextClick
 {
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:RightMouseButton];
 

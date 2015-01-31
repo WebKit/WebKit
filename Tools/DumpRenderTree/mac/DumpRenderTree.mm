@@ -486,9 +486,7 @@ static void activateTestingFonts()
         "WebKitWeightWatcher700.ttf",
         "WebKitWeightWatcher800.ttf",
         "WebKitWeightWatcher900.ttf",
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         "SampleFont.sfont",
-#endif
         0
     };
 
@@ -1107,7 +1105,7 @@ static void prepareConsistentTestingEnvironment()
     
     makeLargeMallocFailSilently();
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
     static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"DumpRenderTree should not be subject to process suppression"] retain];
     ASSERT_UNUSED(assertion, assertion);
