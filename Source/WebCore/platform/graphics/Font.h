@@ -236,12 +236,6 @@ private:
     float widthForGDIGlyph(Glyph) const;
 #endif
 
-#if USE(CG)
-    bool canUseFastGlyphAdvanceGetter(Glyph, CGSize& advance, bool& populatedAdvance) const;
-    CGFontRenderingStyle renderingStyle() const;
-    bool advanceForColorBitmapFont(Glyph, CGSize& result) const; // Returns true if the font is a color bitmap font
-#endif
-
     FontMetrics m_fontMetrics;
     float m_maxCharWidth;
     float m_avgCharWidth;
