@@ -170,7 +170,7 @@ CachedResource::~CachedResource()
 #endif
 
     if (m_owningCachedResourceLoader)
-        m_owningCachedResourceLoader->removeCachedResource(this);
+        m_owningCachedResourceLoader->removeCachedResource(*this);
 }
 
 void CachedResource::failBeforeStarting()
@@ -178,7 +178,7 @@ void CachedResource::failBeforeStarting()
     // FIXME: What if resources in other frames were waiting for this revalidation?
     LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().data());
     if (m_resourceToRevalidate) 
-        memoryCache().revalidationFailed(this); 
+        memoryCache().revalidationFailed(*this);
     error(CachedResource::LoadError);
 }
 
@@ -415,7 +415,7 @@ bool CachedResource::addClientToSet(CachedResourceClient* client)
             m_preloadResult = PreloadReferenced;
     }
     if (!hasClients() && inCache())
-        memoryCache().addToLiveResourcesSize(this);
+        memoryCache().addToLiveResourcesSize(*this);
 
     if ((m_type == RawResource || m_type == MainResource) && !m_response.isNull() && !m_proxyResource) {
         // Certain resources (especially XHRs and main resources) do crazy things if an asynchronous load returns
@@ -447,8 +447,8 @@ void CachedResource::removeClient(CachedResourceClient* client)
     bool deleted = deleteIfPossible();
     if (!deleted && !hasClients()) {
         if (inCache()) {
-            memoryCache().removeFromLiveResourcesSize(this);
-            memoryCache().removeFromLiveDecodedResourcesList(this);
+            memoryCache().removeFromLiveResourcesSize(*this);
+            memoryCache().removeFromLiveDecodedResourcesList(*this);
         }
         if (!m_switchingClientsToRevalidatedResource)
             allClientsRemoved();
@@ -458,7 +458,7 @@ void CachedResource::removeClient(CachedResourceClient* client)
             // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
             // "... History buffers MAY store such responses as part of their normal operation."
             // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
-            memoryCache().remove(this);
+            memoryCache().remove(*this);
         }
         memoryCache().prune();
     }
@@ -499,13 +499,13 @@ void CachedResource::setDecodedSize(unsigned size)
     // The object must be moved to a different queue, since its size has been changed.
     // Remove before updating m_decodedSize, so we find the resource in the correct LRU list.
     if (inCache())
-        memoryCache().removeFromLRUList(this);
+        memoryCache().removeFromLRUList(*this);
     
     m_decodedSize = size;
    
     if (inCache()) { 
         // Now insert into the new LRU list.
-        memoryCache().insertInLRUList(this);
+        memoryCache().insertInLRUList(*this);
         
         // Insert into or remove from the live decoded list if necessary.
         // When inserting into the LiveDecodedResourcesList it is possible
@@ -516,9 +516,9 @@ void CachedResource::setDecodedSize(unsigned size)
         // a problem. For more details please see: https://bugs.webkit.org/show_bug.cgi?id=30209
         bool inLiveDecodedResourcesList = memoryCache().inLiveDecodedResourcesList(*this);
         if (m_decodedSize && !inLiveDecodedResourcesList && hasClients())
-            memoryCache().insertInLiveDecodedResourcesList(this);
+            memoryCache().insertInLiveDecodedResourcesList(*this);
         else if (!m_decodedSize && inLiveDecodedResourcesList)
-            memoryCache().removeFromLiveDecodedResourcesList(this);
+            memoryCache().removeFromLiveDecodedResourcesList(*this);
 
         // Update the cache's size totals.
         memoryCache().adjustSize(hasClients(), delta);
@@ -535,12 +535,12 @@ void CachedResource::setEncodedSize(unsigned size)
     // The object must be moved to a different queue, since its size has been changed.
     // Remove before updating m_encodedSize, so we find the resource in the correct LRU list.
     if (inCache())
-        memoryCache().removeFromLRUList(this);
+        memoryCache().removeFromLRUList(*this);
 
     m_encodedSize = size;
 
     if (inCache()) { 
-        memoryCache().insertInLRUList(this);
+        memoryCache().insertInLRUList(*this);
         memoryCache().adjustSize(hasClients(), delta);
     }
 }
@@ -551,8 +551,8 @@ void CachedResource::didAccessDecodedData(double timeStamp)
     
     if (inCache()) {
         if (memoryCache().inLiveDecodedResourcesList(*this)) {
-            memoryCache().removeFromLiveDecodedResourcesList(this);
-            memoryCache().insertInLiveDecodedResourcesList(this);
+            memoryCache().removeFromLiveDecodedResourcesList(*this);
+            memoryCache().insertInLiveDecodedResourcesList(*this);
         }
         memoryCache().prune();
     }

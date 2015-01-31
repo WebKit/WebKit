@@ -710,7 +710,7 @@ void InspectorResourceAgent::replayXHR(ErrorString&, const String& requestId)
 
     CachedResource* cachedResource = memoryCache().resourceForRequest(request, m_pageAgent->page()->sessionID());
     if (cachedResource)
-        memoryCache().remove(cachedResource);
+        memoryCache().remove(*cachedResource);
 
     xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), IGNORE_EXCEPTION);
     for (const auto& header : xhrReplayData->headers())

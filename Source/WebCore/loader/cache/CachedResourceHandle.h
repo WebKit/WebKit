@@ -68,6 +68,7 @@ public:
 
     R* get() const { return reinterpret_cast<R*>(CachedResourceHandleBase::get()); }
     R* operator->() const { return get(); }
+    R& operator*() const { ASSERT(get()); return *get(); }
 
     CachedResourceHandle& operator=(R* res) { setResource(res); return *this; } 
     CachedResourceHandle& operator=(const CachedResourceHandle& o) { setResource(o.get()); return *this; }

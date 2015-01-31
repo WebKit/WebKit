@@ -218,7 +218,7 @@ void MaskImageOperation::notifyFinished(CachedResource* resource)
                 // Let the cached resource loader of the document which requested this mask keep a handle to this
                 // cached image to ensure it only gets deleted when it should.
                 if (m_cachedResourceLoader.get())
-                    m_cachedResourceLoader->addCachedResource(m_styleImage->cachedImage());
+                    m_cachedResourceLoader->addCachedResource(*m_styleImage->cachedImage());
             }
             
             // Destroy the current SVG document as its no longer needed

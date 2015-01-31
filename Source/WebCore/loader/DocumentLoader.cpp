@@ -448,7 +448,7 @@ void DocumentLoader::finishedLoading(double finishTime)
     // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
     if (m_frame) {
         if (m_mainResource && m_frame->document()->hasManifest())
-            memoryCache().remove(m_mainResource.get());
+            memoryCache().remove(*m_mainResource);
     }
     m_applicationCacheHost->finishedLoadingMainResource();
 }
@@ -599,7 +599,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     // The memory cache doesn't understand the application cache or its caching rules. So if a main resource is served
     // from the application cache, ensure we don't save the result for future use.
     if (willLoadFallback)
-        memoryCache().remove(m_mainResource.get());
+        memoryCache().remove(*m_mainResource);
 
     if (willLoadFallback)
         return;

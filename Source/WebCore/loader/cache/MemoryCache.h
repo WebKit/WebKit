@@ -78,7 +78,7 @@ public:
         { 
         }
 
-        void addResource(CachedResource*);
+        void addResource(CachedResource&);
     };
     
     struct Statistics {
@@ -92,13 +92,13 @@ public:
     WEBCORE_EXPORT CachedResource* resourceForURL(const URL&, SessionID = SessionID::defaultSessionID());
     WEBCORE_EXPORT CachedResource* resourceForRequest(const ResourceRequest&, SessionID);
 
-    bool add(CachedResource*);
-    void remove(CachedResource*);
+    bool add(CachedResource&);
+    void remove(CachedResource&);
 
     static URL removeFragmentIdentifierIfNeeded(const URL& originalURL);
     
-    void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
-    void revalidationFailed(CachedResource* revalidatingResource);
+    void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
+    void revalidationFailed(CachedResource& revalidatingResource);
     
     // Sets the cache's memory capacities, in bytes. These will hold only approximately, 
     // since the decoded cost of resources like scripts and stylesheets is not known.
@@ -120,29 +120,29 @@ public:
     std::chrono::milliseconds deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }
 
     // Calls to put the cached resource into and out of LRU lists.
-    void insertInLRUList(CachedResource*);
-    void removeFromLRUList(CachedResource*);
+    void insertInLRUList(CachedResource&);
+    void removeFromLRUList(CachedResource&);
 
     // Called to adjust the cache totals when a resource changes size.
     void adjustSize(bool live, int delta);
 
     // Track decoded resources that are in the cache and referenced by a Web page.
-    void insertInLiveDecodedResourcesList(CachedResource*);
-    void removeFromLiveDecodedResourcesList(CachedResource*);
+    void insertInLiveDecodedResourcesList(CachedResource&);
+    void removeFromLiveDecodedResourcesList(CachedResource&);
 
-    void addToLiveResourcesSize(CachedResource*);
-    void removeFromLiveResourcesSize(CachedResource*);
+    void addToLiveResourcesSize(CachedResource&);
+    void removeFromLiveResourcesSize(CachedResource&);
 
-    static void removeRequestFromSessionCaches(ScriptExecutionContext*, const ResourceRequest&);
+    static void removeRequestFromSessionCaches(ScriptExecutionContext&, const ResourceRequest&);
 
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     WEBCORE_EXPORT Statistics getStatistics();
     
-    void resourceAccessed(CachedResource*);
+    void resourceAccessed(CachedResource&);
     bool inLiveDecodedResourcesList(CachedResource& resource) const { return m_liveDecodedResources.contains(&resource); }
 
     typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
-    WEBCORE_EXPORT void removeResourcesWithOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT void removeResourcesWithOrigin(SecurityOrigin&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
 
 #if USE(CG)
@@ -176,7 +176,7 @@ private:
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
-    LRUList* lruListFor(CachedResource*);
+    LRUList* lruListFor(CachedResource&);
 #ifndef NDEBUG
     void dumpStats();
     void dumpLRULists(bool includeLive) const;

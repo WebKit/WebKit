@@ -114,7 +114,7 @@ void WebResourceCacheManager::clearCacheForOrigin(const SecurityOriginData& orig
     if (!origin)
         return;
 
-    memoryCache().removeResourcesWithOrigin(origin.get());
+    memoryCache().removeResourcesWithOrigin(*origin);
 
 #if USE(CFURLCACHE)
     if (resourceCachesToClear != InMemoryResourceCachesOnly) { 
