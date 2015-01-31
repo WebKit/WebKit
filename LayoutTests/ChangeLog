@@ -1,3 +1,12 @@
+2015-01-30  Piotr Pajak  <p.pajak@samsung.com>
+
+        [EFL] Mark test css3/masking/mask-repeat-space-padding.html as passing
+        https://bugs.webkit.org/show_bug.cgi?id=141077
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2015-01-30  Karol Pawlowski  <k.pawlowski@samsung.com>
 
         [EFL] Rebaseline efl/js/dom/global-constructors-attributes-expected.txt
