@@ -34,9 +34,11 @@ class DeadBlock;
 class HandleSet;
 class HandleNode;
 
-class HandleBlock : public HeapBlock<HandleBlock> {
+class HandleBlock : public DoublyLinkedListNode<HandleBlock> {
+    friend class WTF::DoublyLinkedListNode<HandleBlock>;
 public:
-    static HandleBlock* create(DeadBlock*, HandleSet*);
+    static HandleBlock* create(HandleSet*);
+    static void destroy(HandleBlock*);
     static HandleBlock* blockFor(HandleNode*);
 
     static const size_t blockSize = 4 * KB;
@@ -48,13 +50,15 @@ public:
     unsigned nodeCapacity();
 
 private:
-    HandleBlock(Region*, HandleSet*);
+    HandleBlock(HandleSet*);
 
     char* payload();
     char* payloadEnd();
 
     static const size_t s_blockMask = ~(blockSize - 1);
 
+    HandleBlock* m_prev;
+    HandleBlock* m_next;
     HandleSet* m_handleSet;
 };
 
