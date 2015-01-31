@@ -1,0 +1,32 @@
+[
+{
+    "name": "html5lib",
+    "path": "tools",
+    "url": "https://github.com/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz",
+    "url_subpath": "html5lib-python-7cce65bbaa78411f98b8b37eeefc9db03c580097"
+},
+{
+    "name": "pywebsocket",
+    "path": "tools",
+    "url": "https://github.com/w3c/pywebsocket/archive/8c285d9015121e8c1c40be852439fc03b4a18112.tar.gz",
+    "url_subpath": "pywebsocket-8c285d9015121e8c1c40be852439fc03b4a18112"
+},
+{
+    "name": "six",
+    "path": "tools",
+    "url": "https://github.com/jgraham/six/archive/3b6173c833d217ab0186c355804f5925cbcfca47.tar.gz",
+    "url_subpath": "six-3b6173c833d217ab0186c355804f5925cbcfca47"
+},
+{
+    "name": "wptserve",
+    "path": "tools",
+    "url": "https://github.com/w3c/wptserve/archive/91e764ffa0f587090341a26af457dfdc6762eb0d.tar.gz",
+    "url_subpath": "wptserve-91e764ffa0f587090341a26af457dfdc6762eb0d"
+},
+{
+    "name": "resources",
+    "path": ".",
+    "url": "https://github.com/w3c/testharness.js/archive/74ba13d2fbb19c6e7494960bd7724873e88c523c.tar.gz",
+    "url_subpath": "testharness.js-74ba13d2fbb19c6e7494960bd7724873e88c523c"
+}
+]

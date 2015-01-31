@@ -2,16 +2,35 @@
 # http://www.w3.org/Consortium/Legal/2008/03-bsd-license.html
 
 import imp
-import sys
 import logging
-import optparse
 import os
+import sys
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger('web-platform-test-launcher')
+logging.basicConfig(level=logging.DEBUG)
 
-sys.path.insert(1, ".")
-import serve as WebPlatformTestServer
+
+def create_wpt_empty_file_if_needed(relative_path):
+    file_path = os.path.join(os.getcwd(), os.path.sep.join(relative_path))
+    if not os.path.isfile(file_path):
+        logger.warning(file_path + ' is not present, creating it as empty file')
+        open(file_path, 'a').close()
+
+create_wpt_empty_file_if_needed(['tools', '__init__.py'])
+create_wpt_empty_file_if_needed(['tools', 'scripts', '__init__.py'])
+create_wpt_empty_file_if_needed(['tools', 'pywebsocket', 'src', 'test', '__init__.py'])
+create_wpt_empty_file_if_needed(['tools', 'webdriver', 'webdriver', '__init__.py'])
+create_wpt_empty_file_if_needed(['tools', 'html5lib', 'html5lib', 'treeadapters', '__init__.py'])
+create_wpt_empty_file_if_needed(['tools', 'html5lib', 'html5lib', 'filters', '__init__.py'])
+
+try:
+    sys.path.insert(0, os.getcwd())
+    import serve as WebPlatformTestServer
+except ImportError, e:
+    logger.critical("Import of wpt serve module failed.\n"
+        "Please check that the file serve.py is present in the web-platform-tests folder.\n"
+        "Please also check that __init__.py files in the web-platform-tests/tools folder and subfolders are also present.")
+    raise
 
 # This script is used to launch the web platform test server main script (serve.py) and stop it when asked by run-webkit-tests
 

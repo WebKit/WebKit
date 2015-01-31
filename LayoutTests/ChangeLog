@@ -1,3 +1,13 @@
+2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Import W3C web platform tests infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=140934
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: added lines to skip web-platform-tests
+        infrastructure folders. Added one line for a partially passing test.
+
 2015-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement ES6 Symbol

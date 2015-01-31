@@ -1,3 +1,16 @@
+2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Import W3C web platform tests infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=140934
+
+        Reviewed by Ryosuke Niwa.
+
+        Loading necessary web platform tests modules before launching server.
+        Ensuring that some empty __init__.py files are present and create them if necessary. 
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py:
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+
 2015-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Another unreviewed test fix.

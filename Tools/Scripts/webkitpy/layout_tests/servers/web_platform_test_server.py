@@ -26,6 +26,7 @@ import logging
 import sys
 import time
 
+from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.layout_tests.servers import http_server_base
 
 _log = logging.getLogger(__name__)
@@ -75,6 +76,11 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py")]
         self._doc_root_path = port_obj.path_from_webkit_base("LayoutTests", self._doc_root)
 
+    def _install_modules(self):
+        modules = json.loads(self._filesystem.read_text_file(self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "WPTModules")))
+        for module in modules:
+            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, module["path"])).install(url=module["url"], url_subpath=module["url_subpath"], target_name=module["name"])
+
     def _copy_webkit_test_files(self):
         _log.debug('Copying WebKit resources files')
         for f in self._resources_files_to_copy:
@@ -101,6 +107,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         if self._filesystem.exists(self._output_dir):
             output_log = self._filesystem.join(self._output_dir, self._log_file_name)
             self._wsout = self._filesystem.open_text_file_for_writing(output_log)
+        self._install_modules()
         self._copy_webkit_test_files()
 
     def _spawn_process(self):

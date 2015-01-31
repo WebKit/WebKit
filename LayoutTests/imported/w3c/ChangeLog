@@ -1,3 +1,34 @@
+2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Import W3C web platform tests infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=140934
+
+        Reviewed by Ryosuke Niwa.
+
+        Initial import of the web-platform-tests repository.
+        This includes all infrastructure folders.
+        web-platform-tests submodules are downloaded when needed based on resources/WPTModules.
+
+        This patch also adds two tests from the domparsing folder to ensure 
+        W3C test infrastructure works properly on WebKit bots.
+
+        * resources/WPTModules: Added
+        * web-platform-tests/.gitignore: Added.
+        * web-platform-tests/_certs: Added.
+        * web-platform-tests/common: Added.
+        * web-platform-tests/config.default.json: Added.
+        * web-platform-tests/fonts: Added.
+        * web-platform-tests/images: Added.
+        * web-platform-tests/resource: Added.
+        * web-platform-tests/serve.py: Added.
+        * web-platform-tests/tools: Added.
+        * web-platform-tests/w3c-import.log: Added
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt: Added.
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html: Added.
+        * web-platform-tests/domparsing/insert-adjacent-expected.txt: Added.
+        * web-platform-tests/domparsing/insert-adjacent.html: Added.
+        * web-platform-tests/domparsing/w3c-import.log: Added.
+
 2015-01-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Integrate WP python server into WebKit test framework

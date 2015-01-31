@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Last Import: 2015-01-27 10:26
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/common/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/common/text-plain.txt
+/LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
+/LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js
+/LayoutTests/imported/w3c/web-platform-tests/common/canvas-frame.css
+/LayoutTests/imported/w3c/web-platform-tests/common/css-red.txt
+/LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.css
+/LayoutTests/imported/w3c/web-platform-tests/common/canvas-spec.css
+/LayoutTests/imported/w3c/web-platform-tests/common/media.js
+/LayoutTests/imported/w3c/web-platform-tests/common/vendor-prefix.js
+/LayoutTests/imported/w3c/web-platform-tests/common/large.py
+/LayoutTests/imported/w3c/web-platform-tests/common/failing-test.html
+/LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/common/canvas-index.css

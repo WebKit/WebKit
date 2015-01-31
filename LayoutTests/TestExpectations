@@ -228,6 +228,15 @@ webkit.org/b/137883 transitions/started-while-suspended.html [ Pass Failure ]
 webkit.org/b/137883 transitions/transition-shorthand-delay.html
 webkit.org/b/137883 transitions/transition-timing-function.html [ Pass Failure ]
 
+# W3C web platform tests infrastructure directories are skipped as they may contain html files
+imported/w3c/web-platform-tests/common [ Skip ]
+imported/w3c/web-platform-tests/fonts [ Skip ]
+imported/w3c/web-platform-tests/images [ Skip ]
+imported/w3c/web-platform-tests/tools [ Skip ]
+
+# W3C domparsing test suite
+imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html [ Pass ] # Some assertions failing
+
 # Imported W3C canvas failed tests
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.null.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.incomplete.omitted.html [ Failure ]
