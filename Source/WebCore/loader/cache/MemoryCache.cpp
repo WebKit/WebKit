@@ -125,7 +125,6 @@ bool MemoryCache::add(CachedResource& resource)
     return true;
 }
 
-// FIXME: This should take a reference.
 void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse& response)
 {
     ASSERT(revalidatingResource.resourceToRevalidate());
