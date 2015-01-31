@@ -126,7 +126,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
             if (buffer == NULL)
                 break;
 
-            if (_vsnprintf(buffer, size, format, args) != -1) {
+            if (vsnprintf(buffer, size, format, args) != -1) {
                 OutputDebugStringA(buffer);
                 free(buffer);
                 break;

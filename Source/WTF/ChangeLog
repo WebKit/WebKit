@@ -1,3 +1,16 @@
+2015-01-30  Namhoon Kim  <yanhkim@gmail.com>
+
+        Call vsnprintf instead of _vsnprintf in vprintf_stderr_common
+        https://bugs.webkit.org/show_bug.cgi?id=141078
+
+        In windows _vsnprintf api does not place null character
+        automatically. Simply replace it with vsnprintf. Which is
+        polyfill to call wtf_vsnprintf in windows.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Assertions.cpp:
+
 2015-01-30  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: ASSERT in InspectorTimelineAgent::internalStop
