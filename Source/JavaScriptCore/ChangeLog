@@ -1,3 +1,18 @@
+2015-01-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179426.
+        https://bugs.webkit.org/show_bug.cgi?id=141119
+
+        "caused a memory use regression" (Requested by Guest45 on
+        #webkit).
+
+        Reverted changeset:
+
+        "Use FastMalloc (bmalloc) instead of BlockAllocator for GC
+        pages"
+        https://bugs.webkit.org/show_bug.cgi?id=140900
+        http://trac.webkit.org/changeset/179426
+
 2015-01-30  Daniel Bates  <dabates@apple.com>
 
         Clean up: Remove unnecessary <dispatch/dispatch.h> header from RemoteInspectorDebuggableConnection.h

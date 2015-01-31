@@ -28,30 +28,24 @@
 
 #include "BlockAllocator.h"
 #include "HandleBlock.h"
-#include <wtf/FastMalloc.h>
 
 namespace JSC {
 
-inline HandleBlock* HandleBlock::create(HandleSet* handleSet)
+inline HandleBlock* HandleBlock::create(DeadBlock* block, HandleSet* handleSet)
 {
-    return new (NotNull, fastAlignedMalloc(blockSize, blockSize)) HandleBlock(handleSet);
+    Region* region = block->region();
+    return new (NotNull, block) HandleBlock(region, handleSet);
 }
 
-inline void HandleBlock::destroy(HandleBlock* block)
-{
-    block->~HandleBlock();
-    fastAlignedFree(block);
-}
-
-inline HandleBlock::HandleBlock(HandleSet* handleSet)
-    : DoublyLinkedListNode<HandleBlock>()
+inline HandleBlock::HandleBlock(Region* region, HandleSet* handleSet)
+    : HeapBlock<HandleBlock>(region)
     , m_handleSet(handleSet)
 {
 }
 
 inline char* HandleBlock::payloadEnd()
 {
-    return reinterpret_cast<char*>(this) + blockSize;
+    return reinterpret_cast<char*>(this) + region()->blockSize();
 }
 
 inline char* HandleBlock::payload()

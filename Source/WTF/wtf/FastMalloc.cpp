@@ -162,34 +162,6 @@ size_t fastMallocGoodSize(size_t bytes)
 #endif
 }
 
-#if OS(WINDOWS)
-
-void* fastAlignedMalloc(size_t alignment, size_t size) 
-{
-    return _aligned_malloc(alignment, size);
-}
-
-void fastAlignedFree(void* p) 
-{
-    _aligned_free(p);
-}
-
-#else
-
-void* fastAlignedMalloc(size_t alignment, size_t size) 
-{
-    void* p = nullptr;
-    posix_memalign(&p, alignment, size);
-    return p;
-}
-
-void fastAlignedFree(void* p) 
-{
-    free(p);
-}
-
-#endif // OS(WINDOWS)
-
 TryMallocReturnValue tryFastMalloc(size_t n) 
 {
     return malloc(n);
@@ -301,16 +273,6 @@ size_t fastMallocGoodSize(size_t size)
     return size;
 }
     
-void* fastAlignedMalloc(size_t alignment, size_t size) 
-{
-    return bmalloc::api::memalign(alignment, size);
-}
-
-void fastAlignedFree(void* p) 
-{
-    bmalloc::api::free(p);
-}
-
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
     return fastMalloc(size);
@@ -4062,6 +4024,7 @@ static ALWAYS_INLINE void do_free(void* ptr) {
   }
 }
 
+#ifndef WTF_CHANGES
 // For use by exported routines below that want specific alignments
 //
 // Note: this code can be slow, and can significantly fragment memory.
@@ -4132,6 +4095,7 @@ static void* do_memalign(size_t align, size_t size) {
   }
   return SpanToMallocResult(span);
 }
+#endif
 
 // Helpers for use by exported routines below:
 
@@ -4187,16 +4151,6 @@ extern "C"
 
 template <bool crashOnFailure>
 ALWAYS_INLINE void* malloc(size_t);
-
-void* fastAlignedMalloc(size_t alignment, size_t size) 
-{
-    return do_memalign(alignment, size);
-}
-
-void fastAlignedFree(void* p) 
-{
-    do_free(p);
-}
 
 void* fastMalloc(size_t size)
 {
