@@ -1,5 +1,17 @@
 2015-01-31  Antti Koivisto  <antti@apple.com>
 
+        Unreviewed, rolling out r179447.
+
+        Forgot to include the test.
+
+        Reverted changeset:
+
+        "Enable WebKit disk cache on OS X"
+        https://bugs.webkit.org/show_bug.cgi?id=141022
+        http://trac.webkit.org/changeset/179447
+
+2015-01-31  Antti Koivisto  <antti@apple.com>
+
         Enable WebKit disk cache on OS X
         https://bugs.webkit.org/show_bug.cgi?id=141022
 
