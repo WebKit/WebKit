@@ -39,29 +39,35 @@ namespace SimpleLineLayout {
 class FlowContentsIterator  {
 public:
     FlowContentsIterator(const RenderBlockFlow&);
-
-    struct TextFragment {
+    class TextFragment {
+    public:
+        enum Type { ContentEnd, LineBreak, Whitespace, NonWhitespace };
         TextFragment() = default;
-        TextFragment(unsigned textStart, unsigned textEnd, float textWidth, bool isWhitespaceOnly)
-            : start(textStart)
-            , end(textEnd)
-            , type(isWhitespaceOnly ? Whitespace : NonWhitespace)
-            , width(textWidth)
+        TextFragment(unsigned start, unsigned end, float width, Type type, bool isCollapsed = false, bool isBreakable = false)
+            : m_start(start)
+            , m_end(end)
+            , m_type(type)
+            , m_width(width)
+            , m_isCollapsed(isCollapsed)
+            , m_isBreakable(isBreakable)
         {
         }
 
-        bool isEmpty() const
-        {
-            return start == end;
-        }
+        unsigned start() const { return m_start; }
+        unsigned end() const { return m_end; }
+        float width() const { return m_width; }
+        Type type() const { return m_type; }
+        bool isCollapsed() const { return m_isCollapsed; }
+        bool isBreakable() const { return m_isBreakable; }
+        bool isEmpty() const { return start() == end(); }
 
-        enum Type { LineBreak, Whitespace, NonWhitespace };
-        unsigned start { 0 };
-        unsigned end  {0 };
-        Type type { NonWhitespace };
-        bool isCollapsed { false };
-        bool isBreakable { false };
-        float width { 0 };
+    private:
+        unsigned m_start { 0 };
+        unsigned m_end { 0 };
+        Type m_type { NonWhitespace };
+        float m_width { 0 };
+        bool m_isCollapsed { false };
+        bool m_isBreakable { false };
     };
     TextFragment nextTextFragment(float xPosition = 0);
     float textWidth(unsigned from, unsigned to, float xPosition) const;

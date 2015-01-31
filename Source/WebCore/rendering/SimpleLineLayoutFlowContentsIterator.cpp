@@ -61,47 +61,34 @@ FlowContentsIterator::TextFragment FlowContentsIterator::nextTextFragment(float 
     // 2. whitespace (collasped, non-collapsed multi or single) or
     // 3. non-whitespace characters.
     // 4. empty, indicating content end.
-    TextFragment fragment;
-    fragment.start = m_position;
-    if (isEnd(fragment.start)) {
-        fragment.end = fragment.start;
+    if (isEnd(m_position))
+        return TextFragment(m_position, m_position, 0, TextFragment::ContentEnd);
+    if (isLineBreak(m_position)) {
+        TextFragment fragment(m_position, m_position + 1, 0, TextFragment::LineBreak);
+        ++m_position;
         return fragment;
     }
-    if (isLineBreak(fragment.start)) {
-        fragment.type = TextFragment::LineBreak;
-        fragment.end = fragment.start + 1;
-        m_position = fragment.end;
-        return fragment;
-    }
-
     unsigned spaceCount = 0;
-    unsigned whitespaceEnd = findNextNonWhitespacePosition(fragment.start, spaceCount);
-    ASSERT(fragment.start <= whitespaceEnd);
-    if (fragment.start != whitespaceEnd) {
-        fragment.type = TextFragment::Whitespace;
-        fragment.end = whitespaceEnd;
-        bool multipleWhitespace = fragment.start + 1 < fragment.end;
-        fragment.isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
-        fragment.isBreakable = !fragment.isCollapsed && multipleWhitespace;
-        if (fragment.isCollapsed)
-            fragment.width = m_style.spaceWidth;
+    unsigned startPosition = m_position;
+    unsigned endPosition = findNextNonWhitespacePosition(startPosition, spaceCount);
+    ASSERT(startPosition <= endPosition);
+    if (endPosition > startPosition) {
+        bool multipleWhitespace = startPosition + 1 < endPosition;
+        bool isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
+        bool isBreakable = !isCollapsed && multipleWhitespace;
+        float width = 0;
+        if (isCollapsed)
+            width = m_style.spaceWidth;
         else {
-            unsigned fragmentLength = fragment.end - fragment.start;
-            if (fragmentLength == spaceCount)
-                fragment.width = fragmentLength * m_style.spaceWidth;
-            else
-                fragment.width = textWidth(fragment.start, fragment.end, xPosition);
+            unsigned length = endPosition - startPosition;
+            width = length == spaceCount ? length * m_style.spaceWidth : textWidth(startPosition, endPosition, xPosition);
         }
-        m_position = fragment.end;
-        return fragment;
+        m_position = endPosition;
+        return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, isCollapsed, isBreakable);
     }
-
-    fragment.type = TextFragment::NonWhitespace;
-    fragment.isBreakable = m_style.breakWordOnOverflow;
-    fragment.end = findNextBreakablePosition(fragment.start + 1);
-    fragment.width = textWidth(fragment.start, fragment.end, xPosition);
-    m_position = fragment.end;
-    return fragment;
+    endPosition = findNextBreakablePosition(startPosition + 1);
+    m_position = endPosition;
+    return TextFragment(startPosition, endPosition, textWidth(startPosition, endPosition, xPosition), TextFragment::NonWhitespace, false, m_style.breakWordOnOverflow);
 }
 
 float FlowContentsIterator::textWidth(unsigned from, unsigned to, float xPosition) const

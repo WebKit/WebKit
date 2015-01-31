@@ -235,7 +235,7 @@ public:
 
     float availableWidth() const { return m_availableWidth; }
     float logicalLeftOffset() const { return m_logicalLeftOffset; }
-    FlowContentsIterator::TextFragment overflowedFragment() const { return m_overflowedFragment; }
+    const FlowContentsIterator::TextFragment& overflowedFragment() const { return m_overflowedFragment; }
     bool hasTrailingWhitespace() const { return m_trailingWhitespaceLength; }
     bool isWhitespaceOnly() const { return m_trailingWhitespaceWidth && m_runsWidth == m_trailingWhitespaceWidth; }
     bool fits(float extra) const { return m_availableWidth >= m_runsWidth + extra; }
@@ -245,29 +245,29 @@ public:
     void appendFragment(const FlowContentsIterator::TextFragment& fragment, Layout::RunVector& runs)
     {
         // Adjust end position while collapsing.
-        unsigned endPosition = fragment.isCollapsed ? fragment.start + 1 : fragment.end;
+        unsigned endPosition = fragment.isCollapsed() ? fragment.start() + 1 : fragment.end();
 
         if (m_createNewRun)
-            runs.append(Run(fragment.start, endPosition, m_runsWidth, m_runsWidth + fragment.width, false));
+            runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false));
         else {
             ASSERT(runs.size());
             Run& lastRun = runs.last();
             lastRun.end = endPosition;
-            lastRun.logicalRight = m_runsWidth + fragment.width;
+            lastRun.logicalRight = m_runsWidth + fragment.width();
         }
-        m_createNewRun = fragment.isCollapsed;
-        m_runsWidth += fragment.width;
+        m_createNewRun = fragment.isCollapsed();
+        m_runsWidth += fragment.width();
 
-        if (fragment.type == FlowContentsIterator::TextFragment::Whitespace) {
-            m_trailingWhitespaceLength += endPosition - fragment.start;
-            m_trailingWhitespaceWidth += fragment.width;
+        if (fragment.type() == FlowContentsIterator::TextFragment::Whitespace) {
+            m_trailingWhitespaceLength += endPosition - fragment.start();
+            m_trailingWhitespaceWidth += fragment.width();
         } else {
             m_trailingWhitespaceLength = 0;
             m_trailingWhitespaceWidth = 0;
         }
 
         if (!m_firstCharacterFits)
-            m_firstCharacterFits = fragment.start + 1 > fragment.end || m_runsWidth <= m_availableWidth;
+            m_firstCharacterFits = fragment.start() + 1 > endPosition || m_runsWidth <= m_availableWidth;
     }
 
     void removeTrailingWhitespace(Layout::RunVector& runs)
@@ -331,23 +331,23 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line)
 static FlowContentsIterator::TextFragment splitFragmentToFitLine(FlowContentsIterator::TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const FlowContentsIterator& flowContentsIterator)
 {
     // Fast path for single char fragments.
-    if (fragmentToSplit.start + 1 == fragmentToSplit.end) {
+    if (fragmentToSplit.start() + 1 == fragmentToSplit.end()) {
         if (keepAtLeastOneCharacter)
             return FlowContentsIterator::TextFragment();
 
         FlowContentsIterator::TextFragment fragmentForNextLine(fragmentToSplit);
-        fragmentToSplit.end = fragmentToSplit.start;
-        fragmentToSplit.width = 0;
+        // Make it empty fragment.
+        fragmentToSplit = FlowContentsIterator::TextFragment(fragmentToSplit.start(), fragmentToSplit.start(), 0, fragmentToSplit.type());
         return fragmentForNextLine;
     }
     // Simple binary search to find out what fits the current line.
     // FIXME: add surrogate pair support.
-    unsigned left = fragmentToSplit.start;
-    unsigned right = fragmentToSplit.end - 1; // We can ignore the last character. It surely does not fit.
+    unsigned left = fragmentToSplit.start();
+    unsigned right = fragmentToSplit.end() - 1; // We can ignore the last character. It surely does not fit.
     float width = 0;
     while (left < right) {
         unsigned middle = (left + right) / 2;
-        width = flowContentsIterator.textWidth(fragmentToSplit.start, middle + 1, 0);
+        width = flowContentsIterator.textWidth(fragmentToSplit.start(), middle + 1, 0);
         if (availableWidth > width)
             left = middle + 1;
         else if (availableWidth < width)
@@ -358,21 +358,25 @@ static FlowContentsIterator::TextFragment splitFragmentToFitLine(FlowContentsIte
         }
     }
 
-    if (keepAtLeastOneCharacter && right == fragmentToSplit.start)
+    if (keepAtLeastOneCharacter && right == fragmentToSplit.start())
         ++right;
-    FlowContentsIterator::TextFragment fragmentForNextLine(fragmentToSplit);
-    fragmentToSplit.end = right;
-    fragmentToSplit.width = fragmentToSplit.isEmpty() ? 0 : flowContentsIterator.textWidth(fragmentToSplit.start, fragmentToSplit.end, 0);
 
-    fragmentForNextLine.start = fragmentToSplit.end;
-    fragmentForNextLine.width -= fragmentToSplit.width;
-    return fragmentForNextLine;
+    // Fragment for next line.
+    unsigned nextLineStart = right;
+    unsigned nextLineEnd = fragmentToSplit.end();
+    float nextLineWidth = flowContentsIterator.textWidth(nextLineStart, nextLineEnd, 0);
+
+    unsigned thisLineStart = fragmentToSplit.start();
+    unsigned thisLineEnd = right;
+    float thisLineWidth = flowContentsIterator.textWidth(thisLineStart, thisLineEnd, 0);
+    fragmentToSplit = FlowContentsIterator::TextFragment(thisLineStart, thisLineEnd, thisLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
+    return FlowContentsIterator::TextFragment(nextLineStart, nextLineEnd, nextLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
 }
 
 static FlowContentsIterator::TextFragment firstFragment(FlowContentsIterator& flowContentsIterator, const LineState& previousLine)
 {
     // Handle overflowed fragment from previous line.
-    FlowContentsIterator::TextFragment firstFragment = previousLine.overflowedFragment();
+    FlowContentsIterator::TextFragment firstFragment(previousLine.overflowedFragment());
     const auto& style = flowContentsIterator.style();
 
     if (firstFragment.isEmpty())
@@ -380,16 +384,16 @@ static FlowContentsIterator::TextFragment firstFragment(FlowContentsIterator& fl
     else {
         // Special overflow pre-wrap whitespace handling: ignore the overflowed whitespace if we managed to fit at least one character on the previous line.
         // When the line is too short to fit one character (thought it still stays on the line) we continue with the overflow whitespace content on this line.
-        if (firstFragment.type == FlowContentsIterator::TextFragment::Whitespace && preWrap(style) && previousLine.firstCharacterFits()) {
+        if (firstFragment.type() == FlowContentsIterator::TextFragment::Whitespace && preWrap(style) && previousLine.firstCharacterFits()) {
             firstFragment = flowContentsIterator.nextTextFragment();
             // If skipping the whitespace puts us on a hard newline, skip the newline too as we already wrapped the line.
-            if (firstFragment.type == FlowContentsIterator::TextFragment::LineBreak)
+            if (firstFragment.type() == FlowContentsIterator::TextFragment::LineBreak)
                 firstFragment = flowContentsIterator.nextTextFragment();
         }
     }
 
     // Check if we need to skip the leading whitespace.
-    if (style.collapseWhitespace && firstFragment.type == FlowContentsIterator::TextFragment::Whitespace)
+    if (style.collapseWhitespace && firstFragment.type() == FlowContentsIterator::TextFragment::Whitespace)
         firstFragment = flowContentsIterator.nextTextFragment();
     return firstFragment;
 }
@@ -399,15 +403,15 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
     const auto& style = flowContentsIterator.style();
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
     auto fragment = firstFragment(flowContentsIterator, previousLine);
-    while (!fragment.isEmpty()) {
+    while (fragment.type() != FlowContentsIterator::TextFragment::ContentEnd) {
         // Hard linebreak.
-        if (fragment.type == FlowContentsIterator::TextFragment::LineBreak) {
+        if (fragment.type() == FlowContentsIterator::TextFragment::LineBreak) {
             // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
             if (!line.width())
                 line.appendFragment(fragment, runs);
             break;
         }
-        if (lineCanBeWrapped && !line.fits(fragment.width)) {
+        if (lineCanBeWrapped && !line.fits(fragment.width())) {
             // Overflow wrapping behaviour:
             // 1. Whitesapce collapse on: whitespace is skipped. Jump to next line.
             // 2. Whitespace collapse off: whitespace is wrapped.
@@ -415,7 +419,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
             // 4. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
             bool emptyLine = !line.width();
             // Whitespace fragment.
-            if (fragment.type == FlowContentsIterator::TextFragment::Whitespace) {
+            if (fragment.type() == FlowContentsIterator::TextFragment::Whitespace) {
                 if (!style.collapseWhitespace) {
                     // Split the fragment; (modified)fragment stays on this line, overflowedFragment is pushed to next line.
                     line.setOverflowedFragment(splitFragmentToFitLine(fragment, line.availableWidth() - line.width(), emptyLine, flowContentsIterator));
@@ -444,7 +448,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
         // Find the next text fragment.
         fragment = flowContentsIterator.nextTextFragment(line.width());
     }
-    return fragment.isEmpty() && line.overflowedFragment().isEmpty();
+    return fragment.type() == FlowContentsIterator::TextFragment::ContentEnd && line.overflowedFragment().isEmpty();
 }
 
 static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, unsigned previousRunCount, unsigned& lineCount, const FlowContentsIterator& flowContentsIterator)
