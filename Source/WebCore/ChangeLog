@@ -1,5 +1,31 @@
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
+        Optimize MemoryCache::getSessionMap() a bit
+        https://bugs.webkit.org/show_bug.cgi?id=141069
+
+        Reviewed by Anders Carlsson.
+
+        Optimize MemoryCache::getSessionMap() a bit by doing 1 HashMap lookup
+        instead of previously 3. Also rename the method to
+        ensureSessionResourceMap() as we usually don't use "get" prefix for
+        getters and the implementation will also create the HashMap value if
+        the key is not found.
+
+        Also add a alternative sessionResourceMap() method which returns
+        the HashMap value if the key exists but doesn't try to create it if
+        missing. This is actually what we really want for some call sites.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::resourceForRequest):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::remove):
+        (WebCore::MemoryCache::getSessionMap): Deleted.
+        * loader/cache/MemoryCache.h:
+
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed. Remove outdated comment.
 
         * loader/cache/MemoryCache.cpp:
