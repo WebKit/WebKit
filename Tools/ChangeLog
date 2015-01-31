@@ -1,5 +1,15 @@
 2015-01-30  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Another unreviewed test fix.
+
+        Correct copy/paste error in buildbot handling.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        (LayoutTestApacheHttpd._get_apache_config_file_path):
+
+2015-01-30  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed test fix.
 
         Correct path handling based on failures on test bots to get things running again.

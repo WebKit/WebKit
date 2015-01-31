@@ -68,7 +68,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             precompiledDrive = re.compile('^/cygdrive/c')
             output_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", output_dir)
             output_dir = precompiledDrive.sub("C:", output_dir)
-            test_dir = precompiledBuildbot.sub("C:", test_dir)
+            test_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", test_dir)
             test_dir = precompiledDrive.sub("C:", test_dir)
             self._pid_file = self._pid_file.replace("/tmp", "C:/cygwin/tmp")
 
@@ -160,7 +160,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             precompiledDrive = re.compile('^/cygdrive/c')
             httpd_config_copy = precompiledDrive.sub("C:", httpd_config_copy)
             precompiledBuildbot = re.compile('^/home/buildbot')
-            httpd_config_copy = precompiledDrive.sub("C:/cygwin/home/buildbot", httpd_config_copy)
+            httpd_config_copy = precompiledBuildbot.sub("C:/cygwin/home/buildbot", httpd_config_copy)
 
         return httpd_config_copy
 
