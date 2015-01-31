@@ -1,3 +1,42 @@
+2015-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        Add and hook up APINavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=140698
+
+        Reviewed by Sam Weinig.
+
+        Add a single APINavigationClient that NavigationState implements and
+        WebPageProxy prefers over APILoaderClient and APIPolicyClient.
+
+        * UIProcess/API/APILoaderClient.h:
+        Fix a comment.
+
+        * UIProcess/API/APINavigationClient.h: Added.
+        APINavigationClient is the union of NavigationState's overrides of APILoaderClient and APIPolicyClient.
+        Names are adjusted to more closely match the Modern API.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        Instead of having policy and loader clients, NavigationState has a single navigation client.
+        Adjust as necessary.
+
+        Move as much logic as possible (isMainFrame checks, construction of API objects) out of here
+        and into WebPageProxy.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Install the aforementioned single navigation client.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setNavigationClient):
+        Add a navigation client setter.
+
+        For all policy and loader client calls, if we have a navigation client, use that;
+        otherwise, fall back on the policy and loader clients.
+
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Update MemoryCache code to use more references instead of pointers

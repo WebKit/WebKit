@@ -85,7 +85,7 @@ public:
     virtual void didChangeProgress(WebKit::WebPageProxy&) { }
     virtual void didFinishProgress(WebKit::WebPageProxy&) { }
 
-    // FIXME: These three functions should not be part of this client.
+    // FIXME: These four functions should not be part of this client.
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
     virtual void interactionOccurredWhileProcessUnresponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }

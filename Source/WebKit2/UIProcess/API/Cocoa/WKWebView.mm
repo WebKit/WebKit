@@ -357,8 +357,7 @@ static int32_t deviceOrientation()
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
-    _page->setPolicyClient(_navigationState->createPolicyClient());
-    _page->setLoaderClient(_navigationState->createLoaderClient());
+    _page->setNavigationClient(_navigationState->createNavigationClient());
 
     _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
     _page->setUIClient(_uiDelegate->createUIClient());

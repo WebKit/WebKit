@@ -382,6 +382,7 @@ set(WebKit2_SOURCES
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
 
+    UIProcess/API/APIFrameInfo.cpp
     UIProcess/API/APINavigation.cpp
     UIProcess/API/APISessionState.cpp
     UIProcess/API/APIWebsiteDataStore.cpp

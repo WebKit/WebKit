@@ -26,6 +26,7 @@
 #ifndef APINavigationResponse_h
 #define APINavigationResponse_h
 
+#include "APIFrameInfo.h"
 #include "APIObject.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>

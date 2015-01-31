@@ -30,13 +30,12 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/HashMap.h>
-#import <wtf/RetainPtr.h>
-#import "APILoaderClient.h"
-#import "APIPolicyClient.h"
+#import "APINavigationClient.h"
 #import "PageLoadState.h"
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
+#import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;
@@ -57,8 +56,7 @@ public:
 
     static NavigationState& fromWebPage(WebPageProxy&);
 
-    std::unique_ptr<API::PolicyClient> createPolicyClient();
-    std::unique_ptr<API::LoaderClient> createLoaderClient();
+    std::unique_ptr<API::NavigationClient> createNavigationClient();
 
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);
@@ -73,49 +71,41 @@ public:
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
 private:
-    class PolicyClient final : public API::PolicyClient {
+    class NavigationClient final : public API::NavigationClient {
     public:
-        explicit PolicyClient(NavigationState&);
-        ~PolicyClient();
+        explicit NavigationClient(NavigationState&);
+        ~NavigationClient();
 
     private:
-        // API::PolicyClient
-        virtual void decidePolicyForNavigationAction(WebPageProxy&, WebFrameProxy* destinationFrame, const NavigationActionData&, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
-        virtual void decidePolicyForNewWindowAction(WebPageProxy&, WebFrameProxy& sourceFrame, const NavigationActionData&, const WebCore::ResourceRequest&, const WTF::String& frameName, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
-        virtual void decidePolicyForResponse(WebPageProxy&, WebFrameProxy&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
+        virtual void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        virtual void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFailNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
 
-        NavigationState& m_navigationState;
-    };
+        virtual void renderingProgressDidChange(WebPageProxy&, WebCore::LayoutMilestones, API::Object*) override;
 
-    class LoaderClient final : public API::LoaderClient {
-    public:
-        explicit LoaderClient(NavigationState&);
-        ~LoaderClient();
-
-    private:
-        virtual void didStartProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
-        virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
-        virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
-        virtual void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
-        virtual void didFinishDocumentLoadForFrame(WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) override;
-        virtual void didFinishLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
-        virtual void didFailLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
-        virtual void didSameDocumentNavigationForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
-        virtual void didLayout(WebPageProxy&, WebCore::LayoutMilestones, API::Object*) override;
-        virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebProtectionSpace*) override;
-        virtual void didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebKit::WebFrameProxy&, WebKit::AuthenticationChallengeProxy*) override;
+        virtual bool canAuthenticateAgainstProtectionSpace(WebPageProxy&, WebProtectionSpace*) override;
+        virtual void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy*) override;
         virtual void processDidCrash(WebPageProxy&) override;
         virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
 
+        virtual void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&) override;
+        virtual void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        virtual void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        virtual void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+
 #if USE(QUICK_LOOK)
         virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
-        virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) override;
+        virtual void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
 #endif
 
-        virtual void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&, WebFrameProxy&) override;
-        virtual void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
-        virtual void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
-        virtual void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
+        virtual void decidePolicyForNavigationAction(WebPageProxy&, API::NavigationAction&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
+        virtual void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
 
         NavigationState& m_navigationState;
     };

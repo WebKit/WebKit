@@ -117,6 +117,7 @@ class FindClient;
 class FormClient;
 class LoaderClient;
 class Navigation;
+class NavigationClient;
 class PolicyClient;
 class UIClient;
 class URLRequest;
@@ -314,6 +315,7 @@ public:
     void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>);
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void setFormClient(std::unique_ptr<API::FormClient>);
+    void setNavigationClient(std::unique_ptr<API::NavigationClient>);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
 
@@ -1371,6 +1373,7 @@ private:
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
+    std::unique_ptr<API::NavigationClient> m_navigationClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;
 #if PLATFORM(EFL)
