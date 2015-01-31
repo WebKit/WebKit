@@ -1,5 +1,14 @@
 2015-01-31  Antti Koivisto  <antti@apple.com>
 
+        Enable WebKit disk cache on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=141022
+
+        Reviewed by Gavin Barraclough.
+
+        * config.h: Flip the switch.
+
+2015-01-31  Antti Koivisto  <antti@apple.com>
+
         OSObjectPtr does not work with dispatch_data_t on Maverics
         https://bugs.webkit.org/show_bug.cgi?id=141081
 
