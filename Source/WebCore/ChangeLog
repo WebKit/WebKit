@@ -1,3 +1,18 @@
+2015-01-30  Jeongmin Kim  <jm86.kim@lge.com>
+
+        Update the comment in RenderLayer for clarity as related code location is changed
+        https://bugs.webkit.org/show_bug.cgi?id=141103
+
+        Reviewed by Simon Fraser.
+
+        Update the comment in RenderLayer for clarity as related code location is changed
+        The repainting in implicitClose() that is now called in setVisualUpdatesAllowed(bool) is removed
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::shouldSuppressPaintingLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Optimize MemoryCache::getSessionMap() a bit

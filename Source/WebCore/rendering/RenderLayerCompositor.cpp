@@ -661,7 +661,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     ASSERT(!m_renderView.document().inPageCache());
     
-    // Compositing layers will be updated in Document::implicitClose() if suppressed here.
+    // Compositing layers will be updated in Document::setVisualUpdatesAllowed(bool) if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())
         return;
 

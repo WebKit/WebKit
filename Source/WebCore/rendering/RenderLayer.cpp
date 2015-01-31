@@ -3842,7 +3842,7 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
         return true;
 
     // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
-    // A full repaint will occur in Document::implicitClose() if painting is suppressed here.
+    // A full repaint will occur in Document::setVisualUpdatesAllowed(bool) if painting is suppressed here.
     if (!layer->renderer().document().visualUpdatesAllowed())
         return true;
 
