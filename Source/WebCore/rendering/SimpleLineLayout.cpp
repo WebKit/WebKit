@@ -368,7 +368,8 @@ static FlowContentsIterator::TextFragment splitFragmentToFitLine(FlowContentsIte
 
     unsigned thisLineStart = fragmentToSplit.start();
     unsigned thisLineEnd = right;
-    float thisLineWidth = flowContentsIterator.textWidth(thisLineStart, thisLineEnd, 0);
+    ASSERT(thisLineStart <= thisLineEnd);
+    float thisLineWidth = thisLineStart < thisLineEnd ? flowContentsIterator.textWidth(thisLineStart, thisLineEnd, 0) : 0;
     fragmentToSplit = FlowContentsIterator::TextFragment(thisLineStart, thisLineEnd, thisLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
     return FlowContentsIterator::TextFragment(nextLineStart, nextLineEnd, nextLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
 }
