@@ -153,7 +153,6 @@
 		072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
 		072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */; };
-		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07367DDF172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */; };
 		07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */; };
 		073794DD19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */; };
@@ -7179,7 +7178,6 @@
 		072AE1E3183C0741000A5988 /* QuickTimePluginReplacement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = QuickTimePluginReplacement.idl; path = plugins/QuickTimePluginReplacement.idl; sourceTree = "<group>"; };
 		072AE1E4183C0741000A5988 /* QuickTimePluginReplacement.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = QuickTimePluginReplacement.js; path = plugins/QuickTimePluginReplacement.js; sourceTree = "<group>"; };
 		072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionUserPreferences.cpp; sourceTree = "<group>"; };
-		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InbandTextTrackPrivateLegacyAVFObjC.h; path = objc/InbandTextTrackPrivateLegacyAVFObjC.h; sourceTree = "<group>"; };
 		07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InbandTextTrackPrivateLegacyAVFObjC.mm; path = objc/InbandTextTrackPrivateLegacyAVFObjC.mm; sourceTree = "<group>"; };
 		073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCOfferAnswerOptions.cpp; sourceTree = "<group>"; };
@@ -20461,7 +20459,6 @@
 				B27535510B053814002CE64F /* IntSizeMac.mm */,
 				E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */,
 				E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */,
-				0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */,
 				CD60C0C5193E87C7003C656B /* MediaTimeQTKit.h */,
 				CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */,
 				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
@@ -25454,7 +25451,6 @@
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */,
 				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
-				0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */,
 				4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */,
 				4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */,
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,

@@ -54,7 +54,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/MediaPlayerProxy.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebCoreURLResponse.h>

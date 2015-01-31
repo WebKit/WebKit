@@ -1,3 +1,13 @@
+2015-01-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove MediaPlayerProxy.h
+        https://bugs.webkit.org/show_bug.cgi?id=141087
+
+        Reviewed by Sam Weinig.
+
+        * MigrateHeaders.make: Don't need to copy MediaPlayerProxy.h.
+        * Plugins/WebPluginController.mm: Don't include MediaPlayerProxy.h.
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Rename shared() static member functions to singleton() for singleton classes.
