@@ -76,8 +76,6 @@ GCPhase GCThread::waitForNextPhase()
     if (!m_shared.m_numberOfActiveGCThreads)
         m_shared.m_activityConditionVariable.notify_one();
 
-    WTF::releaseFastMallocFreeMemoryForThisThread();
-
     m_shared.m_phaseConditionVariable.wait(lock, [this] { return m_shared.m_currentPhase != NoPhase; });
     m_shared.m_numberOfActiveGCThreads++;
     return m_shared.m_currentPhase;
@@ -117,6 +115,9 @@ void GCThread::gcThreadMain()
                 // all of the blocks that the GCThreads borrowed have been returned. doneCopying() 
                 // returns our borrowed CopiedBlock, allowing the copying phase to finish.
                 m_copyVisitor->doneCopying();
+
+                WTF::releaseFastMallocFreeMemoryForThisThread();
+
                 break;
             case NoPhase:
                 RELEASE_ASSERT_NOT_REACHED();

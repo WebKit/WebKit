@@ -3,6 +3,21 @@
         GC marking threads should clear malloc caches
         https://bugs.webkit.org/show_bug.cgi?id=141097
 
+        Reviewed by Sam Weinig.
+
+        Follow-up based on Mark Hahnenberg's review: Release after the copy
+        phase, rather than after any phase, since we'd rather not release
+        between marking and copying.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::waitForNextPhase):
+        (JSC::GCThread::gcThreadMain):
+
+2015-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        GC marking threads should clear malloc caches
+        https://bugs.webkit.org/show_bug.cgi?id=141097
+
         Reviewed by Andreas Kling.
 
         This is an attempt to ameliorate a potential memory use regression
