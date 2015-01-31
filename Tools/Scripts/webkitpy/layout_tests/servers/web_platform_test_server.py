@@ -77,7 +77,11 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._doc_root_path = port_obj.path_from_webkit_base("LayoutTests", self._doc_root)
 
     def _install_modules(self):
-        modules = json.loads(self._filesystem.read_text_file(self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "WPTModules")))
+        modules_file_path = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "WPTModules")
+        if not self._filesystem.isfile(modules_file_path):
+            _log.warning("Cannot read " + modules_file_path)
+            return
+        modules = json.loads(self._filesystem.read_text_file(modules_file_path))
         for module in modules:
             AutoInstaller(target_dir=self._filesystem.join(self._doc_root, module["path"])).install(url=module["url"], url_subpath=module["url_subpath"], target_name=module["name"])
 

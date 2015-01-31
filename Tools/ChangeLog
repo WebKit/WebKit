@@ -1,5 +1,15 @@
 2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        https://trac.webkit.org/changeset/179439 breaks a python test
+        https://bugs.webkit.org/show_bug.cgi?id=141114
+
+        Unreviewed.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._install_modules): Checks whether WPTModules file exists before reading it as no such file exists in mock tests.  
+
+2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Import W3C web platform tests infrastructure
         https://bugs.webkit.org/show_bug.cgi?id=140934
 
