@@ -64,8 +64,12 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         if port_obj.host.platform.is_win():
             # Convert to MSDOS file naming:
-            output_dir = output_dir.replace("/cygdrive/c", "C:")
-            test_dir = test_dir.replace("/cygdrive/c", "C:")
+            precompiledBuildbot = re.compile('^/home/buildbot')
+            precompiledDrive = re.compile('^/cygdrive/c')
+            output_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", output_dir)
+            output_dir = precompiledDrive.sub("C:", output_dir)
+            test_dir = precompiledBuildbot.sub("C:", test_dir)
+            test_dir = precompiledDrive.sub("C:", test_dir)
             self._pid_file = self._pid_file.replace("/tmp", "C:/cygwin/tmp")
 
         js_test_resources_dir = self._filesystem.join(test_dir, "resources")
@@ -152,7 +156,11 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
         if self._port_obj.host.platform.is_win():
-            httpd_config_copy = httpd_config_copy.replace("/cygdrive/c", "C:")
+            # Convert to MSDOS file naming:
+            precompiledDrive = re.compile('^/cygdrive/c')
+            httpd_config_copy = precompiledDrive.sub("C:", httpd_config_copy)
+            precompiledBuildbot = re.compile('^/home/buildbot')
+            httpd_config_copy = precompiledDrive.sub("C:/cygwin/home/buildbot", httpd_config_copy)
 
         return httpd_config_copy
 
