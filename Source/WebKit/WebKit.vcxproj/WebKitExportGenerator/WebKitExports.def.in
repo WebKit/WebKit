@@ -207,8 +207,8 @@ EXPORTS
         symbolWithPointer(?intersects@IntRect@WebCore@@QBE_NABV12@@Z, ?intersects@IntRect@WebCore@@QEBA_NAEBV12@@Z)
         symbolWithPointer(?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z, ?item@StaticNodeList@WebCore@@UEBAPEAVNode@2@I@Z)
         ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
-        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBEA?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ)
-        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXAAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QBEXEAAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
+        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ)
+        symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXAAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXAEAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         symbolWithPointer(?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ, ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UEAA_NXZ)
