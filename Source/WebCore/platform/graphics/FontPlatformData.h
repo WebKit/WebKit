@@ -112,7 +112,6 @@ public:
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
 #elif PLATFORM(COCOA)
-    // 
     CTFontRef font() const { return m_font; }
     void setFont(CTFontRef);
 
@@ -132,9 +131,6 @@ public:
 
 #if USE(CG)
     CGFontRef cgFont() const { return m_cgFont.get(); }
-#endif
-
-#if PLATFORM(COCOA)
 #endif
 
     bool isFixedPitch() const;

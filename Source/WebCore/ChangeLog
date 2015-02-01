@@ -1,5 +1,13 @@
 2015-01-31  Sam Weinig  <sam@webkit.org>
 
+        Remove empty #if/#endif
+
+        Rubber-stamped by Antti Koivisto.
+
+        * platform/graphics/FontPlatformData.h:
+
+2015-01-31  Sam Weinig  <sam@webkit.org>
+
         Remove support for disabling drawing of emoji
         https://bugs.webkit.org/show_bug.cgi?id=141126
 
