@@ -84,9 +84,6 @@ namespace WebCore {
     class GraphicsContext3D;
     class TextRun;
     class TransformationMatrix;
-#if PLATFORM(IOS)
-    struct BidiStatus;
-#endif
 
     enum TextDrawingMode {
         TextModeFill = 1 << 0,
@@ -344,18 +341,11 @@ namespace WebCore {
         TextDrawingModeFlags textDrawingMode() const;
         void setTextDrawingMode(TextDrawingModeFlags);
         
-#if !PLATFORM(IOS)
-        void drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
-#else
         float drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
-#endif
         void drawGlyphs(const FontCascade&, const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawEmphasisMarks(const FontCascade&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
-#if !PLATFORM(IOS)
         void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
-#else
-        WEBCORE_EXPORT float drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
-#endif
+
         enum RoundingMode {
             RoundAllSides,
             RoundOriginAndDimensions

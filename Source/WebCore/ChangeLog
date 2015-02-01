@@ -1,3 +1,29 @@
+2015-01-31  Sam Weinig  <sam@webkit.org>
+
+        Merge the iOS implementations of GraphicsContext::drawText and GraphicsContext::drawBidiText with the platform independent ones
+        https://bugs.webkit.org/show_bug.cgi?id=141131
+
+        Reviewed by Antti Koivisto.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        The only difference between the two implementation here was the iOS one returns the length of
+        the text that was drawn. As all platforms now support that, we can merge by keeping the iOS one.
+
+        (WebCore::GraphicsContext::drawBidiText):
+        This function had a few differences:
+            - iOS returns the length of the text that was drawn.
+                Since this is not used anywhere, I dropped this ability.
+            - iOS took additional inputs of initial bidi status and run length (and returned the
+              the final bidi status as an out parameter)
+                Since this was also unused, I dropped it.
+            - iOS used the fact that font.drawText() returns the length that was drawn, to avoid
+              measuring the text twice.
+                I kept this, since all platforms now support this.
+
+        * platform/graphics/GraphicsContext.h:
+        Update signatures. Remove WEBCORE_EXPORT for function that is not used outside of WebCore.
+
 2015-01-31  Andreas Kling  <akling@apple.com>
 
         Shrink RenderBlock.

@@ -426,19 +426,6 @@ bool GraphicsContext::paintingDisabled() const
     return m_state.paintingDisabled;
 }
 
-// FIXME: Replace the non-iOS implementation with the iOS implementation since the latter computes returns
-// the width of the drawn text. Ensure that there aren't noticeable differences in layout.
-#if !PLATFORM(IOS)
-#if !USE(WINGDI)
-void GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
-{
-    if (paintingDisabled())
-        return;
-
-    font.drawText(this, run, point, from, to);
-}
-#endif
-#else
 float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
@@ -446,7 +433,6 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
 
     return font.drawText(this, run, point, from, to);
 }
-#endif // !PLATFORM(IOS)
 
 void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& font, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
 {
@@ -464,44 +450,22 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
     font.drawEmphasisMarks(this, run, mark, point, from, to);
 }
 
-// FIXME: Better merge the iOS and non-iOS differences. In particular, make this method use the
-// returned width of the drawn text, FontCascade::drawText(), instead of computing it. Ensure that there
-// aren't noticeable differences in layout with such a change.
-#if !PLATFORM(IOS)
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
-#else
-float GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction, BidiStatus* status, int length)
-#endif
 {
     if (paintingDisabled())
-#if !PLATFORM(IOS)
         return;
-#else
-        return 0;
-#endif
 
     BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
-#if !PLATFORM(IOS)
     bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
-#else
-    bidiResolver.setStatus(status ? *status : BidiStatus(run.direction(), run.directionalOverride()));
-#endif
     bidiResolver.setPositionIgnoringNestedIsolates(TextRunIterator(&run, 0));
 
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
     BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
-#if !PLATFORM(IOS)
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
-#else
-    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, length < 0 ? run.length() : length));
-#endif    
+
     if (!bidiRuns.runCount())
-#if !PLATFORM(IOS)
         return;
-#else
-        return 0;
-#endif
 
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiRuns.firstRun();
@@ -511,30 +475,13 @@ float GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run,
         subrun.setDirection(isRTL ? RTL : LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
-#if !PLATFORM(IOS)
-        font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
-
-        bidiRun = bidiRun->next();
-        // FIXME: Have FontCascade::drawText return the width of what it drew so that we don't have to re-measure here.
-        if (bidiRun)
-            currPoint.move(font.width(subrun), 0);
-#else
         float width = font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
         currPoint.move(width, 0);
 
         bidiRun = bidiRun->next();
-#endif
     }
 
-#if PLATFORM(IOS)
-    if (status)
-        *status = bidiResolver.status();
-#endif
     bidiRuns.deleteRuns();
-
-#if PLATFORM(IOS)
-    return currPoint.x() - static_cast<float>(point.x());
-#endif
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
