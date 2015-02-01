@@ -1,9 +1,7 @@
-description("Tests whether SVG event bubbling works across shadow trees.");
+description("Tests wheter SVG event bubbling works accross shadow trees.");
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 var svgNS = "http://www.w3.org/2000/svg";
 var xhtmlNS = "http://www.w3.org/1999/xhtml";
@@ -20,8 +18,8 @@ function log(message) {
 }
 
 function eventHandler(evt, label) {
-    var targetId = evt.target.id;
-    var curTargetId = evt.currentTarget.id;
+    var targetId = evt.target.correspondingElement ? evt.target.correspondingElement.id : evt.target.id;
+    var curTargetId = evt.currentTarget.correspondingElement ? evt.currentTarget.correspondingElement.id : evt.currentTarget.id;
 
     var phaseString = "";
     switch (evt.eventPhase) {
@@ -43,7 +41,10 @@ function eventHandler(evt, label) {
 
 function finishTest()
 {
+    successfullyParsed = true;
+
     document.getElementById("rectParent").setAttribute("fill", "green");
+    shouldBeTrue("successfullyParsed");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 
     if (window.testRunner)
@@ -58,22 +59,22 @@ function nextTest()
     switch (counter) {
     case 1:
         rect.onclick = function(evt) { eventHandler(evt, 1); };
-        expected[0] = "[EventHandler 1] type: click phase: AT_TARGET target: [object SVGUseElement] (id: use) currentTarget: [object SVGUseElement] (id: use)";
+        expected[0] = "[EventHandler 1] type: click phase: AT_TARGET target: [object SVGElementInstance] (id: rect) currentTarget: [object SVGElementInstance] (id: rect)";
         testListeners();
         break;
     case 2:
         rectContainer.addEventListener("click", function(evt) { eventHandler(evt, 2) }, false);
-        expected[1] = "[EventHandler 2] type: click phase: AT_TARGET target: [object SVGUseElement] (id: use) currentTarget: [object SVGUseElement] (id: use)";
+        expected[1] = "[EventHandler 2] type: click phase: BUBBLING target: [object SVGElementInstance] (id: rect) currentTarget: [object SVGElementInstance] (id: rectParent)";    
         testListeners();
         break;
     case 3:
         use.setAttribute("onclick", "eventHandler(evt, 3)");
-        expected[2] = "[EventHandler 3] type: click phase: AT_TARGET target: [object SVGUseElement] (id: use) currentTarget: [object SVGUseElement] (id: use)";
+        expected[2] = "[EventHandler 3] type: click phase: BUBBLING target: [object SVGElementInstance] (id: rect) currentTarget: [object SVGUseElement] (id: use)";
         testListeners();
         break;
     case 4:
         useContainer.onclick = function(evt) { eventHandler(evt, 4) };
-        expected[3] = "[EventHandler 4] type: click phase: BUBBLING target: [object SVGUseElement] (id: use) currentTarget: [object SVGGElement] (id: useParent)";
+        expected[3] = "[EventHandler 4] type: click phase: BUBBLING target: [object SVGElementInstance] (id: rect) currentTarget: [object SVGGElement] (id: useParent)";
         testListeners();
         break;
     }
@@ -105,7 +106,7 @@ defs.appendChild(rectContainer);
 
 var rect = document.createElementNS(svgNS, "rect");
 rect.id = "rect";
-rect.style.fill = "blue";
+rect.style.fill = "red";
 rect.width.baseVal.value = 100;
 rect.height.baseVal.value = 100;
 rectContainer.appendChild(rect);
@@ -120,4 +121,8 @@ use.id = "use";
 use.href.baseVal = "#rectParent";
 useContainer.appendChild(use);
 
-nextTest();
+function repaintTest() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    nextTest();
+}
