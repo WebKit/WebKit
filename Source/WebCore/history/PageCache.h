@@ -55,7 +55,7 @@ public:
 
     void add(HistoryItem&, Page&); // Prunes if maxSize() is exceeded.
     WEBCORE_EXPORT void remove(HistoryItem&);
-    CachedPage* get(HistoryItem&, Page*) const;
+    CachedPage* get(HistoryItem&, Page*);
     std::unique_ptr<CachedPage> take(HistoryItem&, Page*);
 
     unsigned pageCount() const { return m_items.size(); }
