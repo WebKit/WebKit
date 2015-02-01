@@ -1,3 +1,58 @@
+2015-01-31  Andreas Kling  <akling@apple.com>
+
+        Shrink RenderBlock.
+        <https://webkit.org/b/141129>
+
+        Reviewed by Antti Koivisto.
+
+        Get rid of the bitfield in RenderBlock by moving the essential bits to
+        RenderElement (plenty of space in the bitfield there.)
+
+        RenderBlock also had a cache of its line-height, but it doesn't appear
+        to help any of the benchmarks that we're tracking so I'd say it's okay
+        to lose this optimization.
+
+        This knocks 8 bytes off of RenderBlock (and all of its subclasses.)
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::recomputeLogicalWidth):
+        (WebCore::RenderBlock::lineHeight):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::setHasMarginBeforeQuirk):
+        (WebCore::RenderBlock::setHasMarginAfterQuirk):
+        (WebCore::RenderBlock::setHasBorderOrPaddingLogicalWidthChanged):
+        (WebCore::RenderBlock::hasMarginBeforeQuirk):
+        (WebCore::RenderBlock::hasMarginAfterQuirk):
+        (WebCore::RenderBlock::hasBorderOrPaddingLogicalWidthChanged):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::lineLayoutPath):
+        (WebCore::RenderBlockFlow::setLineLayoutPath):
+        (WebCore::RenderBlockFlow::setHasMarkupTruncation):
+        (WebCore::RenderBlockFlow::hasMarkupTruncation):
+        (WebCore::RenderBlockFlow::simpleLineLayout):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setRenderBlockHasMarginBeforeQuirk):
+        (WebCore::RenderElement::setRenderBlockHasMarginAfterQuirk):
+        (WebCore::RenderElement::setRenderBlockHasBorderOrPaddingLogicalWidthChanged):
+        (WebCore::RenderElement::renderBlockHasMarginBeforeQuirk):
+        (WebCore::RenderElement::renderBlockHasMarginAfterQuirk):
+        (WebCore::RenderElement::renderBlockHasBorderOrPaddingLogicalWidthChanged):
+        (WebCore::RenderElement::setRenderBlockFlowLineLayoutPath):
+        (WebCore::RenderElement::setRenderBlockFlowHasMarkupTruncation):
+        (WebCore::RenderElement::renderBlockFlowLineLayoutPath):
+        (WebCore::RenderElement::renderBlockFlowHasMarkupTruncation):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeLineRegionInfo):
+
 2015-01-31  Chris Dumez  <cdumez@apple.com>
 
         Remove useless PageCache::singleton() call from PageCache member function

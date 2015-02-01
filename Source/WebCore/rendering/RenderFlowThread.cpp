@@ -592,7 +592,7 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 
 void RenderFlowThread::removeLineRegionInfo(const RenderBlockFlow* blockFlow)
 {
-    if (!m_lineToRegionMap || blockFlow->m_lineLayoutPath == SimpleLinesPath)
+    if (!m_lineToRegionMap || blockFlow->lineLayoutPath() == SimpleLinesPath)
         return;
 
     for (RootInlineBox* curr = blockFlow->firstRootBox(); curr; curr = curr->nextRootBox()) {

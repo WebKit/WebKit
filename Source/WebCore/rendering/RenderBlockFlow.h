@@ -344,14 +344,18 @@ public:
     virtual bool hasLines() const override final;
     virtual void invalidateLineLayoutPath() override final;
 
+    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, ForceLineBoxesPath };
+    LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
+    void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
+
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
     int lineCount(const RootInlineBox* = nullptr, bool* = nullptr) const;
     int heightForLineCount(int);
     void clearTruncation();
 
-    void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
-    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
+    void setHasMarkupTruncation(bool b) { setRenderBlockFlowHasMarkupTruncation(b); }
+    bool hasMarkupTruncation() const { return renderBlockFlowHasMarkupTruncation(); }
 
     bool containsNonZeroBidiLevel() const;
 
@@ -634,7 +638,7 @@ inline bool RenderElement::isRenderNamedFlowFragmentContainer() const
 
 inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
 {
-    ASSERT(m_lineLayoutPath == SimpleLinesPath || !m_simpleLineLayout);
+    ASSERT(lineLayoutPath() == SimpleLinesPath || !m_simpleLineLayout);
     return m_simpleLineLayout.get();
 }
 

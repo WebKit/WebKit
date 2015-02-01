@@ -235,6 +235,18 @@ protected:
     static void removeControlStatesForRenderer(const RenderObject*);
     static void addControlStatesForRenderer(const RenderObject*, ControlStates*);
 
+    void setRenderBlockHasMarginBeforeQuirk(bool b) { m_renderBlockHasMarginBeforeQuirk = b; }
+    void setRenderBlockHasMarginAfterQuirk(bool b) { m_renderBlockHasMarginAfterQuirk = b; }
+    void setRenderBlockHasBorderOrPaddingLogicalWidthChanged(bool b) { m_renderBlockHasBorderOrPaddingLogicalWidthChanged = b; }
+    bool renderBlockHasMarginBeforeQuirk() const { return m_renderBlockHasMarginBeforeQuirk; }
+    bool renderBlockHasMarginAfterQuirk() const { return m_renderBlockHasMarginAfterQuirk; }
+    bool renderBlockHasBorderOrPaddingLogicalWidthChanged() const { return m_renderBlockHasBorderOrPaddingLogicalWidthChanged; }
+
+    void setRenderBlockFlowLineLayoutPath(unsigned u) { m_renderBlockFlowLineLayoutPath = u; }
+    void setRenderBlockFlowHasMarkupTruncation(bool b) { m_renderBlockFlowHasMarkupTruncation = b; }
+    unsigned renderBlockFlowLineLayoutPath() const { return m_renderBlockFlowLineLayoutPath; }
+    bool renderBlockFlowHasMarkupTruncation() const { return m_renderBlockFlowHasMarkupTruncation; }
+
 private:
     RenderElement(ContainerNode&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
     void node() const = delete;
@@ -279,6 +291,12 @@ private:
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_isCSSAnimating : 1;
     unsigned m_hasContinuation : 1;
+
+    unsigned m_renderBlockHasMarginBeforeQuirk : 1;
+    unsigned m_renderBlockHasMarginAfterQuirk : 1;
+    unsigned m_renderBlockHasBorderOrPaddingLogicalWidthChanged : 1;
+    unsigned m_renderBlockFlowHasMarkupTruncation : 1;
+    unsigned m_renderBlockFlowLineLayoutPath : 2;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

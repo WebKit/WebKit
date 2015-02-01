@@ -633,10 +633,10 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    if (m_lineLayoutPath == UndeterminedPath)
-        m_lineLayoutPath = SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath;
+    if (lineLayoutPath() == UndeterminedPath)
+        setLineLayoutPath(SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath);
 
-    if (m_lineLayoutPath == SimpleLinesPath) {
+    if (lineLayoutPath() == SimpleLinesPath) {
         layoutSimpleLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
@@ -3471,20 +3471,20 @@ bool RenderBlockFlow::hasLines() const
 
 void RenderBlockFlow::invalidateLineLayoutPath()
 {
-    switch (m_lineLayoutPath) {
+    switch (lineLayoutPath()) {
     case UndeterminedPath:
     case ForceLineBoxesPath:
         ASSERT(!m_simpleLineLayout);
         return;
     case LineBoxesPath:
         ASSERT(!m_simpleLineLayout);
-        m_lineLayoutPath = UndeterminedPath;
+        setLineLayoutPath(UndeterminedPath);
         return;
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
         m_simpleLineLayout = nullptr;
         setNeedsLayout();
-        m_lineLayoutPath = UndeterminedPath;
+        setLineLayoutPath(UndeterminedPath);
         return;
     }
     ASSERT_NOT_REACHED();
@@ -3508,7 +3508,7 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
 
 void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
-    ASSERT(m_lineLayoutPath == SimpleLinesPath);
+    ASSERT(lineLayoutPath() == SimpleLinesPath);
     lineBoxes().deleteLineBoxes();
     ASSERT(!childrenOfType<RenderElement>(*this).first());
     for (auto& textRenderer : childrenOfType<RenderText>(*this))
@@ -3517,7 +3517,7 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 
 void RenderBlockFlow::ensureLineBoxes()
 {
-    m_lineLayoutPath = ForceLineBoxesPath;
+    setLineLayoutPath(ForceLineBoxesPath);
     if (!m_simpleLineLayout)
         return;
     m_simpleLineLayout = nullptr;
