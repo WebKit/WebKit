@@ -1,3 +1,18 @@
+2015-01-31  Michael Saboff  <msaboff@apple.com>
+
+        Crash (DFG assertion) beneath AbstractInterpreter::verifyEdge() @ http://experilous.com/1/planet-generator/2014-09-28/version-1
+        https://bugs.webkit.org/show_bug.cgi?id=141111
+
+        Reviewed by Filip Pizlo.
+
+        In LowerDFGToLLVM::compileNode(), if we determine while compiling a node that we would have
+        exited, we don't need to process the OSR availability or abstract interpreter.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::safelyInvalidateAfterTermination): Broke this out a a separate
+        method since we need to call it at the top and near the bottom of compileNode().
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+
 2015-01-31  Sam Weinig  <sam@webkit.org>
 
         Remove even more Mountain Lion support

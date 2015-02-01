@@ -1,3 +1,20 @@
+2015-01-31  Michael Saboff  <msaboff@apple.com>
+
+        Crash (DFG assertion) beneath AbstractInterpreter::verifyEdge() @ http://experilous.com/1/planet-generator/2014-09-28/version-1
+        https://bugs.webkit.org/show_bug.cgi?id=141111
+
+        Reviewed by Filip Pizlo.
+
+        New tests.
+
+        * js/regress-141111-expected.txt: Added.
+        * js/regress-141111.html: Added.
+        * js/script-tests/regress-141111.js: Added.
+        (MyObject):
+        (foo):
+        (.result):
+        (bar):
+
 2015-01-31  Antti Koivisto  <antti@apple.com>
 
         Enable WebKit disk cache on OS X

@@ -306,30 +306,34 @@ private:
                 break;
         }
     }
-    
+
+    void safelyInvalidateAfterTermination()
+    {
+        if (verboseCompilationEnabled())
+            dataLog("Bailing.\n");
+        crash(m_highBlock->index, m_node->index());
+
+        // Invalidate dominated blocks. Under normal circumstances we would expect
+        // them to be invalidated already. But you can have the CFA become more
+        // precise over time because the structures of objects change on the main
+        // thread. Failing to do this would result in weird crashes due to a value
+        // being used but not defined. Race conditions FTW!
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* target = m_graph.block(blockIndex);
+            if (!target)
+                continue;
+            if (m_graph.m_dominators.dominates(m_highBlock, target)) {
+                if (verboseCompilationEnabled())
+                    dataLog("Block ", *target, " will bail also.\n");
+                target->cfaHasVisited = false;
+            }
+        }
+    }
+
     bool compileNode(unsigned nodeIndex)
     {
         if (!m_state.isValid()) {
-            if (verboseCompilationEnabled())
-                dataLog("Bailing.\n");
-            crash(m_highBlock->index, m_node->index());
-            
-            // Invalidate dominated blocks. Under normal circumstances we would expect
-            // them to be invalidated already. But you can have the CFA become more
-            // precise over time because the structures of objects change on the main
-            // thread. Failing to do this would result in weird crashes due to a value
-            // being used but not defined. Race conditions FTW!
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* target = m_graph.block(blockIndex);
-                if (!target)
-                    continue;
-                if (m_graph.m_dominators.dominates(m_highBlock, target)) {
-                    if (verboseCompilationEnabled())
-                        dataLog("Block ", *target, " will bail also.\n");
-                    target->cfaHasVisited = false;
-                }
-            }
-            
+            safelyInvalidateAfterTermination();
             return false;
         }
         
@@ -749,7 +753,12 @@ private:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
             break;
         }
-        
+
+        if (!m_state.isValid()) {
+            safelyInvalidateAfterTermination();
+            return false;
+        }
+
         m_availabilityCalculator.executeNode(m_node);
         m_interpreter.executeEffects(nodeIndex);
         
