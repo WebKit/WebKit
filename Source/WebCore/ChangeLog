@@ -1,3 +1,17 @@
+2015-01-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r178183.
+        https://bugs.webkit.org/show_bug.cgi?id=141132
+
+        Caused more mallocing than the volatility saved. (Requested by
+        kling on #webkit).
+
+        Reverted changeset:
+
+        "[Cocoa] Make decoded image data purgeable ASAP."
+        https://bugs.webkit.org/show_bug.cgi?id=140298
+        http://trac.webkit.org/changeset/178183
+
 2015-01-31  Chris Dumez  <cdumez@apple.com>
 
         Use simpler CachedResourceMap structure in MemoryCache with CACHE_PARTITIONING enabled
