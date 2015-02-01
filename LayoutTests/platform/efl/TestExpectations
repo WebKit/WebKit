@@ -505,6 +505,11 @@ webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Timeout Pa
 webkit.org/b/131044 media [ Skip ]
 
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
+webkit.org/b/131729 compositing/backface-visibility/backface-visibility-webgl.html [ Crash ]
+webkit.org/b/131729 compositing/visibility/visibility-simple-webgl-layer.html [ Crash ]
+webkit.org/b/131729 compositing/webgl/webgl-no-alpha.html [ Crash ]
+webkit.org/b/131729 compositing/webgl/webgl-reflection.html [ Crash ]
+webkit.org/b/131729 compositing/webgl/webgl-repaint.html [ Crash ]
 webkit.org/b/131729 fast/canvas/webgl [ Skip ]
 webkit.org/b/131729 fast/events/touch [ Skip ]
 webkit.org/b/131729 webgl [ Skip ]
