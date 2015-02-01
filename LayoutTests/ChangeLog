@@ -1,3 +1,9 @@
+2015-01-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test machine configuration change.
+
+        * http/conf/apache2.4-httpd-win.conf: Provide reasonable default PidFile location for xampp-based install.
+
 2015-01-31  Myles C. Maxfield  <litherum@gmail.com>
 
         REGRESSION (r177689): Emoji variation sequences rendered incorrectly (as characters from other non-emoji font)
