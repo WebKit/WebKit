@@ -507,6 +507,7 @@ webkit.org/b/131044 media [ Skip ]
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
 webkit.org/b/131729 compositing/backface-visibility/backface-visibility-webgl.html [ Crash ]
 webkit.org/b/131729 compositing/visibility/visibility-simple-webgl-layer.html [ Crash ]
+webkit.org/b/131729 compositing/webgl/webgl-background-color.html [ Crash ]
 webkit.org/b/131729 compositing/webgl/webgl-no-alpha.html [ Crash ]
 webkit.org/b/131729 compositing/webgl/webgl-reflection.html [ Crash ]
 webkit.org/b/131729 compositing/webgl/webgl-repaint.html [ Crash ]
@@ -1085,6 +1086,24 @@ Bug(EFL) svg/custom
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
 webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
+
+# Below W3C SVG1.1 tests seem to related with bug 137138. 
+webkit.org/b/137138 svg/W3C-SVG-1.1/animate-elem-20-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/animate-elem-25-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/animate-elem-52-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/animate-elem-68-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/coords-trans-01-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/coords-units-03-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/filters-offset-01-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/fonts-glyph-03-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/linking-a-01-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/linking-uri-02-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/struct-group-03-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/struct-image-03-t.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/text-align-04-b.svg [ Failure ]
+webkit.org/b/137138 svg/W3C-SVG-1.1/text-tselect-01-b.svg [ Failure ]
+
 webkit.org/b/98653 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]

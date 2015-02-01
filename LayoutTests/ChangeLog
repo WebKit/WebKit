@@ -1,5 +1,11 @@
 2015-02-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewd EFL gardening. Add new failing tests related to W3C SVG 1.1.
+
+        * platform/efl/TestExpectations:
+
+2015-02-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed EFL gardening. Update crash tests related to webgl because
         webgl isn't supported by EFL port at the moment.
 
