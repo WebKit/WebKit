@@ -1,3 +1,12 @@
+2015-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r179467): svg/custom/use-events-crash.svg times out
+
+        Looks like the new test (svg/custom/use-event-retargeting.html) somehow breaks
+        subsequent one, let's try skipping it for now.
+
+        * TestExpectations:
+
 2015-01-31  Darin Adler  <darin@apple.com>
 
         Stop dispatching events with SVGElementInstance objects as their targets
