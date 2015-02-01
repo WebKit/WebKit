@@ -16,12 +16,10 @@ def create_wpt_empty_file_if_needed(relative_path):
         logger.warning(file_path + ' is not present, creating it as empty file')
         open(file_path, 'a').close()
 
+#FIXME: Handle empty files at importer/auto-installer level.
 create_wpt_empty_file_if_needed(['tools', '__init__.py'])
 create_wpt_empty_file_if_needed(['tools', 'scripts', '__init__.py'])
-create_wpt_empty_file_if_needed(['tools', 'pywebsocket', 'src', 'test', '__init__.py'])
 create_wpt_empty_file_if_needed(['tools', 'webdriver', 'webdriver', '__init__.py'])
-create_wpt_empty_file_if_needed(['tools', 'html5lib', 'html5lib', 'treeadapters', '__init__.py'])
-create_wpt_empty_file_if_needed(['tools', 'html5lib', 'html5lib', 'filters', '__init__.py'])
 
 try:
     sys.path.insert(0, os.getcwd())
