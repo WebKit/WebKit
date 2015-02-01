@@ -1,3 +1,17 @@
+2015-01-31  Darin Adler  <darin@apple.com>
+
+        Stop dispatching events to with SVGElementInstance objects as their targets
+        https://bugs.webkit.org/show_bug.cgi?id=141108
+
+        Reviewed by Anders Carlsson.
+
+        Test: svg/custom/use-event-retargeting.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingTargetRules): Replaced the code that retargeted
+        events at SVGElementInstance objects with code that retargets them at the use
+        element instead. Also wrote the code in a simpler way.
+
 2015-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Optimize TextureMapperLayer::removeAllChildren()
