@@ -159,10 +159,9 @@ public:
 
 private:
 #if ENABLE(CACHE_PARTITIONING)
-    typedef HashMap<String, CachedResource*> CachedResourceItem;
-    typedef HashMap<String, OwnPtr<CachedResourceItem>> CachedResourceMap;
+    typedef HashMap<std::pair<URL, String /* partitionName */>, CachedResource*> CachedResourceMap;
 #else
-    typedef HashMap<String, CachedResource*> CachedResourceMap;
+    typedef HashMap<URL, CachedResource*> CachedResourceMap;
 #endif
 
     struct LRUList {

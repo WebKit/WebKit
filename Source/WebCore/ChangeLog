@@ -1,3 +1,45 @@
+2015-01-31  Chris Dumez  <cdumez@apple.com>
+
+        Use simpler CachedResourceMap structure in MemoryCache with CACHE_PARTITIONING enabled
+        https://bugs.webkit.org/show_bug.cgi?id=141110
+
+        Reviewed by Antti Koivisto.
+
+        Use simpler CachedResourceMap structure in MemoryCache with CACHE_PARTITIONING
+        enabled. Previously, we would be using a HashMap of HashMap to store
+        CachedResources. The outer HashMap would use the URL as key and the inner
+        HashMap would use the partition name as key. This would make traversing the
+        structure overly complicated, especially considering that the code needs to
+        traverse a simple HashMap if CACHE_PARTITIONING is disabled.
+
+        This patch updates the CachedResourceMap structure to be a simple HashMap,
+        whose key is an std::pair<URL, String /* partitionName */>. Having a flat
+        structure simplifies the traversal code a lot and enables more code sharing
+        between CACHE_PARTITIONING and !CACHE_PARTITIONING. This shouldn't regress
+        performance because we always have both a URL and a partition name when we
+        need to look up a resource. We never need to retrieve all resources with
+        a particular URL.
+
+        This patch also switches to using a URL as key instead of a String as we
+        always have a URL has input.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::resourceForRequestImpl):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::remove):
+        After removing the resource from the CachedResourceMap, remove the
+        sessionID from m_sessionResources if the CachedResourceMap is now
+        empty. Previously, no code was removing sessionIDs from
+        m_sessionResources.
+
+        (WebCore::MemoryCache::removeResourcesWithOrigin):
+        (WebCore::MemoryCache::getOriginsWithCache):
+        (WebCore::MemoryCache::getStatistics):
+        (WebCore::MemoryCache::setDisabled):
+        * loader/cache/MemoryCache.h:
+
 2015-01-31  Sam Weinig  <sam@webkit.org>
 
         Merge the iOS implementations of GraphicsContext::drawText and GraphicsContext::drawBidiText with the platform independent ones
