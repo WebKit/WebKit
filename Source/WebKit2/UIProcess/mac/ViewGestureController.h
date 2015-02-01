@@ -33,8 +33,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
-#define ENABLE_VIEW_GESTURE_CONTROLLER_TRACING 1
-
 OBJC_CLASS CALayer;
 
 #if PLATFORM(IOS)
@@ -216,9 +214,6 @@ private:
     WeakObjCPtr<WKWebView> m_alternateBackForwardListSourceView;
     RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
     uint64_t m_gesturePendingSnapshotRemoval;
-#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
-    Vector<String> m_logEntries;
-#endif
 #endif
 };
 

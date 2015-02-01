@@ -1,3 +1,21 @@
+2015-02-01  Dan Bernstein  <mitz@apple.com>
+
+        Remove ViewGestureController tracing
+        https://bugs.webkit.org/show_bug.cgi?id=141137
+
+        Reviewed by Tim Horton.
+
+        Remove the tracing added in r176133, now that http://webkit.org/b/138750 is fixed.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::willCommitPostSwipeTransitionLayerTree):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (WebKit::addLogEntry): Deleted.
+        (WebKit::dumpLogEntries): Deleted.
+        * UIProcess/mac/ViewGestureController.h:
+
 2015-01-31  Sam Weinig  <sam@webkit.org>
 
         Remove even more Mountain Lion support
