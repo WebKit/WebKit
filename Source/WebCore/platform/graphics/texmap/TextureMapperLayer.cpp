@@ -483,11 +483,9 @@ void TextureMapperLayer::removeFromParent()
 
 void TextureMapperLayer::removeAllChildren()
 {
-    while (m_children.size()) {
-        TextureMapperLayer* curLayer = m_children[0];
-        ASSERT(curLayer->m_parent);
-        curLayer->removeFromParent();
-    }
+    auto oldChildren = WTF::move(m_children);
+    for (auto* child : oldChildren)
+        child->m_parent = nullptr;
 }
 
 void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)

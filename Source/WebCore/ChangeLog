@@ -1,5 +1,19 @@
 2015-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Optimize TextureMapperLayer::removeAllChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=140734
+
+        Reviewed by Chris Dumez.
+
+        Instead of removing the children from the Vector member one by one,
+        move the Vector out and iterate through the ex-children, clearing
+        out the pointer to the parent.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::removeAllChildren):
+
+2015-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Avoid unnecessary TransformationMatrix copies in GraphicsLayerTransform
         https://bugs.webkit.org/show_bug.cgi?id=140735
 
