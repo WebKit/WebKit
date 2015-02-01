@@ -1,3 +1,13 @@
+2015-01-31  Myles C. Maxfield  <litherum@gmail.com>
+
+        REGRESSION (r177689): Emoji variation sequences rendered incorrectly (as characters from other non-emoji font)
+        https://bugs.webkit.org/show_bug.cgi?id=141112
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/fast/text/combining-mark-paint-expected.html: Added.
+        * platform/mac/fast/text/combining-mark-paint.html: Added.
+
 2015-01-31  Michael Saboff  <msaboff@apple.com>
 
         Crash (DFG assertion) beneath AbstractInterpreter::verifyEdge() @ http://experilous.com/1/planet-generator/2014-09-28/version-1

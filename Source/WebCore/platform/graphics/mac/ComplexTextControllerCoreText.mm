@@ -261,8 +261,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                     runFont = m_font.fallbackRangesAt(i).fontForCharacter(baseCharacter);
                     if (!runFont)
                         continue;
-                    RetainPtr<CFTypeRef> runFontEqualityObject = runFont->platformData().objectForEqualityCheck();
-                    if (CFEqual(runFontEqualityObject.get(), runFontEqualityObject.get()))
+                    if (CFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
                         break;
                     runFont = nullptr;
                 }
