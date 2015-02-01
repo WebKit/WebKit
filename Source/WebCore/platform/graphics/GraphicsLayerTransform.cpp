@@ -78,13 +78,13 @@ void GraphicsLayerTransform::setChildrenTransform(const TransformationMatrix& tr
     m_dirty = true;
 }
 
-TransformationMatrix GraphicsLayerTransform::combined()
+const TransformationMatrix& GraphicsLayerTransform::combined() const
 {
     ASSERT(!m_dirty);
     return m_combined;
 }
 
-TransformationMatrix GraphicsLayerTransform::combinedForChildren()
+const TransformationMatrix& GraphicsLayerTransform::combinedForChildren() const
 {
     ASSERT(!m_dirty);
     if (m_childrenDirty)
@@ -96,10 +96,10 @@ void GraphicsLayerTransform::combineTransforms(const TransformationMatrix& paren
 {
     float originX = m_anchorPoint.x() * m_size.width();
     float originY = m_anchorPoint.y() * m_size.height();
-    m_combined =
-        TransformationMatrix(parentTransform)
-            .translate3d(originX + m_position.x(), originY + m_position.y(), m_anchorPoint.z() )
-            .multiply(m_local);
+    m_combined = parentTransform;
+    m_combined
+        .translate3d(originX + m_position.x(), originY + m_position.y(), m_anchorPoint.z())
+        .multiply(m_local);
 
     // The children transform will take it from here, if it gets used.
     m_combinedForChildren = m_combined;
@@ -109,7 +109,7 @@ void GraphicsLayerTransform::combineTransforms(const TransformationMatrix& paren
     m_childrenDirty = true;
 }
 
-void GraphicsLayerTransform::combineTransformsForChildren()
+void GraphicsLayerTransform::combineTransformsForChildren() const
 {
     ASSERT(!m_dirty);
     ASSERT(m_childrenDirty);

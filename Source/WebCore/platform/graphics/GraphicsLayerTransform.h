@@ -36,25 +36,25 @@ public:
     void setFlattening(bool);
     void setLocalTransform(const TransformationMatrix&);
     void setChildrenTransform(const TransformationMatrix&);
-    TransformationMatrix combined();
-    TransformationMatrix combinedForChildren();
+    const TransformationMatrix& combined() const;
+    const TransformationMatrix& combinedForChildren() const;
 
     void combineTransforms(const TransformationMatrix& parentTransform);
 
 private:
-    void combineTransformsForChildren();
+    void combineTransformsForChildren() const;
 
     FloatPoint3D m_anchorPoint;
     FloatPoint m_position;
     FloatSize m_size;
     bool m_flattening;
     bool m_dirty;
-    bool m_childrenDirty;
+    mutable bool m_childrenDirty;
 
     TransformationMatrix m_local;
     TransformationMatrix m_children;
     TransformationMatrix m_combined;
-    TransformationMatrix m_combinedForChildren;
+    mutable TransformationMatrix m_combinedForChildren;
 };
 
 }

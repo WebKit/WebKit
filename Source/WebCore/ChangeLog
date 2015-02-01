@@ -1,3 +1,21 @@
+2015-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Avoid unnecessary TransformationMatrix copies in GraphicsLayerTransform
+        https://bugs.webkit.org/show_bug.cgi?id=140735
+
+        Reviewed by Chris Dumez.
+
+        * platform/graphics/GraphicsLayerTransform.cpp:
+        (WebCore::GraphicsLayerTransform::combined): Return a const reference to the matrix.
+        (WebCore::GraphicsLayerTransform::combinedForChildren): Ditto.
+        (WebCore::GraphicsLayerTransform::combineTransforms): First copy the parent transform,
+        then apply the translation and multiplication. Previously this copied the parent
+        transform into a temporary object, performed the translation and multiplication, and
+        copied that temporary object again when assigning to the member variable.
+        (WebCore::GraphicsLayerTransform::combineTransformsForChildren): Mark const. m_childrenDirty
+        and m_combinedForChildren members are marked mutable.
+        * platform/graphics/GraphicsLayerTransform.h:
+
 2015-01-31  Myles C. Maxfield  <litherum@gmail.com>
 
         REGRESSION (r177689): Emoji variation sequences rendered incorrectly (as characters from other non-emoji font)
