@@ -393,14 +393,6 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     value: Element.prototype.createChild
 });
 
-Object.defineProperty(String.prototype, "contains",
-{
-    value: function(value)
-    {
-        return this.indexOf(value) !== -1;
-    }
-});
-
 Object.defineProperty(Array.prototype, "contains",
 {
     value: function(value)
@@ -441,6 +433,14 @@ Object.defineProperty(Array.prototype, "keySet",
         for (var i = 0; i < this.length; ++i)
             keys[this[i]] = true;
         return keys;
+    }
+});
+
+Object.defineProperty(String.prototype, "contains",
+{
+    value: function(value)
+    {
+        return this.indexOf(value) !== -1;
     }
 });
 
@@ -589,6 +589,17 @@ Object.defineProperty(String.prototype, "startsWith",
     value: function(string)
     {
         return this.lastIndexOf(string, 0) === 0;
+    }
+});
+
+Object.defineProperty(String.prototype, "endsWith",
+{
+    value: function(string)
+    {
+        var position = this.length - string.length;
+        if (position < 0)
+            return false;
+        return this.indexOf(string, position) === position;
     }
 });
 

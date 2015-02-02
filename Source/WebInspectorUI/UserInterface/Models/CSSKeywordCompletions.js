@@ -45,6 +45,8 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
         acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
     else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions._colorAwareProperties)
         acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
+    else if (propertyName.endsWith("color"))
+        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
 
     // Only suggest "inherit" on inheritable properties even though it is valid on all properties.
     if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
@@ -58,11 +60,6 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
     }
 
     return new WebInspector.CSSCompletions(acceptedKeywords, true);
-};
-
-WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)
-{
-    return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
 };
 
 WebInspector.CSSKeywordCompletions.addCustomCompletions = function(properties)
