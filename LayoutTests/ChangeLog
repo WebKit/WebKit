@@ -1,3 +1,9 @@
+2015-02-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Update flakiness tests on W3C SVG 1.1 tests.
+
+        * platform/efl/TestExpectations:
+
 2015-02-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Clean up attribute handling: part 2 - attributeNode
