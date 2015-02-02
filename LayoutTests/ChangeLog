@@ -1,3 +1,9 @@
+2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Rebaseline test with new expected results.
+
+        * http/tests/inspector-protocol/access-inspected-object-expected.txt:
+
 2015-02-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Multiple CSS plus selector not working after checkbox:checked
