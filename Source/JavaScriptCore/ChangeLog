@@ -1,3 +1,32 @@
+2015-01-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Converting Flushes and PhantomLocals to Phantoms requires an OSR availability analysis rather than just using the SetLocal's child
+        https://bugs.webkit.org/show_bug.cgi?id=141107
+
+        Reviewed by Michael Saboff.
+        
+        See the bugzilla for a discussion of the problem. This addresses the problem by ensuring
+        that Flushes are always strength-reduced to PhantomLocals, and CPS rethreading does a mini
+        OSR availability analysis to determine the right MovHint value to use for the Phantom.
+
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::CPSRethreadingPhase):
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::clearVariables):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        (JSC::DFG::CPSRethreadingPhase::clearVariablesAtHeadAndTail): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertPhantomToPhantomLocal):
+        (JSC::DFG::Node::convertFlushToPhantomLocal):
+        (JSC::DFG::Node::convertToPhantomLocal): Deleted.
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * tests/stress/inline-call-that-doesnt-use-all-args.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2015-01-31  Michael Saboff  <msaboff@apple.com>
 
         Crash (DFG assertion) beneath AbstractInterpreter::verifyEdge() @ http://experilous.com/1/planet-generator/2014-09-28/version-1

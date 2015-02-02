@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -280,10 +280,10 @@ private:
             if (!setLocal)
                 break;
             
-            m_node->convertToPhantom();
-            Node* dataNode = setLocal->child1().node();
-            DFG_ASSERT(m_graph, m_node, dataNode->hasResult());
-            m_node->child1() = dataNode->defaultEdge();
+            // The Flush should become a PhantomLocal at this point. This means that we want the
+            // local's value during OSR, but we don't care if the value is stored to the stack. CPS
+            // rethreading can canonicalize PhantomLocals for us.
+            m_node->convertFlushToPhantomLocal();
             m_graph.dethread();
             m_changed = true;
             break;

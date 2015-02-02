@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -538,12 +538,19 @@ struct Node {
         children = AdjacencyList();
     }
     
-    void convertToPhantomLocal()
+    void convertPhantomToPhantomLocal()
     {
         ASSERT(m_op == Phantom && (child1()->op() == Phi || child1()->op() == SetLocal || child1()->op() == SetArgument));
         m_op = PhantomLocal;
         m_opInfo = child1()->m_opInfo; // Copy the variableAccessData.
         children.setChild1(Edge());
+    }
+    
+    void convertFlushToPhantomLocal()
+    {
+        ASSERT(m_op == Flush);
+        m_op = PhantomLocal;
+        children = AdjacencyList();
     }
     
     void convertToGetLocal(VariableAccessData* variable, Node* phi)
