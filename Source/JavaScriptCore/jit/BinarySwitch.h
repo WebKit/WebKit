@@ -30,6 +30,7 @@
 
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
+#include "WeakRandom.h"
 
 namespace JSC {
 
@@ -66,6 +67,7 @@ public:
     };
     
     BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type);
+    ~BinarySwitch();
     
     unsigned caseIndex() const { return m_cases[m_caseIndex].index; }
     int64_t caseValue() const { return m_cases[m_caseIndex].value; }
@@ -75,7 +77,7 @@ public:
     MacroAssembler::JumpList& fallThrough() { return m_fallThrough; }
     
 private:
-    void build(unsigned start, unsigned end);
+    void build(unsigned start, bool hardStart, unsigned end);
     
     GPRReg m_value;
     
@@ -120,6 +122,8 @@ private:
         unsigned index;
     };
     
+    WeakRandom m_weakRandom;
+    
     Vector<BranchCode> m_branches;
 
     unsigned m_index;
@@ -127,8 +131,6 @@ private:
     Vector<MacroAssembler::Jump> m_jumpStack;
     
     MacroAssembler::JumpList m_fallThrough;
-    
-    unsigned m_medianBias;
     
     Type m_type;
 };

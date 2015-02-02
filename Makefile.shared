@@ -12,6 +12,8 @@ ifneq (,$(ARCHS))
 	XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
 endif
 
+XCODE_OPTIONS += TOOLCHAINS=com.apple.dt.toolchain.OSX10_11
+
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 

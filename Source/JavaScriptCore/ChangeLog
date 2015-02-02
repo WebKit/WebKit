@@ -1,3 +1,36 @@
+2015-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        BinarySwitch should be faster on average
+        https://bugs.webkit.org/show_bug.cgi?id=141046
+
+        Reviewed by Anders Carlsson.
+        
+        This optimizes our binary switch using math. It's strictly better than what we had before
+        assuming we bottom out in some case (rather than fall through), assuming all cases get
+        hit with equal probability. The difference is particularly large for large switch
+        statements. For example, a switch statement with 1000 cases would previously require on
+        average 13.207 branches to get to some case, while now it just requires 10.464.
+        
+        This is also a progression for the fall-through case, though we could shave off another
+        1/6 branch on average if we wanted to - though it would regress taking a case (not falling
+        through) by 1/6 branch. I believe it's better to bias the BinarySwitch for not falling
+        through.
+        
+        This also adds some randomness to the algorithm to minimize the likelihood of us
+        generating a switch statement that is always particularly bad for some input. Note that
+        the randomness has no effect on average-case performance assuming all cases are equally
+        likely.
+        
+        This ought to have no actual performance change because we don't rely on binary switches
+        that much. The main reason why this change is interesting is that I'm finding myself
+        increasingly relying on BinarySwitch, and I'd like to know that it's optimal.
+
+        * jit/BinarySwitch.cpp:
+        (JSC::BinarySwitch::BinarySwitch):
+        (JSC::BinarySwitch::~BinarySwitch):
+        (JSC::BinarySwitch::build):
+        * jit/BinarySwitch.h:
+
 2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Extend CSS.getSupportedCSSProperties to provide values for properties for CSS Augmented JSContext

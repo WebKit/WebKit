@@ -297,3 +297,5 @@
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
        (home-subpath "/Library/Input Methods"))
+
+(allow default)
