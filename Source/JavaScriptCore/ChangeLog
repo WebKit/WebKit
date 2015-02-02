@@ -1,3 +1,37 @@
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r171691.
+
+    2014-07-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+            REGRESSION: JSObjectSetPrototype() does not work on result of JSGetGlobalObject()
+            https://bugs.webkit.org/show_bug.cgi?id=135322
+
+            Reviewed by Oliver Hunt.
+
+            The prototype chain of the JSProxy object should match that of the JSGlobalObject. 
+
+            This is a separate but related issue with JSObjectSetPrototype which doesn't correctly 
+            account for JSProxies. I also audited the rest of the C API to check that we correctly 
+            handle JSProxies in all other situations where we expect a JSCallbackObject of some sort
+            and found some SPI calls (JSObject*PrivateProperty) that didn't behave correctly when 
+            passed a JSProxy.
+
+            I also added some new tests for these cases.
+
+            * API/JSObjectRef.cpp:
+            (JSObjectSetPrototype):
+            (JSObjectGetPrivateProperty):
+            (JSObjectSetPrivateProperty):
+            (JSObjectDeletePrivateProperty):
+            * API/JSWeakObjectMapRefPrivate.cpp:
+            * API/tests/CustomGlobalObjectClassTest.c:
+            (globalObjectSetPrototypeTest):
+            (globalObjectPrivatePropertyTest):
+            * API/tests/CustomGlobalObjectClassTest.h:
+            * API/tests/testapi.c:
+            (main):
+
 2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178768. rdar://problem/19617631
