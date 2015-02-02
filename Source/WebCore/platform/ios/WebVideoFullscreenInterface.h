@@ -44,6 +44,7 @@ public:
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
     
     virtual ~WebVideoFullscreenInterface() { };
+    virtual void resetMediaState() = 0;
     virtual void setDuration(double) = 0;
     virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
     virtual void setRate(bool isPlaying, float playbackRate) = 0;

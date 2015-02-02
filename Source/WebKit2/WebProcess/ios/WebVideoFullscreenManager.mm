@@ -119,6 +119,11 @@ void WebVideoFullscreenManager::exitVideoFullscreen()
     m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(clientRectForElement(videoElement.get())), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::resetMediaState()
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ResetMediaState(), m_page->pageID());
+}
+    
 void WebVideoFullscreenManager::setDuration(double duration)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetDuration(duration), m_page->pageID());

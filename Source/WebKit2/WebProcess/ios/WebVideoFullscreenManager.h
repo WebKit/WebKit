@@ -68,6 +68,7 @@ protected:
     virtual bool operator==(const EventListener& rhs) override { return static_cast<WebCore::EventListener*>(this) == &rhs; }
     
     // FullscreenInterface
+    virtual void resetMediaState() override;
     virtual void setDuration(double) override;
     virtual void setCurrentTime(double currentTime, double anchorTime) override;
     virtual void setRate(bool isPlaying, float playbackRate) override;

@@ -1,3 +1,19 @@
+2015-02-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Prevent crash when accessing WebAVPlayerController.delegate.
+        https://bugs.webkit.org/show_bug.cgi?id=140893
+
+        Reviewed by Darin Adler.
+
+        Plumb new resetMediaState() through IPC interface WebVideoFullscreenManagerProxy.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate): remove redundant set to nullptr.
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::resetMediaState):
+
 2015-02-01  Chris Dumez  <cdumez@apple.com>
 
         Use more references in HistoryItem

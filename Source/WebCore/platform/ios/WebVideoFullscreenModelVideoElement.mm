@@ -67,6 +67,9 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     if (m_videoElement == videoElement)
         return;
 
+    if (m_videoFullscreenInterface)
+        m_videoFullscreenInterface->resetMediaState();
+    
     if (m_videoElement && m_isListening) {
         for (auto eventName : observedEventNames())
             m_videoElement->removeEventListener(eventName, this, false);
