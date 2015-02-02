@@ -263,10 +263,16 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     CTFontRef font = style->font().primaryFont()->getCTFont();
     if (font)
         [result setObject:(id)font forKey:NSFontAttributeName];
-    
-    if (style->textDecorationsInEffect() & TextDecorationUnderline)
-        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-    
+
+    RefPtr<EditingStyle> typingStyle = m_frame.selection().typingStyle();
+    if (typingStyle && typingStyle->style()) {
+        String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
+        if (value.contains("underline"))
+            [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    } else {
+        if (style->textDecorationsInEffect() & TextDecorationUnderline)
+            [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    }
     if (nodeToRemove)
         nodeToRemove->remove(ASSERT_NO_EXCEPTION);
     
