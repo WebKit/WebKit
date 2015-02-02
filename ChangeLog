@@ -1,5 +1,11 @@
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Revert accidental change in r179490.
+
+        * Makefile.shared:
+
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, revert accidental change to Makefile.shared in r179478
 
         * Makefile.shared:

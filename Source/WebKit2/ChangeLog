@@ -1,3 +1,9 @@
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Revert accidental (and super bad) change in r179490.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-02-02  Chris Dumez  <cdumez@apple.com>
 
         Access MemoryCache singleton using MemoryCache::singleton()
