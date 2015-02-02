@@ -1,3 +1,37 @@
+2015-02-02  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Make decoded image data purgeable ASAP.
+        <https://webkit.org/b/140298>
+        <rdar://problem/19623377>
+
+        Reviewed by Antti Koivisto.
+
+        Re-landing this patch since it turned out to not be the cause of
+        the memory regression we saw around that revision.
+
+        Mark decoded images as "transient" which makes CoreGraphics mark
+        the backing stores as purgeable shortly after they're used.
+
+        The decoded representation will remain in CoreGraphics's caches
+        indefinitely unless the kernel gets starved and needs the pages.
+
+        Most resources will now reach a state where the encoded data is
+        mmap'ed from disk cache (once the entire resource is downloaded)
+        and the decoded data is purgeable.
+
+        This also has the side effect of making the MemoryCache more
+        palatial since the decoded data cost can be deducted for images,
+        allowing us to cache more resources.
+
+        Note that the worst case for this new behavior would be something
+        like hovering below 100% memory utilization and constantly having
+        to drop and re-decode images. While churny, it still beats
+        crashing the process, plus there's tiling to remove many of the
+        reasons we'd need the decoded data.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Support console.table
