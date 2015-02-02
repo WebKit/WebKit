@@ -1,3 +1,12 @@
+2015-02-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove copy/paste code from run-jsc-stress-tests to determine numberOfTests
+        https://bugs.webkit.org/show_bug.cgi?id=141158
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] MiniBrowser should close itself on Ctrl+W or Ctrl+Q

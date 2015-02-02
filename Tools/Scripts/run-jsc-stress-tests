@@ -1290,7 +1290,12 @@ def sshRead(cmd)
     result
 end
 
-def runAndMonitorTestRunnerCommand(numberOfTests, *cmd)
+def runAndMonitorTestRunnerCommand(*cmd)
+    numberOfTests = 0
+    Dir.chdir($runnerDir) {
+        # -1 for the runscript, and -2 for '..' and '.'
+        numberOfTests = Dir.entries(".").count - 3
+    }
     unless $progressMeter
         mysys(cmd.join(' '))
     else
@@ -1354,12 +1359,6 @@ end
 
 def runShellTestRunner
     if $remote
-        numberOfTests = 0
-        Dir.chdir($runnerDir) {
-            # -1 for the runscript, and -2 for '..' and '.'
-            numberOfTests = Dir.entries(".").count - 3
-        }
-
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
         mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
         remoteScript = "\""
@@ -1369,12 +1368,10 @@ def runShellTestRunner
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += "DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" sh runscript"
         remoteScript += "\""
-        runAndMonitorTestRunnerCommand(numberOfTests, "ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
+        runAndMonitorTestRunnerCommand("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {
-            # -1 for the runscript, and -2 for '..' and '.'
-            numberOfTests = Dir.entries(".").count - 3
-            runAndMonitorTestRunnerCommand(numberOfTests, "sh", "runscript")
+            runAndMonitorTestRunnerCommand("sh", "runscript")
         }
     end
 end
@@ -1382,9 +1379,7 @@ end
 def runMakeTestRunner
     raise if $remote
     Dir.chdir($runnerDir) {
-        # -1 for the Makefile, and -2 for '..' and '.'
-        numberOfTests = Dir.entries(".").count - 3
-        runAndMonitorTestRunnerCommand(numberOfTests, "make", "-j", $numProcessors.to_s, "-s", "-f", "Makefile")
+        runAndMonitorTestRunnerCommand("make", "-j", $numProcessors.to_s, "-s", "-f", "Makefile")
     }
 end
 
