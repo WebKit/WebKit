@@ -1,3 +1,12 @@
+2015-02-02  Roger Fong  <roger_fong@apple.com>
+
+        [Win] Build fix following r179482.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * platform/graphics/GraphicsContext3D.h:
+
 2015-02-02  Chris Dumez  <cdumez@apple.com>
 
         Access MemoryCache singleton using MemoryCache::singleton()
