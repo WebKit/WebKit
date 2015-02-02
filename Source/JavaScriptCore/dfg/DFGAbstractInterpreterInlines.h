@@ -741,7 +741,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case ArithSin: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
+        if (false && child && child.isNumber()) {
             setConstant(node, jsDoubleNumber(sin(child.asNumber())));
             break;
         }
@@ -751,7 +751,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     
     case ArithCos: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
+        if (false && child && child.isNumber()) {
             setConstant(node, jsDoubleNumber(cos(child.asNumber())));
             break;
         }
@@ -1964,14 +1964,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Construct:
     case NativeCall:
     case NativeConstruct:
-        clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).makeHeapTop();
-        break;
-
-    case ProfiledCall:
-    case ProfiledConstruct:
-        if (forNode(m_graph.varArgChild(node, 0)).m_value)
-            m_state.setFoundConstants(true);
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;

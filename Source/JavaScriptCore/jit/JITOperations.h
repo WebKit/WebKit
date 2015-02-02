@@ -246,12 +246,12 @@ void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJ
 void JIT_OPERATION operationDirectPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState*, ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkClosureCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkPolymorphicCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualConstruct(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkConstruct(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkPolymorphicCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
@@ -391,13 +391,13 @@ inline P_JITOperation_ECli operationVirtualFor(
     return 0;
 }
 
-inline P_JITOperation_ECli operationLinkClosureCallFor(RegisterPreservationMode registers)
+inline P_JITOperation_ECli operationLinkPolymorphicCallFor(RegisterPreservationMode registers)
 {
     switch (registers) {
     case RegisterPreservationNotRequired:
-        return operationLinkClosureCall;
+        return operationLinkPolymorphicCall;
     case MustPreserveRegisters:
-        return operationLinkClosureCallThatPreservesRegs;
+        return operationLinkPolymorphicCallThatPreservesRegs;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return 0;

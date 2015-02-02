@@ -1,3 +1,168 @@
+2015-01-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Polymorphic call inlining should be based on polymorphic call inline caching rather than logging
+        https://bugs.webkit.org/show_bug.cgi?id=140660
+
+        Reviewed by Geoffrey Garen.
+        
+        When we first implemented polymorphic call inlining, we did the profiling based on a call
+        edge log. The idea was to store each call edge (a tuple of call site and callee) into a
+        global log that was processed lazily. Processing the log would give precise counts of call
+        edges, and could be used to drive well-informed inlining decisions - polymorphic or not.
+        This was a speed-up on throughput tests but a slow-down for latency tests. It was a net win
+        nonetheless.
+        
+        Experience with this code shows three things. First, the call edge profiler is buggy and
+        complex. It would take work to fix the bugs. Second, the call edge profiler incurs lots of
+        overhead for latency code that we care deeply about. Third, it's not at all clear that
+        having call edge counts for every possible callee is any better than just having call edge
+        counts for the limited number of callees that an inline cache would catch.
+        
+        So, this patch removes the call edge profiler and replaces it with a polymorphic call inline
+        cache. If we miss the basic call inline cache, we inflate the cache to be a jump to an
+        out-of-line stub that cases on the previously known callees. If that misses again, then we
+        rewrite that stub to include the new callee. We do this up to some number of callees. If we
+        hit the limit then we switch to using a plain virtual call.
+        
+        Substantial speed-up on V8Spider; undoes the slow-down that the original call edge profiler
+        caused. Might be a SunSpider speed-up (below 1%), depending on hardware.
+        
+        Rolling this back in after fixing https://bugs.webkit.org/show_bug.cgi?id=141107.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallEdge.h:
+        (JSC::CallEdge::count):
+        (JSC::CallEdge::CallEdge):
+        * bytecode/CallEdgeProfile.cpp: Removed.
+        * bytecode/CallEdgeProfile.h: Removed.
+        * bytecode/CallEdgeProfileInlines.h: Removed.
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        (JSC::CallLinkStatus::isClosureCall):
+        (JSC::CallLinkStatus::makeClosureCall):
+        (JSC::CallLinkStatus::dump):
+        (JSC::CallLinkStatus::computeFromCallEdgeProfile): Deleted.
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::isSet):
+        (JSC::CallLinkStatus::variants):
+        (JSC::CallLinkStatus::size):
+        (JSC::CallLinkStatus::at):
+        (JSC::CallLinkStatus::operator[]):
+        (JSC::CallLinkStatus::canOptimize):
+        (JSC::CallLinkStatus::edges): Deleted.
+        (JSC::CallLinkStatus::canTrustCounts): Deleted.
+        * bytecode/CallVariant.cpp:
+        (JSC::variantListWithVariant):
+        (JSC::despecifiedVariantList):
+        * bytecode/CallVariant.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::linkIncomingPolymorphicCall):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isIncomingCallAlreadyLinked): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::removeFTLProfiling): Deleted.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * jit/BinarySwitch.h:
+        * jit/ClosureCallStubRoutine.cpp: Removed.
+        * jit/ClosureCallStubRoutine.h: Removed.
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        (JSC::operationLinkPolymorphicCallFor):
+        (JSC::operationLinkClosureCallFor): Deleted.
+        * jit/JITStubRoutine.h:
+        * jit/JITWriteBarrier.h:
+        * jit/PolymorphicCallStubRoutine.cpp: Added.
+        (JSC::PolymorphicCallNode::~PolymorphicCallNode):
+        (JSC::PolymorphicCallNode::unlink):
+        (JSC::PolymorphicCallCase::dump):
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        (JSC::PolymorphicCallStubRoutine::~PolymorphicCallStubRoutine):
+        (JSC::PolymorphicCallStubRoutine::variants):
+        (JSC::PolymorphicCallStubRoutine::edges):
+        (JSC::PolymorphicCallStubRoutine::visitWeak):
+        (JSC::PolymorphicCallStubRoutine::markRequiredObjectsInternal):
+        * jit/PolymorphicCallStubRoutine.h: Added.
+        (JSC::PolymorphicCallNode::PolymorphicCallNode):
+        (JSC::PolymorphicCallCase::PolymorphicCallCase):
+        (JSC::PolymorphicCallCase::variant):
+        (JSC::PolymorphicCallCase::codeBlock):
+        * jit/Repatch.cpp:
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        (JSC::linkClosureCall): Deleted.
+        * jit/Repatch.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::linkPolymorphicCallForThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::linkPolymorphicCallThatPreservesRegsThunkGenerator):
+        (JSC::linkClosureCallForThunkGenerator): Deleted.
+        (JSC::linkClosureCallThunkGenerator): Deleted.
+        (JSC::linkClosureCallThatPreservesRegsThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        (JSC::linkPolymorphicCallThunkGeneratorFor):
+        (JSC::linkClosureCallThunkGeneratorFor): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::prepareToDiscardCode):
+        (JSC::VM::ensureCallEdgeLog): Deleted.
+        * runtime/VM.h:
+
 2015-01-30  Filip Pizlo  <fpizlo@apple.com>
 
         Converting Flushes and PhantomLocals to Phantoms requires an OSR availability analysis rather than just using the SetLocal's child

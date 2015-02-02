@@ -170,12 +170,11 @@ typedef const char* optionString;
     v(bool, enablePolyvariantDevirtualization, true) \
     v(bool, enablePolymorphicAccessInlining, true) \
     v(bool, enablePolymorphicCallInlining, true) \
-    v(bool, callStatusShouldUseCallEdgeProfile, true) \
-    v(bool, callEdgeProfileReallyProcessesLog, true) \
-    v(bool, baselineDoesCallEdgeProfiling, false) \
-    v(bool, dfgDoesCallEdgeProfiling, true) \
-    v(bool, enableCallEdgeProfiling, true) \
+    v(unsigned, maxPolymorphicCallVariantListSize, 15) \
+    v(unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5) \
+    v(unsigned, maxPolymorphicCallVariantsForInlining, 5) \
     v(unsigned, frequentCallThreshold, 2) \
+    v(double, minimumCallToKnownRate, 0.51) \
     v(bool, optimizeNativeCalls, false) \
     v(bool, enableObjectAllocationSinking, true) \
     \

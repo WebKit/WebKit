@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define CallLinkStatus_h
 
 #include "CallLinkInfo.h"
+#include "CallVariant.h"
 #include "CodeOrigin.h"
 #include "CodeSpecializationKind.h"
 #include "ConcurrentJITLock.h"
@@ -48,7 +49,6 @@ public:
     CallLinkStatus()
         : m_couldTakeSlowPath(false)
         , m_isProved(false)
-        , m_canTrustCounts(false)
     {
     }
     
@@ -62,10 +62,9 @@ public:
     explicit CallLinkStatus(JSValue);
     
     CallLinkStatus(CallVariant variant)
-        : m_edges(1, CallEdge(variant, 1))
+        : m_variants(1, variant)
         , m_couldTakeSlowPath(false)
         , m_isProved(false)
-        , m_canTrustCounts(false)
     {
     }
     
@@ -109,19 +108,18 @@ public:
     static CallLinkStatus computeFor(
         CodeBlock*, CodeOrigin, const CallLinkInfoMap&, const ContextMap&);
     
-    bool isSet() const { return !m_edges.isEmpty() || m_couldTakeSlowPath; }
+    bool isSet() const { return !m_variants.isEmpty() || m_couldTakeSlowPath; }
     
     bool operator!() const { return !isSet(); }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
     
-    CallEdgeList edges() const { return m_edges; }
-    unsigned size() const { return m_edges.size(); }
-    CallEdge at(unsigned i) const { return m_edges[i]; }
-    CallEdge operator[](unsigned i) const { return at(i); }
+    CallVariantList variants() const { return m_variants; }
+    unsigned size() const { return m_variants.size(); }
+    CallVariant at(unsigned i) const { return m_variants[i]; }
+    CallVariant operator[](unsigned i) const { return at(i); }
     bool isProved() const { return m_isProved; }
-    bool canOptimize() const { return !m_edges.isEmpty(); }
-    bool canTrustCounts() const { return m_canTrustCounts; }
+    bool canOptimize() const { return !m_variants.isEmpty(); }
     
     bool isClosureCall() const; // Returns true if any callee is a closure call.
     
@@ -132,15 +130,13 @@ private:
     
     static CallLinkStatus computeFromLLInt(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
 #if ENABLE(JIT)
-    static CallLinkStatus computeFromCallEdgeProfile(CallEdgeProfile*);
     static CallLinkStatus computeFromCallLinkInfo(
         const ConcurrentJITLocker&, CallLinkInfo&);
 #endif
     
-    CallEdgeList m_edges;
+    CallVariantList m_variants;
     bool m_couldTakeSlowPath;
     bool m_isProved;
-    bool m_canTrustCounts;
 };
 
 } // namespace JSC

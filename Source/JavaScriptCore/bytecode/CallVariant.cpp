@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,35 @@ void CallVariant::dump(PrintStream& out) const
     }
     
     out.print("Executable: ", *executable());
+}
+
+CallVariantList variantListWithVariant(const CallVariantList& list, CallVariant variantToAdd)
+{
+    ASSERT(variantToAdd);
+    CallVariantList result;
+    for (CallVariant variant : list) {
+        ASSERT(variant);
+        if (!!variantToAdd) {
+            if (variant == variantToAdd)
+                variantToAdd = CallVariant();
+            else if (variant.despecifiedClosure() == variantToAdd.despecifiedClosure()) {
+                variant = variant.despecifiedClosure();
+                variantToAdd = CallVariant();
+            }
+        }
+        result.append(variant);
+    }
+    if (!!variantToAdd)
+        result.append(variantToAdd);
+    return result;
+}
+
+CallVariantList despecifiedVariantList(const CallVariantList& list)
+{
+    CallVariantList result;
+    for (CallVariant variant : list)
+        result = variantListWithVariant(result, variant.despecifiedClosure());
+    return result;
 }
 
 } // namespace JSC

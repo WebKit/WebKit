@@ -992,11 +992,6 @@ void Heap::collect(HeapOperation collectionType)
         vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
     }
     
-    if (vm()->callEdgeLog) {
-        DeferGCForAWhile awhile(*this);
-        vm()->callEdgeLog->processLog();
-    }
-    
     RELEASE_ASSERT(!m_deferralDepth);
     ASSERT(vm()->currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());

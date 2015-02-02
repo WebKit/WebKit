@@ -29,7 +29,9 @@
 #include "DFGOperations.h"
 #include "DFGThunks.h"
 #include "JSCInlines.h"
+#include "Repatch.h"
 #include "RepatchBuffer.h"
+#include <wtf/ListDump.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(JIT)
@@ -37,20 +39,17 @@ namespace JSC {
 
 void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)
 {
-    ASSERT(isLinked());
+    if (!isLinked()) {
+        // We could be called even if we're not linked anymore because of how polymorphic calls
+        // work. Each callsite within the polymorphic call stub may separately ask us to unlink().
+        RELEASE_ASSERT(!isOnList());
+        return;
+    }
     
-    if (Options::showDisassembly())
-        dataLog("Unlinking call from ", callReturnLocation, " to ", pointerDump(repatchBuffer.codeBlock()), "\n");
-
-    repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(RepatchBuffer::startOfBranchPtrWithPatchOnRegister(hotPathBegin), static_cast<MacroAssembler::RegisterID>(calleeGPR), 0);
-    repatchBuffer.relink(
-        callReturnLocation,
-        repatchBuffer.codeBlock()->vm()->getCTIStub(linkThunkGeneratorFor(
-            (callType == Construct || callType == ConstructVarargs)? CodeForConstruct : CodeForCall,
-            isFTL ? MustPreserveRegisters : RegisterPreservationNotRequired)).code());
-    hasSeenShouldRepatch = false;
-    callee.clear();
-    stub.clear();
+    unlinkFor(
+        repatchBuffer, *this,
+        (callType == Construct || callType == ConstructVarargs)? CodeForConstruct : CodeForCall,
+        isFTL ? MustPreserveRegisters : RegisterPreservationNotRequired);
 
     // It will be on a list if the callee has a code block.
     if (isOnList())
@@ -61,12 +60,12 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
 {
     if (isLinked()) {
         if (stub) {
-            if (!Heap::isMarked(stub->executable())) {
+            if (!stub->visitWeak(repatchBuffer)) {
                 if (Options::verboseOSR()) {
                     dataLog(
                         "Clearing closure call from ", *repatchBuffer.codeBlock(), " to ",
-                        stub->executable()->hashFor(specializationKind()),
-                        ", stub routine ", RawPointer(stub.get()), ".\n");
+                        listDump(stub->variants()), ", stub routine ", RawPointer(stub.get()),
+                        ".\n");
                 }
                 unlink(repatchBuffer);
             }
@@ -83,11 +82,6 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
     }
     if (!!lastSeenCallee && !Heap::isMarked(lastSeenCallee.get()))
         lastSeenCallee.clear();
-    
-    if (callEdgeProfile) {
-        WTF::loadLoadFence();
-        callEdgeProfile->visitWeak();
-    }
 }
 
 CallLinkInfo& CallLinkInfo::dummy()

@@ -118,8 +118,6 @@ bool doesGC(Graph& graph, Node* node)
     case Construct:
     case NativeCall:
     case NativeConstruct:
-    case ProfiledCall:
-    case ProfiledConstruct:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:

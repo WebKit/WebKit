@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ CallLinkStatus::CallLinkStatus(JSValue value)
         return;
     }
     
-    m_edges.append(CallEdge(CallVariant(value.asCell()), 1));
+    m_variants.append(CallVariant(value.asCell()));
 }
 
 CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
@@ -129,23 +129,6 @@ CallLinkStatus CallLinkStatus::computeFor(
     // We don't really need this, but anytime we have to debug this code, it becomes indispensable.
     UNUSED_PARAM(profiledBlock);
     
-    if (Options::callStatusShouldUseCallEdgeProfile()) {
-        // Always trust the call edge profile over anything else since this has precise counts.
-        // It can make the best possible decision because it never "forgets" what happened for any
-        // call, with the exception of fading out the counts of old calls (for example if the
-        // counter type is 16-bit then calls that happened more than 2^16 calls ago are given half
-        // weight, and this compounds for every 2^15 [sic] calls after that). The combination of
-        // high fidelity for recent calls and fading for older calls makes this the most useful
-        // mechamism of choosing how to optimize future calls.
-        CallEdgeProfile* edgeProfile = callLinkInfo.callEdgeProfile.get();
-        WTF::loadLoadFence();
-        if (edgeProfile) {
-            CallLinkStatus result = computeFromCallEdgeProfile(edgeProfile);
-            if (!!result)
-                return result;
-        }
-    }
-    
     return computeFromCallLinkInfo(locker, callLinkInfo);
 }
 
@@ -165,11 +148,67 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     // that is still marginally valid (i.e. the pointers ain't stale). This kind of raciness
     // is probably OK for now.
     
+    // PolymorphicCallStubRoutine is a GCAwareJITStubRoutine, so if non-null, it will stay alive
+    // until next GC even if the CallLinkInfo is concurrently cleared. Also, the variants list is
+    // never mutated after the PolymorphicCallStubRoutine is instantiated. We have some conservative
+    // fencing in place to make sure that we see the variants list after construction.
+    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub.get()) {
+        WTF::loadLoadFence();
+        
+        CallEdgeList edges = stub->edges();
+        
+        // Now that we've loaded the edges list, there are no further concurrency concerns. We will
+        // just manipulate and prune this list to our liking - mostly removing entries that are too
+        // infrequent and ensuring that it's sorted in descending order of frequency.
+        
+        RELEASE_ASSERT(edges.size());
+        
+        std::sort(
+            edges.begin(), edges.end(),
+            [] (CallEdge a, CallEdge b) {
+                return a.count() > b.count();
+            });
+        RELEASE_ASSERT(edges.first().count() >= edges.last().count());
+        
+        double totalCallsToKnown = 0;
+        double totalCallsToUnknown = callLinkInfo.slowPathCount;
+        CallVariantList variants;
+        for (size_t i = 0; i < edges.size(); ++i) {
+            CallEdge edge = edges[i];
+            // If the call is at the tail of the distribution, then we don't optimize it and we
+            // treat it as if it was a call to something unknown. We define the tail as being either
+            // a call that doesn't belong to the N most frequent callees (N =
+            // maxPolymorphicCallVariantsForInlining) or that has a total call count that is too
+            // small.
+            if (i >= Options::maxPolymorphicCallVariantsForInlining()
+                || edge.count() < Options::frequentCallThreshold())
+                totalCallsToUnknown += edge.count();
+            else {
+                totalCallsToKnown += edge.count();
+                variants.append(edge.callee());
+            }
+        }
+        
+        // Bail if we didn't find any calls that qualified.
+        RELEASE_ASSERT(!!totalCallsToKnown == !!variants.size());
+        if (variants.isEmpty())
+            return takesSlowPath();
+        
+        // We require that the distribution of callees is skewed towards a handful of common ones.
+        if (totalCallsToKnown / totalCallsToUnknown < Options::minimumCallToKnownRate())
+            return takesSlowPath();
+        
+        RELEASE_ASSERT(totalCallsToKnown);
+        RELEASE_ASSERT(variants.size());
+        
+        CallLinkStatus result;
+        result.m_variants = variants;
+        result.m_couldTakeSlowPath = !!totalCallsToUnknown;
+        return result;
+    }
+    
     if (callLinkInfo.slowPathCount >= Options::couldTakeSlowCaseMinimumCount())
         return takesSlowPath();
-    
-    if (ClosureCallStubRoutine* stub = callLinkInfo.stub.get())
-        return CallLinkStatus(stub->executable());
     
     JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
@@ -179,34 +218,6 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         return CallLinkStatus(target->executable());
 
     return CallLinkStatus(target);
-}
-
-CallLinkStatus CallLinkStatus::computeFromCallEdgeProfile(CallEdgeProfile* edgeProfile)
-{
-    // In cases where the call edge profile saw nothing, use the CallLinkInfo instead.
-    if (!edgeProfile->totalCalls())
-        return CallLinkStatus();
-    
-    // To do anything meaningful, we require that the majority of calls are to something we
-    // know how to handle.
-    unsigned numCallsToKnown = edgeProfile->numCallsToKnownCells();
-    unsigned numCallsToUnknown = edgeProfile->numCallsToNotCell() + edgeProfile->numCallsToUnknownCell();
-    
-    // We require that the majority of calls were to something that we could possibly inline.
-    if (numCallsToKnown <= numCallsToUnknown)
-        return takesSlowPath();
-    
-    // We require that the number of such calls is greater than some minimal threshold, so that we
-    // avoid inlining completely cold calls.
-    if (numCallsToKnown < Options::frequentCallThreshold())
-        return takesSlowPath();
-    
-    CallLinkStatus result;
-    result.m_edges = edgeProfile->callEdges();
-    result.m_couldTakeSlowPath = !!numCallsToUnknown;
-    result.m_canTrustCounts = true;
-    
-    return result;
 }
 
 CallLinkStatus CallLinkStatus::computeFor(
@@ -282,8 +293,8 @@ CallLinkStatus CallLinkStatus::computeFor(
 
 bool CallLinkStatus::isClosureCall() const
 {
-    for (unsigned i = m_edges.size(); i--;) {
-        if (m_edges[i].callee().isClosureCall())
+    for (unsigned i = m_variants.size(); i--;) {
+        if (m_variants[i].isClosureCall())
             return true;
     }
     return false;
@@ -291,18 +302,7 @@ bool CallLinkStatus::isClosureCall() const
 
 void CallLinkStatus::makeClosureCall()
 {
-    ASSERT(!m_isProved);
-    for (unsigned i = m_edges.size(); i--;)
-        m_edges[i] = m_edges[i].despecifiedClosure();
-    
-    if (!ASSERT_DISABLED) {
-        // Doing this should not have created duplicates, because the CallEdgeProfile
-        // should despecify closures if doing so would reduce the number of known callees.
-        for (unsigned i = 0; i < m_edges.size(); ++i) {
-            for (unsigned j = i + 1; j < m_edges.size(); ++j)
-                ASSERT(m_edges[i].callee() != m_edges[j].callee());
-        }
-    }
+    m_variants = despecifiedVariantList(m_variants);
 }
 
 void CallLinkStatus::dump(PrintStream& out) const
@@ -320,7 +320,8 @@ void CallLinkStatus::dump(PrintStream& out) const
     if (m_couldTakeSlowPath)
         out.print(comma, "Could Take Slow Path");
     
-    out.print(listDump(m_edges));
+    if (!m_variants.isEmpty())
+        out.print(comma, listDump(m_variants));
 }
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,15 @@
 
 namespace JSC {
 
-typedef uint16_t CallEdgeCountType;
-
 class CallEdge {
 public:
     CallEdge();
-    CallEdge(CallVariant, CallEdgeCountType);
+    CallEdge(CallVariant, uint32_t);
     
     bool operator!() const { return !m_callee; }
     
     CallVariant callee() const { return m_callee; }
-    CallEdgeCountType count() const { return m_count; }
+    uint32_t count() const { return m_count; }
     
     CallEdge despecifiedClosure() const
     {
@@ -49,12 +47,12 @@ public:
     
     void dump(PrintStream&) const;
     
-public:
+private:
     CallVariant m_callee;
-    CallEdgeCountType m_count;
+    uint32_t m_count;
 };
 
-inline CallEdge::CallEdge(CallVariant callee, CallEdgeCountType count)
+inline CallEdge::CallEdge(CallVariant callee, uint32_t count)
     : m_callee(callee)
     , m_count(count)
 {
