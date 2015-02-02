@@ -741,6 +741,12 @@ static void browser_window_init(BrowserWindow *window)
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_F11, 0, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(toggleFullScreen), window, NULL));
 
+    /* Quit */
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_Q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
+
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
     gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
