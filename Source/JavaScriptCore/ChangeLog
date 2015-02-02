@@ -1,5 +1,24 @@
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(r179477): arguments simplification no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=141169
+
+        Reviewed by Mark Lam.
+        
+        The operations involved in callee/scope access don't exit and shouldn't get in the way
+        of strength-reducing a Flush to a PhantomLocal. Then the PhantomLocal shouldn't get in
+        the way of further such strength-reduction. We also need to canonicalize PhantomLocal
+        before running arguments simplification.
+
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
         VirtualRegister should really know how to dump itself
         https://bugs.webkit.org/show_bug.cgi?id=141171
 

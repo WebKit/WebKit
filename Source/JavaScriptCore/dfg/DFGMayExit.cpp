@@ -81,6 +81,9 @@ bool mayExit(Graph& graph, Node* node)
     case PhantomNewObject:
     case PutLocal:
     case KillLocal:
+    case GetCallee:
+    case GetScope:
+    case PhantomLocal:
         break;
         
     default:

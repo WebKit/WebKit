@@ -257,8 +257,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
     performStrengthReduction(dfg);
     performLocalCSE(dfg);
+    performCPSRethreading(dfg); // Canonicalize PhantomLocal to Phantom
     performArgumentsSimplification(dfg);
-    performCPSRethreading(dfg);
+    performCPSRethreading(dfg); // This should do nothing, if arguments simplification did nothing.
     performCFA(dfg);
     performConstantFolding(dfg);
     bool changed = false;
