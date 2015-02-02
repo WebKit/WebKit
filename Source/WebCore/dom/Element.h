@@ -393,6 +393,8 @@ public:
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
     virtual bool isURLAttribute(const Attribute&) const { return false; }
+    virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
+    virtual String completeURLsInAttributeValue(const URL& base, const Attribute&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     URL getURLAttribute(const QualifiedName&) const;

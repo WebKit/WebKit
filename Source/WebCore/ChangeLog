@@ -1,5 +1,42 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r171941.
+
+    2014-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            URLs in srcset attributes are not made absolute upon copy and paste
+            https://bugs.webkit.org/show_bug.cgi?id=135448
+
+            Reviewed by Ryosuke Niwa.
+
+            When pasting, canonicalize URLs in srcset the same way we do with src.
+
+            Test: editing/pasteboard/img-srcset-copy-paste-canonicalization.html
+
+            * dom/Element.cpp:
+            (WebCore::Element::completeURLsInAttributeValue): Initial implemention, moved from markup.cpp.
+            * dom/Element.h:
+            (WebCore::Element::attributeContainsURL): New function for completeURLs to call.
+            (WebCore::Element::completeURLsInAttributeValue): Only called if attributeContainsURL returns
+            true. Default implementation simply calls isURLAttribute().
+            * editing/markup.cpp:
+            (WebCore::completeURLs): Call attributeContainsURL() and completeURLsInAttributeValue() to
+            complete the URL, so nodes can perform their own behavior.
+            * html/HTMLImageElement.cpp:
+            (WebCore::HTMLImageElement::attributeContainsURL): Return true for srcset.
+            (WebCore::HTMLImageElement::completeUrlAttributeValue): Use our existing srcset parser to
+            parse the srcset attribute, then use its output to canonicalize URLs, and build it back up
+            into a string.
+            * html/HTMLImageElement.h:
+            (WebCore::HTMLImageElement::attributeContainsURL):
+            (WebCore::HTMLImageElement::completeUrlAttributeValue):
+            * html/parser/HTMLSrcsetParser.cpp: Make parseImageCandidatesFromSrcsetAttribute() public
+            and change its signature to return its result.
+            (WebCore::parseImageCandidatesFromSrcsetAttribute):
+            * html/parser/HTMLSrcsetParser.h: Ditto.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171692.
 
     2014-07-28  Andreas Kling  <akling@apple.com>

@@ -1,5 +1,27 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r171941.
+
+    2014-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            URLs in srcset attributes are not made absolute upon copy and paste
+            https://bugs.webkit.org/show_bug.cgi?id=135448
+
+            Reviewed by Ryosuke Niwa.
+
+            Copy and paste a srcset image with relative URLs, and make sure that the
+            pasted srcset attribute doesn't match what it was before. I can't actually
+            dump the new srcset because it will include a full path of the file on the
+            user's system, and would therefore be machine-specific.
+
+            * editing/pasteboard/img-srcset-copy-paste-canonicalization-expected.txt:
+            * editing/pasteboard/img-srcset-copy-paste-canonicalization.html: Paste and check.
+            * editing/pasteboard/resources/img-srcset-copy-paste-canonicalization-iframe.html:
+            This has to be an iframe because we don't perform any url canonicalization if we
+            are copying and pasting from a document into itself.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171692.
 
     2014-07-28  Andreas Kling  <akling@apple.com>
