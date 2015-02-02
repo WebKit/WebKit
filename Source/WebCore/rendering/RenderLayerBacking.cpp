@@ -1468,9 +1468,9 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
         }
     } else {
         if (m_childClippingMaskLayer) {
-            m_childClippingMaskLayer = nullptr;
             if (hasClippingLayer())
                 clippingLayer()->setMaskLayer(nullptr);
+            m_childClippingMaskLayer = nullptr;
         } else 
             if (hasClippingLayer())
                 clippingLayer()->setMasksToBoundsRect(FloatRoundedRect(FloatRect(FloatPoint(), clippingLayer()->size())));
