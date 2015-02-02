@@ -107,7 +107,7 @@ void MemoryPressureHandler::releaseCriticalMemory()
 
     {
         ReliefLogger log("Prune MemoryCache");
-        memoryCache().evictResources();
+        MemoryCache::singleton().evictResources();
     }
 
     {

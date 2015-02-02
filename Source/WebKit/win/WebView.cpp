@@ -673,8 +673,9 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         ASSERT_NOT_REACHED();
     }
 
-    memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
-    memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
+    auto& memoryCache = MemoryCache::singleton();
+    memoryCache.setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
+    memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     PageCache::singleton().setMaxSize(pageCacheSize);
 
 #if USE(CFNETWORK)

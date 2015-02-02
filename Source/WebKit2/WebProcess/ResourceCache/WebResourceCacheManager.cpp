@@ -57,7 +57,7 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 #else
     MemoryCache::SecurityOriginSet origins;
 #endif
-    memoryCache().getOriginsWithCache(origins);
+    MemoryCache::singleton().getOriginsWithCache(origins);
 
 #if USE(CFURLCACHE)
 #if ENABLE(CACHE_PARTITIONING)
@@ -114,7 +114,7 @@ void WebResourceCacheManager::clearCacheForOrigin(const SecurityOriginData& orig
     if (!origin)
         return;
 
-    memoryCache().removeResourcesWithOrigin(*origin);
+    MemoryCache::singleton().removeResourcesWithOrigin(*origin);
 
 #if USE(CFURLCACHE)
     if (resourceCachesToClear != InMemoryResourceCachesOnly) { 

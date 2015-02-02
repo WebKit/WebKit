@@ -381,7 +381,7 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
         // Image decoding failed. Either we need more image data or the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
         if (inCache())
-            memoryCache().remove(*this);
+            MemoryCache::singleton().remove(*this);
         return;
     }
 
@@ -422,7 +422,7 @@ void CachedImage::finishLoading(SharedBuffer* data)
         // Image decoding failed; the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
         if (inCache())
-            memoryCache().remove(*this);
+            MemoryCache::singleton().remove(*this);
         return;
     }
 

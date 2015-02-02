@@ -380,7 +380,7 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
 {
     if (!contextDocument() || !contextDocument()->page())
         return false;
-    CachedResource* resource = memoryCache().resourceForURL(contextDocument()->completeURL(url), contextDocument()->page()->sessionID());
+    CachedResource* resource = MemoryCache::singleton().resourceForURL(contextDocument()->completeURL(url), contextDocument()->page()->sessionID());
     return resource && resource->status() == CachedResource::Cached;
 }
 
@@ -406,7 +406,7 @@ String Internals::xhrResponseSource(XMLHttpRequest* xhr)
 
 void Internals::clearMemoryCache()
 {
-    memoryCache().evictResources();
+    MemoryCache::singleton().evictResources();
 }
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)

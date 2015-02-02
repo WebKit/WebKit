@@ -53,12 +53,10 @@ static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const auto defaultDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
-MemoryCache& memoryCache()
+MemoryCache& MemoryCache::singleton()
 {
     ASSERT(WTF::isMainThread());
-
     static NeverDestroyed<MemoryCache> memoryCache;
-
     return memoryCache;
 }
 
@@ -639,9 +637,10 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext& context
         return;
     }
 
-    for (auto& resources : memoryCache().m_sessionResources) {
-        if (CachedResource* resource = memoryCache().resourceForRequestImpl(request, *resources.value))
-            memoryCache().remove(*resource);
+    auto& memoryCache = MemoryCache::singleton();
+    for (auto& resources : memoryCache.m_sessionResources) {
+        if (CachedResource* resource = memoryCache.resourceForRequestImpl(request, *resources.value))
+            memoryCache.remove(*resource);
     }
 }
 

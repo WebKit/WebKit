@@ -1,3 +1,14 @@
+2015-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Access MemoryCache singleton using MemoryCache::singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=141104
+
+        Reviewed by Andreas Kling.
+
+        Access MemoryCache singleton using MemoryCache::singleton() static
+        member function, instead of a free function, as per the recent
+        coding style discussion on WebKit-dev.
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Rename shared() static member functions to singleton() for singleton classes.

@@ -575,7 +575,7 @@ void WebProcess::terminate()
 #ifndef NDEBUG
     gcController().garbageCollectNow();
     fontCache().invalidate();
-    memoryCache().setDisabled(true);
+    MemoryCache::singleton().setDisabled(true);
 #endif
 
     m_webConnection->invalidate();
@@ -633,7 +633,7 @@ void WebProcess::didClose(IPC::Connection&)
 
     gcController().garbageCollectSoon();
     fontCache().invalidate();
-    memoryCache().setDisabled(true);
+    MemoryCache::singleton().setDisabled(true);
 #endif    
 
     // The UI process closed this connection, shut down.
@@ -705,7 +705,7 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
     setCacheModel(CacheModelDocumentViewer);
     setCacheModel(cacheModel);
 
-    memoryCache().evictResources();
+    MemoryCache::singleton().evictResources();
 
     // Empty the cross-origin preflight cache.
     CrossOriginPreflightResultCache::singleton().empty();
@@ -861,7 +861,7 @@ static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t>>& r
     String xslString(ASCIILiteral("XSL"));
     String javaScriptString(ASCIILiteral("JavaScript"));
     
-    MemoryCache::Statistics memoryCacheStatistics = memoryCache().getStatistics();
+    MemoryCache::Statistics memoryCacheStatistics = MemoryCache::singleton().getStatistics();
     
     HashMap<String, uint64_t> counts;
     counts.set(imagesString, memoryCacheStatistics.images.count);
@@ -1319,8 +1319,9 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 
 void WebProcess::setMemoryCacheDisabled(bool disabled)
 {
-    if (memoryCache().disabled() != disabled)
-        memoryCache().setDisabled(disabled);
+    auto& memoryCache = MemoryCache::singleton();
+    if (memoryCache.disabled() != disabled)
+        memoryCache.setDisabled(disabled);
 }
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -83,7 +83,7 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::S
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, SessionID sessionID)
 {
-    CachedResource* resource = memoryCache().resourceForRequest(request, sessionID);
+    CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, sessionID);
     if (!resource)
         return;
     

@@ -159,7 +159,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
         // Doing so would have us reusing the resource from the first request if the second request's revalidation succeeds.
         if (newRequest.isConditional() && m_resource->resourceToRevalidate() && newRequest.url() != m_resource->resourceToRevalidate()->response().url()) {
             newRequest.makeUnconditional();
-            memoryCache().revalidationFailed(*m_resource);
+            MemoryCache::singleton().revalidationFailed(*m_resource);
             if (m_frame)
                 m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail);
         }
@@ -207,7 +207,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             // 304 Not modified / Use local copy
             // Existing resource is ok, just use it updating the expiration time.
             m_resource->setResponse(response);
-            memoryCache().revalidationSucceeded(*m_resource, response);
+            MemoryCache::singleton().revalidationSucceeded(*m_resource, response);
             if (m_frame)
                 m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass);
             if (!reachedTerminalState())
@@ -215,7 +215,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             return;
         }
         // Did not get 304 response, continue as a regular resource load.
-        memoryCache().revalidationFailed(*m_resource);
+        MemoryCache::singleton().revalidationFailed(*m_resource);
         if (m_frame)
             m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail);
     }
@@ -385,10 +385,10 @@ void SubresourceLoader::didFail(const ResourceError& error)
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     if (m_resource->resourceToRevalidate())
-        memoryCache().revalidationFailed(*m_resource);
+        MemoryCache::singleton().revalidationFailed(*m_resource);
     m_resource->setResourceError(error);
     if (!m_resource->isPreloaded())
-        memoryCache().remove(*m_resource);
+        MemoryCache::singleton().remove(*m_resource);
     m_resource->error(CachedResource::LoadError);
     cleanupForError(error);
     notifyDone();
@@ -417,10 +417,11 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 #else
     m_state = Finishing;
 #endif
+    auto& memoryCache = MemoryCache::singleton();
     if (m_resource->resourceToRevalidate())
-        memoryCache().revalidationFailed(*m_resource);
+        memoryCache.revalidationFailed(*m_resource);
     m_resource->setResourceError(error);
-    memoryCache().remove(*m_resource);
+    memoryCache.remove(*m_resource);
 }
 
 void SubresourceLoader::didCancel(const ResourceError&)

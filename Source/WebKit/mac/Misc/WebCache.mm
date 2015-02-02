@@ -65,7 +65,7 @@
 
 + (NSArray *)statistics
 {
-    WebCore::MemoryCache::Statistics s = WebCore::memoryCache().getStatistics();
+    WebCore::MemoryCache::Statistics s = WebCore::MemoryCache::singleton().getStatistics();
 
     return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -140,13 +140,13 @@
         [WebView _setCacheModel:WebCacheModelDocumentViewer];
         [WebView _setCacheModel:cacheModel];
 
-        WebCore::memoryCache().pruneLiveResources(true);
+        WebCore::MemoryCache::singleton().pruneLiveResources(true);
     });
 }
 
 + (void)sizeOfDeadResources:(int *)resources
 {
-    WebCore::MemoryCache::Statistics stats = WebCore::memoryCache().getStatistics();
+    WebCore::MemoryCache::Statistics stats = WebCore::MemoryCache::singleton().getStatistics();
     if (resources) {
         *resources = (stats.images.size - stats.images.liveSize)
                      + (stats.cssStyleSheets.size - stats.cssStyleSheets.liveSize)
@@ -176,7 +176,7 @@
     if (frame)
         topOrigin = core(frame)->document()->topOrigin();
 #endif
-    return WebCore::memoryCache().addImageToCache(image, url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
+    return WebCore::MemoryCache::singleton().addImageToCache(image, url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }
 
 + (void)removeImageFromCacheForURL:(NSURL *)url
@@ -193,7 +193,7 @@
     if (frame)
         topOrigin = core(frame)->document()->topOrigin();
 #endif
-    WebCore::memoryCache().removeImageFromCache(url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
+    WebCore::MemoryCache::singleton().removeImageFromCache(url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }
 
 + (CGImageRef)imageForURL:(NSURL *)url
@@ -201,7 +201,7 @@
     if (!url)
         return nullptr;
     
-    WebCore::CachedResource* cachedResource = WebCore::memoryCache().resourceForURL(url);
+    WebCore::CachedResource* cachedResource = WebCore::MemoryCache::singleton().resourceForURL(url);
     if (!is<WebCore::CachedImage>(cachedResource))
         return nullptr;
     WebCore::CachedImage& cachedImage = downcast<WebCore::CachedImage>(*cachedResource);
@@ -217,12 +217,12 @@
     if (!pthread_main_np())
         return [[self _webkit_invokeOnMainThread] setDisabled:disabled];
 
-    WebCore::memoryCache().setDisabled(disabled);
+    WebCore::MemoryCache::singleton().setDisabled(disabled);
 }
 
 + (BOOL)isDisabled
 {
-    return WebCore::memoryCache().disabled();
+    return WebCore::MemoryCache::singleton().disabled();
 }
 
 @end

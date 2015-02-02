@@ -3761,7 +3761,7 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
 
         // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
         // we might need some live bitmaps on painting.
-        memoryCache().prune();
+        MemoryCache::singleton().prune();
     }
 
     if (paintingState.isTopLevelPainter)
@@ -3801,7 +3801,7 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
     // Painting can lead to decoding of large amounts of bitmaps
     // If we are low on memory, wipe them out after the paint.
     if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure())
-        memoryCache().pruneLiveResources(true);
+        MemoryCache::singleton().pruneLiveResources(true);
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT)

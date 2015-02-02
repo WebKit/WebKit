@@ -261,7 +261,7 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
 #if ENABLE(CACHE_PARTITIONING)
         request.setDomainForCachePartition(frame->document()->topOrigin()->domainForCachePartition());
 #endif
-        cachedResource = memoryCache().resourceForRequest(request, frame->page()->sessionID());
+        cachedResource = MemoryCache::singleton().resourceForRequest(request, frame->page()->sessionID());
     }
 
     return cachedResource;

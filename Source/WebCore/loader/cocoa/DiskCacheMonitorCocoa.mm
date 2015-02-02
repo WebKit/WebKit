@@ -112,7 +112,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
 
 void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
 {
-    CachedResource* resource = memoryCache().resourceForRequest(m_resourceRequest, m_sessionID);
+    CachedResource* resource = MemoryCache::singleton().resourceForRequest(m_resourceRequest, m_sessionID);
     if (!resource)
         return;
 

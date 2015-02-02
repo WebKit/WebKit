@@ -708,9 +708,9 @@ void InspectorResourceAgent::replayXHR(ErrorString&, const String& requestId)
     request.setDomainForCachePartition(m_pageAgent->mainFrame()->document()->topOrigin()->domainForCachePartition());
 #endif
 
-    CachedResource* cachedResource = memoryCache().resourceForRequest(request, m_pageAgent->page()->sessionID());
-    if (cachedResource)
-        memoryCache().remove(*cachedResource);
+    auto& memoryCache = MemoryCache::singleton();
+    if (CachedResource* cachedResource = memoryCache.resourceForRequest(request, m_pageAgent->page()->sessionID()))
+        memoryCache.remove(*cachedResource);
 
     xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), IGNORE_EXCEPTION);
     for (const auto& header : xhrReplayData->headers())
@@ -742,7 +742,7 @@ void InspectorResourceAgent::setCacheDisabled(ErrorString&, bool cacheDisabled)
 {
     m_cacheDisabled = cacheDisabled;
     if (cacheDisabled)
-        memoryCache().evictResources();
+        MemoryCache::singleton().evictResources();
 }
 
 void InspectorResourceAgent::loadResource(ErrorString& errorString, const String& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
@@ -788,7 +788,7 @@ void InspectorResourceAgent::loadResource(ErrorString& errorString, const String
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader& loader)
 {
     if (m_cacheDisabled)
-        memoryCache().evictResources();
+        MemoryCache::singleton().evictResources();
 
     m_resourcesData->clear(m_pageAgent->loaderId(&loader));
 }
