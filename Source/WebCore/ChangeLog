@@ -1,3 +1,45 @@
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r171692.
+
+    2014-07-28  Andreas Kling  <akling@apple.com>
+
+            REGRESSION (r160806): CSS zoom property doesn't work on anything inside anchors.
+            <https://webkit.org/b/135344>
+            <rdar://problem/17759577>
+
+            When DeprecatedStyleBuilder applies the CSS zoom property (ApplyPropertyZoom)
+            it first resets the "effective zoom" by calling RenderStyle::setEffectiveZoom().
+
+            This mechanism was not resistent to being called multiple times, due to the
+            optimization in RenderStyle::setZoom() to avoid copy-on-writing the shared data
+            when setting some property to the already-set value.
+
+            The bug would happen in this sequence:
+
+            ApplyPropertyZoom:
+                - setEffectiveZoom(1);
+                - setZoom(2); // this updates the effective zoom
+            ApplyPropertyZoom:
+                - setEffectiveZoom(1);
+                - setZoom(2); // this doesn't update the effective zoom
+
+            When we run the second setZoom(2); call, the RenderStyle's zoom value is 2
+            already and we'll early return without updating the effective zoom.
+
+            This change moves the updating of the effective zoom in setZoom() to take place
+            before the early return due to overwriting with the same value.
+
+            Note: the fact that we're apply the zoom property twice is an inefficiency that
+            we should figure out a way to avoid in the future.
+
+            Reviewed by Simon Fraser.
+
+            Test: fast/css/zoom-inside-link.html
+
+            * rendering/style/RenderStyle.h:
+            (WebCore::RenderStyle::setZoom):
+
 2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179027. rdar://problem/19585744
