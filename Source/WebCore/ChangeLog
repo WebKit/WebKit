@@ -1,3 +1,35 @@
+2015-02-02  Darin Adler  <darin@apple.com>
+
+        Fix some leaks found by the leak bot
+        https://bugs.webkit.org/show_bug.cgi?id=141149
+
+        Reviewed by Alexey Proskuryakov.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::importKey): Changed argument types to std::unique_ptr for better code clarity.
+        (WebCore::JSSubtleCrypto::importKey): Use WTF::move instead of release.
+        (WebCore::JSSubtleCrypto::wrapKey): Fixed leaks by adding missing delete calls to the
+        case where we get a DOM exception.
+        (WebCore::JSSubtleCrypto::unwrapKey): Ditto.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery): Use WTF::move here. Not clear how this could
+        have caused the storage leak, but it does seem obviously missing. The leak is pretty big,
+        implying that we leak almost all CSSSelectorList objects we parse; not sure this fixes it.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse): Added code to
+        deleted the unguarded pointer if postTaskForModeToWorkerGlobalScope fails.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData): Ditto.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail): Ditto.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck): Ditto.
+
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions): Added missing adoptNS.
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::updateDocumentMarkerResources): Added missing release.
+
 2015-02-01  Chris Dumez  <cdumez@apple.com>
 
         Use more references in HistoryItem

@@ -107,10 +107,10 @@ void MediaSelectionGroupAVFObjC::updateOptions()
     for (auto& avOption : m_options.keys())
         [oldAVOptions addObject:avOption];
 
-    RetainPtr<NSMutableSet> addedAVOptions = [newAVOptions mutableCopy];
+    RetainPtr<NSMutableSet> addedAVOptions = adoptNS([newAVOptions mutableCopy]);
     [addedAVOptions minusSet:oldAVOptions.get()];
 
-    RetainPtr<NSMutableSet> removedAVOptions = [oldAVOptions mutableCopy];
+    RetainPtr<NSMutableSet> removedAVOptions = adoptNS([oldAVOptions mutableCopy]);
     [removedAVOptions minusSet:newAVOptions.get()];
 
     for (AVMediaSelectionOption* removedAVOption in removedAVOptions.get()) {

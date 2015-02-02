@@ -435,11 +435,8 @@ JSValue JSSubtleCrypto::generateKey(ExecState* exec)
     return wrapper.promise();
 }
 
-static void importKey(ExecState* exec, CryptoKeyFormat keyFormat, CryptoOperationData data, CryptoAlgorithm* algorithmPtr, CryptoAlgorithmParameters* parametersPtr, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
+static void importKey(ExecState* exec, CryptoKeyFormat keyFormat, CryptoOperationData data, std::unique_ptr<CryptoAlgorithm> algorithm, std::unique_ptr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
-    std::unique_ptr<CryptoAlgorithm> algorithm(algorithmPtr);
-    std::unique_ptr<CryptoAlgorithmParameters> parameters(parametersPtr);
-
     std::unique_ptr<CryptoKeySerialization> keySerialization;
     switch (keyFormat) {
     case CryptoKeyFormat::Raw:
@@ -550,7 +547,7 @@ JSValue JSSubtleCrypto::importKey(ExecState* exec)
         wrapper.reject(nullptr);
     };
 
-    WebCore::importKey(exec, keyFormat, data, algorithm.release(), parameters.release(), extractable, keyUsages, WTF::move(successCallback), WTF::move(failureCallback));
+    WebCore::importKey(exec, keyFormat, data, WTF::move(algorithm), WTF::move(parameters), extractable, keyUsages, WTF::move(successCallback), WTF::move(failureCallback));
     if (exec->hadException())
         return jsUndefined();
 
@@ -689,6 +686,8 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
     ExceptionCode ec = 0;
     WebCore::exportKey(exec, keyFormat, *key, WTF::move(exportSuccessCallback), WTF::move(exportFailureCallback));
     if (ec) {
+        delete algorithmPtr;
+        delete parametersPtr;
         setDOMException(exec, ec);
         return jsUndefined();
     }
@@ -780,7 +779,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
             wrapper.reject(nullptr);
         };
         ExecState* exec = domGlobalObject->globalExec();
-        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, WTF::move(importSuccessCallback), WTF::move(importFailureCallback));
+        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), std::unique_ptr<CryptoAlgorithm>(unwrappedKeyAlgorithmPtr), std::unique_ptr<CryptoAlgorithmParameters>(unwrappedKeyAlgorithmParametersPtr), extractable, keyUsages, WTF::move(importSuccessCallback), WTF::move(importFailureCallback));
         if (exec->hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             exec->clearException();
@@ -797,6 +796,8 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
     ExceptionCode ec = 0;
     unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, WTF::move(decryptSuccessCallback), WTF::move(decryptFailureCallback), ec);
     if (ec) {
+        delete unwrappedKeyAlgorithmPtr;
+        delete unwrappedKeyAlgorithmParametersPtr;
         setDOMException(exec, ec);
         return jsUndefined();
     }

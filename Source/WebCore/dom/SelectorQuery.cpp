@@ -603,7 +603,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
 }
 
 SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
-    : m_selectorList(selectorList)
+    : m_selectorList(WTF::move(selectorList))
     , m_selectors(m_selectorList)
 {
 }

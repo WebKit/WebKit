@@ -152,8 +152,11 @@ static NSColor *correctionPatternColor = nullptr;
 
 void GraphicsContext::updateDocumentMarkerResources()
 {
+    [spellingPatternColor release];
     spellingPatternColor = nullptr;
+    [grammarPatternColor release];
     grammarPatternColor = nullptr;
+    [correctionPatternColor release];
     correctionPatternColor = nullptr;
 }
 
