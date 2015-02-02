@@ -139,6 +139,9 @@ public:
     struct SourceSize {
         std::unique_ptr<MediaQueryExp> expression;
         RefPtr<CSSValue> length;
+
+        SourceSize(SourceSize&&);
+        SourceSize(std::unique_ptr<MediaQueryExp>&&, RefPtr<CSSValue>);
     };
     Vector<SourceSize> parseSizesAttribute(StringView);
     SourceSize sourceSize(std::unique_ptr<MediaQueryExp>&&, CSSParserValue&);

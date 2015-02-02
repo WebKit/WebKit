@@ -1501,6 +1501,18 @@ Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
     return result;
 }
 
+CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
+    : expression(WTF::move(original.expression))
+    , length(original.length)
+{
+}
+
+CSSParser::SourceSize::SourceSize(std::unique_ptr<MediaQueryExp>&& origExp, RefPtr<CSSValue> value)
+    : expression(WTF::move(origExp))
+    , length(value)
+{
+}
+
 CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& expression, CSSParserValue& parserValue)
 {
     RefPtr<CSSValue> value;
@@ -1511,10 +1523,9 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     }
     if (!value)
         value = parserValue.createCSSValue();
-    // FIXME: Using a named local for the result here to work around an MSVC bug.
+    // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
     // With the other compilers, this works without explicitly stating the type name SourceSize or using a local.
-    SourceSize result { WTF::move(expression), value };
-    return result;
+    return SourceSize(WTF::move(expression), WTF::move(value));
 }
 
 #endif
