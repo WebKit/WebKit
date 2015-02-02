@@ -1,3 +1,29 @@
+2015-02-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Get rid of invalidSelectorVector, use Bison's error recovery instead
+        https://bugs.webkit.org/show_bug.cgi?id=141147
+
+        Reviewed by Darin Adler.
+
+        * css/CSSGrammar.y.in:
+        Instead of reducing a null selector, we can use a real parsing error
+        to get out of invalid selector endings.
+
+        When that happens, Bison will pop the stack until it can reduce any
+        valid error recovery rules.
+
+        The problem is to make sure there is no floating values because
+        none of the reduce block between the error and the recovery would
+        be executed.
+
+        In this case, "nth_selector_ending" is a non-recursive production of
+        the NTHCHILDFUNCTIONS. In turn, NTHCHILDFUNCTIONS are productions
+        of the non-recursive "pseudo". "pseudo" is only used as a trivial
+        production of "specifier". "specifier" is only used by "specifier_list".
+
+        "specifier_list" has error recovery code -> no production could have
+        generated a floating values between "specifier_list" and "nth_selector_ending".
+
 2015-01-30  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Implement spec section 3.7.1 Setting and getting state (Part 1).

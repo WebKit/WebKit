@@ -85,8 +85,6 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
     return v;
 }
 
-static auto* const invalidSelectorVector = reinterpret_cast<Vector<std::unique_ptr<CSSParserSelector>>*>(-1);
-
 static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_ptr<CSSParserSelector>>* selectorVector)
 {
     if (!selectorVector)
@@ -305,7 +303,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %union { Vector<std::unique_ptr<CSSParserSelector>>* selectorList; }
 %type <selectorList> selector_list nested_selector_list simple_selector_list nth_selector_ending
 %destructor { delete $$; } selector_list nested_selector_list simple_selector_list
-%destructor { if ($$ != invalidSelectorVector) delete $$; } nth_selector_ending
+%destructor { delete $$; } nth_selector_ending
 
 %union { bool boolean; }
 %type <boolean> declaration declaration_list decl_list priority
@@ -1323,7 +1321,7 @@ nth_selector_ending:
         if ($4)
             $$ = $4;
         else
-            $$ = invalidSelectorVector;
+            YYERROR;
     }
     ;
 
@@ -1405,53 +1403,47 @@ pseudo:
     // Definition of :nth-child().
     | ':' NTHCHILDFUNCTIONS maybe_space NTH nth_selector_ending {
         $$ = nullptr;
-        if ($5 != invalidSelectorVector) {
-            std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($5);
-            if (selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
-                auto selector = std::make_unique<CSSParserSelector>();
-                selector->setMatch(CSSSelector::PseudoClass);
-                selector->setArgument($4);
-                selector->setPseudoClassValue($2);
-                if (ending)
-                    selector->adoptSelectorVector(*ending);
-                CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
-                if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
-                    $$ = selector.release();
-            }
+        std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($5);
+        if (selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument($4);
+            selector->setPseudoClassValue($2);
+            if (ending)
+                selector->adoptSelectorVector(*ending);
+            CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
+            if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
+                $$ = selector.release();
         }
     }
     | ':' NTHCHILDFUNCTIONS maybe_space maybe_unary_operator INTEGER nth_selector_ending {
         $$ = nullptr;
-        if ($6 != invalidSelectorVector) {
-            std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($6);
-            if (selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
-                auto selector = std::make_unique<CSSParserSelector>();
-                selector->setMatch(CSSSelector::PseudoClass);
-                selector->setArgument(AtomicString::number($4 * $5));
-                selector->setPseudoClassValue($2);
-                if (ending)
-                    selector->adoptSelectorVector(*ending);
-                CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
-                if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
-                    $$ = selector.release();
-            }
+        std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($6);
+        if (selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument(AtomicString::number($4 * $5));
+            selector->setPseudoClassValue($2);
+            if (ending)
+                selector->adoptSelectorVector(*ending);
+            CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
+            if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
+                $$ = selector.release();
         }
     }
     | ':' NTHCHILDFUNCTIONS maybe_space IDENT nth_selector_ending {
         $$ = nullptr;
-        if ($5 != invalidSelectorVector) {
-            std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($5);
-            if (isValidNthToken($4) && selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
-                auto selector = std::make_unique<CSSParserSelector>();
-                selector->setMatch(CSSSelector::PseudoClass);
-                selector->setArgument($4);
-                selector->setPseudoClassValue($2);
-                if (ending)
-                   selector->adoptSelectorVector(*ending);
-                CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
-                if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
-                    $$ = selector.release();
-            }
+        std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> ending($5);
+        if (isValidNthToken($4) && selectorListDoesNotMatchAnyPseudoElement(ending.get())) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument($4);
+            selector->setPseudoClassValue($2);
+            if (ending)
+               selector->adoptSelectorVector(*ending);
+            CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
+            if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
+                $$ = selector.release();
         }
     }
 
