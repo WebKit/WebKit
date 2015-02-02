@@ -239,7 +239,7 @@ public:
                         ASSERT(!node->replacement);
                     }
                     if (verbose)
-                        dataLog("Mapping: r", valueForOperand.operandForIndex(i), " -> ", node, "\n");
+                        dataLog("Mapping: ", VirtualRegister(valueForOperand.operandForIndex(i)), " -> ", node, "\n");
                     valueForOperand[i] = node;
                 }
             }
@@ -287,7 +287,7 @@ public:
                     
                     if (!variable->isCaptured()) {
                         if (verbose)
-                            dataLog("Mapping: r", variable->local(), " -> ", node->child1().node(), "\n");
+                            dataLog("Mapping: ", variable->local(), " -> ", node->child1().node(), "\n");
                         valueForOperand.operand(variable->local()) = node->child1().node();
                     }
                     break;
@@ -345,7 +345,7 @@ public:
                     VariableAccessData* variable = node->variableAccessData();
                     ASSERT(!variable->isCaptured());
                     if (verbose)
-                        dataLog("Mapping: r", variable->local(), " -> ", node, "\n");
+                        dataLog("Mapping: ", variable->local(), " -> ", node, "\n");
                     valueForOperand.operand(variable->local()) = node;
                     break;
                 }

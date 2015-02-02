@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -276,35 +276,18 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         VariableAccessData* variableAccessData = node->tryGetVariableAccessData();
         if (variableAccessData) {
             VirtualRegister operand = variableAccessData->local();
-            if (operand.isArgument())
-                out.print(comma, "arg", operand.toArgument(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
-            else
-                out.print(comma, "loc", operand.toLocal(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
-            
+            out.print(comma, variableAccessData->local(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
             operand = variableAccessData->machineLocal();
-            if (operand.isValid()) {
-                if (operand.isArgument())
-                    out.print(comma, "machine:arg", operand.toArgument());
-                else
-                    out.print(comma, "machine:loc", operand.toLocal());
-            }
+            if (operand.isValid())
+                out.print(comma, "machine:", operand);
         }
     }
-    if (node->hasUnlinkedLocal()) {
-        VirtualRegister operand = node->unlinkedLocal();
-        if (operand.isArgument())
-            out.print(comma, "arg", operand.toArgument());
-        else
-            out.print(comma, "loc", operand.toLocal());
-    }
+    if (node->hasUnlinkedLocal()) 
+        out.print(comma, node->unlinkedLocal());
     if (node->hasUnlinkedMachineLocal()) {
         VirtualRegister operand = node->unlinkedMachineLocal();
-        if (operand.isValid()) {
-            if (operand.isArgument())
-                out.print(comma, "machine:arg", operand.toArgument());
-            else
-                out.print(comma, "machine:loc", operand.toLocal());
-        }
+        if (operand.isValid())
+            out.print(comma, "machine:", operand);
     }
     if (node->hasConstantBuffer()) {
         out.print(comma);

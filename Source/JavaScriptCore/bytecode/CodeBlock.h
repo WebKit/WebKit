@@ -85,8 +85,6 @@ class TypeLocation;
 
 inline VirtualRegister unmodifiedArgumentsRegister(VirtualRegister argumentsRegister) { return VirtualRegister(argumentsRegister.offset() + 1); }
 
-static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
-
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {

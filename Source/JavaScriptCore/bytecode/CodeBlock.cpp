@@ -174,7 +174,7 @@ void CodeBlock::dump(PrintStream& out) const
 
 static CString constantName(int k, JSValue value)
 {
-    return toCString(value, "(@k", k - FirstConstantRegisterIndex, ")");
+    return toCString(value, "(", VirtualRegister(k), ")");
 }
 
 static CString idName(int id0, const Identifier& ident)
@@ -184,19 +184,10 @@ static CString idName(int id0, const Identifier& ident)
 
 CString CodeBlock::registerName(int r) const
 {
-    if (r == missingThisObjectMarker())
-        return "<null>";
-
     if (isConstantRegisterIndex(r))
         return constantName(r, getConstant(r));
 
-    if (operandIsArgument(r)) {
-        if (!VirtualRegister(r).toArgument())
-            return "this";
-        return toCString("arg", VirtualRegister(r).toArgument());
-    }
-
-    return toCString("loc", VirtualRegister(r).toLocal());
+    return toCString(VirtualRegister(r));
 }
 
 static CString regexpToSourceString(RegExp* regExp)
@@ -3946,7 +3937,7 @@ struct VerifyCapturedDef {
 
         if (codeBlock->captureCount() && codeBlock->symbolTable()->isCaptured(operand)) {
             codeBlock->beginValidationDidFail();
-            dataLog("    At bc#", bytecodeOffset, " encountered invalid assignment to captured variable loc", virtualReg.toLocal(), ".\n");
+            dataLog("    At bc#", bytecodeOffset, " encountered invalid assignment to captured variable ", virtualReg, ".\n");
             codeBlock->endValidationDidFail();
             return;
         }

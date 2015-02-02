@@ -353,6 +353,7 @@
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
     <ClCompile Include="..\bytecode\VariableWatchpointSet.cpp" />
+    <ClCompile Include="..\bytecode\VirtualRegister.cpp" />
     <ClCompile Include="..\bytecode\Watchpoint.cpp" />
     <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
     <ClCompile Include="..\bytecompiler\NodesCodegen.cpp" />

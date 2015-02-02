@@ -1,3 +1,48 @@
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        VirtualRegister should really know how to dump itself
+        https://bugs.webkit.org/show_bug.cgi?id=141171
+
+        Reviewed by Geoffrey Garen.
+        
+        Gives VirtualRegister a dump() method that pretty-prints the virtual register. The rest of
+        the patch is all about using this new power.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::constantName):
+        (JSC::CodeBlock::registerName):
+        * bytecode/CodeBlock.h:
+        (JSC::missingThisObjectMarker): Deleted.
+        * bytecode/VirtualRegister.cpp: Added.
+        (JSC::VirtualRegister::dump):
+        * bytecode/VirtualRegister.h:
+        (WTF::printInternal): Deleted.
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::dump):
+        * dfg/DFGFlushedAt.cpp:
+        (JSC::DFG::FlushedAt::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGPutLocalSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::reportValidationContext):
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        (JSC::DFG::VariableEvent::dumpSpillInfo):
+        * ftl/FTLExitArgumentForOperand.cpp:
+        (JSC::FTL::ExitArgumentForOperand::dump):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+
 2015-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

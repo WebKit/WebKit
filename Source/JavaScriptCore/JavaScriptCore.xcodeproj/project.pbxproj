@@ -112,6 +112,7 @@
 		0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FE51B1922A3BC006987C5 /* AbortReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F20C2591A8013AB00DA3229 /* VirtualRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */; };
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */; };
@@ -1782,6 +1783,7 @@
 		0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSlowPathGenerator.h; path = dfg/DFGSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSilentRegisterSavePlan.h; path = dfg/DFGSilentRegisterSavePlan.h; sourceTree = "<group>"; };
 		0F1FE51B1922A3BC006987C5 /* AbortReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortReason.h; sourceTree = "<group>"; };
+		0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualRegister.cpp; sourceTree = "<group>"; };
 		0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSpecializationKind.h; sourceTree = "<group>"; };
 		0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeConventions.h; sourceTree = "<group>"; };
 		0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitArgument.cpp; path = ftl/FTLExitArgument.cpp; sourceTree = "<group>"; };
@@ -5124,6 +5126,7 @@
 				0FCA9112195E66A000426438 /* VariableWatchpointSet.cpp */,
 				0F9181C618415CA50057B669 /* VariableWatchpointSet.h */,
 				FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */,
+				0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */,
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
 				0F919D2215853CDE004A4E7D /* Watchpoint.cpp */,
 				0F919D2315853CDE004A4E7D /* Watchpoint.h */,
@@ -7118,6 +7121,7 @@
 				A7C0C4AD1681067E0017011D /* JSScriptRef.cpp in Sources */,
 				0F919D10157F3329004A4E7D /* JSSegmentedVariableObject.cpp in Sources */,
 				A7299D9D17D12837005F5FF9 /* JSSet.cpp in Sources */,
+				0F20C2591A8013AB00DA3229 /* VirtualRegister.cpp in Sources */,
 				A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */,
 				2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* JSStack.cpp in Sources */,

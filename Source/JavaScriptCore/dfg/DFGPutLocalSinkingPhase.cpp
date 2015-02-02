@@ -168,7 +168,7 @@ public:
                         if (operand.isHeader())
                             return;
                         if (verbose)
-                            dataLog("    r", operand, " is live at ", node, "\n");
+                            dataLog("    ", operand, " is live at ", node, "\n");
                         live.operand(operand) = true;
                     };
                     
@@ -313,7 +313,7 @@ public:
                 for (BasicBlock* successor : block->successors()) {
                     for (size_t i = deferred.size(); i--;) {
                         if (verbose)
-                            dataLog("Considering r", deferred.operandForIndex(i), " at ", pointerDump(block), "->", pointerDump(successor), ": ", deferred[i], " and ", deferredAtHead[successor][i], " merges to ");
+                            dataLog("Considering ", VirtualRegister(deferred.operandForIndex(i)), " at ", pointerDump(block), "->", pointerDump(successor), ": ", deferred[i], " and ", deferredAtHead[successor][i], " merges to ");
 
                         deferredAtHead[successor][i] =
                             deferredAtHead[successor][i].merge(deferred[i]);
@@ -395,7 +395,7 @@ public:
                     return nullptr;
 
                 if (verbose)
-                    dataLog("Adding Phi for r", operand, " at ", pointerDump(block), "\n");
+                    dataLog("Adding Phi for ", operand, " at ", pointerDump(block), "\n");
                 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
                 DFG_ASSERT(m_graph, nullptr, variableDeferral.hasVariable());
@@ -429,7 +429,7 @@ public:
                 insertionSet.insert(0, phiDef->value());
                 
                 if (verbose)
-                    dataLog("   Mapping r", operand, " to ", phiDef->value(), "\n");
+                    dataLog("   Mapping ", operand, " to ", phiDef->value(), "\n");
                 mapping.operand(operand) = phiDef->value();
             }
             
@@ -445,7 +445,7 @@ public:
                     VirtualRegister operand = variable->local();
                     deferred.operand(operand) = VariableDeferral(variable);
                     if (verbose)
-                        dataLog("   Mapping r", operand, " to ", node->child1().node(), " at ", node, "\n");
+                        dataLog("   Mapping ", operand, " to ", node->child1().node(), " at ", node, "\n");
                     mapping.operand(operand) = node->child1().node();
                     break;
                 }
@@ -473,7 +473,7 @@ public:
                     
                         // Gotta insert a PutLocal.
                         if (verbose)
-                            dataLog("Inserting a PutLocal for r", operand, " at ", node, "\n");
+                            dataLog("Inserting a PutLocal for ", operand, " at ", node, "\n");
 
                         Node* incoming = mapping.operand(operand);
                         DFG_ASSERT(m_graph, node, incoming);
@@ -501,7 +501,7 @@ public:
                     SSACalculator::Variable* variable = phiDef->variable();
                     VirtualRegister operand = indexToOperand[variable->index()];
                     if (verbose)
-                        dataLog("Creating Upsilon for r", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
+                        dataLog("Creating Upsilon for ", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
                     VariableDeferral variableDeferral =
                         deferredAtHead[successorBlock].operand(operand);
                     DFG_ASSERT(m_graph, nullptr, variableDeferral.hasVariable());

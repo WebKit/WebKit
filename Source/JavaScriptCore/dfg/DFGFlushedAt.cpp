@@ -37,7 +37,7 @@ void FlushedAt::dump(PrintStream& out) const
     if (m_format == DeadFlush || m_format == ConflictingFlush)
         out.print(m_format);
     else if (m_virtualRegister.isValid())
-        out.print("r", m_virtualRegister, ":", m_format);
+        out.print(m_virtualRegister, ":", m_format);
     else
         out.print(m_format);
 }

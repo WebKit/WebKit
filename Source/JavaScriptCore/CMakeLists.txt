@@ -105,6 +105,7 @@ set(JavaScriptCore_SOURCES
     bytecode/UnlinkedInstructionStream.cpp
     bytecode/ValueRecovery.cpp
     bytecode/VariableWatchpointSet.cpp
+    bytecode/VirtualRegister.cpp
     bytecode/Watchpoint.cpp
 
     bytecompiler/BytecodeGenerator.cpp

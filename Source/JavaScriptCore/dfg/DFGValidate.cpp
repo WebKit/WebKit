@@ -542,23 +542,23 @@ private:
     void reportValidationContext(VirtualRegister local, BasicBlock* block)
     {
         if (!block) {
-            dataLog("r", local, " in null Block ");
+            dataLog(local, " in null Block ");
             return;
         }
 
-        dataLog("r", local, " in Block ", *block);
+        dataLog(local, " in Block ", *block);
     }
     
     void reportValidationContext(
         VirtualRegister local, BasicBlock* sourceBlock, BasicBlock* destinationBlock)
     {
-        dataLog("r", local, " in Block ", *sourceBlock, " -> ", *destinationBlock);
+        dataLog(local, " in Block ", *sourceBlock, " -> ", *destinationBlock);
     }
     
     void reportValidationContext(
         VirtualRegister local, BasicBlock* sourceBlock, Node* prevNode)
     {
-        dataLog(prevNode, " for r", local, " in Block ", *sourceBlock);
+        dataLog(prevNode, " for ", local, " in Block ", *sourceBlock);
     }
     
     void reportValidationContext(Node* node, BasicBlock* block)

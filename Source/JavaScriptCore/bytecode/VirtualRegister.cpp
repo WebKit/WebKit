@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,59 +24,42 @@
  */
 
 #include "config.h"
-#include "DFGValueSource.h"
+#include "VirtualRegister.h"
 
-#if ENABLE(DFG_JIT)
+namespace JSC {
 
-#include "JSCInlines.h"
-
-namespace JSC { namespace DFG {
-
-void ValueSource::dump(PrintStream& out) const
+void VirtualRegister::dump(PrintStream& out) const
 {
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("NotSet");
-        break;
-    case SourceIsDead:
-        out.print("IsDead");
-        break;
-    case ValueInJSStack:
-        out.print("JS:", virtualRegister());
-        break;
-    case Int32InJSStack:
-        out.print("Int32:", virtualRegister());
-        break;
-    case Int52InJSStack:
-        out.print("Int52:", virtualRegister());
-        break;
-    case CellInJSStack:
-        out.print("Cell:", virtualRegister());
-        break;
-    case BooleanInJSStack:
-        out.print("Bool:", virtualRegister());
-        break;
-    case DoubleInJSStack:
-        out.print("Double:", virtualRegister());
-        break;
-    case ArgumentsSource:
-        out.print("Arguments");
-        break;
-    case HaveNode:
-        out.print("Node(", m_value, ")");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+    if (!isValid()) {
+        out.print("<invalid>");
+        return;
     }
+    
+    if (isHeader()) {
+        out.print("head", m_virtualRegister);
+        return;
+    }
+    
+    if (isConstant()) {
+        out.print("const", toConstantIndex());
+        return;
+    }
+    
+    if (isArgument()) {
+        if (!toArgument())
+            out.print("this");
+        else
+            out.print("arg", toArgument());
+        return;
+    }
+    
+    if (isLocal()) {
+        out.print("loc", toLocal());
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
-{
-    dump(out);
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,8 @@ public:
 
     bool operator==(const VirtualRegister other) const { return m_virtualRegister == other.m_virtualRegister; }
     bool operator!=(const VirtualRegister other) const { return m_virtualRegister != other.m_virtualRegister; }
+    
+    void dump(PrintStream& out) const;
 
 private:
     static const int s_invalidVirtualRegister = 0x3fffffff;
@@ -95,14 +97,5 @@ inline VirtualRegister virtualRegisterForArgument(int argument, int offset = 0)
 }
 
 } // namespace JSC
-
-namespace WTF {
-
-inline void printInternal(PrintStream& out, JSC::VirtualRegister value)
-{
-    out.print(value.offset());
-}
-
-} // namespace WTF
 
 #endif // VirtualRegister_h

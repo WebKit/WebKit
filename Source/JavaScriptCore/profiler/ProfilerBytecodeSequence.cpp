@@ -44,7 +44,7 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
         if (!description.length())
             continue;
         out.reset();
-        out.print("arg", i, " (r", virtualRegisterForArgument(i).offset(), "): ", description);
+        out.print("arg", i, ": ", description);
         m_header.append(out.toCString());
     }
     
