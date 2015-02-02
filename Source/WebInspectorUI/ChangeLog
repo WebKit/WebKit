@@ -1,5 +1,56 @@
 2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Support console.table
+        https://bugs.webkit.org/show_bug.cgi?id=141058
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Index", "(Index)", "Value", table header strings.
+
+        * UserInterface/Views/ConsoleMessage.js:
+        Add "Table", but add FIXMEs to consider using the protocol generated enums.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._format):
+        Special case console.table messages.
+
+        (WebInspector.ConsoleMessageImpl.prototype._appendPropertyPreviews):
+        (WebInspector.ConsoleMessageImpl.prototype._propertyPreviewElement):
+        Factor out ProjectPreview printing. Also, replace newlines in strings
+        with return characters, like we did elsewhere.
+
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsTable):
+        Ultimately try to create a DataGrid from the output. Search first
+        for rich object data in the list. If no rich object data is found
+        just check for simple values. If the table is lossy, also do
+        a log of the object in case the user wants to see more data.
+
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        The for..in enumeration is unordered and may not give us the
+        column ordering we wanted. So include an optional preferred
+        column names list to get the preferred order.
+
+        (WebInspector.DataGrid.createSortableDataGrid):
+        Numerous bug fixes here. Accidental globals, typos, and sorting failures.
+
+        (WebInspector.DataGrid.prototype.autoSizeColumns):
+        (WebInspector.DataGrid.prototype.textForDataGridNodeColumn):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridNode):
+        Create a generic method to get the text for a datagrid node in a column.
+        This is important for getting the text from console.table previews which
+        contains Nodes.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-messages:focus .console-item.selected .data-grid tr.selected):
+        (.console-item .data-grid tr.selected):
+        DataGrid selection colors while in the console which may or may
+        not have selected console items.
+
+2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Extend CSS.getSupportedCSSProperties to provide values for properties for CSS Augmented JSContext
         https://bugs.webkit.org/show_bug.cgi?id=141064
 

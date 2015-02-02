@@ -119,6 +119,8 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
 
     if (type == MessageType::Trace)
         levelString = "TRACE";
+    else if (type == MessageType::Table)
+        levelString = "TABLE";
 
     builder.append(sourceString);
     builder.append(' ');

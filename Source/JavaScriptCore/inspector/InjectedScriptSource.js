@@ -101,14 +101,17 @@ InjectedScript.prototype = {
     {
         if (!canAccessInspectedGlobalObject)
             return this._fallbackWrapper(table);
+
         var columnNames = null;
         if (typeof columns === "string")
             columns = [columns];
+
         if (InjectedScriptHost.subtype(columns) === "array") {
             columnNames = [];
             for (var i = 0; i < columns.length; ++i)
-                columnNames.push(String(columns[i]));
+                columnNames.push(toString(columns[i]));
         }
+
         return this._wrapObject(table, "console", false, true, columnNames);
     },
 
@@ -847,7 +850,7 @@ InjectedScript.RemoteObject.prototype = {
             // Properties.
             preview.properties = [];
             var descriptors = injectedScript._propertyDescriptors(object);
-            this._appendPropertyPreviews(preview, descriptors, propertiesThreshold, secondLevelKeys);
+            this._appendPropertyPreviews(preview, descriptors, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;
 
@@ -860,7 +863,7 @@ InjectedScript.RemoteObject.prototype = {
         return preview;
     },
 
-    _appendPropertyPreviews: function(preview, descriptors, propertiesThreshold, secondLevelKeys)
+    _appendPropertyPreviews: function(preview, descriptors, propertiesThreshold, firstLevelKeys, secondLevelKeys)
     {
         for (var descriptor of descriptors) {
             // Seen enough.
@@ -884,6 +887,10 @@ InjectedScript.RemoteObject.prototype = {
 
             // Do not show non-enumerable non-own properties. Special case to allow array indexes that may be on the prototype.
             if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" && isUInt32(name)))
+                continue;
+
+            // If we have a filter, only show properties in the filter.
+            if (firstLevelKeys && firstLevelKeys.indexOf(name) === -1)
                 continue;
 
             // Getter/setter.

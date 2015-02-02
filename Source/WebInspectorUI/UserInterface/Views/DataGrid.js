@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
+WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback, preferredColumnOrder)
 {
     this.columns = new Map;
     this.orderedColumns = [];
@@ -87,8 +87,13 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
     this.element.appendChild(this._headerTableElement);
     this.element.appendChild(this._scrollContainerElement);
 
-    for (var columnIdentifier in columnsData)
-        this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
+    if (preferredColumnOrder) {
+        for (var columnIdentifier of preferredColumnOrder)
+            this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
+    } else {
+        for (var columnIdentifier in columnsData)
+            this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
+    }
 
     this._generateSortIndicatorImagesIfNeeded();
 }
@@ -118,17 +123,15 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
         return null;
 
     var columnsData = {};
-
     for (var columnName of columnNames) {
-        var column = {};
-        column["width"] = columnName.length;
-        column["title"] = columnName;
-        column["sortable"] = true;
-
-        columnsData[columnName] = column;
+        columnsData[columnName] = {
+            width: columnName.length,
+            title: columnName,
+            sortable: true,
+        };
     }
 
-    var dataGrid = new WebInspector.DataGrid(columnsData);
+    var dataGrid = new WebInspector.DataGrid(columnsData, undefined, undefined, columnNames);
     for (var i = 0; i < values.length / numColumns; ++i) {
         var data = {};
         for (var j = 0; j < columnNames.length; ++j)
@@ -142,34 +145,38 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
     function sortDataGrid()
     {
         var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-        var sortAscending = dataGrid.sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
 
+        var columnIsNumeric = true;
         for (var node of dataGrid.children) {
-            if (isNaN(Number(node.data[sortColumnIdentifier] || "")))
+            var value = dataGrid.textForDataGridNodeColumn(node, sortColumnIdentifier);
+            if (isNaN(Number(value)))
                 columnIsNumeric = false;
         }
 
         function comparator(dataGridNode1, dataGridNode2)
         {
-            var item1 = dataGridNode1.data[sortColumnIdentifier] || "";
-            var item2 = dataGridNode2.data[sortColumnIdentifier] || "";
+            var item1 = dataGrid.textForDataGridNodeColumn(dataGridNode1, sortColumnIdentifier);
+            var item2 = dataGrid.textForDataGridNodeColumn(dataGridNode2, sortColumnIdentifier);
 
             var comparison;
             if (columnIsNumeric) {
-                // Sort numbers based on comparing their values rather than a lexicographical comparison.
                 var number1 = parseFloat(item1);
                 var number2 = parseFloat(item2);
                 comparison = number1 < number2 ? -1 : (number1 > number2 ? 1 : 0);
             } else
                 comparison = item1 < item2 ? -1 : (item1 > item2 ? 1 : 0);
 
-            return sortDirection * comparison;
+            return comparison;
         }
 
         dataGrid.sortNodes(comparator);
     }
 
     dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, sortDataGrid, this);
+
+    dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+    dataGrid.sortColumnIdentifier = columnNames[0];
+
     return dataGrid;
 }
 
@@ -360,7 +367,7 @@ WebInspector.DataGrid.prototype = {
         var children = maxDescentLevel ? this._enumerateChildren(this, [], maxDescentLevel + 1) : this.children;
         for (var node of children) {
             for (var identifier of this.columns.keys()) {
-                var text = node.data[identifier] || "";
+                var text = this.textForDataGridNodeColumn(node, identifier);
                 if (text.length > widths[identifier])
                     widths[identifier] = text.length;
             }
@@ -414,7 +421,8 @@ WebInspector.DataGrid.prototype = {
         this.updateLayout();
     },
 
-    insertColumn: function(columnIdentifier, columnData, insertionIndex) {
+    insertColumn: function(columnIdentifier, columnData, insertionIndex)
+    {
         if (insertionIndex === undefined)
             insertionIndex = this.orderedColumns.length;
         insertionIndex = Number.constrain(insertionIndex, 0, this.orderedColumns.length);
@@ -1179,11 +1187,17 @@ WebInspector.DataGrid.prototype = {
         }
     },
 
+    textForDataGridNodeColumn: function(node, columnIdentifier)
+    {
+        var data = node.data[columnIdentifier];
+        return (data instanceof Node ? data.textContent : data) || "";
+    },
+
     _copyTextForDataGridNode: function(node)
     {
         var fields = [];
         for (var identifier of node.dataGrid.orderedColumns)
-            fields.push(node.data[identifier] || "");
+            fields.push(this.textForDataGridNodeColumn(node, identifier));
 
         var tabSeparatedValues = fields.join("\t");
         return tabSeparatedValues;

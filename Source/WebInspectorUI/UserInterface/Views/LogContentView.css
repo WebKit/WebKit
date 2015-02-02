@@ -72,6 +72,14 @@
     width: 2px;
 }
 
+.console-messages:focus .console-item.selected .data-grid tr.selected {
+    background-color: hsl(210, 90%, 90%) !important;
+}
+
+.console-item .data-grid tr.selected {
+    background-color: hsl(210, 0%, 90%) !important;
+}
+
 .console-messages:focus .console-item.selected .console-user-command::after,
 .console-messages:focus .console-item.selected .console-message::after {
     background: hsl(210, 100%, 49%);

@@ -1,3 +1,14 @@
+2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Support console.table
+        https://bugs.webkit.org/show_bug.cgi?id=141058
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/CommandLineAPIModuleSource.js:
+        Include "table(foo)" as an alias of "console.table(foo)" on
+        the command line.
+
 2015-02-02  Roger Fong  <roger_fong@apple.com>
 
         [Win] Build fix following r179482.

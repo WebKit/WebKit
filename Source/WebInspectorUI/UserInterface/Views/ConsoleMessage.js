@@ -64,7 +64,7 @@ WebInspector.ConsoleMessage.create = function(source, level, message, type, url,
     return new WebInspector.ConsoleMessageImpl(source, level, message, null, type, url, line, column, repeatCount, parameters, stackTrace, request);
 };
 
-// Note: Keep these constants in sync with the ones in Console.h
+// FIXME: Switch to ConsoleAgent.ConsoleMessageSource.
 WebInspector.ConsoleMessage.MessageSource = {
     HTML: "html",
     XML: "xml",
@@ -74,10 +74,12 @@ WebInspector.ConsoleMessage.MessageSource = {
     Other: "other"
 };
 
+// FIXME: Switch to ConsoleAgent.ConsoleMessageType.
 WebInspector.ConsoleMessage.MessageType = {
     Log: "log",
     Dir: "dir",
     DirXML: "dirxml",
+    Table: "table",
     Trace: "trace",
     StartGroup: "startGroup",
     StartGroupCollapsed: "startGroupCollapsed",
@@ -86,6 +88,7 @@ WebInspector.ConsoleMessage.MessageType = {
     Result: "result"
 };
 
+// FIXME: Switch to ConsoleAgent.ConsoleMessageLevel.
 WebInspector.ConsoleMessage.MessageLevel = {
     Tip: "tip",
     Log: "log",

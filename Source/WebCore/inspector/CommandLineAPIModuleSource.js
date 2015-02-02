@@ -132,7 +132,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
  * @const
  */
 CommandLineAPI.members_ = [
-    "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
+    "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "table",
     "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
 ];
 
@@ -241,6 +241,11 @@ CommandLineAPIImpl.prototype = {
     profileEnd: function()
     {
         return inspectedWindow.console.profileEnd.apply(inspectedWindow.console, arguments)
+    },
+
+    table: function()
+    {
+        return inspectedWindow.console.table.apply(inspectedWindow.console, arguments)
     },
 
     /**
