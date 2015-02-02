@@ -1,3 +1,10 @@
+2015-02-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] 64-bit build fix after r179492.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Forgot to build these files
+        as standalone under 64-bit target.
+
 2015-02-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Clean up attribute handling: part 2 - attributeNode
