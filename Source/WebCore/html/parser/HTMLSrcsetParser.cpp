@@ -170,8 +170,10 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
 
 // http://picture.responsiveimages.org/#parse-srcset-attr
 template<typename CharType>
-static void parseImageCandidatesFromSrcsetAttribute(const CharType* attributeStart, unsigned length, Vector<ImageCandidate>& imageCandidates)
+static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(const CharType* attributeStart, unsigned length)
 {
+    Vector<ImageCandidate> imageCandidates;
+
     const CharType* attributeEnd = attributeStart + length;
 
     for (const CharType* position = attributeStart; position < attributeEnd;) {
@@ -215,15 +217,16 @@ static void parseImageCandidatesFromSrcsetAttribute(const CharType* attributeSta
         imageCandidates.append(ImageCandidate(StringView(imageURLStart, imageURLLength), result, ImageCandidate::SrcsetOrigin));
         // 11. Return to the step labeled splitting loop.
     }
+    return imageCandidates;
 }
 
-static void parseImageCandidatesFromSrcsetAttribute(StringView attribute, Vector<ImageCandidate>& imageCandidates)
+Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute)
 {
     // FIXME: We should consider replacing the direct pointers in the parsing process with StringView and positions.
     if (attribute.is8Bit())
-        parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.characters8(), attribute.length(), imageCandidates);
+        return parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.characters8(), attribute.length());
     else
-        parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length(), imageCandidates);
+        return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length());
 }
 
 static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates
@@ -283,9 +286,7 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
         return ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
     }
 
-    Vector<ImageCandidate> imageCandidates;
-
-    parseImageCandidatesFromSrcsetAttribute(StringView(srcsetAttribute), imageCandidates);
+    Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(StringView(srcsetAttribute));
 
     if (!srcAttribute.isEmpty())
         imageCandidates.append(ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
