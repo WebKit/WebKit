@@ -1,3 +1,12 @@
+2015-02-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r179489.
+
+        Correct symbol export definitions for 32-bit and 64-bit builds.
+        Also add some drive-by fixes for 64-bit symbols.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2015-01-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed 64-bit build fix.
