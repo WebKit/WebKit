@@ -1,3 +1,18 @@
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r171692.
+
+    2014-07-28  Andreas Kling  <akling@apple.com>
+
+            REGRESSION (r160806): CSS zoom property doesn't work on anything inside anchors.
+            <https://webkit.org/b/135344>
+            <rdar://problem/17759577>
+
+            Reviewed by Simon Fraser.
+
+            * fast/css/zoom-inside-link-expected.html: Added.
+            * fast/css/zoom-inside-link.html: Added.
+
 2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179027. rdar://problem/19585744
