@@ -2073,10 +2073,10 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
 
 inline bool RenderStyle::setZoom(float f)
 {
+    setEffectiveZoom(effectiveZoom() * f);
     if (compareEqual(visual->m_zoom, f))
         return false;
     visual.access()->m_zoom = f;
-    setEffectiveZoom(effectiveZoom() * zoom());
     return true;
 }
 
