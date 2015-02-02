@@ -103,7 +103,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
 #endif
 
     for (auto& childHistoryItem : historyItem.children()) {
-        FrameState childFrameState = toFrameState(*childHistoryItem);
+        FrameState childFrameState = toFrameState(childHistoryItem);
         frameState.children.append(WTF::move(childFrameState));
     }
 
@@ -178,10 +178,10 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 #endif
 
     for (const auto& childFrameState : frameState.children) {
-        RefPtr<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, String());
-        applyFrameState(*childHistoryItem, childFrameState);
+        Ref<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, String());
+        applyFrameState(childHistoryItem, childFrameState);
 
-        historyItem.addChildItem(childHistoryItem.release());
+        historyItem.addChildItem(WTF::move(childHistoryItem));
     }
 }
 

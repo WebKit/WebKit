@@ -50,7 +50,7 @@ public:
 private:
     WebBackForwardListProxy(WebPage*);
 
-    virtual void addItem(PassRefPtr<WebCore::HistoryItem>) override;
+    virtual void addItem(Ref<WebCore::HistoryItem>&&) override;
 
     virtual void goToItem(WebCore::HistoryItem*) override;
         

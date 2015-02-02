@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT bool goBack();
     WEBCORE_EXPORT bool goForward();
 
-    void addItem(PassRefPtr<HistoryItem>);
+    void addItem(Ref<HistoryItem>&&);
     void setCurrentItem(HistoryItem*);
         
     int count() const;

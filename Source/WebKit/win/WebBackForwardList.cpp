@@ -124,7 +124,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::addItem(
     if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
  
-    m_backForwardList->addItem(webHistoryItem->historyItem());
+    m_backForwardList->addItem(*webHistoryItem->historyItem());
     return S_OK;
 }
 
@@ -209,7 +209,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::backListWithLimit(
 
     if (list)
         for (unsigned i = 0; i < historyItemVector.size(); i++)
-            list[i] = WebHistoryItem::createInstance(historyItemVector[i].get());
+            list[i] = WebHistoryItem::createInstance(historyItemVector[i].ptr());
 
     return S_OK;
 }
@@ -226,7 +226,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::forwardListWithLimit(
 
     if (list)
         for (unsigned i = 0; i < historyItemVector.size(); i++)
-            list[i] = WebHistoryItem::createInstance(historyItemVector[i].get());
+            list[i] = WebHistoryItem::createInstance(historyItemVector[i].ptr());
 
     return S_OK;
 }

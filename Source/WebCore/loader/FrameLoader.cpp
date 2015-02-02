@@ -3143,7 +3143,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
     if (FrameView* view = m_frame.view())
         view->setWasScrolledByUser(false);
 
-    history().setCurrentItem(&item);
+    history().setCurrentItem(item);
         
     // loadInSameDocument() actually changes the URL and notifies load delegates of a "fake" load
     loadInSameDocument(item.url(), item.stateObject(), false);
@@ -3247,7 +3247,7 @@ void FrameLoader::loadItem(HistoryItem& item, FrameLoadType loadType)
 {
     m_requestedHistoryItem = &item;
     HistoryItem* currentItem = history().currentItem();
-    bool sameDocumentNavigation = currentItem && item.shouldDoSameDocumentNavigationTo(currentItem);
+    bool sameDocumentNavigation = currentItem && item.shouldDoSameDocumentNavigationTo(*currentItem);
 
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);

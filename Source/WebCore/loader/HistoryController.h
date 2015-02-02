@@ -74,7 +74,7 @@ public:
     void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
-    void setCurrentItem(HistoryItem*);
+    void setCurrentItem(HistoryItem&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(HistoryItem*);
@@ -92,12 +92,12 @@ public:
 
 private:
     friend class Page;
-    bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
+    bool shouldStopLoadingForHistoryItem(HistoryItem&) const;
     void goToItem(HistoryItem&, FrameLoadType);
 
-    void initializeItem(HistoryItem*);
-    PassRefPtr<HistoryItem> createItem();
-    PassRefPtr<HistoryItem> createItemTree(Frame& targetFrame, bool clipAtTarget);
+    void initializeItem(HistoryItem&);
+    Ref<HistoryItem> createItem();
+    Ref<HistoryItem> createItemTree(Frame& targetFrame, bool clipAtTarget);
 
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType);

@@ -143,11 +143,9 @@ WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
     WebCore::notifyHistoryItemChanged = WK2NotifyHistoryItemChanged;
 }
 
-void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
+void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
 {
-    RefPtr<HistoryItem> item = prpItem;
-
-    ASSERT(!historyItemToIDMap().contains(item));
+    ASSERT(!historyItemToIDMap().contains(item.ptr()));
 
     if (!m_page)
         return;
@@ -158,10 +156,10 @@ void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 
     m_associatedItemIDs.add(itemID);
 
-    historyItemToIDMap().set<ItemAndPageID>(item, { .itemID = itemID, .pageID = m_page->pageID() });
-    idToHistoryItemMap().set(itemID, item);
+    historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = m_page->pageID() });
+    idToHistoryItemMap().set(itemID, item.ptr());
 
-    updateBackForwardItem(itemID, m_page->pageID(), item.get());
+    updateBackForwardItem(itemID, m_page->pageID(), item.ptr());
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
 }
 

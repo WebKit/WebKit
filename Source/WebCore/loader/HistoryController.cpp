@@ -185,12 +185,11 @@ void HistoryController::saveDocumentState()
     if (!item)
         return;
 
-    Document* document = m_frame.document();
-    ASSERT(document);
-    
-    if (item->isCurrentDocument(document) && document->hasLivingRenderTree()) {
+    ASSERT(m_frame.document());
+    Document& document = *m_frame.document();
+    if (item->isCurrentDocument(document) && document.hasLivingRenderTree()) {
         LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame.tree().uniqueName().string().utf8().data(), item);
-        item->setDocumentState(document->formElementsState());
+        item->setDocumentState(document.formElementsState());
     }
 }
 
@@ -253,7 +252,7 @@ void HistoryController::invalidateCurrentItemCachedPage()
     }
 }
 
-bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem) const
+bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem& targetItem) const
 {
     if (!m_currentItem)
         return false;
@@ -469,8 +468,8 @@ void HistoryController::updateForCommit()
         // Note previousItem must be set before we close the URL, which will
         // happen when the data source is made non-provisional below
         ASSERT(m_provisionalItem);
-        setCurrentItem(m_provisionalItem.get());
-        m_provisionalItem = 0;
+        setCurrentItem(*m_provisionalItem);
+        m_provisionalItem = nullptr;
 
         // Tell all other frames in the tree to commit their provisional items and
         // restore their scroll position.  We'll avoid this frame (which has already
@@ -510,8 +509,8 @@ void HistoryController::recursiveUpdateForCommit()
             view->setWasScrolledByUser(false);
 
         // Now commit the provisional item
-        setCurrentItem(m_provisionalItem.get());
-        m_provisionalItem = 0;
+        setCurrentItem(*m_provisionalItem);
+        m_provisionalItem = nullptr;
 
         // Restore form state (works from currentItem)
         restoreDocumentState();
@@ -555,12 +554,12 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
 
     // The provisional item may represent a different pending navigation.
     // Don't commit it if it isn't a same document navigation.
-    if (m_currentItem && !m_currentItem->shouldDoSameDocumentNavigationTo(m_provisionalItem.get()))
+    if (m_currentItem && !m_currentItem->shouldDoSameDocumentNavigationTo(*m_provisionalItem))
         return;
 
     // Commit the provisional item.
-    setCurrentItem(m_provisionalItem.get());
-    m_provisionalItem = 0;
+    setCurrentItem(*m_provisionalItem);
+    m_provisionalItem = nullptr;
 
     // Iterate over the rest of the tree.
     for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
@@ -575,11 +574,11 @@ void HistoryController::updateForFrameLoadCompleted()
     m_frameLoadComplete = true;
 }
 
-void HistoryController::setCurrentItem(HistoryItem* item)
+void HistoryController::setCurrentItem(HistoryItem& item)
 {
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
-    m_currentItem = item;
+    m_currentItem = &item;
 }
 
 void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
@@ -610,7 +609,7 @@ void HistoryController::setProvisionalItem(HistoryItem* item)
     m_provisionalItem = item;
 }
 
-void HistoryController::initializeItem(HistoryItem* item)
+void HistoryController::initializeItem(HistoryItem& item)
 {
     DocumentLoader* documentLoader = m_frame.loader().documentLoader();
     ASSERT(documentLoader);
@@ -642,34 +641,34 @@ void HistoryController::initializeItem(HistoryItem* item)
     String parent = parentFrame ? parentFrame->tree().uniqueName() : "";
     StringWithDirection title = documentLoader->title();
 
-    item->setURL(url);
-    item->setTarget(m_frame.tree().uniqueName());
-    item->setParent(parent);
+    item.setURL(url);
+    item.setTarget(m_frame.tree().uniqueName());
+    item.setParent(parent);
     // FIXME: should store title directionality in history as well.
-    item->setTitle(title.string());
-    item->setOriginalURLString(originalURL.string());
+    item.setTitle(title.string());
+    item.setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)
-        item->setLastVisitWasFailure(true);
+        item.setLastVisitWasFailure(true);
 
     // Save form state if this is a POST
-    item->setFormInfoFromRequest(documentLoader->request());
+    item.setFormInfoFromRequest(documentLoader->request());
 }
 
-PassRefPtr<HistoryItem> HistoryController::createItem()
+Ref<HistoryItem> HistoryController::createItem()
 {
-    RefPtr<HistoryItem> item = HistoryItem::create();
-    initializeItem(item.get());
+    Ref<HistoryItem> item = HistoryItem::create();
+    initializeItem(item);
     
     // Set the item for which we will save document state
-    setCurrentItem(item.get());
+    setCurrentItem(item);
     
-    return item.release();
+    return item;
 }
 
-PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame& targetFrame, bool clipAtTarget)
+Ref<HistoryItem> HistoryController::createItemTree(Frame& targetFrame, bool clipAtTarget)
 {
-    RefPtr<HistoryItem> bfItem = createItem();
+    Ref<HistoryItem> bfItem = createItem();
     if (!m_frameLoadComplete)
         saveScrollPositionAndViewStateToItem(m_previousItem.get());
 
@@ -717,7 +716,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
     // Set provisional item, which will be committed in recursiveUpdateForCommit.
     m_provisionalItem = &item;
 
-    for (const auto& childItem : item.children()) {
+    for (auto& childItem : item.children()) {
         const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
@@ -725,7 +724,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
         Frame* childFrame = m_frame.tree().child(childFrameName);
         ASSERT(childFrame);
 
-        childFrame->loader().history().recursiveSetProvisionalItem(*childItem, fromChildItem);
+        childFrame->loader().history().recursiveSetProvisionalItem(const_cast<HistoryItem&>(childItem.get()), fromChildItem);
     }
 }
 
@@ -739,14 +738,14 @@ void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromIt
     }
 
     // Just iterate over the rest, looking for frames to navigate.
-    for (const auto& childItem : item.children()) {
+    for (auto& childItem : item.children()) {
         const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);
         Frame* childFrame = m_frame.tree().child(childFrameName);
         ASSERT(childFrame);
-        childFrame->loader().history().recursiveGoToItem(*childItem, fromChildItem, type);
+        childFrame->loader().history().recursiveGoToItem(const_cast<HistoryItem&>(childItem.get()), fromChildItem, type);
     }
 }
 
@@ -763,7 +762,7 @@ bool HistoryController::itemsAreClones(HistoryItem& item1, HistoryItem* item2) c
         && &item1 != item2
         && item1.itemSequenceNumber() == item2->itemSequenceNumber()
         && currentFramesMatchItem(&item1)
-        && item2->hasSameFrames(&item1);
+        && item2->hasSameFrames(item1);
 }
 
 // Helper method that determines whether the current frame tree matches given history item's.
@@ -801,9 +800,9 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
 
     FrameLoader& frameLoader = m_frame.mainFrame().loader();
 
-    RefPtr<HistoryItem> topItem = frameLoader.history().createItemTree(m_frame, doClip);
-    LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", topItem.get(), m_frame.loader().documentLoader()->url().string().ascii().data());
-    page->backForward().addItem(topItem.release());
+    Ref<HistoryItem> topItem = frameLoader.history().createItemTree(m_frame, doClip);
+    LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", topItem.ptr(), m_frame.loader().documentLoader()->url().string().ascii().data());
+    page->backForward().addItem(WTF::move(topItem));
 }
 
 void HistoryController::updateCurrentItem()
@@ -823,7 +822,7 @@ void HistoryController::updateCurrentItem()
         // dependent on the document.
         bool isTargetItem = m_currentItem->isTargetItem();
         m_currentItem->reset();
-        initializeItem(m_currentItem.get());
+        initializeItem(*m_currentItem);
         m_currentItem->setIsTargetItem(isTargetItem);
     } else {
         // Even if the final URL didn't change, the form data may have changed.
@@ -840,7 +839,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     ASSERT(page);
 
     // Get a HistoryItem tree for the current frame tree.
-    RefPtr<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
+    Ref<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
     
     // Override data in the current item (created by createItemTree) to reflect
     // the pushState() arguments.
@@ -848,7 +847,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     m_currentItem->setStateObject(stateObject);
     m_currentItem->setURLString(urlString);
 
-    page->backForward().addItem(topItem.release());
+    page->backForward().addItem(WTF::move(topItem));
 
     if (m_frame.page()->usesEphemeralSession())
         return;

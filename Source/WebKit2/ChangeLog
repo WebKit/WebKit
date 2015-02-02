@@ -1,3 +1,21 @@
+2015-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Use more references in HistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=141133
+
+        Reviewed by Andreas Kling.
+
+        Use more references in HistoryItem instead of pointers.
+
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp:
+        (WebKit::InjectedBundleBackForwardListItem::children):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItem):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
 2015-02-01  Dan Bernstein  <mitz@apple.com>
 
         Remove ViewGestureController tracing

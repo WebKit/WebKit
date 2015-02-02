@@ -38,7 +38,7 @@ PassRefPtr<API::Array> InjectedBundleBackForwardListItem::children() const
     children.reserveInitialCapacity(m_item->children().size());
 
     for (const auto& child : m_item->children())
-        children.uncheckedAppend(InjectedBundleBackForwardListItem::create(child));
+        children.uncheckedAppend(InjectedBundleBackForwardListItem::create(const_cast<HistoryItem*>(child.ptr())));
 
     return API::Array::create(WTF::move(children));
 }

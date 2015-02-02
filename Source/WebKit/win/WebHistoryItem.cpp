@@ -286,7 +286,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::children(unsigned* outChildCount, SAFE
         return E_OUTOFMEMORY;
 
     for (unsigned i = 0; i < childCount; ++i) {
-        COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance(coreChildren[i]));
+        COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance(const_cast<HistoryItem*>(coreChildren[i].ptr())));
         if (!item) {
             SafeArrayDestroy(children);
             return E_OUTOFMEMORY;

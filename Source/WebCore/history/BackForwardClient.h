@@ -41,7 +41,7 @@ public:
     {
     }
 
-    virtual void addItem(PassRefPtr<HistoryItem>) = 0;
+    virtual void addItem(Ref<HistoryItem>&&) = 0;
 
     virtual void goToItem(HistoryItem*) = 0;
         

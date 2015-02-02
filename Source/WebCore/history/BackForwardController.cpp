@@ -97,9 +97,9 @@ bool BackForwardController::goForward()
     return true;
 }
 
-void BackForwardController::addItem(PassRefPtr<HistoryItem> item)
+void BackForwardController::addItem(Ref<HistoryItem>&& item)
 {
-    m_client->addItem(item);
+    m_client->addItem(WTF::move(item));
 }
 
 void BackForwardController::setCurrentItem(HistoryItem* item)

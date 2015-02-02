@@ -55,7 +55,7 @@ class ResourceRequest;
 class URL;
 enum class PruningReason;
 
-typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
+typedef Vector<Ref<HistoryItem>> HistoryItemVector;
 
 extern void (*notifyHistoryItemChanged)(HistoryItem*);
 
@@ -79,7 +79,7 @@ public:
     
     WEBCORE_EXPORT ~HistoryItem();
 
-    WEBCORE_EXPORT PassRefPtr<HistoryItem> copy() const;
+    WEBCORE_EXPORT Ref<HistoryItem> copy() const;
 
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
@@ -141,24 +141,24 @@ public:
 
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
 
-    WEBCORE_EXPORT void addChildItem(PassRefPtr<HistoryItem>);
-    void setChildItem(PassRefPtr<HistoryItem>);
-    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const String&) const;
-    HistoryItem* childItemWithDocumentSequenceNumber(long long number) const;
+    WEBCORE_EXPORT void addChildItem(Ref<HistoryItem>&&);
+    void setChildItem(Ref<HistoryItem>&&);
+    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const String&);
+    HistoryItem* childItemWithDocumentSequenceNumber(long long number);
     WEBCORE_EXPORT HistoryItem* targetItem();
     WEBCORE_EXPORT const HistoryItemVector& children() const;
     WEBCORE_EXPORT bool hasChildren() const;
     void clearChildren();
-    bool isAncestorOf(const HistoryItem*) const;
+    bool isAncestorOf(const HistoryItem&) const;
     
-    bool shouldDoSameDocumentNavigationTo(HistoryItem* otherItem) const;
-    bool hasSameFrames(HistoryItem* otherItem) const;
+    bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
+    bool hasSameFrames(HistoryItem& otherItem) const;
 
     WEBCORE_EXPORT void addRedirectURL(const String&);
     WEBCORE_EXPORT Vector<String>* redirectURLs() const;
     WEBCORE_EXPORT void setRedirectURLs(std::unique_ptr<Vector<String>>);
 
-    bool isCurrentDocument(Document*) const;
+    bool isCurrentDocument(Document&) const;
     
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT id viewState() const;
@@ -212,9 +212,9 @@ private:
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle);
     WEBCORE_EXPORT HistoryItem(const URL&, const String& frameName, const String& parent, const String& title);
 
-    explicit HistoryItem(const HistoryItem&);
+    HistoryItem(const HistoryItem&);
 
-    bool hasSameDocumentTree(HistoryItem* otherItem) const;
+    bool hasSameDocumentTree(HistoryItem& otherItem) const;
 
     HistoryItem* findTargetItem();
 

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class Page;
 
-typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
+typedef Vector<Ref<HistoryItem>> HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public BackForwardClient {
@@ -46,7 +46,7 @@ public:
 
     Page* page() { return m_page; }
 
-    virtual void addItem(PassRefPtr<HistoryItem>) override;
+    virtual void addItem(Ref<HistoryItem>&&) override;
     WEBCORE_EXPORT void goBack();
     WEBCORE_EXPORT void goForward();
     virtual void goToItem(HistoryItem*) override;

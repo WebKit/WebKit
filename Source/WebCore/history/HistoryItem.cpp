@@ -172,9 +172,9 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
         m_redirectURLs = std::make_unique<Vector<String>>(*item.m_redirectURLs);
 }
 
-PassRefPtr<HistoryItem> HistoryItem::copy() const
+Ref<HistoryItem> HistoryItem::copy() const
 {
-    return adoptRef(new HistoryItem(*this));
+    return adoptRef(*new HistoryItem(*this));
 }
 
 void HistoryItem::reset()
@@ -366,44 +366,44 @@ void HistoryItem::setStateObject(PassRefPtr<SerializedScriptValue> object)
     m_stateObject = object;
 }
 
-void HistoryItem::addChildItem(PassRefPtr<HistoryItem> child)
+void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 {
     ASSERT(!childItemWithTarget(child->target()));
-    m_children.append(child);
+    m_children.append(WTF::move(child));
 }
 
-void HistoryItem::setChildItem(PassRefPtr<HistoryItem> child)
+void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
 {
     ASSERT(!child->isTargetItem());
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i)  {
         if (m_children[i]->target() == child->target()) {
             child->setIsTargetItem(m_children[i]->isTargetItem());
-            m_children[i] = child;
+            m_children[i] = WTF::move(child);
             return;
         }
     }
-    m_children.append(child);
+    m_children.append(WTF::move(child));
 }
 
-HistoryItem* HistoryItem::childItemWithTarget(const String& target) const
+HistoryItem* HistoryItem::childItemWithTarget(const String& target)
 {
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
         if (m_children[i]->target() == target)
-            return m_children[i].get();
+            return m_children[i].ptr();
     }
-    return 0;
+    return nullptr;
 }
 
-HistoryItem* HistoryItem::childItemWithDocumentSequenceNumber(long long number) const
+HistoryItem* HistoryItem::childItemWithDocumentSequenceNumber(long long number)
 {
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
         if (m_children[i]->documentSequenceNumber() == number)
-            return m_children[i].get();
+            return m_children[i].ptr();
     }
-    return 0;
+    return nullptr;
 }
 
 // <rdar://problem/4895849> HistoryItem::findTargetItem() should be replaced with a non-recursive method.
@@ -413,15 +413,17 @@ HistoryItem* HistoryItem::findTargetItem()
         return this;
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
+        // FIXME: targetItem() cannot return null currently, which is wrong.
         if (HistoryItem* match = m_children[i]->targetItem())
             return match;
     }
-    return 0;
+    return nullptr;
 }
 
 HistoryItem* HistoryItem::targetItem()
 {
     HistoryItem* foundItem = findTargetItem();
+    // FIXME: This should probably not fall back to |this|.
     return foundItem ? foundItem : this;
 }
 
@@ -440,13 +442,13 @@ void HistoryItem::clearChildren()
     m_children.clear();
 }
 
-bool HistoryItem::isAncestorOf(const HistoryItem* item) const
+bool HistoryItem::isAncestorOf(const HistoryItem& item) const
 {
     for (size_t i = 0; i < m_children.size(); ++i) {
-        HistoryItem* child = m_children[i].get();
-        if (child == item)
+        auto& child = m_children[i].get();
+        if (&child == &item)
             return true;
-        if (child->isAncestorOf(item))
+        if (child.isAncestorOf(item))
             return true;
     }
     return false;
@@ -455,34 +457,34 @@ bool HistoryItem::isAncestorOf(const HistoryItem* item) const
 // We do same-document navigation if going to a different item and if either of the following is true:
 // - The other item corresponds to the same document (for history entries created via pushState or fragment changes).
 // - The other item corresponds to the same set of documents, including frames (for history entries created via regular navigation)
-bool HistoryItem::shouldDoSameDocumentNavigationTo(HistoryItem* otherItem) const
+bool HistoryItem::shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const
 {
-    if (this == otherItem)
+    if (this == &otherItem)
         return false;
 
-    if (stateObject() || otherItem->stateObject())
-        return documentSequenceNumber() == otherItem->documentSequenceNumber();
+    if (stateObject() || otherItem.stateObject())
+        return documentSequenceNumber() == otherItem.documentSequenceNumber();
     
-    if ((url().hasFragmentIdentifier() || otherItem->url().hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url(), otherItem->url()))
-        return documentSequenceNumber() == otherItem->documentSequenceNumber();        
+    if ((url().hasFragmentIdentifier() || otherItem.url().hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url(), otherItem.url()))
+        return documentSequenceNumber() == otherItem.documentSequenceNumber();
     
     return hasSameDocumentTree(otherItem);
 }
 
 // Does a recursive check that this item and its descendants have the same
 // document sequence numbers as the other item.
-bool HistoryItem::hasSameDocumentTree(HistoryItem* otherItem) const
+bool HistoryItem::hasSameDocumentTree(HistoryItem& otherItem) const
 {
-    if (documentSequenceNumber() != otherItem->documentSequenceNumber())
+    if (documentSequenceNumber() != otherItem.documentSequenceNumber())
         return false;
         
-    if (children().size() != otherItem->children().size())
+    if (children().size() != otherItem.children().size())
         return false;
 
     for (size_t i = 0; i < children().size(); i++) {
-        HistoryItem* child = children()[i].get();
-        HistoryItem* otherChild = otherItem->childItemWithDocumentSequenceNumber(child->documentSequenceNumber());
-        if (!otherChild || !child->hasSameDocumentTree(otherChild))
+        auto& child = children()[i].get();
+        auto* otherChild = otherItem.childItemWithDocumentSequenceNumber(child.documentSequenceNumber());
+        if (!otherChild || !child.hasSameDocumentTree(*otherChild))
             return false;
     }
 
@@ -491,16 +493,16 @@ bool HistoryItem::hasSameDocumentTree(HistoryItem* otherItem) const
 
 // Does a non-recursive check that this item and its immediate children have the
 // same frames as the other item.
-bool HistoryItem::hasSameFrames(HistoryItem* otherItem) const
+bool HistoryItem::hasSameFrames(HistoryItem& otherItem) const
 {
-    if (target() != otherItem->target())
+    if (target() != otherItem.target())
         return false;
         
-    if (children().size() != otherItem->children().size())
+    if (children().size() != otherItem.children().size())
         return false;
 
     for (size_t i = 0; i < children().size(); i++) {
-        if (!otherItem->childItemWithTarget(children()[i]->target()))
+        if (!otherItem.childItemWithTarget(children()[i]->target()))
             return false;
     }
 
@@ -542,10 +544,10 @@ FormData* HistoryItem::formData()
     return m_formData.get();
 }
 
-bool HistoryItem::isCurrentDocument(Document* doc) const
+bool HistoryItem::isCurrentDocument(Document& document) const
 {
     // FIXME: We should find a better way to check if this is the current document.
-    return equalIgnoringFragmentIdentifier(url(), doc->url());
+    return equalIgnoringFragmentIdentifier(url(), document.url());
 }
 
 void HistoryItem::addRedirectURL(const String& url)
