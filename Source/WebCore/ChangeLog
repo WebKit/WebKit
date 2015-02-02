@@ -1,3 +1,19 @@
+2015-02-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILED: m_scriptExecutionContext->isContextThread() in ContextDestructionObserver::observeContext
+        https://bugs.webkit.org/show_bug.cgi?id=141057
+        <rdar://problem/19068790>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where we would create-/delete- the RSA crypto keys and dispatch callbacks on the wrong
+        thread in WebKit1 for iOS. In iOS WebKit1 we should perform such operations on thread WebThread.
+
+        This change is covered by existing layout tests.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+
 2015-02-02  Jeremy Jones  <jeremyj@apple.com>
 
         Prevent crash when accessing WebAVPlayerController.delegate.

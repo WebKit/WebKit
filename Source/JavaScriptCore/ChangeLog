@@ -1,3 +1,17 @@
+2015-02-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILED: m_scriptExecutionContext->isContextThread() in ContextDestructionObserver::observeContext
+        https://bugs.webkit.org/show_bug.cgi?id=141057
+        <rdar://problem/19068790>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedIndicateMessage): Modified to call WTF::callOnWebThreadOrDispatchAsyncOnMainThread().
+        (Inspector::dispatchAsyncOnQueueSafeForAnyDebuggable): Deleted; moved logic to common helper function,
+        WTF::callOnWebThreadOrDispatchAsyncOnMainThread() so that it can be called from both RemoteInspector::receivedIndicateMessage()
+        and CryptoKeyRSA::generatePair().
+
 2015-02-02  Saam Barati  <saambarati1@gmail.com>
 
         Create tests for JSC's Control Flow Profiler

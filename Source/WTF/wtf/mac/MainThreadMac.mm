@@ -31,6 +31,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/NSThread.h>
+#import <dispatch/dispatch.h>
 #import <stdio.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashSet.h>
@@ -140,6 +141,17 @@ void scheduleDispatchFunctionsOnMainThread()
 
     ASSERT(mainThreadNSThread);
     [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
+}
+
+void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())
+{
+#if USE(WEB_THREAD)
+    if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
+        WebCoreWebThreadRun(block);
+        return;
+    }
+#endif
+    dispatch_async(dispatch_get_main_queue(), block);
 }
 
 #if USE(WEB_THREAD)

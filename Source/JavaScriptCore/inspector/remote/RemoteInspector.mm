@@ -36,6 +36,7 @@
 #import <dispatch/dispatch.h>
 #import <notify.h>
 #import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
@@ -50,10 +51,6 @@ enum sandbox_filter_type {
 
 extern "C" int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
 extern "C" const enum sandbox_filter_type SANDBOX_CHECK_NO_REPORT;
-
-#if PLATFORM(IOS)
-#import <wtf/ios/WebCoreThread.h>
-#endif
 
 namespace Inspector {
 
@@ -71,18 +68,6 @@ static bool globalAutomaticInspectionState()
     uint64_t automaticInspectionEnabled = 0;
     notify_get_state(token, &automaticInspectionEnabled);
     return automaticInspectionEnabled == 1;
-}
-
-static void dispatchAsyncOnQueueSafeForAnyDebuggable(void (^block)())
-{
-#if PLATFORM(IOS)
-    if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
-        WebCoreWebThreadRun(block);
-        return;
-    }
-#endif
-
-    dispatch_async(dispatch_get_main_queue(), block);
 }
 
 bool RemoteInspector::startEnabled = true;
@@ -643,7 +628,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     unsigned identifier = [pageId unsignedIntValue];
     BOOL indicateEnabled = [[userInfo objectForKey:WIRIndicateEnabledKey] boolValue];
 
-    dispatchAsyncOnQueueSafeForAnyDebuggable(^{
+    callOnWebThreadOrDispatchAsyncOnMainThread(^{
         RemoteInspectorDebuggable* debuggable = nullptr;
         {
             std::lock_guard<std::mutex> lock(m_mutex);

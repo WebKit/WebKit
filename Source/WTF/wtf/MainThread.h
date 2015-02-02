@@ -46,6 +46,10 @@ WTF_EXPORT_PRIVATE void cancelCallOnMainThread(MainThreadFunction*, void* contex
 
 WTF_EXPORT_PRIVATE void callOnMainThread(std::function<void ()>);
 
+#if PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
+#endif
+
 WTF_EXPORT_PRIVATE void setMainThreadCallbacksPaused(bool paused);
 
 WTF_EXPORT_PRIVATE bool isMainThread();
@@ -94,6 +98,9 @@ void initializeMainThreadToProcessMainThreadPlatform();
 
 using WTF::callOnMainThread;
 using WTF::cancelCallOnMainThread;
+#if PLATFORM(COCOA)
+using WTF::callOnWebThreadOrDispatchAsyncOnMainThread;
+#endif
 using WTF::setMainThreadCallbacksPaused;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
