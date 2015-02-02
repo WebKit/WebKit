@@ -1,3 +1,9 @@
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert accidental change to Makefile.shared in r179478
+
+        * Makefile.shared:
+
 2015-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Minimum python version should be 2.7.
