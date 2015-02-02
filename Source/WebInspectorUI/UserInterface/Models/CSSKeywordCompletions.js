@@ -65,6 +65,35 @@ WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)
     return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
 };
 
+WebInspector.CSSKeywordCompletions.addCustomCompletions = function(properties)
+{
+    // COMPATIBILITY (iOS 6): This used to be an array of strings. They won't have custom values.
+    if (properties.length && typeof properties[0] === "string")
+        return;
+
+    for (var property of properties) {
+        if (property.values)
+            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues(property.name, property.values);
+    }
+};
+
+WebInspector.CSSKeywordCompletions.addPropertyCompletionValues = function(propertyName, newValues)
+{
+    var existingValues = WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName];
+    if (!existingValues) {
+        WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName] = newValues;
+        return;
+    }
+
+    var union = new Set;
+    for (var value of existingValues)
+        union.add(value);
+    for (var value of newValues)
+        union.add(value);
+
+    WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName] = [...union.values()];
+};
+
 WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
 
 WebInspector.CSSKeywordCompletions.InheritedProperties = [

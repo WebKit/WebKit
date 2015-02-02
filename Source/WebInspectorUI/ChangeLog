@@ -1,3 +1,18 @@
+2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Extend CSS.getSupportedCSSProperties to provide values for properties for CSS Augmented JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=141064
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.addCustomCompletions):
+        (WebInspector.CSSKeywordCompletions.addPropertyCompletionValues):
+        If a property is specified with custom values, extend the
+        keyword completions map to make those values available
+        in autocompletion.
+
 2015-01-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Web Inspector should not show undock toolbar buttons

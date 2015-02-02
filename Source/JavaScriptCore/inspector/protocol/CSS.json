@@ -148,7 +148,8 @@
             "type": "object",
             "properties": [
                 { "name": "name", "type": "string", "description": "Property name." },
-                { "name": "longhands", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Longhand property names." }
+                { "name": "longhands", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Longhand property names." },
+                { "name": "values", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Supported values for this property." }
             ]
         },
         {
