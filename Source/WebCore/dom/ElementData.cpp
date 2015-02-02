@@ -178,40 +178,6 @@ bool ElementData::isEquivalent(const ElementData* other) const
     return true;
 }
 
-unsigned ElementData::findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
-{
-    // FIXME: this should use ASCII case-insensitive, not unicode case-insensitive.
-    // Continue to checking case-insensitively and/or full namespaced names if necessary:
-    const Attribute* attributes = attributeBase();
-    unsigned length = this->length();
-    for (unsigned i = 0; i < length; ++i) {
-        const Attribute& attribute = attributes[i];
-        if (!attribute.name().hasPrefix()) {
-            if (shouldIgnoreAttributeCase && equalIgnoringCase(name, attribute.localName()))
-                return i;
-        } else {
-            // FIXME: Would be faster to do this comparison without calling toString, which
-            // generates a temporary string by concatenation. But this branch is only reached
-            // if the attribute name has a prefix, which is rare in HTML.
-            if (equalPossiblyIgnoringCase(name, attribute.name().toString(), shouldIgnoreAttributeCase))
-                return i;
-        }
-    }
-    return attributeNotFound;
-}
-
-unsigned ElementData::findAttributeIndexByNameForAttributeNode(const Attr* attr, bool shouldIgnoreAttributeCase) const
-{
-    ASSERT(attr);
-    const Attribute* attributes = attributeBase();
-    unsigned count = length();
-    for (unsigned i = 0; i < count; ++i) {
-        if (attributes[i].name().matchesIgnoringCaseForLocalName(attr->qualifiedName(), shouldIgnoreAttributeCase))
-            return i;
-    }
-    return attributeNotFound;
-}
-
 Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
 {
     for (unsigned i = 0, count = m_attributeVector.size(); i < count; ++i) {

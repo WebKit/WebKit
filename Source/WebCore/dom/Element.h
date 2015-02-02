@@ -240,6 +240,7 @@ public:
     RefPtr<Attr> removeAttributeNode(Attr*, ExceptionCode&);
 
     RefPtr<Attr> attrIfExists(const QualifiedName&);
+    RefPtr<Attr> attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase);
     RefPtr<Attr> ensureAttr(const QualifiedName&);
 
     const Vector<RefPtr<Attr>>& attrNodeList();

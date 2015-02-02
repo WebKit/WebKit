@@ -1,3 +1,82 @@
+2015-02-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Clean up attribute handling: part 2 - attributeNode
+        https://bugs.webkit.org/show_bug.cgi?id=141109
+
+        Reviewed by Andreas Kling.
+
+        Our implementation was covering some old legacy behaviors of Firefox,
+        even copying bugs in some cases.
+
+        The spec (https://dom.spec.whatwg.org) now defines the behavior precisely,
+        let's move a bit closer to that.
+
+        Tests: fast/dom/Element/attribute-ascii-case-insensitive-3.html
+               fast/dom/Element/attribute-setAttributeNode-multiple-times.html
+               fast/dom/Element/attribute-setAttributeNodeNS-multiple-times.html
+               fast/dom/Element/mozilla-dom-base-tests/test_bug1075702.html
+               fast/dom/Element/mozilla-dom-base-tests/test_bug339494.html
+               fast/dom/Element/mozilla-dom-base-tests/test_bug364092.xhtml
+               fast/dom/Element/setAttributeNode-overriding-lowercase-values.html
+
+        * dom/Element.cpp:
+        (WebCore::findAttrNodeInList):
+        New getter for the name-without-namespace case.
+
+        (WebCore::Element::setAttributeNode):
+        This one is the tricky one: https://dom.spec.whatwg.org/#dom-element-setattributenode
+
+        When setAttributeNode() is used with an AttributeNode without namespace,
+        getting the old value behaves like getAttribute(), with ASCII lowercase name matching.
+        When used with a namespace, getting the old value behaves like getAttributeNS().
+
+        Setting the value is a whole different story, the name used always keeps
+        the original case.
+
+        Now that's a bit tricky for us because AttributeNodes are just legacy stuff we don't
+        used internally.
+
+        We have 4 cases to handle:
+        1) The name being set is lowercase, there was no conflicting name on the element.
+           That's easy, we just override any node that would exist, set the name otherwise.
+        2) The name is lowercase but there was an existing attribute for it.
+           -We create a new AttributeNode for the name to represent the old name.
+           -We check the names are the same with attribute.name().matches(attrNode->qualifiedName())
+            and override the value.
+        3) The name has uppercase characters, there is no conflicting name.
+           We would not find an element to remove, we just use setAttributeInternal() as usual
+           to add the attribute;
+        4) The name has uppercase characters, there is a lowercase conflicing name.
+           This is the weird behavior: we need to nuke the old attribute, then add the new attribute
+           with a different case.
+
+           First we remove the attribute with a lowercase name with removeAttributeInternal().
+           That becomes the old node.
+
+           There might still be an element of the same name as what we are trying to add. We don't want
+           to add another version of the same attribute. We need to use findAttributeIndexByName() again
+           to find if there is a conflicting attribute. Then we call setAttributeInternal() which handle
+           the both the cases where there was an element or not.
+
+        (WebCore::Element::setAttributeNodeNS):
+        This should work like any "NS" method.
+
+        (WebCore::Element::removeAttributeNode):
+        The method removeAttributeNode() is supposed to be exact.
+
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::attrIfExists):
+        * dom/Element.h:
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::findAttributeIndexByNameSlowCase): Deleted.
+        (WebCore::ElementData::findAttributeIndexByNameForAttributeNode): Deleted.
+        Kill the slow case, every caller has been updated now.
+        * dom/ElementData.h:
+        (WebCore::ElementData::findAttributeIndexByName):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::matchesIgnoringCaseForLocalName): Deleted.
+
 2015-02-02  peavo@outlook.com  <peavo@outlook.com>
 
         Memory is written to after deallocated, in GraphicsLayer::setMaskLayer.

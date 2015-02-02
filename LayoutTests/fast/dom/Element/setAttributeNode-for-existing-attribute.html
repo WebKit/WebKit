@@ -19,6 +19,7 @@ function runTest() {
 </script>
 </head>
 <body onload="runTest();">
+<p>This test legacy behavior that were replaced when a spec was written. This test is supposed to fail to set the style.</p>
 <div>Testcase for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=120293">120293</a>: setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.\nThe issue can be manually verified by ascertaining that a green colored block is displayed instead of a red one.</div>
 <div id="test" style="background-color: red;"/>&nbsp;</div>
 <div id="result"></div>

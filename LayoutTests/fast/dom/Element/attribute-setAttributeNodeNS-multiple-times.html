@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container" style="display: none;"></div>
+</body>
+<script>
+description('Test using setAttributeNodeNS() multiple times with "compatible" names and "incompatible" names."');
+
+function setSameAttributeNodeMultipleTimes(name) {
+     // Set the same attribute node several times.
+    var foobar = document.createAttribute(name);
+    document.documentElement.setAttributeNodeNS(foobar);
+    document.documentElement.setAttributeNodeNS(foobar);
+    document.documentElement.setAttributeNodeNS(foobar);
+
+    foobar.value = 'WebKit!';
+    document.documentElement.setAttributeNodeNS(foobar);
+    document.documentElement.setAttributeNodeNS(foobar);
+    document.documentElement.setAttributeNodeNS(foobar);
+
+    shouldBe('document.documentElement.attributes.length', '1');
+
+    document.documentElement.removeAttributeNode(foobar);
+    shouldBe('document.documentElement.attributes.length', '0');
+}
+
+function setAttributeNodesOfSameNameMultipleTimes(name) {
+    // Set the same attribute node several times.
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+    document.documentElement.setAttributeNodeNS(document.createAttribute(name));
+
+    shouldBe('document.documentElement.attributes.length', '1');
+
+    var foobar = document.createAttribute(name);
+    document.documentElement.setAttributeNodeNS(foobar);
+    document.documentElement.removeAttributeNode(foobar);
+    shouldBe('document.documentElement.attributes.length', '0');
+}
+
+function testName(name) {
+    debug("Testing: " + name);
+    setSameAttributeNodeMultipleTimes(name);
+    setAttributeNodesOfSameNameMultipleTimes(name);
+    debug("");
+}
+
+testName("FooBar");
+testName("foobar");
+testName("FOOBAR");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

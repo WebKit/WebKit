@@ -19,7 +19,7 @@ function testGetAttributeNodeMixedCase()
     var a = div.ownerDocument.createAttribute("mixedCaseAttrib");
     a.nodeValue = "x";
     div.setAttributeNode(a);
-    return div.getAttribute("mixedCaseAttrib");
+    return div.getAttributeNS("", "mixedCaseAttrib");
 }
 
 shouldBe("testGetAttributeNodeMixedCase()", '"x"');
@@ -74,7 +74,7 @@ function testAttribNodeNamePreservesCaseGetNode()
 
     body.setAttributeNode(a);
 
-    a = document.body.getAttributeNode("A");
+    a = document.body.getAttributeNodeNS("", "A");
     if (!a)
         return "FAIL";
 
@@ -94,7 +94,7 @@ function testAttribNodeNamePreservesCaseGetNode2()
 
     body.setAttributeNode(a);
 
-    a = document.body.getAttributeNode("B");
+    a = document.body.getAttributeNodeNS("", "B");
     if (!a)
         return "FAIL";
 
@@ -103,7 +103,7 @@ function testAttribNodeNamePreservesCaseGetNode2()
     a.nodeValue = "x";
     body.setAttributeNode(a);
 
-    a = document.body.getAttributeNode("B");
+    a = document.body.getAttributeNodeNS("", "B");
       
     var result = [ a.name, a.nodeName ];
     return result.join(",");
@@ -136,6 +136,6 @@ attrib.nodeValue = "XXX";
 node.setAttributeNode(attrib);
 
 shouldBe("(new XMLSerializer).serializeToString(node)", '"<div xmlns=\\"http://www.w3.org/1999/xhtml\\" myAttrib=\\"XXX\\"></div>"');
-shouldBe("node.getAttributeNode('myAttrib').name", '"myAttrib"');
-shouldBe("node.getAttributeNode('myattrib').name", '"myAttrib"');
+shouldBe("node.getAttributeNodeNS('', 'myAttrib').name", '"myAttrib"');
+shouldBe("node.getAttributeNodeNS('', 'myattrib')", 'null');
 shouldBe("attrib.name", '"myAttrib"');

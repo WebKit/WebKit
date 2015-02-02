@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:foo="http://www.webkit.org/awesome.html">
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container" style="display: none;"></div>
+</body>
+<script>
+description('In HTML, attributes should be ASCII case-insensitive. This test includes basic coverage for setting names with the prefix syntax through the simple attribute API.');
+
+var testContainer = document.getElementById('test-container');
+
+function testAttributeOnTarget(equivalentNames, distinctNames) {
+    for (var equivalentName of equivalentNames) {
+        shouldBeTrue('document.getElementById("target").hasAttribute("' + equivalentName + '")');
+        shouldBeEqualToString('document.getElementById("target").getAttribute("' + equivalentName + '")', 'WebKit!');
+    }
+
+    for (var distinctName of distinctNames) {
+        shouldBeFalse('document.getElementById("target").hasAttribute("' + distinctName + '")');
+        shouldBe('document.getElementById("target").getAttribute("' + distinctName + '")', 'null');
+    }
+
+    var target = document.getElementById("target");
+    for (var distinctName of distinctNames) {
+        target.removeAttribute(distinctName);
+    }
+
+    for (var equivalentName of equivalentNames) {
+        shouldBeTrue('document.getElementById("target").hasAttribute("' + equivalentName + '")');
+        shouldBeEqualToString('document.getElementById("target").getAttribute("' + equivalentName + '")', 'WebKit!');
+    }
+}
+
+function testParsedAttribute(attribute, equivalentNames, distinctNames) {
+    testContainer.innerHTML = '<div ' + attribute + '="WebKit!" id="target"></div>';
+    testAttributeOnTarget(equivalentNames, distinctNames);
+    testContainer.innerHTML = '';
+}
+
+function testAttributeFromDOMApis(attribute, equivalentNames, distinctNames) {
+    var newElement = document.createElement('div');
+    newElement.setAttribute('id', 'target');
+    newElement.setAttribute(attribute, "WebKit!");
+    testContainer.appendChild(newElement);
+    testAttributeOnTarget(equivalentNames, distinctNames);
+    testContainer.innerHTML = '';
+}
+
+function testAttribute(equivalentNames, distinctNames) {
+    for (var testCase of equivalentNames) {
+        debug("Testing " + testCase);
+        testParsedAttribute(testCase, equivalentNames, distinctNames);
+        testAttributeFromDOMApis(testCase, equivalentNames, distinctNames);
+        debug("");
+    }
+}
+
+// ASCII prefixes.
+testAttribute(['foo:data-æøå', 'foo:DATA-æøå', 'foo:Data-æøå', 'FOO:data-æøå', 'Foo:data-æøå'], ['data-ÆØÅ', 'data-Æøå', 'foo:data-ÆØÅ', 'foo:data-Æøå']);
+testAttribute(['foo:data-Æøå', 'foo:DATA-Æøå', 'foo:Data-Æøå', 'FOO:data-Æøå', 'Foo:data-Æøå'], ['data-ÆØÅ', 'data-æøå', 'foo:data-ÆØÅ', 'foo:data-æøå']);
+testAttribute(['foo:data-ÆØÅ', 'foo:DATA-ÆØÅ', 'foo:Data-ÆØÅ', 'FOO:data-ÆØÅ', 'Foo:data-ÆØÅ'], ['data-Æøå', 'data-æøå', 'foo:data-Æøå', 'foo:data-æøå']);
+
+// Non-ASCII prefixes.
+testAttribute(['fooæøå:data-æøå', 'Fooæøå:DATA-æøå', 'FOOæøå:Data-æøå'], ['fooÆøå:data-ÆØÅ', 'FooÆøå:data-Æøå', 'FOOÆøå:data-ÆØÅ', 'fooæøå:data-Æøå', 'fooæøå:data-ÆØÅ', 'fooæøå:data-Æøå']);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

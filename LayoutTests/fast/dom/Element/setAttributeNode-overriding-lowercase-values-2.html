@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container" style="display: none;"></div>
+</body>
+<script>
+description('Test using setAttributeNode() behaves like setAttribute() to get the existing attribute, but like setAttributeNS() to set the new value. This test covers attributes set through an AttributeNode with a namespace."');
+
+var testElement = document.createElement("div");
+var a = document.createAttributeNS('ns1', 'foobar');
+a.value = 'WebKit'
+testElement.setAttributeNode(a);
+
+shouldBe('testElement.attributes.length', '1');
+shouldBeEqualToString('testElement.getAttribute("foobar")', 'WebKit');
+shouldBeTrue('testElement.hasAttribute("foobar")');
+shouldBeEqualToString('testElement.getAttribute("FooBar")', 'WebKit');
+shouldBeTrue('testElement.hasAttribute("FooBar")');
+
+shouldBeEqualToString('testElement.getAttributeNS("ns1", "foobar")', 'WebKit');
+shouldBeTrue('testElement.hasAttributeNS("ns1", "foobar")');
+shouldBe('testElement.getAttributeNS("ns1", "FooBar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("ns1", "FooBar")');
+
+shouldBe('testElement.getAttributeNS("", "foobar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("", "foobar")');
+shouldBe('testElement.getAttributeNS("", "FooBar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("", "FooBar")');
+
+// Setting this node through setAttributeNode() instead of setAttributeNodeNS()
+// erases the lowercase "foobar".
+var b = document.createAttributeNS('ns1', 'FooBar');
+b.value = "Rocks!";
+testElement.setAttributeNode(b);
+
+shouldBe('testElement.attributes.length', '1');
+shouldBe('testElement.getAttribute("foobar")', 'null');
+shouldBeFalse('testElement.hasAttribute("foobar")');
+shouldBe('testElement.getAttribute("FooBar")', 'null');
+shouldBeFalse('testElement.hasAttribute("FooBar")');
+
+shouldBe('testElement.getAttributeNS("ns1", "foobar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("ns1", "foobar")');
+shouldBeEqualToString('testElement.getAttributeNS("ns1", "FooBar")', 'Rocks!');
+shouldBeTrue('testElement.hasAttributeNS("ns1", "FooBar")');
+
+shouldBe('testElement.getAttributeNS("", "foobar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("", "foobar")');
+shouldBe('testElement.getAttributeNS("", "FooBar")', 'null');
+shouldBeFalse('testElement.hasAttributeNS("", "FooBar")');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

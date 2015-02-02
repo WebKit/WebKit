@@ -11,9 +11,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -27,9 +27,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -45,9 +45,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -61,9 +61,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -79,9 +79,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -95,9 +95,9 @@ PASS document.getElementById("target").getAttribute("DATA-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-æøå") is true
 PASS document.getElementById("target").getAttribute("Data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is true
 PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-æøå") is true
@@ -113,9 +113,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -129,9 +129,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -147,9 +147,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -163,9 +163,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -181,9 +181,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -197,9 +197,9 @@ PASS document.getElementById("target").getAttribute("DATA-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-Æøå") is true
 PASS document.getElementById("target").getAttribute("Data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
-FAIL document.getElementById("target").getAttribute("data-ÆØÅ") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-Æøå") is true
 PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-Æøå") is true
@@ -215,9 +215,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true
@@ -231,9 +231,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true
@@ -249,9 +249,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true
@@ -265,9 +265,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true
@@ -283,9 +283,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true
@@ -299,9 +299,9 @@ PASS document.getElementById("target").getAttribute("DATA-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("Data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("Data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("data-Æøå") is false
-FAIL document.getElementById("target").getAttribute("data-Æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-Æøå") is null
 PASS document.getElementById("target").hasAttribute("data-æøå") is false
-FAIL document.getElementById("target").getAttribute("data-æøå") should be null (of type object). Was WebKit! (of type string).
+PASS document.getElementById("target").getAttribute("data-æøå") is null
 PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
 PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
 PASS document.getElementById("target").hasAttribute("DATA-ÆØÅ") is true

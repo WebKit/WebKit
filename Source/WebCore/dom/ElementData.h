@@ -105,7 +105,6 @@ public:
     const Attribute* findAttributeByName(const QualifiedName&) const;
     unsigned findAttributeIndexByName(const QualifiedName&) const;
     unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
-    unsigned findAttributeIndexByNameForAttributeNode(const Attr*, bool shouldIgnoreAttributeCase = false) const;
     const Attribute* findLanguageAttribute() const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
@@ -177,7 +176,6 @@ private:
 
     const Attribute* attributeBase() const;
     const Attribute* findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
-    unsigned findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     Ref<UniqueElementData> makeUniqueCopy() const;
 };
@@ -286,21 +284,27 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
 ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
+    unsigned attributeCount = length();
+    if (!attributeCount)
+        return attributeNotFound;
+
     const Attribute* attributes = attributeBase();
-    bool doSlowCheck = shouldIgnoreAttributeCase;
     const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
 
-    // Optimize for the case where the attribute exists and its name exactly matches.
-    for (unsigned i = 0, count = length(); i < count; ++i) {
-        if (!attributes[i].name().hasPrefix()) {
-            if (caseAdjustedName == attributes[i].localName())
-                return i;
-        } else
-            doSlowCheck = true;
-    }
+    unsigned attributeIndex = 0;
+    do {
+        const Attribute& attribute = attributes[attributeIndex];
+        if (!attribute.name().hasPrefix()) {
+            if (attribute.localName() == caseAdjustedName)
+                return attributeIndex;
+        } else {
+            if (attribute.name().toString() == caseAdjustedName)
+                return attributeIndex;
+        }
 
-    if (doSlowCheck)
-        return findAttributeIndexByNameSlowCase(name, shouldIgnoreAttributeCase);
+        ++attributeIndex;
+    } while (attributeIndex < attributeCount);
+
     return attributeNotFound;
 }
 

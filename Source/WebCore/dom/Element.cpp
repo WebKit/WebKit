@@ -133,7 +133,17 @@ static void removeAttrNodeListForElement(Element& element)
 static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const QualifiedName& name)
 {
     for (auto& node : attrNodeList) {
-        if (node->qualifiedName() == name)
+        if (node->qualifiedName().matches(name))
+            return node.get();
+    }
+    return nullptr;
+}
+
+static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomicString& localName, bool shouldIgnoreAttributeCase)
+{
+    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? localName.convertToASCIILowercase() : localName;
+    for (auto& node : attrNodeList) {
+        if (node->qualifiedName().localName() == caseAdjustedName)
             return node.get();
     }
     return nullptr;
@@ -1710,6 +1720,54 @@ RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 {
     if (!attrNode) {
         ec = TYPE_MISMATCH_ERR;
+        return nullptr;
+    }
+
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode->qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    if (oldAttrNode.get() == attrNode)
+        return attrNode; // This Attr is already attached to the element.
+
+    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
+    // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
+    if (attrNode->ownerElement() && attrNode->ownerElement() != this) {
+        ec = INUSE_ATTRIBUTE_ERR;
+        return nullptr;
+    }
+
+    synchronizeAllAttributes();
+    UniqueElementData& elementData = ensureUniqueElementData();
+
+    unsigned existingAttributeIndex = elementData.findAttributeIndexByName(attrNode->qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    if (existingAttributeIndex != ElementData::attributeNotFound) {
+        const Attribute& attribute = attributeAt(existingAttributeIndex);
+        if (oldAttrNode)
+            detachAttrNodeFromElementWithValue(oldAttrNode.get(), attribute.value());
+        else
+            oldAttrNode = Attr::create(document(), attrNode->qualifiedName(), attribute.value());
+
+        if (attribute.name().matches(attrNode->qualifiedName()))
+            setAttributeInternal(existingAttributeIndex, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+        else {
+            removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
+            unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode->qualifiedName());
+            setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+        }
+    } else {
+        unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode->qualifiedName());
+        setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+    }
+    if (attrNode->ownerElement() != this) {
+        attrNode->attachToElement(this);
+        treeScope().adoptIfNeeded(attrNode);
+        ensureAttrNodeListForElement(*this).append(attrNode);
+    }
+    return oldAttrNode;
+}
+
+RefPtr<Attr> Element::setAttributeNodeNS(Attr* attrNode, ExceptionCode& ec)
+{
+    if (!attrNode) {
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
@@ -1719,7 +1777,7 @@ RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 
     // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
-    if (attrNode->ownerElement()) {
+    if (attrNode->ownerElement() && attrNode->ownerElement() != this) {
         ec = INUSE_ATTRIBUTE_ERR;
         return 0;
     }
@@ -1727,7 +1785,7 @@ RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    unsigned index = elementData.findAttributeIndexByNameForAttributeNode(attrNode, shouldIgnoreAttributeCase(*this));
+    unsigned index = elementData.findAttributeIndexByName(attrNode->qualifiedName());
     if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
@@ -1744,36 +1802,37 @@ RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     return oldAttrNode.release();
 }
 
-RefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
-{
-    return setAttributeNode(attr, ec);
-}
-
 RefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 {
     if (!attr) {
         ec = TYPE_MISMATCH_ERR;
-        return 0;
+        return nullptr;
     }
     if (attr->ownerElement() != this) {
         ec = NOT_FOUND_ERR;
-        return 0;
+        return nullptr;
     }
 
     ASSERT(&document() == &attr->document());
 
-    synchronizeAttribute(attr->qualifiedName());
+    synchronizeAllAttributes();
 
-    unsigned index = elementData()->findAttributeIndexByNameForAttributeNode(attr);
-    if (index == ElementData::attributeNotFound) {
+    if (!m_elementData) {
         ec = NOT_FOUND_ERR;
-        return 0;
+        return nullptr;
+    }
+
+    unsigned existingAttributeIndex = m_elementData->findAttributeIndexByName(attr->qualifiedName());
+
+    if (existingAttributeIndex == ElementData::attributeNotFound) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
     }
 
     RefPtr<Attr> attrNode = attr;
-    detachAttrNodeFromElementWithValue(attr, elementData()->attributeAt(index).value());
-    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
-    return attrNode.release();
+    detachAttrNodeFromElementWithValue(attr, m_elementData->attributeAt(existingAttributeIndex).value());
+    removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
+    return attrNode;
 }
 
 bool Element::parseAttributeName(QualifiedName& out, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode& ec)
@@ -1859,11 +1918,11 @@ bool Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicSt
 RefPtr<Attr> Element::getAttributeNode(const AtomicString& localName)
 {
     if (!elementData())
-        return 0;
+        return nullptr;
     synchronizeAttribute(localName);
     const Attribute* attribute = elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(*this));
     if (!attribute)
-        return 0;
+        return nullptr;
     return ensureAttr(attribute->name());
 }
 
@@ -1884,7 +1943,7 @@ bool Element::hasAttribute(const AtomicString& localName) const
     if (!elementData())
         return false;
     synchronizeAttribute(localName);
-    return elementData()->findAttributeByName(shouldIgnoreAttributeCase(*this) ? localName.convertToASCIILowercase() : localName, false);
+    return elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(*this));
 }
 
 bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
@@ -2873,6 +2932,13 @@ void Element::setSavedLayerScrollOffset(const IntSize& size)
     if (size.isZero() && !hasRareData())
         return;
     ensureElementRareData().setSavedLayerScrollOffset(size);
+}
+
+RefPtr<Attr> Element::attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase)
+{
+    if (auto* attrNodeList = attrNodeListForElement(*this))
+        return findAttrNodeInList(*attrNodeList, localName, shouldIgnoreAttributeCase);
+    return nullptr;
 }
 
 RefPtr<Attr> Element::attrIfExists(const QualifiedName& name)

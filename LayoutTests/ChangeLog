@@ -1,3 +1,64 @@
+2015-02-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Clean up attribute handling: part 2 - attributeNode
+        https://bugs.webkit.org/show_bug.cgi?id=141109
+
+        Reviewed by Andreas Kling.
+
+        Improve the coverage a little.
+
+        Not everything is right yet: some getters return an empty string when they
+        should return null.
+
+        * fast/dom/Element/attribute-ascii-case-insensitive-1-expected.txt:
+        This is now fixed :)
+
+        * fast/dom/Element/attribute-ascii-case-insensitive-3-expected.txt: Added.
+        * fast/dom/Element/attribute-ascii-case-insensitive-3.html: Added.
+        Test prefixed-like attribute defined through the parser.
+
+        * fast/dom/Element/attribute-setAttributeNode-multiple-times-expected.txt: Added.
+        * fast/dom/Element/attribute-setAttributeNode-multiple-times.html: Added.
+        Make sure we don't accumulate nodes.
+
+        * fast/dom/Element/attribute-setAttributeNodeNS-multiple-times-expected.txt: Added.
+        * fast/dom/Element/attribute-setAttributeNodeNS-multiple-times.html: Added.
+        Same without the crazy setter.
+
+        * fast/dom/Element/script-tests/getAttribute-check-case-sensitivity.js:
+        * fast/dom/Element/getAttribute-check-case-sensitivity-expected.txt:
+        With the latest spec, getting a node with any uppercase character through
+        getAttributeNode() always fails. Update the test to use .getAttributeNodeNS()
+        were needed.
+
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug1075702-expected.txt: Added.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug1075702.html: Added.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug339494-expected.txt: Added.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug339494.html: Added.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug364092-expected.txt: Added.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug364092.xhtml: Added.
+        (testGetAttributeNodeMixedCase):
+        (testAttribNodeNamePreservesCaseGetNode):
+        (testAttribNodeNamePreservesCaseGetNode2):
+        Some related tests from Gecko, for completeness.
+
+        * fast/dom/Element/setAttributeNode-case-insensitivity-expected.txt:
+        * fast/dom/Element/setAttributeNode-case-insensitivity.html:
+        Test that the getAttribute part of setAttributeNode() do not ignore the prefix. The spec
+        says to use the name, not the localname.
+
+        * fast/dom/Element/setAttributeNode-for-existing-attribute-expected.txt:
+        * fast/dom/Element/setAttributeNode-for-existing-attribute.html:
+        This test was for legacy behavior that came from Firefox. Firefox does not do that anymore.
+        Keep the test around for regression catching, but add a sentence explaining the 'incorrect'
+        behavior.
+
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1-expected.txt: Added.
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1.html: Added.
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-2-expected.txt: Added.
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-2.html: Added.
+        Some coverage for the name overriding craziness.
+
 2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rebaseline test with new expected results.
