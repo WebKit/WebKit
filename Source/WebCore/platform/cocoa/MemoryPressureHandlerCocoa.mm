@@ -124,6 +124,8 @@ void MemoryPressureHandler::install()
         // Release any freed up blocks from the JS heap back to the system.
         JSDOMWindowBase::commonVM().heap.blockAllocator().releaseFreeRegions();
 
+        WTF::releaseFastMallocFreeMemory();
+
         malloc_zone_pressure_relief(nullptr, 0);
     });
 
