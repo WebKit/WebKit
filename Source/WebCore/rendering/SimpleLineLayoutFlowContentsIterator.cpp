@@ -171,7 +171,9 @@ unsigned FlowContentsIterator::findNextNonWhitespacePosition(unsigned position, 
 template <typename CharacterType>
 float FlowContentsIterator::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
 {
-    ASSERT(from < to);
+    ASSERT(from <= to);
+    if (from == to)
+        return 0;
     bool measureWithEndSpace = m_style.collapseWhitespace && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;

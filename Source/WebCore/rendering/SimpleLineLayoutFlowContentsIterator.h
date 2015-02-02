@@ -59,7 +59,9 @@ public:
         Type type() const { return m_type; }
         bool isCollapsed() const { return m_isCollapsed; }
         bool isBreakable() const { return m_isBreakable; }
+
         bool isEmpty() const { return start() == end(); }
+        TextFragment split(unsigned splitPosition, const FlowContentsIterator&);
 
     private:
         unsigned m_start { 0 };
@@ -102,6 +104,28 @@ private:
     const Style m_style;
     unsigned m_position { 0 };
 };
+
+inline FlowContentsIterator::TextFragment FlowContentsIterator::TextFragment::split(unsigned splitPosition, const FlowContentsIterator& flowContentsIterator)
+{
+    auto updateFragmentProperties = [&flowContentsIterator] (TextFragment& fragment)
+    {
+        fragment.m_width = 0;
+        if (fragment.start() != fragment.end())
+            fragment.m_width = flowContentsIterator.textWidth(fragment.start(), fragment.end(), 0);
+        if (fragment.start() + 1 > fragment.end())
+            return;
+        fragment.m_isCollapsed = false;
+        fragment.m_isBreakable = false;
+    };
+
+    TextFragment newFragment(*this);
+    m_end = splitPosition;
+    updateFragmentProperties(*this);
+
+    newFragment.m_start = splitPosition;
+    updateFragmentProperties(newFragment);
+    return newFragment;
+}
 
 inline UChar FlowContentsIterator::characterAt(unsigned position) const
 {

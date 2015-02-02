@@ -1,3 +1,28 @@
+2015-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: use std::upper_bound in splitFragmentToFitLine()
+        https://bugs.webkit.org/show_bug.cgi?id=141146
+
+        Reviewed by Antti Koivisto.
+
+        Replace the custom binary search implementation with std::upper_bound and
+        move splitting functionality to TextFragment.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::FragmentForwardIterator):
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator++):
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator!=):
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator*):
+        (WebCore::SimpleLineLayout::begin):
+        (WebCore::SimpleLineLayout::end):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        * rendering/SimpleLineLayoutFlowContentsIterator.cpp:
+        (WebCore::SimpleLineLayout::FlowContentsIterator::runWidth):
+        * rendering/SimpleLineLayoutFlowContentsIterator.h:
+        (WebCore::SimpleLineLayout::FlowContentsIterator::TextFragment::split):
+
 2015-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

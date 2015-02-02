@@ -297,6 +297,29 @@ private:
     bool m_firstCharacterFits { false };
 };
 
+class FragmentForwardIterator : public std::iterator<std::forward_iterator_tag, unsigned> {
+public:
+    FragmentForwardIterator(unsigned fragmentIndex)
+        : m_fragmentIndex(fragmentIndex)
+    {
+    }
+
+    FragmentForwardIterator& operator++()
+    {
+        ++m_fragmentIndex;
+        return *this;
+    }
+
+    bool operator!=(const FragmentForwardIterator& other) const { return m_fragmentIndex != other.m_fragmentIndex; }
+    unsigned operator*() const { return m_fragmentIndex; }
+
+private:
+    unsigned m_fragmentIndex { 0 };
+};
+
+static FragmentForwardIterator begin(const FlowContentsIterator::TextFragment& fragment)  { return FragmentForwardIterator(fragment.start()); }
+static FragmentForwardIterator end(const FlowContentsIterator::TextFragment& fragment)  { return FragmentForwardIterator(fragment.end()); }
+
 static bool preWrap(const FlowContentsIterator::Style& style)
 {
     return style.wrapLines && !style.collapseWhitespace;
@@ -330,48 +353,16 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line)
 
 static FlowContentsIterator::TextFragment splitFragmentToFitLine(FlowContentsIterator::TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const FlowContentsIterator& flowContentsIterator)
 {
-    // Fast path for single char fragments.
-    if (fragmentToSplit.start() + 1 == fragmentToSplit.end()) {
-        if (keepAtLeastOneCharacter)
-            return FlowContentsIterator::TextFragment();
-
-        FlowContentsIterator::TextFragment fragmentForNextLine(fragmentToSplit);
-        // Make it empty fragment.
-        fragmentToSplit = FlowContentsIterator::TextFragment(fragmentToSplit.start(), fragmentToSplit.start(), 0, fragmentToSplit.type());
-        return fragmentForNextLine;
-    }
-    // Simple binary search to find out what fits the current line.
     // FIXME: add surrogate pair support.
-    unsigned left = fragmentToSplit.start();
-    unsigned right = fragmentToSplit.end() - 1; // We can ignore the last character. It surely does not fit.
-    float width = 0;
-    while (left < right) {
-        unsigned middle = (left + right) / 2;
-        width = flowContentsIterator.textWidth(fragmentToSplit.start(), middle + 1, 0);
-        if (availableWidth > width)
-            left = middle + 1;
-        else if (availableWidth < width)
-            right = middle;
-        else {
-            right = middle + 1;
-            break;
-        }
-    }
-
-    if (keepAtLeastOneCharacter && right == fragmentToSplit.start())
-        ++right;
-
-    // Fragment for next line.
-    unsigned nextLineStart = right;
-    unsigned nextLineEnd = fragmentToSplit.end();
-    float nextLineWidth = flowContentsIterator.textWidth(nextLineStart, nextLineEnd, 0);
-
-    unsigned thisLineStart = fragmentToSplit.start();
-    unsigned thisLineEnd = right;
-    ASSERT(thisLineStart <= thisLineEnd);
-    float thisLineWidth = thisLineStart < thisLineEnd ? flowContentsIterator.textWidth(thisLineStart, thisLineEnd, 0) : 0;
-    fragmentToSplit = FlowContentsIterator::TextFragment(thisLineStart, thisLineEnd, thisLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
-    return FlowContentsIterator::TextFragment(nextLineStart, nextLineEnd, nextLineWidth, fragmentToSplit.type(), fragmentToSplit.isCollapsed(), fragmentToSplit.isBreakable());
+    unsigned start = fragmentToSplit.start();
+    auto it = std::upper_bound(begin(fragmentToSplit), end(fragmentToSplit), availableWidth, [&flowContentsIterator, start](float availableWidth, unsigned index) {
+        // FIXME: use the actual left position of the line (instead of 0) to calculated width. It might give false width for tab characters.
+        return availableWidth < flowContentsIterator.textWidth(start, index + 1, 0);
+    });
+    unsigned splitPosition = (*it);
+    if (keepAtLeastOneCharacter && splitPosition == fragmentToSplit.start())
+        ++splitPosition;
+    return fragmentToSplit.split(splitPosition, flowContentsIterator);
 }
 
 static FlowContentsIterator::TextFragment firstFragment(FlowContentsIterator& flowContentsIterator, const LineState& previousLine)
