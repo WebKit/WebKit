@@ -43,10 +43,6 @@ PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: INVALID_OPER
 PASS gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 1) generated expected GL error: NO_ERROR.
 PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
 
-Verify that IMPLEMENTATION_COLOR_READ_FORMAT and IMPLEMENTATION_COLOR_READ_TYPE are undefined
-PASS undefined is undefined.
-PASS undefined is undefined.
-
 Verify that *LENGTH are undefined
 PASS undefined is undefined.
 PASS undefined is undefined.

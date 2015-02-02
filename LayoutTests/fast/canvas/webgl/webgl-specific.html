@@ -71,11 +71,6 @@ shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.FRONT, gl.ALWA
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
 
 debug("");
-debug("Verify that IMPLEMENTATION_COLOR_READ_FORMAT and IMPLEMENTATION_COLOR_READ_TYPE are undefined");
-shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
-shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-
-debug("");
 debug("Verify that *LENGTH are undefined");
 shouldBeUndefined(gl.INFO_LOG_LENGTH);
 shouldBeUndefined(gl.SHADER_SOURCE_LENGTH);

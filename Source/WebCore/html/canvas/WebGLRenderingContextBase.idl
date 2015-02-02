@@ -396,6 +396,10 @@ DoNotCheckConstants,
     const GLenum VERTEX_ATTRIB_ARRAY_POINTER        = 0x8645;
     const GLenum VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = 0x889F;
 
+    /* Read Format */
+    const GLenum IMPLEMENTATION_COLOR_READ_TYPE     = 0x8B9A;
+    const GLenum IMPLEMENTATION_COLOR_READ_FORMAT   = 0x8B9B;
+
     /* Shader Source */
     const GLenum COMPILE_STATUS                 = 0x8B81;
 

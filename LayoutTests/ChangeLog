@@ -1,3 +1,17 @@
+2015-01-30  Roger Fong  <roger_fong@apple.com>
+
+        WebGL2: Implement spec section 3.7.1 Setting and getting state (Part 1).
+        https://bugs.webkit.org/show_bug.cgi?id=141096
+        <rdar://problem/15002469>
+
+        Reviewed by Brent Fulgham.
+
+        Two read format parameters were moved from the WebGL2 spec to the WebGL1 spec. Update tests accordingly.
+        * fast/canvas/webgl/constants.html:
+        * fast/canvas/webgl/webgl-specific-expected.txt:
+        * fast/canvas/webgl/webgl-specific.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/misc/webgl-specific.html:
+
 2015-02-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILED: m_scriptExecutionContext->isContextThread() in ContextDestructionObserver::observeContext

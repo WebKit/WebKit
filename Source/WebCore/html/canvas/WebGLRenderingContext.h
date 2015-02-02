@@ -37,7 +37,9 @@ public:
     virtual bool isWebGL1() const { return true; }
     
     virtual WebGLExtension* getExtension(const String&) override;
+    virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;
     virtual Vector<String> getSupportedExtensions() override;
+    bool validateCapability(const char* functionName, GC3Denum cap) override;
 };
     
 } // namespace WebCore

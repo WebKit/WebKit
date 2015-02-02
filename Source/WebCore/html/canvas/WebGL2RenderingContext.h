@@ -167,6 +167,9 @@ public:
     /* Extensions */
     virtual WebGLExtension* getExtension(const String&) override;
     virtual Vector<String> getSupportedExtensions() override;
+
+    virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;
+    bool validateCapability(const char* functionName, GC3Denum cap) override;
 };
 
 } // namespace WebCore

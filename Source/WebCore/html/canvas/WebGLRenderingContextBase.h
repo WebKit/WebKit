@@ -178,7 +178,7 @@ public:
     GC3Denum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
-    WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&);
+    virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) = 0;
     WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname, ExceptionCode&);
     String getProgramInfoLog(WebGLProgram*, ExceptionCode&);
     WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
@@ -725,7 +725,7 @@ protected:
     bool validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst);
 
     // Helper function to validate a GL capability.
-    bool validateCapability(const char* functionName, GC3Denum);
+    virtual bool validateCapability(const char* functionName, GC3Denum) = 0;
 
     // Helper function to validate input parameters for uniform functions.
     bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, Float32Array*, GC3Dsizei mod);

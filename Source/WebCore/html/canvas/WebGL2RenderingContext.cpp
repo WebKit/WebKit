@@ -695,6 +695,20 @@ WebGLGetInfo WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Dui
 {
     UNUSED_PARAM(target);
     UNUSED_PARAM(index);
+    switch (target) {
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_SIZE:
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_START:
+    case GraphicsContext3D::UNIFORM_BUFFER_BINDING:
+    case GraphicsContext3D::UNIFORM_BUFFER_SIZE:
+    case GraphicsContext3D::UNIFORM_BUFFER_START:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getIndexedParameter", "parameter name not yet supported");
+        return WebGLGetInfo();
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getIndexedParameter", "invalid parameter name");
+        return WebGLGetInfo();
+            
+    }
     return WebGLGetInfo();
 }
 
@@ -884,6 +898,305 @@ Vector<String> WebGL2RenderingContext::getSupportedExtensions()
     }
     
     return result;
+}
+
+WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    if (isContextLostOrPending())
+        return WebGLGetInfo();
+    const int intZero = 0;
+    switch (pname) {
+    case GraphicsContext3D::ACTIVE_TEXTURE:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::ALIASED_LINE_WIDTH_RANGE:
+        return getWebGLFloatArrayParameter(pname);
+    case GraphicsContext3D::ALIASED_POINT_SIZE_RANGE:
+        return getWebGLFloatArrayParameter(pname);
+    case GraphicsContext3D::ALPHA_BITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::ARRAY_BUFFER_BINDING:
+        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundArrayBuffer));
+    case GraphicsContext3D::BLEND:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::BLEND_COLOR:
+        return getWebGLFloatArrayParameter(pname);
+    case GraphicsContext3D::BLEND_DST_ALPHA:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLEND_DST_RGB:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLEND_EQUATION_ALPHA:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLEND_EQUATION_RGB:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLEND_SRC_ALPHA:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLEND_SRC_RGB:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::BLUE_BITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::COLOR_CLEAR_VALUE:
+        return getWebGLFloatArrayParameter(pname);
+    case GraphicsContext3D::COLOR_WRITEMASK:
+        return getBooleanArrayParameter(pname);
+    case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
+        return WebGLGetInfo(Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size()));
+    case GraphicsContext3D::CULL_FACE:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::CULL_FACE_MODE:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::CURRENT_PROGRAM:
+        return WebGLGetInfo(PassRefPtr<WebGLProgram>(m_currentProgram));
+    case GraphicsContext3D::DEPTH_BITS:
+        if (!m_framebufferBinding && !m_attributes.depth)
+            return WebGLGetInfo(intZero);
+        return getIntParameter(pname);
+    case GraphicsContext3D::DEPTH_CLEAR_VALUE:
+        return getFloatParameter(pname);
+    case GraphicsContext3D::DEPTH_FUNC:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::DEPTH_RANGE:
+        return getWebGLFloatArrayParameter(pname);
+    case GraphicsContext3D::DEPTH_TEST:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::DEPTH_WRITEMASK:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::DITHER:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER_BINDING:
+        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundVertexArrayObject->getElementArrayBuffer()));
+    case GraphicsContext3D::FRAMEBUFFER_BINDING:
+        return WebGLGetInfo(PassRefPtr<WebGLFramebuffer>(m_framebufferBinding));
+    case GraphicsContext3D::FRONT_FACE:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::GENERATE_MIPMAP_HINT:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::GREEN_BITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT:
+        return getIntParameter(pname);
+    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::LINE_WIDTH:
+        return getFloatParameter(pname);
+    case GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_CUBE_MAP_TEXTURE_SIZE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_RENDERBUFFER_SIZE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_TEXTURE_SIZE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VARYING_VECTORS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_ATTRIBS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VIEWPORT_DIMS:
+        return getWebGLIntArrayParameter(pname);
+    case GraphicsContext3D::NUM_SHADER_BINARY_FORMATS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::PACK_ALIGNMENT:
+        return getIntParameter(pname);
+    case GraphicsContext3D::POLYGON_OFFSET_FACTOR:
+        return getFloatParameter(pname);
+    case GraphicsContext3D::POLYGON_OFFSET_FILL:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::POLYGON_OFFSET_UNITS:
+        return getFloatParameter(pname);
+    case GraphicsContext3D::RED_BITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::RENDERBUFFER_BINDING:
+        return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(m_renderbufferBinding));
+    case GraphicsContext3D::RENDERER:
+        return WebGLGetInfo(String("WebKit WebGL"));
+    case GraphicsContext3D::SAMPLE_BUFFERS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::SAMPLE_COVERAGE_VALUE:
+        return getFloatParameter(pname);
+    case GraphicsContext3D::SAMPLES:
+        return getIntParameter(pname);
+    case GraphicsContext3D::SCISSOR_BOX:
+        return getWebGLIntArrayParameter(pname);
+    case GraphicsContext3D::SCISSOR_TEST:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::SHADING_LANGUAGE_VERSION:
+        return WebGLGetInfo("WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContext3D::SHADING_LANGUAGE_VERSION) + ")");
+    case GraphicsContext3D::STENCIL_BACK_FAIL:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_FUNC:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_FAIL:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_PASS:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_REF:
+        return getIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_VALUE_MASK:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BACK_WRITEMASK:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_BITS:
+        if (!m_framebufferBinding && !m_attributes.stencil)
+            return WebGLGetInfo(intZero);
+        return getIntParameter(pname);
+    case GraphicsContext3D::STENCIL_CLEAR_VALUE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::STENCIL_FAIL:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_FUNC:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_PASS_DEPTH_FAIL:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_PASS_DEPTH_PASS:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_REF:
+        return getIntParameter(pname);
+    case GraphicsContext3D::STENCIL_TEST:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::STENCIL_VALUE_MASK:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::STENCIL_WRITEMASK:
+        return getUnsignedIntParameter(pname);
+    case GraphicsContext3D::SUBPIXEL_BITS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::TEXTURE_BINDING_2D:
+        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].texture2DBinding));
+    case GraphicsContext3D::TEXTURE_BINDING_CUBE_MAP:
+        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].textureCubeMapBinding));
+    case GraphicsContext3D::UNPACK_ALIGNMENT:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
+        return WebGLGetInfo(m_unpackFlipY);
+    case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
+        return WebGLGetInfo(m_unpackPremultiplyAlpha);
+    case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
+        return WebGLGetInfo(m_unpackColorspaceConversion);
+    case GraphicsContext3D::VENDOR:
+        return WebGLGetInfo(String("WebKit"));
+    case GraphicsContext3D::VERSION:
+        return WebGLGetInfo("WebGL 2.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")");
+    case GraphicsContext3D::VIEWPORT:
+        return getWebGLIntArrayParameter(pname);
+    case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
+        if (m_webglDebugRendererInfo)
+            return WebGLGetInfo(m_context->getString(GraphicsContext3D::RENDERER));
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
+        return WebGLGetInfo();
+    case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
+        if (m_webglDebugRendererInfo)
+            return WebGLGetInfo(m_context->getString(GraphicsContext3D::VENDOR));
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
+        return WebGLGetInfo();
+    case Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
+        if (m_extTextureFilterAnisotropic)
+            return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+        return WebGLGetInfo();
+    case GraphicsContext3D::COPY_READ_BUFFER:
+    case GraphicsContext3D::COPY_WRITE_BUFFER:
+    case GraphicsContext3D::DRAW_BUFFER0:
+    case GraphicsContext3D::DRAW_BUFFER1:
+    case GraphicsContext3D::DRAW_BUFFER2:
+    case GraphicsContext3D::DRAW_BUFFER3:
+    case GraphicsContext3D::DRAW_BUFFER4:
+    case GraphicsContext3D::DRAW_BUFFER5:
+    case GraphicsContext3D::DRAW_BUFFER6:
+    case GraphicsContext3D::DRAW_BUFFER7:
+    case GraphicsContext3D::DRAW_BUFFER8:
+    case GraphicsContext3D::DRAW_BUFFER9:
+    case GraphicsContext3D::DRAW_BUFFER10:
+    case GraphicsContext3D::DRAW_BUFFER11:
+    case GraphicsContext3D::DRAW_BUFFER12:
+    case GraphicsContext3D::DRAW_BUFFER13:
+    case GraphicsContext3D::DRAW_BUFFER14:
+    case GraphicsContext3D::DRAW_BUFFER15:
+    case GraphicsContext3D::FRAGMENT_SHADER_DERIVATIVE_HINT:
+    case GraphicsContext3D::MAX_3D_TEXTURE_SIZE:
+    case GraphicsContext3D::MAX_ARRAY_TEXTURE_LAYERS:
+    case GraphicsContext3D::MAX_COLOR_ATTACHMENTS:
+    case GraphicsContext3D::MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
+    case GraphicsContext3D::MAX_COMBINED_UNIFORM_BLOCKS:
+    case GraphicsContext3D::MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS:
+    case GraphicsContext3D::MAX_DRAW_BUFFERS:
+    case GraphicsContext3D::MAX_ELEMENT_INDEX:
+    case GraphicsContext3D::MAX_ELEMENTS_INDICES:
+    case GraphicsContext3D::MAX_ELEMENTS_VERTICES:
+    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_COMPONENTS:
+    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_BLOCKS:
+    case GraphicsContext3D::MAX_PROGRAM_TEXEL_OFFSET:
+    case GraphicsContext3D::MAX_SAMPLES:
+    case GraphicsContext3D::MAX_SERVER_WAIT_TIMEOUT:
+    case GraphicsContext3D::MAX_TEXTURE_LOD_BIAS:
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS:
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS:
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS:
+    case GraphicsContext3D::MAX_UNIFORM_BLOCK_SIZE:
+    case GraphicsContext3D::MAX_UNIFORM_BUFFER_BINDINGS:
+    case GraphicsContext3D::MAX_VARYING_COMPONENTS:
+    case GraphicsContext3D::MAX_VERTEX_OUTPUT_COMPONENTS:
+    case GraphicsContext3D::MAX_VERTEX_UNIFORM_BLOCKS:
+    case GraphicsContext3D::MAX_VERTEX_UNIFORM_COMPONENTS:                             
+    case GraphicsContext3D::MIN_PROGRAM_TEXEL_OFFSET:
+    case GraphicsContext3D::PACK_ROW_LENGTH:
+    case GraphicsContext3D::PACK_SKIP_PIXELS:
+    case GraphicsContext3D::PACK_SKIP_ROWS:
+    case GraphicsContext3D::PIXEL_PACK_BUFFER_BINDING:   
+    case GraphicsContext3D::PIXEL_UNPACK_BUFFER_BINDING:
+    case GraphicsContext3D::RASTERIZER_DISCARD:
+    case GraphicsContext3D::READ_BUFFER:
+    case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
+    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
+    case GraphicsContext3D::SAMPLE_COVERAGE:
+    case GraphicsContext3D::SAMPLER_BINDING:
+    case GraphicsContext3D::TEXTURE_BINDING_2D_ARRAY:
+    case GraphicsContext3D::TEXTURE_BINDING_3D:
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_ACTIVE:
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_PAUSED:
+    case GraphicsContext3D::UNIFORM_BUFFER_BINDING:
+    case GraphicsContext3D::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
+    case GraphicsContext3D::UNPACK_IMAGE_HEIGHT:
+    case GraphicsContext3D::UNPACK_ROW_LENGTH:
+    case GraphicsContext3D::UNPACK_SKIP_IMAGES:
+    case GraphicsContext3D::UNPACK_SKIP_PIXELS:
+    case GraphicsContext3D::UNPACK_SKIP_ROWS:
+    case GraphicsContext3D::VERTEX_ARRAY_BINDING:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "parameter name not yet supported");
+        return WebGLGetInfo();
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
+        return WebGLGetInfo();
+    }
+}
+
+bool WebGL2RenderingContext::validateCapability(const char* functionName, GC3Denum cap)
+{
+    switch (cap) {
+    case GraphicsContext3D::BLEND:
+    case GraphicsContext3D::CULL_FACE:
+    case GraphicsContext3D::DEPTH_TEST:
+    case GraphicsContext3D::DITHER:
+    case GraphicsContext3D::POLYGON_OFFSET_FILL:
+    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
+    case GraphicsContext3D::SAMPLE_COVERAGE:
+    case GraphicsContext3D::SCISSOR_TEST:
+    case GraphicsContext3D::STENCIL_TEST:
+    case GraphicsContext3D::RASTERIZER_DISCARD:
+        return true;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid capability");
+        return false;
+    }
 }
 
 } // namespace WebCore
