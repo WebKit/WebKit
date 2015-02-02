@@ -68,24 +68,24 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 {
     GraphicsContext* context = paintInfo.context;
 
-    LayoutRect contentRect = contentBoxRect();
-    contentRect.moveBy(paintOffset);
-    LayoutRect paintRect = replacedContentRect(intrinsicSize());
-    paintRect.moveBy(paintOffset);
+    LayoutRect contentBoxRect = this->contentBoxRect();
+    contentBoxRect.moveBy(paintOffset);
+    LayoutRect replacedContentRect = this->replacedContentRect(intrinsicSize());
+    replacedContentRect.moveBy(paintOffset);
 
     // Not allowed to overflow the content box.
-    bool clip = !contentRect.contains(paintRect);
+    bool clip = !contentBoxRect.contains(replacedContentRect);
     GraphicsContextStateSaver stateSaver(*paintInfo.context, clip);
     if (clip)
-        paintInfo.context->clip(snappedIntRect(contentRect));
+        paintInfo.context->clip(snappedIntRect(contentBoxRect));
 
     if (Page* page = frame().page()) {
         if (paintInfo.phase == PaintPhaseForeground)
-            page->addRelevantRepaintedObject(this, intersection(paintRect, contentRect));
+            page->addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
     }
 
     bool useLowQualityScale = style().imageRendering() == ImageRenderingCrispEdges || style().imageRendering() == ImageRenderingOptimizeSpeed;
-    canvasElement().paint(context, paintRect, useLowQualityScale);
+    canvasElement().paint(context, replacedContentRect, useLowQualityScale);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()

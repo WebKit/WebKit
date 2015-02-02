@@ -324,11 +324,11 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
 LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) const
 {
     LayoutRect contentRect = contentBoxRect();
-    ObjectFit objectFit = style().objectFit();
-    if (objectFit == ObjectFitFill)
+    if (intrinsicSize.isEmpty())
         return contentRect;
 
-    if (!intrinsicSize.width() || !intrinsicSize.height())
+    ObjectFit objectFit = style().objectFit();
+    if (objectFit == ObjectFitFill)
         return contentRect;
 
     LayoutRect finalRect = contentRect;

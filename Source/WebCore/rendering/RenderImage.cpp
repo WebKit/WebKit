@@ -277,8 +277,7 @@ bool RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize, bool im
 void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
-    LayoutRect paintRect = replacedContentRect(intrinsicSize());
-    IntSize containerSize(paintRect.width(), paintRect.height());
+    IntSize containerSize(replacedContentRect(intrinsicSize()).size());
     if (!containerSize.isEmpty())
         imageResource().setContainerSizeForRenderer(containerSize);
 }
@@ -455,21 +454,21 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             return;
         }
 
-        LayoutRect contentRect = contentBoxRect();
-        contentRect.moveBy(paintOffset);
-        LayoutRect paintRect = replacedContentRect(intrinsicSize());
-        paintRect.moveBy(paintOffset);
-        bool clip = !contentRect.contains(paintRect);
+        LayoutRect contentBoxRect = this->contentBoxRect();
+        contentBoxRect.moveBy(paintOffset);
+        LayoutRect replacedContentRect = this->replacedContentRect(intrinsicSize());
+        replacedContentRect.moveBy(paintOffset);
+        bool clip = !contentBoxRect.contains(replacedContentRect);
         GraphicsContextStateSaver stateSaver(*context, clip);
         if (clip)
-            context->clip(contentRect);
+            context->clip(contentBoxRect);
 
-        paintIntoRect(context, snapRectToDevicePixels(paintRect, deviceScaleFactor));
+        paintIntoRect(context, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
         
         if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
             // For now, count images as unpainted if they are still progressively loading. We may want 
             // to refine this in the future to account for the portion of the image that has painted.
-            LayoutRect visibleRect = intersection(paintRect, contentRect);
+            LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
             if (cachedImage()->isLoading())
                 page->addRelevantUnpaintedObject(this, visibleRect);
             else
