@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Yoav Weiss <yoav@yoav.ws>
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,51 +21,15 @@
 #ifndef SourceSizeList_h
 #define SourceSizeList_h
 
-#if ENABLE(PICTURE_SIZES)
-
-#include "CSSParserValues.h"
-#include "MediaQueryExp.h"
-#include <memory>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class RenderStyle;
-class RenderView;
 class Frame;
+class RenderView;
 
-class SourceSize {
-public:
-    SourceSize(std::unique_ptr<MediaQueryExp> mediaExp, const CSSParserValue& length)
-        : m_mediaExp(WTF::move(mediaExp))
-        , m_length(length)
-    {
-    }
-
-    bool match(RenderStyle&, Frame*);
-    unsigned length(RenderStyle&, RenderView*);
-
-private:
-    std::unique_ptr<MediaQueryExp> m_mediaExp;
-    CSSParserValue m_length;
-};
-
-class SourceSizeList {
-public:
-    void append(std::unique_ptr<SourceSize> sourceSize)
-    {
-        m_list.append(WTF::move(sourceSize));
-    }
-
-    static unsigned parseSizesAttribute(const String& sizesAttribute, RenderView*, Frame*);
-    unsigned getEffectiveSize(RenderStyle&, RenderView*, Frame*);
-
-private:
-    Vector<std::unique_ptr<SourceSize>> m_list;
-};
+unsigned parseSizesAttribute(StringView sizesAttribute, RenderView*, Frame*);
 
 } // namespace WebCore
 
-#endif // ENABLE(PICTURE_SIZES)
-
 #endif // SourceSizeList_h
-

@@ -1,5 +1,85 @@
 2015-02-02  Darin Adler  <darin@apple.com>
 
+        REGRESSION (r170576): Storage leaks in parsing of CSS image sizes
+        https://bugs.webkit.org/show_bug.cgi?id=141026
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSGrammar.y.in: Fixed all the shift/reduce conflicts caused
+        by the ENABLE_PICTURE_SIZES code by removing all the redundant
+        maybe_space which caused them. Rearranged the productions for
+        ENABLE_PICTURE_SIZES to tighten up the code quite a bit. Changed
+        the code to build up the source size vector as a Vector instead of
+        a special class, and use the SourceSize struct from inside the
+        CSSParser class.'
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::setupParser): Changed this to take a StringView.
+        In the future we can change all the parsing functions to take StringView,
+        since they don't work with the String in place.
+        (WebCore::CSSParser::parseSizesAttribute): Changed to return a vector
+        of SourceSize instead of a SourceSizeList. This is better because it's
+        a real CSS data structure that does not contain a CSSParserValue.
+        (WebCore::CSSParser::sourceSize): Added. Helper that creates a
+        SourceSize, mapping parser data structures into real CSS ones.
+
+        * css/CSSParser.h: Updated for changes above.
+
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery): Use std::make_unique and the copy
+        constructor directly instead of using a MediaQuery::copy function.
+
+        * css/MediaQueryExp.cpp: Streamlined the class a little bit.
+        * css/MediaQueryExp.h: Removed unneeded includes. Moved functions out
+        of the class body so the class is easier to read. Removed the unneeded
+        copy function.
+
+        * css/SourceSizeList.cpp:
+        (WebCore::SourceSize::match): Changed to use WTF::move instead
+        of releasing and then re-creating the unique_ptr.
+        (WebCore::computeLength): Added a comment to explain this function
+        is using an incorrect strategy. Also added some type checking code
+        to handle cases where a null or non-primitive CSS value might be
+        returned. Probably dead code, but we don't want to risk a bad cast.
+        Worthe cleaning up when we fix the strategy.
+        (WebCore::SourceSizeList::getEffectiveSize): Updated since the
+        vector now contains actual SourceSize objects rather than pointers
+        to SourceSize objects on the heap.
+
+        * css/SourceSizeList.h: Changed the CSSParserValue argument to be
+        an rvalue reference to make it clearer that we take ownership of it
+        when it's moved in. Added a move constructor and a destructor. Added
+        comments explaining that it's not correct design to use a
+        CSSParserValue here, outside the parser. Changed SourceSizeList's
+        append function to move a SourceSize in rather than a unique_ptr.
+        Made getEffectiveSize private. Moved the various inline functions to
+        the bottom of the file to make the class definitions easier to read.
+
+
+        * css/SourceSizeList.cpp: Made almost everything about this private
+        to this source file instead of public in the header.
+        (WebCore::match): Made this a free function instead of a member function
+        and made it take the media query expression as an argument.
+        (WebCore::computeLength): Changed the argument type to CSSValue*,
+        rather than using CSSParserValue here outside the parser.
+        (WebCore::parseSizesAttribute): Streamlined and simplified this.
+        Now that the parser builds the list in the correct order, there was
+        no need to iterate backwards any more so we could use a modern for
+        loop.
+
+        * css/SourceSizeList.h: Removed almost everything in this header.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Call the
+        parseSizesAttribute function as free function since it's no longer
+        a member of a SourceSizeList class.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        Ditto.
+
+2015-02-02  Darin Adler  <darin@apple.com>
+
         Fix some leaks found by the leak bot
         https://bugs.webkit.org/show_bug.cgi?id=141149
 

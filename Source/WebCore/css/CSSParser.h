@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2010, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 - 2010  Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -117,9 +117,6 @@ public:
     bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
-#if ENABLE(PICTURE_SIZES)
-    std::unique_ptr<SourceSizeList> parseSizesAttribute(const String&);
-#endif
 
     void addPropertyWithPrefixingVariant(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
@@ -137,6 +134,15 @@ public:
     PassRefPtr<CSSValue> parseAttr(CSSParserValueList& args);
 
     PassRefPtr<CSSValue> parseBackgroundColor();
+
+#if ENABLE(PICTURE_SIZES)
+    struct SourceSize {
+        std::unique_ptr<MediaQueryExp> expression;
+        RefPtr<CSSValue> length;
+    };
+    Vector<SourceSize> parseSizesAttribute(StringView);
+    SourceSize sourceSize(std::unique_ptr<MediaQueryExp>&&, CSSParserValue&);
+#endif
 
     // FIXME: Maybe these two methods could be combined into one.
     bool parseMaskImage(CSSParserValueList&, RefPtr<CSSValue>&);
@@ -366,7 +372,7 @@ public:
     RefPtr<StyleKeyframe> m_keyframe;
     std::unique_ptr<MediaQuery> m_mediaQuery;
 #if ENABLE(PICTURE_SIZES)
-    std::unique_ptr<SourceSizeList> m_sourceSizeList;
+    std::unique_ptr<Vector<SourceSize>> m_sourceSizeList;
 #endif
     std::unique_ptr<CSSParserValueList> m_valueList;
     bool m_supportsCondition;
@@ -514,11 +520,11 @@ private:
     void recheckAtKeyword(const UChar* str, int len);
 
     template<unsigned prefixLength, unsigned suffixLength>
-    inline void setupParser(const char (&prefix)[prefixLength], const String& string, const char (&suffix)[suffixLength])
+    void setupParser(const char (&prefix)[prefixLength], StringView string, const char (&suffix)[suffixLength])
     {
         setupParser(prefix, prefixLength - 1, string, suffix, suffixLength - 1);
     }
-    void setupParser(const char* prefix, unsigned prefixLength, const String&, const char* suffix, unsigned suffixLength);
+    void setupParser(const char* prefix, unsigned prefixLength, StringView, const char* suffix, unsigned suffixLength);
     bool inShorthand() const { return m_inParseShorthand; }
 
     bool validateWidth(ValueWithCalculation&);

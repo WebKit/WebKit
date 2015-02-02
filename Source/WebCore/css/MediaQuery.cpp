@@ -110,7 +110,7 @@ MediaQuery::MediaQuery(const MediaQuery& o)
     , m_serializationCache(o.m_serializationCache)
 {
     for (unsigned i = 0; i < m_expressions->size(); ++i)
-        (*m_expressions)[i] = o.m_expressions->at(i)->copy();
+        (*m_expressions)[i] = std::make_unique<MediaQueryExp>(*o.m_expressions->at(i));
 }
 
 MediaQuery::~MediaQuery()

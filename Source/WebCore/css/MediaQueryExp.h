@@ -1,8 +1,7 @@
 /*
- * CSS Media Query
- *
  * Copyright (C) 2006 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,52 +31,69 @@
 #include "CSSValue.h"
 #include "MediaFeatureNames.h"
 #include <memory>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
 class CSSParserValueList;
 
 class MediaQueryExp {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
-    ~MediaQueryExp();
+    explicit MediaQueryExp(const AtomicString& mediaFeature = emptyAtom, CSSParserValueList* values = nullptr);
 
-    AtomicString mediaFeature() const { return m_mediaFeature; }
+    const AtomicString& mediaFeature() const;
+    CSSValue* value() const;
 
-    CSSValue* value() const { return m_value.get(); }
-
-    bool operator==(const MediaQueryExp& other) const
-    {
-        return (other.m_mediaFeature == m_mediaFeature)
-            && ((!other.m_value && !m_value)
-                || (other.m_value && m_value && other.m_value->equals(*m_value)));
-    }
-
-    bool isValid() const { return m_isValid; }
-
-    bool isViewportDependent() const { return m_mediaFeature == MediaFeatureNames::widthMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::heightMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::min_widthMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::min_heightMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::max_widthMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::max_heightMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::orientationMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature
-                                            || m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;  }
+    bool isValid() const;
+    bool isViewportDependent() const;
 
     String serialize() const;
 
-    std::unique_ptr<MediaQueryExp> copy() const { return std::make_unique<MediaQueryExp>(*this); }
+    bool operator==(const MediaQueryExp&) const;
 
 private:
     AtomicString m_mediaFeature;
     RefPtr<CSSValue> m_value;
-    bool m_isValid;
-    String m_serializationCache;
+    bool m_isValid { false };
+    mutable String m_serializationCache;
 };
+
+inline const AtomicString& MediaQueryExp::mediaFeature() const
+{
+    return m_mediaFeature;
+}
+
+inline CSSValue* MediaQueryExp::value() const
+{
+    return m_value.get();
+}
+
+inline bool MediaQueryExp::operator==(const MediaQueryExp& other) const
+{
+    return (other.m_mediaFeature == m_mediaFeature)
+        && ((!other.m_value && !m_value)
+            || (other.m_value && m_value && other.m_value->equals(*m_value)));
+}
+
+inline bool MediaQueryExp::isValid() const
+{
+    return m_isValid;
+}
+
+inline bool MediaQueryExp::isViewportDependent() const
+{
+    return m_mediaFeature == MediaFeatureNames::widthMediaFeature
+        || m_mediaFeature == MediaFeatureNames::heightMediaFeature
+        || m_mediaFeature == MediaFeatureNames::min_widthMediaFeature
+        || m_mediaFeature == MediaFeatureNames::min_heightMediaFeature
+        || m_mediaFeature == MediaFeatureNames::max_widthMediaFeature
+        || m_mediaFeature == MediaFeatureNames::max_heightMediaFeature
+        || m_mediaFeature == MediaFeatureNames::orientationMediaFeature
+        || m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature
+        || m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature
+        || m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;
+}
 
 } // namespace
 

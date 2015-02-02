@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2012 Intel Corporation. All rights reserved.
@@ -104,17 +104,9 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %}
 
 #if ENABLE_CSS_GRID_LAYOUT
-#if ENABLE_PICTURE_SIZES
-%expect 36
-#else
 %expect 32
-#endif
-#else
-#if ENABLE_PICTURE_SIZES
-%expect 35
 #else
 %expect 31
-#endif
 #endif
 
 %nonassoc LOWEST_PREC
@@ -265,23 +257,21 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <mediaQueryRestrictor> maybe_media_restrictor
 
 %union { MediaQueryExp* mediaQueryExp; }
-%type <mediaQueryExp> media_query_exp
-%destructor { delete $$; } media_query_exp
+%type <mediaQueryExp> media_query_exp base_media_query_exp
+%destructor { delete $$; } media_query_exp base_media_query_exp
 
 #if ENABLE_PICTURE_SIZES
-%union { MediaQueryExp* mediaCondition; }
-%type <mediaQueryExp> media_condition
-%destructor { delete $$; } media_condition
 
-%union { SourceSize* sourceSize; }
-%type <sourceSize> source_size
-%destructor { delete $$; } source_size
-
-%union { SourceSizeList* sourceSizeList; }
+%union { Vector<CSSParser::SourceSize>* sourceSizeList; }
 %type <sourceSizeList> source_size_list
 %destructor { delete $$; } source_size_list
 
+%type <mediaQueryExp> maybe_source_media_query_exp
+%destructor { delete $$; } maybe_source_media_query_exp
+
 %type <value> source_size_length
+%destructor { destroy($$); } source_size_length
+
 #endif
 
 %union { Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList; }
@@ -298,12 +288,12 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <keyframeRuleList> keyframes_rule
 %destructor { delete $$; } keyframes_rule
 
-// These two parser values never need to be destroyed because they are never functions or value lists.
-%type <value> key unary_term
+// These parser values never need to be destroyed because they are never functions or value lists.
+%type <value> calc_func_term key unary_term
 
 // These parser values need to be destroyed because they might be functions.
-%type <value> calc_func_term calc_function function min_or_max_function term
-%destructor { destroy($$); } calc_func_term calc_function function min_or_max_function term
+%type <value> calc_function function min_or_max_function term
+%destructor { destroy($$); } calc_function function min_or_max_function term
 
 %union { CSSPropertyID id; }
 %type <id> property
@@ -334,10 +324,13 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
+
 %type <string> lang_range
+
 %union { Vector<CSSParserString>* stringList; }
 %type <stringList> comma_separated_lang_ranges
 %destructor { delete $$; } comma_separated_lang_ranges
+
 #endif
 
 %type <string> min_or_max
@@ -348,11 +341,13 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <location> error_location
 
 #if ENABLE_CSS_GRID_LAYOUT
+
 %type <valueList> ident_list
 %destructor { delete $$; } ident_list
 
 %type <value> track_names_list
 %destructor { destroy($$); } track_names_list
+
 #endif
 
 %token SUPPORTS_AND
@@ -577,55 +572,50 @@ string_or_uri: STRING | URI ;
 maybe_media_value: /*empty*/ { $$ = nullptr; } | ':' maybe_space expr maybe_space { $$ = $3; } ;
 
 #if ENABLE_PICTURE_SIZES
-media_condition:
-    maybe_space '(' maybe_space IDENT maybe_space maybe_media_value ')' maybe_space {
-        std::unique_ptr<CSSParserValueList> mediaValue($6);
-        $4.lower();
-        $$ = new MediaQueryExp($4, mediaValue.get());
+
+webkit_source_size_list:
+    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list maybe_space '}' {
+        parser->m_sourceSizeList = std::unique_ptr<Vector<CSSParser::SourceSize>>($3);
     }
     ;
 
-webkit_source_size_list:
-    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list '}' { parser->m_sourceSizeList = std::unique_ptr<SourceSizeList>($3); };
-
 source_size_list:
-    maybe_space source_size maybe_space {
-        $$ = new SourceSizeList();
-        $$->append(std::unique_ptr<SourceSize>($2));
+    maybe_source_media_query_exp source_size_length {
+        $$ = new Vector<CSSParser::SourceSize>;
+        $$->append(parser->sourceSize(std::unique_ptr<MediaQueryExp>($1), $2));
     }
-    | maybe_space source_size maybe_space ',' maybe_space source_size_list maybe_space {
-        $$ = $6;
-        $$->append(std::unique_ptr<SourceSize>($2));
-    };
-
-source_size_length:
-    unary_term {
+    | source_size_list maybe_space ',' maybe_space maybe_source_media_query_exp source_size_length {
         $$ = $1;
+        $$->append(parser->sourceSize(std::unique_ptr<MediaQueryExp>($5), $6));
     }
-    | calc_function {
-        $$ = $1;
-    };
+    ;
 
-source_size:
-    media_condition source_size_length {
-        $$ = new SourceSize(std::unique_ptr<MediaQueryExp>($1), $2);
+maybe_source_media_query_exp:
+    /* empty */ {
+        $$ = new MediaQueryExp;
     }
-    | source_size_length {
-        $$ = new SourceSize(std::make_unique<MediaQueryExp>(emptyString(), nullptr), $1);
-    };
+    | base_media_query_exp maybe_space;
+
+source_size_length: unary_term | calc_function;
+
 #endif
 
+base_media_query_exp: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
+        std::unique_ptr<CSSParserValueList> mediaValue($5);
+        $3.lower();
+        $$ = new MediaQueryExp($3, mediaValue.get());
+    }
+    ;
+
 media_query_exp:
-    maybe_media_restrictor maybe_space '(' maybe_space IDENT maybe_space maybe_media_value ')' maybe_space {
-        // If restrictor is specified, media query expression is invalid.
-        // Create empty media query expression and continue parsing media query.
-        std::unique_ptr<CSSParserValueList> mediaValue($7);
-        if ($1 != MediaQuery::None)
-            $$ = new MediaQueryExp(emptyString(), nullptr);
-        else {
-            $5.lower();
-            $$ = new MediaQueryExp($5, mediaValue.get());
-        }
+    maybe_media_restrictor maybe_space base_media_query_exp maybe_space {
+        if ($1 != MediaQuery::None) {
+            // If restrictor is specified, media query expression is invalid.
+            // Create empty media query expression and continue parsing media query.
+            delete $3;
+            $$ = new MediaQueryExp;
+        } else
+            $$ = $3;
     }
     ;
 
@@ -1915,4 +1905,3 @@ error_recovery:
     ;
 
 %%
-

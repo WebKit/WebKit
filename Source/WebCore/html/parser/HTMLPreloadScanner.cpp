@@ -107,12 +107,7 @@ public:
 
         // Resolve between src and srcSet if we have them.
         if (!m_srcSetAttribute.isEmpty()) {
-            unsigned sourceSize = 0;
-#if ENABLE(PICTURE_SIZES)
-            sourceSize = SourceSizeList::parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
-#else
-            UNUSED_PARAM(document);
-#endif
+            unsigned sourceSize = parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);
         }

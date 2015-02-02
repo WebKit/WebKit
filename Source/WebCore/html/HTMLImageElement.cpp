@@ -143,10 +143,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (is<RenderImage>(renderer()))
             downcast<RenderImage>(*renderer()).updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        unsigned sourceSize = 0;
-#if ENABLE(PICTURE_SIZES)
-        sourceSize = SourceSizeList::parseSizesAttribute(fastGetAttribute(sizesAttr), document().renderView(), document().frame());
-#endif
+        unsigned sourceSize = parseSizesAttribute(fastGetAttribute(sizesAttr).string(), document().renderView(), document().frame());
         ImageCandidate candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr), sourceSize);
         setBestFitURLAndDPRFromImageCandidate(candidate);
         m_imageLoader.updateFromElementIgnoringPreviousError();

@@ -1,9 +1,7 @@
 /*
- * CSS Media Query
- *
  * Copyright (C) 2006 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,8 +160,6 @@ static inline bool featureWithoutValue(const AtomicString& mediaFeature)
 
 MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
     : m_mediaFeature(mediaFeature)
-    , m_value(0)
-    , m_isValid(false)
 {
     // Initialize media query expression that must have 1 or more values.
     if (valueList) {
@@ -228,10 +224,6 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueLis
         m_isValid = true;
 }
 
-MediaQueryExp::~MediaQueryExp()
-{
-}
-
 String MediaQueryExp::serialize() const
 {
     if (!m_serializationCache.isNull())
@@ -246,7 +238,7 @@ String MediaQueryExp::serialize() const
     }
     result.append(')');
 
-    const_cast<MediaQueryExp*>(this)->m_serializationCache = result.toString();
+    m_serializationCache = result.toString();
     return m_serializationCache;
 }
 
