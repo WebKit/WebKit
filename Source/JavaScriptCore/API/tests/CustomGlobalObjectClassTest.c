@@ -25,6 +25,7 @@
 
 #include "CustomGlobalObjectClassTest.h"
 
+#include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <stdio.h>
 
@@ -97,4 +98,48 @@ void customGlobalObjectClassTest()
     JSStringRelease(script);
 
     assertTrue(executedCallback, "Executed custom global object callback");
+}
+
+void globalObjectSetPrototypeTest()
+{
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = "Global";
+    JSClassRef global = JSClassCreate(&definition);
+    JSGlobalContextRef context = JSGlobalContextCreate(global);
+    JSObjectRef object = JSContextGetGlobalObject(context);
+
+    JSObjectRef above = JSObjectMake(context, 0, 0);
+    JSStringRef test = JSStringCreateWithUTF8CString("test");
+    JSValueRef value = JSValueMakeString(context, test);
+    JSObjectSetProperty(context, above, test, value, kJSPropertyAttributeDontEnum, 0);
+
+    JSObjectSetPrototype(context, object, above);
+    JSStringRef script = JSStringCreateWithUTF8CString("test === \"test\"");
+    JSValueRef result = JSEvaluateScript(context, script, 0, 0, 0, 0);
+
+    assertTrue(JSValueToBoolean(context, result), "test === \"test\"");
+
+    JSStringRelease(test);
+    JSStringRelease(script);
+}
+
+void globalObjectPrivatePropertyTest()
+{
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = "Global";
+    JSClassRef global = JSClassCreate(&definition);
+    JSGlobalContextRef context = JSGlobalContextCreate(global);
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+
+    JSStringRef privateName = JSStringCreateWithUTF8CString("private");
+    JSValueRef privateValue = JSValueMakeString(context, privateName);
+    assertTrue(JSObjectSetPrivateProperty(context, globalObject, privateName, privateValue), "JSObjectSetPrivateProperty succeeded");
+    JSValueRef result = JSObjectGetPrivateProperty(context, globalObject, privateName);
+    assertTrue(JSValueIsStrictEqual(context, privateValue, result), "privateValue === \"private\"");
+
+    assertTrue(JSObjectDeletePrivateProperty(context, globalObject, privateName), "JSObjectDeletePrivateProperty succeeded");
+    result = JSObjectGetPrivateProperty(context, globalObject, privateName);
+    assertTrue(JSValueIsNull(context, result), "Deleted private property is indeed no longer present");
+
+    JSStringRelease(privateName);
 }
