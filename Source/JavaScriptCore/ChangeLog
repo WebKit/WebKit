@@ -1,3 +1,48 @@
+2015-02-02  Saam Barati  <saambarati1@gmail.com>
+
+        Create tests for JSC's Control Flow Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=141123
+
+        Reviewed by Filip Pizlo.
+
+        This patch creates a control flow profiler testing API in jsc.cpp 
+        that accepts a function and a string as arguments. The string must 
+        be a substring of the text of the function argument. The API returns 
+        a boolean indicating whether or not the basic block that encloses the 
+        substring has executed.
+
+        This patch uses this API to test that the control flow profiler
+        behaves as expected on basic block boundaries. These tests do not
+        provide full coverage for all JavaScript statements that can create
+        basic blocks boundaries. Full coverage will come in a later patch.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionHasBasicBlockExecuted):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted):
+        * runtime/ControlFlowProfiler.h:
+        * tests/controlFlowProfiler: Added.
+        * tests/controlFlowProfiler.yaml: Added.
+        * tests/controlFlowProfiler/driver: Added.
+        * tests/controlFlowProfiler/driver/driver.js: Added.
+        (assert):
+        * tests/controlFlowProfiler/if-statement.js: Added.
+        (testIf):
+        (noMatches):
+        * tests/controlFlowProfiler/loop-statements.js: Added.
+        (forRegular):
+        (forIn):
+        (forOf):
+        (whileLoop):
+        * tests/controlFlowProfiler/switch-statements.js: Added.
+        (testSwitch):
+        * tests/controlFlowProfiler/test-jit.js: Added.
+        (tierUpToBaseline):
+        (tierUpToDFG):
+        (baselineTest):
+        (dfgTest):
+
 2015-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         Polymorphic call inlining should be based on polymorphic call inline caching rather than logging

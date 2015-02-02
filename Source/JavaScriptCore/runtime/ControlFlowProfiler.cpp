@@ -98,4 +98,23 @@ Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(intptr_t 
     return result;
 }
 
+bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, intptr_t sourceID, VM& vm)
+{
+    const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
+    int bestDistance = INT_MAX;
+    BasicBlockRange bestRange;
+    bestRange.m_startOffset = bestRange.m_endOffset = -1;
+    // Because some ranges may overlap because of function boundaries, make sure to find the smallest range enclosing the offset.
+    for (BasicBlockRange range : blocks) {
+        if (range.m_startOffset <= offset && offset <= range.m_endOffset && (range.m_endOffset - range.m_startOffset) < bestDistance) {
+            RELEASE_ASSERT(range.m_endOffset - range.m_startOffset >= 0);
+            bestDistance = range.m_endOffset - range.m_startOffset;
+            bestRange = range;
+        }
+    }
+
+    RELEASE_ASSERT(bestRange.m_startOffset != -1 && bestRange.m_endOffset != -1);
+    return bestRange.m_hasExecuted;
+}
+
 } // namespace JSC

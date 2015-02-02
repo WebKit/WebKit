@@ -482,6 +482,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -638,6 +639,7 @@ protected:
         addFunction(vm, "returnTypeFor", functionReturnTypeFor, 1);
 
         addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
+        addFunction(vm, "hasBasicBlockExecuted", functionHasBasicBlockExecuted, 2);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1112,6 +1114,23 @@ EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState* ex
     RELEASE_ASSERT(exec->vm().controlFlowProfiler());
     exec->vm().controlFlowProfiler()->dumpData();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().controlFlowProfiler());
+
+    JSValue functionValue = exec->argument(0);
+    RELEASE_ASSERT(functionValue.isFunction());
+    FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
+
+    RELEASE_ASSERT(exec->argument(1).isString());
+    String substring = exec->argument(1).getString(exec);
+    String sourceCodeText = executable->source().toString();
+    int offset = sourceCodeText.find(substring) + executable->source().startOffset();
+    
+    bool hasExecuted = exec->vm().controlFlowProfiler()->hasBasicBlockAtTextOffsetBeenExecuted(offset, executable->sourceID(), exec->vm());
+    return JSValue::encode(jsBoolean(hasExecuted));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog
