@@ -1,5 +1,26 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176372.
+
+    2014-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [OS X] Upright vertical text is completely broken for multi-code-unit codepoints
+            https://bugs.webkit.org/show_bug.cgi?id=138891
+
+            Reviewed by Dan Bernstein.
+
+            We were assuming that we can use the string index (in UTF-16) as the glyph
+            index. This falls down when a single codepoint (and glyph) contians
+            multiple code units.
+
+            Test: platform/mac/fast/text/multiple-codeunit-vertical-upright.html
+
+            * platform/graphics/GlyphPage.h:
+            * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+            (WebCore::GlyphPage::fill):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176318.
 
     2014-11-19  Chris Fleizach  <cfleizach@apple.com>
