@@ -1,5 +1,20 @@
 2015-02-03  Jeremy Jones  <jeremyj@apple.com>
 
+        Restore interface before exiting optimized fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=141167
+
+        Reviewed by Simon Fraser.
+
+        This change allows the user interface to be restored before exiting optimized fullscreen mode.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Add declaration.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: 
+        (-[WebAVPlayerController playerViewController:restoreUserInterfaceForOptimizedFullscreenStopWithCompletionHandler:]): Added.
+        (WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline): Added.
+        * platform/spi/ios/AVKitSPI.h: Add new SPI.
+
+2015-02-03  Jeremy Jones  <jeremyj@apple.com>
+
         Prevent flicker when exiting fullscreen by synchronizing transactions.
         https://bugs.webkit.org/show_bug.cgi?id=140897
 

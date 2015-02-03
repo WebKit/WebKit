@@ -73,6 +73,7 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
     AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived = 3,
 };
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForOptimizedFullscreeStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;
 @end
 
 typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
