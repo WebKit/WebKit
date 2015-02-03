@@ -1,3 +1,10 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Project file cleanups after r179429.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         arguments[-1] should have well-defined behavior

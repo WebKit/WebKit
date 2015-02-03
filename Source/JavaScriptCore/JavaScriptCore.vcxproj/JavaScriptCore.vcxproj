@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -1296,7 +1296,6 @@
     <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\inspector\InspectorEnvironment.h" />
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h" />
-    <ClInclude Include="..\inspector\InspectorProtocolObjects.h" />
     <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />

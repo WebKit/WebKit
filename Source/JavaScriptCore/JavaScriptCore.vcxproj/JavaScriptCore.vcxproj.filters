@@ -372,9 +372,6 @@
     <ClCompile Include="..\interpreter\VMInspector.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\ExecutableAllocator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -854,7 +851,7 @@
     </ClCompile>
     <ClCompile Include="..\runtime\Symbol.cpp">
       <Filter>runtime</Filter>
-    </ClInclude>
+    </ClCompile>
     <ClCompile Include="..\runtime\SymbolConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1054,9 +1051,6 @@
       <Filter>dfg</Filter>
     </ClCompile>
     <ClCompile Include="..\dfg\DFGBasicBlock.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dfg\DFGBinarySwitch.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
     <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp">
@@ -1704,9 +1698,6 @@
     <ClCompile Include="..\bytecode\CallEdge.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
-    <ClCompile Include="..\bytecode\CallEdgeProfile.cpp">
-      <Filter>bytecode</Filter>
-    </ClCompile>
     <ClCompile Include="..\bytecode\CallVariant.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -1751,6 +1742,18 @@
     </ClCompile>
     <ClCompile Include="..\ftl\FTLOperations.cpp">
       <Filter>ftl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\BinarySwitch.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPutLocalSinkingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\VirtualRegister.cpp">
+      <Filter>bytecode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2258,9 +2261,6 @@
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\InspectorProtocolTypes.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\InspectorValues.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -2311,9 +2311,6 @@
     </ClInclude>
     <ClInclude Include="..\interpreter\VMInspector.h">
       <Filter>interpreter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\ClosureCallStubRoutine.h">
-      <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\CompactJITCodeMap.h">
       <Filter>jit</Filter>
@@ -3351,9 +3348,6 @@
     <ClInclude Include="..\dfg\DFGBasicBlockInlines.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGBinarySwitch.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGBlockInsertionSet.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -4141,12 +4135,6 @@
     <ClInclude Include="..\bytecode\CallEdge.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\CallEdgeProfile.h">
-      <Filter>bytecode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bytecode\CallEdgeProfileInlines.h">
-      <Filter>bytecode</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGAvailabilityMap.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -4200,6 +4188,18 @@
     </ClInclude>
     <ClInclude Include="..\ftl\FTLOperations.h">
       <Filter>ftl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\BinarySwitch.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPreciseLocalClobberize.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPutLocalSinkingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h">
+      <Filter>jit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
