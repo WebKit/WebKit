@@ -4657,6 +4657,13 @@ WebGLGetInfo WebGLRenderingContextBase::getUnsignedIntParameter(GC3Denum pname)
     return WebGLGetInfo(static_cast<unsigned int>(value));
 }
 
+WebGLGetInfo WebGLRenderingContextBase::getInt64Parameter(GC3Denum pname)
+{
+    GC3Dint64 value = 0;
+    m_context->getInteger64v(pname, &value);
+    return WebGLGetInfo(value);
+}
+
 WebGLGetInfo WebGLRenderingContextBase::getWebGLFloatArrayParameter(GC3Denum pname)
 {
     GC3Dfloat value[4] = {0};

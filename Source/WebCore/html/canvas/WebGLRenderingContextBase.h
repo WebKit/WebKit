@@ -570,6 +570,7 @@ protected:
     WebGLGetInfo getFloatParameter(GC3Denum);
     WebGLGetInfo getIntParameter(GC3Denum);
     WebGLGetInfo getUnsignedIntParameter(GC3Denum);
+    WebGLGetInfo getInt64Parameter(GC3Denum);
     WebGLGetInfo getWebGLFloatArrayParameter(GC3Denum);
     WebGLGetInfo getWebGLIntArrayParameter(GC3Denum);
 

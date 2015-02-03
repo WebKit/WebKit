@@ -57,6 +57,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return jsStringWithCache(exec, info.getString());
     case WebGLGetInfo::kTypeUnsignedInt:
         return jsNumber(info.getUnsignedInt());
+    case WebGLGetInfo::kTypeInt64:
+        return jsNumber(info.getInt64());
     default:
         notImplemented();
         return jsUndefined();

@@ -1020,6 +1020,7 @@ public:
     void getFloatv(GC3Denum pname, GC3Dfloat* value);
     void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value);
     void getIntegerv(GC3Denum pname, GC3Dint* value);
+    void getInteger64v(GC3Denum pname, GC3Dint64* value);
     void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     void getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     String getProgramInfoLog(Platform3DObject);

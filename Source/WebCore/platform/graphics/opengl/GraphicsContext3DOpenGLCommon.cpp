@@ -1370,6 +1370,15 @@ void GraphicsContext3D::getFloatv(GC3Denum pname, GC3Dfloat* value)
     makeContextCurrent();
     ::glGetFloatv(pname, value);
 }
+    
+void GraphicsContext3D::getInteger64v(GC3Denum pname, GC3Dint64* value)
+{
+    UNUSED_PARAM(pname);
+    makeContextCurrent();
+    *value = 0;
+    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
+    // ::glGetInteger64v(pname, value);
+}
 
 void GraphicsContext3D::getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value)
 {

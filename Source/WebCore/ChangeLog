@@ -1,3 +1,32 @@
+2015-02-02  Roger Fong  <roger_fong@apple.com>
+
+        WebGL2: Implement spec section 3.7.1 Setting and getting state (Part 2).
+        https://bugs.webkit.org/show_bug.cgi?id=141096
+        <rdar://problem/15002469>
+
+        Reviewed by Brent Fulgham.
+
+        This patch handles some of the valid arguments that could be passed into getParameter.
+        The unhandled cases will be implemented as the associated WebGL2 features are implemented.
+        In addition, getParameter queries that return 64 bit integer currently just return 0 as 
+        we need to use ::glGetInteger64v which is only available in GLES 3.0 headers.
+        I will be adding these headers in a future patch.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::toJS): Accept a 64 bit integer type.
+        * html/canvas/WebGL2RenderingContext.cpp: Handle various parameter inputs.
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLGetInfo.cpp: Add a 64 bit integer type.
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getInt64):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getInt64Parameter):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getInteger64v):
+
 2015-02-02  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: use std::upper_bound in splitFragmentToFitLine()

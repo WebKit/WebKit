@@ -1102,6 +1102,88 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
             return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return WebGLGetInfo();
+    case GraphicsContext3D::FRAGMENT_SHADER_DERIVATIVE_HINT:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_3D_TEXTURE_SIZE:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_ARRAY_TEXTURE_LAYERS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_COLOR_ATTACHMENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
+        return getInt64Parameter(pname);
+    case GraphicsContext3D::MAX_COMBINED_UNIFORM_BLOCKS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS:
+        return getInt64Parameter(pname);
+    case GraphicsContext3D::MAX_DRAW_BUFFERS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_ELEMENT_INDEX:
+        return getInt64Parameter(pname);
+    case GraphicsContext3D::MAX_ELEMENTS_INDICES:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_ELEMENTS_VERTICES:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_COMPONENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_BLOCKS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_PROGRAM_TEXEL_OFFSET:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_SAMPLES:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_SERVER_WAIT_TIMEOUT:
+        return getInt64Parameter(pname);
+    case GraphicsContext3D::MAX_TEXTURE_LOD_BIAS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_UNIFORM_BLOCK_SIZE:
+        return getInt64Parameter(pname);
+    case GraphicsContext3D::MAX_UNIFORM_BUFFER_BINDINGS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VARYING_COMPONENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_OUTPUT_COMPONENTS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_UNIFORM_BLOCKS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::MAX_VERTEX_UNIFORM_COMPONENTS: 
+        return getIntParameter(pname);                            
+    case GraphicsContext3D::MIN_PROGRAM_TEXEL_OFFSET:
+        return getIntParameter(pname);
+    case GraphicsContext3D::PACK_ROW_LENGTH:
+        return getIntParameter(pname);
+    case GraphicsContext3D::PACK_SKIP_PIXELS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::PACK_SKIP_ROWS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_IMAGE_HEIGHT:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_ROW_LENGTH:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_SKIP_IMAGES:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_SKIP_PIXELS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::UNPACK_SKIP_ROWS:
+        return getIntParameter(pname);
+    case GraphicsContext3D::RASTERIZER_DISCARD:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::SAMPLE_COVERAGE:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_ACTIVE:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::TRANSFORM_FEEDBACK_PAUSED:
+        return getBooleanParameter(pname);
+    case GraphicsContext3D::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
+        return getIntParameter(pname);
     case GraphicsContext3D::COPY_READ_BUFFER:
     case GraphicsContext3D::COPY_WRITE_BUFFER:
     case GraphicsContext3D::DRAW_BUFFER0:
@@ -1120,56 +1202,15 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::DRAW_BUFFER13:
     case GraphicsContext3D::DRAW_BUFFER14:
     case GraphicsContext3D::DRAW_BUFFER15:
-    case GraphicsContext3D::FRAGMENT_SHADER_DERIVATIVE_HINT:
-    case GraphicsContext3D::MAX_3D_TEXTURE_SIZE:
-    case GraphicsContext3D::MAX_ARRAY_TEXTURE_LAYERS:
-    case GraphicsContext3D::MAX_COLOR_ATTACHMENTS:
-    case GraphicsContext3D::MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
-    case GraphicsContext3D::MAX_COMBINED_UNIFORM_BLOCKS:
-    case GraphicsContext3D::MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS:
-    case GraphicsContext3D::MAX_DRAW_BUFFERS:
-    case GraphicsContext3D::MAX_ELEMENT_INDEX:
-    case GraphicsContext3D::MAX_ELEMENTS_INDICES:
-    case GraphicsContext3D::MAX_ELEMENTS_VERTICES:
-    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_COMPONENTS:
-    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_BLOCKS:
-    case GraphicsContext3D::MAX_PROGRAM_TEXEL_OFFSET:
-    case GraphicsContext3D::MAX_SAMPLES:
-    case GraphicsContext3D::MAX_SERVER_WAIT_TIMEOUT:
-    case GraphicsContext3D::MAX_TEXTURE_LOD_BIAS:
-    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS:
-    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS:
-    case GraphicsContext3D::MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS:
-    case GraphicsContext3D::MAX_UNIFORM_BLOCK_SIZE:
-    case GraphicsContext3D::MAX_UNIFORM_BUFFER_BINDINGS:
-    case GraphicsContext3D::MAX_VARYING_COMPONENTS:
-    case GraphicsContext3D::MAX_VERTEX_OUTPUT_COMPONENTS:
-    case GraphicsContext3D::MAX_VERTEX_UNIFORM_BLOCKS:
-    case GraphicsContext3D::MAX_VERTEX_UNIFORM_COMPONENTS:                             
-    case GraphicsContext3D::MIN_PROGRAM_TEXEL_OFFSET:
-    case GraphicsContext3D::PACK_ROW_LENGTH:
-    case GraphicsContext3D::PACK_SKIP_PIXELS:
-    case GraphicsContext3D::PACK_SKIP_ROWS:
     case GraphicsContext3D::PIXEL_PACK_BUFFER_BINDING:   
     case GraphicsContext3D::PIXEL_UNPACK_BUFFER_BINDING:
-    case GraphicsContext3D::RASTERIZER_DISCARD:
     case GraphicsContext3D::READ_BUFFER:
-    case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
-    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
-    case GraphicsContext3D::SAMPLE_COVERAGE:
     case GraphicsContext3D::SAMPLER_BINDING:
     case GraphicsContext3D::TEXTURE_BINDING_2D_ARRAY:
     case GraphicsContext3D::TEXTURE_BINDING_3D:
-    case GraphicsContext3D::TRANSFORM_FEEDBACK_ACTIVE:
+    case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
     case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
-    case GraphicsContext3D::TRANSFORM_FEEDBACK_PAUSED:
     case GraphicsContext3D::UNIFORM_BUFFER_BINDING:
-    case GraphicsContext3D::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
-    case GraphicsContext3D::UNPACK_IMAGE_HEIGHT:
-    case GraphicsContext3D::UNPACK_ROW_LENGTH:
-    case GraphicsContext3D::UNPACK_SKIP_IMAGES:
-    case GraphicsContext3D::UNPACK_SKIP_PIXELS:
-    case GraphicsContext3D::UNPACK_SKIP_ROWS:
     case GraphicsContext3D::VERTEX_ARRAY_BINDING:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "parameter name not yet supported");
         return WebGLGetInfo();

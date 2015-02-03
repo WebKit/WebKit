@@ -49,6 +49,7 @@ WebGLGetInfo::WebGLGetInfo(bool value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
 }
 
@@ -58,6 +59,7 @@ WebGLGetInfo::WebGLGetInfo(const bool* value, int size)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
     if (!value || size <=0)
         return;
@@ -72,6 +74,7 @@ WebGLGetInfo::WebGLGetInfo(float value)
     , m_float(value)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
 }
 
@@ -81,6 +84,7 @@ WebGLGetInfo::WebGLGetInfo(int value)
     , m_float(0)
     , m_int(value)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
 }
 
@@ -90,6 +94,7 @@ WebGLGetInfo::WebGLGetInfo()
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
 }
 
@@ -100,6 +105,7 @@ WebGLGetInfo::WebGLGetInfo(const String& value)
     , m_int(0)
     , m_string(value)
     , m_unsignedInt(0)
+    , m_int64(0)
 {
 }
 
@@ -109,8 +115,20 @@ WebGLGetInfo::WebGLGetInfo(unsigned int value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(value)
+    , m_int64(0)
 {
 }
+
+WebGLGetInfo::WebGLGetInfo(long long value)
+    : m_type(kTypeInt64)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
+    , m_int64(value)
+{
+}
+
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLBuffer> value)
     : m_type(kTypeWebGLBuffer)
@@ -118,6 +136,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLBuffer> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglBuffer(value)
 {
 }
@@ -128,6 +147,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<Float32Array> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglFloatArray(value)
 {
 }
@@ -138,6 +158,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLFramebuffer> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglFramebuffer(value)
 {
 }
@@ -148,6 +169,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<Int32Array> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglIntArray(value)
 {
 }
@@ -158,6 +180,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLProgram> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglProgram(value)
 {
 }
@@ -168,6 +191,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLRenderbuffer> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglRenderbuffer(value)
 {
 }
@@ -178,6 +202,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLTexture> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglTexture(value)
 {
 }
@@ -188,6 +213,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<Uint8Array> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglUnsignedByteArray(value)
 {
 }
@@ -198,6 +224,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<Uint32Array> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglUnsignedIntArray(value)
 {
 }
@@ -208,6 +235,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value)
     , m_float(0)
     , m_int(0)
     , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglVertexArrayObject(value)
 {
 }
@@ -255,6 +283,12 @@ unsigned int WebGLGetInfo::getUnsignedInt() const
 {
     ASSERT(getType() == kTypeUnsignedInt);
     return m_unsignedInt;
+}
+
+long long WebGLGetInfo::getInt64() const
+{
+    ASSERT(getType() == kTypeInt64);
+    return m_int64;
 }
 
 PassRefPtr<WebGLBuffer> WebGLGetInfo::getWebGLBuffer() const
