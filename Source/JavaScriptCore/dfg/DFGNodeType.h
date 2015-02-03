@@ -171,7 +171,7 @@ namespace JSC { namespace DFG {
     macro(GetSetter, NodeResultJS) \
     macro(GetByOffset, NodeResultJS) \
     macro(GetGetterSetterByOffset, NodeResultJS) \
-    macro(MultiGetByOffset, NodeResultJS) \
+    macro(MultiGetByOffset, NodeResultJS | NodeMustGenerate) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(MultiPutByOffset, NodeMustGenerate) \
     macro(GetArrayLength, NodeResultInt32) \

@@ -1,5 +1,19 @@
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
+        MultiGetByOffset should be marked NodeMustGenerate
+        https://bugs.webkit.org/show_bug.cgi?id=140137
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset): We were sloppy - we should also clear NodeMustGenerate once it's a GetByOffset.
+        (JSC::DFG::Node::convertToMultiGetByOffset): Assert that we converted from something that already had NodeMustGenerate.
+        * dfg/DFGNodeType.h: We shouldn't DCE a node that does checks and could be effectful in baseline. Making MultiGetByOffset as NodeMustGenerate prevents DCE. FTL could still DCE the actual loads, but the checks will stay.
+        * tests/stress/multi-get-by-offset-dce.js: Added. This previously failed because the getter wasn't called.
+        (foo):
+
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
         [FTL] inlined GetMyArgumentByVal with no arguments passed causes instant crash
         https://bugs.webkit.org/show_bug.cgi?id=141180
         rdar://problem/19677552

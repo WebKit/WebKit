@@ -478,7 +478,7 @@ struct Node {
         children.child2().setUseKind(KnownCellUse);
         children.setChild1(storage);
         m_op = GetByOffset;
-        m_flags &= ~NodeClobbersWorld;
+        m_flags &= ~(NodeClobbersWorld | NodeMustGenerate);
     }
     
     void convertToMultiGetByOffset(MultiGetByOffsetData* data)
@@ -488,6 +488,7 @@ struct Node {
         child1().setUseKind(CellUse);
         m_op = MultiGetByOffset;
         m_flags &= ~NodeClobbersWorld;
+        ASSERT(m_flags & NodeMustGenerate);
     }
     
     void convertToPutByOffset(StorageAccessData& data, Edge storage)
