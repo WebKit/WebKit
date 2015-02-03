@@ -170,7 +170,7 @@ HRESULT PolicyDelegate::unableToImplementPolicyWithError(
     _bstr_t frameName;
     frame->name(&frameName.GetBSTR());
     
-    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'", static_cast<wchar_t*>(domainStr), code, static_cast<TCHAR*>(frameName));
+    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'\n", static_cast<wchar_t*>(domainStr), code, static_cast<TCHAR*>(frameName));
     
     return S_OK;
 }

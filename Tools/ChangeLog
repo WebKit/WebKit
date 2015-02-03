@@ -1,3 +1,11 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix.
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::unableToImplementPolicyWithError): The message was missing a linefeed,
+        so was not matching expected output.
+
 2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Unreviewed. Moving myself to the committer section at last.
