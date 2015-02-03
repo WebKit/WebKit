@@ -174,7 +174,7 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     entry->response = cachedResponse;
 
 #if ENABLE(SHAREABLE_RESOURCE)
-    RefPtr<SharedMemory> sharedMemory = storageEntry.body.size() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(storageEntry.body.data()), storageEntry.body.size()) : nullptr;
+    RefPtr<SharedMemory> sharedMemory = storageEntry.body.isMap() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(storageEntry.body.data()), storageEntry.body.size()) : nullptr;
     RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, storageEntry.body.size()) : nullptr;
 
     if (shareableResource && shareableResource->createHandle(entry->shareableResourceHandle))

@@ -105,15 +105,18 @@ public:
 
     class Data {
     public:
-        Data();
+        Data() { }
         Data(const uint8_t*, size_t);
+
+        enum class Backing { Buffer, Map };
 #if PLATFORM(COCOA)
-        explicit Data(DispatchPtr<dispatch_data_t>);
+        explicit Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
         bool isNull() const;
 
         const uint8_t* data() const;
         size_t size() const { return m_size; }
+        bool isMap() const { return m_isMap; }
 
 #if PLATFORM(COCOA)
         dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
@@ -122,8 +125,9 @@ public:
 #if PLATFORM(COCOA)
         mutable DispatchPtr<dispatch_data_t> m_dispatchData;
 #endif
-        mutable const uint8_t* m_data;
-        size_t m_size;
+        mutable const uint8_t* m_data { nullptr };
+        size_t m_size { 0 };
+        bool m_isMap { false };
     };
 
     struct Entry {
@@ -160,12 +164,15 @@ private:
 
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };
 
-    BloomFilter<20> m_keyFilter;
+    BloomFilter<20> m_contentsFilter;
     std::atomic<size_t> m_approximateEntryCount { 0 };
     std::atomic<bool> m_shrinkInProgress { false };
 
     Vector<Deque<RetrieveOperation>> m_pendingRetrieveOperationsByPriority;
     unsigned m_activeRetrieveOperationCount { 0 };
+
+    typedef std::pair<NetworkCacheKey, Entry> KeyEntryPair;
+    HashMap<NetworkCacheKey::HashType, std::shared_ptr<KeyEntryPair>, AlreadyHashed> m_writeCache;
 
 #if PLATFORM(COCOA)
     mutable DispatchPtr<dispatch_queue_t> m_ioQueue;

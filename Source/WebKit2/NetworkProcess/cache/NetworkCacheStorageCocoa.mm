@@ -73,24 +73,18 @@ static void traverseCacheFiles(const String& cachePath, std::function<void (cons
     });
 }
 
-NetworkCacheStorage::Data::Data()
-    : m_data(nullptr)
-    , m_size(0)
-{
-}
-
 NetworkCacheStorage::Data::Data(const uint8_t* data, size_t size)
     : m_dispatchData(adoptDispatch(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
-    , m_data(nullptr)
     , m_size(size)
 {
 }
 
-NetworkCacheStorage::Data::Data(DispatchPtr<dispatch_data_t> dispatchData)
+NetworkCacheStorage::Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
 {
     const void* data;
     m_dispatchData = adoptDispatch(dispatch_data_create_map(dispatchData.get(), &data, &m_size));
     m_data = static_cast<const uint8_t*>(data);
+    m_isMap = m_size && backing == Backing::Map;
 }
 
 const uint8_t* NetworkCacheStorage::Data::data() const
@@ -135,16 +129,16 @@ void NetworkCacheStorage::initialize()
     ASSERT(RunLoop::isMain());
 
     StringCapture cachePathCapture(m_directoryPath);
-    auto& keyFilter = m_keyFilter;
+    auto& diskContentsFilter = m_contentsFilter;
     auto& entryCount = m_approximateEntryCount;
 
-    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture, &keyFilter, &entryCount] {
+    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture, &diskContentsFilter, &entryCount] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [&keyFilter, &entryCount](const String& fileName, const String&) {
+        traverseCacheFiles(cachePath, [&diskContentsFilter, &entryCount](const String& fileName, const String&) {
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
-            keyFilter.add(hash);
+            diskContentsFilter.add(hash);
             ++entryCount;
         });
     });
@@ -293,8 +287,8 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
 
     return std::make_unique<NetworkCacheStorage::Entry>(NetworkCacheStorage::Entry {
         metaData.timeStamp,
-        NetworkCacheStorage::Data(headerData),
-        NetworkCacheStorage::Data(bodyData)
+        NetworkCacheStorage::Data { headerData },
+        NetworkCacheStorage::Data { bodyData, NetworkCacheStorage::Data::Backing::Map }
     });
 }
 
@@ -346,8 +340,8 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_keyFilter.mayContain(key.hash()))
-        m_keyFilter.remove(key.hash());
+    if (m_contentsFilter.mayContain(key.hash()))
+        m_contentsFilter.remove(key.hash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
     dispatch_async(m_ioQueue.get(), [this, filePathCapture] {
@@ -416,9 +410,20 @@ void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority
 {
     ASSERT(RunLoop::isMain());
 
-    if (!m_keyFilter.mayContain(key.hash())) {
+    if (!m_contentsFilter.mayContain(key.hash())) {
         completionHandler(nullptr);
         return;
+    }
+
+    // Write cache is a temporary memory cache used to respond to requests while a write is pending.
+    if (auto keyEntryPair = m_writeCache.get(key.hash())) {
+        if (keyEntryPair->first == key) {
+            LOG(NetworkCacheStorage, "(NetworkProcess) found from the write cache");
+            dispatch_async(dispatch_get_main_queue(), [keyEntryPair, completionHandler] {
+                completionHandler(std::make_unique<Entry>(keyEntryPair->second));
+            });
+            return;
+        }
     }
 
     if (m_pendingRetrieveOperationsByPriority.size() < priority + 1)
@@ -432,6 +437,11 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
 {
     ASSERT(RunLoop::isMain());
 
+    m_contentsFilter.add(key.hash());
+    ++m_approximateEntryCount;
+
+    m_writeCache.set(key.hash(), std::make_shared<KeyEntryPair>(key, entry));
+
     StringCapture cachePathCapture(m_directoryPath);
     dispatch_async(m_backgroundIOQueue.get(), [this, key, entry, cachePathCapture, completionHandler] {
         auto data = encodeEntry(key, entry);
@@ -441,25 +451,32 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
         dispatch_io_write(channel.get(), 0, data.get(), dispatch_get_main_queue(), [this, key, completionHandler](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
-            if (!error) {
-                m_keyFilter.add(key.hash());
-                ++m_approximateEntryCount;
-                shrinkIfNeeded();
+            if (error) {
+                if (m_contentsFilter.mayContain(key.hash()))
+                    m_contentsFilter.remove(key.hash());
+                if (m_approximateEntryCount)
+                    --m_approximateEntryCount;
             }
+            m_writeCache.remove(key.hash());
+
             completionHandler(!error);
         });
     });
+
+    shrinkIfNeeded();
 }
 
 void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, std::function<void (bool success)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    if (!m_keyFilter.mayContain(key.hash())) {
+    if (!m_contentsFilter.mayContain(key.hash())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) existing entry not found, storing full entry");
         store(key, updateEntry, completionHandler);
         return;
     }
+
+    m_writeCache.set(key.hash(), std::make_shared<KeyEntryPair>(key, updateEntry));
 
     // Try to update the header of an existing entry.
     StringCapture cachePathCapture(m_directoryPath);
@@ -484,6 +501,7 @@ void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& update
 
             if (error)
                 removeEntry(key);
+            m_writeCache.remove(key.hash());
 
             completionHandler(!error);
         });
@@ -503,7 +521,8 @@ void NetworkCacheStorage::clear()
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
-    m_keyFilter.clear();
+    m_writeCache.clear();
+    m_contentsFilter.clear();
     m_approximateEntryCount = 0;
 
     StringCapture directoryPathCapture(m_directoryPath);
@@ -555,8 +574,8 @@ void NetworkCacheStorage::shrinkIfNeeded()
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
             dispatch_async(dispatch_get_main_queue(), [this, hash] {
-                if (m_keyFilter.mayContain(hash))
-                    m_keyFilter.remove(hash);
+                if (m_contentsFilter.mayContain(hash))
+                    m_contentsFilter.remove(hash);
             });
         });
         m_approximateEntryCount = foundEntryCount - deletedCount;
