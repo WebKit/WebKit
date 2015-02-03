@@ -1,3 +1,17 @@
+2015-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Make NetworkCache's constructor private
+        https://bugs.webkit.org/show_bug.cgi?id=141181
+
+        Reviewed by Antti Koivisto.
+
+        Make NetworkCache's constructor private and mark its destructor as
+        deleted as it is a singleton class.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::NetworkCache): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         Revert accidental (and super bad) change in r179490.

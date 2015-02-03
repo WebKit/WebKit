@@ -49,10 +49,6 @@ NetworkCache& NetworkCache::singleton()
     return instance;
 }
 
-NetworkCache::NetworkCache()
-{
-}
-
 bool NetworkCache::initialize(const String& cachePath)
 {
     m_storage = NetworkCacheStorage::open(cachePath);
