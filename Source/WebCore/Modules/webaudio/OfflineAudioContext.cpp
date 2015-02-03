@@ -44,7 +44,7 @@ PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionConte
 
     Document& document = downcast<Document>(context);
 
-    if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate)) {
+    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSampleRateRangeGood(sampleRate)) {
         ec = SYNTAX_ERR;
         return nullptr;
     }

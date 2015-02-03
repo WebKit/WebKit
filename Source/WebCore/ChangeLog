@@ -1,5 +1,20 @@
 2015-02-03  Jer Noble  <jer.noble@apple.com>
 
+        Passing invalid values to OfflineAudioContext's constructor should not crash.
+        https://bugs.webkit.org/show_bug.cgi?id=141197
+
+        Reviewed by Darin Adler.
+
+        Test: webaudio/offlineaudiocontext-constructor.html
+
+        Throw a SYNTAX_ERR exception if passed in a zero for channelCount or numberOfSamples. This avoids
+        a crash where OfflineAudioDestinationNode is passed a null renderTarget.
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+
+2015-02-03  Jer Noble  <jer.noble@apple.com>
+
         [MSE] Setting timestampOffset does not change the timestamps in the actual sample, leading to visual and audible errors.
         https://bugs.webkit.org/show_bug.cgi?id=140929
 
