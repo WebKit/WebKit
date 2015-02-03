@@ -1,0 +1,17 @@
+This test verifies that emoji groups and emoji with variations are deleted correctly
+
+Dump of markup 1:
+| "👦🏻👦🏾🏻👦🏾👦👩‍👩‍👦<#selection-caret>
+"
+
+Dump of markup 2:
+| "👦🏻👦🏾🏻👦🏾👦<#selection-caret>"
+
+Dump of markup 3:
+| "👦🏻👦🏾🏻👦🏾<#selection-caret>"
+
+Dump of markup 4:
+| "👦🏻👦🏾🏻<#selection-caret>"
+
+Dump of markup 5:
+| "👦🏻👦🏾<#selection-caret>"
