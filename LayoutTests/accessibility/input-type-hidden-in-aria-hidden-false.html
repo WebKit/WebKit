@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content" role="group">
+   <input type="hidden">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that input type of hidden are not exposed when aria-hidden=false");
+
+    if (window.accessibilityController) {
+          // By default, this should have no children because input type=hidden is hidden.
+          var content = accessibilityController.accessibleElementById("content");
+          shouldBe("content.childrenCount", "0");
+
+          // When aria-hidden=true, content should not even be there
+          document.getElementById("content").setAttribute("aria-hidden", "true");
+          content = accessibilityController.accessibleElementById("content");
+          shouldBeTrue("!content || !content.isValid()");
+
+          // When aria-hidden=false, we should NOT expose input type=hidden
+          document.getElementById("content").setAttribute("aria-hidden", "false");
+          content = accessibilityController.accessibleElementById("content");
+          shouldBe("content.childrenCount", "0");
+
+          // And changing back to true on the fly should have a similar effect
+          document.getElementById("content").setAttribute("aria-hidden", "true");
+          content = accessibilityController.accessibleElementById("content");
+          shouldBeTrue("!content || !content.isValid()");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
