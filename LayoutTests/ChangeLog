@@ -1,3 +1,10 @@
+2015-02-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Activate HTTP tests
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/adopt-node-crash-2-expected.txt:
+
 2015-02-02  Benjamin Poulain  <benjamin@webkit.org>
 
         JIT Compile simple cases of :nth-last-child()

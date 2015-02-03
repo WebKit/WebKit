@@ -569,7 +569,7 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Ski
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Skip ]
 
 # TODO Need support for ResourceHandle::didChangePriority and DRT support
-webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
+webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
 
 # TODO Snapshotted plugins not enabled on WK1
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
@@ -620,9 +620,9 @@ webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Skip ]
 plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
 webkit.org/b/29289 plugins/destroy-during-npp-new.html [ Skip ]
-webkit.org/b/24810 plugins/npruntime/npruntime.html [ Skip ]
-webkit.org/b/24810 plugins/netscape-destroy-plugin-script-objects.html [ Skip ]
-webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Skip ]
+plugins/npruntime/npruntime.html [ Skip ]
+plugins/netscape-destroy-plugin-script-objects.html [ Skip ]
+plugins/netscape-plugin-setwindow-size-2.html [ Skip ]
 # Needs to implement NPP_HandleEvent() in TestNetscapePlugin
 plugins/keyboard-events.html  [ Skip ]
 plugins/plugin-initiate-popup-window.html [ Skip ]
@@ -1232,6 +1232,7 @@ webkit.org/b/140798 accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/140798 accessibility/link-inside-button-accessible-text.html [ Failure ]
 webkit.org/b/140798 accessibility/list-detection.html [ Failure ]
 webkit.org/b/140798 accessibility/listitem-title.html [ Failure ]
+webkit.org/b/140798 accessibility/math-multiscript-attributes.html [ Failure ]
 webkit.org/b/140798 accessibility/math-text.html [ Failure ]
 webkit.org/b/140798 accessibility/negative-tabindex-does-not-expose-label.html [ Failure ]
 webkit.org/b/140798 accessibility/non-data-table-cell-title-ui-element.html [ Failure ]
@@ -1276,7 +1277,6 @@ webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Ski
 # The following fail because of missing numerical output support.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
-webkit.org/b/140832 accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
@@ -1356,7 +1356,6 @@ accessibility/image-map2.html [ Failure ]
 accessibility/internal-link-anchors2.html [ Failure ]
 accessibility/language-attribute.html [ Failure ]
 accessibility/lists.html [ Failure ]
-accessibility/multiselect-list-reports-active-option.html [ Failure ]
 accessibility/onclick-handlers.html [ Failure ]
 accessibility/parent-delete.html [ Failure ]
 accessibility/placeholder.html [ Failure ]
@@ -1399,7 +1398,7 @@ webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.blur.html
 webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.x.html
 webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.y.html
 
-webkit.org/b/24810 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
+fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
 fast/canvas/canvas-blending-shadow.html [ Failure ]
@@ -1450,7 +1449,7 @@ webkit.org/b/53700 svg/W3C-SVG-1.1-SE/types-dom-01-b.svg [ Pass Failure ]
 # See https://bugs.webkit.org/show_bug.cgi?id=33374
 svg/W3C-SVG-1.1/filters-conv-01-f.svg [ Pass Failure ]
 
-webkit.org/b/24810 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
+svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 svg/as-image/img-preserveAspectRatio-support-1.html [ Failure ]
 svg/carto.net/tabgroup.svg [ Failure ]
 svg/W3C-I18N/g-dirLTR-ubNone.svg [ Failure ]
@@ -1677,7 +1676,7 @@ fast/dom/Window/window-postmessage-clone-deep-array.html [ Skip ]
 ################             Forms Issues                   ####################
 ################################################################################
 # Not putting 'focused' text
-webkit.org/b/24810 fast/forms/legend-access-key.html [ Failure ]
+fast/forms/legend-access-key.html [ Failure ]
 
 webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
@@ -1720,147 +1719,215 @@ fast/forms/textarea/textarea-state-restore.html [ Skip ]
 ################################################################################
 ################             HTTP Issues                 #######################
 ################################################################################
+# These fail because the URL is not available when the loader first runs, so instead of 'didFinishLoading' being
+# attributed to 'block-test.html', it shows up as <unknown>
+webkit.org/b/140703 http/tests/cache/iframe-304-crash.html [ Failure ]
+webkit.org/b/140703 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+webkit.org/b/140703 http/tests/loading/307-after-303-after-post.html [ Failure ]
+webkit.org/b/140703 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
+webkit.org/b/140703 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
+webkit.org/b/140703 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
+webkit.org/b/140703 http/tests/loading/redirect-methods.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/401-alternative-content.php [ Failure ]
+webkit.org/b/140703 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
+webkit.org/b/140703 http/tests/misc/window-dot-stop.html [ Failure ]
+webkit.org/b/140703 http/tests/security/401-logout/401-logout.php [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-invalid.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
+webkit.org/b/140703 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
+webkit.org/b/140703 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 
-http/ [ Skip ]
+# CSP Stuff
+http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
+http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Failure ]
+http/tests/security/contentSecurityPolicy/nosniff-script-blocked.html [ Failure ]
+http/tests/security/contentTypeOptions/nosniff-script-without-content-type-blocked.html [ Failure ]
 
-# Apache 1.3 doesn't support SSL <rdar://problem/5345985>
-#http/tests/navigation/ping-cross-origin-from-https.html
-#http/tests/ssl
-#http/tests/security/cross-frame-access-protocol-explicit-domain.html
-#http/tests/security/cross-frame-access-protocol.html
+# Crashes
+http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
+http/tests/misc/drag-not-loaded-image.html [ Skip ] # Crash
+http/tests/misc/canvas-pattern-from-incremental-image.html [ Skip ] # Crash
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Skip ] # Crash
+http/tests/security/video-cross-origin-accesssameorigin.html [ Skip ] # Crash
+http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Skip ] # Crash
+http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ] # Crash
+http/tests/security/video-cross-origin-accessfailure.html [ Skip ] # Crash
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ] # Crash
+http/tests/websocket/tests/hybi/workers/close-in-worker.html [ Skip ] # Crash
+http/tests/websocket/tests/hybi/workers/close.html [ Skip ] # Crash
+http/tests/webgl/1.0.2/texSubImage2DHTML.html [ Skip ] # Crash
+
+# The following timeout
+http/tests/cache/history-navigation-no-resource-revalidation.html [ Skip ] # Timeout
+http/tests/cache/subresource-failover-to-network.html [ Skip ] # Timeout
+http/tests/cache/history-only-cached-subresource-loads.html [ Skip ] # Timeout
+http/tests/fullscreen/fullscreenelement-different-origin.html [ Skip ] # Timeout
+http/tests/fullscreen/fullscreenelement-same-origin.html [ Skip ] # Timeout
+http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ] # Timeout
+http/tests/mime/mime-type-sniff.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-no-referrer.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-no-referrer.html [ Skip ] # Timeout
+http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-never.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-redirect.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-redirect-link.html [ Skip ] # Timeout
+http/tests/security/appcache-switching-private-browsing.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-always.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-no-referrer-when-downgrade.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-default.html [ Skip ] # Timeout
+http/tests/security/originHeader/origin-header-for-https.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-origin.html [ Skip ] # Timeout
+http/tests/security/text-track-crossorigin.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-unsafe-url.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-https-never.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-invalid.html [ Skip ] # Timeout
+http/tests/security/referrer-policy-rel-noreferrer.html [ Skip ] # Timeout
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Skip ] # Timeout
+webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Skip ] # Timeout
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html [ Skip ] # Timeout
+http/tests/navigation/forward-to-fragment-fires-onload.html [ Skip ] # Timeout
+http/tests/navigation/https-in-page-cache.html [ Skip ] # Timeout
+http/tests/navigation/post-frames-goback1-uncached.html [ Skip ] # Timeout
+http/tests/navigation/post-frames-goback1.html [ Skip ] # Timeout
+http/tests/navigation/postredirect-frames-goback1.html [ Skip ] # Timeout
+http/tests/navigation/post-goback1.html [ Skip ] # Timeout
+http/tests/navigation/history-back-across-form-submission-to-fragment.html [ Skip ] # Timeout
+http/tests/navigation/https-no-store-subframe-in-page-cache.html [ Skip ] # Timeout
+http/tests/navigation/back-send-referrer.html [ Skip ] # Timeout
+http/tests/history/back-with-fragment-change.php [ Skip ] # Timeout
+http/tests/history/back-to-post.php [ Skip ] # Timeout
+http/tests/history/replacestate-post-to-get-2.html [ Skip ] # Timeout
+http/tests/workers/text-encoding.html [ Skip ] # Timeout
+http/tests/security/cross-frame-access-protocol-explicit-domain.html [ Skip ] # Timeout
+http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
+
+# SSL Configuration on Windows <rdar://problem/5345985>
+http/tests/navigation/ping-cross-origin-from-https.html [ Skip ] # Timeout
+http/tests/security/cross-frame-access-protocol.html [ Skip ] # Timeout
 
 #<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
-#http/tests/navigation/anchor-frames.html
+http/tests/navigation/anchor-frames.html
 
 # Sometimes times out
-#webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Pass Timeout ]
-#webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
-#webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
-#webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Timeout ]
+webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ] # Timeout
+webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
+webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
+webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Timeout ]
 
 # Different tests sometimes time out on apple-windows-5
 #webkit.org/b/55579 http/tests/websocket [ Skip ]
 
 # Times out <rdar://problem/9304941>
-#http/tests/multipart/invalid-image-data-standalone.html [ Pass Timeout ]
+http/tests/multipart/invalid-image-data-standalone.html [ Skip ] # Timeout
 
 # Times out <rdar://problem/7091605>
-#http/tests/cache/subresource-expiration-1.html [ Pass Timeout ]
-#http/tests/cache/subresource-expiration-2.html [ Pass Timeout ]
+#http/tests/cache/subresource-expiration-1.html [ Skip ] # Timeout
+#http/tests/cache/subresource-expiration-2.html [ Skip ] # Timeout
 
 # Not investigated yet
-#webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nopassword.html
-#webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html
+webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
+webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
 
 # <rdar://problem/5961006> LayoutTests that send an OPTIONS request don't work on Windows due to Apache 1.3
 #http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 #http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 
-# Some http tests crash in Debug Windows builds due to an assertion in CFNetwork when releasing a CFURLConnection
-#webkit.org/b/25344 [ Debug ] http/tests/misc/redirect-to-external-url.html [ Crash Failure ]
-#webkit.org/b/25344 [ Debug ] http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]  # Crashing
-
-# FIXME: File bugs and examine these tests
-#http/tests/xmlhttprequest/cache-override.html [ Failure ]
-#http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure Timeout ]
-
-# <rdar://7127902> Crashes on Windows debug
-#[ Debug ] http/tests/misc/favicon-loads-with-images-disabled.html [ Skip ]  # Crashing
-
 # Mixed content tests failing on Windows
-#webkit.org/b/29213 http/tests/security/mixedContent [ Failure ]
-
-# Skip these two failures I introduced this morning while I explore them.
-#http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
+webkit.org/b/29213 http/tests/security/mixedContent [ Skip ]
 
 # HTTP 204 (No Content) should be ignored
-#webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
+webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
-#webkit.org/b/24810 http/tests/misc/window-dot-stop.html [ Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/abort-should-cancel-load.html [ Pass Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html [ Pass Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Pass Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ Pass Failure ]
-#webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Pass Failure ]
-#webkit.org/b/24810 http/tests/security/frame-loading-via-document-write.html [ Pass Timeout ]
-#webkit.org/b/24810 http/tests/security/local-CSS-from-remote.html [ Pass Timeout ]
-#webkit.org/b/24810 http/tests/security/local-JavaScript-from-remote.html [ Pass Timeout ]
-#webkit.org/b/24810 http/tests/security/local-iFrame-from-remote.html [ Pass Timeout ]
-#webkit.org/b/24810 http/tests/security/local-image-from-remote.html [ Pass Timeout ]
-#webkit.org/b/24810 http/tests/security/local-user-CSS-from-remote.html [ Pass Failure Timeout ]
-#webkit.org/b/24810 http/tests/security/originHeader/origin-header-for-https.html [ Failure Timeout ]
-#http/tests/security/referrer-policy-https-origin.html [ Skip ] #  [ Timeout ]
-#webkit.org/b/95803 http/tests/security/local-image-from-remote-whitelisted.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/object-literals.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/script-with-failed-cors-check-fails-to-load.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-mime-type-execute-as-html.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/contentSecurityPolicy/report-blocked-uri.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/cookies/cookie-theft-with-javascript-doc.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/local-video-poster-from-remote.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/local-video-source-from-remote.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/location-prototype.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/script-crossorigin-loads-correctly.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/video-poster-cross-origin-crash.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-eval.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/cookies/xmlhttprequest.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/canvas-cors-with-two-hosts.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/cross-frame-access-frameelement.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/document-all.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/window-named-proto.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/window-named-valueOf.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-window-open-javascript-url-with-spaces.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-window-open-parent.html [ Pass Failure ]
-#webkit.org/b/95803 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Pass Failure ]
-#http/tests/security/cross-frame-access-call.html
-#http/tests/security/cross-frame-access-get.html
-#http/tests/security/sandboxed-iframe-modify-self.html
-#http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
-#http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
-#http/tests/security/xssAuditor/script-tag-with-callbacks.html
-#http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
-#http/tests/security/no-referrer.html [ Pass Failure ]
-#http/tests/security/referrer-policy-https-always.html [ Pass Failure Timeout ]
-#http/tests/security/referrer-policy-https-default.html [ Pass Failure Timeout  ]
-#http/tests/security/referrer-policy-https-never.html [ Skip ] #  [ Timeout ]
-#http/tests/security/referrer-policy-redirect.html [ Timeout ]
-#webkit.org/b/95805 http/tests/cookies/multiple-cookies.html [ Pass Failure ]
-#webkit.org/b/95805 http/tests/cookies/single-quoted-value.html [ Pass Failure ]
-#http/tests/fullscreen/fullscreenelement-different-origin.html [ Skip ]
-#http/tests/fullscreen/fullscreenelement-same-origin.html [ Skip ]
-#http/tests/history/back-with-fragment-change.php [ Skip ]
-#http/tests/loading/pdf-commit-load-callbacks.html [ Skip ]
-#http/tests/loading/post-in-iframe-with-back-navigation.html [ Skip ]
-#http/tests/misc/submit-post-keygen.html [ Skip ]
-#http/tests/navigation/https-in-page-cache.html [ Skip ]
-#http/tests/navigation/post-307-response.html [ Skip ]
-#http/tests/navigation/post-frames-goback1.html [ Skip ]
-#http/tests/navigation/post-goback1.html [ Skip ]
-#http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html [ Skip ]
-#http/tests/xmlhttprequest/range-test.html [ Skip ]
-#webkit.org/b/97271 http/tests/security/sandboxed-iframe-origin-add.html [ Skip ]
-#webkit.org/b/97271 http/tests/security/sandboxed-iframe-origin-remove.html [ Skip ]
-#webkit.org/b/97485 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
-#webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
-#webkit.org/b/98079 http/tests/security/cross-origin-local-storage-wk1.html [ Skip ]
-#webkit.org/b/97026 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
-#http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
-#http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Timeout ]
-#http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/security/mixedContent/data-url-iframe-in-main-frame.html [ Skip ] #  [ Timeout ]
-#http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Skip ] #  [ Timeout ]
-#http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_connection_reuse.html [ Skip ] #  [ Timeout ]
-#http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Skip ] #  [ Timeout ]
+# The following are unreviewed:
+http/tests/cache/content-type-ignored-during-revalidation.html [ Failure ]
+http/tests/cache/partitioned-cache.html [ Failure ]
+http/tests/cache/partitioned-cache-iframe.html [ Failure ]
+http/tests/cache/post-redirect-get.php [ Failure ] # Easy
+http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
+http/tests/css/css-image-valued-shape.html [ Failure ]
+http/tests/cookies/set-cookie-on-redirect.html [ Pass Failure ]
+http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+http/tests/dom/document-contentType.html [ Failure ]
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
+http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
+http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
+http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
+http/tests/misc/acid3.html [ Failure ]
+http/tests/misc/async-script-removed.html [ Failure ]
+http/tests/misc/bad-charset-alias.html
+http/tests/misc/refresh-headers.php [ Failure ] # Easy
+http/tests/misc/submit-post-keygen.html [ Failure ]
+http/tests/multipart/load-last-non-html-frame.php [ Failure ] # Rebaseline
+http/tests/multipart/multipart-replace-non-html-content.php [ Failure ] # Rebaseline
+http/tests/navigation/no-referrer-reset.html [ Failure ] # Easy
+http/tests/navigation/no-referrer-same-window.html [ Failure ] # Easy
+http/tests/navigation/no-referrer-subframe.html [ Failure ] # Easy
+http/tests/navigation/no-referrer-target-blank.html [ Failure ] # Easy
+http/tests/navigation/post-goback-same-url.html [ Failure ] # Easy
+http/tests/navigation/restore-form-state-https.html [ Failure ]
+http/tests/security/contentTypeOptions/nosniff-script-blocked.html [ Failure ]
+http/tests/security/cross-frame-access-call.html [ Failure ]
+http/tests/security/cross-frame-access-get.html [ Failure ]
+http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]
+http/tests/security/cross-origin-appcache-allowed.html [ Failure ]
+http/tests/security/cross-origin-appcache.html [ Failure ]
+webkit.org/b/98079 http/tests/security/cross-origin-local-storage-wk1.html [ Failure ]
+http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
+http/tests/security/cross-origin-plugin.html [ Failure ]
+http/tests/security/cross-origin-websql-allowed.html [ Failure ]
+http/tests/security/cross-origin-websql.html [ Failure ]
+http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Failure ]
+http/tests/security/local-user-CSS-from-remote.html [ Failure ]
+http/tests/security/mixedContent/data-url-script-in-iframe.html [ Failure ]
+webkit.org/b/95803 http/tests/security/script-crossorigin-loads-correctly.html [ Pass Failure ]
+http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
+http/tests/security/storage-blocking-loosened-websql.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-websql.html [ Failure ]
+http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Failure ]
+http/tests/ssl/ping-with-unsafe-redirect.html [ Failure ]
+http/tests/ssl/referer-301.html [ Failure ]
+http/tests/ssl/referer-303.html [ Failure ]
+http/tests/ssl/verify-ssl-enabled.php [ Failure ] # Easy?
+http/tests/websocket/tests/hybi/workers/close.html [ Failure ]
+http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
+http/tests/xmlhttprequest/access-control-preflight-headers-async.html [ Pass Failure ] # Easy?
+http/tests/xmlhttprequest/cache-override.html [ Failure ]
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
+http/tests/xmlhttprequest/range-test.html [ Failure ]
+http/tests/xmlhttprequest/response-special-characters.html [ Failure ]
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
@@ -1934,8 +2001,8 @@ fast/html/keygen.html [ Failure ]
 # Sometimes times out
 webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
 fast/frames/flattening/scrolling-in-object.html [ Pass Timeout ]
-webkit.org/b/24810 fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
-webkit.org/b/24810 fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Timeout ]
+fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
+fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Timeout ]
 fast/block/positioning/percent-top-left-on-relative-position.html [ Pass Timeout ]
 fast/block/margin-collapse/021.html [ Pass Timeout ]
 dom/xhtml/level1/core/hc_characterdataindexsizeerrdeletedataoffsetnegative.xhtml [ Pass Failure ]
@@ -2103,12 +2170,13 @@ webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Skip ] 
 webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html	[ Skip ] #  [ Timeout ]
 webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Skip ] #  [ Timeout ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ] #  [ Timeout ]
-webkit.org/b/24810 fast/events/special-key-events-in-input-text.html [ Failure ]
+fast/events/special-key-events-in-input-text.html [ Failure ]
 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Pass Failure ]
 fast/events/drag-outside-window.html [ Pass Timeout ]
 fast/events/event-sender-mouse-moved.html [ Pass Timeout ]
 fast/events/inputText-never-fired-on-keydown-cancel.html [ Pass Timeout ]
 webkit.org/b/140518 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
+fast/events/ondrop-text-html.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/events/pageshow-pagehide-on-back-uncached.html [ Skip ]
 
@@ -2148,11 +2216,11 @@ fast/lists/li-style-alpha-huge-value-crash.html	 [ Pass Timeout ]
 
 fast/loader/file-protocol-fragment.html [ Failure ]
 webkit.org/b/97026 fast/loader/javascript-url-in-embed.html [ Failure ]
-webkit.org/b/24810 fast/loader/main-document-url-for-non-http-loads.html [ Failure ]
-webkit.org/b/24810 fast/loader/stop-provisional-loads.html [ Failure ]
-webkit.org/b/24810 fast/loader/local-CSS-from-local.html [ Failure Timeout ]
-webkit.org/b/24810 fast/loader/local-JavaScript-from-local.html [ Failure ]
-webkit.org/b/24810 fast/loader/local-image-from-local.html [ Failure ]
+fast/loader/main-document-url-for-non-http-loads.html [ Failure ]
+fast/loader/stop-provisional-loads.html [ Failure ]
+fast/loader/local-CSS-from-local.html [ Failure Timeout ]
+fast/loader/local-JavaScript-from-local.html [ Failure ]
+fast/loader/local-image-from-local.html [ Failure ]
 fast/loader/fragment-after-redirect-gets-back-entry.html [ Pass Failure ]
 fast/loader/url-parse-1.html [ Pass Failure ]
 fast/loader/child-frame-add-after-back-forward.html [ Skip ]
@@ -2391,12 +2459,12 @@ webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
 webkit.org/b/138042 fast/repaint/button-spurious-layout-hint.html [ Failure ]
 webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html [ Failure ]
 
-webkit.org/b/24810 fast/replaced/border-radius-clip.html [ Failure ]
+fast/replaced/border-radius-clip.html [ Failure ]
 webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html [ Failure ]
 webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html [ Skip ] #  [ Timeout ]
 webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Skip ] #  [ Timeout ]
 webkit.org/b/117323 fast/replaced/object-with-embed-url-param.html [ Failure ]
-webkit.org/b/24810 fast/replaced/replaced-breaking.html [ Failure ]
+fast/replaced/replaced-breaking.html [ Failure ]
 fast/replaced/width100percent-button.html [ Failure ]
 fast/replaced/width100percent-radio.html [ Failure ]
 webkit.org/b/138025 fast/replaced/width100percent-textfield.html [ Failure ]
@@ -2426,6 +2494,9 @@ fast/table/table-cell-change-last-row-with-needsCellRecalc-section.html [ Pass T
 
 fast/text/emphasis-vertical-over-right.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Pass Timeout ]
+fast/text/backslash-to-yen-sign-euc.html [ Failure ]
+fast/text/backslash-to-yen-sign-euc.html [ Failure ]
+fast/text/international/complex-character-based-fallback.html [ Failure ]
 fast/text/indic.html [ Failure ]
 fast/text/khmer-lao-font.html [ Failure ]
 fast/text/line-runs-rounding-simple-lines.html [ Pass Timeout ]
@@ -2441,6 +2512,7 @@ webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Fail
 
 webkit.org/b/140216 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+fast/text/international/complex-character-based-fallback.html [ Failure ]
 
 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Failure Timeout ]
 
