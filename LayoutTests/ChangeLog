@@ -1,3 +1,13 @@
+2015-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Setting timestampOffset does not change the timestamps in the actual sample, leading to visual and audible errors.
+        https://bugs.webkit.org/show_bug.cgi?id=140929
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/media-source-timeoffset-expected.txt: Added.
+        * media/media-source/media-source-timeoffset.html: Added.
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [WIn] Unreviewed test updates.

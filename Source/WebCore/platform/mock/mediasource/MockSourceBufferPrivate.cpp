@@ -63,6 +63,7 @@ private:
     virtual PlatformSample platformSample() override;
     virtual FloatSize presentationSize() const override { return FloatSize(); }
     virtual void dump(PrintStream&) const override;
+    virtual void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
 
     unsigned generation() const { return m_box.generation(); }
 

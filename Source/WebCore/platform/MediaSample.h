@@ -58,6 +58,7 @@ public:
     virtual AtomicString trackID() const = 0;
     virtual size_t sizeInBytes() const = 0;
     virtual FloatSize presentationSize() const = 0;
+    virtual void offsetTimestampsBy(const MediaTime&) = 0;
 
     enum SampleFlags {
         None = 0,

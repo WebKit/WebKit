@@ -1,0 +1,18 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.timestampOffset = 10)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '6') OK
+{PTS({100000000/10000000, 10.000000}), DTS({100000000/10000000, 10.000000}), duration({1000/1000, 1.000000}), flags(1), generation(0)}
+{PTS({110000000/10000000, 11.000000}), DTS({110000000/10000000, 11.000000}), duration({1000/1000, 1.000000}), flags(0), generation(0)}
+{PTS({120000000/10000000, 12.000000}), DTS({120000000/10000000, 12.000000}), duration({1000/1000, 1.000000}), flags(0), generation(0)}
+{PTS({130000000/10000000, 13.000000}), DTS({130000000/10000000, 13.000000}), duration({1000/1000, 1.000000}), flags(1), generation(0)}
+{PTS({140000000/10000000, 14.000000}), DTS({140000000/10000000, 14.000000}), duration({1000/1000, 1.000000}), flags(0), generation(0)}
+{PTS({150000000/10000000, 15.000000}), DTS({150000000/10000000, 15.000000}), duration({1000/1000, 1.000000}), flags(0), generation(0)}
+END OF TEST
+

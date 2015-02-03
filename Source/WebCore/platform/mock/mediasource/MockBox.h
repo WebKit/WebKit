@@ -130,6 +130,11 @@ public:
     int32_t trackID() const { return m_trackID; }
     uint8_t flags() const { return m_flags; }
     uint8_t generation() const { return m_generation; }
+    void offsetTimestampsBy(const MediaTime& offset)
+    {
+        m_presentationTimestamp += offset;
+        m_decodeTimestamp += offset;
+    }
 
     enum {
         IsSync = 1 << 0,

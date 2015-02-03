@@ -1352,6 +1352,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
             // 1.4.2 Add timestampOffset to the decode timestamp.
             decodeTimestamp += m_timestampOffset;
+
+            // Reflect the new timestamps back into the sample.
+            sample->offsetTimestampsBy(m_timestampOffset);
         }
 
         // 1.5 Let track buffer equal the track buffer that the coded frame will be added to.
