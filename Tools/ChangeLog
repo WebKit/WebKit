@@ -1,5 +1,17 @@
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Correct version parsing warning in update-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=141200
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (setupAppleWinEnv): Strip out any specific version build level
+        from the Cygwin version information.
+  
+
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Attempt to improve the reliability of HTTP service
         https://bugs.webkit.org/show_bug.cgi?id=141191
 

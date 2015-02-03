@@ -1508,6 +1508,7 @@ sub setupAppleWinEnv()
         # https://bugs.webkit.org/show_bug.cgi?id=85791
         my $uname_version = (POSIX::uname())[2];
         $uname_version =~ s/\(.*\)//;  # Remove the trailing cygwin version, if any.
+        $uname_version =~ s/\-.*$//; # Remove trailing dash-version content, if any
         if (version->parse($uname_version) < version->parse("1.7.10")) {
             # Setting the environment variable 'CYGWIN' to 'tty' makes cygwin enable extra support (i.e., termios)
             # for UNIX-like ttys in the Windows console
