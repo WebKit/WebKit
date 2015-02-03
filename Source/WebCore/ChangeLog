@@ -1,3 +1,27 @@
+2015-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Add diagnostic logging for ResourceResponse's source
+        https://bugs.webkit.org/show_bug.cgi?id=141170
+        <rdar://problem/19632080>
+
+        Reviewed by Antti Koivisto.
+
+        Add diagnostic logging for ResourceResponse's source (network, disk
+        cache, disk cache after validation) to give us an idea of our network
+        cache efficacy.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::networkKey):
+        (WebCore::DiagnosticLoggingKeys::diskCacheKey):
+        (WebCore::DiagnosticLoggingKeys::diskCacheAfterValidationKey):
+        (WebCore::DiagnosticLoggingKeys::resourceResponseKey):
+        (WebCore::DiagnosticLoggingKeys::scriptKey):
+        (WebCore::DiagnosticLoggingKeys::sourceKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-02-02  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Optimize matchesLangPseudoClass() of :lang()

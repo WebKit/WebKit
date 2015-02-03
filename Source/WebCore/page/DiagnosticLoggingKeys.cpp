@@ -103,6 +103,11 @@ String DiagnosticLoggingKeys::navigationKey()
     return ASCIILiteral("navigation");
 }
 
+String DiagnosticLoggingKeys::networkKey()
+{
+    return ASCIILiteral("network");
+}
+
 String DiagnosticLoggingKeys::noCacheKey()
 {
     return ASCIILiteral("noCache");
@@ -263,6 +268,16 @@ String DiagnosticLoggingKeys::deviceProximityKey()
     return ASCIILiteral("deviceProximity");
 }
 
+String DiagnosticLoggingKeys::diskCacheKey()
+{
+    return ASCIILiteral("diskCache");
+}
+
+String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
+{
+    return ASCIILiteral("diskCacheAfterValidation");
+}
+
 String DiagnosticLoggingKeys::reloadKey()
 {
     return ASCIILiteral("reload");
@@ -276,6 +291,11 @@ String DiagnosticLoggingKeys::resourceKey()
 String DiagnosticLoggingKeys::resourceRequestKey()
 {
     return ASCIILiteral("resourceRequest");
+}
+
+String DiagnosticLoggingKeys::resourceResponseKey()
+{
+    return ASCIILiteral("resourceResponse");
 }
 
 String DiagnosticLoggingKeys::revalidatingKey()
@@ -296,6 +316,11 @@ String DiagnosticLoggingKeys::sameLoadKey()
 String DiagnosticLoggingKeys::scriptKey()
 {
     return ASCIILiteral("script");
+}
+
+String DiagnosticLoggingKeys::sourceKey()
+{
+    return ASCIILiteral("sourceKey");
 }
 
 String DiagnosticLoggingKeys::styleSheetKey()

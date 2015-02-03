@@ -32,12 +32,15 @@
 
 #include "ApplicationCacheHost.h"
 #include "AuthenticationChallenge.h"
+#include "DiagnosticLoggingClient.h"
+#include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
@@ -294,6 +297,29 @@ void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }
 
+static void logResourceResponseSource(Frame* frame, ResourceResponse::Source source)
+{
+    if (!frame)
+        return;
+
+    String sourceKey;
+    switch (source) {
+    case ResourceResponse::Source::Network:
+        sourceKey = DiagnosticLoggingKeys::networkKey();
+        break;
+    case ResourceResponse::Source::DiskCache:
+        sourceKey = DiagnosticLoggingKeys::diskCacheKey();
+        break;
+    case ResourceResponse::Source::DiskCacheAfterValidation:
+        sourceKey = DiagnosticLoggingKeys::diskCacheAfterValidationKey();
+        break;
+    case ResourceResponse::Source::Unknown:
+        return;
+    }
+
+    frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceResponseKey(), DiagnosticLoggingKeys::sourceKey(), sourceKey);
+}
+
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
     ASSERT(!m_reachedTerminalState);
@@ -301,6 +327,8 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protect(*this);
+
+    logResourceResponseSource(m_frame.get(), r.source());
 
     m_response = r;
 

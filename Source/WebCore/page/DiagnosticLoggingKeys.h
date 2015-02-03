@@ -40,6 +40,8 @@ public:
     static String deviceMotionKey();
     static String deviceOrientationKey();
     static String deviceProximityKey();
+    static String diskCacheKey();
+    static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();
     static String engineFailedToLoadKey();
     static String expiredKey();
@@ -61,6 +63,7 @@ public:
     static String mediaLoadingFailedKey();
     static String mustRevalidateIsExpiredKey();
     static String navigationKey();
+    static String networkKey();
     static String noCacheKey();
     static String noCurrentHistoryItemKey();
     static String noDocumentLoaderKey();
@@ -86,9 +89,11 @@ public:
     static String reloadKey();
     static String resourceKey();
     static String resourceRequestKey();
+    static String resourceResponseKey();
     static String revalidatingKey();
     static String sameLoadKey();
     static String scriptKey();
+    static String sourceKey();
     static String styleSheetKey();
     static String svgDocumentKey();
     static String unusedKey();
