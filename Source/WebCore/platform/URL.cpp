@@ -247,7 +247,7 @@ static inline bool isIPv6Char(unsigned char c) { return characterClassTable[c] &
 static inline bool isPathSegmentEndChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & PathSegmentEndChar; }
 static inline bool isPathSegmentEndChar(UChar c) { return c <= 0xff && (characterClassTable[c] & PathSegmentEndChar); }
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
-    
+
 static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schemeCharacter)
 {
     ASSERT(isSchemeChar(character));
@@ -1140,10 +1140,17 @@ void URL::parse(const char* url, const String* originalString)
         // Attempt to find an authority.
         // FIXME: Authority characters may be scanned twice, and it would be nice to be faster.
 
-        if (hierarchical)
+        if (hierarchical) {
             userStart++;
-        if (hasSecondSlash)
-            userStart++;
+            if (hasSecondSlash) {
+                userStart++;
+                if (isNonFileHierarchicalScheme(url, schemeEnd)) {
+                    while (url[userStart] == '/')
+                        userStart++;
+                }
+            }
+        }
+
         userEnd = userStart;
 
         int colonPos = 0;
