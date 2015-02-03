@@ -1,5 +1,30 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175818.
+
+    2014-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Layers with negative z position disapear behind the page tiles
+            https://bugs.webkit.org/show_bug.cgi?id=138571
+            rdar://problem/18873480
+
+            Reviewed by Dean Jackson.
+
+            Some crufty iOS-only code in RenderLayerBacking::parentForSublayers() caused us to fail
+            to use the m_childContainmentLayer as the ancestor for descendants, so layers with
+            negative z position would get depth-sorted behind the tiles.
+
+            Fix by removing that code.
+
+            This should have been detected by compositing/tile-cache-must-flatten.html, but
+            testing infrastructure suck prevented us from doing so.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::parentForSublayers):
+            * rendering/RenderLayerBacking.h: Just some nullptr cleanup.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175277.
 
     2014-10-24  Jeffrey Pfau  <jpfau@apple.com>
