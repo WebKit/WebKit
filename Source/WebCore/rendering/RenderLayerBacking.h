@@ -89,15 +89,15 @@ public:
 
     // Layer to clip children
     bool hasClippingLayer() const { return (m_childContainmentLayer && !m_usingTiledCacheLayer); }
-    GraphicsLayer* clippingLayer() const { return !m_usingTiledCacheLayer ? m_childContainmentLayer.get() : 0; }
+    GraphicsLayer* clippingLayer() const { return !m_usingTiledCacheLayer ? m_childContainmentLayer.get() : nullptr; }
 
     // Layer to get clipped by ancestor
-    bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != 0; }
+    bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != nullptr; }
     GraphicsLayer* ancestorClippingLayer() const { return m_ancestorClippingLayer.get(); }
 
     GraphicsLayer* contentsContainmentLayer() const { return m_contentsContainmentLayer.get(); }
 
-    bool hasContentsLayer() const { return m_foregroundLayer != 0; }
+    bool hasContentsLayer() const { return m_foregroundLayer != nullptr; }
     GraphicsLayer* foregroundLayer() const { return m_foregroundLayer.get(); }
 
     GraphicsLayer* backgroundLayer() const { return m_backgroundLayer.get(); }
