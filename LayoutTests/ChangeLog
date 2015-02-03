@@ -1,3 +1,9 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Mark some debug assertion failures to be skipped.
+
+        * platform/win/TestExpectations:
+
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Smart quoting could move the caret backwards in some configurations
