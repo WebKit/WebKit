@@ -49,6 +49,7 @@
 #import "MediaSelectionGroupAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformTimeRanges.h"
+#import "QuartzCoreSPI.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
 #import "SoftLinking.h"
@@ -80,6 +81,7 @@
 #if PLATFORM(IOS)
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
+#import <mach/mach_port.h>
 #else
 #import <Foundation/NSGeometry.h>
 #import <QuartzCore/CoreImage.h>
@@ -1039,18 +1041,41 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
+    
+    CALayer *oldRootLayer = videoFullscreenLayer;
+    while (oldRootLayer.superlayer)
+        oldRootLayer = oldRootLayer.superlayer;
 
+    CALayer *newRootLayer = nil;
+    
     if (m_videoFullscreenLayer && m_videoLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoLayer removeFromSuperlayer];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        newRootLayer = m_videoFullscreenLayer.get();
     } else if (m_videoInlineLayer && m_videoLayer) {
         [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
         [m_videoLayer removeFromSuperlayer];
         [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        newRootLayer = m_videoInlineLayer.get();
     } else if (m_videoLayer)
         [m_videoLayer removeFromSuperlayer];
 
+    while (newRootLayer.superlayer)
+        newRootLayer = newRootLayer.superlayer;
+
+    if (oldRootLayer && newRootLayer && oldRootLayer != newRootLayer) {
+        mach_port_t fencePort = 0;
+        for (CAContext *context in [CAContext allContexts]) {
+            if (context.layer == oldRootLayer || context.layer == newRootLayer) {
+                if (!fencePort)
+                    fencePort = [context createFencePort];
+                else
+                    [context setFencePort:fencePort];
+            }
+        }
+        mach_port_deallocate(mach_task_self(), fencePort);
+    }
     [CATransaction commit];
 
     if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {

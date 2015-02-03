@@ -135,6 +135,7 @@ void WebVideoFullscreenManagerProxy::didExitFullscreen()
     
 void WebVideoFullscreenManagerProxy::didCleanupFullscreen()
 {
+    [CATransaction flush];
     [m_layerHost removeFromSuperlayer];
     m_layerHost.clear();
     m_page->send(Messages::WebVideoFullscreenManager::DidCleanupFullscreen(), m_page->pageID());

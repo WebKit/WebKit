@@ -57,11 +57,13 @@ extern "C" {
 @end
 
 @interface CAContext (Details)
++ (NSArray *)allContexts;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
 + (id)objectForSlot:(uint32_t)name;
 - (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
 - (void)deleteSlot:(uint32_t)name;
 - (void)invalidate;
+- (mach_port_t)createFencePort;
 - (void)setFencePort:(mach_port_t)port;
 @property (readonly) uint32_t contextId;
 @property (strong) CALayer *layer;

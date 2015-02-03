@@ -1,3 +1,15 @@
+2015-02-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Prevent flicker when exiting fullscreen by synchronizing transactions.
+        https://bugs.webkit.org/show_bug.cgi?id=140897
+
+        Reviewed by Tim Horton.
+
+        Flush transactions before removing layerHost. This allows existing transactions to be completed before the hosting layer disappears.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen):
+
 2015-02-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Convert WebInspectorProxy to use WKWebView API for the inspector view

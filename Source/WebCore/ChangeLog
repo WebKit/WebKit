@@ -1,3 +1,17 @@
+2015-02-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Prevent flicker when exiting fullscreen by synchronizing transactions.
+        https://bugs.webkit.org/show_bug.cgi?id=140897
+
+        Reviewed by Tim Horton.
+
+        Synchronize across CAContexts when moving the video layer between layer hierarchies.
+        Normally transactions involving multiple CAContexts are not synchronized.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        * platform/spi/cocoa/QuartzCoreSPI.h: add additional CAContext SPI declarations.
+
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Smart quoting could move the caret backwards in some configurations
