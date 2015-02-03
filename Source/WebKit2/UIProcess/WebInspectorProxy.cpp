@@ -39,6 +39,7 @@
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -121,28 +122,8 @@ private:
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     : m_page(page)
-    , m_inspectorPage(nullptr)
-    , m_underTest(false)
-    , m_isVisible(false)
-    , m_isAttached(false)
-    , m_canAttach(false)
-    , m_isProfilingPage(false)
-    , m_showMessageSent(false)
-    , m_ignoreFirstBringToFront(false)
-    , m_attachmentSide(AttachmentSideBottom)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && WK_API_ENABLED
     , m_closeTimer(RunLoop::main(), this, &WebInspectorProxy::closeTimerFired)
-#elif PLATFORM(GTK) || PLATFORM(EFL)
-    , m_inspectorView(nullptr)
-    , m_inspectorWindow(nullptr)
-#if PLATFORM(GTK)
-    , m_headerBar(nullptr)
-    , m_dockBottomButton(nullptr)
-    , m_dockRightButton(nullptr)
-#endif
-#endif
-#if ENABLE(INSPECTOR_SERVER)
-    , m_remoteInspectionPageId(0)
 #endif
 {
     m_level = WebInspectorPageGroups::singleton().inspectorLevel(m_page->pageGroup());
@@ -156,6 +137,11 @@ WebInspectorProxy::~WebInspectorProxy()
 WebPageGroup* WebInspectorProxy::inspectorPageGroup() const
 {
     return WebInspectorPageGroups::singleton().inspectorPageGroupForLevel(m_level);
+}
+
+WebPreferences& WebInspectorProxy::inspectorPagePreferences() const
+{
+    return inspectorPageGroup()->preferences();
 }
 
 void WebInspectorProxy::invalidate()
@@ -293,10 +279,10 @@ void WebInspectorProxy::attach(AttachmentSide side)
     m_isAttached = true;
     m_attachmentSide = side;
 
-    inspectorPageGroup()->preferences().setInspectorAttachmentSide(side);
+    inspectorPagePreferences().setInspectorAttachmentSide(side);
 
     if (m_isVisible)
-        inspectorPageGroup()->preferences().setInspectorStartsAttached(true);
+        inspectorPagePreferences().setInspectorStartsAttached(true);
 
     m_page->process().send(Messages::WebInspector::SetAttached(true), m_page->pageID());
 
@@ -321,7 +307,7 @@ void WebInspectorProxy::detach()
     m_isAttached = false;
 
     if (m_isVisible)
-        inspectorPageGroup()->preferences().setInspectorStartsAttached(false);
+        inspectorPagePreferences().setInspectorStartsAttached(false);
 
     m_page->process().send(Messages::WebInspector::SetAttached(false), m_page->pageID());
     m_inspectorPage->process().send(Messages::WebInspectorUI::Detached(), m_inspectorPage->pageID());
@@ -331,13 +317,13 @@ void WebInspectorProxy::detach()
 
 void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
-    inspectorPageGroup()->preferences().setInspectorAttachedHeight(height);
+    inspectorPagePreferences().setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 
 void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
 {
-    inspectorPageGroup()->preferences().setInspectorAttachedWidth(width);
+    inspectorPagePreferences().setInspectorAttachedWidth(width);
     platformSetAttachedWindowWidth(width);
 }
 
@@ -539,7 +525,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
     if (!m_underTest) {
         m_canAttach = canAttach;
         m_isAttached = shouldOpenAttached();
-        m_attachmentSide = static_cast<AttachmentSide>(inspectorPageGroup()->preferences().inspectorAttachmentSide());
+        m_attachmentSide = static_cast<AttachmentSide>(inspectorPagePreferences().inspectorAttachmentSide());
 
         m_page->process().send(Messages::WebInspector::SetAttached(m_isAttached), m_page->pageID());
 
@@ -633,7 +619,7 @@ void WebInspectorProxy::append(const String& filename, const String& content)
 
 bool WebInspectorProxy::shouldOpenAttached()
 {
-    return inspectorPageGroup()->preferences().inspectorStartsAttached() && canAttach();
+    return inspectorPagePreferences().inspectorStartsAttached() && canAttach();
 }
 
 #if ENABLE(INSPECTOR_SERVER)
@@ -643,5 +629,123 @@ void WebInspectorProxy::sendMessageToRemoteFrontend(const String& message)
     WebInspectorServer::singleton().sendMessageOverConnection(m_remoteInspectionPageId, message);
 }
 #endif
+
+// Unsupported configurations can use the stubs provided here.
+
+#if PLATFORM(IOS) || (PLATFORM(MAC) && !WK_API_ENABLED)
+
+WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+{
+    notImplemented();
+    return nullptr;
+}
+
+void WebInspectorProxy::platformOpen()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDidClose()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformInvalidate()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformBringToFront()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformHide()
+{
+    notImplemented();
+}
+
+bool WebInspectorProxy::platformIsFront()
+{
+    notImplemented();
+    return false;
+}
+
+void WebInspectorProxy::platformInspectedURLChanged(const String&)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
+{
+    notImplemented();
+}
+
+unsigned WebInspectorProxy::platformInspectedWindowHeight()
+{
+    notImplemented();
+    return 0;
+}
+
+unsigned WebInspectorProxy::platformInspectedWindowWidth()
+{
+    notImplemented();
+    return 0;
+}
+
+void WebInspectorProxy::platformAttach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDetach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetToolbarHeight(unsigned)
+{
+    notImplemented();
+}
+
+String WebInspectorProxy::inspectorPageURL() const
+{
+    notImplemented();
+    return String();
+}
+
+String WebInspectorProxy::inspectorTestPageURL() const
+{
+    notImplemented();
+    return String();
+}
+
+String WebInspectorProxy::inspectorBaseURL() const
+{
+    notImplemented();
+    return String();
+}
+
+void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+{
+    notImplemented();
+}
+
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && !WK_API_ENABLED)
 
 } // namespace WebKit

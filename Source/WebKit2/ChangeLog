@@ -1,3 +1,78 @@
+2015-02-03  Brian J. Burg  <burg@cs.washington.edu>
+
+        Convert WebInspectorProxy to use WKWebView API for the inspector view
+        https://bugs.webkit.org/show_bug.cgi?id=141037
+
+        Reviewed by Timothy Hatcher.
+
+        Use the newer API for PLATFORM(MAC). The main difference is that the
+        WKWebView's page group cannot be set directly; instead, the group identifier
+        is passed. Also add some preference setters needed for the inspector.
+
+        Refactor some code to not use page groups directly. In a future patch,
+        the PageGroup-based inspector level system will be simplified. It is
+        it is no longer necessary to keep a static map of PageGroup instances,
+        since they are only used to save inspector window preferences. (These used
+        to prevent all levels of inspector from pausing together when a second-level
+        inspector hit a breakpoint. This is not necessary with multi-process
+        web inspectors.)
+
+        Also, adjust window resizing behavior when the inspector is docked to
+        the right. Window width resizes should not affect the width of the inspector
+        frame. This matches the behavior of height changes when docked to the bottom.
+
+        To support 32-bit Mac builds where WKWebView is not defined, share the stub
+        platformFoo() implementations with PLATFORM(IOS). The stubs are now located
+        in the platform-independent WebInspectorProxy.cpp.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _logsPageMessagesToSystemConsoleEnabled]): Added.
+        (-[WKPreferences _setLogsPageMessagesToSystemConsoleEnabled:]): Added.
+        (-[WKPreferences _allowFileAccessFromFileURLs]): Added.
+        (-[WKPreferences _setAllowFileAccessFromFileURLs:]): Added.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::inspectorPagePreferences):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::setAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::setAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::shouldOpenAttached):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformHide):
+        (WebKit::WebInspectorProxy::platformIsFront):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit::WebInspectorProxy::platformAppend):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/ios/WebInspectorProxyIOS.mm: Removed.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorWKWebView _didRelaunchProcess]):
+        WKWebView doesn't implement this, so remove the super call.
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        (WebKit::createDockButton):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (-[WKWebInspectorWKView _didRelaunchProcess]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-03  Antti Koivisto  <antti@apple.com>
 
         Memory cache for resources pending disk write

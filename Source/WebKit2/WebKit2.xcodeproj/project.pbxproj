@@ -633,7 +633,6 @@
 		2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9449D1884E4F000ED86DB /* GestureTypes.h */; };
 		2DA944A71884E94800ED86DB /* DownloadIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A61884E94800ED86DB /* DownloadIOS.mm */; };
 		2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */; };
-		2DA944AE1884E9BA00ED86DB /* WebInspectorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */; };
 		2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */; };
 		2DA944B01884E9BA00ED86DB /* WebProcessProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */; };
 		2DA944B91884EA3900ED86DB /* WebBackForwardListProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944B51884EA3500ED86DB /* WebBackForwardListProxyIOS.mm */; };
@@ -2744,7 +2743,6 @@
 		2DA9449D1884E4F000ED86DB /* GestureTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureTypes.h; path = ios/GestureTypes.h; sourceTree = "<group>"; };
 		2DA944A61884E94800ED86DB /* DownloadIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadIOS.mm; path = Downloads/ios/DownloadIOS.mm; sourceTree = "<group>"; };
 		2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextCheckerIOS.mm; path = ios/TextCheckerIOS.mm; sourceTree = "<group>"; };
-		2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebInspectorProxyIOS.mm; path = ios/WebInspectorProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPageProxyIOS.mm; path = ios/WebPageProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebProcessProxyIOS.mm; path = ios/WebProcessProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944B51884EA3500ED86DB /* WebBackForwardListProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebBackForwardListProxyIOS.mm; path = ios/WebBackForwardListProxyIOS.mm; sourceTree = "<group>"; };
@@ -5046,7 +5044,6 @@
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
-				2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */,
 				2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */,
 				2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.mm */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
@@ -9632,7 +9629,6 @@
 				BC111A60112F4FBB00337BAB /* WebInspectorClient.cpp in Sources */,
 				1C8E2A351277852400BC7BD0 /* WebInspectorMessageReceiver.cpp in Sources */,
 				1C8E28351275D73800BC7BD0 /* WebInspectorProxy.cpp in Sources */,
-				2DA944AE1884E9BA00ED86DB /* WebInspectorProxyIOS.mm in Sources */,
 				1CA8B936127C774E00576C2B /* WebInspectorProxyMac.mm in Sources */,
 				1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */,
 				1C891D6519B124FF00BA79DD /* WebInspectorUI.cpp in Sources */,
