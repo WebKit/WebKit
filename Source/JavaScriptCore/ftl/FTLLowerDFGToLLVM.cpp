@@ -311,7 +311,7 @@ private:
     {
         if (verboseCompilationEnabled())
             dataLog("Bailing.\n");
-        crash(m_highBlock->index, m_node->index());
+        crash();
 
         // Invalidate dominated blocks. Under normal circumstances we would expect
         // them to be invalidated already. But you can have the CFA become more
@@ -2017,9 +2017,18 @@ private:
         }
         
         TypedPointer base;
-        if (codeOrigin.inlineCallFrame)
+        if (codeOrigin.inlineCallFrame) {
+            if (codeOrigin.inlineCallFrame->arguments.size() <= 1) {
+                // We should have already exited due to the bounds check, above. Just tell the
+                // compiler that anything dominated by this instruction is not reachable, so
+                // that we don't waste time generating such code. This will also plant some
+                // kind of crashing instruction so that if by some fluke the bounds check didn't
+                // work, we'll crash in an easy-to-see way.
+                didAlreadyTerminate();
+                return;
+            }
             base = addressFor(codeOrigin.inlineCallFrame->arguments[1].virtualRegister());
-        else
+        } else
             base = addressFor(virtualRegisterForArgument(1));
         
         LValue pointer = m_out.baseIndex(
@@ -5426,6 +5435,11 @@ private:
     void terminate(ExitKind kind)
     {
         speculate(kind, noValue(), nullptr, m_out.booleanTrue);
+        didAlreadyTerminate();
+    }
+    
+    void didAlreadyTerminate()
+    {
         m_state.setIsValid(false);
     }
     
@@ -6889,6 +6903,10 @@ private:
         return addressFor(operand, TagOffset);
     }
     
+    void crash()
+    {
+        crash(m_highBlock->index, m_node->index());
+    }
     void crash(BlockIndex blockIndex, unsigned nodeIndex)
     {
 #if ASSERT_DISABLED
