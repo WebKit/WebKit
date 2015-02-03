@@ -1,3 +1,9 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Lint cleanup of Windows TestExpectations (Unreviewed)
+
+        * platform/win/TestExpectations:
+
 2015-02-03  Jer Noble  <jer.noble@apple.com>
 
         Passing invalid values to OfflineAudioContext's constructor should not crash.

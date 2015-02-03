@@ -508,9 +508,6 @@ fast/events/constructors/device-proximity-event-constructor.html
 # TODO Fail until SUBPIXEL_LAYOUT is enabled
 webkit.org/b/85532 fast/sub-pixel [ Skip ]
 
-# TODO JavaScript Experiments are not enabled on Windows
-webkit.org/b/87858 js/names.html [ Skip ]
-
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
 
@@ -1757,11 +1754,8 @@ http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Failure ]
-http/tests/security/contentSecurityPolicy/nosniff-script-blocked.html [ Failure ]
-http/tests/security/contentTypeOptions/nosniff-script-without-content-type-blocked.html [ Failure ]
 
 # Crashes
-http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
 http/tests/misc/drag-not-loaded-image.html [ Skip ] # Crash
 http/tests/misc/canvas-pattern-from-incremental-image.html [ Skip ] # Crash
 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Skip ] # Crash
@@ -1917,7 +1911,6 @@ http/tests/ssl/ping-with-unsafe-redirect.html [ Failure ]
 http/tests/ssl/referer-301.html [ Failure ]
 http/tests/ssl/referer-303.html [ Failure ]
 http/tests/ssl/verify-ssl-enabled.php [ Failure ] # Easy?
-http/tests/websocket/tests/hybi/workers/close.html [ Failure ]
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/access-control-preflight-headers-async.html [ Pass Failure ] # Easy?
 http/tests/xmlhttprequest/cache-override.html [ Failure ]
@@ -2494,7 +2487,6 @@ fast/table/table-cell-change-last-row-with-needsCellRecalc-section.html [ Pass T
 fast/text/emphasis-vertical-over-right.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-euc.html [ Failure ]
-fast/text/backslash-to-yen-sign-euc.html [ Failure ]
 fast/text/fallback-traits-fixup.html [ Failure ]
 fast/text/international/complex-character-based-fallback.html [ Failure ]
 fast/text/indic.html [ Failure ]
@@ -2513,7 +2505,6 @@ webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Fail
 webkit.org/b/140216 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
-fast/text/international/complex-character-based-fallback.html [ Failure ]
 
 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Failure Timeout ]
 
