@@ -1,3 +1,15 @@
+2015-02-02  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r170576): Storage leaks in parsing of CSS image sizes
+        https://bugs.webkit.org/show_bug.cgi?id=141026
+
+        Reviewed by Brent Fulgham.
+
+        Forgot to actually fix the leak in the successful parse case!
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::sourceSize): Added a call to destroy.
+
 2015-02-02  Benjamin Poulain  <benjamin@webkit.org>
 
         JIT Compile simple cases of :nth-last-child()

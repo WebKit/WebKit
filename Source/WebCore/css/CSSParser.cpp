@@ -1523,8 +1523,9 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     }
     if (!value)
         value = parserValue.createCSSValue();
+    destroy(parserValue);
     // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
-    // With the other compilers, this works without explicitly stating the type name SourceSize or using a local.
+    // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
     return SourceSize(WTF::move(expression), WTF::move(value));
 }
 
