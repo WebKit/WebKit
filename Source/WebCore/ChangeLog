@@ -1,5 +1,32 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174756.
+
+    2014-10-15  Dean Jackson  <dino@apple.com>
+
+            [Media] Reduce style updates (painting) in controls
+            https://bugs.webkit.org/show_bug.cgi?id=137763
+            <rdar://problem/17833045>
+
+            Reviewed by Simon Fraser.
+
+            Media controls were causing a lot of repaints they were
+            constantly updating the style of the widgets, the value
+            of the forms, or the text in the display.
+
+            This is necessary when the controls are visible, but not
+            necessary when they are hidden. Return immediately in that case.
+
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.createControls): Initialise the slider to a zero value.
+            (Controller.prototype.handleDurationChange): Force an update even though we might be hidden.
+            (Controller.prototype.updateProgress): Don't update if we're hidden.
+            (Controller.prototype.updateTime): Ditto.
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.updateProgress): Ditto.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174741.
 
     2014-10-13  Chris Fleizach  <cfleizach@apple.com>
