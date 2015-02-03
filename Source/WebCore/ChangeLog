@@ -1,5 +1,23 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176318.
+
+    2014-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Screen braille input doesn't work on forms.
+            https://bugs.webkit.org/show_bug.cgi?id=138804
+
+            Reviewed by Mario Sanchez Prada.
+
+            Allow iOS to set values of text fields through the API.
+
+            Test: platform/ios-sim/accessibility/set-value.html
+
+            * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+            (-[WebAccessibilityObjectWrapper _accessibilitySetValue:]):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175818.
 
     2014-11-10  Simon Fraser  <simon.fraser@apple.com>
