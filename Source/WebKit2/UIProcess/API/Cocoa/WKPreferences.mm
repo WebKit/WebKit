@@ -247,26 +247,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setDeveloperExtrasEnabled(developerExtrasEnabled);
 }
 
-- (BOOL)_logsPageMessagesToSystemConsoleEnabled
-{
-    return _preferences->logsPageMessagesToSystemConsoleEnabled();
-}
-
-- (void)_setLogsPageMessagesToSystemConsoleEnabled:(BOOL)logsPageMessagesToSystemConsoleEnabled
-{
-    _preferences->setLogsPageMessagesToSystemConsoleEnabled(logsPageMessagesToSystemConsoleEnabled);
-}
-
-- (BOOL)_allowFileAccessFromFileURLs
-{
-    return _preferences->allowFileAccessFromFileURLs();
-}
-
-- (void)_setAllowFileAccessFromFileURLs:(BOOL)allowFileAccessFromFileURLs
-{
-    _preferences->setAllowFileAccessFromFileURLs(allowFileAccessFromFileURLs);
-}
-
 - (BOOL)_isStandalone
 {
     return _preferences->standalone();

@@ -31,6 +31,7 @@
 #include "Attachment.h"
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,7 @@ OBJC_CLASS NSButton;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorProxyObjCAdapter;
-OBJC_CLASS WKWebInspectorWKWebView;
+OBJC_CLASS WKWebInspectorWKView;
 #endif
 
 #if PLATFORM(GTK)
@@ -61,7 +62,6 @@ namespace WebKit {
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
-class WebPreferences;
 class WebProcessPool;
 
 enum AttachmentSide {
@@ -94,7 +94,7 @@ public:
     void close();
 
     void didRelaunchInspectorPageProcess();
-
+    
 #if PLATFORM(MAC)
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
@@ -192,10 +192,7 @@ private:
 
     void open();
 
-    // FIXME: this should return the page group identifier, not an instance. The Mac port cannot
-    // directly provide a page group instance, and instances are not necessary to compute levels.
     WebPageGroup* inspectorPageGroup() const;
-    WebPreferences& inspectorPagePreferences() const;
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
     void createInspectorWindow();
@@ -212,16 +209,16 @@ private:
     static const unsigned initialWindowWidth;
     static const unsigned initialWindowHeight;
 
-    WebPageProxy* m_page {nullptr};
-    WebPageProxy* m_inspectorPage {nullptr};
+    WebPageProxy* m_page;
+    WebPageProxy* m_inspectorPage;
 
-    bool m_underTest {false};
-    bool m_isVisible {false};
-    bool m_isAttached {false};
-    bool m_canAttach {false};
-    bool m_isProfilingPage {false};
-    bool m_showMessageSent {false};
-    bool m_ignoreFirstBringToFront {false};
+    bool m_underTest;
+    bool m_isVisible;
+    bool m_isAttached;
+    bool m_canAttach;
+    bool m_isProfilingPage;
+    bool m_showMessageSent;
+    bool m_ignoreFirstBringToFront;
 
     // The debugger stops all the pages in the same PageGroup. Having
     // all the inspectors in the same group will make it impossible to debug
@@ -230,10 +227,10 @@ private:
     
     IPC::Attachment m_connectionIdentifier;
 
-    AttachmentSide m_attachmentSide {AttachmentSideBottom};
+    AttachmentSide m_attachmentSide;
 
 #if PLATFORM(MAC)
-    RetainPtr<WKWebInspectorWKWebView> m_inspectorView;
+    RetainPtr<WKWebInspectorWKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<NSButton> m_dockBottomButton;
     RetainPtr<NSButton> m_dockRightButton;
@@ -243,18 +240,18 @@ private:
     String m_urlString;
 #elif PLATFORM(GTK)
     WebInspectorClientGtk m_client;
-    GtkWidget* m_inspectorView {nullptr};
-    GtkWidget* m_inspectorWindow {nullptr};
-    GtkWidget* m_headerBar {nullptr};
-    GtkWidget* m_dockBottomButton {nullptr};
-    GtkWidget* m_dockRightButton {nullptr};
+    GtkWidget* m_inspectorView;
+    GtkWidget* m_inspectorWindow;
+    GtkWidget* m_headerBar;
+    GtkWidget* m_dockBottomButton;
+    GtkWidget* m_dockRightButton;
     String m_inspectedURLString;
 #elif PLATFORM(EFL)
-    Evas_Object* m_inspectorView {nullptr};
-    Ecore_Evas* m_inspectorWindow {nullptr};
+    Evas_Object* m_inspectorView;
+    Ecore_Evas* m_inspectorWindow;
 #endif
 #if ENABLE(INSPECTOR_SERVER)
-    int m_remoteInspectionPageId {0};
+    int m_remoteInspectionPageId;
 #endif
 };
 

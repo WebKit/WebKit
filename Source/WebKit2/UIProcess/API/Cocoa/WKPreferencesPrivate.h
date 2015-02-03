@@ -56,10 +56,6 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 
 @property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-@property (nonatomic, setter=_setLogsPageMessagesToSystemConsoleEnabled:) BOOL _logsPageMessagesToSystemConsoleEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
-@property (nonatomic, setter=_setAllowFileAccessFromFileURLs:) BOOL _allowFileAccessFromFileURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
 @property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, setter=_setDiagnosticLoggingEnabled:) BOOL _diagnosticLoggingEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);

@@ -33,18 +33,15 @@
 #import "WKMutableArray.h"
 #import "WKOpenPanelParameters.h"
 #import "WKOpenPanelResultListener.h"
-#import "WKPreferencesInternal.h"
-#import "WKProcessPoolInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLCF.h"
 #import "WKViewInternal.h"
-#import "WKWebViewConfigurationPrivate.h"
-#import "WKWebViewInternal.h"
 #import "WebInspectorMessages.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
@@ -173,7 +170,7 @@ static const unsigned webViewCloseTimeout = 60;
 
 @end
 
-@interface WKWebInspectorWKWebView : WKWebView {
+@interface WKWebInspectorWKView : WKView {
 @private
     WKWebInspectorProxyObjCAdapter *_inspectorProxyObjCAdapter;
 }
@@ -181,7 +178,7 @@ static const unsigned webViewCloseTimeout = 60;
 @property (nonatomic, assign) WKWebInspectorProxyObjCAdapter *inspectorProxyObjCAdapter;
 @end
 
-@implementation WKWebInspectorWKWebView
+@implementation WKWebInspectorWKView
 
 @synthesize inspectorProxyObjCAdapter = _inspectorProxyObjCAdapter;
 
@@ -192,6 +189,8 @@ static const unsigned webViewCloseTimeout = 60;
 
 - (void)_didRelaunchProcess
 {
+    [super _didRelaunchProcess];
+
     [self.inspectorProxyObjCAdapter didRelaunchProcess];
 }
 
@@ -313,7 +312,8 @@ void WebInspectorProxy::closeTimerFired()
         return;
 
     if (m_inspectorView) {
-        m_inspectorView->_page->close();
+        WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
+        inspectorPage->close();
         [m_inspectorView setInspectorProxyObjCAdapter:nil];
         m_inspectorView = nil;
     }
@@ -331,7 +331,7 @@ static NSButton *createDockButton(NSString *imageName)
     dockButton.autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
 
     // Get the dock image and make it a template so the button cell effects will apply.
-    NSImage *dockImage = [[NSBundle bundleForClass:[WKWebInspectorWKWebView class]] imageForResource:imageName];
+    NSImage *dockImage = [[NSBundle bundleForClass:[WKWebInspectorWKView class]] imageForResource:imageName];
     [dockImage setTemplate:YES];
 
     // Set the dock image on the button cell.
@@ -453,7 +453,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     if (m_inspectorView) {
         ASSERT(m_inspectorProxyObjCAdapter);
-        return m_inspectorView->_page.get();
+        return toImpl(m_inspectorView.get().pageRef);
     }
 
     ASSERT(!m_inspectorView);
@@ -465,10 +465,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
         switch (m_attachmentSide) {
         case AttachmentSideBottom:
-            initialRect = NSMakeRect(0, 0, NSWidth(inspectedViewFrame), inspectorPagePreferences().inspectorAttachedHeight());
+            initialRect = NSMakeRect(0, 0, NSWidth(inspectedViewFrame), inspectorPageGroup()->preferences().inspectorAttachedHeight());
             break;
         case AttachmentSideRight:
-            initialRect = NSMakeRect(0, 0, inspectorPagePreferences().inspectorAttachedWidth(), NSHeight(inspectedViewFrame));
+            initialRect = NSMakeRect(0, 0, inspectorPageGroup()->preferences().inspectorAttachedWidth(), NSHeight(inspectedViewFrame));
             break;
         }
     } else {
@@ -480,25 +480,11 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferences *preferences = [configuration preferences];
-#ifndef NDEBUG
-    // Allow developers to inspect the Web Inspector in debug builds without changing settings.
-    preferences._developerExtrasEnabled = YES;
-    preferences._logsPageMessagesToSystemConsoleEnabled = YES;
-#endif
-    preferences._allowFileAccessFromFileURLs = YES;
-    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool())];
-    [configuration _setGroupIdentifier:inspectorPageGroup()->identifier()];
-
-    m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
+    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&inspectorProcessPool()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:nullptr]);
     ASSERT(m_inspectorView);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
-    [m_inspectorView _setDrawsTransparentBackground:YES];
-#endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [m_inspectorView _setAutomaticallyAdjustsContentInsets:NO];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+    [m_inspectorView setDrawsBackground:NO];
 #endif
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
@@ -506,7 +492,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     [m_inspectorView setInspectorProxyObjCAdapter:m_inspectorProxyObjCAdapter.get()];
 
-    WebPageProxy* inspectorPage = m_inspectorView->_page.get();
+    WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
     ASSERT(inspectorPage);
 
     WKPageUIClientV2 uiClient = {
@@ -803,16 +789,16 @@ void WebInspectorProxy::platformAttach()
 
     [m_inspectorView removeFromSuperview];
 
+    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
+
     CGFloat currentDimension;
 
     switch (m_attachmentSide) {
     case AttachmentSideBottom:
-        [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
-        currentDimension = inspectorPagePreferences().inspectorAttachedHeight();
+        currentDimension = inspectorPageGroup()->preferences().inspectorAttachedHeight();
         break;
     case AttachmentSideRight:
-        [m_inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
-        currentDimension = inspectorPagePreferences().inspectorAttachedWidth();
+        currentDimension = inspectorPageGroup()->preferences().inspectorAttachedWidth();
         break;
     }
 

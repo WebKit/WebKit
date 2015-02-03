@@ -121,8 +121,28 @@ private:
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     : m_page(page)
+    , m_inspectorPage(nullptr)
+    , m_underTest(false)
+    , m_isVisible(false)
+    , m_isAttached(false)
+    , m_canAttach(false)
+    , m_isProfilingPage(false)
+    , m_showMessageSent(false)
+    , m_ignoreFirstBringToFront(false)
+    , m_attachmentSide(AttachmentSideBottom)
 #if PLATFORM(MAC)
     , m_closeTimer(RunLoop::main(), this, &WebInspectorProxy::closeTimerFired)
+#elif PLATFORM(GTK) || PLATFORM(EFL)
+    , m_inspectorView(nullptr)
+    , m_inspectorWindow(nullptr)
+#if PLATFORM(GTK)
+    , m_headerBar(nullptr)
+    , m_dockBottomButton(nullptr)
+    , m_dockRightButton(nullptr)
+#endif
+#endif
+#if ENABLE(INSPECTOR_SERVER)
+    , m_remoteInspectionPageId(0)
 #endif
 {
     m_level = WebInspectorPageGroups::singleton().inspectorLevel(m_page->pageGroup());
@@ -136,11 +156,6 @@ WebInspectorProxy::~WebInspectorProxy()
 WebPageGroup* WebInspectorProxy::inspectorPageGroup() const
 {
     return WebInspectorPageGroups::singleton().inspectorPageGroupForLevel(m_level);
-}
-
-WebPreferences& WebInspectorProxy::inspectorPagePreferences() const
-{
-    return inspectorPageGroup()->preferences();
 }
 
 void WebInspectorProxy::invalidate()
@@ -278,10 +293,10 @@ void WebInspectorProxy::attach(AttachmentSide side)
     m_isAttached = true;
     m_attachmentSide = side;
 
-    inspectorPagePreferences().setInspectorAttachmentSide(side);
+    inspectorPageGroup()->preferences().setInspectorAttachmentSide(side);
 
     if (m_isVisible)
-        inspectorPagePreferences().setInspectorStartsAttached(true);
+        inspectorPageGroup()->preferences().setInspectorStartsAttached(true);
 
     m_page->process().send(Messages::WebInspector::SetAttached(true), m_page->pageID());
 
@@ -306,7 +321,7 @@ void WebInspectorProxy::detach()
     m_isAttached = false;
 
     if (m_isVisible)
-        inspectorPagePreferences().setInspectorStartsAttached(false);
+        inspectorPageGroup()->preferences().setInspectorStartsAttached(false);
 
     m_page->process().send(Messages::WebInspector::SetAttached(false), m_page->pageID());
     m_inspectorPage->process().send(Messages::WebInspectorUI::Detached(), m_inspectorPage->pageID());
@@ -316,13 +331,13 @@ void WebInspectorProxy::detach()
 
 void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
-    inspectorPagePreferences().setInspectorAttachedHeight(height);
+    inspectorPageGroup()->preferences().setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 
 void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
 {
-    inspectorPagePreferences().setInspectorAttachedWidth(width);
+    inspectorPageGroup()->preferences().setInspectorAttachedWidth(width);
     platformSetAttachedWindowWidth(width);
 }
 
@@ -524,7 +539,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
     if (!m_underTest) {
         m_canAttach = canAttach;
         m_isAttached = shouldOpenAttached();
-        m_attachmentSide = static_cast<AttachmentSide>(inspectorPagePreferences().inspectorAttachmentSide());
+        m_attachmentSide = static_cast<AttachmentSide>(inspectorPageGroup()->preferences().inspectorAttachmentSide());
 
         m_page->process().send(Messages::WebInspector::SetAttached(m_isAttached), m_page->pageID());
 
@@ -618,7 +633,7 @@ void WebInspectorProxy::append(const String& filename, const String& content)
 
 bool WebInspectorProxy::shouldOpenAttached()
 {
-    return inspectorPagePreferences().inspectorStartsAttached() && canAttach();
+    return inspectorPageGroup()->preferences().inspectorStartsAttached() && canAttach();
 }
 
 #if ENABLE(INSPECTOR_SERVER)

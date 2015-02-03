@@ -1,3 +1,18 @@
+2015-02-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179540.
+        https://bugs.webkit.org/show_bug.cgi?id=141190
+
+        need further investigation to fix !WK_API_ENABLED (32bit)
+        build. (Requested by brrian_ on #webkit).
+
+        Reverted changeset:
+
+        "Convert WebInspectorProxy to use WKWebView API for the
+        inspector view"
+        https://bugs.webkit.org/show_bug.cgi?id=141037
+        http://trac.webkit.org/changeset/179540
+
 2015-02-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Convert WebInspectorProxy to use WKWebView API for the inspector view
