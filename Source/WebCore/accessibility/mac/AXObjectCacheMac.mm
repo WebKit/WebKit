@@ -160,8 +160,13 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXT
 {
 }
 
-void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent)
+void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)
 {
+    if (!axFrameObject)
+        return;
+    
+    if (loadingEvent == AXLoadingFinished && axFrameObject->document() == axFrameObject->topDocument())
+        postPlatformNotification(axFrameObject, AXLoadComplete);
 }
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)

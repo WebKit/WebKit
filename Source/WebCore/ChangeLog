@@ -1,5 +1,35 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174741.
+
+    2014-10-13  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Going back is broken for VoiceOver
+            https://bugs.webkit.org/show_bug.cgi?id=137382
+
+            Reviewed by Darin Adler.
+
+            There were two issues preventing VoiceOver from navigating when using page history to go back/forward.
+              1) Existing AXLoadComplete does not get fired when you just move through page history. 
+                   There were existing frameLoad notifications used by GTK. I think we should use those which seem more reliable.
+              2) The AccessibilityScrollView cached its children, but on some history page loads, that cache was never cleared out.
+                   Rather than trying to find those places to clear out the cache, it's easier to just add the elements to the children
+                   array everytime it's asked for. Since there's only ever 3 elements (web area + 2 scroll bars) this should not be a performance hit.
+
+            Tests are not possible since they require monitoring notifications across multiple page loads.
+
+            * accessibility/AXObjectCache.h:
+            * accessibility/AccessibilityScrollView.cpp:
+            (WebCore::AccessibilityScrollView::updateChildrenIfNecessary):
+            * accessibility/ios/AXObjectCacheIOS.mm:
+            (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+            * accessibility/mac/AXObjectCacheMac.mm:
+            (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+            * dom/Document.cpp:
+            (WebCore::Document::implicitClose):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174712.
 
     2014-10-14  Dan Bernstein  <mitz@apple.com>
