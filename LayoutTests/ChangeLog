@@ -1,3 +1,9 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [WIn] Unreviewed test updates.
+
+        * platform/win/TestExpectations:
+
 2015-02-03  Jer Noble  <jer.noble@apple.com>
 
         [Mac] HLS audio is not correctly selected according to system language

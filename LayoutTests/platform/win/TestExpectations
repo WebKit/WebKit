@@ -1207,6 +1207,7 @@ webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
 # thing is that these do not consistently fail:
 webkit.org/b/140798 accessibility/aria-checked-mixed-value.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-controls.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-disabled-propagated-to-children.html [ Pass Failure ]
 webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-hidden-with-elements.html [ Failure ]
@@ -1300,9 +1301,6 @@ webkit.org/b/95405 platform/win/accessibility/single-select-children.html [ Skip
 accessibility/file-upload-button-stringvalue.html
 webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #  [ Timeout ]
 
-# AX role needs to be updated on Windows, many test cases involve AX role crash or fail
-#accessibility/svg-bounds.html
-#accessibility/html-html-element-is-ignored.html
 # Wants 'webkitCreateShadowRoot()' access:
 webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html [ Failure ]
 
@@ -1342,6 +1340,7 @@ webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html 
 webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 
 # The following failures have not been investigated.
+accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
 accessibility/aria-readonly.html [ Failure ]
 accessibility/aria-required.html [ Failure ]
 accessibility/content-editable.html [ Failure ]
@@ -1354,7 +1353,7 @@ accessibility/html5-required-attribute.html [ Failure ]
 accessibility/image-link.html [ Failure ]
 accessibility/image-map2.html [ Failure ]
 accessibility/internal-link-anchors2.html [ Failure ]
-accessibility/language-attribute.html [ Failure ]
+accessibility/language-attribute.html [ Pass Failure ]
 accessibility/lists.html [ Failure ]
 accessibility/onclick-handlers.html [ Failure ]
 accessibility/parent-delete.html [ Failure ]
@@ -1699,7 +1698,7 @@ fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html [ Pass Timeo
 fast/forms/003.html [ ImageOnlyFailure ]
 fast/forms/004.html [ ImageOnlyFailure ]
 
-webkit.org/b/140865 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
+webkit.org/b/140865 fast/forms/textarea-placeholder-set-attribute.html [ Pass ImageOnlyFailure ]
 
 # new timeouts, need bug reports
 fast/forms/button-state-restore.html [ Skip ]
@@ -1847,10 +1846,6 @@ webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Timeout ]
 # Times out <rdar://problem/9304941>
 http/tests/multipart/invalid-image-data-standalone.html [ Skip ] # Timeout
 
-# Times out <rdar://problem/7091605>
-#http/tests/cache/subresource-expiration-1.html [ Skip ] # Timeout
-#http/tests/cache/subresource-expiration-2.html [ Skip ] # Timeout
-
 # Not investigated yet
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
@@ -1867,6 +1862,7 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 # The following are unreviewed:
 http/tests/cache/content-type-ignored-during-revalidation.html [ Failure ]
+http/tests/cache/disk-cache-validation.html [ Failure ]
 http/tests/cache/partitioned-cache.html [ Failure ]
 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 http/tests/cache/post-redirect-get.php [ Failure ] # Easy
@@ -1928,6 +1924,8 @@ http/tests/xmlhttprequest/cache-override.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
 http/tests/xmlhttprequest/range-test.html [ Failure ]
 http/tests/xmlhttprequest/response-special-characters.html [ Failure ]
+http/tests/xmlhttprequest/web-apps/012.html
+http/tests/xmlhttprequest/web-apps/013.html
 ################################################################################
 #################            End HTTP Issues             #######################
 ################################################################################
@@ -2061,7 +2059,6 @@ inspector-protocol/debugger/pause-on-assert.html [ Skip ]
 fast/images/bad-png.html [ Skip ]
 
 webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
-webkit.org/b/140703 fast/preloader/scan-body-from-head-script.html [ Failure ]
 
 # These fail because the URL is not available when the loader first runs, so instead of 'didFinishLoading' being
 # attributed to 'block-test.html', it shows up as <unknown>
@@ -2086,7 +2083,6 @@ webkit.org/b/140866 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 # Main frame document does not match cached page document:
 webkit.org/b/140871 [ Debug ] fast/loader/non-deferred-substitute-load.html [ Skip ]
 
-fast/inline/out-of-flow-positioned-render-replaced-box-moves.html [ ImageOnlyFailure ]
 webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure ]
 webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back.html [ Failure ]
 webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failure ]
@@ -2201,6 +2197,8 @@ fast/history/history-length.html [ Skip ]
 fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
+
+fast/html/marquee-scrollamount.html [ Failure ]
 
 fast/images/image-controls-basic.html [ Failure ]
 fast/images/exif-orientation-composited.html [ Failure ]
@@ -2482,6 +2480,7 @@ webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFai
 webkit.org/b/140519 [ Debug ] fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html [ Skip ]  # Crashing
 fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
+fast/selectors/several-nth-last-child.html [ Failure ]
 
 fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html [ Pass ImageOnlyFailure ]
 fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html [ ImageOnlyFailure ]
@@ -2496,6 +2495,7 @@ fast/text/emphasis-vertical-over-right.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-euc.html [ Failure ]
 fast/text/backslash-to-yen-sign-euc.html [ Failure ]
+fast/text/fallback-traits-fixup.html [ Failure ]
 fast/text/international/complex-character-based-fallback.html [ Failure ]
 fast/text/indic.html [ Failure ]
 fast/text/khmer-lao-font.html [ Failure ]
@@ -2512,6 +2512,7 @@ webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Fail
 
 webkit.org/b/140216 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 fast/text/international/complex-character-based-fallback.html [ Failure ]
 
 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Failure Timeout ]
