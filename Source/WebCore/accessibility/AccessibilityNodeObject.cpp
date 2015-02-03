@@ -300,7 +300,9 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
             return buttonRoleType();
         if (input->isRangeControl())
             return SliderRole;
-
+        if (input->isInputTypeHidden())
+            return IgnoredRole;
+        
 #if ENABLE(INPUT_TYPE_COLOR)
         const AtomicString& type = input->getAttribute(typeAttr);
         if (equalIgnoringCase(type, "color"))
@@ -438,6 +440,9 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (isDescendantOfBarrenParent())
         return true;
 
+    if (roleValue() == IgnoredRole)
+        return true;
+    
     return m_role == UnknownRole;
 }
 
