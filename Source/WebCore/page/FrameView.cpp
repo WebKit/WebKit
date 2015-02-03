@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2013, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -1127,7 +1127,7 @@ void FrameView::layout(bool allowSubtree)
 
     if (!allowSubtree && m_layoutRoot) {
         m_layoutRoot->markContainingBlocksForLayout(false);
-        m_layoutRoot = 0;
+        m_layoutRoot = nullptr;
     }
 
     ASSERT(frame().view() == this);
@@ -1325,7 +1325,9 @@ void FrameView::layout(bool allowSubtree)
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 
     updateCompositingLayersAfterLayout();
-    
+
+    m_layoutPhase = InPostLayerPositionsUpdatedAfterLayout;
+
     m_layoutCount++;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(EFL)
@@ -1344,6 +1346,8 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(!root->needsLayout());
 
     updateCanBlitOnScrollRecursively();
+
+    handleDeferredScrollUpdateAfterContentSizeChange();
 
     if (document.hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
@@ -1372,6 +1376,11 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentation::didLayout(cookie, root);
 
     --m_nestedLayoutCount;
+}
+
+bool FrameView::shouldDeferScrollUpdateAfterContentSizeChange()
+{
+    return (m_layoutPhase < InPostLayout) && (m_layoutPhase != OutsideLayout);
 }
 
 RenderBox* FrameView::embeddedContentBox() const
@@ -2051,7 +2060,7 @@ void FrameView::didChangeScrollOffset()
     frame().loader().client().didChangeScrollOffset();
 }
 
-void FrameView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
+void FrameView::scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition)
 {
     updateLayerPositionsAfterScrolling();
     updateCompositingLayersAfterScrolling();
@@ -2135,6 +2144,8 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 
 void FrameView::updateCompositingLayersAfterScrolling()
 {
+    ASSERT(m_layoutPhase >= InPostLayout || m_layoutPhase == OutsideLayout);
+
     if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
 
@@ -3671,6 +3682,11 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
 
 void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    if (m_layoutPhase == InViewSizeAdjust)
+        return;
+
+    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
+
 #ifndef NDEBUG
     bool fillWithRed;
     if (frame().document()->printing())
