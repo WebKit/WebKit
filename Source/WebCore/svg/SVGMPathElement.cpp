@@ -140,7 +140,7 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         buildPendingResource();

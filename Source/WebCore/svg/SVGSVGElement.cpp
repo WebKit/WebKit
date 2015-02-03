@@ -300,7 +300,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
             object->setNeedsTransformUpdate();
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (updateRelativeLengthsOrViewBox
         || SVGLangSpace::isKnownAttribute(attrName)

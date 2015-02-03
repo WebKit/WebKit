@@ -151,7 +151,7 @@ void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::operatorAttr
         || attrName == SVGNames::k1Attr

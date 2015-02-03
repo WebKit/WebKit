@@ -155,8 +155,6 @@ public:
 
     void callClearTarget() { clearTarget(); }
 
-    class InstanceUpdateBlocker;
-
 protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
@@ -185,8 +183,6 @@ protected:
     void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement*);
 
-    class InstanceInvalidationGuard;
-
 private:
     friend class SVGElementInstance;
 
@@ -204,8 +200,6 @@ private:
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;
 #endif
 
-    void invalidateInstances();
-
     std::unique_ptr<SVGElementRareData> m_svgRareData;
 
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
@@ -214,22 +208,6 @@ private:
         DECLARE_ANIMATED_STRING(ClassName, className)
     END_DECLARE_ANIMATED_PROPERTIES
 
-};
-
-class SVGElement::InstanceInvalidationGuard {
-public:
-    InstanceInvalidationGuard(SVGElement&);
-    ~InstanceInvalidationGuard();
-private:
-    SVGElement& m_element;
-};
-
-class SVGElement::InstanceUpdateBlocker {
-public:
-    InstanceUpdateBlocker(SVGElement&);
-    ~InstanceUpdateBlocker();
-private:
-    SVGElement& m_element;
 };
 
 struct SVGAttributeHashTranslator {
@@ -243,28 +221,6 @@ struct SVGAttributeHashTranslator {
     }
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
-
-inline SVGElement::InstanceInvalidationGuard::InstanceInvalidationGuard(SVGElement& element)
-    : m_element(element)
-{
-}
-
-inline SVGElement::InstanceInvalidationGuard::~InstanceInvalidationGuard()
-{
-    m_element.invalidateInstances();
-}
-
-inline SVGElement::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement& element)
-    : m_element(element)
-{
-    m_element.setInstanceUpdatesBlocked(true);
-}
-
-inline SVGElement::InstanceUpdateBlocker::~InstanceUpdateBlocker()
-{
-    ASSERT(m_element.instanceUpdatesBlocked());
-    m_element.setInstanceUpdatesBlocked(false);
-}
 
 inline bool Node::hasTagName(const SVGQualifiedName& name) const
 {

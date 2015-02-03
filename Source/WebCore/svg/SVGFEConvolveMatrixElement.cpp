@@ -257,7 +257,7 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::edgeModeAttr
         || attrName == SVGNames::divisorAttr

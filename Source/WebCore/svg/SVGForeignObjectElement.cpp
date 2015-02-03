@@ -112,7 +112,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::widthAttr
         || attrName == SVGNames::heightAttr) {

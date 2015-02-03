@@ -1,3 +1,18 @@
+2015-02-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179548.
+        https://bugs.webkit.org/show_bug.cgi?id=141201
+
+        Hits debug assertions in 50+ SVG tests (Requested by brrian on
+        #webkit).
+
+        Reverted changeset:
+
+        "Move InstanceInvalidationGuard/UpdateBlocker to SVGElement
+        from SVGElementInstance"
+        https://bugs.webkit.org/show_bug.cgi?id=141148
+        http://trac.webkit.org/changeset/179548
+
 2015-02-03  Jer Noble  <jer.noble@apple.com>
 
         [Mac] HLS audio is not correctly selected according to system language

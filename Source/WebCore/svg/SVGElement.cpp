@@ -392,7 +392,7 @@ void SVGElement::removedFrom(ContainerNode& rootParent)
         document().accessSVGExtensions().clearTargetDependencies(*this);
         document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
     }
-    invalidateInstances();
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
@@ -713,7 +713,7 @@ void SVGElement::finishParsingChildren()
 
     // Notify all the elements which have references to this element to rebuild their shadow and render
     // trees, e.g. a <use> element references a target element before this target element is defined.
-    invalidateInstances();
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
@@ -1044,13 +1044,13 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName);
     if (propId > 0) {
-        invalidateInstances();
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
         return;
     }
 
     if (attrName == HTMLNames::classAttr) {
         classAttributeChanged(className());
-        invalidateInstances();
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
         return;
     }
 
@@ -1061,7 +1061,7 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
             downcast<RenderSVGResourceContainer>(*renderer).idChanged();
         if (inDocument())
             buildPendingResourcesIfNeeded();
-        invalidateInstances();
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
         return;
     }
 }
@@ -1103,7 +1103,7 @@ void SVGElement::childrenChanged(const ChildChange& change)
 
     if (change.source == ChildChangeSourceParser)
         return;
-    invalidateInstances();
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 RefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
@@ -1130,10 +1130,6 @@ bool SVGElement::instanceUpdatesBlocked() const
 
 void SVGElement::setInstanceUpdatesBlocked(bool value)
 {
-    // Catch any callers that calls setInstanceUpdatesBlocked(true) twice in a row.
-    // That probably indicates nested use of InstanceUpdateBlocker and a bug.
-    ASSERT(!value || !instanceUpdatesBlocked());
-
     if (m_svgRareData)
         m_svgRareData->setInstanceUpdatesBlocked(value);
 }
@@ -1203,32 +1199,6 @@ bool SVGElement::isMouseFocusable() const
 void SVGElement::accessKeyAction(bool sendMouseEvents)
 {
     dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
-}
-
-void SVGElement::invalidateInstances()
-{
-    if (!inDocument())
-        return;
-
-    if (instanceUpdatesBlocked())
-        return;
-
-    auto& instances = this->instances();
-    if (instances.isEmpty())
-        return;
-
-    // Mark all use elements referencing 'element' for rebuilding
-    do {
-        SVGElement* instance = *instances.begin();
-        if (SVGUseElement* element = instance->correspondingUseElement()) {
-            ASSERT(element->inDocument());
-            element->invalidateShadowTree();
-        }
-        instance->setCorrespondingElement(nullptr);
-    } while (!instances.isEmpty());
-
-    // FIXME: Why is this needed?
-    document().updateStyleIfNeeded();
 }
 
 }

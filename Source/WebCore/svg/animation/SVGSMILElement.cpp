@@ -499,7 +499,7 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
     else if (attrName == SVGNames::attributeNameAttr)
         setAttributeName(constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr)));
     else if (attrName.matches(XLinkNames::hrefAttr)) {
-        InstanceInvalidationGuard guard(*this);
+        SVGElementInstance::InvalidationGuard invalidationGuard(this);
         buildPendingResource();
     } else if (inDocument()) {
         if (attrName == SVGNames::beginAttr)

@@ -141,7 +141,7 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     bool updateRelativeLengths = attrName == SVGNames::xAttr
                               || attrName == SVGNames::yAttr

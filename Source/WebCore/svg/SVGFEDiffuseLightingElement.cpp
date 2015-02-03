@@ -174,7 +174,7 @@ void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrN
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
     
     if (attrName == SVGNames::surfaceScaleAttr
         || attrName == SVGNames::diffuseConstantAttr

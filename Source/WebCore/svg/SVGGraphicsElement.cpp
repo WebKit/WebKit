@@ -137,7 +137,7 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (SVGTests::handleAttributeChange(this, attrName))
         return;

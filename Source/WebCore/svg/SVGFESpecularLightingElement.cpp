@@ -185,7 +185,7 @@ void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attr
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
     
     if (attrName == SVGNames::surfaceScaleAttr
         || attrName == SVGNames::specularConstantAttr

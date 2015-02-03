@@ -112,7 +112,7 @@ void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedNa
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);    
     invalidate();
 }
 

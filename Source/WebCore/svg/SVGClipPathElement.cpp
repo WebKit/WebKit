@@ -96,7 +96,7 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout();

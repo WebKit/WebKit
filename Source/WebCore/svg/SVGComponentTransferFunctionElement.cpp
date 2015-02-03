@@ -131,7 +131,7 @@ void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedNam
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     invalidateFilterPrimitiveParent(this);
 }

@@ -167,6 +167,31 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
     appendChildToContainer<SVGElementInstance, SVGElementInstance>(child.get(), *this);
 }
 
+void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
+{
+    if (!element || !element->inDocument())
+        return;
+
+    if (element->instanceUpdatesBlocked())
+        return;
+
+    auto& instances = element->instances();
+    if (instances.isEmpty())
+        return;
+
+    // Mark all use elements referencing 'element' for rebuilding
+    do {
+        SVGElement* instance = *instances.begin();
+        if (SVGUseElement* element = instance->correspondingUseElement()) {
+            ASSERT(element->inDocument());
+            element->invalidateShadowTree();
+        }
+        instance->setCorrespondingElement(nullptr);
+    } while (!instances.isEmpty());
+
+    element->document().updateStyleIfNeeded();
+}
+
 EventTargetInterface SVGElementInstance::eventTargetInterface() const
 {
     return SVGElementInstanceEventTargetInterfaceType;
@@ -215,4 +240,17 @@ EventTargetData& SVGElementInstance::ensureEventTargetData()
     return *eventTargetData();
 }
 
+SVGElementInstance::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement* targetElement)
+    : m_targetElement(targetElement)
+{
+    if (m_targetElement)
+        m_targetElement->setInstanceUpdatesBlocked(true);
+}
+
+SVGElementInstance::InstanceUpdateBlocker::~InstanceUpdateBlocker()
+{
+    if (m_targetElement)
+        m_targetElement->setInstanceUpdatesBlocked(false);
+}
+   
 }

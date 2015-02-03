@@ -88,7 +88,7 @@ void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     // Every other property change is ignored.
     if (attrName == SVGNames::viewBoxAttr)

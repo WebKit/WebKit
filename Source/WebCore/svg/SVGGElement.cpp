@@ -82,7 +82,7 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (auto renderer = this->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

@@ -107,7 +107,7 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
     
     bool isLengthAttribute = attrName == SVGNames::x1Attr
                           || attrName == SVGNames::y1Attr
