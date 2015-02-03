@@ -1,3 +1,9 @@
+2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Unreviewed. Moving myself to the committer section at last.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Tests fail because DRT reports '(null)' instead of an empty string
