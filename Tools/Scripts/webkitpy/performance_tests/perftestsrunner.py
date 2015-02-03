@@ -132,6 +132,10 @@ class PerfTestsRunner(object):
                 help="Specify number of times to run test set (default: 1)."),
             optparse.make_option("--test-runner-count", default=-1, type="int",
                 help="Specify number of times to invoke test runner for each performance test."),
+            optparse.make_option("--wrapper",
+                help="wrapper command to insert before invocations of "
+                 "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
+                 "running. (Example: --wrapper='valgrind --smc-check=all')"),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 

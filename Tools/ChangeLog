@@ -1,3 +1,15 @@
+2015-02-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        run-perf-tests: allow to specify a wrapper command.
+        https://bugs.webkit.org/show_bug.cgi?id=141172
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Update text to indicate is also valid for WTR.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Add wrapper command.
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct version parsing warning in update-webkit
