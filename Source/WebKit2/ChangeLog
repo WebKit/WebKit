@@ -1,3 +1,44 @@
+2015-02-02  Antti Koivisto  <antti@apple.com>
+
+        Update cache header after revalidation without rewriting the body data
+        https://bugs.webkit.org/show_bug.cgi?id=141182
+
+        Reviewed by Andreas Kling.
+
+        Currently we just rewrite the entire entry after revalidation.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::decodeStorageEntry):
+
+            Include the strorage entry to the cache response so we can more easily update it.
+
+        (WebKit::NetworkCache::update):
+
+            Call the storage update function with the new and the exisiting storage entry.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::openFileForKey):
+
+            Added an option for opening a file for writing without creating a new one.
+            Renamed for clarity.
+
+        (WebKit::encodeEntryHeader):
+
+            Separate header encoding to a function.
+
+        (WebKit::encodeEntry):
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+
+            New update function.
+            If the page-rounded header size would stay unchanged we can just write the new header over the old one.
+            In the unlikely event it doesn't we rewrite the whole thing.
+
+        (WebKit::createIOChannelForKey): Deleted.
+
 2015-02-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179540.

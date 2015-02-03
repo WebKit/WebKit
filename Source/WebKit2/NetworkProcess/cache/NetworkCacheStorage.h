@@ -134,6 +134,7 @@ public:
     // This may call completion handler synchronously on failure.
     void retrieve(const NetworkCacheKey&, unsigned priority, std::function<bool (std::unique_ptr<Entry>)>);
     void store(const NetworkCacheKey&, const Entry&, std::function<void (bool success)>);
+    void update(const NetworkCacheKey&, const Entry& updateEntry, const Entry& existingEntry, std::function<void (bool success)>);
 
     void setMaximumSize(size_t);
     void clear();

@@ -53,6 +53,7 @@ public:
     bool isEnabled() const { return !!m_storage; }
 
     struct Entry {
+        NetworkCacheStorage::Entry storageEntry;
         WebCore::ResourceResponse response;
         RefPtr<WebCore::SharedBuffer> buffer;
 #if ENABLE(SHAREABLE_RESOURCE)

@@ -167,6 +167,7 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     }
 
     auto entry = std::make_unique<NetworkCache::Entry>();
+    entry->storageEntry = storageEntry;
     entry->needsRevalidation = needsRevalidation;
 
     cachedResponse.setSource(needsRevalidation ? WebCore::ResourceResponse::Source::DiskCacheAfterValidation : WebCore::ResourceResponse::Source::DiskCache);
@@ -316,11 +317,10 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
     WebCore::ResourceResponse response = entry.response;
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
 
-    // FIXME: This rewrites the entire resource instead of just the header.
     auto key = makeCacheKey(originalRequest);
-    auto storageEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
+    auto updateEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
 
-    m_storage->store(key, storageEntry, [](bool success) {
+    m_storage->update(key, updateEntry, entry.storageEntry, [](bool success) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }
