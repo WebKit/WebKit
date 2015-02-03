@@ -95,6 +95,9 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     if (FAILED(navigationData->title(&titleBSTR.GetBSTR())))
         return E_FAIL;
 
+    if (!static_cast<char*>(titleBSTR))
+        titleBSTR = L"";
+
     COMPtr<IWebURLRequest> request;
     if (FAILED(navigationData->originalRequest(&request)))
         return E_FAIL;
@@ -102,6 +105,9 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     _bstr_t httpMethodBSTR;
     if (FAILED(request->HTTPMethod(&httpMethodBSTR.GetBSTR())))
         return E_FAIL;
+
+    if (!static_cast<char*>(httpMethodBSTR))
+        httpMethodBSTR = L"";
 
     COMPtr<IWebURLResponse> response;
     if (FAILED(navigationData->response(&response)))
@@ -122,6 +128,10 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     _bstr_t clientRedirectSourceBSTR;
     if (FAILED(navigationData->clientRedirectSource(&clientRedirectSourceBSTR.GetBSTR())))
         return E_FAIL;
+
+    if (!static_cast<char*>(clientRedirectSourceBSTR))
+        clientRedirectSourceBSTR = L"";
+
     bool hasClientRedirect = clientRedirectSourceBSTR.length();
     wstring redirectSource;
     if (clientRedirectSourceBSTR.length())
@@ -129,10 +139,10 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
 
     bool wasFailure = hasSubstituteData || (httpResponse && statusCode >= 400);
         
-    printf("WebView navigated to url \"%S\" with title \"%S\" with HTTP equivalent method \"%S\".  The navigation was %s and was %s%S.\n", 
+    printf("WebView navigated to url \"%S\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%S.\n", 
         url.c_str(), 
-        static_cast<wchar_t*>(titleBSTR),
-        static_cast<wchar_t*>(httpMethodBSTR),
+        static_cast<char*>(titleBSTR),
+        static_cast<char*>(httpMethodBSTR),
         wasFailure ? "a failure" : "successful", 
         hasClientRedirect ? "a client redirect from " : "not a client redirect", 
         redirectSource.c_str());

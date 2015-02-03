@@ -1,3 +1,14 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Tests fail because DRT reports '(null)' instead of an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=141205
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        (HistoryDelegate::didNavigateWithNavigationData): Deal with empty BSTR values
+        properly so that we match expected DumpRenderTree output.
+
 2015-02-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] TestWebKitAccessibility is not skipped
