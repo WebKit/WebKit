@@ -30,13 +30,15 @@ function test()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
-        
+
+    // Timeout ensures stack references to request are cleared when we collect.
+    // Start the timer before starting the load, so that it's guaranteed to fire first.
+    setTimeout('collect();', 0);
+
     var request = new XMLHttpRequest();
     request.onreadystatechange = processStateChange;
     request.open("GET", "print-content-type.cgi", true);
     request.send(null);
-    
-    setTimeout('collect();', 0); // timeout ensures stack references to request are cleared when we collect
 }
 </script>
 </head>
