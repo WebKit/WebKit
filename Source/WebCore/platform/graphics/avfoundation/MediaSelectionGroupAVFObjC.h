@@ -89,8 +89,9 @@ private:
     RetainPtr<AVPlayerItem> m_playerItem;
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     OptionContainer m_options;
-    MediaSelectionOptionAVFObjC* m_selectedOption;
+    MediaSelectionOptionAVFObjC* m_selectedOption { nullptr };
     Timer m_selectionTimer;
+    bool m_shouldSelectOptionAutomatically { true };
 };
 
 }

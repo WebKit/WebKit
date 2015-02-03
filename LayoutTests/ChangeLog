@@ -1,3 +1,15 @@
+2015-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] HLS audio is not correctly selected according to system language
+        https://bugs.webkit.org/show_bug.cgi?id=140398
+        rdar://problem/19218487
+
+        Reviewed by Darin Adler.
+
+        * http/tests/media/hls/hls-audio-tracks-locale-selection-expected.txt: Added.
+        * http/tests/media/hls/hls-audio-tracks-locale-selection.html: Added.
+        * http/tests/media/resources/hls/audio-tracks.m3u8:
+
 2015-02-03  Piotr Krysiewicz  <p.krysiewicz@samsung.com>
 
         [EFL] fast/borders/mixed-border-style2.html fails due to missing -expected.txt

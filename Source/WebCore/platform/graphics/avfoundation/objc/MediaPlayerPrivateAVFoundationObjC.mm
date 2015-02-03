@@ -935,12 +935,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
 #endif
 
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForAudibleMedia()];
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForVisualMedia()];
-#endif
-
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider)
         m_provider->setPlayerItem(m_avPlayerItem.get());

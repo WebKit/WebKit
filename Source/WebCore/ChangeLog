@@ -1,3 +1,28 @@
+2015-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] HLS audio is not correctly selected according to system language
+        https://bugs.webkit.org/show_bug.cgi?id=140398
+        rdar://problem/19218487
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/media/hls/hls-audio-tracks-locale-selection.html
+
+        When AVMediaSelectionOptions come and go and no explicit track selection choice has
+        been made, automatically pick the most appropriate track according to the user's
+        current preferred locale settings.
+
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC): Set m_shouldSelectOptionAutomatically
+            to true by default.
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions): If m_shouldSelectOptionAutomatically is set
+            pick the most appropriate media selection option.
+        (WebCore::MediaSelectionGroupAVFObjC::setSelectedOption): Set m_shouldSelectOptionAutomatically to false.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Remove these automatic selection
+            requests as they are ineffective when -appliesMediaSelectionCriteriaAutomatically is NO.
+
 2015-02-03  Darin Adler  <darin@apple.com>
 
         Move InstanceInvalidationGuard/UpdateBlocker to SVGElement from SVGElementInstance
