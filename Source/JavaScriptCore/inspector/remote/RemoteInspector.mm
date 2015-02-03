@@ -84,9 +84,12 @@ RemoteInspector& RemoteInspector::singleton()
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         if (canAccessWebInspectorMachPort()) {
-            JSC::initializeThreading();
-            if (RemoteInspector::startEnabled)
-                shared.get().start();
+            dispatch_async(dispatch_get_main_queue(), ^{
+                WTF::initializeMainThread();
+                JSC::initializeThreading();
+                if (RemoteInspector::startEnabled)
+                    shared.get().start();
+            });
         }
     });
 
