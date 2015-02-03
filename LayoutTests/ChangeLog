@@ -1,3 +1,17 @@
+2015-02-03  Piotr Krysiewicz  <p.krysiewicz@samsung.com>
+
+        [EFL] fast/borders/mixed-border-style2.html fails due to missing -expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=141080
+
+        Unreviewed EFL gardening
+
+        Wrong: Test has no expected result
+        Right: Test has an expected result as well as an image showing
+               the correct page render
+
+        * platform/efl/fast/borders/mixed-border-style2-expected.png: Added.
+        * platform/efl/fast/borders/mixed-border-style2-expected.txt: Added.
+
 2015-02-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Activate HTTP tests
