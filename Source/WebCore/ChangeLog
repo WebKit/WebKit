@@ -1,5 +1,26 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174832.
+
+    2014-10-17  Dean Jackson  <dino@apple.com>
+
+            [Media] Always update controls for <audio> since they are always visible
+            https://bugs.webkit.org/show_bug.cgi?id=137829
+            <rdar://problem/18693987>
+
+            Reviewed by Brent Fulgham.
+
+            Revision 174756 made a change to only update the display of the controls
+            while they are visible. However, <audio> elements didn't detect visibility
+            the same way, since their controls do not auto-hide.
+
+            Change controlsAreHidden to check if we're an audio element.
+
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.controlsAreHidden): Audio elements do not auto-hide their controls.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174756.
 
     2014-10-15  Dean Jackson  <dino@apple.com>
