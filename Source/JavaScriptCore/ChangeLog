@@ -1,5 +1,75 @@
 2015-02-02  Filip Pizlo  <fpizlo@apple.com>
 
+        arguments[-1] should have well-defined behavior
+        https://bugs.webkit.org/show_bug.cgi?id=141183
+
+        Reviewed by Mark Lam.
+        
+        According to JSC's internal argument numbering, 0 is "this" and 1 is the first argument.
+        In the "arguments[i]" expression, "this" is not accessible and i = 0 refers to the first
+        argument. Previously we handled the bounds check in "arguments[i]" - where "arguments" is
+        statically known to be the current function's arguments object - as follows:
+        
+            add 1, i
+            branchAboveOrEqual i, callFrame.ArgumentCount, slowPath
+        
+        The problem with this is that if i = -1, this passes the test, and we end up accessing
+        what would be the "this" argument slot. That's wrong, since we should really be bottoming
+        out in arguments["-1"], which is usually undefined but could be anything. It's even worse
+        if the function is inlined or if we're in a constructor - in that case the "this" slot
+        could be garbage.
+        
+        It turns out that we had this bug in all of our engines.
+        
+        This fixes the issue by changing the algorithm to:
+        
+            load32 callFrame.ArgumentCount, tmp
+            sub 1, tmp
+            branchAboveOrEqual i, tmp, slowPath
+        
+        In some engines, we would have used the modified "i" (the one that had 1 added to it) for
+        the subsequent argument load; since we don't do this anymore I also had to change some of
+        the offsets on the BaseIndex arguments load.
+        
+        This also includes tests that are written in such a way as to get coverage on LLInt and
+        Baseline JIT (get-my-argument-by-val-wrap-around-no-warm-up), DFG and FTL
+        (get-my-argument-by-val-wrap-around), and DFG when we're being paranoid about the user
+        overwriting the "arguments" variable (get-my-argument-by-val-safe-wrap-around). This also
+        includes off-by-1 out-of-bounds tests for each of these cases, since in the process of
+        writing the patch I broke the arguments[arguments.length] case in the DFG and didn't see
+        any test failures.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::offsetOfArguments):
+        (JSC::AssemblyHelpers::offsetOfArgumentsIncludingThis): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * tests/stress/get-my-argument-by-val-out-of-bounds-no-warm-up.js: Added.
+        (foo):
+        * tests/stress/get-my-argument-by-val-out-of-bounds.js: Added.
+        (foo):
+        * tests/stress/get-my-argument-by-val-safe-out-of-bounds.js: Added.
+        (foo):
+        * tests/stress/get-my-argument-by-val-safe-wrap-around.js: Added.
+        (foo):
+        * tests/stress/get-my-argument-by-val-wrap-around-no-warm-up.js: Added.
+        (foo):
+        * tests/stress/get-my-argument-by-val-wrap-around.js: Added.
+        (foo):
+
+2015-02-02  Filip Pizlo  <fpizlo@apple.com>
+
         MultiGetByOffset should be marked NodeMustGenerate
         https://bugs.webkit.org/show_bug.cgi?id=140137
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1613,12 +1613,12 @@ _llint_op_get_argument_by_val:
     loadi 12[PC], t1
     bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opGetArgumentByValSlow
     loadConstantOrVariablePayload(t1, Int32Tag, t2, .opGetArgumentByValSlow)
-    addi 1, t2
     loadi ArgumentCount + PayloadOffset[cfr], t1
+    subi 1, t1
     biaeq t2, t1, .opGetArgumentByValSlow
     loadi 4[PC], t3
-    loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
-    loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t1
+    loadi FirstArgumentOffset + TagOffset[cfr, t2, 8], t0
+    loadi FirstArgumentOffset + PayloadOffset[cfr, t2, 8], t1
     storei t0, TagOffset[cfr, t3, 8]
     storei t1, PayloadOffset[cfr, t3, 8]
     valueProfile(t0, t1, 24, t2)

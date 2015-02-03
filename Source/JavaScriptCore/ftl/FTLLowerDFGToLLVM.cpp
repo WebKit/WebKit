@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1997,16 +1997,15 @@ private:
         
         CodeOrigin codeOrigin = m_node->origin.semantic;
         
-        LValue zeroBasedIndex = lowInt32(m_node->child1());
-        LValue oneBasedIndex = m_out.add(zeroBasedIndex, m_out.int32One);
+        LValue index = lowInt32(m_node->child1());
         
         LValue limit;
         if (codeOrigin.inlineCallFrame)
-            limit = m_out.constInt32(codeOrigin.inlineCallFrame->arguments.size());
+            limit = m_out.constInt32(codeOrigin.inlineCallFrame->arguments.size() - 1);
         else
-            limit = m_out.load32(payloadFor(JSStack::ArgumentCount));
+            limit = m_out.sub(m_out.load32(payloadFor(JSStack::ArgumentCount)), m_out.int32One);
         
-        speculate(Uncountable, noValue(), 0, m_out.aboveOrEqual(oneBasedIndex, limit));
+        speculate(Uncountable, noValue(), 0, m_out.aboveOrEqual(index, limit));
         
         SymbolTable* symbolTable = m_graph.baselineCodeBlockFor(codeOrigin)->symbolTable();
         if (symbolTable->slowArguments()) {
@@ -2032,7 +2031,7 @@ private:
             base = addressFor(virtualRegisterForArgument(1));
         
         LValue pointer = m_out.baseIndex(
-            base.value(), m_out.zeroExt(zeroBasedIndex, m_out.intPtr), ScaleEight);
+            base.value(), m_out.zeroExt(index, m_out.intPtr), ScaleEight);
         setJSValue(m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer)));
     }
 

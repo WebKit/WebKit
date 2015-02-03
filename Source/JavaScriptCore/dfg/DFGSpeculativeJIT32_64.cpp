@@ -4347,22 +4347,19 @@ void SpeculativeJIT::compile(Node* node)
                     TrustedImm32(JSValue::EmptyValueTag)));
         }
             
-        m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
-            
         if (node->origin.semantic.inlineCallFrame) {
             speculationCheck(
                 Uncountable, JSValueRegs(), 0,
                 m_jit.branch32(
                     JITCompiler::AboveOrEqual,
-                    resultPayloadGPR,
-                    Imm32(node->origin.semantic.inlineCallFrame->arguments.size())));
+                    indexGPR,
+                    Imm32(node->origin.semantic.inlineCallFrame->arguments.size() - 1)));
         } else {
+            m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), resultPayloadGPR);
+            m_jit.sub32(TrustedImm32(1), resultPayloadGPR);
             speculationCheck(
                 Uncountable, JSValueRegs(), 0,
-                m_jit.branch32(
-                    JITCompiler::AboveOrEqual,
-                    resultPayloadGPR,
-                    JITCompiler::payloadFor(JSStack::ArgumentCount)));
+                m_jit.branch32(JITCompiler::AboveOrEqual, indexGPR, resultPayloadGPR));
         }
         
         JITCompiler::JumpList slowArgument;
@@ -4399,13 +4396,13 @@ void SpeculativeJIT::compile(Node* node)
 
         m_jit.load32(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                m_jit.offsetOfArgumentsIncludingThis(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+                GPRInfo::callFrameRegister, indexGPR, JITCompiler::TimesEight,
+                m_jit.offsetOfArguments(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
             resultTagGPR);
         m_jit.load32(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                m_jit.offsetOfArgumentsIncludingThis(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+                GPRInfo::callFrameRegister, indexGPR, JITCompiler::TimesEight,
+                m_jit.offsetOfArguments(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
             resultPayloadGPR);
             
         slowArgument.link(&m_jit);
@@ -4427,19 +4424,17 @@ void SpeculativeJIT::compile(Node* node)
                 JITCompiler::tagFor(m_jit.graph().machineArgumentsRegisterFor(node->origin.semantic)),
                 TrustedImm32(JSValue::EmptyValueTag)));
         
-        m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
         if (node->origin.semantic.inlineCallFrame) {
             slowPath.append(
                 m_jit.branch32(
                     JITCompiler::AboveOrEqual,
-                    resultPayloadGPR,
-                    Imm32(node->origin.semantic.inlineCallFrame->arguments.size())));
+                    indexGPR,
+                    Imm32(node->origin.semantic.inlineCallFrame->arguments.size() - 1)));
         } else {
+            m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), resultPayloadGPR);
+            m_jit.sub32(TrustedImm32(1), resultPayloadGPR);
             slowPath.append(
-                m_jit.branch32(
-                    JITCompiler::AboveOrEqual,
-                    resultPayloadGPR,
-                    JITCompiler::payloadFor(JSStack::ArgumentCount)));
+                m_jit.branch32(JITCompiler::AboveOrEqual, indexGPR, resultPayloadGPR));
         }
         
         JITCompiler::JumpList slowArgument;
@@ -4475,13 +4470,13 @@ void SpeculativeJIT::compile(Node* node)
 
         m_jit.load32(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                m_jit.offsetOfArgumentsIncludingThis(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+                GPRInfo::callFrameRegister, indexGPR, JITCompiler::TimesEight,
+                m_jit.offsetOfArguments(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
             resultTagGPR);
         m_jit.load32(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                m_jit.offsetOfArgumentsIncludingThis(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+                GPRInfo::callFrameRegister, indexGPR, JITCompiler::TimesEight,
+                m_jit.offsetOfArguments(node->origin.semantic) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
             resultPayloadGPR);
         
         if (node->origin.semantic.inlineCallFrame) {

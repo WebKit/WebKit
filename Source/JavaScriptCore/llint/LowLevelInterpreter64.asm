@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1471,12 +1471,13 @@ _llint_op_get_argument_by_val:
     loadisFromInstruction(3, t1)
     btqnz [cfr, t0, 8], .opGetArgumentByValSlow
     loadConstantOrVariableInt32(t1, t2, .opGetArgumentByValSlow)
-    addi 1, t2
     loadi ArgumentCount + PayloadOffset[cfr], t1
+    sxi2q t2, t2
+    subi 1, t1
     biaeq t2, t1, .opGetArgumentByValSlow
     loadisFromInstruction(1, t3)
     loadpFromInstruction(6, t1)
-    loadq ThisArgumentOffset[cfr, t2, 8], t0
+    loadq FirstArgumentOffset[cfr, t2, 8], t0
     storeq t0, [cfr, t3, 8]
     valueProfile(t0, 6, t1)
     dispatch(7)

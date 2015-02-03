@@ -1044,13 +1044,13 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, tagFor(argumentsRegister), TrustedImm32(JSValue::EmptyValueTag)));
     emitLoad(property, regT1, regT2);
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    add32(TrustedImm32(1), regT2);
     // regT2 now contains the integer index of the argument we want, including this
     load32(payloadFor(JSStack::ArgumentCount), regT3);
+    sub32(TrustedImm32(1), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, regT3));
     
-    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
-    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT1);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + CallFrame::argumentOffset(0) * static_cast<int>(sizeof(Register))), regT0);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + CallFrame::argumentOffset(0) * static_cast<int>(sizeof(Register))), regT1);
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
 }

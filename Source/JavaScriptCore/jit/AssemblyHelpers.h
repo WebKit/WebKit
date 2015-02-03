@@ -603,22 +603,22 @@ public:
         return codeOrigin.inlineCallFrame->stackOffset * sizeof(Register);
     }
 
-    int offsetOfArgumentsIncludingThis(InlineCallFrame* inlineCallFrame)
+    int offsetOfArguments(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
-            return CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register);
+            return CallFrame::argumentOffset(0) * sizeof(Register);
         if (inlineCallFrame->arguments.size() <= 1)
             return 0;
         ValueRecovery recovery = inlineCallFrame->arguments[1];
         RELEASE_ASSERT(recovery.technique() == DisplacedInJSStack);
-        return (recovery.virtualRegister().offset() - 1) * sizeof(Register);
+        return recovery.virtualRegister().offset() * sizeof(Register);
     }
     
-    int offsetOfArgumentsIncludingThis(const CodeOrigin& codeOrigin)
+    int offsetOfArguments(const CodeOrigin& codeOrigin)
     {
-        return offsetOfArgumentsIncludingThis(codeOrigin.inlineCallFrame);
+        return offsetOfArguments(codeOrigin.inlineCallFrame);
     }
-
+    
     void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)
     {
 #if USE(JSVALUE64)
