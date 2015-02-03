@@ -21,10 +21,13 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import imp
+import sys
 import time
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.port import Port
 from webkitpy.tool.mocktool import MockOptions
 
@@ -42,3 +45,25 @@ class TestWebPlatformTestServer(unittest.TestCase):
         server._spawn_process()
         time.sleep(1)
         server._stop_running_server()
+
+    def test_import_web_platform_test_modules(self):
+        fs = FileSystem()
+        current_dir, name = fs.split(fs.realpath(__file__))
+        doc_root_dir = fs.join(current_dir, "..", "..", "..", "..", "..", "LayoutTests", "imported", "w3c", "web-platform-tests")
+        tools_dir = fs.join(doc_root_dir, "tools")
+
+        sys.path.insert(0, doc_root_dir)
+        try:
+            file, pathname, description = imp.find_module("tools")
+        except ImportError, e:
+            self.fail(e)
+        self.assertEqual(pathname, tools_dir)
+        sys.path.pop(0)
+
+        sys.path.insert(0, tools_dir)
+        try:
+            file, pathname, description = imp.find_module("scripts")
+        except ImportError, e:
+            self.fail(e)
+        self.assertEqual(pathname, fs.join(tools_dir, "scripts"))
+        sys.path.pop(0)

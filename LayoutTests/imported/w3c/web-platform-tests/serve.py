@@ -1,6 +1,5 @@
  # -*- coding: utf-8 -*-
 import argparse
-import imp
 import json
 import os
 import signal
@@ -14,8 +13,6 @@ import uuid
 from collections import defaultdict
 from multiprocessing import Process, Event
 
-print sys.path
-print imp.find_module('tools')
 from tools.scripts import _env
 repo_root = _env.repo_root
 from wptserve import server as wptserve, handlers

@@ -328,6 +328,9 @@ class TestImporter(object):
                         outfile = open(new_filepath, 'wb')
                         outfile.write(converted_file[2])
                         outfile.close()
+                elif orig_filepath.endswith('__init__.py') and not self.filesystem.getsize(orig_filepath):
+                    # Some bots dislike empty __init__.py.
+                    self.filesystem.write_text_file(new_filepath, '# This file is required for Python to search this directory for modules.')
                 else:
                     shutil.copyfile(orig_filepath, new_filepath)
 

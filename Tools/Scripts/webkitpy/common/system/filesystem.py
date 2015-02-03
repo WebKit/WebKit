@@ -123,6 +123,9 @@ class FileSystem(object):
     def isfile(self, path):
         return os.path.isfile(path)
 
+    def getsize(self, path):
+        return os.path.getsize(path)
+
     def isdir(self, path):
         return os.path.isdir(path)
 
