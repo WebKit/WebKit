@@ -83,4 +83,9 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
     return result;
 }
 
+void SVGAnimatedTypeAnimator::setInstanceUpdatesBlocked(SVGElement& element, bool blocked)
+{
+    element.setInstanceUpdatesBlocked(blocked);
+}
+
 } // namespace WebCore

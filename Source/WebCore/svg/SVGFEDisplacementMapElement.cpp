@@ -132,7 +132,7 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
         return;
     }
 
-    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    InstanceInvalidationGuard guard(*this);
     
     if (attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr) {
         primitiveAttributeChanged(attrName);

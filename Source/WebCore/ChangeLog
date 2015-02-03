@@ -1,3 +1,154 @@
+2015-02-03  Darin Adler  <darin@apple.com>
+
+        Move InstanceInvalidationGuard/UpdateBlocker to SVGElement from SVGElementInstance
+        https://bugs.webkit.org/show_bug.cgi?id=141148
+
+        Reviewed by Brent Fulgham.
+
+        Inspired by this change Rob Buis made in Blink:
+
+            http://src.chromium.org/viewvc/blink?view=revision&revision=173343
+
+        I actually wrote the whole thing and then discovered we did it almost identically.
+
+        * svg/SVGAnimatedTypeAnimator.cpp:
+        (WebCore::SVGElementAnimatedPropertyList::setInstanceUpdatesBlocked): Added this
+        helper function to get around a circular header dependency.
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::executeAction): Use setInstanceUpdatesBlocked.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removedFrom): Use invalidateInstances.
+        (WebCore::SVGElement::finishParsingChildren): Ditto.
+        (WebCore::SVGElement::svgAttributeChanged): Ditto.
+        (WebCore::SVGElement::childrenChanged): Ditto.
+        (WebCore::SVGElement::setInstanceUpdatesBlocked): Added an assertion that will
+        catch anyone who nests InstanceUpdateBlocker by accident.
+        (WebCore::SVGElement::invalidateInstances): Moved this here from
+        SVGElementInstance::invalidateAllInstancesOfElement. I had already modified this
+        so it had nothing to do with SVGElementInstance, so it was a simple matter of
+        converting this into a member function. Added a FIXME about the mysterious
+        updateStyleIfNeeded that makes multiple tests fail if it's removed.
+
+        * svg/SVGElement.h: Added public InstanceUpdateBlocker class, protected
+        InstanceInvalidationGuard class, and private invalidateInstances function.
+        Unlike the ones in SVGElementInstance these use references so they are then
+        not copyable without using the WTF_MAKE_NONCOPYABLE macro.
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement): Deleted.
+        (WebCore::SVGElementInstance::InstanceUpdateBlocker::InstanceUpdateBlocker): Deleted.
+        (WebCore::SVGElementInstance::InstanceUpdateBlocker::~InstanceUpdateBlocker): Deleted.
+        * svg/SVGElementInstance.h: Removed InvalidationGuard, InstanceUpdateBlocker, and
+        invalidateAllInstancesOfElement. Didn't do any further cleanup since we soon will
+        delete this entire file.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::svgAttributeChanged): Updated to use new name and reference
+        instead of pointer.
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::applyCSSPropertyToTargetAndInstances): Ditto.
+        (WebCore::removeCSSPropertyFromTargetAndInstances): Ditto.
+        (WebCore::notifyTargetAndInstancesAboutAnimValChange): Ditto.
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::startAnimValAnimation): Ditto.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged): Ditto.
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged): Ditto.
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::svgAttributeChanged): Ditto.
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged): Ditto.
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::svgAttributeChanged): Ditto.
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged): Ditto.
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged): Ditto.
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged): Ditto.
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::svgAttributeChanged): Ditto.
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged): Ditto.
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::svgAttributeChanged): Ditto.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged): Ditto.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged): Ditto.
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::svgAttributeChanged): Ditto.
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::svgAttributeChanged): Ditto.
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::svgAttributeChanged): Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged): Ditto.
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged): Ditto.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged): Ditto.
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged): Ditto.
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged): Ditto.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged): Ditto.
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged): Ditto.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged): Ditto.
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged): Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged): Ditto.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::svgAttributeChanged): Ditto.
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::svgAttributeChanged): Ditto.
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::svgAttributeChanged): Ditto.
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged): Ditto.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::svgAttributeChanged): Ditto.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged): Ditto.
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::svgAttributeChanged): Ditto.
+
 2015-02-02  Darin Adler  <darin@apple.com>
 
         REGRESSION (r170576): Storage leaks in parsing of CSS image sizes
