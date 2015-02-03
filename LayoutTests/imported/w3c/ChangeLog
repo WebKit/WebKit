@@ -1,3 +1,16 @@
+2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        imported/w3c/web-platform-tests should contain top level files of the W3C web-platform-tests repository
+        https://bugs.webkit.org/show_bug.cgi?id=141151
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/CONTRIBUTING.md: Added.
+        * web-platform-tests/LICENSE: Added.
+        * web-platform-tests/README.md: Added.
+        * web-platform-tests/server-side.md: Added.
+        * web-platform-tests/w3c-import.log:
+
 2015-01-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Import W3C web platform tests infrastructure
