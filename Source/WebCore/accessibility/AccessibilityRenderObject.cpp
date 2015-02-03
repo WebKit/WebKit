@@ -1173,6 +1173,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     ASSERT(m_initialized);
 #endif
 
+    if (!m_renderer)
+        return true;
+    
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
     // that AccessibilityRenderObjects take on.
@@ -1201,7 +1204,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return accessibilityIgnoreAttachment();
     
     // ignore popup menu items because AppKit does
-    if (ancestorsOfType<RenderMenuList>(*m_renderer).first())
+    if (m_renderer && ancestorsOfType<RenderMenuList>(*m_renderer).first())
         return true;
 
     // find out if this element is inside of a label element.
