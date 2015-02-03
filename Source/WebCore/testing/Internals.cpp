@@ -1039,6 +1039,16 @@ String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
     return range->text();
 }
 
+PassRefPtr<Range> Internals::subrange(Range* range, int rangeLocation, int rangeLength, ExceptionCode& ec)
+{
+    if (!range) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return TextIterator::subrange(range, rangeLocation, rangeLength);
+}
+
 void Internals::setDelegatesScrolling(bool enabled, ExceptionCode& ec)
 {
     Document* document = contextDocument();
