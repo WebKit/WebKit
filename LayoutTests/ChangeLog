@@ -1,3 +1,33 @@
+2015-02-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        JIT Compile simple cases of :nth-last-child()
+        https://bugs.webkit.org/show_bug.cgi?id=141053
+
+        Reviewed by Andreas Kling.
+
+        There was almost no test coverage for :nth-last-child(). I copied the main tests
+        from :nth-child() and updated the expected results.
+
+        This is not ideal because we should have style update tests targetting
+        backward invalidation... Still better than nothing :)
+
+        * fast/selectors/nth-last-child-as-first-simple-selector-style-update-expected.txt: Added.
+        * fast/selectors/nth-last-child-as-first-simple-selector-style-update.html: Added.
+        * fast/selectors/nth-last-child-basics-expected.txt: Added.
+        * fast/selectors/nth-last-child-basics.html: Added.
+        * fast/selectors/nth-last-child-bounds-expected.txt: Added.
+        * fast/selectors/nth-last-child-bounds.html: Added.
+        * fast/selectors/nth-last-child-chained-expected.txt: Added.
+        * fast/selectors/nth-last-child-chained.html: Added.
+        * fast/selectors/nth-last-child-on-root-expected.txt: Added.
+        * fast/selectors/nth-last-child-on-root.html: Added.
+        * fast/selectors/nth-last-child-style-update-expected.txt: Added.
+        * fast/selectors/nth-last-child-style-update.html: Added.
+        * fast/selectors/nth-last-child-with-backtracking-expected.txt: Added.
+        * fast/selectors/nth-last-child-with-backtracking.html: Added.
+        * fast/selectors/several-nth-last-child-expected.txt: Added.
+        * fast/selectors/several-nth-last-child.html: Added.
+
 2015-02-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Update flakiness tests on W3C SVG 1.1 tests.
