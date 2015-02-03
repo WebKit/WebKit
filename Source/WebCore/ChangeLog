@@ -1,3 +1,19 @@
+2015-02-02  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Optimize matchesLangPseudoClass() of :lang()
+        https://bugs.webkit.org/show_bug.cgi?id=140873
+
+        Reviewed by Darin Adler.
+
+        Avoid unnecessary memory allocation.
+
+        No new tests, no behavior changed.
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::equalIgnoringASCIICase):
+        (WebCore::containslanguageSubtagMatchingRange):
+        (WebCore::matchesLangPseudoClass):
+
 2015-02-02  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Implement spec section 3.7.1 Setting and getting state (Part 2).

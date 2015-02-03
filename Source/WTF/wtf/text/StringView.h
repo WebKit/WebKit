@@ -139,6 +139,23 @@ private:
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
 
+bool equal(StringView, StringView);
+bool equal(StringView, const LChar*);
+bool equal(StringView, const char*);
+bool equalIgnoringASCIICase(StringView, StringView);
+
+inline bool operator==(StringView a, StringView b) { return equal(a, b); }
+inline bool operator==(StringView a, const LChar* b) { return equal(a, b); }
+inline bool operator==(StringView a, const char* b) { return equal(a, b); }
+inline bool operator==(const LChar* a, StringView b) { return equal(b, a); }
+inline bool operator==(const char* a, StringView b) { return equal(b, a); }
+
+inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
+inline bool operator!=(StringView a, const LChar* b) { return !equal(a, b); }
+inline bool operator!=(StringView a, const char* b) { return !equal(a, b); }
+inline bool operator!=(const LChar* a, StringView b) { return !equal(b, a); }
+inline bool operator!=(const char* a, StringView b) { return !equal(b, a); }
+
 }
 
 #include <wtf/text/WTFString.h>
@@ -449,6 +466,55 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
     string.getCharactersWithUpconvert(buffer.data() + oldSize);
 }
 
+inline bool equal(StringView a, StringView b)
+{
+    unsigned aLength = a.length();
+    unsigned bLength = b.length();
+    if (aLength != bLength)
+        return false;
+
+    if (a.is8Bit()) {
+        if (b.is8Bit())
+            return equal(a.characters8(), b.characters8(), aLength);
+
+        return equal(a.characters8(), b.characters16(), aLength);
+    }
+
+    if (b.is8Bit())
+        return equal(a.characters16(), b.characters8(), aLength);
+
+    return equal(a.characters16(), b.characters16(), aLength);
+}
+
+inline bool equal(StringView a, const LChar* b)
+{
+    if (!b)
+        return !a.isEmpty();
+    if (a.isEmpty())
+        return !b;
+    unsigned aLength = a.length();
+    if (a.is8Bit())
+        return equal(a.characters8(), b, aLength);
+    return equal(a.characters16(), b, aLength);
+}
+
+inline bool equal(StringView a, const char* b) 
+{
+    return equal(a, reinterpret_cast<const LChar*>(b)); 
+}
+
+inline bool equalIgnoringASCIICase(StringView a, StringView b)
+{
+    unsigned aLength = a.length();
+    if (aLength != b.length()) 
+        return false;
+    for (size_t i = 0; i < aLength; ++i) {
+        if (toASCIILower(a[i]) != toASCIILower(b[i]))
+            return false;
+    }
+    return true;
+}
+
 class StringView::CodePoints {
 public:
     explicit CodePoints(const StringView&);
@@ -619,6 +685,7 @@ inline auto StringView::CodeUnits::end() const -> Iterator
 } // namespace WTF
 
 using WTF::append;
+using WTF::equal;
 using WTF::StringView;
 
 #endif // StringView_h

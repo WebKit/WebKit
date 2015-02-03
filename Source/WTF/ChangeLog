@@ -1,3 +1,18 @@
+2015-02-02  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Optimize matchesLangPseudoClass() of :lang()
+        https://bugs.webkit.org/show_bug.cgi?id=140873
+
+        Reviewed by Darin Adler.
+
+        Add some basic equality comparison operators.
+
+        * wtf/text/StringView.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equal):
+        (WTF::equalIgnoringASCIICase):
+
 2015-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

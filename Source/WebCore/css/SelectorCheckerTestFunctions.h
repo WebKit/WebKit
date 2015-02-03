@@ -121,7 +121,7 @@ ALWAYS_INLINE bool isWindowInactive(const Element* element)
 }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-inline bool equalIgnoringASCIICase(const String& a, const String& b)
+ALWAYS_INLINE bool equalIgnoringASCIICase(const String& a, const String& b)
 {
     if (a.length() != b.length()) 
         return false;
@@ -132,21 +132,37 @@ inline bool equalIgnoringASCIICase(const String& a, const String& b)
     return true;
 }
 
-inline bool containslanguageSubtagMatchingRange(const Vector<String>& languageSubtags, const String& range, size_t& position)
+ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, StringView range, unsigned languageLength, unsigned& position)
 {
-    for (size_t languageSubtagIndex = position; languageSubtagIndex < languageSubtags.size(); ++languageSubtagIndex) {
-        const String& currentLanguageSubtag = languageSubtags[languageSubtagIndex];
-        if (currentLanguageSubtag.length() == 1 && range != "*")
+    unsigned languageSubtagsStartIndex = position;
+    unsigned languageSubtagsEndIndex = languageLength;
+    bool isAsteriskRange = range == "*";
+    do {
+        if (languageSubtagsStartIndex > 0)
+            languageSubtagsStartIndex += 1;
+        
+        languageSubtagsEndIndex = std::min<unsigned>(language.find('-', languageSubtagsStartIndex), languageLength);
+
+        if (languageSubtagsStartIndex > languageSubtagsEndIndex)
             return false;
-        if (equalIgnoringASCIICase(range, currentLanguageSubtag) || range == "*") {
-            position = languageSubtagIndex + 1;
+
+        StringView languageSubtag = language.substring(languageSubtagsStartIndex, languageSubtagsEndIndex - languageSubtagsStartIndex);
+        bool isEqual = equalIgnoringASCIICase(range, languageSubtag);
+        if (!isAsteriskRange) {
+            if ((!isEqual && !languageSubtagsStartIndex) || (languageSubtag.length() == 1 && languageSubtagsStartIndex > 0))
+                return false;
+        }
+        languageSubtagsStartIndex = languageSubtagsEndIndex;
+        if (isEqual || isAsteriskRange) {
+            position = languageSubtagsStartIndex;
             return true;
         }
-    }
+
+    } while (languageSubtagsStartIndex < languageLength);
     return false;
 }
 
-inline bool matchesLangPseudoClass(const Element* element, const Vector<LanguageArgument>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<LanguageArgument>& argumentList)
 {
     ASSERT(element);
 
@@ -163,10 +179,15 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<Language
 
     // Implement basic and extended filterings of given language tags
     // as specified in www.ietf.org/rfc/rfc4647.txt.
-    Vector<String> rangeSubtags;
-    Vector<String> languageSubtags;
-
-    language.string().split('-', true, languageSubtags);
+    StringView languageStringView = language.string();
+    unsigned languageLength = language.length();
+    for (const LanguageArgument& argument : argumentList) {
+        const AtomicString& range = argument.languageRange;
+        if (range.isEmpty())
+            continue;
+        if (range == "*")
+            return true;
+    }
 
     for (const LanguageArgument& argument : argumentList) {
         const AtomicString& range = argument.languageRange;
@@ -176,26 +197,29 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<Language
         if (range == "*")
             return true;
 
-        if (equalIgnoringASCIICase(language, range) && !language.contains('-'))
+        StringView rangeStringView = range.string();
+        if (equalIgnoringASCIICase(languageStringView, rangeStringView) && !languageStringView.contains('-'))
             return true;
+        
+        unsigned rangeLength = rangeStringView.length();
+        unsigned rangeSubtagsStartIndex = 0;
+        unsigned rangeSubtagsEndIndex = rangeLength;
+        unsigned lastMatchedLanguageSubtagIndex = 0;
 
-        range.string().split('-', true, rangeSubtags);
-
-        if (rangeSubtags.size() > languageSubtags.size()) 
-            continue;
-
-        const String& firstRangeSubtag = rangeSubtags.first();
-        if (!equalIgnoringASCIICase(firstRangeSubtag, languageSubtags.first()) && firstRangeSubtag != "*") 
-            continue;
-
-        size_t lastMatchedLanguageSubtagIndex = 1;
         bool matchedRange = true;
-        for (size_t rangeSubtagIndex = 1; rangeSubtagIndex < rangeSubtags.size(); ++rangeSubtagIndex) {
-            if (!containslanguageSubtagMatchingRange(languageSubtags, rangeSubtags[rangeSubtagIndex], lastMatchedLanguageSubtagIndex)) {
+        do {
+            if (rangeSubtagsStartIndex > 0)
+                rangeSubtagsStartIndex += 1;
+            if (rangeSubtagsStartIndex > languageLength)
+                return false;
+            rangeSubtagsEndIndex = std::min<unsigned>(rangeStringView.find('-', rangeSubtagsStartIndex), rangeLength);
+            StringView rangeSubtag = rangeStringView.substring(rangeSubtagsStartIndex, rangeSubtagsEndIndex - rangeSubtagsStartIndex);
+            if (!containslanguageSubtagMatchingRange(languageStringView, rangeSubtag, languageLength, lastMatchedLanguageSubtagIndex)) {
                 matchedRange = false;
                 break;
             }
-        }
+            rangeSubtagsStartIndex = rangeSubtagsEndIndex;
+        } while (rangeSubtagsStartIndex < rangeLength);
         if (matchedRange)
             return true;
     }
