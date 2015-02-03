@@ -1,5 +1,41 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r177000.
+
+    2014-12-08  Dean Jackson  <dino@apple.com>
+
+            [Apple] Use Accelerate framework to speed-up FEGaussianBlur
+            https://bugs.webkit.org/show_bug.cgi?id=139310
+            <rdar://problem/18434594>
+
+            Reviewed by Simon Fraser.
+
+            Using Apple's Accelerate framework provides faster blurs
+            than the parallel jobs approach, especially since r168577
+            which started performing retina-accurate filters.
+
+            Using Accelerate.framework to replace the existing box blur (what
+            we use to approximate Gaussian blurs) gets about a 20% speedup on
+            desktop class machines, but between a 2x-6x speedup on iOS hardware.
+            Obviously this depends on the size of the content being blurred,
+            but it is still good.
+
+            The change is to intercept the platformApply function on
+            FEGaussianBlur and send it off to Accelerate.
+
+            There is an interactive performance test: PerformanceTests/Interactive/blur-filter-timing.html
+
+            * platform/graphics/filters/FEGaussianBlur.cpp:
+            (WebCore::kernelPosition): Move this to a file static function from the .h.
+            (WebCore::accelerateBoxBlur): The Accelerate implementation.
+            (WebCore::standardBoxBlur): The default generic/standard implementation.
+            (WebCore::FEGaussianBlur::platformApplyGeneric): Use accelerate or the default form.
+            (WebCore::FEGaussianBlur::platformApply): Don't try the parallelJobs approach if Accelerate is available.
+            * platform/graphics/filters/FEGaussianBlur.h:
+            (WebCore::FEGaussianBlur::kernelPosition): Deleted. Move into the .cpp.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176484.
 
     2014-11-21  Chris Fleizach  <cfleizach@apple.com>
