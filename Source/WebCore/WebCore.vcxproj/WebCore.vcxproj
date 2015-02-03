@@ -11588,7 +11588,7 @@
     <ClCompile Include="..\rendering\SelectionSubtreeRoot.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayout.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayoutFlowContents.cpp" />
-    <ClCompile Include="..\rendering\SimpleLineLayoutFlowContentsIterator.cpp" />
+    <ClCompile Include="..\rendering\SimpleLineLayoutTextFragmentIterator.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayoutResolver.cpp" />
     <ClCompile Include="..\rendering\TextPaintStyle.cpp" />

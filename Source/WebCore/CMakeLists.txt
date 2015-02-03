@@ -2351,7 +2351,7 @@ set(WebCore_SOURCES
     rendering/ScrollBehavior.cpp
     rendering/SimpleLineLayout.cpp
     rendering/SimpleLineLayoutFlowContents.cpp
-    rendering/SimpleLineLayoutFlowContentsIterator.cpp
+    rendering/SimpleLineLayoutTextFragmentIterator.cpp
     rendering/SimpleLineLayoutFunctions.cpp
     rendering/SimpleLineLayoutResolver.cpp
     rendering/TextAutosizer.cpp

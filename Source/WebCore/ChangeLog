@@ -1,3 +1,59 @@
+2015-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Rename FlowContentsIterator to TextFragmentIterator.
+        https://bugs.webkit.org/show_bug.cgi?id=141177
+
+        Rubber-stamped by Antti Koivisto
+
+        FlowContentsIterator is easy to confuse with FlowContents::Iterator.
+        TextFragmentIterator reflects the functionality better.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::setOverflowedFragment):
+        (WebCore::SimpleLineLayout::LineState::overflowedFragment):
+        (WebCore::SimpleLineLayout::LineState::appendFragment):
+        (WebCore::SimpleLineLayout::begin):
+        (WebCore::SimpleLineLayout::end):
+        (WebCore::SimpleLineLayout::preWrap):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::splitRunsAtRendererBoundary):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp: Renamed from Source/WebCore/rendering/SimpleLineLayoutFlowContentsIterator.cpp.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragmentIterator):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextTextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        (WebCore::SimpleLineLayout::nextBreakablePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::findNextNonWhitespace):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::runWidth):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h: Renamed from Source/WebCore/rendering/SimpleLineLayoutFlowContentsIterator.h.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::start):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::end):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::width):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::type):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isCollapsed):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isBreakable):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isEmpty):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::segmentForPosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::split):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::characterAt):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isLineBreak):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::isEnd):
+
 2015-02-02  Chris Dumez  <cdumez@apple.com>
 
         Add diagnostic logging for ResourceResponse's source

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SimpleLineLayoutFlowContentsIterator.h"
+#include "SimpleLineLayoutTextFragmentIterator.h"
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-FlowContentsIterator::Style::Style(const RenderStyle& style)
+TextFragmentIterator::Style::Style(const RenderStyle& style)
     : font(style.fontCascade())
     , textAlign(style.textAlign())
     , collapseWhitespace(style.collapseWhiteSpace())
@@ -47,14 +47,14 @@ FlowContentsIterator::Style::Style(const RenderStyle& style)
 {
 }
 
-FlowContentsIterator::FlowContentsIterator(const RenderBlockFlow& flow)
+TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
     : m_flowContents(flow)
     , m_lineBreakIterator((*m_flowContents.begin()).text, flow.style().locale())
     , m_style(flow.style())
 {
 }
 
-FlowContentsIterator::TextFragment FlowContentsIterator::nextTextFragment(float xPosition)
+TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float xPosition)
 {
     // A fragment can either be
     // 1. new line character when preserveNewline is on (not considered as whitespace) or
@@ -91,7 +91,7 @@ FlowContentsIterator::TextFragment FlowContentsIterator::nextTextFragment(float 
     return TextFragment(startPosition, endPosition, textWidth(startPosition, endPosition, xPosition), TextFragment::NonWhitespace, false, m_style.breakWordOnOverflow);
 }
 
-float FlowContentsIterator::textWidth(unsigned from, unsigned to, float xPosition) const
+float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
 {
     const auto& fromSegment = m_flowContents.segmentForPosition(from);
     if ((m_style.font.isFixedPitch() && fromSegment.end >= to) || (from == fromSegment.start && to == fromSegment.end))
@@ -122,7 +122,7 @@ static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, 
     return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, characters, segmentLength, segmentPosition);
 }
 
-unsigned FlowContentsIterator::findNextBreakablePosition(unsigned position) const
+unsigned TextFragmentIterator::findNextBreakablePosition(unsigned position) const
 {
     while (!isEnd(position)) {
         auto& segment = m_flowContents.segmentForPosition(position);
@@ -142,7 +142,7 @@ unsigned FlowContentsIterator::findNextBreakablePosition(unsigned position) cons
 }
 
 template <typename CharacterType>
-static bool findNextNonWhitespace(const FlowContents::Segment& segment, const FlowContentsIterator::Style& style, unsigned& position, unsigned& spaceCount)
+static bool findNextNonWhitespace(const FlowContents::Segment& segment, const TextFragmentIterator::Style& style, unsigned& position, unsigned& spaceCount)
 {
     const auto* text = segment.text.characters<CharacterType>();
     for (; position < segment.end; ++position) {
@@ -157,7 +157,7 @@ static bool findNextNonWhitespace(const FlowContents::Segment& segment, const Fl
     return false;
 }
 
-unsigned FlowContentsIterator::findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
+unsigned TextFragmentIterator::findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
 {
     FlowContents::Iterator it(m_flowContents, m_flowContents.segmentIndexForPosition(position));
     for (auto end = m_flowContents.end(); it != end; ++it) {
@@ -169,7 +169,7 @@ unsigned FlowContentsIterator::findNextNonWhitespacePosition(unsigned position, 
 }
 
 template <typename CharacterType>
-float FlowContentsIterator::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
+float TextFragmentIterator::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
 {
     ASSERT(from <= to);
     if (from == to)
