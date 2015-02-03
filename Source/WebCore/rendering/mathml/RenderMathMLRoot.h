@@ -49,6 +49,9 @@ public:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateFromElement() override;
     
+    RenderMathMLRootWrapper* baseWrapper() const;
+    RenderMathMLRootWrapper* indexWrapper() const;
+
 protected:
     virtual void layout() override;
     
@@ -61,9 +64,7 @@ private:
     void updateStyle();
     void restructureWrappers();
 
-    RenderMathMLRootWrapper* baseWrapper() const;
     RenderMathMLBlock* radicalWrapper() const;
-    RenderMathMLRootWrapper* indexWrapper() const;
     RenderMathMLRadicalOperator* radicalOperator() const;
 
     LayoutUnit m_verticalGap;
