@@ -1,5 +1,26 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174614.
+
+    2014-10-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            RenderMathMLUnderOver adds spacing to the child operator indefinitely when resizing the window.
+            https://bugs.webkit.org/show_bug.cgi?id=137330
+
+            Reviewed by Simon Fraser.
+
+            Change the layout with resize test of the MathML underover object from being render tree test
+            to be reference test. The render test was failing on WK2 because it was doing window resizing 
+            and view zooming.  The new test rely solely on forcing the layout synchronously by resizing the
+            math container <div> element.
+
+            * mathml/opentype/munderover-layout-resize-expected.html: Added.
+            * mathml/opentype/munderover-layout-resize.html: Added.
+            * mathml/opentype/munderover-window-resize-expected.txt: Removed.
+            * mathml/opentype/munderover-window-resize.html: Removed.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174540.
 
     2014-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
