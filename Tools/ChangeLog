@@ -1,3 +1,16 @@
+2015-02-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] TestWebKitAccessibility is not skipped
+        https://bugs.webkit.org/show_bug.cgi?id=141179
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't attempt to skip TestWebKitAccessibility. This path is wrong so it was not being
+        skipped, and it apparently works reliably on the bots.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-02-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         run-perf-tests: allow to specify a wrapper command.
