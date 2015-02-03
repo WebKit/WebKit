@@ -1,5 +1,7 @@
 /.resources.url
 /__init__.py
+/_certs/index.txt
+
 /resources/
 
 /tools/.html5lib.url

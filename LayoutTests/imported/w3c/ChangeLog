@@ -1,5 +1,16 @@
 2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Web Platform Tests dirty a few untracked files
+        https://bugs.webkit.org/show_bug.cgi?id=141185
+
+        Reviewed by Darin Adler.
+
+        Added the empty file web-platform-tests/_certs/index.txt to .gitignore.
+
+        * web-platform-tests/.gitignore:
+
+2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Web platform test server should not need to create __init__.py files
         https://bugs.webkit.org/show_bug.cgi?id=141030
 
