@@ -1,3 +1,15 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Attempt to improve the reliability of HTTP service
+        https://bugs.webkit.org/show_bug.cgi?id=141191
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Use default XAMPP pidfile location.
+        (LayoutTestApacheHttpd._stop_running_server): Delete the abandoned PID file
+        when stopping the service doesn't do so on its own (for Windows runs).
+
 2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Web platform test server should not need to create __init__.py files

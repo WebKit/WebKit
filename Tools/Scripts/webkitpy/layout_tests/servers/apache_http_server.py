@@ -70,7 +70,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             output_dir = precompiledDrive.sub("C:", output_dir)
             test_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", test_dir)
             test_dir = precompiledDrive.sub("C:", test_dir)
-            self._pid_file = self._pid_file.replace("/tmp", "C:/cygwin/tmp")
+            self._pid_file = self._filesystem.join("C:/xampp/apache/logs", '%s.pid' % self._name)
 
         js_test_resources_dir = self._filesystem.join(test_dir, "resources")
         media_resources_dir = self._filesystem.join(test_dir, "media")
@@ -198,6 +198,10 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # the stop command returns, so we wait a little while longer for the
         # pid file to be removed.
         if not self._wait_for_action(lambda: not self._filesystem.exists(self._pid_file)):
+            if self._port_obj.host.platform.is_win():
+                self._remove_pid_file()
+                return
+
             raise http_server_base.ServerError('Failed to stop %s: pid file still exists' % self._name)
 
     def _run(self, cmd):
