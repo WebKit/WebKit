@@ -76,6 +76,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 - (CGFloat)_accessibilityMinValue;
 - (CGFloat)_accessibilityMaxValue;
+- (void)_accessibilitySetValue:(NSString *)value;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -522,6 +523,11 @@ double AccessibilityUIElement::minValue()
 double AccessibilityUIElement::maxValue()
 {
     return [m_element _accessibilityMaxValue];
+}
+
+void AccessibilityUIElement::setValue(JSStringRef valueText)
+{
+    [m_element _accessibilitySetValue:[NSString stringWithJSStringRef:valueText]];
 }
 
 JSStringRef AccessibilityUIElement::valueDescription()
