@@ -1,5 +1,11 @@
 2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Unreviewed. Marking web-platform-tests as Skip to stop running wpt server.
+
+        * LayoutTests/TestExpectations:
+
+2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Unreviewed. Marking web-platform-tests as failed until wpt server can be properly relaunched.
 
         * LayoutTests/TestExpectations:
