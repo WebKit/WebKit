@@ -1,3 +1,10 @@
+2015-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/misc/detached-frame-console.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=141267
+
+        * TestExpectations: Mark it as such.
+
 2015-02-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Support ClearKey encryption with AES128-encrypted HLS
