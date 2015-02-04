@@ -1,3 +1,11 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix. Turn on feature flags for items
+        we currently ship/test on Mac.
+
+        * win/tools/vsprops/FeatureDefines.props: Activate ENABLE_DOM4_EVENTS_CONSTRUCTOR
+        and CURSOR_VISIBILITY.
+
 2015-01-28  Sam Weinig  <sam@webkit.org>
 
         Remove libWebKitSystemInterfaceMountainLion.a
