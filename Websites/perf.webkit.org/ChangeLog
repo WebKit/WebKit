@@ -1,3 +1,31 @@
+2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Interactive chart component provides two duplicate API for highlighting points
+        https://bugs.webkit.org/show_bug.cgi?id=141234
+
+        Reviewed by Chris Dumez.
+
+        Prior to this patch, the interactive chart component supported highlightedItems for finding commits
+        on the main charts page and markedPoints to show the two end points in the analysis task page.
+
+        This patch merges markedPoints into highlightedItems. 
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController._fetchedRuns): Use highlightedItems.
+        * public/v2/chart-pane.css:
+        * public/v2/index.html: Ditto.
+        * public/v2/interactive-chart.js: 
+        (App.InteractiveChartComponent._constructGraphIfPossible): Make this._highlights an array instead of
+        array of arrays. Also call _highlightedItemsChanged at the end to fix the bug that we never highlight
+        items if highlightedItems was set before the initial layout.
+        (App.InteractiveChartComponent._relayoutDataAndAxes):
+        (App.InteractiveChartComponent._updateHighlightPositions): Now that highlights are circles instead of
+        vertical lines, just set cx and cy as done for other "dots".
+        (App.InteractiveChartComponent._highlightedItemsChanged): Exit early only if _clippedContainer wasn't
+        already set; i.e. _constructGraphIfPossible hasn't been called. Also updated the logic to accommodate
+        the fact this._highlights is an array of elements instead of an array of arrays of elements. Finally,
+        set the radius of highlight circles here.
+
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don’t use repository names as id’s.

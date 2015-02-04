@@ -96,8 +96,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
             this._dots.forEach(function (dot) { dots.remove(); });
         this._dots = [];
         if (this._highlights)
-            this._highlights.forEach(function (highlight) { highlight.remove(); });
-        this._highlights = [];
+            this._highlights.remove();
+        this._highlights = null;
 
         this._currentTimeSeries = chartData.current.timeSeriesByCommitTime();
         this._currentTimeSeriesData = this._currentTimeSeries.series();
@@ -180,6 +180,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
 
         this._needsConstruction = false;
 
+        this._highlightedItemsChanged();
         this._rangesChanged();
     },
     _updateDomain: function ()
@@ -273,7 +274,6 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("cx", function(measurement) { return xScale(measurement.time); })
                 .attr("cy", function(measurement) { return yScale(measurement.value); });
         });
-        this._updateMarkedDots();
         this._updateHighlightPositions();
         this._updateRangeBarRects();
 
@@ -303,27 +303,15 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .style("z-index", "100")
             .text(this._yAxisUnit);
     },
-    _updateMarkedDots: function () {
-        var markedPoints = this.get('markedPoints') || {};
-        var defaultDotRadius = this.get('chartPointRadius') || 1;
-        this._dots.forEach(function (dot) {
-            dot.classed('marked', function (point) { return markedPoints[point.measurement.id()]; });
-            dot.attr('r', function (point) {
-                return markedPoints[point.measurement.id()] ? defaultDotRadius * 1.5 : defaultDotRadius; });
-        });
-    }.observes('markedPoints'),
     _updateHighlightPositions: function () {
+        if (!this._highlights)
+            return;
+
         var xScale = this._x;
         var yScale = this._y;
-        var y2 = this._margin.top + this._contentHeight;
-        this._highlights.forEach(function (highlight) {
-            highlight
-                .attr("y1", 0)
-                .attr("y2", y2)
-                .attr("y", function(measurement) { return yScale(measurement.value); })
-                .attr("x1", function(measurement) { return xScale(measurement.time); })
-                .attr("x2", function(measurement) { return xScale(measurement.time); });
-        });
+        this._highlights
+            .attr("cy", function(point) { return yScale(point.value); })
+            .attr("cx", function(point) { return xScale(point.time); });
     },
     _computeXAxisDomain: function (timeSeries)
     {
@@ -588,24 +576,23 @@ App.InteractiveChartComponent = Ember.Component.extend({
         }
     }.observes('selectedItem').on('init'),
     _highlightedItemsChanged: function () {
-        if (!this._margin)
+        if (!this._clippedContainer)
             return;
 
         var highlightedItems = this.get('highlightedItems');
 
         var data = this._currentTimeSeriesData.filter(function (item) { return highlightedItems[item.measurement.id()]; });
 
-        if (this._highlights.length)
-            this._highlights.forEach(function (highlight) { highlight.remove(); });
-
-        this._highlights.push(this._clippedContainer
+        if (this._highlights)
+            this._highlights.remove();
+        this._highlights = this._clippedContainer
             .selectAll(".highlight")
                 .data(data)
-            .enter().append("line")
-                .attr("class", "highlight"));
+            .enter().append("circle")
+                .attr("class", "highlight")
+                .attr("r", (this.get('chartPointRadius') || 1) * 1.8);
 
         this._updateHighlightPositions();
-
     }.observes('highlightedItems'),
     _rangesChanged: function ()
     {

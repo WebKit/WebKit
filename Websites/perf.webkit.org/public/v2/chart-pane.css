@@ -266,10 +266,6 @@
     stroke: none;
 }
 
-.chart .marked {
-    fill: #c33;
-}
-
 .chart path.area {
     stroke: none;
     fill: #ccc;
@@ -308,9 +304,8 @@
 }
 
 .chart .highlight {
-    stroke: #39f;
-    stroke-dasharray: 4, 4;
-    stroke-width: 1px;
+    stroke: #f93;
+    stroke-width: 2px;
     fill: none;
 }
 

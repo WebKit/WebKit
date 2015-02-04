@@ -827,9 +827,9 @@ App.AnalysisTaskController = Ember.Controller.extend({
         if (!start || !end)
             return; // FIXME: Report an error.
 
-        var markedPoints = {};
-        markedPoints[start.measurement.id()] = true;
-        markedPoints[end.measurement.id()] = true;
+        var highlightedItems = {};
+        highlightedItems[start.measurement.id()] = true;
+        highlightedItems[end.measurement.id()] = true;
 
         var formatedPoints = currentTimeSeries.seriesBetweenPoints(start, end).map(function (point, index) {
             return {
@@ -843,7 +843,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
         var margin = (end.time - start.time) * 0.1;
         this.set('chartData', runs);
         this.set('chartDomain', [start.time - margin, +end.time + margin]);
-        this.set('markedPoints', markedPoints);
+        this.set('highlightedItems', highlightedItems);
         this.set('analysisPoints', formatedPoints);
     },
     testSets: function ()
