@@ -1,5 +1,19 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176321.
+
+    2014-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Safari fails to load a web page with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=138849
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/inline-block-assertion-expected.txt: Added.
+        * accessibility/inline-block-assertion.html: Added.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174860.
 
     2014-10-18  Chris Fleizach  <cfleizach@apple.com>
