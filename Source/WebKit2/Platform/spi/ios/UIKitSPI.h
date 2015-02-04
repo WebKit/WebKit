@@ -154,6 +154,7 @@ typedef enum {
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags;
 - (BOOL)autocorrectSpellingEnabled;
 - (void)deleteFromInput;
+- (void)deleteFromInputWithFlags:(NSUInteger)flags;
 - (void)replaceText:(id)replacement;
 @property (nonatomic, readwrite, retain) UIResponder <UIKeyInput> *delegate;
 @end
