@@ -9,8 +9,6 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2015-02-02 11:42
-------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
 Property values requiring vendor prefixes:
@@ -20,7 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/CONTRIBUTING.md
 /LayoutTests/imported/w3c/web-platform-tests/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/README.md
-/LayoutTests/imported/w3c/web-platform-tests/SUBMODULES
 /LayoutTests/imported/w3c/web-platform-tests/config.default.json
 /LayoutTests/imported/w3c/web-platform-tests/serve.py
 /LayoutTests/imported/w3c/web-platform-tests/server-side.md

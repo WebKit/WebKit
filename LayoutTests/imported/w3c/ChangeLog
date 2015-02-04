@@ -1,3 +1,23 @@
+2015-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should sort the list of files when generating the w3c-import.log
+        https://bugs.webkit.org/show_bug.cgi?id=141156
+
+        Reviewed by Bem Jones-Bey.
+
+        Updated web-platform-tests logs according importer file sorting.
+
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/fonts/w3c-import.log:
+        * web-platform-tests/images/w3c-import.log:
+        * web-platform-tests/tools/runner/css/w3c-import.log:
+        * web-platform-tests/tools/runner/fonts/w3c-import.log:
+        * web-platform-tests/tools/runner/w3c-import.log:
+        * web-platform-tests/tools/scripts/w3c-import.log:
+        * web-platform-tests/tools/sslutils/w3c-import.log:
+        * web-platform-tests/tools/w3c-import.log:
+        * web-platform-tests/tools/webdriver/webdriver/w3c-import.log:
+
 2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Web Platform Tests dirty a few untracked files

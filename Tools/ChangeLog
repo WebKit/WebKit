@@ -1,3 +1,16 @@
+2015-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should sort the list of files when generating the w3c-import.log
+        https://bugs.webkit.org/show_bug.cgi?id=141156
+
+        Reviewed by Bem Jones-Bey.
+
+        Sort explicitly the list of imported files written in the w3c-import.log.
+        Removed logging of the import date.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.write_import_log):
+
 2015-02-04  Daniel Bates  <dabates@apple.com>
 
         test-webkitpy fails on Mac without iphoneos SDK

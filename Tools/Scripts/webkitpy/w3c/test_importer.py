@@ -385,8 +385,6 @@ class TestImporter(object):
     def write_import_log(self, import_directory, file_list, prop_list, property_values_list):
         """ Writes a w3c-import.log file in each directory with imported files. """
 
-        now = datetime.datetime.now()
-
         import_log = open(os.path.join(import_directory, 'w3c-import.log'), 'w')
         import_log.write('The tests in this directory were imported from the W3C repository.\n')
         import_log.write('Do NOT modify these tests directly in Webkit.\n')
@@ -396,8 +394,6 @@ class TestImporter(object):
         import_log.write('\thttps://github.com/w3c/csswg-test\n\n')
         import_log.write('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
         import_log.write('Do NOT modify or remove this file\n\n')
-        import_log.write('------------------------------------------------------------------------\n')
-        import_log.write('Last Import: ' + now.strftime('%Y-%m-%d %H:%M') + '\n')
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('Properties requiring vendor prefixes:\n')
         if prop_list:
@@ -413,7 +409,7 @@ class TestImporter(object):
             import_log.write('None\n')
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('List of files:\n')
-        for item in file_list:
+        for item in sorted(file_list):
             import_log.write(item + '\n')
 
         import_log.close()
