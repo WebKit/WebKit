@@ -217,8 +217,6 @@ public:
     static PassRefPtr<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
-    void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
-
 private:
     RefPtr<JSLock> m_apiLock;
 

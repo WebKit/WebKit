@@ -123,12 +123,12 @@ MachineThreads::MachineThreads(Heap* heap)
 #endif
 {
     UNUSED_PARAM(heap);
+    threadSpecificKeyCreate(&m_threadSpecific, removeThread);
 }
 
 MachineThreads::~MachineThreads()
 {
-    if (m_threadSpecific)
-        threadSpecificKeyDelete(m_threadSpecific);
+    threadSpecificKeyDelete(m_threadSpecific);
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
     for (Thread* t = m_registeredThreads; t;) {
@@ -160,20 +160,14 @@ static inline bool equalThread(const PlatformThread& first, const PlatformThread
 #endif
 }
 
-void MachineThreads::makeUsableFromMultipleThreads()
-{
-    if (m_threadSpecific)
-        return;
-
-    threadSpecificKeyCreate(&m_threadSpecific, removeThread);
-}
-
 void MachineThreads::addCurrentThread()
 {
     ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
 
-    if (!m_threadSpecific || threadSpecificGet(m_threadSpecific))
+    if (threadSpecificGet(m_threadSpecific)) {
+        ASSERT(threadSpecificGet(m_threadSpecific) == this);
         return;
+    }
 
     threadSpecificSet(m_threadSpecific, this);
     Thread* thread = new Thread(getCurrentPlatformThread(), wtfThreadData().stack().origin());
@@ -186,8 +180,7 @@ void MachineThreads::addCurrentThread()
 
 void MachineThreads::removeThread(void* p)
 {
-    if (p)
-        static_cast<MachineThreads*>(p)->removeCurrentThread();
+    static_cast<MachineThreads*>(p)->removeCurrentThread();
 }
 
 template<typename PlatformThread>
@@ -520,9 +513,6 @@ static void growBuffer(size_t size, void** buffer, size_t* capacity)
 void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& currentThreadRegisters)
 {
     gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent, currentThreadRegisters);
-
-    if (!m_threadSpecific)
-        return;
 
     size_t size;
     size_t capacity = 0;

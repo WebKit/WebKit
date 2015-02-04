@@ -212,7 +212,6 @@ VM& JSDOMWindowBase::commonVM()
         vm->heap.setEdenActivityCallback(vm->heap.fullActivityCallback());
 #endif
         vm->heap.setIncrementalSweeper(std::make_unique<WebSafeIncrementalSweeper>(&vm->heap));
-        vm->makeUsableFromMultipleThreads();
         vm->heap.machineThreads().addCurrentThread();
 #endif
         initNormalWorldClientData(vm);

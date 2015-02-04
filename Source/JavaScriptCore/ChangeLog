@@ -1,3 +1,45 @@
+2015-02-04  Mark Lam  <mark.lam@apple.com>
+
+        Remove concept of makeUsableFromMultipleThreads().
+        <https://webkit.org/b/141221>
+
+        Reviewed by Mark Hahnenberg.
+
+        Currently, we rely on VM::makeUsableFromMultipleThreads() being called before we
+        start acquiring the JSLock and entering the VM from different threads.
+        Acquisition of the JSLock will register the acquiring thread with the VM's thread
+        registry if not already registered.  However, it will only do this if the VM's
+        thread specific key has been initialized by makeUsableFromMultipleThreads().
+
+        This is fragile, and also does not read intuitively because one would expect to
+        acquire the JSLock before calling any methods on the VM.  This is exactly what
+        JSGlobalContextCreateInGroup() did (i.e. acquire the lock before calling
+        makeUsableFromMultipleThreads()), but is wrong.  The result is that the invoking
+        thread will not have been registered with the VM during that first entry into
+        the VM.
+
+        The fix is to make it so that we initialize the VM's thread specific key on
+        construction of the VM's MachineThreads registry instead of relying on
+        makeUsableFromMultipleThreads() being called.  With this, we can eliminate
+        makeUsableFromMultipleThreads() altogether.
+
+        Performance results are neutral in aggregate.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        (JSC::MachineThreads::makeUsableFromMultipleThreads): Deleted.
+        * heap/MachineStackMarker.h:
+        * runtime/VM.cpp:
+        (JSC::VM::sharedInstance):
+        * runtime/VM.h:
+        (JSC::VM::makeUsableFromMultipleThreads): Deleted.
+
 2015-02-04  Chris Dumez  <cdumez@apple.com>
 
         Add removeFirst(value) / removeAll(value) methods to WTF::Vector

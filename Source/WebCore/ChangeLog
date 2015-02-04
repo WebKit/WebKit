@@ -1,3 +1,15 @@
+2015-02-04  Mark Lam  <mark.lam@apple.com>
+
+        Remove concept of makeUsableFromMultipleThreads().
+        <https://webkit.org/b/141221>
+
+        Reviewed by Mark Hahnenberg.
+
+        No new tests.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+
 2015-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Assert in ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren() on tab switching

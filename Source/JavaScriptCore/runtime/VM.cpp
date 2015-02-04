@@ -357,10 +357,8 @@ VM& VM::sharedInstance()
 {
     GlobalJSLock globalLock;
     VM*& instance = sharedInstanceInternal();
-    if (!instance) {
+    if (!instance)
         instance = adoptRef(new VM(APIShared, SmallHeap)).leakRef();
-        instance->makeUsableFromMultipleThreads();
-    }
     return *instance;
 }
 

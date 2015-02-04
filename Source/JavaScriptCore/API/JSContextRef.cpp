@@ -138,7 +138,6 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     RefPtr<VM> vm = group ? PassRefPtr<VM>(toJS(group)) : VM::createContextGroup();
 
     JSLockHolder locker(vm.get());
-    vm->makeUsableFromMultipleThreads();
 
     if (!globalObjectClass) {
         JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));

@@ -44,7 +44,6 @@ namespace JSC {
 
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent, RegisterState& registers);
 
-        JS_EXPORT_PRIVATE void makeUsableFromMultipleThreads();
         JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
     private:
