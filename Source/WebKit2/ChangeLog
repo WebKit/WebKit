@@ -1,3 +1,11 @@
+2015-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix GTK/EFL build after r179588.
+
+        Add new files to CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2015-02-03  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix build warning in WebKit2/Platform/IPC module.

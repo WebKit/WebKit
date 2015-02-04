@@ -403,6 +403,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKDownload.cpp
     UIProcess/API/C/WKFormSubmissionListener.cpp
     UIProcess/API/C/WKFrame.cpp
+    UIProcess/API/C/WKFrameInfoRef.cpp
     UIProcess/API/C/WKFramePolicyListener.cpp
     UIProcess/API/C/WKGeolocationManager.cpp
     UIProcess/API/C/WKGeolocationPermissionRequest.cpp
@@ -413,7 +414,10 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
+    UIProcess/API/C/WKNavigationActionRef.cpp
     UIProcess/API/C/WKNavigationDataRef.cpp
+    UIProcess/API/C/WKNavigationRef.cpp
+    UIProcess/API/C/WKNavigationResponseRef.cpp
     UIProcess/API/C/WKNotification.cpp
     UIProcess/API/C/WKNotificationManager.cpp
     UIProcess/API/C/WKNotificationPermissionRequest.cpp
