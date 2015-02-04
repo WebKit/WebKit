@@ -1,3 +1,22 @@
+2015-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        video.attribute should not return true just because of fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=141219
+
+        Reviewed by Dean Jackson.
+
+        No new tests, updated media/video-fullscreeen-only-controls.html
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.shouldHaveControls):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.isFullScreen):
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls): Don't consider fullscreen status.
+        (WebCore::HTMLMediaElement::configureMediaControls): Create controls if a video element
+            isn't allowed to play inline, or if it is in fullscreen.
+
 2015-02-04  Mark Lam  <mark.lam@apple.com>
 
         Remove concept of makeUsableFromMultipleThreads().

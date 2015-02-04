@@ -2,6 +2,8 @@ This tests that when inline-playback is restricted, the video element's "control
 
 
 RUN(internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted'))
+EXPECTED (video.hasAttribute('controls') == 'false') OK
+EXPECTED (video.controls == 'false') OK
 EXPECTED (shadowRoot = internals.shadowRoot(video) != 'null') OK
 EXPECTED (panel = mediaControlsElement(shadowRoot.firstChild, '-webkit-media-controls-panel') != 'null') OK
 EXPECTED (internals.shadowPseudoId(panel) == '-webkit-media-controls-panel') OK

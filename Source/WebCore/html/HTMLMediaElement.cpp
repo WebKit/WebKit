@@ -2966,14 +2966,6 @@ bool HTMLMediaElement::controls() const
     if (frame && !frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return true;
 
-    // always show controls for video when fullscreen playback is required.
-    if (isVideo() && m_mediaSession->requiresFullscreenForVideoPlayback(*this))
-        return true;
-
-    // Always show controls when in full screen mode.
-    if (isFullscreen())
-        return true;
-
     return fastHasAttribute(controlsAttr);
 }
 
@@ -5256,13 +5248,23 @@ bool HTMLMediaElement::createMediaControls()
 
 void HTMLMediaElement::configureMediaControls()
 {
+    bool requireControls = controls();
+
+    // Always create controls for video when fullscreen playback is required.
+    if (isVideo() && m_mediaSession->requiresFullscreenForVideoPlayback(*this))
+        requireControls = true;
+
+    // Always create controls when in full screen mode.
+    if (isFullscreen())
+        requireControls = true;
+
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (!controls() || !inDocument())
+    if (!requireControls || !inDocument())
         return;
 
     ensureUserAgentShadowRoot();
 #else
-    if (!controls() || !inDocument()) {
+    if (!requireControls || !inDocument()) {
         if (hasMediaControls())
             mediaControls()->hide();
         return;

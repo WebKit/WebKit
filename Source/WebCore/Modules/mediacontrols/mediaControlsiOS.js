@@ -413,7 +413,7 @@ ControllerIOS.prototype = {
 
     isFullScreen: function()
     {
-        return this.video.webkitDisplayingFullscreen;
+        return this.video.webkitDisplayingFullscreen && this.presentationMode() != 'optimized';
     },
 
     handleFullscreenButtonClicked: function(event) {

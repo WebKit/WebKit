@@ -250,6 +250,9 @@ Controller.prototype = {
 
     shouldHaveControls: function()
     {
+        if (!this.isAudio() && !this.host.mediaPlaybackAllowsInline)
+            return true;
+
         return this.video.controls || this.isFullScreen();
     },
 

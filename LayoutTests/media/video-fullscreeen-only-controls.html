@@ -14,6 +14,9 @@
     var video = document.getElementById('video');
     video.src = findMediaFile("video", "content/test");
 
+    testExpected("video.hasAttribute('controls')", false);
+    testExpected("video.controls", false);
+
     if (window.internals) {
         testExpected("shadowRoot = internals.shadowRoot(video)", null, "!=");
         testExpected("panel = mediaControlsElement(shadowRoot.firstChild, '-webkit-media-controls-panel')", null, "!=");
