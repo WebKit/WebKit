@@ -1,3 +1,15 @@
+2015-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Insertion bar (caret) is hidden behind the placeholder text in the style editor
+        https://bugs.webkit.org/show_bug.cgi?id=139659
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-placeholder):
+        Use non-monospace font to fit the placeholder text on a single line and
+        match the color if the native placeholder.
+
 2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table with columnName filter for non-existent property should still show column
