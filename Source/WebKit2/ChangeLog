@@ -1,3 +1,24 @@
+2015-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Layers that are created and destroyed in the same transaction shouldn't be encoded
+        https://bugs.webkit.org/show_bug.cgi?id=141228
+
+        Reviewed by Tim Horton.
+        
+        With UI-side compositing, it was possible for layers to get created and
+        destroyed in the same transaction (e.g. two layouts before a single layer
+        tree commit). When that happened we would encode layer creation properties
+        but not encode layer properties, since the layer would be unreachable.
+        
+        Fix by removing deleted layers from the created layers list, which is
+        converted into a map for easy searching.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWasCreated):
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed):
+        (WebKit::RemoteLayerTreeContext::buildTransaction):
+
 2015-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Build with seccomp filters broken since r179409
