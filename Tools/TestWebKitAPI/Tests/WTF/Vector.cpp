@@ -27,6 +27,7 @@
 
 #include "MoveOnly.h"
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace TestWebKitAPI {
 
@@ -321,6 +322,145 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
     EXPECT_EQ(1U, c[0][0].size());
     EXPECT_EQ(42, c[0][0][0]);
     EXPECT_EQ(0U, b.size());
+}
+
+TEST(WTF_Vector, RemoveFirst)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeFirst(1));
+    EXPECT_FALSE(v.removeFirst(-1));
+    EXPECT_TRUE(v.isEmpty());
+
+    v.fill(2, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_FALSE(v.removeFirst(1));
+    EXPECT_EQ(10U, v.size());
+    v.clear();
+
+    v.fill(1, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_TRUE(v.removeFirst(1));
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 1, 1, 1, 1, 1, 1}));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_FALSE(v.removeFirst(2));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 1, 1, 1, 1, 1, 1, 1, 1}));
+
+    unsigned removed = 0;
+    while (v.removeFirst(1))
+        ++removed;
+    EXPECT_EQ(9U, removed);
+    EXPECT_TRUE(v.isEmpty());
+
+    v.resize(1);
+    EXPECT_EQ(1U, v.size());
+    EXPECT_TRUE(v.removeFirst(1));
+    EXPECT_EQ(0U, v.size());
+    EXPECT_TRUE(v.isEmpty());
+}
+
+TEST(WTF_Vector, RemoveAll)
+{
+    // Using a memcpy-able type.
+    static_assert(VectorTraits<int>::canMoveWithMemcpy, "Should use a memcpy-able type");
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeAll(1));
+    EXPECT_FALSE(v.removeAll(-1));
+    EXPECT_TRUE(v.isEmpty());
+
+    v.fill(1, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_EQ(10U, v.removeAll(1));
+    EXPECT_TRUE(v.isEmpty());
+
+    v.fill(2, 10);
+    EXPECT_EQ(10U, v.size());
+    EXPECT_EQ(0U, v.removeAll(1));
+    EXPECT_EQ(10U, v.size());
+
+    v = {1, 2, 1, 2, 1, 2, 2, 1, 1, 1};
+    EXPECT_EQ(10U, v.size());
+    EXPECT_EQ(6U, v.removeAll(1));
+    EXPECT_EQ(4U, v.size());
+    EXPECT_TRUE(v == Vector<int>({2, 2, 2, 2}));
+    EXPECT_TRUE(v.find(1) == notFound);
+    EXPECT_EQ(4U, v.removeAll(2));
+    EXPECT_TRUE(v.isEmpty());
+
+    v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
+    EXPECT_EQ(12U, v.size());
+    EXPECT_EQ(6U, v.removeAll(1));
+    EXPECT_EQ(6U, v.size());
+    EXPECT_TRUE(v.find(1) == notFound);
+    EXPECT_TRUE(v == Vector<int>({3, 2, 2, 2, 2, 3}));
+
+    EXPECT_EQ(4U, v.removeAll(2));
+    EXPECT_EQ(2U, v.size());
+    EXPECT_TRUE(v.find(2) == notFound);
+    EXPECT_TRUE(v == Vector<int>({3, 3}));
+
+    EXPECT_EQ(2U, v.removeAll(3));
+    EXPECT_TRUE(v.isEmpty());
+
+    v = {1, 1, 1, 3, 2, 4, 2, 2, 2, 4, 4, 3};
+    EXPECT_EQ(12U, v.size());
+    EXPECT_EQ(3U, v.removeAll(1));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_TRUE(v.find(1) == notFound);
+    EXPECT_TRUE(v == Vector<int>({3, 2, 4, 2, 2, 2, 4, 4, 3}));
+
+    // Using a non memcpy-able type.
+    static_assert(!VectorTraits<CString>::canMoveWithMemcpy, "Should use a non memcpy-able type");
+    Vector<CString> vExpected;
+    Vector<CString> v2;
+    EXPECT_TRUE(v2.isEmpty());
+    EXPECT_FALSE(v2.removeAll("1"));
+    EXPECT_TRUE(v2.isEmpty());
+
+    v2.fill("1", 10);
+    EXPECT_EQ(10U, v2.size());
+    EXPECT_EQ(10U, v2.removeAll("1"));
+    EXPECT_TRUE(v2.isEmpty());
+
+    v2.fill("2", 10);
+    EXPECT_EQ(10U, v2.size());
+    EXPECT_EQ(0U, v2.removeAll("1"));
+    EXPECT_EQ(10U, v2.size());
+
+    v2 = {"1", "2", "1", "2", "1", "2", "2", "1", "1", "1"};
+    EXPECT_EQ(10U, v2.size());
+    EXPECT_EQ(6U, v2.removeAll("1"));
+    EXPECT_EQ(4U, v2.size());
+    EXPECT_TRUE(v2.find("1") == notFound);
+    EXPECT_EQ(4U, v2.removeAll("2"));
+    EXPECT_TRUE(v2.isEmpty());
+
+    v2 = {"3", "1", "2", "1", "2", "1", "2", "2", "1", "1", "1", "3"};
+    EXPECT_EQ(12U, v2.size());
+    EXPECT_EQ(6U, v2.removeAll("1"));
+    EXPECT_EQ(6U, v2.size());
+    EXPECT_TRUE(v2.find("1") == notFound);
+    vExpected = {"3", "2", "2", "2", "2", "3"};
+    EXPECT_TRUE(v2 == vExpected);
+
+    EXPECT_EQ(4U, v2.removeAll("2"));
+    EXPECT_EQ(2U, v2.size());
+    EXPECT_TRUE(v2.find("2") == notFound);
+    vExpected = {"3", "3"};
+    EXPECT_TRUE(v2 == vExpected);
+
+    EXPECT_EQ(2U, v2.removeAll("3"));
+    EXPECT_TRUE(v2.isEmpty());
+
+    v2 = {"1", "1", "1", "3", "2", "4", "2", "2", "2", "4", "4", "3"};
+    EXPECT_EQ(12U, v2.size());
+    EXPECT_EQ(3U, v2.removeAll("1"));
+    EXPECT_EQ(9U, v2.size());
+    EXPECT_TRUE(v2.find("1") == notFound);
+    vExpected = {"3", "2", "4", "2", "2", "2", "4", "4", "3"};
+    EXPECT_TRUE(v2 == vExpected);
 }
 
 } // namespace TestWebKitAPI

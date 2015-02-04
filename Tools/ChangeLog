@@ -1,3 +1,16 @@
+2015-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Add removeFirst(value) / removeAll(value) methods to WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=141192
+
+        Reviewed by Benjamin Poulain.
+
+        Add API tests for Vector::removeFirst(value) and
+        Vector::removeAll(value).
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-02-03  Tim Horton  <timothy_horton@apple.com>
 
         Add WKPageNavigationClient as C SPI around API::NavigationClient, and adopt in WKTR

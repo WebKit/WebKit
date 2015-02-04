@@ -735,6 +735,8 @@ public:
 
     void remove(size_t position);
     void remove(size_t position, size_t length);
+    template<typename U> bool removeFirst(const U&);
+    template<typename U> unsigned removeAll(const U&);
 
     void removeLast() 
     {
@@ -1306,6 +1308,45 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position, 
     TypeOperations::moveOverlapping(endSpot, end(), beginSpot);
     asanBufferSizeWillChangeTo(m_size - length);
     m_size -= length;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename U>
+inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirst(const U& value)
+{
+    size_t index = find(value);
+    if (index != notFound) {
+        remove(index);
+        return true;
+    }
+    return false;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename U>
+inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAll(const U& value)
+{
+    iterator holeBegin = end();
+    iterator holeEnd = end();
+    unsigned matchCount = 0;
+    for (auto it = begin(), itEnd = end(); it != itEnd; ++it) {
+        if (*it == value) {
+            if (holeBegin == end())
+                holeBegin = it;
+            else if (holeEnd != it) {
+                TypeOperations::moveOverlapping(holeEnd, it, holeBegin);
+                holeBegin += it - holeEnd;
+            }
+            holeEnd = it + 1;
+            it->~T();
+            ++matchCount;
+        }
+    }
+    if (holeEnd != end())
+        TypeOperations::moveOverlapping(holeEnd, end(), holeBegin);
+    asanBufferSizeWillChangeTo(m_size - matchCount);
+    m_size -= matchCount;
+    return matchCount;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>

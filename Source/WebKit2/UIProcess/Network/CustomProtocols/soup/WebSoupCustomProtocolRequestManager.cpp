@@ -96,8 +96,8 @@ void WebSoupCustomProtocolRequestManager::unregisterSchemeForCustomProtocol(cons
 
     processPool()->unregisterSchemeForCustomProtocol(scheme);
 
-    ASSERT(m_registeredSchemes.contains(scheme));
-    m_registeredSchemes.remove(m_registeredSchemes.find(scheme));
+    bool removed = m_registeredSchemes.removeFirst(scheme);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void WebSoupCustomProtocolRequestManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)

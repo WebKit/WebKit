@@ -1,3 +1,16 @@
+2015-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Add removeFirst(value) / removeAll(value) methods to WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=141192
+
+        Reviewed by Benjamin Poulain.
+
+        Use new Vector::removeFirst(value) / removeAll(value) API to simplify the
+        code a bit.
+
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorObjectBase::remove):
+
 2015-02-03  Mark Lam  <mark.lam@apple.com>
 
         Workaround a thread library bug where thread destructors may not get called.

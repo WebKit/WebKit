@@ -74,10 +74,8 @@ void PageLoadState::addObserver(Observer& observer)
 
 void PageLoadState::removeObserver(Observer& observer)
 {
-    ASSERT(m_observers.contains(&observer));
-
-    size_t index = m_observers.find(&observer);
-    m_observers.remove(index);
+    bool removed = m_observers.removeFirst(&observer);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void PageLoadState::endTransaction()

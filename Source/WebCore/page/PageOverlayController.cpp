@@ -151,9 +151,8 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay* overlay, PageOverl
 
     m_overlayGraphicsLayers.take(overlay)->removeFromParent();
 
-    size_t overlayIndex = m_pageOverlays.find(overlay);
-    ASSERT(overlayIndex != notFound);
-    m_pageOverlays.remove(overlayIndex);
+    bool removed = m_pageOverlays.removeFirst(overlay);
+    ASSERT_UNUSED(removed, removed);
 
     updateForceSynchronousScrollLayerPositionUpdates();
 }

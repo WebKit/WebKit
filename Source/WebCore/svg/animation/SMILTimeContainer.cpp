@@ -92,9 +92,8 @@ void SMILTimeContainer::unschedule(SVGSMILElement* animation, SVGElement* target
     ElementAttributePair key(target, attributeName);
     AnimationsVector* scheduled = m_scheduledAnimations.get(key);
     ASSERT(scheduled);
-    size_t idx = scheduled->find(animation);
-    ASSERT(idx != notFound);
-    scheduled->remove(idx);
+    bool removed = scheduled->removeFirst(animation);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void SMILTimeContainer::notifyIntervalsChanged()

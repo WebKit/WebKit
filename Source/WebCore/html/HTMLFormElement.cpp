@@ -510,16 +510,6 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         HTMLElement::parseAttribute(name, value);
 }
 
-template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T* item)
-{
-    size_t size = vec.size();
-    for (size_t i = 0; i != size; ++i)
-        if (vec[i] == item) {
-            vec.remove(i);
-            break;
-        }
-}
-
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)
 {
     if (m_associatedElements.isEmpty())
@@ -608,18 +598,14 @@ void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 
 void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 {
-    unsigned index;
-    for (index = 0; index < m_associatedElements.size(); ++index) {
-        if (m_associatedElements[index] == e)
-            break;
-    }
+    unsigned index = m_associatedElements.find(e);
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_associatedElements.size());
     if (index < m_associatedElementsBeforeIndex)
         --m_associatedElementsBeforeIndex;
     if (index < m_associatedElementsAfterIndex)
         --m_associatedElementsAfterIndex;
     removeFromPastNamesMap(e);
-    removeFromVector(m_associatedElements, e);
+    m_associatedElements.remove(index);
 }
 
 void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControlElement& formControlElement)
@@ -653,9 +639,9 @@ void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 {
-    ASSERT(m_imageElements.find(e) != notFound);
     removeFromPastNamesMap(e);
-    removeFromVector(m_imageElements, e);
+    bool removed = m_imageElements.removeFirst(e);
+    ASSERT_UNUSED(removed, removed);
 }
 
 RefPtr<HTMLCollection> HTMLFormElement::elements()

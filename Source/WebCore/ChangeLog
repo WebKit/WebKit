@@ -1,3 +1,40 @@
+2015-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Add removeFirst(value) / removeAll(value) methods to WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=141192
+
+        Reviewed by Benjamin Poulain.
+
+        Use new Vector::removeFirst(value) / removeAll(value) API to simplify the
+        code a bit.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::unregisterClient):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::removeImgElement):
+        (WebCore::removeFromVector): Deleted.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::unregisterPopupOpeningObserver):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::uninstallPageOverlay):
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::removeFromParent):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimations::remove):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::addSearchResult):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::removeCaption):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::subtreeChildWillBeRemoved):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::unschedule):
+
 2015-02-03  Maciej Stachowiak  <mjs@apple.com>
 
         Crash when printing snapshotted plugins

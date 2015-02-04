@@ -230,12 +230,8 @@ void RenderTable::addCaption(const RenderTableCaption* caption)
 
 void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
 {
-    size_t index = m_captions.find(oldCaption);
-    ASSERT(index != notFound);
-    if (index == notFound)
-        return;
-
-    m_captions.remove(index);
+    bool removed = m_captions.removeFirst(oldCaption);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void RenderTable::invalidateCachedColumns()

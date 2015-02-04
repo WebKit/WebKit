@@ -262,9 +262,8 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
     if (next)
         affectedAttributes.append(next);
 
-    size_t position = m_layoutAttributes.find(text.layoutAttributes());
-    ASSERT(position != notFound);
-    m_layoutAttributes.remove(position);
+    bool removed = m_layoutAttributes.removeFirst(text.layoutAttributes());
+    ASSERT_UNUSED(removed, removed);
 }
 
 void RenderSVGText::subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)

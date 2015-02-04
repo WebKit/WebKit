@@ -237,8 +237,8 @@ void WebProcessPool::platformInitialize()
 
 WebProcessPool::~WebProcessPool()
 {
-    ASSERT(processPools().find(this) != notFound);
-    processPools().remove(processPools().find(this));
+    bool removed = processPools().removeFirst(this);
+    ASSERT_UNUSED(removed, removed);
 
     removeLanguageChangeObserver(this);
 
@@ -805,7 +805,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
         static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
 
-        m_processes.remove(m_processes.find(process));
+        m_processes.removeFirst(process);
         return;
     }
 
@@ -819,8 +819,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     // if it were invoked from Vector::remove(). RefPtr delays destruction until it's safe.
     RefPtr<WebProcessProxy> protect(process);
     if (m_processWithPageCache == process)
-        m_processWithPageCache = 0;
-    m_processes.remove(m_processes.find(process));
+        m_processWithPageCache = nullptr;
+    m_processes.removeFirst(process);
 }
 
 WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit()

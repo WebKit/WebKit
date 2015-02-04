@@ -37,7 +37,7 @@ void EwkExtension::append(Ewk_Extension_Client* client)
 
 void EwkExtension::remove(Ewk_Extension_Client* client)
 {
-    m_clients.remove(m_clients.find(client));
+    m_clients.removeFirst(client);
 }
 
 Eina_Bool ewk_extension_client_add(Ewk_Extension* extension, Ewk_Extension_Client* client)

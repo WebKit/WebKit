@@ -786,12 +786,7 @@ bool InspectorObjectBase::getValue(const String& name, RefPtr<InspectorValue>& o
 void InspectorObjectBase::remove(const String& name)
 {
     m_data.remove(name);
-    for (size_t i = 0; i < m_order.size(); ++i) {
-        if (m_order[i] == name) {
-            m_order.remove(i);
-            break;
-        }
-    }
+    m_order.removeFirst(name);
 }
 
 void InspectorObjectBase::writeJSON(StringBuilder& output) const

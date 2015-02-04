@@ -88,12 +88,7 @@ void RenderSearchField::addSearchResult()
     if (frame().page()->usesEphemeralSession())
         return;
 
-    int size = static_cast<int>(m_recentSearches.size());
-    for (int i = size - 1; i >= 0; --i) {
-        if (m_recentSearches[i] == value)
-            m_recentSearches.remove(i);
-    }
-
+    m_recentSearches.removeAll(value);
     m_recentSearches.insert(0, value);
     while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults())
         m_recentSearches.removeLast();

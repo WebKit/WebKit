@@ -1,3 +1,23 @@
+2015-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Add removeFirst(value) / removeAll(value) methods to WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=141192
+
+        Reviewed by Benjamin Poulain.
+
+        Use new Vector::removeFirst(value) / removeAll(value) API to simplify the
+        code a bit.
+
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        (WebKit::WebSoupCustomProtocolRequestManager::unregisterSchemeForCustomProtocol):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::removeObserver):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::disconnectProcess):
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.cpp:
+        (EwkExtension::remove):
+
 2015-02-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix GTK/EFL build after r179588.
