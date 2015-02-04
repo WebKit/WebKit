@@ -576,10 +576,10 @@ App.InteractiveChartComponent = Ember.Component.extend({
         }
     }.observes('selectedItem').on('init'),
     _highlightedItemsChanged: function () {
-        if (!this._clippedContainer)
-            return;
-
         var highlightedItems = this.get('highlightedItems');
+
+        if (!this._clippedContainer || !highlightedItems)
+            return;
 
         var data = this._currentTimeSeriesData.filter(function (item) { return highlightedItems[item.measurement.id()]; });
 
