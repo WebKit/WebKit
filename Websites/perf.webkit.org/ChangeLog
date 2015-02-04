@@ -1,5 +1,24 @@
 2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard doesn’t show the right unit for Safari UI tests
+        https://bugs.webkit.org/show_bug.cgi?id=141238
+
+        Reviewed by Darin Adler.
+
+        Safari UI tests use custom metrics that end with "Time". This patch teaches the perf dashboard how to
+        get the unit for a given metric based on the suffix of the metric name instead of hard-coding the mapping
+        between metrics and their units.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns): Use the suffix of the metric name to compute the unit.
+        * public/v2/manifest.js:
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Ditto. Also set "useSI" property iff for "bytes".
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._constructGraphIfPossible): Respect useSI. Use toPrecision(3) otherwise.
+        (App.InteractiveChartComponent._relayoutDataAndAxes): Place the unit vertically on the left of ticks.
+
+2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Interactive chart component provides two duplicate API for highlighting points
         https://bugs.webkit.org/show_bug.cgi?id=141234
 

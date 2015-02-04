@@ -66,7 +66,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
         }
 
         if (this.get('showYAxis')) {
-            this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(6).tickFormat(d3.format("s"));
+            this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(6).tickFormat(
+                chartData.useSI ? d3.format("s") : d3.format(".3g"));
             this._yAxisLabels = svg.append("g")
                 .attr("class", "y axis");
         }
@@ -295,12 +296,11 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._yAxisLabels.call(this._yAxis);
         if (this._yAxisUnitContainer)
             this._yAxisUnitContainer.remove();
+        var x = - 3 * this._rem;
+        var y = this._contentHeight / 2;
         this._yAxisUnitContainer = this._yAxisLabels.append("text")
-            .attr("x", 0.5 * this._rem)
-            .attr("y", 0.2 * this._rem)
-            .attr("dy", 0.8 * this._rem)
-            .style("text-anchor", "start")
-            .style("z-index", "100")
+            .attr("transform", "rotate(90 0 0) translate(" + y + ", " + (-x) + ")")
+            .style("text-anchor", "middle")
             .text(this._yAxisUnit);
     },
     _updateHighlightPositions: function () {

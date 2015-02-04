@@ -151,16 +151,14 @@ function PerfTestRuns(metric, platform) {
     var cachedUnit = null;
     var cachedScalingFactor = null;
     var baselines = {};
+    var suffix = metric.name.match('([A-z][a-z]+|FrameRate)$')[0];
     var unit = {'Combined': '', // Assume smaller is better for now.
         'FrameRate': 'fps',
         'Runs': '/s',
         'Time': 'ms',
         'Malloc': 'B',
-        'JSHeap': 'B',
-        'Allocations': 'B',
-        'EndAllocations': 'B',
-        'MaxAllocations': 'B',
-        'MeanAllocations': 'B'}[metric.name];
+        'Heap': 'B',
+        'Allocations': 'B'}[suffix];
 
     // We can't do this in PerfTestResult because all results for each metric need to share the same unit and the same scaling factor.
     function computeScalingFactorIfNeeded() {

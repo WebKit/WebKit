@@ -272,18 +272,19 @@ App.Manifest = Ember.Controller.extend({
             var platform = App.Manifest.platform(platformId);
             var metric = App.Manifest.metric(metricId);
 
-            // FIXME: Include this information in JSON and process it in RunsData.fetchRuns
-            var unit = {'Combined': '', // Assume smaller is better for now.
+            var suffix = metric.get('name').match('([A-z][a-z]+|FrameRate)$')[0];
+            var unit = {
                 'FrameRate': 'fps',
-                'Runs': 'runs/s',
+                'Runs': '/s',
                 'Time': 'ms',
                 'Malloc': 'bytes',
-                'JSHeap': 'bytes',
-                'Allocations': 'bytes',
-                'EndAllocations': 'bytes',
-                'MaxAllocations': 'bytes',
-                'MeanAllocations': 'bytes'}[metric.get('name')];
+                'Heap': 'bytes',
+                'Allocations': 'bytes'
+            }[suffix];
+
+            // FIXME: Include this information in JSON and process it in RunsData.fetchRuns
             runs.unit = unit;
+            runs.useSI = unit == 'bytes';
 
             return {platform: platform, metric: metric, runs: runs};
         });
