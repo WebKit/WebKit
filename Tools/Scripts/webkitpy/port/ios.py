@@ -52,16 +52,11 @@ class IOSPort(ApplePort):
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name == cls.port_name:
-            sdk_version = '8.0'
-            # FIXME: We should move the call to xcrun to the PlatformInfo object so that
-            # we can use MockPlatformInfo to set an expectation when running the unit tests.
-            if os.path.isfile('/usr/bin/xcrun'):
-                sdk_command_output = subprocess.check_output(['/usr/bin/xcrun', '--sdk', 'iphoneos', '--show-sdk-version'], stderr=None).rstrip()
-                if sdk_command_output:
-                    sdk_version = sdk_command_output
-
-            port_name = port_name + '-' + re.match('^([0-9]+)', sdk_version).group(1)
-
+            iphoneos_sdk_version = host.platform.xcode_sdk_version('iphoneos')
+            if not iphoneos_sdk_version:
+                raise Exception("Ensure that the Xcode command line tools and the iphoneos SDK are installed.")
+            major_version_number = iphoneos_sdk_version.split('.')[0]
+            port_name = port_name + '-' + major_version_number
         return port_name
 
     def __init__(self, *args, **kwargs):

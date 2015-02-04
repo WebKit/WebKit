@@ -1,3 +1,25 @@
+2015-02-04  Daniel Bates  <dabates@apple.com>
+
+        test-webkitpy fails on Mac without iphoneos SDK
+        https://bugs.webkit.org/show_bug.cgi?id=141255
+        <rdar://problem/19619691>
+
+        Reviewed by David Kilzer and Alexey Proskuryakov.
+
+        Fixes an issue where test-webkitpy fails on a Mac without the iOS SDK. We should
+        should not require the iphoneos SDK to be installed to run the webkitpy tests.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.xcode_sdk_version): Added; return the version of the specified SDK, if
+        installed. We take advantage of the behavior that xcrun --show-sdk-version only writes
+        to standard output if the SDK is installed to return the empty string if the SDK is
+        not installed.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.xcode_sdk_version): Added.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.determine_full_port_name): Modified to call PlatformInfo.xcode_sdk_version()
+        to get the version of the iphoneos SDK, if installed.
+
 2015-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         run-webkit-tests doesn't always capture ASan violation reports

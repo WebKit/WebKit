@@ -55,3 +55,6 @@ class MockPlatformInfo(object):
 
     def terminal_width(self):
         return 80
+
+    def xcode_sdk_version(self, sdk_name):
+        return '8.1'

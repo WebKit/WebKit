@@ -29,6 +29,7 @@
 import re
 import sys
 
+from webkitpy.common.system.executive import Executive
 
 class PlatformInfo(object):
     """This class provides a consistent (and mockable) interpretation of
@@ -117,6 +118,12 @@ class PlatformInfo(object):
                 return columns
         except:
             return sys.maxint
+
+    def xcode_sdk_version(self, sdk_name):
+        if self.is_mac():
+            # Assumes that xcrun does not write to standard output on failure (e.g. SDK does not exist).
+            return self._executive.run_command(["xcrun", "--sdk", sdk_name, "--show-sdk-version"], return_stderr=False, error_handler=Executive.ignore_error).rstrip()
+        return ''
 
     def _determine_os_name(self, sys_platform):
         if sys_platform == 'darwin':
