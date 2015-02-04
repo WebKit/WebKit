@@ -86,27 +86,29 @@ audio::-webkit-media-controls-inline-playback-placeholder.hidden {
 audio::-webkit-media-controls-wireless-playback-picker-button,
 video::-webkit-media-controls-wireless-playback-picker-button {
     display: block;
-    background-color: black;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: 0 1px;
+    opacity: 0.9;
 }
 
 audio::-webkit-media-controls-wireless-playback-picker-button {
     width: 44px;
     height: 39px;
-    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 39"><g fill="none"><path stroke="white" stroke-width="1" d="M15.5,24.5  10.5,24.5  10.5,11.5  31.5,11.5  31.5,24.5  26.5,24.5  31.5,24.5  31.5,11.5  10.5,11.5  10.5,24.5  15.5,24.5 Z" /><path fill="white" d="M21,21  13.5,29  28.5,29" /></g></svg>');
+    background-size: 44px 39px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 39"><g fill="none"><path stroke="black" stroke-width="1" d="M15.5,24.5  10.5,24.5  10.5,11.5  31.5,11.5  31.5,24.5  26.5,24.5  31.5,24.5  31.5,11.5  10.5,11.5  10.5,24.5  15.5,24.5 Z" /><path fill="black" d="M21,21  13.5,29  28.5,29" /></g></svg>');
 }
 
 video::-webkit-media-controls-wireless-playback-picker-button {
     width: 42px;
     height: 44px;
-    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 44"><g fill="none"><path stroke="white" stroke-width="1" d="M15,27.5  10.5,27.5  10.5,14.5  30.5,14.5  30.5,27.5  26,27.5  30.5,27.5  30.5,14.5  10.5,14.5  10.5,27.5  15,27.5 Z" /><path fill="white" d="M20.5,23.5  13,31.5  28,31.5" /></g></svg>');
-    opacity: 0.5;
+    background-size: 42px 44px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 44"><g fill="none"><path stroke="black" stroke-width="1" d="M15,27.5  10.5,27.5  10.5,14.5  30.5,14.5  30.5,27.5  26,27.5  30.5,27.5  30.5,14.5  10.5,14.5  10.5,27.5  15,27.5 Z" /><path fill="black" d="M20.5,23.5  13,31.5  28,31.5" /></g></svg>');
 }
 
-video::-webkit-media-controls-wireless-playback-picker-button.active,
+video::-webkit-media-controls-wireless-playback-picker-button.active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 44"><g fill="none"><path stroke="#1060FE" stroke-width="1" d="M15,27.5  10.5,27.5  10.5,14.5  30.5,14.5  30.5,27.5  26,27.5  30.5,27.5  30.5,14.5  10.5,14.5  10.5,27.5  15,27.5 Z" /><path fill="#1060FE" d="M20.5,23.5  13,31.5  28,31.5" /></g></svg>');
+}
+
 audio::-webkit-media-controls-wireless-playback-picker-button.active {
-    background-color: #1060FE;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 39"><g fill="none"><path stroke="#1060FE" stroke-width="1" d="M15.5,24.5  10.5,24.5  10.5,11.5  31.5,11.5  31.5,24.5  26.5,24.5  31.5,24.5  31.5,11.5  10.5,11.5  10.5,24.5  15.5,24.5 Z" /><path fill="#1060FE" d="M21,21  13.5,29  28.5,29" /></g></svg>');
 }
 
 video::-webkit-media-text-track-container,
