@@ -1,5 +1,19 @@
 2015-02-04  Dean Jackson  <dino@apple.com>
 
+        [Media] Fullscreen button should always come last in inline controls (141245)
+        https://bugs.webkit.org/show_bug.cgi?id=141245
+        <rdar://problem/19714622>
+
+        Reviewed by Eric Carlson.
+
+        Make sure the optimizedFullscreen button is inserted before the
+        normal fullscreen button.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.configureInlineControls):
+
+2015-02-04  Dean Jackson  <dino@apple.com>
+
         REGRESSION: AirPlay button not visible but present in inline toolbar
         https://bugs.webkit.org/show_bug.cgi?id=141244
         <rdar://problem/19328322>
