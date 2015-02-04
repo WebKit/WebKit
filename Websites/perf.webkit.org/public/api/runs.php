@@ -50,7 +50,11 @@ function format_run($run) {
         'builder' => $run['build_builder']);
 }
 
+$repository_id_to_name = array();
+
 function main($path) {
+    global $repository_id_to_name;
+
     if (count($path) != 1)
         exit_with_error('InvalidRequest');
 
@@ -74,7 +78,6 @@ function main($path) {
     if (!$config_rows)
         exit_with_error('ConfigurationNotFound');
 
-    $repository_id_to_name = array();
     if ($repository_table = $db->fetch_table('repositories')) {
         foreach ($repository_table as $repository)
             $repository_id_to_name[$repository['repository_id']] = $repository['repository_name'];
