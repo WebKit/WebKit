@@ -29,9 +29,6 @@
 
 #include "CaptionUserPreferencesMediaAF.h"
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include "CoreText/CoreText.h"
-#endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "URL.h"
@@ -52,6 +49,7 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
 #endif
 
