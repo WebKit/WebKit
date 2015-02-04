@@ -102,10 +102,12 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     if (headerObject)
         return headerObject;
     
-    // now try for <th> tags in the first body
-    headerObject = headerObjectForSection(table->firstBody(), true);
-
-    return headerObject;
+    RenderTableSection* bodySection = table->firstBody();
+    while (bodySection && bodySection->isAnonymous())
+        bodySection = table->sectionBelow(bodySection, SkipEmptySections);
+    
+    // now try for <th> tags in the first body. If the first body is 
+    return headerObjectForSection(bodySection, true);
 }
 
 AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTableSection* section, bool thTagRequired)
@@ -123,22 +125,30 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     RenderTableCell* cell = 0;
     // also account for cells that have a span
     for (int testCol = m_columnIndex; testCol >= 0; --testCol) {
-        RenderTableCell* testCell = section->primaryCellAt(0, testCol);
-        if (!testCell)
-            continue;
         
-        // we've reached a cell that doesn't even overlap our column 
-        // it can't be our header
-        if ((testCell->col() + (testCell->colSpan()-1)) < m_columnIndex)
+        // Run down the rows in case initial rows are invalid (like when a <caption> is used).
+        unsigned rowCount = section->numRows();
+        for (unsigned testRow = 0; testRow < rowCount; testRow++) {
+            RenderTableCell* testCell = section->primaryCellAt(testRow, testCol);
+            // No cell at this index, keep checking more rows and columns.
+            if (!testCell)
+                continue;
+            
+            // If we've reached a cell that doesn't even overlap our column it can't be the header.
+            if ((testCell->col() + (testCell->colSpan()-1)) < m_columnIndex)
+                break;
+            
+            // If this does not have an element (like a <caption>) then check the next row
+            if (!testCell->element())
+                continue;
+            
+            // If th is required, but we found an element that doesn't have a th tag, we can stop looking.
+            if (thTagRequired && !testCell->element()->hasTagName(thTag))
+                break;
+            
+            cell = testCell;
             break;
-        
-        if (!testCell->element())
-            continue;
-        
-        if (thTagRequired && !testCell->element()->hasTagName(thTag))
-            continue;
-        
-        cell = testCell;
+        }
     }
     
     if (!cell)
