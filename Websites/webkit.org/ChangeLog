@@ -1,3 +1,12 @@
+2015-02-03  Byungseon Shin  <sun.shin@webkit.org>
+
+        Add LG Electronics to team.html
+        https://bugs.webkit.org/show_bug.cgi?id=141227
+
+        Reviewed by Andreas Kling.
+
+        * team.html:
+
 2015-01-30  Chris Dumez  <cdumez@apple.com>
 
         Add "Singleton pattern" section to the WebKit coding style
