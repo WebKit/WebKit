@@ -1,3 +1,39 @@
+2015-02-03  Mark Lam  <mark.lam@apple.com>
+
+        Workaround a thread library bug where thread destructors may not get called.
+        <https://webkit.org/b/141209>
+
+        Reviewed by Michael Saboff.
+
+        There's a bug where thread destructors may not get called.  As far as
+        we know, this only manifests on darwin ports.  We will work around this
+        by checking at GC time if the platform thread is still valid.  If not,
+        we'll purge it from the VM's registeredThreads list before proceeding
+        with thread scanning activity.
+
+        Note: it is important that we do this invalid thread detection during
+        suspension, because the validity (and liveness) of the other thread is
+        only guaranteed while it is suspended.
+
+        * API/tests/testapi.mm:
+        (threadMain):
+        - Added a test to enter the VM from another thread before we GC on
+          the main thread.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::removeThreadWithLockAlreadyAcquired):
+        (JSC::MachineThreads::removeCurrentThread):
+        - refactored removeThreadWithLockAlreadyAcquired() out from
+          removeCurrentThread() so that we can also call it for purging invalid
+          threads.
+        (JSC::suspendThread):
+        - Added a return status to tell if the suspension succeeded or not.
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        - Check if the suspension failed, and purge the thread if we can't
+          suspend it.  Failure to suspend implies that the thread has
+          terminated without calling its destructor.
+        * heap/MachineStackMarker.h:
+
 2015-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ASSERT mainThreadPthread launching remote debuggable JSContext app with Debug JavaScriptCore

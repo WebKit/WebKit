@@ -29,6 +29,8 @@
 #import "DateTests.h"
 #import "JSExportTests.h"
 
+#import <pthread.h>
+
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" void JSSynchronousEdenCollectForDebugging(JSContextRef);
 
@@ -468,6 +470,16 @@ static bool blockSignatureContainsClass()
         return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
     }();
     return containsClass;
+}
+
+static void* threadMain(void* contextPtr)
+{
+    JSContext *context = (__bridge JSContext*)contextPtr;
+
+    // Do something to enter the VM.
+    TestObject *testObject = [TestObject testObject];
+    context[@"testObject"] = testObject;
+    pthread_exit(nullptr);
 }
 
 void testObjectiveCAPI()
@@ -1359,6 +1371,17 @@ void testObjectiveCAPI()
         checkResult(@"EdenCollection doesn't reclaim new managed values", [managedJSObject value] != nil);
     }
 
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        
+        pthread_t threadID;
+        pthread_create(&threadID, NULL, &threadMain, (__bridge void*)context);
+        pthread_join(threadID, nullptr);
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+
+        checkResult(@"Did not crash after entering the VM from another thread", true);
+    }
+    
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();

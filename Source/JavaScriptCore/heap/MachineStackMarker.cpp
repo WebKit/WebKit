@@ -190,13 +190,10 @@ void MachineThreads::removeThread(void* p)
         static_cast<MachineThreads*>(p)->removeCurrentThread();
 }
 
-void MachineThreads::removeCurrentThread()
+template<typename PlatformThread>
+void MachineThreads::removeThreadWithLockAlreadyAcquired(PlatformThread threadToRemove)
 {
-    PlatformThread currentPlatformThread = getCurrentPlatformThread();
-
-    MutexLocker lock(m_registeredThreadsMutex);
-
-    if (equalThread(currentPlatformThread, m_registeredThreads->platformThread)) {
+    if (equalThread(threadToRemove, m_registeredThreads->platformThread)) {
         Thread* t = m_registeredThreads;
         m_registeredThreads = m_registeredThreads->next;
         delete t;
@@ -204,7 +201,7 @@ void MachineThreads::removeCurrentThread()
         Thread* last = m_registeredThreads;
         Thread* t;
         for (t = m_registeredThreads->next; t; t = t->next) {
-            if (equalThread(t->platformThread, currentPlatformThread)) {
+            if (equalThread(t->platformThread, threadToRemove)) {
                 last->next = t->next;
                 break;
             }
@@ -214,7 +211,15 @@ void MachineThreads::removeCurrentThread()
         delete t;
     }
 }
+    
+void MachineThreads::removeCurrentThread()
+{
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
 
+    MutexLocker lock(m_registeredThreadsMutex);
+    removeThreadWithLockAlreadyAcquired(currentPlatformThread);
+}
+    
 void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& registers)
 {
     void* registersBegin = &registers;
@@ -226,14 +231,18 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
 }
 
-static inline void suspendThread(const PlatformThread& platformThread)
+static inline bool suspendThread(const PlatformThread& platformThread)
 {
 #if OS(DARWIN)
-    thread_suspend(platformThread);
+    kern_return_t result = thread_suspend(platformThread);
+    return result == KERN_SUCCESS;
 #elif OS(WINDOWS)
-    SuspendThread(platformThread);
+    bool threadIsSuspended = (SuspendThread(platformThread) != (DWORD)-1);
+    ASSERT(threadIsSuspended);
+    return threadIsSuspended;
 #elif USE(PTHREADS)
     pthread_kill(platformThread, SigThreadSuspendResume);
+    return true;
 #else
 #error Need a way to suspend threads on this platform
 #endif
@@ -452,9 +461,38 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
     *size = 0;
 
     PlatformThread currentPlatformThread = getCurrentPlatformThread();
-    for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-        if (!equalThread(thread->platformThread, currentPlatformThread))
-            suspendThread(thread->platformThread);
+    int numberOfThreads = 0; // Using 0 to denote that we haven't counted the number of threads yet.
+    int index = 1;
+
+    for (Thread* thread = m_registeredThreads; thread; index++) {
+        if (!equalThread(thread->platformThread, currentPlatformThread)) {
+            bool success = suspendThread(thread->platformThread);
+#if OS(DARWIN)
+            if (!success) {
+                if (!numberOfThreads) {
+                    for (Thread* countedThread = m_registeredThreads; countedThread; countedThread = countedThread->next)
+                        numberOfThreads++;
+                }
+                
+                // Re-do the suspension to get the actual failure result for logging.
+                kern_return_t error = thread_suspend(thread->platformThread);
+                ASSERT(error != KERN_SUCCESS);
+
+                WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
+                    "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] platformThread %p.",
+                    error, index, numberOfThreads, thread, reinterpret_cast<void*>(thread->platformThread));
+                
+                Thread* nextThread = thread->next;
+                removeThreadWithLockAlreadyAcquired(thread->platformThread);
+                thread = nextThread;
+                continue;
+            }
+#else
+            UNUSED_PARAM(numberOfThreads);
+            ASSERT_UNUSED(success, success);
+#endif
+        }
+        thread = thread->next;
     }
 
     for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
