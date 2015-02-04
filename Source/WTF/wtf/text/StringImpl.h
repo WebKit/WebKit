@@ -875,7 +875,7 @@ inline T loadUnaligned(const char* s)
 }
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
-#if CPU(X86_64) || CPU(ARM64)
+#if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
 {
     unsigned dwordLength = length >> 3;
@@ -945,7 +945,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 
     return true;
 }
-#elif CPU(X86)
+#elif CPU(X86) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
 {
     const char* a = reinterpret_cast<const char*>(aLChar);
@@ -992,7 +992,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 
     return true;
 }
-#elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7)
+#elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 {
     bool isEqual = false;
@@ -1080,9 +1080,26 @@ ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
         );
     return isEqual;
 }
-#else
+#elif !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length) { return !memcmp(a, b, length); }
 ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length) { return !memcmp(a, b, length * sizeof(UChar)); }
+#else
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
 #endif
 
 ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
