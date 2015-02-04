@@ -1,3 +1,78 @@
+2015-02-04  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][EME] Support ClearKey encryption with AES128-encrypted HLS
+        https://bugs.webkit.org/show_bug.cgi?id=140825
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/clearkey/clear-key-hls-aes128.html
+
+        Add support for ClearKey encryption when used with an AES-128 encrypted HLS stream.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::installedCDMFactories): Add the CDMPrivateClearKey factory.
+        * Modules/encryptedmedia/CDMPrivateClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::supportsKeySystem): Support the "org.w3c.clearkey" key system.
+        (WebCore::CDMPrivateClearKey::supportsKeySystemAndMimeType): Ditto.
+        (WebCore::CDMPrivateClearKey::supportsMIMEType): Ditto.
+        (WebCore::CDMPrivateClearKey::createSession): Create a CDMSessionClearKey.
+        * Modules/encryptedmedia/CDMPrivateClearKey.h:
+        (WebCore::CDMPrivateClearKey::create): Simple factory.
+        (WebCore::CDMPrivateClearKey::~CDMPrivateClearKey): Virtual destructor.
+        (WebCore::CDMPrivateClearKey::CDMPrivateClearKey): Simple destructor.
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp: Added.
+        (WebCore::clearKeyVM): Static method returning the VM to be used by JSON parsing.
+        (WebCore::CDMSessionClearKey::CDMSessionClearKey): Simple constructor.
+        (WebCore::CDMSessionClearKey::~CDMSessionClearKey): Simple destructor.
+        (WebCore::CDMSessionClearKey::generateKeyRequest): Store the initData, ensure that it consists of a UTF8-encoded key
+            URI, and return same.
+        (WebCore::CDMSessionClearKey::releaseKeys): Purged all cached keys.
+        (WebCore::CDMSessionClearKey::update): Parse raw JSON-encoded JWK keys, rejecting non-AES, non-oct keys.
+        (WebCore::CDMSessionClearKey::cachedKeyForKeyID): Return cached keys.
+        * Modules/encryptedmedia/CDMSessionClearKey.h:
+
+        Add support for the "org.w3c.clearkey" CDM to MediaPlayerPrivateAVFoundationObjC, and do so in a platform-agnostic
+        way by simply asking for raw key data from MediaPlayerClient when notified that a key has been added.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::keySystemIsSupported):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem):
+        (WebCore::fulfillRequestWithKeyData): Added utility method.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::keyAdded):
+
+        Pipe a keyAdded() notification down to MediaPlayer and a cachedKeyForKeyId() request up to CDMSessionClearKey:
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::cachedKeyForKeyId):
+        (WebCore::MediaKeySession::addKeyTimerFired):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::keyAdded):
+        (WebCore::MediaKeys::cachedKeyForKeyId):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::keyAdded):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/CDMSession.h:
+        (WebCore::CDMSession::cachedKeyForKeyID):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::keyAdded):
+        (WebCore::MediaPlayer::cachedKeyForKeyId):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCachedKeyForKeyId):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::keyAdded):
+
+        Add new files to project:
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2015-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179618.

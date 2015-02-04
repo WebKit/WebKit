@@ -29,6 +29,7 @@
 
 #include "CDM.h"
 
+#include "CDMPrivateClearKey.h"
 #include "CDMPrivateMediaPlayer.h"
 #include "CDMSession.h"
 #include "MediaKeyError.h"
@@ -64,6 +65,8 @@ static Vector<CDMFactory*>& installedCDMFactories()
     static bool queriedCDMs = false;
     if (!queriedCDMs) {
         queriedCDMs = true;
+
+        cdms.get().append(new CDMFactory(CDMPrivateClearKey::create, CDMPrivateClearKey::supportsKeySystem, CDMPrivateClearKey::supportsKeySystemAndMimeType));
 
         // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
         cdms.get().append(new CDMFactory(CDMPrivateMediaPlayer::create, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType));

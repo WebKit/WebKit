@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaKeys_h
-#define MediaKeys_h
+#ifndef CDMPrivateClearKey_h
+#define CDMPrivateClearKey_h
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#include "CDM.h"
-#include "EventTarget.h"
-#include "ExceptionCode.h"
-#include <runtime/Uint8Array.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "CDMPrivate.h"
 
 namespace WebCore {
 
-class MediaKeySession;
-class HTMLMediaElement;
+class CDM;
 
-class MediaKeys : public RefCounted<MediaKeys>, public CDMClient {
+class CDMPrivateClearKey : public CDMPrivateInterface {
 public:
-    static PassRefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
-    virtual ~MediaKeys();
+    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::unique_ptr<CDMPrivateInterface>(new CDMPrivateClearKey(cdm)); }
+    virtual ~CDMPrivateClearKey() { }
 
-    PassRefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    static bool isTypeSupported(const String& keySystem, const String& mimeType);
-
-    const String& keySystem() const { return m_keySystem; }
-    CDM* cdm() { return m_cdm.get(); }
-
-    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
-    void setMediaElement(HTMLMediaElement*);
-
-    void keyAdded();
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
+    virtual bool supportsMIMEType(const String& mimeType) override;
+    virtual std::unique_ptr<CDMSession> createSession() override;
 
 protected:
-    // CDMClient:
-    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const override;
+    explicit CDMPrivateClearKey(CDM* cdm)
+        : m_cdm(cdm)
+    {
+    }
 
-    MediaKeys(const String& keySystem, std::unique_ptr<CDM>);
-
-    Vector<RefPtr<MediaKeySession>> m_sessions;
-
-    HTMLMediaElement* m_mediaElement;
-    String m_keySystem;
-    std::unique_ptr<CDM> m_cdm;
+    CDM* m_cdm;
 };
 
 }
 
 #endif // ENABLE(ENCRYPTED_MEDIA_V2)
 
-#endif // MediaKeys_h
+#endif // CDMPrivateClearKey_h

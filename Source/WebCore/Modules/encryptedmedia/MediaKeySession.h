@@ -66,6 +66,8 @@ public:
     bool isClosed() const { return !m_session; }
     void close();
 
+    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
+
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
 

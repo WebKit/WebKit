@@ -1,3 +1,23 @@
+2015-02-04  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][EME] Support ClearKey encryption with AES128-encrypted HLS
+        https://bugs.webkit.org/show_bug.cgi?id=140825
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/clearkey/clear-key-hls-aes128-expected.txt: Added.
+        * http/tests/media/clearkey/clear-key-hls-aes128.html: Added.
+        * http/tests/media/clearkey/support.js: Added.
+        (stringToUInt8Array):
+        (uInt8ArrayToString):
+        (base64EncodeUint8Array):
+        * http/tests/media/resources/hls/clearkey/crypt0.key: Added.
+        * http/tests/media/resources/hls/clearkey/iframe_index.m3u8: Added.
+        * http/tests/media/resources/hls/clearkey/main0.ts: Added.
+        * http/tests/media/resources/hls/clearkey/prog_index.m3u8: Added.
+        * media/video-test.js:
+        (waitForEventOnceOn):
+
 2015-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179618.

@@ -160,6 +160,22 @@ MediaPlayer* MediaKeys::cdmMediaPlayer(const CDM*) const
     return 0;
 }
 
+void MediaKeys::keyAdded()
+{
+    if (m_mediaElement)
+        m_mediaElement->keyAdded();
+
+}
+
+RefPtr<ArrayBuffer> MediaKeys::cachedKeyForKeyId(const String& keyId) const
+{
+    for (auto& session : m_sessions) {
+        if (RefPtr<ArrayBuffer> key = session->cachedKeyForKeyId(keyId))
+            return key;
+    }
+    return nullptr;
+}
+
 }
 
 #endif

@@ -2182,6 +2182,11 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySyste
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+RefPtr<ArrayBuffer> HTMLMediaElement::mediaPlayerCachedKeyForKeyId(const String& keyId) const
+{
+    return m_mediaKeys ? m_mediaKeys->cachedKeyForKeyId(keyId) : nullptr;
+}
+
 bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 {
     if (!hasEventListeners("webkitneedkey")) {
@@ -2229,6 +2234,12 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
     m_mediaKeys = mediaKeys;
     if (m_mediaKeys)
         m_mediaKeys->setMediaElement(this);
+}
+
+void HTMLMediaElement::keyAdded()
+{
+    if (m_player)
+        m_player->keyAdded();
 }
 #endif
 

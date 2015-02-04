@@ -211,6 +211,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const { return nullptr; }
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
     virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
@@ -351,6 +352,7 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     std::unique_ptr<CDMSession> createSession(const String& keySystem);
     void setCDMSession(CDMSession*);
+    void keyAdded();
 #endif
 
     bool paused() const;
@@ -517,6 +519,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
     bool keyNeeded(Uint8Array* initData);
     String mediaKeysStorageDirectory() const;
 #endif

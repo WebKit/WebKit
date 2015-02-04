@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- *
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -23,58 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaKeys_h
-#define MediaKeys_h
+#include "config.h"
+#include "CDMPrivateClearKey.h"
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include "CDM.h"
-#include "EventTarget.h"
+#include "CDMSessionClearKey.h"
+#include "ContentType.h"
 #include "ExceptionCode.h"
-#include <runtime/Uint8Array.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "MediaPlayer.h"
 
 namespace WebCore {
 
-class MediaKeySession;
-class HTMLMediaElement;
+bool CDMPrivateClearKey::supportsKeySystem(const String& keySystem)
+{
+    if (!equalIgnoringCase(keySystem, "org.w3c.clearkey"))
+        return false;
 
-class MediaKeys : public RefCounted<MediaKeys>, public CDMClient {
-public:
-    static PassRefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
-    virtual ~MediaKeys();
+    // The MediaPlayer must also support the key system:
+    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
+}
 
-    PassRefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
+bool CDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    if (!equalIgnoringCase(keySystem, "org.w3c.clearkey"))
+        return false;
 
-    static bool isTypeSupported(const String& keySystem, const String& mimeType);
+    // The MediaPlayer must also support the key system:
+    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
+}
 
-    const String& keySystem() const { return m_keySystem; }
-    CDM* cdm() { return m_cdm.get(); }
+bool CDMPrivateClearKey::supportsMIMEType(const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
+}
 
-    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
-    void setMediaElement(HTMLMediaElement*);
-
-    void keyAdded();
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
-
-protected:
-    // CDMClient:
-    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const override;
-
-    MediaKeys(const String& keySystem, std::unique_ptr<CDM>);
-
-    Vector<RefPtr<MediaKeySession>> m_sessions;
-
-    HTMLMediaElement* m_mediaElement;
-    String m_keySystem;
-    std::unique_ptr<CDM> m_cdm;
-};
+std::unique_ptr<CDMSession> CDMPrivateClearKey::createSession()
+{
+    return std::make_unique<CDMSessionClearKey>();
+}
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
-
-#endif // MediaKeys_h
+#endif

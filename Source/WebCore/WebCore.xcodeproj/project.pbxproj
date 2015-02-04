@@ -5748,6 +5748,10 @@
 		CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */; };
 		CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE83DB0183C44060031EAA3 /* VideoPlaybackQuality.h */; };
 		CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE83DB4183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp */; };
+		CDE8B5EC1A69777300B4B66A /* CDMPrivateClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE8B5EA1A69777300B4B66A /* CDMPrivateClearKey.cpp */; };
+		CDE8B5ED1A69777300B4B66A /* CDMPrivateClearKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE8B5EB1A69777300B4B66A /* CDMPrivateClearKey.h */; };
+		CDE8B5F01A69778B00B4B66A /* CDMSessionClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE8B5EE1A69778B00B4B66A /* CDMSessionClearKey.cpp */; };
+		CDE8B5F11A69778B00B4B66A /* CDMSessionClearKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE8B5EF1A69778B00B4B66A /* CDMSessionClearKey.h */; };
 		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
 		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
 		CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76331460B462008B31F1 /* Clock.cpp */; };
@@ -13249,6 +13253,10 @@
 		CDE83DB3183C441E0031EAA3 /* VideoPlaybackQuality.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoPlaybackQuality.idl; sourceTree = "<group>"; };
 		CDE83DB4183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoPlaybackQuality.cpp; sourceTree = "<group>"; };
 		CDE83DB5183D352A0031EAA3 /* JSVideoPlaybackQuality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoPlaybackQuality.h; sourceTree = "<group>"; };
+		CDE8B5EA1A69777300B4B66A /* CDMPrivateClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMPrivateClearKey.cpp; sourceTree = "<group>"; };
+		CDE8B5EB1A69777300B4B66A /* CDMPrivateClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivateClearKey.h; sourceTree = "<group>"; };
+		CDE8B5EE1A69778B00B4B66A /* CDMSessionClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMSessionClearKey.cpp; sourceTree = "<group>"; };
+		CDE8B5EF1A69778B00B4B66A /* CDMSessionClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMSessionClearKey.h; sourceTree = "<group>"; };
 		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformClockCA.cpp; sourceTree = "<group>"; };
 		CDEA762F146084EE008B31F1 /* PlatformClockCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCA.h; sourceTree = "<group>"; };
@@ -21649,6 +21657,10 @@
 				CDA98DC716014F2C00FEA3B1 /* MediaKeySession.cpp */,
 				CDA98DC816014F2C00FEA3B1 /* MediaKeySession.h */,
 				CDA98DC916014F4000FEA3B1 /* MediaKeySession.idl */,
+				CDE8B5EA1A69777300B4B66A /* CDMPrivateClearKey.cpp */,
+				CDE8B5EB1A69777300B4B66A /* CDMPrivateClearKey.h */,
+				CDE8B5EE1A69778B00B4B66A /* CDMSessionClearKey.cpp */,
+				CDE8B5EF1A69778B00B4B66A /* CDMSessionClearKey.h */,
 			);
 			path = encryptedmedia;
 			sourceTree = "<group>";
@@ -25754,6 +25766,7 @@
 				D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */,
 				F55B3DCE1251F12D003EF269 /* RangeInputType.h in Headers */,
 				6E84E9E117668BF100815B68 /* RasterShape.h in Headers */,
+				CDE8B5F11A69778B00B4B66A /* CDMSessionClearKey.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
@@ -26535,6 +26548,7 @@
 				E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */,
 				930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */,
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
+				CDE8B5ED1A69777300B4B66A /* CDMPrivateClearKey.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 				448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */,
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
@@ -28338,6 +28352,7 @@
 				590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */,
 				BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */,
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
+				CDE8B5F01A69778B00B4B66A /* CDMSessionClearKey.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
@@ -28719,6 +28734,7 @@
 				08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */,
 				8542A79A0AE5C94400DF58DF /* JSSVGElementWrapperFactory.cpp in Sources */,
 				B2FA3D680AB75A6F000E5AC4 /* JSSVGEllipseElement.cpp in Sources */,
+				CDE8B5EC1A69777300B4B66A /* CDMPrivateClearKey.cpp in Sources */,
 				B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */,
 				B2FA3D6A0AB75A6F000E5AC4 /* JSSVGFEBlendElement.cpp in Sources */,
 				B2FA3D6C0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.cpp in Sources */,

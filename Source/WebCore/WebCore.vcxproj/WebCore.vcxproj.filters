@@ -6919,6 +6919,12 @@
     <ClCompile Include="..\Modules\encryptedmedia\CDMPrivateMediaPlayer.cpp">
       <Filter>Modules\encryptedmedia</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\CDMPrivateClearKey.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\encryptedmedia\CDMSessionClearKey.cpp">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.cpp">
       <Filter>Modules\encryptedmedia</Filter>
     </ClCompile>
@@ -14906,6 +14912,14 @@
     </ClInclude>
     <ClInclude Include="..\svg\SVGURIReference.h">
       <Filter>svg</Filter>
+    <ClInclude Include="..\Modules\encryptedmedia\CDMPrivateClearKey.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\CDMSessionClearKey.h">
+      <Filter>Modules\encryptedmedia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.h">
+      <Filter>Modules\encryptedmedia</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGUseElement.h">
       <Filter>svg</Filter>
