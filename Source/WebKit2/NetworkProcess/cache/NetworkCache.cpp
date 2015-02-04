@@ -218,7 +218,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
 {
     ASSERT(isEnabled());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", originalRequest.url().string().ascii().data(), originalRequest.priority());
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
 
     if (!canRetrieve(originalRequest)) {
         completionHandler(nullptr);
@@ -249,7 +249,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
 #endif
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%d time=%lldms", success, capture->originalRequest.priority(), elapsedMS);
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%u time=%lldms", success, capture->originalRequest.priority(), elapsedMS);
         capture->completionHandler(WTF::move(decodedEntry));
         return success;
     });

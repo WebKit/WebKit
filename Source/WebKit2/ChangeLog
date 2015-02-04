@@ -1,3 +1,18 @@
+2015-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop ResourceLoadPriorityUnresolved resource load priority and use Optional<> instead
+        https://bugs.webkit.org/show_bug.cgi?id=141186
+
+        Reviewed by Antti Koivisto.
+
+        Update code now that ResourceLoadPriorityUnresolved is not longer a
+        ResourceLoadPriority enum value.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::retrieve):
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2015-02-03  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Add support for deleteFromInputWithFlags.

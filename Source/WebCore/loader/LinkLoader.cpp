@@ -105,7 +105,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
     if ((relAttribute.m_isLinkPrefetch || relAttribute.m_isLinkSubresource) && href.isValid() && document->frame()) {
         if (!m_client->shouldLoadLink())
             return false;
-        ResourceLoadPriority priority = ResourceLoadPriorityUnresolved;
+        Optional<ResourceLoadPriority> priority;
         CachedResource::Type type = CachedResource::LinkPrefetch;
         // We only make one request to the cachedresourcelodaer if multiple rel types are
         // specified, 

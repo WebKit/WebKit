@@ -1,5 +1,20 @@
 2015-02-03  Chris Dumez  <cdumez@apple.com>
 
+        Drop ResourceLoadPriorityUnresolved resource load priority and use Optional<> instead
+        https://bugs.webkit.org/show_bug.cgi?id=141186
+
+        Reviewed by Antti Koivisto.
+
+        Drop ResourceLoadPriorityUnresolved resource load priority value and use
+        Optional<ResourceLoadPriority> when needed instead. If the Optional
+        doesn't have a value, then it means it is unresolved. Having
+        ResourceLoadPriorityUnresolved in ResourceLoadPriority was confusing
+        because this value is only valid in CachedResourceRequest, it is not
+        a valid value in CachedResource or in ResourceRequest. After this
+        refactoring, it now becomes more obvious.
+
+2015-02-03  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION(176609): Very high memory usage in Canvas/reuse.html performance test
         https://bugs.webkit.org/show_bug.cgi?id=139812
 

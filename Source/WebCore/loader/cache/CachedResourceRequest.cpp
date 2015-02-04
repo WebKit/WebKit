@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const String& charset, ResourceLoadPriority priority)
+CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const String& charset, Optional<ResourceLoadPriority> priority)
     : m_resourceRequest(resourceRequest)
     , m_charset(charset)
     , m_options(CachedResourceLoader::defaultCachedResourceOptions())
@@ -45,13 +45,12 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
 CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const ResourceLoaderOptions& options)
     : m_resourceRequest(resourceRequest)
     , m_options(options)
-    , m_priority(ResourceLoadPriorityUnresolved)
     , m_forPreload(false)
     , m_defer(NoDefer)
 {
 }
 
-CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, ResourceLoadPriority priority)
+CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, Optional<ResourceLoadPriority> priority)
     : m_resourceRequest(resourceRequest)
     , m_options(CachedResourceLoader::defaultCachedResourceOptions())
     , m_priority(priority)

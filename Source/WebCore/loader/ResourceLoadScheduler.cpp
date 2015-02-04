@@ -163,7 +163,6 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 #endif
 
     ResourceLoadPriority priority = resourceLoader->request().priority();
-    ASSERT(priority != ResourceLoadPriorityUnresolved);
 
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);

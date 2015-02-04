@@ -158,7 +158,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         wkHTTPRequestEnablePipelining(cfRequest);
 
     if (resourcePrioritiesEnabled())
-        wkSetHTTPRequestPriority(cfRequest, toPlatformRequestPriority(m_priority));
+        wkSetHTTPRequestPriority(cfRequest, toPlatformRequestPriority(priority()));
 
 #if !PLATFORM(WIN)
     wkCFURLRequestAllowAllPostCaching(cfRequest);
@@ -274,11 +274,8 @@ void ResourceRequest::doUpdateResourceRequest()
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
-    if (resourcePrioritiesEnabled()) {
-        auto priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
-        if (priority > ResourceLoadPriorityUnresolved)
-            m_priority = priority;
-    }
+    if (resourcePrioritiesEnabled())
+        m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {

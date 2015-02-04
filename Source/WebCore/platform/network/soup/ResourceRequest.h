@@ -132,8 +132,6 @@ namespace WebCore {
 inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
 {
     switch (priority) {
-    case ResourceLoadPriorityUnresolved:
-        return SOUP_MESSAGE_PRIORITY_NORMAL;
     case ResourceLoadPriorityVeryLow:
         return SOUP_MESSAGE_PRIORITY_VERY_LOW;
     case ResourceLoadPriorityLow:

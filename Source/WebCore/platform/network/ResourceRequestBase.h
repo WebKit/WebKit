@@ -214,16 +214,16 @@ namespace WebCore {
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         RefPtr<FormData> m_httpBody;
         unsigned m_cachePolicy : 3;
-        bool m_allowCookies : 1;
-        mutable bool m_resourceRequestUpdated : 1;
-        mutable bool m_platformRequestUpdated : 1;
-        mutable bool m_resourceRequestBodyUpdated : 1;
-        mutable bool m_platformRequestBodyUpdated : 1;
-        bool m_reportUploadProgress : 1;
-        bool m_reportLoadTiming : 1;
-        bool m_reportRawHeaders : 1;
-        bool m_hiddenFromInspector : 1;
-        ResourceLoadPriority m_priority : 4; // not unsigned because ResourceLoadPriority has negative values
+        unsigned m_allowCookies : 1;
+        mutable unsigned m_resourceRequestUpdated : 1;
+        mutable unsigned m_platformRequestUpdated : 1;
+        mutable unsigned m_resourceRequestBodyUpdated : 1;
+        mutable unsigned m_platformRequestBodyUpdated : 1;
+        unsigned m_reportUploadProgress : 1;
+        unsigned m_reportLoadTiming : 1;
+        unsigned m_reportRawHeaders : 1;
+        unsigned m_hiddenFromInspector : 1;
+        unsigned m_priority : 4;
 
     private:
         const ResourceRequest& asResourceRequest() const;

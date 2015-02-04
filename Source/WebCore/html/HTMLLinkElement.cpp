@@ -229,7 +229,9 @@ void HTMLLinkElement::process()
         addPendingSheet(isActive ? ActiveSheet : InactiveSheet);
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
-        ResourceLoadPriority priority = isActive ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
+        Optional<ResourceLoadPriority> priority;
+        if (!isActive)
+            priority = ResourceLoadPriorityVeryLow;
         CachedResourceRequest request(ResourceRequest(document().completeURL(url)), charset, priority);
         request.setInitiator(this);
         m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(request);

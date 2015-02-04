@@ -437,7 +437,7 @@ ResourceLoadPriority ResourceRequestBase::priority() const
 {
     updateResourceRequest();
 
-    return m_priority;
+    return static_cast<ResourceLoadPriority>(m_priority);
 }
 
 void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
@@ -448,6 +448,7 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
         return;
 
     m_priority = priority;
+    ASSERT(static_cast<ResourceLoadPriority>(m_priority) == priority); // Make sure it fits in the bitfield.
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
