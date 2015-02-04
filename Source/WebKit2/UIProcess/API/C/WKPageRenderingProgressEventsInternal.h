@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKPageRenderingProgressEvents.h"
+#include "WKPageRenderingProgressEvents.h"
 
-#import <WebCore/LayoutMilestones.h>
+#include <WebCore/LayoutMilestones.h>
 
 static inline WKPageRenderingProgressEvents pageRenderingProgressEvents(WebCore::LayoutMilestones milestones)
 {
