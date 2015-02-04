@@ -62,6 +62,12 @@ InjectedScript.primitiveTypes = {
     string: true
 }
 
+InjectedScript.CollectionMode = {
+    OwnProperties: 1 << 0,    // own properties.
+    GetterProperties: 1 << 1, // getter properties in the prototype chain.
+    AllProperties: 1 << 2,    // all properties in the prototype chain.
+}
+
 InjectedScript.prototype = {
     isPrimitiveValue: function(object)
     {
@@ -194,7 +200,13 @@ InjectedScript.prototype = {
         if (!this._isDefined(object))
             return false;
 
-        var descriptors = this._propertyDescriptors(object, ownProperties, ownAndGetterProperties);
+        var collectionMode = InjectedScript.CollectionMode.AllProperties;
+        if (ownProperties)
+            collectionMode = InjectedScript.CollectionMode.OwnProperties;
+        else if (ownAndGetterProperties)
+            collectionMode = InjectedScript.CollectionMode.OwnProperties | InjectedScript.CollectionMode.GetterProperties;
+
+        var descriptors = this._propertyDescriptors(object, collectionMode);
 
         // Go over properties, wrap object values.
         for (var i = 0; i < descriptors.length; ++i) {
@@ -515,13 +527,8 @@ InjectedScript.prototype = {
         return module;
     },
 
-    _propertyDescriptors: function(object, ownProperties, ownAndGetterProperties)
+    _propertyDescriptors: function(object, collectionMode)
     {
-        // Modes:
-        //  - ownProperties - only own properties and __proto__
-        //  - ownAndGetterProperties - own properties, __proto__, and getters in the prototype chain
-        //  - neither - get all properties in the prototype chain and __proto__
-
         var descriptors = [];
         var nameProcessed = {};
         nameProcessed["__proto__"] = null;
@@ -540,30 +547,32 @@ InjectedScript.prototype = {
 
         function processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
-            // Own properties only.
-            if (ownProperties) {
-                if (isOwnProperty)
-                    descriptors.push(descriptor);
+            // All properties.
+            if (collectionMode & InjectedScript.CollectionMode.AllProperties) {
+                descriptors.push(descriptor);
                 return;
             }
 
-            // Own and getter properties.
-            if (ownAndGetterProperties) {
-                if (isOwnProperty) {
-                    // Own property, include the descriptor as is.
-                    descriptors.push(descriptor);
-                } else if (descriptor.hasOwnProperty("get") && descriptor.get) {
+            // Own properties.
+            if (collectionMode & InjectedScript.CollectionMode.OwnProperties && isOwnProperty) {
+                descriptors.push(descriptor);
+                return;
+            }
+
+            // Getter properties.
+            if (collectionMode & InjectedScript.CollectionMode.GetterProperties) {
+                if (descriptor.hasOwnProperty("get") && descriptor.get) {
                     // Getter property in the prototype chain. Create a fake value descriptor.
                     descriptors.push(createFakeValueDescriptor(descriptor.name, descriptor, isOwnProperty));
-                } else if (possibleNativeBindingGetter) {
+                    return;
+                }
+
+                if (possibleNativeBindingGetter) {
                     // Possible getter property in the prototype chain.
                     descriptors.push(descriptor);
+                    return;
                 }
-                return;
             }
-
-            // All properties.
-            descriptors.push(descriptor);
         }
 
         function processPropertyNames(o, names, isOwnProperty)
@@ -604,11 +613,11 @@ InjectedScript.prototype = {
         for (var o = object; this._isDefined(o); o = o.__proto__) {
             var isOwnProperty = o === object;
             processPropertyNames(o, Object.getOwnPropertyNames(o), isOwnProperty);
-            if (ownProperties)
+            if (collectionMode === InjectedScript.CollectionMode.OwnProperties)
                 break;
         }
 
-        // Include __proto__ at the end.
+        // Always include __proto__ at the end.
         try {
             if (object.__proto__)
                 descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false, isOwn: true});
@@ -853,7 +862,7 @@ InjectedScript.RemoteObject.prototype = {
 
             // Properties.
             preview.properties = [];
-            var descriptors = injectedScript._propertyDescriptors(object);
+            var descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties);
             this._appendPropertyPreviews(preview, descriptors, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;

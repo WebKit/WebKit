@@ -1,5 +1,16 @@
 2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Clean up Object Property Descriptor Collection
+        https://bugs.webkit.org/show_bug.cgi?id=141222
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        Use a list of options when determining which properties to collect
+        instead of a few booleans with overlapping responsibilities.
+
+2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: console.table with columnName filter for non-existent property should still show column
         https://bugs.webkit.org/show_bug.cgi?id=141066
 
