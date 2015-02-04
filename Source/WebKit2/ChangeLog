@@ -1,3 +1,15 @@
+2015-02-03  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebKit2/Platform/IPC module.
+        https://bugs.webkit.org/show_bug.cgi?id=141229
+
+        Reviewed by Chris Dumez.
+
+        Fix build warning by using UNUSED_PARAM macro.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+
 2015-02-03  Tim Horton  <timothy_horton@apple.com>
 
         Add WKPageNavigationClient as C SPI around API::NavigationClient, and adopt in WKTR

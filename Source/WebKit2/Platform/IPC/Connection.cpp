@@ -387,6 +387,8 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
     std::unique_ptr<MessageRecorder::MessageProcessingToken> token;
     if (!alreadyRecordedMessage)
         token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+#else
+    UNUSED_PARAM(alreadyRecordedMessage);
 #endif
 
     {
