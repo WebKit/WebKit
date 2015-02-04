@@ -1,3 +1,9 @@
+2015-02-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Unreviewed. Marking web-platform-tests as failed until wpt server can be properly relaunched.
+
+        * LayoutTests/TestExpectations:
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More test results gardening.
