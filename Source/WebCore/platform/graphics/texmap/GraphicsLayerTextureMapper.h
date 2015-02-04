@@ -34,7 +34,7 @@ namespace WebCore {
 
 class GraphicsLayerTextureMapper final : public GraphicsLayer, TextureMapperPlatformLayer::Client {
 public:
-    explicit GraphicsLayerTextureMapper(GraphicsLayerClient&);
+    explicit GraphicsLayerTextureMapper(Type, GraphicsLayerClient&);
     virtual ~GraphicsLayerTextureMapper();
 
     void setScrollClient(TextureMapperLayer::ScrollingClient* client) { m_layer.setScrollClient(client); }

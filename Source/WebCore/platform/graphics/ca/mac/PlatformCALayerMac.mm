@@ -205,7 +205,6 @@ PlatformCALayer::LayerType PlatformCALayerMac::layerTypeForPlatformLayer(Platfor
 PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClient* owner)
     : PlatformCALayer(layerType, owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
-    , m_customBehavior(GraphicsLayer::NoCustomBehavior)
 {
     Class layerClass = Nil;
     switch (layerType) {
@@ -213,6 +212,9 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
     case LayerTypeRootLayer:
         layerClass = [CALayer class];
         break;
+    case LayerTypeScrollingLayer:
+        // Scrolling layers only have special behavior with PlatformCALayerRemote.
+        // fallthrough
     case LayerTypeWebLayer:
         layerClass = [WebLayer class];
         break;
@@ -262,7 +264,6 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
 PlatformCALayerMac::PlatformCALayerMac(PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer(layerTypeForPlatformLayer(layer), owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
-    , m_customBehavior(GraphicsLayer::NoCustomBehavior)
 {
     m_layer = layer;
     commonInit();
@@ -275,7 +276,7 @@ void PlatformCALayerMac::commonInit()
     [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeCustom)
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
@@ -875,19 +876,6 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
         break;
     }
 #endif
-}
-
-void PlatformCALayerMac::updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior)
-{
-    m_customBehavior = customBehavior;
-
-    // Custom layers can get wrapped in UIViews (which clobbers the layer delegate),
-    // so fall back to the slower way of disabling implicit animations.
-    if (m_customBehavior != GraphicsLayer::NoCustomBehavior) {
-        if ([[m_layer delegate] isKindOfClass:[WebActionDisablingCALayerDelegate class]])
-            [m_layer setDelegate:nil];
-        [m_layer web_disableAllActions];
-    }
 }
 
 TiledBacking* PlatformCALayerMac::tiledBacking()

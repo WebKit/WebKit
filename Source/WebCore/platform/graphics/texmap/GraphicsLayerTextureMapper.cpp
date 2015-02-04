@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     if (!factory)
-        return std::make_unique<GraphicsLayerTextureMapper>(client);
+        return std::make_unique<GraphicsLayerTextureMapper>(layerType, client);
 
-    return factory->createGraphicsLayer(client);
+    return factory->createGraphicsLayer(layerType, client);
 }
 
-GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient& client)
-    : GraphicsLayer(client)
+GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(Type layerType, GraphicsLayerClient& client)
+    : GraphicsLayer(layerType, client)
     , m_compositedNativeImagePtr(0)
     , m_changeMask(NoChanges)
     , m_needsDisplay(false)

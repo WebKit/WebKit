@@ -133,9 +133,6 @@ public:
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) override { m_customAppearance = customAppearance; }
 
-    virtual GraphicsLayer::CustomBehavior customBehavior() const override { return m_customBehavior; }
-    virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior) override { m_customBehavior = customBehavior; }
-
     virtual TiledBacking* tiledBacking() override;
     
     virtual PlatformCALayer* rootLayer() const override;
@@ -156,7 +153,6 @@ private:
     HashMap<String, RefPtr<PlatformCAAnimation>> m_animations;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
-    GraphicsLayer::CustomBehavior m_customBehavior;
 };
 
 }

@@ -114,7 +114,7 @@ private:
     virtual void removeUpdateAtlas(uint32_t atlasID) override;
 
     // GraphicsLayerFactory
-    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) override;
+    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) override;
 
     void initializeRootCompositingLayerIfNeeded();
     void flushPendingImageBackingChanges();

@@ -222,6 +222,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case PlatformCALayer::LayerTypeScrollingLayer:
         layer = adoptNS([[CALayer alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:

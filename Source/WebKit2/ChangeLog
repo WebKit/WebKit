@@ -1,3 +1,49 @@
+2015-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Assert in ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren() on tab switching
+        https://bugs.webkit.org/show_bug.cgi?id=141223
+        rdar://problem/18458993
+
+        Reviewed by Tim Horton.
+
+        It's possible to submit a RemoteLayerTree transaction that contains data
+        about a created layer, but doesn't have any properties for that layer. This
+        happens when the newly created layer isn't reached during the traversal that
+        gathers layer properties (i.e. it's not rooted). However, whether we create
+        a scrolling layer or not requires having properties; they are missing, so we
+        create a normal layer, but then the scrolling tree commit asserts that we
+        should have a scrolling layer.
+        
+        Fix by making scrolling layers have a corresponding layer type, which is
+        stored in layer creation properties. This required exposing layer types
+        up through GraphicsLayer, but that allows for some nice cleanup:
+        
+        1. No need to have the hokey shouldUseTiledBacking() GraphicsLayerClient hack
+           for creating the page tiled layer.
+        2. The notion of "custom behaviors" can be removed from GraphicsLayer entirely.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::customBehavior): Deleted.
+        (WebKit::PlatformCALayerRemote::updateCustomBehavior): Deleted.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::createGraphicsLayer):
+
 2015-02-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Manage failing API tests

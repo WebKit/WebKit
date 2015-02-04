@@ -26,18 +26,16 @@
 #ifndef GraphicsLayerFactory_h
 #define GraphicsLayerFactory_h
 
+#include "GraphicsLayer.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-class GraphicsLayer;
-class GraphicsLayerClient;
 
 class GraphicsLayerFactory {
 public:
     virtual ~GraphicsLayerFactory() { }
 
-    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) = 0;
+    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) = 0;
 };
 
 } // namespace WebCore

@@ -61,7 +61,7 @@ class CoordinatedGraphicsLayer : public GraphicsLayer
     , public CoordinatedImageBacking::Host
     , public CoordinatedTileClient {
 public:
-    explicit CoordinatedGraphicsLayer(GraphicsLayerClient&);
+    explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
     virtual ~CoordinatedGraphicsLayer();
 
     // Reimplementations from GraphicsLayer.h.

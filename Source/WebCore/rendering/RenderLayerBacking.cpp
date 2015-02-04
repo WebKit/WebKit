@@ -105,8 +105,6 @@ static ScrollingCoordinator* scrollingCoordinatorFromLayer(RenderLayer& layer)
     return page->scrollingCoordinator();
 }
 
-bool RenderLayerBacking::m_creatingPrimaryGraphicsLayer = false;
-
 RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     : m_owningLayer(layer)
     , m_viewportConstrainedNodeID(0)
@@ -163,13 +161,13 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name)
+std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
     GraphicsLayerFactory* graphicsLayerFactory = 0;
     if (Page* page = renderer().frame().page())
         graphicsLayerFactory = page->chrome().client().graphicsLayerFactory();
 
-    std::unique_ptr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this);
+    std::unique_ptr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
 
 #ifndef NDEBUG
     graphicsLayer->setName(name);
@@ -181,11 +179,6 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
 #endif    
     
     return graphicsLayer;
-}
-
-bool RenderLayerBacking::shouldUseTiledBacking(const GraphicsLayer*) const
-{
-    return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
 }
 
 void RenderLayerBacking::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
@@ -286,14 +279,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     layerName = m_owningLayer.name();
 #endif
     
-    // The call to createGraphicsLayer ends calling back into here as
-    // a GraphicsLayerClient to ask if it shouldUseTiledBacking(). We only want
-    // the tile cache on our main layer. This is pretty ugly, but saves us from
-    // exposing the API to all clients.
-
-    m_creatingPrimaryGraphicsLayer = true;
-    m_graphicsLayer = createGraphicsLayer(layerName);
-    m_creatingPrimaryGraphicsLayer = false;
+    m_graphicsLayer = createGraphicsLayer(layerName, m_usingTiledCacheLayer ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
     if (m_usingTiledCacheLayer) {
         m_childContainmentLayer = createGraphicsLayer("TiledBacking Flattening Layer");
@@ -1484,18 +1470,14 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
     if (!m_scrollingLayer) {
         // Outer layer which corresponds with the scroll view.
-        m_scrollingLayer = createGraphicsLayer("Scrolling container");
+        m_scrollingLayer = createGraphicsLayer("Scrolling container", GraphicsLayer::Type::Scrolling);
         m_scrollingLayer->setDrawsContent(false);
         m_scrollingLayer->setMasksToBounds(true);
-#if PLATFORM(IOS)
-        m_scrollingLayer->setCustomBehavior(GraphicsLayer::CustomScrollingBehavior);
-#endif
+
         // Inner layer which renders the content that scrolls.
         m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
         m_scrollingContentsLayer->setDrawsContent(true);
-#if PLATFORM(IOS)
-        m_scrollingContentsLayer->setCustomBehavior(GraphicsLayer::CustomScrolledContentsBehavior);
-#endif
+
         GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
         if (!m_foregroundLayer)
             paintPhase |= GraphicsLayerPaintForeground;

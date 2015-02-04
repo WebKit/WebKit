@@ -193,7 +193,6 @@ public:
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 
     // GraphicsLayerClient interface
-    virtual bool shouldUseTiledBacking(const GraphicsLayer*) const override;
     virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
     virtual void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, double startTime) override;
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
@@ -256,7 +255,7 @@ private:
 
     LayoutRect compositedBoundsIncludingMargin() const;
     
-    std::unique_ptr<GraphicsLayer> createGraphicsLayer(const String&);
+    std::unique_ptr<GraphicsLayer> createGraphicsLayer(const String&, GraphicsLayer::Type = GraphicsLayer::Type::Normal);
 
     RenderLayerModelObject& renderer() const { return m_owningLayer.renderer(); }
     RenderLayerCompositor& compositor() const { return m_owningLayer.compositor(); }
@@ -365,8 +364,6 @@ private:
     bool m_canCompositeBackdropFilters;
 #endif
     bool m_backgroundLayerPaintsFixedRootBackground;
-
-    static bool m_creatingPrimaryGraphicsLayer;
 };
 
 enum CanvasCompositingStrategy {

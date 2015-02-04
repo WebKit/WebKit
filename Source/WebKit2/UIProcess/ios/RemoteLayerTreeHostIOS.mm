@@ -173,13 +173,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior) {
-            if (!m_isDebugLayerTreeHost)
-                view = adoptNS([[UIScrollView alloc] init]);
-            else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
-                view = adoptNS([[UIView alloc] init]);
-        } else
-            view = adoptNS([[WKCompositingView alloc] init]);
+        view = adoptNS([[WKCompositingView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeBackdropLayer:
         view = adoptNS([[WKBackdropView alloc] init]);
@@ -197,6 +191,12 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         break;
     case PlatformCALayer::LayerTypeShapeLayer:
         view = adoptNS([[WKShapeView alloc] init]);
+        break;
+    case PlatformCALayer::LayerTypeScrollingLayer:
+        if (!m_isDebugLayerTreeHost)
+            view = adoptNS([[UIScrollView alloc] init]);
+        else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
+            view = adoptNS([[UIView alloc] init]);
         break;
     default:
         ASSERT_NOT_REACHED();

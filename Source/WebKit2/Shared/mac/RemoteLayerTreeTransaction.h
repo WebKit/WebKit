@@ -82,8 +82,7 @@ public:
         FiltersChanged                  = 1LLU << 29,
         AnimationsChanged               = 1LLU << 30,
         EdgeAntialiasingMaskChanged     = 1LLU << 31,
-        CustomAppearanceChanged         = 1LLU << 32,
-        CustomBehaviorChanged           = 1LLU << 33
+        CustomAppearanceChanged         = 1LLU << 32
     };
     typedef uint64_t LayerChange;
 
@@ -149,7 +148,6 @@ public:
         WebCore::Color borderColor;
         unsigned edgeAntialiasingMask;
         WebCore::GraphicsLayer::CustomAppearance customAppearance;
-        WebCore::GraphicsLayer::CustomBehavior customBehavior;
         WebCore::PlatformCALayer::FilterType minificationFilter;
         WebCore::PlatformCALayer::FilterType magnificationFilter;
         WebCore::BlendMode blendMode;

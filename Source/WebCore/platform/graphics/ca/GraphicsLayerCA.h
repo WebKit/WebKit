@@ -56,10 +56,10 @@ public:
     // to keep the overall tile cost low.
     static const int kTiledLayerTileSize = 512;
 
-    WEBCORE_EXPORT explicit GraphicsLayerCA(GraphicsLayerClient&);
+    WEBCORE_EXPORT explicit GraphicsLayerCA(Type, GraphicsLayerClient&);
     WEBCORE_EXPORT virtual ~GraphicsLayerCA();
 
-    WEBCORE_EXPORT virtual void initialize() override;
+    WEBCORE_EXPORT virtual void initialize(Type) override;
 
     WEBCORE_EXPORT virtual void setName(const String&) override;
 
@@ -143,7 +143,6 @@ public:
     WEBCORE_EXPORT virtual void setDebugBorder(const Color&, float borderWidth) override;
 
     WEBCORE_EXPORT virtual void setCustomAppearance(CustomAppearance) override;
-    WEBCORE_EXPORT virtual void setCustomBehavior(CustomBehavior) override;
 
     WEBCORE_EXPORT virtual void deviceOrPageScaleFactorChanged() override;
 
@@ -384,7 +383,6 @@ private:
     void updateTiles();
     void updateContentsScale(float pageScaleFactor);
     void updateCustomAppearance();
-    void updateCustomBehavior();
 
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -401,8 +399,17 @@ private:
 
     enum MoveOrCopy { Move, Copy };
     static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
-    void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer * fromLayer, PlatformCALayer * toLayer);
-    
+    void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer* fromLayer, PlatformCALayer* toLayer);
+
+    void moveAnimations(PlatformCALayer* fromLayer, PlatformCALayer* toLayer)
+    {
+        moveOrCopyAnimations(Move, fromLayer, toLayer);
+    }
+    void copyAnimations(PlatformCALayer* fromLayer, PlatformCALayer* toLayer)
+    {
+        moveOrCopyAnimations(Copy, fromLayer, toLayer);
+    }
+
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
 
@@ -440,8 +447,7 @@ private:
         TilesAdded =                    1LLU << 30,
         DebugIndicatorsChanged =        1LLU << 31,
         CustomAppearanceChanged =       1LLU << 32,
-        CustomBehaviorChanged =         1LLU << 33,
-        BlendModeChanged =              1LLU << 34,
+        BlendModeChanged =              1LLU << 33,
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

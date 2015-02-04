@@ -1,3 +1,64 @@
+2015-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Assert in ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren() on tab switching
+        https://bugs.webkit.org/show_bug.cgi?id=141223
+        rdar://problem/18458993
+
+        Reviewed by Tim Horton.
+        
+        It's possible to submit a RemoteLayerTree transaction that contains data
+        about a created layer, but doesn't have any properties for that layer. This
+        happens when the newly created layer isn't reached during the traversal that
+        gathers layer properties (i.e. it's not rooted). However, whether we create
+        a scrolling layer or not requires having properties; they are missing, so we
+        create a normal layer, but then the scrolling tree commit asserts that we
+        should have a scrolling layer.
+        
+        Fix by making scrolling layers have a corresponding layer type, which is
+        stored in layer creation properties. This required exposing layer types
+        up through GraphicsLayer, but that allows for some nice cleanup:
+        
+        1. No need to have the hokey shouldUseTiledBacking() GraphicsLayerClient hack
+           for creating the page tiled layer.
+        2. The notion of "custom behaviors" can be removed from GraphicsLayer entirely.
+
+        Not testable because it requires tab switching.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::initialize):
+        (WebCore::GraphicsLayer::setCustomBehavior): Deleted.
+        (WebCore::GraphicsLayer::customBehavior): Deleted.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldUseTiledBacking): Deleted.
+        * platform/graphics/GraphicsLayerFactory.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::initialize):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::updateCustomBehavior): Deleted.
+        (WebCore::GraphicsLayerCA::setCustomBehavior): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::moveAnimations):
+        (WebCore::GraphicsLayerCA::copyAnimations):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::commonInit):
+        (PlatformCALayerMac::updateCustomBehavior): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        (WebCore::RenderLayerBacking::shouldUseTiledBacking): Deleted.
+        * rendering/RenderLayerBacking.h:
+
 2015-02-04  Dean Jackson  <dino@apple.com>
 
         [Media] Fullscreen button should always come last in inline controls (141245)

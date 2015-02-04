@@ -103,8 +103,8 @@ void CoordinatedGraphicsLayer::didChangeGeometry()
     setShouldUpdateVisibleRect();
 }
 
-CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient& client)
-    : GraphicsLayer(client)
+CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayerClient& client)
+    : GraphicsLayer(layerType, client)
 #ifndef NDEBUG
     , m_isPurging(false)
 #endif

@@ -93,7 +93,6 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , borderColor(Color::black)
     , edgeAntialiasingMask(kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge)
     , customAppearance(GraphicsLayer::NoCustomAppearance)
-    , customBehavior(GraphicsLayer::NoCustomBehavior)
     , minificationFilter(PlatformCALayer::FilterType::Linear)
     , magnificationFilter(PlatformCALayer::FilterType::Linear)
     , blendMode(BlendModeNormal)
@@ -128,7 +127,6 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , borderColor(other.borderColor)
     , edgeAntialiasingMask(other.edgeAntialiasingMask)
     , customAppearance(other.customAppearance)
-    , customBehavior(other.customBehavior)
     , minificationFilter(other.minificationFilter)
     , magnificationFilter(other.magnificationFilter)
     , blendMode(other.blendMode)
@@ -256,9 +254,6 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & CustomAppearanceChanged)
         encoder.encodeEnum(customAppearance);
-
-    if (changedProperties & CustomBehaviorChanged)
-        encoder.encodeEnum(customBehavior);
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -451,11 +446,6 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & CustomAppearanceChanged) {
         if (!decoder.decodeEnum(result.customAppearance))
-            return false;
-    }
-
-    if (result.changedProperties & CustomBehaviorChanged) {
-        if (!decoder.decodeEnum(result.customBehavior))
             return false;
     }
 
@@ -1185,9 +1175,6 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
             dumpProperty(ts, "customAppearance", layerProperties.customAppearance);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomBehaviorChanged)
-            dumpProperty(ts, "customBehavior", layerProperties.customBehavior);
-
         ts << ")";
 
         ts.decreaseIndent();
@@ -1254,6 +1241,9 @@ CString RemoteLayerTreeTransaction::description() const
                 break;
             case PlatformCALayer::LayerTypeShapeLayer:
                 ts << "shape-layer";
+                break;
+            case PlatformCALayer::LayerTypeScrollingLayer:
+                ts << "scrolling-layer";
                 break;
             case PlatformCALayer::LayerTypeCustom:
                 ts << "custom-layer (context-id " << createdLayer.hostingContextID << ")";

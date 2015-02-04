@@ -35,8 +35,8 @@ class RemoteLayerTreeContext;
 
 class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA {
 public:
-    GraphicsLayerCARemote(WebCore::GraphicsLayerClient& client, RemoteLayerTreeContext& context)
-        : GraphicsLayerCA(client)
+    GraphicsLayerCARemote(Type layerType, WebCore::GraphicsLayerClient& client, RemoteLayerTreeContext& context)
+        : GraphicsLayerCA(layerType, client)
         , m_context(context)
     {
     }

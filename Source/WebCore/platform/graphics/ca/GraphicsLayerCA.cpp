@@ -276,15 +276,15 @@ static inline bool supportsAcceleratedFilterAnimations()
 #endif
 }
 
-std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     std::unique_ptr<GraphicsLayer> graphicsLayer;
     if (!factory)
-        graphicsLayer = std::make_unique<GraphicsLayerCA>(client);
+        graphicsLayer = std::make_unique<GraphicsLayerCA>(layerType, client);
     else
-        graphicsLayer = factory->createGraphicsLayer(client);
+        graphicsLayer = factory->createGraphicsLayer(layerType, client);
 
-    graphicsLayer->initialize();
+    graphicsLayer->initialize(layerType);
 
     return graphicsLayer;
 }
@@ -325,8 +325,8 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 #endif
 }
 
-GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient& client)
-    : GraphicsLayer(client)
+GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
+    : GraphicsLayer(layerType, client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_isPageTiledBackingLayer(false)
     , m_needsFullRepaint(false)
@@ -335,15 +335,24 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient& client)
 {
 }
 
-void GraphicsLayerCA::initialize()
+void GraphicsLayerCA::initialize(Type layerType)
 {
-    PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
-    if (client().shouldUseTiledBacking(this)) {
-        layerType = PlatformCALayer::LayerTypePageTiledBackingLayer;
+    if (layerType == Type::PageTiledBacking)
         m_isPageTiledBackingLayer = true;
-    }
 
-    m_layer = createPlatformCALayer(layerType, this);
+    PlatformCALayer::LayerType platformLayerType;
+    switch (layerType) {
+    case Type::Normal:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
+        break;
+    case Type::PageTiledBacking:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer;
+        break;
+    case Type::Scrolling:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeScrollingLayer;
+        break;
+    }
+    m_layer = createPlatformCALayer(platformLayerType, this);
     noteLayerPropertyChanged(ContentsScaleChanged);
 }
 
@@ -1404,9 +1413,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & CustomAppearanceChanged)
         updateCustomAppearance();
 
-    if (m_uncommittedChanges & CustomBehaviorChanged)
-        updateCustomBehavior();
-
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
@@ -1751,7 +1757,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             ASSERT(m_structuralLayer->superlayer());
             m_structuralLayer->superlayer()->replaceSublayer(*m_structuralLayer, *m_layer);
 
-            moveOrCopyAnimations(Move, m_structuralLayer.get(), m_layer.get());
+            moveAnimations(m_structuralLayer.get(), m_layer.get());
 
             // Release the structural layer.
             m_structuralLayer = nullptr;
@@ -1808,7 +1814,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         }
     }
 
-    moveOrCopyAnimations(Move, m_layer.get(), m_structuralLayer.get());
+    moveAnimations(m_layer.get(), m_structuralLayer.get());
 }
 
 GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose() const
@@ -3001,11 +3007,6 @@ void GraphicsLayerCA::updateCustomAppearance()
     m_layer->updateCustomAppearance(m_customAppearance);
 }
 
-void GraphicsLayerCA::updateCustomBehavior()
-{
-    m_layer->updateCustomBehavior(m_customBehavior);
-}
-
 void GraphicsLayerCA::setShowDebugBorder(bool showBorder)
 {
     if (showBorder == m_showDebugBorder)
@@ -3110,15 +3111,6 @@ void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
     noteLayerPropertyChanged(CustomAppearanceChanged);
 }
 
-void GraphicsLayerCA::setCustomBehavior(CustomBehavior customBehavior)
-{
-    if (customBehavior == m_customBehavior)
-        return;
-
-    GraphicsLayer::setCustomBehavior(customBehavior);
-    noteLayerPropertyChanged(CustomBehaviorChanged);
-}
-
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
     if (!m_drawsContent || m_isPageTiledBackingLayer)
@@ -3188,8 +3180,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     m_layer->setName(name);
 #endif
 
-    // move over animations
-    moveOrCopyAnimations(Move, oldLayer.get(), m_layer.get());
+    moveAnimations(oldLayer.get(), m_layer.get());
     
     // need to tell new layer to draw itself
     setNeedsDisplay();
@@ -3426,7 +3417,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, 
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());
-        moveOrCopyAnimations(Copy, layer, newLayer.get());
+        copyAnimations(layer, newLayer.get());
     }
 
     setLayerDebugBorder(*newLayer, cloneLayerDebugBorderColor(isShowingDebugBorder()), cloneLayerBorderWidth);

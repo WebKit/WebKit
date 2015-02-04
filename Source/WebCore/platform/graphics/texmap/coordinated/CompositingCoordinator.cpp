@@ -255,9 +255,9 @@ void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, G
     m_client->paintLayerContents(graphicsLayer, graphicsContext, enclosingIntRect(clipRect));
 }
 
-std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient& client)
+std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
-    CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
+    CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(layerType, client);
     layer->setCoordinator(this);
     m_registeredLayers.add(layer->id(), layer);
     m_state.layersToCreate.append(layer->id());

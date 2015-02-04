@@ -194,11 +194,18 @@ protected:
 class GraphicsLayer {
     WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&);
+
+    enum class Type {
+        Normal,
+        PageTiledBacking,
+        Scrolling
+    };
+    
+    WEBCORE_EXPORT static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
     
     WEBCORE_EXPORT virtual ~GraphicsLayer();
 
-    virtual void initialize() { }
+    virtual void initialize(Type) { }
 
     typedef uint64_t PlatformLayerID;
     virtual PlatformLayerID primaryLayerID() const { return 0; }
@@ -429,10 +436,6 @@ public:
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
 
-    enum CustomBehavior { NoCustomBehavior, CustomScrollingBehavior, CustomScrolledContentsBehavior };
-    virtual void setCustomBehavior(CustomBehavior customBehavior) { m_customBehavior = customBehavior; }
-    CustomBehavior customBehavior() const { return m_customBehavior; }
-
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
     WEBCORE_EXPORT virtual void setZPosition(float);
@@ -507,6 +510,8 @@ public:
     virtual bool needsClippingMaskLayer() { return true; };
 
 protected:
+    WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
+
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     WEBCORE_EXPORT virtual void willBeDestroyed();
 
@@ -533,8 +538,6 @@ protected:
     // The layer being replicated.
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
-
-    WEBCORE_EXPORT explicit GraphicsLayer(GraphicsLayerClient&);
 
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
@@ -601,7 +604,6 @@ protected:
 
     int m_repaintCount;
     CustomAppearance m_customAppearance;
-    CustomBehavior m_customBehavior;
 };
 
 } // namespace WebCore
