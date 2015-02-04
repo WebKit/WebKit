@@ -516,7 +516,6 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_popup_menu
     test_ewk2_settings
     test_ewk2_ssl
-    test_ewk2_storage_manager
     test_ewk2_text_checker
     test_ewk2_view
     test_ewk2_window_features
@@ -527,6 +526,7 @@ set(EWK2UnitTests_BINARIES
 # webkit.org/b/107422: test_ewk2_auth_request
 # webkit.org/b/132980: test_ewk2_context_menu
 # webkit.org/b/132981: test_ewk2_download_job
+# webkit.org/b/141249: test_ewk2_storage_manager
 
 if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})

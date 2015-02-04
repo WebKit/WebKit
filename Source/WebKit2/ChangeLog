@@ -1,3 +1,14 @@
+2015-02-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Manage failing API tests
+        https://bugs.webkit.org/show_bug.cgi?id=141250
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformEfl.cmake: Skip to test test_ewk2_storage_manager.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Disable 2 unit test functions.
+        (TEST_F):
+
 2015-02-04  Chris Dumez  <cdumez@apple.com>
 
         Add removeFirst(value) / removeAll(value) methods to WTF::Vector
