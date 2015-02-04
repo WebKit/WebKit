@@ -1,5 +1,32 @@
 2015-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175641.
+
+    2014-11-04  David Hyatt  <hyatt@apple.com>
+
+        Descendant ends up in wrong flow thread with nested columns and spans.
+        https://bugs.webkit.org/show_bug.cgi?id=137273
+
+        Reviewed by Simon Fraser.
+
+        Unskipped the two problematic span tests.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::isValidColumnSpanner):
+        Remove the guard and comment and added the assertion back in.
+
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        Changed to no longer use handleSpannerRemoval. Because the spanner was removed from the flow thread's map,
+        handleSpannerRemoval was a no-op. So instead I just removed the placeholder by hand.
+
+        The second fix was to stop destroying the placeholder. Since the placeholder can just have been inserted, you
+        can't delete it, since otherwise code further up the stack will access the deleted object. For now, we just
+        leak the placeholder.
+
+        The third fix is to make sure the subtreeRoot is properly updated to be the new placeholder.
+
+2015-02-04  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174085.
 
     2014-09-29  David Hyatt  <hyatt@apple.com>
