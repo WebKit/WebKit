@@ -75,7 +75,7 @@ String ISOBox::peekString(ArrayBuffer* data, unsigned offset, unsigned length)
     if (data->byteLength() < offset + length)
         return emptyString();
 
-    return String(JSC::Uint8Array::create(data, offset, length)->data(), length);
+    return String::fromUTF8(JSC::Uint8Array::create(data, offset, length)->data(), length);
 }
 
 static const AtomicString& vttCueBoxType()
