@@ -1,3 +1,15 @@
+2015-02-04  Daniel Bates  <dabates@apple.com>
+
+        test-webkitpy fails on Mac without iphoneos SDK
+        https://bugs.webkit.org/show_bug.cgi?id=141255
+        <rdar://problem/19619691>
+
+        I inadvertently committed the wrong exception message. Fix up the exception message
+        to instruct a person to install the iOS SDK when it cannot be found.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.determine_full_port_name):
+
 2015-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should sort the list of files when generating the w3c-import.log

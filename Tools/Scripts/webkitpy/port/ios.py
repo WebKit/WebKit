@@ -54,7 +54,7 @@ class IOSPort(ApplePort):
         if port_name == cls.port_name:
             iphoneos_sdk_version = host.platform.xcode_sdk_version('iphoneos')
             if not iphoneos_sdk_version:
-                raise Exception("Ensure that the Xcode command line tools and the iphoneos SDK are installed.")
+                raise Exception("Please install the iOS SDK.")
             major_version_number = iphoneos_sdk_version.split('.')[0]
             port_name = port_name + '-' + major_version_number
         return port_name
