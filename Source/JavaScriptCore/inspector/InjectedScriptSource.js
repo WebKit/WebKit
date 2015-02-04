@@ -102,6 +102,10 @@ InjectedScript.prototype = {
         if (!canAccessInspectedGlobalObject)
             return this._fallbackWrapper(table);
 
+        // FIXME: Currently columns are ignored. Instead, the frontend filters all
+        // properties based on the provided column names and in the provided order.
+        // Should we filter here too?
+
         var columnNames = null;
         if (typeof columns === "string")
             columns = [columns];

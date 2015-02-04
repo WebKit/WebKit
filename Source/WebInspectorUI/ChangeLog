@@ -1,3 +1,19 @@
+2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table with columnName filter for non-existent property should still show column
+        https://bugs.webkit.org/show_bug.cgi?id=141066
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._appendPropertyPreviews):
+        (WebInspector.ConsoleMessageImpl.prototype._userProvidedColumnNames):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsTable):
+        If a second argument was provided to console.table, try to extract a list
+        of string names to use for the object properties. Output a table with
+        the provided column names, in the specified order. Also, use this
+        opportunity to mark missing properties with an em dash.
+
 2015-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS Autocompletion: Autodetect many color supporting properties

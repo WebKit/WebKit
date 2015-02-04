@@ -372,7 +372,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
             if (i > 0)
                 element.appendChild(document.createTextNode(", "));
-    
+
             if (!isArray || property.name != i) {
                 element.createChild("span", "name").textContent = property.name;
                 element.appendChild(document.createTextNode(": "));
@@ -447,6 +447,31 @@ WebInspector.ConsoleMessageImpl.prototype = {
         arr.getOwnProperties(this._printArray.bind(this, arr, elem));
     },
 
+    _userProvidedColumnNames: function(columnNamesArgument)
+    {
+        if (!columnNamesArgument)
+            return null;
+
+        var remoteObject = WebInspector.RemoteObject.fromPayload(columnNamesArgument);
+
+        // Single primitive argument.
+        if (remoteObject.type === "string" || remoteObject.type === "number")
+            return [String(columnNamesArgument.value)];
+
+        // Ignore everything that is not an array with property previews.
+        if (remoteObject.type !== "object" || remoteObject.subtype !== "array" || !remoteObject.preview || !remoteObject.preview.properties)
+            return null;
+
+        // Array. Look into the preview and get string values.
+        var extractedColumnNames = [];
+        for (var propertyPreview of remoteObject.preview.properties) {
+            if (propertyPreview.type === "string" || propertyPreview.type === "number")
+                extractedColumnNames.push(String(propertyPreview.value));
+        }
+
+        return extractedColumnNames.length ? extractedColumnNames : null;
+    },
+
     _formatParameterAsTable: function(parameters)
     {
         var element = document.createElement("span");
@@ -458,6 +483,14 @@ WebInspector.ConsoleMessageImpl.prototype = {
         var columnNames = [];
         var flatValues = [];
         var preview = table.preview;
+        var userProvidedColumnNames = false;
+
+        // User provided columnNames.
+        var extractedColumnNames = this._userProvidedColumnNames(parameters[1]);
+        if (extractedColumnNames) {
+            userProvidedColumnNames = true;
+            columnNames = extractedColumnNames;
+        }
 
         // Check first for valuePreviews in the properties meaning this was an array of objects.
         for (var i = 0; i < preview.properties.length; ++i) {
@@ -472,7 +505,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 var cellProperty = rowPreview.properties[j];
                 var columnRendered = columnNames.contains(cellProperty.name);
                 if (!columnRendered) {
-                    if (columnNames.length === maxColumnsToRender)
+                    if (userProvidedColumnNames || columnNames.length === maxColumnsToRender)
                         continue;
                     columnRendered = true;
                     columnNames.push(cellProperty.name);
@@ -485,13 +518,19 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         // If there were valuePreviews, convert to a flat list.
         if (rows.length) {
+            const emDash = "\u2014";
             columnNames.unshift(WebInspector.UIString("(Index)"));
             for (var i = 0; i < rows.length; ++i) {
                 var rowName = rows[i][0];
                 var rowValue = rows[i][1];
                 flatValues.push(rowName);
-                for (var j = 1; j < columnNames.length; ++j)
-                    flatValues.push(rowValue[columnNames[j]]);
+                for (var j = 1; j < columnNames.length; ++j) {
+                    var columnName = columnNames[j];
+                    if (!(columnName in rowValue))
+                        flatValues.push(emDash);
+                    else
+                        flatValues.push(rowValue[columnName]);
+                }
             }
         }
 

@@ -208,6 +208,8 @@ void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFr
                     return;
                 }
                 jsonArgs->addItem(inspectorValue.copyRef());
+                if (m_arguments->argumentCount() > 1)
+                    jsonArgs->addItem(injectedScript.wrapObject(columns, ASCIILiteral("console"), true));
             } else {
                 for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
                     RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), ASCIILiteral("console"), generatePreview);
