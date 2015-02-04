@@ -193,6 +193,14 @@ ControllerIOS.prototype = {
             this.controls.startPlaybackButton.parentNode.removeChild(this.controls.startPlaybackButton);
     },
 
+    reconnectControls: function()
+    {
+        Controller.prototype.reconnectControls.call(this);
+
+        if (this.controlsType === ControllerIOS.StartPlaybackControls)
+            this.addStartPlaybackControls();
+    },
+
     configureInlineControls: function() {
         this.base.appendChild(this.controls.wirelessPlaybackStatus);
 
