@@ -293,13 +293,13 @@ webkit.org/b/29359 fast/forms/week [ Skip ]
 # TODO ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 
-# DOM4_EVENTS_CONSTRUCTOR is not yet enabled. Seems to be missing UIEventConstructor
-fast/events/constructors/ui-event-constructor.html [ Skip ]
-fast/events/constructors/mouse-event-constructor.html [ Skip ]
-fast/events/constructors/composition-event-constructor.html [ Skip ]
-fast/events/constructors/wheel-event-constructor.html [ Skip ]
-fast/events/constructors/keyboard-event-constructor.html [ Skip ]
-fast/events/constructors/focus-event-constructor.html [ Skip ]
+# ENABLED! DOM4_EVENTS_CONSTRUCTOR is not yet enabled. Seems to be missing UIEventConstructor
+#fast/events/constructors/ui-event-constructor.html [ Skip ]
+#fast/events/constructors/mouse-event-constructor.html [ Skip ]
+#fast/events/constructors/composition-event-constructor.html [ Skip ]
+#fast/events/constructors/wheel-event-constructor.html [ Skip ]
+#fast/events/constructors/keyboard-event-constructor.html [ Skip ]
+#fast/events/constructors/focus-event-constructor.html [ Skip ]
 
 # TODO Userscripts stuff is not implemented
 webkit.org/b/140258 userscripts/ [ Skip ]
@@ -553,7 +553,7 @@ compositing/overflow/updating-scrolling-content.html [ Skip ]
 webkit.org/b/39725 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
 webkit.org/b/39725 [ Release ] fast/events/drag-and-drop-autoscroll.html [ Failure ]
 
-# TODO Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
+# Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom/ [ Skip ]
 
 # TODO User Timing is not enabled yet. so skip it.
@@ -563,9 +563,9 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
 # TODO CURSOR_VISIBILITY is not enabled on win
-webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Skip ]
+#webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Skip ]
 
-# TODO Need support for ResourceHandle::didChangePriority and DRT support
+# Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
 
 # TODO Snapshotted plugins not enabled on WK1
@@ -1286,7 +1286,7 @@ webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
 
-# Need to implement global addNotificationListener in Windows DRT
+# TODO Need to implement global addNotificationListener in Windows DRT
 accessibility/content-editable-as-textarea.html [ Skip ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
 accessibility/loading-iframe-sends-notification.html [ Failure ]
@@ -1953,13 +1953,17 @@ inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 inspector/css/selector-specificity.html [ Skip ]
 inspector/css/pseudo-element-matches.html [ Skip ]
 
-[ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
+# Inspector Protocol
+webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
+inspector-protocol/debugger/pause-on-assert.html [ Skip ]
+inspector-protocol/debugger/regress-133182.html	[ Skip ]  # Crashing
 [ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
+webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
 [ Release ] inspector-protocol/dom/focus.html [ Pass Timeout ]
+webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
 [ Release ] inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
-webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
-inspector-protocol/debugger/regress-133182.html	[ Skip ]  # Crashing
+[ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
@@ -2054,11 +2058,6 @@ webkit.org/b/87416 fast/dom/Window/Location/set-location-after-close.html [ Skip
 
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 webkit.org/b/87469 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Pass Failure Timeout ]
-
-# Inspector Protocol
-webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
-webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
-inspector-protocol/debugger/pause-on-assert.html [ Skip ]
 
 # <rdar://problem/19526412>
 fast/images/bad-png.html [ Skip ]

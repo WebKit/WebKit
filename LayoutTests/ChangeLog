@@ -1,3 +1,10 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed. Activate more tests.
+
+        * platform/win/TestExpectations: Unskip the DOM4 constructor and cursor visibility
+        tests (since they work).
+
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit the forgotten expected result supposed to be added in r179569.
