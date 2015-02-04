@@ -440,6 +440,16 @@
             "abinader"
          ]
       },
+      "Byungseon Shin" : {
+         "emails" : [
+            "sun.shin@webkit.org",
+            "sun.shin@lge.com"
+         ],
+         "expertise" : "WTF, GPU Accelerated Rendering and Compositing",
+         "nicks" : [
+            "xingri"
+         ]
+      },
       "Byungwoo Lee" : {
          "emails" : [
             "bw80.lee@samsung.com",
