@@ -70,7 +70,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sample
     setNodeType(NodeTypeAudioBufferSource);
 
     m_gain = AudioParam::create(context, "gain", 1.0, 0.0, 1.0);
-    m_playbackRate = AudioParam::create(context, "playbackRate", 1.0, 0.0, MaxRate);
+    m_playbackRate = AudioParam::create(context, "playbackRate", 1.0, -MaxRate, MaxRate);
 
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
     addOutput(std::make_unique<AudioNodeOutput>(this, 1));
@@ -200,46 +200,53 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     size_t bufferLength = buffer()->length();
     double bufferSampleRate = buffer()->sampleRate();
+    double pitchRate = totalPitchRate();
+    bool reverse = pitchRate < 0;
 
     // Avoid converting from time to sample-frames twice by computing
     // the grain end time first before computing the sample frame.
-    unsigned endFrame = m_isGrain ? AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate) : bufferLength;
-    
-    // This is a HACK to allow for HRTF tail-time - avoids glitch at end.
-    // FIXME: implement tailTime for each AudioNode for a more general solution to this problem.
-    // https://bugs.webkit.org/show_bug.cgi?id=77224
+    unsigned maxFrame;
     if (m_isGrain)
-        endFrame += 512;
+        maxFrame = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate);
+    else
+        maxFrame = bufferLength;
 
     // Do some sanity checking.
-    if (endFrame > bufferLength)
-        endFrame = bufferLength;
-    if (m_virtualReadIndex >= endFrame)
+    if (maxFrame > bufferLength)
+        maxFrame = bufferLength;
+    if (reverse && m_virtualReadIndex <= 0)
+        m_virtualReadIndex = maxFrame;
+    else if (!reverse && m_virtualReadIndex >= maxFrame)
         m_virtualReadIndex = 0; // reset to start
 
     // If the .loop attribute is true, then values of m_loopStart == 0 && m_loopEnd == 0 implies
     // that we should use the entire buffer as the loop, otherwise use the loop values in m_loopStart and m_loopEnd.
-    double virtualEndFrame = endFrame;
-    double virtualDeltaFrames = endFrame;
+    double virtualMaxFrame = maxFrame;
+    double virtualMinFrame = 0;
+    double virtualDeltaFrames = maxFrame;
 
     if (loop() && (m_loopStart || m_loopEnd) && m_loopStart >= 0 && m_loopEnd > 0 && m_loopStart < m_loopEnd) {
         // Convert from seconds to sample-frames.
-        double loopStartFrame = m_loopStart * buffer()->sampleRate();
-        double loopEndFrame = m_loopEnd * buffer()->sampleRate();
+        double loopMinFrame = m_loopStart * buffer()->sampleRate();
+        double loopMaxFrame = m_loopEnd * buffer()->sampleRate();
 
-        virtualEndFrame = std::min(loopEndFrame, virtualEndFrame);
-        virtualDeltaFrames = virtualEndFrame - loopStartFrame;
+        virtualMaxFrame = std::min(loopMaxFrame, virtualMaxFrame);
+        virtualMinFrame = std::max(loopMinFrame, virtualMinFrame);
+        virtualDeltaFrames = virtualMaxFrame - virtualMinFrame;
     }
 
 
-    double pitchRate = totalPitchRate();
-
     // Sanity check that our playback rate isn't larger than the loop size.
-    if (pitchRate >= virtualDeltaFrames)
+    if (fabs(pitchRate) >= virtualDeltaFrames)
         return false;
 
     // Get local copy.
     double virtualReadIndex = m_virtualReadIndex;
+
+    bool needsInterpolation = virtualReadIndex != floor(virtualReadIndex)
+        || virtualDeltaFrames != floor(virtualDeltaFrames)
+        || virtualMaxFrame != floor(virtualMaxFrame)
+        || virtualMinFrame != floor(virtualMinFrame);
 
     // Render loop - reading from the source buffer to the destination using linear interpolation.
     int framesToProcess = numberOfFrames;
@@ -249,14 +256,12 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     // Optimize for the very common case of playing back with pitchRate == 1.
     // We can avoid the linear interpolation.
-    if (pitchRate == 1 && virtualReadIndex == floor(virtualReadIndex)
-        && virtualDeltaFrames == floor(virtualDeltaFrames)
-        && virtualEndFrame == floor(virtualEndFrame)) {
+    if (pitchRate == 1 && !needsInterpolation) {
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
         unsigned deltaFrames = static_cast<unsigned>(virtualDeltaFrames);
-        endFrame = static_cast<unsigned>(virtualEndFrame);
+        maxFrame = static_cast<unsigned>(virtualMaxFrame);
         while (framesToProcess > 0) {
-            int framesToEnd = endFrame - readIndex;
+            int framesToEnd = maxFrame - readIndex;
             int framesThisTime = std::min(framesToProcess, framesToEnd);
             framesThisTime = std::max(0, framesThisTime);
 
@@ -268,13 +273,85 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             framesToProcess -= framesThisTime;
 
             // Wrap-around.
-            if (readIndex >= endFrame) {
+            if (readIndex >= maxFrame) {
                 readIndex -= deltaFrames;
                 if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
                     break;
             }
         }
         virtualReadIndex = readIndex;
+    } else if (pitchRate == -1 && !needsInterpolation) {
+        unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+        unsigned deltaFrames = static_cast<unsigned>(virtualDeltaFrames);
+        unsigned minFrame = static_cast<unsigned>(virtualMinFrame);
+        while (framesToProcess > 0) {
+            unsigned framesToEnd = readIndex - minFrame;
+            unsigned framesThisTime = std::min<unsigned>(framesToProcess, framesToEnd);
+            framesThisTime = std::max<unsigned>(0, framesThisTime);
+
+            while (framesThisTime--) {
+                for (unsigned i = 0; i < numberOfChannels; ++i) {
+                    float* destination = destinationChannels[i];
+                    const float* source = sourceChannels[i];
+
+                    destination[writeIndex] = source[readIndex];
+                }
+
+                ++writeIndex;
+                --readIndex;
+                --framesToProcess;
+            }
+
+            // Wrap-around.
+            if (!readIndex) {
+                readIndex = deltaFrames;
+                if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
+                    break;
+            }
+        }
+        virtualReadIndex = readIndex;
+    } else if (!pitchRate) {
+        unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+
+        for (unsigned i = 0; i < numberOfChannels; ++i)
+            std::fill_n(destinationChannels[i], framesToProcess, sourceChannels[i][readIndex]);
+    } else if (reverse) {
+        while (framesToProcess--) {
+            unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+            double interpolationFactor = virtualReadIndex - readIndex;
+
+            unsigned readIndex2;
+            if (!readIndex) {
+                if (loop())
+                    readIndex2 = static_cast<unsigned>(virtualReadIndex + virtualDeltaFrames + 1);
+                else
+                    readIndex2 = readIndex;
+            } else
+                readIndex2 = readIndex - 1;
+
+            // Linear interpolation.
+            for (unsigned i = 0; i < numberOfChannels; ++i) {
+                float* destination = destinationChannels[i];
+                const float* source = sourceChannels[i];
+
+                double sample1 = source[readIndex];
+                double sample2 = source[readIndex2];
+                double sample = (1.0 - interpolationFactor) * sample1 + interpolationFactor * sample2;
+
+                destination[writeIndex] = narrowPrecisionToFloat(sample);
+            }
+
+            writeIndex++;
+
+            virtualReadIndex += pitchRate;
+
+            // Wrap-around, retaining sub-sample position since virtualReadIndex is floating-point.
+            if (virtualReadIndex <= virtualMinFrame) {
+                virtualReadIndex += virtualDeltaFrames;
+                if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
+                    break;
+            }
+        }
     } else {
         while (framesToProcess--) {
             unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
@@ -311,7 +388,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             virtualReadIndex += pitchRate;
 
             // Wrap-around, retaining sub-sample position since virtualReadIndex is floating-point.
-            if (virtualReadIndex >= virtualEndFrame) {
+            if (virtualReadIndex >= virtualMaxFrame) {
                 virtualReadIndex -= virtualDeltaFrames;
                 if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
                     break;
@@ -382,7 +459,7 @@ void AudioBufferSourceNode::start(double when, ExceptionCode& ec)
 
 void AudioBufferSourceNode::start(double when, double grainOffset, ExceptionCode& ec)
 {
-    startPlaying(Partial, when, grainOffset, 0, ec);
+    startPlaying(Partial, when, grainOffset, buffer() ? buffer()->duration() - grainOffset : 0, ec);
 }
 
 void AudioBufferSourceNode::start(double when, double grainOffset, double grainDuration, ExceptionCode& ec)
@@ -431,7 +508,7 @@ void AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double
         m_grainDuration = std::min(maxDuration, grainDuration);
     } else {
         m_grainOffset = 0.0;
-        m_grainDuration = DefaultGrainDuration;
+        m_grainDuration = buffer()->duration();
     }
 
     m_startTime = when;
@@ -440,7 +517,8 @@ void AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double
     // at a sub-sample position since it will degrade the quality.
     // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
     // Since playbackRate == 1 is very common, it's worth considering quality.
-    m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer()->sampleRate());
+    double grainStart = totalPitchRate() < 0 ? m_grainOffset + m_grainDuration : m_grainOffset;
+    m_virtualReadIndex = AudioUtilities::timeToSampleFrame(grainStart, buffer()->sampleRate());
     
     m_playbackState = SCHEDULED_STATE;
 }
@@ -471,11 +549,7 @@ double AudioBufferSourceNode::totalPitchRate()
 
     double totalRate = dopplerRate * sampleRateFactor * basePitchRate;
 
-    // Sanity check the total rate.  It's very important that the resampler not get any bad rate values.
-    totalRate = std::max(0.0, totalRate);
-    if (!totalRate)
-        totalRate = 1; // zero rate is considered illegal
-    totalRate = std::min(MaxRate, totalRate);
+    totalRate = std::max(-MaxRate, std::min(MaxRate, totalRate));
     
     bool isTotalRateValid = !std::isnan(totalRate) && !std::isinf(totalRate);
     ASSERT(isTotalRateValid);

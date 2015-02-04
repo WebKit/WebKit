@@ -1,3 +1,21 @@
+2015-02-04  Jer Noble  <jer.noble@apple.com>
+
+        [WebAudio] AudioBufferSourceNodes should accurately play backwards if given a negative playbackRate.
+        https://bugs.webkit.org/show_bug.cgi?id=140955
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/audiobuffersource-negative-playbackrate-expected.wav: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-expected.wav: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated.html: Added.
+        * webaudio/audiobuffersource-negative-playbackrate.html: Added.
+
+        Get rid of extra HRTF padding as it's now unnecessary.
+
+        * webaudio/resources/note-grain-on-testing.js:
+        (createSignalBuffer):
+        (verifyStartAndEndFrames):
+
 2015-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         video.attribute should not return true just because of fullscreen
