@@ -1,3 +1,19 @@
+2015-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179618.
+        https://bugs.webkit.org/show_bug.cgi?id=141263
+
+        Off-by-one error causing flaky behavior in webaudio
+        /audiobuffersource-negative-playbackrate.html (Requested by
+        jernoble_ on #webkit).
+
+        Reverted changeset:
+
+        "[WebAudio] AudioBufferSourceNodes should accurately play
+        backwards if given a negative playbackRate."
+        https://bugs.webkit.org/show_bug.cgi?id=140955
+        http://trac.webkit.org/changeset/179618
+
 2015-02-03  David Hyatt  <hyatt@apple.com>
 
         Tables don't repaginate properly when the pagination height changes or the pagination offset changes.

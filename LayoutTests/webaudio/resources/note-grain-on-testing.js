@@ -1,13 +1,21 @@
 var sampleRate = 44100.0;
 
+// HRTF extra frames.  This is a magic constant currently in
+// AudioBufferSourceNode::process that always extends the
+// duration by this number of samples.  See bug 77224
+// (https://bugs.webkit.org/show_bug.cgi?id=77224).
+var extraFramesHRTF = 512;
+
 // How many grains to play.
 var numberOfTests = 100;
 
 // Duration of each grain to be played
 var duration = 0.01;
 
-// Time step between the start of each grain.
-var timeStep = duration + .005;
+// Time step between the start of each grain.  We need to add a little
+// bit of silence so we can detect grain boundaries and also account
+// for the extra frames for HRTF.
+var timeStep = duration + .005 + extraFramesHRTF / sampleRate;
 
 // Time step between the start for each grain.
 var grainOffsetStep = 0.001;
@@ -25,7 +33,7 @@ function createSignalBuffer(context, f) {
     // Make sure the buffer has enough data for all of the possible
     // grain offsets and durations.  Need to include the extra frames
     // for HRTF.  The additional 1 is for any round-off errors.
-    var signalLength = Math.floor(1 + sampleRate * (numberOfTests * grainOffsetStep + duration));
+    var signalLength = Math.floor(1 + extraFramesHRTF + sampleRate * (numberOfTests * grainOffsetStep + duration));
 
     var buffer = context.createBuffer(2, signalLength, sampleRate);
     var data = buffer.getChannelData(0);
@@ -127,7 +135,7 @@ function verifyStartAndEndFrames(startEndFrames) {
         var expectedStart = timeToSampleFrame(k * timeStep, sampleRate);
         // The end point is the duration, plus the extra frames
         // for HRTF.
-        var expectedEnd = expectedStart + grainLengthInSampleFrames(k * grainOffsetStep, duration, sampleRate);
+        var expectedEnd = extraFramesHRTF + expectedStart + grainLengthInSampleFrames(k * grainOffsetStep, duration, sampleRate);
 
         if (startFrames[k] != expectedStart) {
             testFailed("Pulse " + k + " started at " + startFrames[k] + " but expected at " + expectedStart);
