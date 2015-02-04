@@ -1,3 +1,19 @@
+2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [webkitpy] Add platform specific Skipped file mechanism for performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=141152
+
+        Reviewed by Csaba Osztrogonác.
+
+        Support a test-expectation-like syntax in performance tests' skipped files.
+        e.g. [Mac] Parsed/BadTest.html will skip Parsed/BadTest.html on Mac ports.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.skipped_perf_tests): Implemented the syntax support by a regular expression.
+
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_skipped_perf_tests): Test the new syntax.
+
 2015-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         When tests fail on leaks bot so much that there are no leaks detected, dashboard erroneously shows green

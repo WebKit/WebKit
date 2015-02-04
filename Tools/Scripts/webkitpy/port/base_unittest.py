@@ -147,8 +147,8 @@ class PortTest(unittest.TestCase):
         add_text_file('inspector', 'test2.html')
         add_text_file('inspector/resources', 'resource_file.html')
         add_text_file('unsupported', 'unsupported_test2.html')
-        add_text_file('', 'Skipped', '\n'.join(['Layout', '', 'SunSpider', 'Supported/some-test.html']))
-        self.assertEqual(port.skipped_perf_tests(), ['Layout', 'SunSpider', 'Supported/some-test.html'])
+        add_text_file('', 'Skipped', '\n'.join(['Layout', '', 'SunSpider', 'Supported/some-test.html', '[ExoticPort] UnskippedTest.html', '[baseport] SkippedTest.html']))
+        self.assertEqual(port.skipped_perf_tests(), ['Layout', 'SunSpider', 'Supported/some-test.html', 'SkippedTest.html'])
 
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
