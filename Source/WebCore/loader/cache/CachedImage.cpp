@@ -109,7 +109,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    if (cachedResourceLoader.autoLoadImages())
+    if (cachedResourceLoader.shouldPerformImageLoad(resourceRequest().url()))
         CachedResource::load(cachedResourceLoader, options);
     else
         setLoading(false);
@@ -415,8 +415,11 @@ void CachedImage::finishLoading(SharedBuffer* data)
     if (!m_image && data)
         createImage();
 
-    if (m_image)
+    if (m_image) {
+        if (m_loader && m_image->isSVGImage())
+            downcast<SVGImage>(*m_image).setDataProtocolLoader(&m_loader->dataProtocolFrameLoader());
         m_image->setData(data, true);
+    }
 
     if (!m_image || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.

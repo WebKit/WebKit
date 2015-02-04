@@ -332,6 +332,8 @@ namespace WebCore {
         // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
         virtual bool isEmptyFrameLoaderClient() { return false; }
 
+        virtual FrameLoader* dataProtocolLoader() const { return nullptr; }
+
 #if USE(QUICK_LOOK)
         virtual void didCreateQuickLookHandle(QuickLookHandle&) { }
 #endif

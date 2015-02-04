@@ -33,11 +33,13 @@
 namespace WebCore {
 
 class Element;
+class FrameLoader;
 class FrameView;
 class ImageBuffer;
 class Page;
 class RenderBox;
 class SVGSVGElement;
+class SVGFrameLoaderClient;
 class SVGImageChromeClient;
 class SVGImageForContainer;
 
@@ -55,6 +57,7 @@ public:
     virtual FloatSize size() const override { return m_intrinsicSize; }
 
     void setURL(const URL& url) { m_url = url; }
+    void setDataProtocolLoader(FrameLoader* dataProtocolLoader) { m_dataProtocolLoader = dataProtocolLoader; }
 
     virtual bool hasSingleSecurityOrigin() const override;
 
@@ -98,10 +101,12 @@ private:
 
     SVGSVGElement* rootElement() const;
 
+    std::unique_ptr<SVGFrameLoaderClient> m_loaderClient;
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
     FloatSize m_intrinsicSize;
     URL m_url;
+    FrameLoader* m_dataProtocolLoader { nullptr };
 };
 
 bool isInSVGImage(const Element*);

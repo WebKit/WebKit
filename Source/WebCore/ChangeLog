@@ -1,3 +1,72 @@
+2015-02-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When using SVG as an image, we should load datauri images when these images are not in the image cache.
+        https://bugs.webkit.org/show_bug.cgi?id=99677.
+
+        Reviewed by Darin Adler.
+        
+        Data URI sub-resources are not loaded because the networking context of FrameLoader
+        attached to the SubResourceLoader is set to null. This is done intentionally to
+        disallow any resource from loading external sub-resources. For example if an <img>
+        tag has its 'src' attribute points to an svg file, this svg is not allowed to load
+        an external image through the 'xlink' attribute of an <image> element. This restriction
+        is not valid if the value of the 'xlink' attribute is a data URI. In this case the image 
+        should be loaded into memory since there is no network traffic involved. All we need
+        to do is to decode the data part of the URI.
+        
+        The fix is to pass the root FrameLoader, which has a valid NetworkingContext, through
+        the FrameLoaderClient, to the ResourceHandle::create() which uses the NetworkingContext
+        to decode the data and fire the load events of the data URI resources.
+
+        Tests:  svg/as-image/svg-image-with-data-uri-background.html
+                svg/as-image/svg-image-with-data-uri-from-canvas.html
+                svg/as-image/svg-image-with-data-uri-images-disabled.html
+                svg/as-image/svg-image-with-data-uri-reloading.html
+                svg/as-image/svg-image-with-data-uri-use-data-uri.svg
+                svg/as-image/svg-image-with-svg-data-uri.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        Remove unreferenced header file.
+
+        * loader/FrameLoaderClient.h:
+        Define the null virtual function dataProtocolLoader() which should return the FrameLoader
+        for loading data URI resources.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::dataProtocolFrameLoader):
+        * loader/ResourceLoader.h:
+        Add ResourceLoader::dataProtocolFrameLoader() which returns the root FrameLoader. The
+        root FrameLoader is used to get a valid NetworkingContext which can be passed to
+        ResourceHandle::create() when url().protocolIsData().
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::finishLoading):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldPerformImageLoad):
+        (WebCore::CachedResourceLoader::shouldDeferImageLoad):
+        * loader/cache/CachedResourceLoader.h:
+        Allow loading data URI sub-resources as long as loading images is not disabled. Also we
+        need to call setDataProtocolLoader() before calling setData() for the isSVGImage case, 
+        setData() will create a page by calling Page::createPageFromBuffer() via SVGImage::dataChanged(),
+        and we need to pass the correct FrameLoaderClient to the created FrameLoader of the main
+         frame of this page.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage):
+        (WebCore::SVGImage::dataChanged):
+        * svg/graphics/SVGImage.h:
+        Create a new FrameLoaderClient of type SVGFrameLoaderClient and set it in pageConfiguration
+        which is used when creating the page from the SVG data URI.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/SVGImageChromeClient.h: Removed.
+        * svg/graphics/SVGImageClients.h: Added.
+        Add a new class SVGImageChromeClient which overrides the function dataProtocolLoader().
+        Rename the header file SVGImageChromeClient.h to be SVGImageClients.h since it now 
+        includes the classes SVGImageChromeClient and SVGFrameLoaderClient.
+
 2015-02-04  Timothy Horton  <timothy_horton@apple.com>
 
         Fix a misplaced include in CaptionUserPreferencesMediaAF

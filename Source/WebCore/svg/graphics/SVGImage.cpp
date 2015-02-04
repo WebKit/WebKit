@@ -31,6 +31,7 @@
 #include "Chrome.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
@@ -41,7 +42,7 @@
 #include "RenderStyle.h"
 #include "SVGDocument.h"
 #include "SVGForeignObjectElement.h"
-#include "SVGImageChromeClient.h"
+#include "SVGImageClients.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
 
@@ -344,6 +345,9 @@ bool SVGImage::dataChanged(bool allDataReceived)
         fillWithEmptyClients(pageConfiguration);
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();
+        m_loaderClient = std::make_unique<SVGFrameLoaderClient>(m_dataProtocolLoader);
+        pageConfiguration.loaderClientForMainFrame = m_loaderClient.get();
+
         bool canHaveScrollbars = false; // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
         bool transparent = true; // SVG Images are transparent.
 

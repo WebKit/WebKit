@@ -161,6 +161,7 @@ void ResourceLoader::start()
     ASSERT(!m_handle);
     ASSERT(!m_request.isNull());
     ASSERT(m_deferredRequest.isNull());
+    ASSERT(frameLoader());
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader->scheduleArchiveLoad(this, m_request))
@@ -175,8 +176,10 @@ void ResourceLoader::start()
         return;
     }
 
-    if (!m_reachedTerminalState)
-        m_handle = ResourceHandle::create(m_frame->loader().networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent() == SniffContent);
+    if (!m_reachedTerminalState) {
+        FrameLoader& loader = m_request.url().protocolIsData() ? dataProtocolFrameLoader() : *frameLoader();
+        m_handle = ResourceHandle::create(loader.networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent() == SniffContent);
+    }
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -198,6 +201,15 @@ FrameLoader* ResourceLoader::frameLoader() const
     if (!m_frame)
         return 0;
     return &m_frame->loader();
+}
+
+// This function should only be called when frameLoader() is non-null.
+FrameLoader& ResourceLoader::dataProtocolFrameLoader() const
+{
+    FrameLoader* loader = frameLoader();
+    ASSERT(loader);
+    FrameLoader* dataProtocolLoader = loader->client().dataProtocolLoader();
+    return *(dataProtocolLoader ? dataProtocolLoader : loader);
 }
 
 void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)

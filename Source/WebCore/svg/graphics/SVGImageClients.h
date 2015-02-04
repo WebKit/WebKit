@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVGImageChromeClient_h
-#define SVGImageChromeClient_h
+#ifndef SVGImageClients_h
+#define SVGImageClients_h
 
 #include "EmptyClients.h"
 
 namespace WebCore {
 
-class SVGImageChromeClient : public EmptyChromeClient {
+class SVGImageChromeClient final : public EmptyChromeClient {
     WTF_MAKE_NONCOPYABLE(SVGImageChromeClient); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGImageChromeClient(SVGImage* image)
@@ -47,7 +47,7 @@ public:
 private:
     virtual void chromeDestroyed() override
     {
-        m_image = 0;
+        m_image = nullptr;
     }
     
     virtual void invalidateContentsAndRootView(const IntRect& r) override
@@ -60,12 +60,18 @@ private:
     SVGImage* m_image;
 };
 
-inline SVGImageChromeClient* toSVGImageChromeClient(ChromeClient* client)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!client || client->isSVGImageChromeClient());
-    return static_cast<SVGImageChromeClient*>(client);
-}
-    
+class SVGFrameLoaderClient final : public EmptyFrameLoaderClient {
+public:
+    SVGFrameLoaderClient(FrameLoader* dataProtocolLoader)
+        : m_dataProtocolLoader(dataProtocolLoader)
+    {
+    }
+
+    virtual FrameLoader* dataProtocolLoader() const override { return m_dataProtocolLoader; }
+private:
+    FrameLoader* m_dataProtocolLoader;
+};
+
 } 
 
-#endif // SVGImageChromeClient_h
+#endif // SVGImageClients_h

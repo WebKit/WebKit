@@ -104,6 +104,7 @@ public:
     void setImagesEnabled(bool);
 
     bool shouldDeferImageLoad(const URL&) const;
+    bool shouldPerformImageLoad(const URL&) const;
     
     CachePolicy cachePolicy(CachedResource::Type) const;
     

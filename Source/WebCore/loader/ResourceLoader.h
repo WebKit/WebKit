@@ -71,6 +71,7 @@ public:
 #endif
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
+    FrameLoader& dataProtocolFrameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     WEBCORE_EXPORT const ResourceRequest& originalRequest() const { return m_originalRequest; }
     
