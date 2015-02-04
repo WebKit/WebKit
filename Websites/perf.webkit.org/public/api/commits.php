@@ -10,11 +10,7 @@ function main($paths) {
     if (!$db->connect())
         exit_with_error('DatabaseConnectionFailure');
 
-    $repository_name = $paths[0];
-    $repository_row = $db->select_first_row('repositories', 'repository', array('name' => $repository_name));
-    if (!$repository_row)
-        exit_with_error('RepositoryNotFound', array('repositoryName' => $repository_name));
-    $repository_id = $repository_row['repository_id'];
+    $repository_id = intval($paths[0]);
 
     $filter = array_get($paths, 1);
     $single_commit = NULL;

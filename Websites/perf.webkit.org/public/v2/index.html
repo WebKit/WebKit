@@ -188,8 +188,10 @@
 
                 <form {{bind-attr class=":search-pane showingSearchPane::hidden"}}>
                     <span class="repositories">
-                        {{view Ember.Select content=App.Manifest.repositoriesWithReportedCommits
-                            optionLabelPath='content.id'
+                        {{view Ember.Select
+                            content=App.Manifest.repositoriesWithReportedCommits
+                            optionValuePath='content.id'
+                            optionLabelPath='content.name'
                             selection=commitSearchRepository}}
                     </span>
                     {{input action="searchCommit" placeholder="Name or email" value=commitSearchKeyword}}

@@ -26,14 +26,10 @@ function main($path) {
         $id_to_triggerable[$id] = array('id' => $id, 'name' => $row['triggerable_name'], 'acceptedRepositories' => &$repositories);
     }
 
-    $repository_id_to_name = array();
-    foreach ($db->select_rows('repositories', 'repository', array(), 'name') as $row)
-        $repository_id_to_name[$row['repository_id']] = $row['repository_name'];
-
     foreach ($db->select_rows('triggerable_repositories', 'trigrepo', array()) as $row) {
         $triggerable = $id_to_triggerable[$row['trigrepo_triggerable']];
         if ($triggerable)
-            array_push($triggerable['acceptedRepositories'], $repository_id_to_name[$row['trigrepo_repository']]);
+            array_push($triggerable['acceptedRepositories'], $row['trigrepo_repository']);
     }
 
     exit_with_success(array('triggerables' => array_values($id_to_triggerable)));

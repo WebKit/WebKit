@@ -141,8 +141,8 @@ function Measurement(rawData)
         revisions = {};
     this._raw['revisions'] = revisions;
 
-    for (var repositoryName in revisions) {
-        var commitTimeOrUndefined = revisions[repositoryName][1]; // e.g. ["162190", 1389945046000]
+    for (var repositoryId in revisions) {
+        var commitTimeOrUndefined = revisions[repositoryId][1]; // e.g. ["162190", 1389945046000]
         if (latestTime < commitTimeOrUndefined)
             latestTime = commitTimeOrUndefined;
     }
@@ -152,10 +152,10 @@ function Measurement(rawData)
     this._formattedRevisions = undefined;
 }
 
-Measurement.prototype.commitTimeForRepository = function (repositoryName)
+Measurement.prototype.commitTimeForRepository = function (repositoryId)
 {
     var revisions = this._raw['revisions'];
-    var rawData = revisions[repositoryName];
+    var rawData = revisions[repositoryId];
     if (!rawData)
         return null;
     return new Date(rawData[1]);
@@ -166,11 +166,11 @@ Measurement.prototype.formattedRevisions = function (previousMeasurement)
     var revisions = this._raw['revisions'];
     var previousRevisions = previousMeasurement ? previousMeasurement._raw['revisions'] : null;
     var formattedRevisions = {};
-    for (var repositoryName in revisions) {
-        var currentRevision = revisions[repositoryName][0];
-        var previousRevision = previousRevisions ? previousRevisions[repositoryName][0] : null;
+    for (var repositoryId in revisions) {
+        var currentRevision = revisions[repositoryId][0];
+        var previousRevision = previousRevisions ? previousRevisions[repositoryId][0] : null;
         var formatttedRevision = this._formatRevisionRange(previousRevision, currentRevision);
-        formattedRevisions[repositoryName] = formatttedRevision;
+        formattedRevisions[repositoryId] = formatttedRevision;
     }
 
     return formattedRevisions;

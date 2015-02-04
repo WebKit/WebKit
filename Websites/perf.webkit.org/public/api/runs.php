@@ -22,8 +22,6 @@ function fetch_runs_for_config($db, $config) {
 }
 
 function parse_revisions_array($postgres_array) {
-    global $repository_id_to_name;
-
     // e.g. {"(WebKit,131456,\"2012-10-16 14:53:00\")","(Chromium,162004,)"}
     $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
     $revisions = array();
@@ -32,7 +30,7 @@ function parse_revisions_array($postgres_array) {
         if (!$name_and_revision[0])
             continue;
         $time = strtotime(trim($name_and_revision[2], '"')) * 1000;
-        $revisions[$repository_id_to_name[trim($name_and_revision[0], '"')]] = array(trim($name_and_revision[1], '"'), $time);
+        $revisions[trim($name_and_revision[0], '"')] = array(trim($name_and_revision[1], '"'), $time);
     }
     return $revisions;
 }
@@ -50,11 +48,7 @@ function format_run($run) {
         'builder' => $run['build_builder']);
 }
 
-$repository_id_to_name = array();
-
 function main($path) {
-    global $repository_id_to_name;
-
     if (count($path) != 1)
         exit_with_error('InvalidRequest');
 
@@ -77,11 +71,6 @@ function main($path) {
         FROM test_configurations WHERE config_metric = $1 AND config_platform = $2', array($metric_id, $platform_id));
     if (!$config_rows)
         exit_with_error('ConfigurationNotFound');
-
-    if ($repository_table = $db->fetch_table('repositories')) {
-        foreach ($repository_table as $repository)
-            $repository_id_to_name[$repository['repository_id']] = $repository['repository_name'];
-    }
 
     $results = array();
     foreach ($config_rows as $config) {

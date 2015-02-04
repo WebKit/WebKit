@@ -1,5 +1,45 @@
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Don’t use repository names as id’s.
+        https://bugs.webkit.org/show_bug.cgi?id=141226
+
+        Reviewed by Chris Dumez.
+
+        Not using repository names as their id's reduces the need to fetch the entire repositories table.
+        Since names of repositories are available in manifest.json, we can resolve their names in the front end.
+
+        * Websites/perf.webkit.org/public/api/runs.php:
+        (parse_revisions_array): No longer uses $repository_id_to_name.
+        (main): No longer populates $repository_id_to_name.
+
+        * Websites/perf.webkit.org/public/api/triggerables.php:
+        (main): Don't resolve repository names.
+
+        * Websites/perf.webkit.org/public/include/manifest.php:
+        (ManifestGenerator::repositories): Use repositories ids as keys in the result and include their names.
+        (ManifestGenerator::bug_trackers): Don't resolve repository names.
+
+        * Websites/perf.webkit.org/public/js/helper-classes.js:
+        (TestBuild): Renamed repositoryName to repositoryId.
+        (TestBuild.revision): Ditto.
+        (TestBuild.formattedRevisions): Ditto. Continue to use the repository name in the formatted result
+        since this is the text shown to human.
+
+        * Websites/perf.webkit.org/public/v2/app.js:
+        (App.pane.searchCommit): Renamed repositoryName to repositoryId.
+        (App.PaneController._updateDetails): Ditto.
+        (App.AnalysisTaskController.updateRoots): Ditto.
+
+        * Websites/perf.webkit.org/public/v2/data.js:
+        (Measurement): Ditto.
+        (Measurement.prototype.commitTimeForRepository): Ditto.
+        (Measurement.prototype.formattedRevisions): Ditto.
+
+        * Websites/perf.webkit.org/public/v2/index.html: Use the repository name and the repository id as
+        select element's label and value respectively.
+
+2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix. Declare $repository_id_to_name in the global scope.
 
         * public/api/runs.php:

@@ -51,8 +51,8 @@ function TestBuild(repositories, builders, platform, rawRun) {
     const revisions = rawRun.revisions;
     var maxTime = 0;
     var revisionCount = 0;
-    for (var repositoryName in revisions) {
-        maxTime = Math.max(maxTime, revisions[repositoryName][1]); // Revision is an pair (revision, time)
+    for (var repositoryId in revisions) {
+        maxTime = Math.max(maxTime, revisions[repositoryId][1]); // Revision is an pair (revision, time)
         revisionCount++;
     }
     if (!maxTime)
@@ -81,14 +81,14 @@ function TestBuild(repositories, builders, platform, rawRun) {
         return template ? template.replace(/\$buildNumber/g, this.buildNumber()) : null;
     }
     this.platform = function () { return platform; }
-    this.revision = function(repositoryName) { return revisions[repositoryName][0]; }
+    this.revision = function(repositoryId) { return revisions[repositoryId][0]; }
     this.formattedRevisions = function (previousBuild) {
         var result = {};
-        for (var repositoryName in repositories) {
-            if (!revisions[repositoryName])
+        for (var repositoryId in repositories) {
+            if (!revisions[repositoryId])
                 continue;
-            var previousRevision = previousBuild ? previousBuild.revision(repositoryName) : undefined;
-            var currentRevision = this.revision(repositoryName);
+            var previousRevision = previousBuild ? previousBuild.revision(repositoryId) : undefined;
+            var currentRevision = this.revision(repositoryId);
             if (previousRevision === currentRevision)
                 previousRevision = undefined;
 
@@ -119,7 +119,7 @@ function TestBuild(repositories, builders, platform, rawRun) {
             }
 
             var url;
-            var repository = repositories[repositoryName];
+            var repository = repositories[repositoryId];
             if (repository) {
                 if (previousRevision)
                     url = (repository['blameUrl'] || '').replace(/\$1/g, previousRevision).replace(/\$2/g, currentRevision);
@@ -127,7 +127,7 @@ function TestBuild(repositories, builders, platform, rawRun) {
                     url = (repository['url'] || '').replace(/\$1/g, currentRevision);
             }
 
-            result[repositoryName] = {
+            result[repository.name] = {
                 'label': labelForThisRepository,
                 'currentRevision': currentRevision,
                 'previousRevision': previousRevision,

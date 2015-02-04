@@ -276,8 +276,8 @@ App.Pane = Ember.Object.extend({
     selectedItem: null,
     searchCommit: function (repository, keyword) {
         var self = this;
-        var repositoryName = repository.get('id');
-        CommitLogs.fetchForTimeRange(repositoryName, null, null, keyword).then(function (commits) {
+        var repositoryId = repository.get('id');
+        CommitLogs.fetchForTimeRange(repositoryId, null, null, keyword).then(function (commits) {
             if (self.isDestroyed || !self.get('chartData') || !commits.length)
                 return;
             var currentRuns = self.get('chartData').current.timeSeriesByCommitTime().series();
@@ -288,7 +288,7 @@ App.Pane = Ember.Object.extend({
             var commitIndex = 0;
             for (var runIndex = 0; runIndex < currentRuns.length && commitIndex < commits.length; runIndex++) {
                 var measurement = currentRuns[runIndex].measurement;
-                var commitTime = measurement.commitTimeForRepository(repositoryName);
+                var commitTime = measurement.commitTimeForRepository(repositoryId);
                 if (!commitTime)
                     continue;
                 if (commits[commitIndex].time <= commitTime) {
@@ -727,12 +727,11 @@ App.PaneController = Ember.ObjectController.extend({
         var revisions = App.Manifest.get('repositories')
             .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
             .map(function (repository) {
-            var repositoryName = repository.get('id');
-            var revision = Ember.Object.create(formattedRevisions[repositoryName]);
+            var revision = Ember.Object.create(formattedRevisions[repository.get('id')]);
             revision['url'] = revision.previousRevision
                 ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision)
                 : repository.urlForRevision(revision.currentRevision);
-            revision['name'] = repositoryName;
+            revision['name'] = repository.get('name');
             revision['repository'] = repository;
             return revision; 
         });
@@ -888,11 +887,11 @@ App.AnalysisTaskController = Ember.Controller.extend({
         var repositoryToRevisions = {};
         analysisPoints.forEach(function (point, pointIndex) {
             var revisions = point.measurement.formattedRevisions();
-            for (var repositoryName in revisions) {
-                if (!repositoryToRevisions[repositoryName])
-                    repositoryToRevisions[repositoryName] = new Array(analysisPoints.length);
-                var revision = revisions[repositoryName];
-                repositoryToRevisions[repositoryName][pointIndex] = {
+            for (var repositoryId in revisions) {
+                if (!repositoryToRevisions[repositoryId])
+                    repositoryToRevisions[repositoryId] = new Array(analysisPoints.length);
+                var revision = revisions[repositoryId];
+                repositoryToRevisions[repositoryId][pointIndex] = {
                     label: point.label + ': ' + revision.label,
                     value: revision.currentRevision,
                 };
@@ -905,15 +904,15 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 return;
 
             self.set('roots', triggerable.get('acceptedRepositories').map(function (repository) {
-                var repositoryName = repository.get('id');
-                var revisions = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryName]);
+                var repositoryId = repository.get('id');
+                var revisions = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryId]);
                 return Ember.Object.create({
-                    name: repositoryName,
+                    name: repository.get('name'),
                     sets: [
-                        Ember.Object.create({name: 'A[' + repositoryName + ']',
+                        Ember.Object.create({name: 'A[' + repositoryId + ']',
                             revisions: revisions,
                             selection: revisions[1]}),
-                        Ember.Object.create({name: 'B[' + repositoryName + ']',
+                        Ember.Object.create({name: 'B[' + repositoryId + ']',
                             revisions: revisions,
                             selection: revisions[revisions.length - 1]}),
                     ],
