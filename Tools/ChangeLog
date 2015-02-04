@@ -1,3 +1,19 @@
+2015-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        run-webkit-tests doesn't always capture ASan violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=141231
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test): Don't look for CrashReporter crash logs if a log was provided
+        by the driver already (as is the case with ASan violations, which are printed to
+        stderr).
+        (Driver._check_for_address_sanitizer_violation): Check if the line is a start of ASan
+        report.
+        (Driver._read_block): Give ASan enough time to symbolicate a crash, and put it into
+        a separate variable for reporting.
+
 2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         [webkitpy] Add platform specific Skipped file mechanism for performance tests

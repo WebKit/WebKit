@@ -175,6 +175,7 @@ class Driver(object):
         self.start(driver_input.should_run_pixel_test, driver_input.args)
         test_begin_time = time.time()
         self._driver_timed_out = False
+        self._crash_report_from_driver = None
         self.error_from_test = str()
         self.err_seen_eof = False
 
@@ -207,7 +208,9 @@ class Driver(object):
             self._server_process = None
 
         crash_log = None
-        if crashed:
+        if self._crash_report_from_driver:
+            crash_log = self._crash_report_from_driver
+        elif crashed:
             self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
@@ -378,6 +381,10 @@ class Driver(object):
         if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 
+    def _check_for_address_sanitizer_violation(self, error_line):
+        if "ERROR: AddressSanitizer" in error_line:
+            return True
+
     def _check_for_driver_crash_or_unresponsiveness(self, error_line):
         if error_line == "#CRASHED\n":
             self._crashed_process_name = self._server_process.name()
@@ -472,6 +479,7 @@ class Driver(object):
     def _read_block(self, deadline, wait_for_stderr_eof=False):
         block = ContentBlock()
         out_seen_eof = False
+        asan_violation_detected = False
 
         while not self.has_crashed():
             if out_seen_eof and (self.err_seen_eof or not wait_for_stderr_eof):
@@ -510,7 +518,26 @@ class Driver(object):
             if err_line:
                 if self._check_for_driver_crash_or_unresponsiveness(err_line):
                     break
-                self.error_from_test += err_line
+                elif self._check_for_address_sanitizer_violation(err_line):
+                    asan_violation_detected = True
+                    self._crash_report_from_driver = ""
+                    # ASan report starts with a nondescript line, we only detect the second line.
+                    end_of_previous_error_line = self.error_from_test.rfind('\n', 0, -1)
+                    if end_of_previous_error_line > 0:
+                        self.error_from_test = self.error_from_test[:end_of_previous_error_line]
+                    else:
+                        self.error_from_test = ""
+                    # Symbolication can take a very long time, give it 10 extra minutes to finish.
+                    # FIXME: This can likely be removed once <rdar://problem/18701447> is fixed.
+                    deadline += 10 * 60 * 1000
+                if asan_violation_detected:
+                    self._crash_report_from_driver += err_line
+                else:
+                    self.error_from_test += err_line
+
+        if asan_violation_detected and not self._crashed_process_name:
+            self._crashed_process_name = self._server_process.name()
+            self._crashed_pid = self._server_process.pid()
 
         block.decode_content()
         return block
