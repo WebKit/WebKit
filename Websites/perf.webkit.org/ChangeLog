@@ -1,3 +1,14 @@
+2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        /api/runs.php should have main function
+        https://bugs.webkit.org/show_bug.cgi?id=141220
+
+        Reviewed by Benjamin Poulain.
+
+        Wrapped the code inside main function for clarity.
+
+        * public/api/runs.php:
+
 2015-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. "eta" isn't set on a in-progress build on a newly added builder.

@@ -2,37 +2,6 @@
 
 require('../include/json-header.php');
 
-$paths = array_key_exists('PATH_INFO', $_SERVER) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : array();
-
-if (count($paths) != 1)
-    exit_with_error('InvalidRequest');
-
-$parts = explode('-', $paths[0]);
-if (count($parts) != 2)
-    exit_with_error('InvalidRequest');
-
-$db = new Database;
-if (!$db->connect())
-    exit_with_error('DatabaseConnectionFailure');
-
-// FIXME: We should support revalication as well as caching results in the server side.
-$maxage = config('jsonCacheMaxAge');
-header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $maxage) . ' GMT');
-header("Cache-Control: maxage=$maxage");
-
-$platform_id = intval($parts[0]);
-$metric_id = intval($parts[1]);
-$config_rows = $db->query_and_fetch_all('SELECT config_id, config_type, config_platform, config_metric
-    FROM test_configurations WHERE config_metric = $1 AND config_platform = $2', array($metric_id, $platform_id));
-if (!$config_rows)
-    exit_with_error('ConfigurationNotFound');
-
-$repository_id_to_name = array();
-if ($repository_table = $db->fetch_table('repositories')) {
-    foreach ($repository_table as $repository)
-        $repository_id_to_name[$repository['repository_id']] = $repository['repository_name'];
-}
-
 function fetch_runs_for_config($db, $config) {
     $raw_runs = $db->query_and_fetch_all('
         SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
@@ -81,12 +50,45 @@ function format_run($run) {
         'builder' => $run['build_builder']);
 }
 
-$results = array();
-foreach ($config_rows as $config) {
-    if ($runs = fetch_runs_for_config($db, $config))
-        $results[$config['config_type']] = $runs;
+function main($path) {
+    if (count($path) != 1)
+        exit_with_error('InvalidRequest');
+
+    $parts = explode('-', $path[0]);
+    if (count($parts) != 2)
+        exit_with_error('InvalidRequest');
+
+    $db = new Database;
+    if (!$db->connect())
+        exit_with_error('DatabaseConnectionFailure');
+
+    // FIXME: We should support revalication as well as caching results in the server side.
+    $maxage = config('jsonCacheMaxAge');
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $maxage) . ' GMT');
+    header("Cache-Control: maxage=$maxage");
+
+    $platform_id = intval($parts[0]);
+    $metric_id = intval($parts[1]);
+    $config_rows = $db->query_and_fetch_all('SELECT config_id, config_type, config_platform, config_metric
+        FROM test_configurations WHERE config_metric = $1 AND config_platform = $2', array($metric_id, $platform_id));
+    if (!$config_rows)
+        exit_with_error('ConfigurationNotFound');
+
+    $repository_id_to_name = array();
+    if ($repository_table = $db->fetch_table('repositories')) {
+        foreach ($repository_table as $repository)
+            $repository_id_to_name[$repository['repository_id']] = $repository['repository_name'];
+    }
+
+    $results = array();
+    foreach ($config_rows as $config) {
+        if ($runs = fetch_runs_for_config($db, $config))
+            $results[$config['config_type']] = $runs;
+    }
+
+    exit_with_success($results);
 }
 
-exit_with_success($results);
+main(array_key_exists('PATH_INFO', $_SERVER) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : array());
 
 ?>
