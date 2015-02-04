@@ -45,7 +45,106 @@
 
 static int installColorProfile = false;
 
-static CFURLRef sUserColorProfileURL;
+static NSMutableDictionary *originalColorProfileURLs()
+{
+    static NSMutableDictionary *sharedInstance;
+    if (!sharedInstance)
+        sharedInstance = [[NSMutableDictionary alloc] init];
+    return sharedInstance;
+}
+
+static NSURL *colorProfileURLForDisplay(NSString *displayUUIDString)
+{
+    CFUUIDRef uuid = CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef)displayUUIDString);
+    CFDictionaryRef deviceInfo = ColorSyncDeviceCopyDeviceInfo(kColorSyncDisplayDeviceClass, uuid);
+    CFRelease(uuid);
+    if (!deviceInfo) {
+        NSLog(@"No display attached to system; not setting main display's color profile.");
+        return nil;
+    }
+
+    CFURLRef profileURL;
+    CFDictionaryRef profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncCustomProfiles);
+    if (profileInfo)
+        profileURL = (CFURLRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
+    else {
+        profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncFactoryProfiles);
+        CFDictionaryRef factoryProfile = (CFDictionaryRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
+        profileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
+    }
+    
+    
+    NSURL *url = (NSURL *)CFAutorelease(CFRetain(profileURL));
+    CFRelease(deviceInfo);
+    return url;
+}
+
+static NSArray *displayUUIDStrings()
+{
+    NSMutableArray *result = [NSMutableArray array];
+
+    static const uint32_t maxDisplayCount = 10;
+    CGDirectDisplayID displayIDs[maxDisplayCount] = { 0 };
+    uint32_t displayCount = 0;
+    
+    CGError err = CGGetActiveDisplayList(maxDisplayCount, displayIDs, &displayCount);
+    if (err != kCGErrorSuccess) {
+        NSLog(@"Error %d getting active display list; not setting display color profile.", err);
+        return nil;
+    }
+
+    if (!displayCount) {
+        NSLog(@"No display attached to system; not setting display color profile.");
+        return nil;
+    }
+
+    for (uint32_t i = 0; i < displayCount; ++i) {
+        CFUUIDRef displayUUIDRef = CGDisplayCreateUUIDFromDisplayID(displayIDs[i]);
+        [result addObject:(NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, displayUUIDRef))];
+        CFRelease(displayUUIDRef);
+    }
+    
+    return result;
+}
+
+static void saveDisplayColorProfiles(NSArray *displayUUIDStrings)
+{
+    NSMutableDictionary *userColorProfiles = originalColorProfileURLs();
+
+    for (NSString *UUIDString in displayUUIDStrings) {
+        if ([userColorProfiles objectForKey:UUIDString])
+            continue;
+        
+        NSURL *colorProfileURL = colorProfileURLForDisplay(UUIDString);
+        [userColorProfiles setObject:colorProfileURL forKey:UUIDString];
+    }
+}
+
+static void setDisplayColorProfile(NSString *displayUUIDString, NSURL *colorProfileURL)
+{
+    NSDictionary *profileInfo = @{
+        (NSString *)kColorSyncDeviceDefaultProfileID : colorProfileURL
+    };
+
+    CFUUIDRef uuid = CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef)displayUUIDString);
+    BOOL success = ColorSyncDeviceSetCustomProfiles(kColorSyncDisplayDeviceClass, uuid, (CFDictionaryRef)profileInfo);
+    if (!success)
+        NSLog(@"Failed to set color profile for display %@! Many pixel tests may fail as a result.", displayUUIDString);
+    CFRelease(uuid);
+}
+
+static void restoreDisplayColorProfiles(NSArray *displayUUIDStrings)
+{
+    NSMutableDictionary* userColorProfiles = originalColorProfileURLs();
+
+    for (NSString *UUIDString in displayUUIDStrings) {
+        NSURL *profileURL = [userColorProfiles objectForKey:UUIDString];
+        if (!profileURL)
+            continue;
+        
+        setDisplayColorProfile(UUIDString, profileURL);
+    }
+}
 
 static void installLayoutTestColorProfile()
 {
@@ -53,65 +152,22 @@ static void installLayoutTestColorProfile()
         return;
 
     // To make sure we get consistent colors (not dependent on the chosen color
-    // space of the main display), we force the generic RGB color profile.
+    // space of the display), we force the generic sRGB color profile on all displays.
     // This causes a change the user can see.
-    
-    CFUUIDRef mainDisplayID = CGDisplayCreateUUIDFromDisplayID(CGMainDisplayID());
-    
-    if (!sUserColorProfileURL) {
-        CFDictionaryRef deviceInfo = ColorSyncDeviceCopyDeviceInfo(kColorSyncDisplayDeviceClass, mainDisplayID);
 
-        if (!deviceInfo) {
-            NSLog(@"No display attached to system; not setting main display's color profile.");
-            CFRelease(mainDisplayID);
-            return;
-        }
-
-        CFDictionaryRef profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncCustomProfiles);
-        if (profileInfo) {
-            sUserColorProfileURL = (CFURLRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
-            CFRetain(sUserColorProfileURL);
-        } else {
-            profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncFactoryProfiles);
-            CFDictionaryRef factoryProfile = (CFDictionaryRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
-            sUserColorProfileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
-            CFRetain(sUserColorProfileURL);
-        }
-        
-        CFRelease(deviceInfo);
-    }
+    NSArray *displays = displayUUIDStrings();
+    saveDisplayColorProfiles(displays);
 
     ColorSyncProfileRef sRGBProfile = ColorSyncProfileCreateWithName(kColorSyncSRGBProfile);
     CFErrorRef error;
     CFURLRef profileURL = ColorSyncProfileGetURL(sRGBProfile, &error);
     if (!profileURL) {
         NSLog(@"Failed to get URL of Generic RGB color profile! Many pixel tests may fail as a result. Error: %@", error);
-        
-        if (sUserColorProfileURL) {
-            CFRelease(sUserColorProfileURL);
-            sUserColorProfileURL = 0;
-        }
-        
-        CFRelease(sRGBProfile);
-        CFRelease(mainDisplayID);
         return;
     }
-        
-    CFMutableDictionaryRef profileInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFDictionarySetValue(profileInfo, kColorSyncDeviceDefaultProfileID, profileURL);
     
-    if (!ColorSyncDeviceSetCustomProfiles(kColorSyncDisplayDeviceClass, mainDisplayID, profileInfo)) {
-        NSLog(@"Failed to set color profile for main display! Many pixel tests may fail as a result.");
-        
-        if (sUserColorProfileURL) {
-            CFRelease(sUserColorProfileURL);
-            sUserColorProfileURL = 0;
-        }
-    }
-    
-    CFRelease(profileInfo);
-    CFRelease(sRGBProfile);
-    CFRelease(mainDisplayID);
+    for (NSString *displayUUIDString in displays)
+        setDisplayColorProfile(displayUUIDString, (NSURL *)profileURL);
 }
 
 static void restoreUserColorProfile(void)
@@ -122,15 +178,8 @@ static void restoreUserColorProfile(void)
     // This is used as a signal handler, and thus the calls into ColorSync are unsafe.
     // But we might as well try to restore the user's color profile, we're going down anyway...
     
-    if (!sUserColorProfileURL)
-        return;
-    
-    CFUUIDRef mainDisplayID = CGDisplayCreateUUIDFromDisplayID(CGMainDisplayID());
-    CFMutableDictionaryRef profileInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFDictionarySetValue(profileInfo, kColorSyncDeviceDefaultProfileID, sUserColorProfileURL);
-    ColorSyncDeviceSetCustomProfiles(kColorSyncDisplayDeviceClass, mainDisplayID, profileInfo);
-    CFRelease(mainDisplayID);
-    CFRelease(profileInfo);
+    NSArray *displays = displayUUIDStrings();
+    restoreDisplayColorProfiles(displays);
 }
 
 static void simpleSignalHandler(int sig)
@@ -188,8 +237,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
     // Hooks the ways we might get told to clean up...
     signal(SIGINT, simpleSignalHandler);
     signal(SIGHUP, simpleSignalHandler);
@@ -210,7 +257,6 @@ int main(int argc, char* argv[])
     // Restore the profile
     restoreUserColorProfile();
 
-    [pool release];
     return 0;
 }
 

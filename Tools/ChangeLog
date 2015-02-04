@@ -1,3 +1,29 @@
+2015-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        LayoutTestHelper should set the color profile of all displays
+        https://bugs.webkit.org/show_bug.cgi?id=141260
+
+        Reviewed by Tim Horton.
+        
+        WebKitTestRunner can (erroneously) grab the colorspace of the "main" screen.
+        which is the screen with the active window. Make things more robust by changing
+        the colorspace of all displays, not just the main screen, when running layout tests.
+
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig: Enable ARC
+        * DumpRenderTree/mac/LayoutTestHelper.m: 
+        (originalColorProfileURLs):
+        (colorProfileURLForDisplay):
+        (displayUUIDStrings):
+        (saveDisplayColorProfiles):
+        (setDisplayColorProfile):
+        (restoreDisplayColorProfiles):
+        (installLayoutTestColorProfile):
+        (restoreUserColorProfile):
+        (main):        
+        Store display color profiles by map of UUID strings to URLs (NSUUID and CFUUID are not
+        toll-free bridged, sadly). Use the map to restore all profiles on exit.
+        Convert to use more Obj-C types.
+
 2015-02-04  Daniel Bates  <dabates@apple.com>
 
         test-webkitpy fails on Mac without iphoneos SDK
