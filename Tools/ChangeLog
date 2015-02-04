@@ -1,5 +1,22 @@
 2015-02-04  Simon Fraser  <simon.fraser@apple.com>
 
+        WKTR should not use -mainScreen to pick a color profile
+        https://bugs.webkit.org/show_bug.cgi?id=141265
+
+        Reviewed by Tim Horton.
+        
+        -[NSScreen mainScreen] depends on the active window, so use the first screen
+        (which is the one we put the window on anyway).
+        
+        Do some cleanup in DRT that makes the code look similar.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+
+2015-02-04  Simon Fraser  <simon.fraser@apple.com>
+
         LayoutTestHelper should set the color profile of all displays
         https://bugs.webkit.org/show_bug.cgi?id=141260
 
