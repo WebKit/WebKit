@@ -1,3 +1,9 @@
+2015-02-03  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix.
