@@ -320,6 +320,8 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 webkit.org/b/140084 [ Yosemite+ ] js/dom/dfg-inline-resolve.html [ Pass Timeout ]
 
+webkit.org/b/141252 [ Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Slow ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
