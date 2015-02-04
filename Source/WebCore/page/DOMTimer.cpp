@@ -38,7 +38,7 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -85,7 +85,7 @@ public:
     void setScriptMadeNonUserObservableChangesToElement(Element& element)
     {
         m_scriptMadeNonUserObservableChanges = true;
-        m_elementsChangedOutsideViewport.add(&element);
+        m_elementsChangedOutsideViewport.set(&element, element.createWeakPtr());
     }
 
     bool scriptMadeNonUserObservableChanges() const { return m_scriptMadeNonUserObservableChanges; }
@@ -103,8 +103,11 @@ public:
     {
         ASSERT(elements.isEmpty());
         elements.reserveCapacity(m_elementsChangedOutsideViewport.size());
-        for (auto& element : m_elementsChangedOutsideViewport)
-            elements.uncheckedAppend(element->createWeakPtr());
+        for (auto& element : m_elementsChangedOutsideViewport.values()) {
+            if (element)
+                elements.uncheckedAppend(element);
+        }
+        elements.shrinkToFit();
     }
 
     static DOMTimerFireState* current;
@@ -113,7 +116,7 @@ private:
     ScriptExecutionContext& m_context;
     uint64_t m_initialDOMTreeVersion;
     DOMTimerFireState* m_previous;
-    HashSet<RefPtr<Element>> m_elementsChangedOutsideViewport;
+    HashMap<Element*, WeakPtr<Element>> m_elementsChangedOutsideViewport;
     bool m_contextIsDocument;
     bool m_scriptMadeNonUserObservableChanges { false };
     bool m_scriptMadeUserObservableChanges { false };
