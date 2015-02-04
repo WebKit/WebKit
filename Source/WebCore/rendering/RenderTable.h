@@ -275,7 +275,9 @@ public:
     LayoutUnit offsetLeftForColumn(const RenderTableCol&) const;
     LayoutUnit offsetWidthForColumn(const RenderTableCol&) const;
     LayoutUnit offsetHeightForColumn(const RenderTableCol&) const;
-
+    
+    virtual void markForPaginationRelayoutIfNeeded() override final;
+    
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
     virtual void simplifiedNormalFlowLayout() override final;

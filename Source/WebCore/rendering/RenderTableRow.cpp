@@ -168,7 +168,7 @@ void RenderTableRow::layout()
     bool paginated = view().layoutState()->isPaginated();
                 
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
-        if (!cell->needsLayout() && paginated && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
+        if (!cell->needsLayout() && paginated && (view().layoutState()->pageLogicalHeightChanged() || (view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())))
             cell->setChildNeedsLayout(MarkOnlyThis);
 
         if (cell->needsLayout()) {

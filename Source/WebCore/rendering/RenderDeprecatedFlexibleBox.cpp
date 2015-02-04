@@ -423,8 +423,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // Compute the child's vertical margins.
             child->computeAndSetBlockDirectionMargins(this);
 
-            if (!child->needsLayout())
-                child->markForPaginationRelayoutIfNeeded();
+            child->markForPaginationRelayoutIfNeeded();
             
             // Apply the child's current layout delta.
             layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
@@ -499,8 +498,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             if (oldChildHeight != child->height())
                 child->setChildNeedsLayout(MarkOnlyThis);
 
-            if (!child->needsLayout())
-                child->markForPaginationRelayoutIfNeeded();
+            child->markForPaginationRelayoutIfNeeded();
 
             layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
 
@@ -744,8 +742,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             // Add in the child's marginTop to our height.
             setHeight(height() + child->marginTop());
 
-            if (!child->needsLayout())
-                child->markForPaginationRelayoutIfNeeded();
+            child->markForPaginationRelayoutIfNeeded();
 
             // Now do a layout.
             layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
