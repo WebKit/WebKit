@@ -157,7 +157,7 @@ String TypeSet::dumpTypes() const
     return seen.toString();
 }
 
-bool TypeSet::doesTypeConformTo(uint32_t test) const
+bool TypeSet::doesTypeConformTo(uint8_t test) const
 {
     // This function checks if our seen types conform  to the types described by the test bitstring. (i.e we haven't seen more types than test).
     // We are <= to those types if ANDing with the bitstring doesn't zero out any of our bits.

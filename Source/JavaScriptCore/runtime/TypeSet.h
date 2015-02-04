@@ -48,7 +48,7 @@ namespace JSC {
 
 class JSValue;
 
-enum RuntimeType {
+enum RuntimeType : uint8_t {
     TypeNothing            = 0x0,
     TypeFunction           = 0x1,
     TypeUndefined          = 0x2,
@@ -108,12 +108,12 @@ public:
     String leastCommonAncestor() const;
     Ref<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
-    bool doesTypeConformTo(uint32_t test) const;
-    uint32_t seenTypes() const { return m_seenTypes; }
+    bool doesTypeConformTo(uint8_t test) const;
+    uint8_t seenTypes() const { return m_seenTypes; }
     StructureSet structureSet() const { return m_structureSet; };
 
 private:
-    uint32_t m_seenTypes;
+    uint8_t m_seenTypes;
     bool m_isOverflown;
     Vector<RefPtr<StructureShape>> m_structureHistory;
     StructureSet m_structureSet;
