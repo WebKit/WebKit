@@ -1,3 +1,9 @@
+2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit the forgotten expected result supposed to be added in r179569.
+
+        * editing/inserting/smart-quote-with-all-configurations-expected.txt: Added.
+
 2015-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/event-listener-gc.html is flaky
