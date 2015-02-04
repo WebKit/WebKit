@@ -1,3 +1,9 @@
+2015-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More test results gardening.
+
+        * platform/win/TestExpectations:
+
 2015-02-03  Maciej Stachowiak  <mjs@apple.com>
 
         Crash when printing snapshotted plugins

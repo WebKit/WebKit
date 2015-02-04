@@ -293,13 +293,8 @@ webkit.org/b/29359 fast/forms/week [ Skip ]
 # TODO ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 
-# ENABLED! DOM4_EVENTS_CONSTRUCTOR is not yet enabled. Seems to be missing UIEventConstructor
-#fast/events/constructors/ui-event-constructor.html [ Skip ]
-#fast/events/constructors/mouse-event-constructor.html [ Skip ]
-#fast/events/constructors/composition-event-constructor.html [ Skip ]
-#fast/events/constructors/wheel-event-constructor.html [ Skip ]
-#fast/events/constructors/keyboard-event-constructor.html [ Skip ]
-#fast/events/constructors/focus-event-constructor.html [ Skip ]
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+webkit.org/b/136452 http/tests/security/contentTypeOptions
 
 # TODO Userscripts stuff is not implemented
 webkit.org/b/140258 userscripts/ [ Skip ]
@@ -561,9 +556,6 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
 # TODO Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
-
-# TODO CURSOR_VISIBILITY is not enabled on win
-#webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Skip ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
@@ -1877,8 +1869,8 @@ http/tests/misc/async-script-removed.html [ Failure ]
 http/tests/misc/bad-charset-alias.html
 http/tests/misc/refresh-headers.php [ Failure ] # Easy
 http/tests/misc/submit-post-keygen.html [ Failure ]
-http/tests/multipart/load-last-non-html-frame.php [ Failure ] # Rebaseline
-http/tests/multipart/multipart-replace-non-html-content.php [ Failure ] # Rebaseline
+http/tests/multipart/load-last-non-html-frame.php [ Failure ] # Extra whitespace
+http/tests/multipart/multipart-replace-non-html-content.php [ Failure ] # Extra whitespace
 http/tests/navigation/no-referrer-reset.html [ Failure ] # Easy
 http/tests/navigation/no-referrer-same-window.html [ Failure ] # Easy
 http/tests/navigation/no-referrer-subframe.html [ Failure ] # Easy
