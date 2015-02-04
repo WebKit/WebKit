@@ -1,3 +1,57 @@
+2015-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add WKPageNavigationClient as C SPI around API::NavigationClient, and adopt in WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=141217
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKFrameInfoRef.cpp: Added.
+        (WKFrameInfoGetTypeID):
+        * UIProcess/API/C/WKFrameInfoRef.h: Added.
+        * UIProcess/API/C/WKNavigationActionRef.cpp: Added.
+        (WKNavigationActionGetTypeID):
+        * UIProcess/API/C/WKNavigationActionRef.h: Added.
+        * UIProcess/API/C/WKNavigationRef.cpp: Added.
+        (WKNavigationGetTypeID):
+        * UIProcess/API/C/WKNavigationRef.h: Added.
+        * UIProcess/API/C/WKNavigationResponseRef.cpp: Added.
+        (WKNavigationResponseGetTypeID):
+        (WKNavigationResponseCanShowMIMEType):
+        * UIProcess/API/C/WKNavigationResponseRef.h: Added.
+        Add tiny C wrappers around API::{FrameInfo, NavigationAction, Navigation, NavigationResponse}.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForPluginLoad):
+        Add a default implementation of decidePolicyForPluginLoad.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPage.h:
+        Add WKPageSetPageNavigationClient, which connects API::NavigationClient to
+        the new WKPageNavigationClient C SPI.
+        
+        * UIProcess/API/C/WKPageNavigationClient.h: Added.
+        Add WKPageNavigationClient, which one can use in place of WKPageLoaderClient
+        and WKPagePolicyClient and which has the same semantics as the Modern ObjC API
+        (including things like API::Navigation as WKNavigationRef, etc.)
+
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/API/C/WKPageRenderingProgressEvents.h: Added.
+        * UIProcess/API/C/WKPageRenderingProgressEventsInternal.h: Added.
+        (pageRenderingProgressEvents):
+        * UIProcess/API/C/WKPluginLoadPolicy.h: Added.
+        Pull some enums out into their own files (WKPageRenderingProgressEvents is
+        duplicated from the Modern ObjC API's _WKRenderingProgressEvents, WKPluginLoadPolicy
+        is pulled out of WKPageLoaderClient).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        Add an equivalent of pluginLoadPolicy to the NavigationClient.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-03  Timothy Horton  <timothy_horton@apple.com>
 
         Every PageOverlayClientImpl leaks

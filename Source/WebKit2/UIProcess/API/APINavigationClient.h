@@ -104,6 +104,13 @@ public:
     {
         listener->use();
     }
+    
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    virtual WebKit::PluginModuleLoadPolicy decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary*, WTF::String&)
+    {
+        return currentPluginLoadPolicy;
+    }
+#endif
 };
 
 } // namespace API

@@ -39,6 +39,7 @@
 #include <WebKit/WKPageFormClient.h>
 #include <WebKit/WKPageLoadTypes.h>
 #include <WebKit/WKPageLoaderClient.h>
+#include <WebKit/WKPageNavigationClient.h>
 #include <WebKit/WKPagePolicyClient.h>
 #include <WebKit/WKPageUIClient.h>
 #include <WebKit/WKPageVisibilityTypes.h>
@@ -212,9 +213,12 @@ WK_EXPORT void WKPageSetPageDiagnosticLoggingClient(WKPageRef page, const WKPage
 WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClientBase* client);
 WK_EXPORT void WKPageSetPageFindMatchesClient(WKPageRef page, const WKPageFindMatchesClientBase* client);
 WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClientBase* client);
+WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClientBase* client);
+
+// A client can implement either a navigation client or loader and policy clients, but never both.
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClientBase* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClientBase* client);
-WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClientBase* client);
+WK_EXPORT void WKPageSetPageNavigationClient(WKPageRef page, const WKPageNavigationClientBase* client);
 
 WK_EXPORT void WKPageSetSession(WKPageRef page, WKSessionRef session);
 

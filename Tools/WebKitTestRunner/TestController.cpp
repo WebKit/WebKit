@@ -38,6 +38,7 @@
 #include <WebKit/WKCookieManager.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKNotification.h>
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNotificationPermissionRequest.h>
@@ -84,7 +85,7 @@ static WKURLRef blankURL()
     return staticBlankURL;
 }
 
-static WKDataRef copyWebCryptoMasterKey(WKContextRef, const void*)
+static WKDataRef copyWebCryptoMasterKey(WKPageRef, const void*)
 {
     // Any 128 bit key would do, all we need for testing is to implement the callback.
     return WKDataCreate((const uint8_t*)"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
@@ -256,61 +257,28 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         decidePolicyForUserMediaPermissionRequest,
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
-
-    WKPageLoaderClientV5 pageLoaderClient = {
-        { 5, &TestController::singleton() },
-        0, // didStartProvisionalLoadForFrame
-        0, // didReceiveServerRedirectForProvisionalLoadForFrame
-        0, // didFailProvisionalLoadWithErrorForFrame
-        0, // didCommitLoadForFrame,
-        0, // didFinishDocumentLoadForFrame
-        0, // didFinishLoadForFrame,
-        0, // didFailLoadWithErrorForFrame
-        0, // didSameDocumentNavigationForFrame
-        0, // didReceiveTitleForFrame
-        0, // didFirstLayoutForFrame
-        0, // didFirstVisuallyNonEmptyLayoutForFrame
-        0, // didRemoveFrameFromHierarchy
-        0, // didFailToInitializePlugin
-        0, // didDisplayInsecureContentForFrame
-        canAuthenticateAgainstProtectionSpaceInFrame,
-        didReceiveAuthenticationChallengeInFrame,
-        0, // didStartProgress
-        0, // didChangeProgress
-        0, // didFinishProgress
-        0, // didBecomeUnresponsive
-        0, // didBecomeResponsive
-        processDidCrash,
-        0, // didChangeBackForwardList
-        0, // shouldGoToBackForwardListItem
-        0, // didRunInsecureContentForFrame
-        0, // didDetectXSSForFrame
-        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        0, // willGoToBackForwardListItem
-        0, // interactionOccurredWhileProcessUnresponsive
-        0, // pluginDidFail_deprecatedForUseWithV1
-        0, // didReceiveIntentForFrame
-        0, // registerIntentServiceForFrame
-        0, // didLayout
-        0, // pluginLoadPolicy_deprecatedForUseWithV2
-        0, // pluginDidFail
-        pluginLoadPolicy, // pluginLoadPolicy
-        0, // webGLLoadPolicy
-        0, // resolveWebGLLoadPolicy
-        0, // shouldKeepCurrentBackForwardListItemInList
-    };
-    WKPageSetPageLoaderClient(view->page(), &pageLoaderClient.base);
-
-    WKPagePolicyClientV1 pagePolicyClient = {
-        { 1, &TestController::singleton() },
-        0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
-        0, // decidePolicyForNewWindowAction
-        0, // decidePolicyForResponse_deprecatedForUseWithV0
-        0, // unableToImplementPolicy
+    
+    WKPageNavigationClientV0 pageNavigationClient = {
+        { 0, &TestController::singleton() },
         decidePolicyForNavigationAction,
-        decidePolicyForResponse,
+        decidePolicyForNavigationResponse,
+        decidePolicyForPluginLoad,
+        0, // didStartProvisionalNavigation
+        0, // didReceiveServerRedirectForProvisionalNavigation
+        0, // didFailProvisionalNavigation
+        0, // didCommitNavigation
+        0, // didFinishNavigation
+        0, // didFailNavigation
+        0, // didFailProvisionalLoadInSubframe
+        0, // didFinishDocumentLoad
+        0, // didSameDocumentNavigation
+        0, // renderingProgressDidChange
+        canAuthenticateAgainstProtectionSpace,
+        didReceiveAuthenticationChallenge,
+        processDidCrash,
+        copyWebCryptoMasterKey,
     };
-    WKPageSetPagePolicyClient(view->page(), &pagePolicyClient.base);
+    WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
     view->didInitializeClients();
 
@@ -415,15 +383,6 @@ void TestController::initialize(int argc, const char* argv[])
 
     platformInitializeContext();
 
-    WKContextClientV1 contextClient = {
-        { 1, this },
-        nullptr, // plugInAutoStartOriginHashesChanged
-        nullptr, // networkProcessDidCrash,
-        nullptr, // plugInInformationBecameAvailable,
-        copyWebCryptoMasterKey
-    };
-    WKContextSetClient(m_context.get(), &contextClient.base);
-
     WKContextInjectedBundleClientV1 injectedBundleClient = {
         { 1, this },
         didReceiveMessageFromInjectedBundle,
@@ -526,60 +485,27 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
-    WKPageLoaderClientV5 pageLoaderClient = {
-        { 5, this },
-        0, // didStartProvisionalLoadForFrame
-        0, // didReceiveServerRedirectForProvisionalLoadForFrame
-        0, // didFailProvisionalLoadWithErrorForFrame
-        didCommitLoadForFrame,
-        0, // didFinishDocumentLoadForFrame
-        didFinishLoadForFrame,
-        0, // didFailLoadWithErrorForFrame
-        0, // didSameDocumentNavigationForFrame
-        0, // didReceiveTitleForFrame
-        0, // didFirstLayoutForFrame
-        0, // didFirstVisuallyNonEmptyLayoutForFrame
-        0, // didRemoveFrameFromHierarchy
-        0, // didFailToInitializePlugin
-        0, // didDisplayInsecureContentForFrame
-        canAuthenticateAgainstProtectionSpaceInFrame,
-        didReceiveAuthenticationChallengeInFrame,
-        0, // didStartProgress
-        0, // didChangeProgress
-        0, // didFinishProgress
-        0, // didBecomeUnresponsive
-        0, // didBecomeResponsive
-        processDidCrash,
-        0, // didChangeBackForwardList
-        0, // shouldGoToBackForwardListItem
-        0, // didRunInsecureContentForFrame
-        0, // didDetectXSSForFrame
-        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        0, // willGoToBackForwardListItem
-        0, // interactionOccurredWhileProcessUnresponsive
-        0, // pluginDidFail_deprecatedForUseWithV1
-        0, // didReceiveIntentForFrame
-        0, // registerIntentServiceForFrame
-        0, // didLayout
-        0, // pluginLoadPolicy_deprecatedForUseWithV2
-        0, // pluginDidFail
-        pluginLoadPolicy, // pluginLoadPolicy
-        0, // webGLLoadPolicy
-        0, // resolveWebGLLoadPolicy
-        0, // shouldKeepCurrentBackForwardListItemInList
-    };
-    WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);
-
-    WKPagePolicyClientV1 pagePolicyClient = {
-        { 1, this },
-        0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
-        0, // decidePolicyForNewWindowAction
-        0, // decidePolicyForResponse_deprecatedForUseWithV0
-        0, // unableToImplementPolicy
+    WKPageNavigationClientV0 pageNavigationClient = {
+        { 0, this },
         decidePolicyForNavigationAction,
-        decidePolicyForResponse,
+        decidePolicyForNavigationResponse,
+        decidePolicyForPluginLoad,
+        0, // didStartProvisionalNavigation
+        0, // didReceiveServerRedirectForProvisionalNavigation
+        0, // didFailProvisionalNavigation
+        didCommitNavigation,
+        didFinishNavigation,
+        0, // didFailNavigation
+        0, // didFailProvisionalLoadInSubframe
+        0, // didFinishDocumentLoad
+        0, // didSameDocumentNavigation
+        0, // renderingProgressDidChange
+        canAuthenticateAgainstProtectionSpace,
+        didReceiveAuthenticationChallenge,
+        processDidCrash,
+        copyWebCryptoMasterKey,
     };
-    WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient.base);
+    WKPageSetPageNavigationClient(m_mainWebView->page(), &pageNavigationClient.base);
 
     m_mainWebView->didInitializeClients();
 
@@ -592,8 +518,7 @@ void TestController::ensureViewSupportsOptions(WKDictionaryRef options)
 {
     if (m_mainWebView && !m_mainWebView->viewSupportsOptions(options)) {
         WKPageSetPageUIClient(m_mainWebView->page(), 0);
-        WKPageSetPageLoaderClient(m_mainWebView->page(), 0);
-        WKPageSetPagePolicyClient(m_mainWebView->page(), 0);
+        WKPageSetPageNavigationClient(m_mainWebView->page(), 0);
         WKPageClose(m_mainWebView->page());
         
         m_mainWebView = nullptr;
@@ -1275,19 +1200,19 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
     return m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody);
 }
 
-// WKPageLoaderClient
+// WKPageNavigationClient
 
-void TestController::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef, const void* clientInfo)
+void TestController::didCommitNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didCommitLoadForFrame(page, frame);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didCommitNavigation(page, navigation);
 }
 
-void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef, const void* clientInfo)
+void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishNavigation(page, navigation);
 }
 
-bool TestController::canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef, WKFrameRef, WKProtectionSpaceRef protectionSpace, const void*)
+bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef, WKProtectionSpaceRef protectionSpace, const void*)
 {
     WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
 
@@ -1299,9 +1224,9 @@ bool TestController::canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef, WKF
     return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
 }
 
-void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
+void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallengeInFrame(page, frame, authenticationChallenge);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(page, /*frame,*/ authenticationChallenge);
 }
 
 void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
@@ -1309,35 +1234,29 @@ void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
     static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
 }
 
-WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, const void* clientInfo)
+WKPluginLoadPolicy TestController::decidePolicyForPluginLoad(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, const void* clientInfo)
 {
-    return static_cast<TestController*>(const_cast<void*>(clientInfo))->pluginLoadPolicy(page, currentPluginLoadPolicy, pluginInformation, unavailabilityDescription);
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForPluginLoad(page, currentPluginLoadPolicy, pluginInformation, unavailabilityDescription);
 }
 
-WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription)
+WKPluginLoadPolicy TestController::decidePolicyForPluginLoad(WKPageRef, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription)
 {
     if (m_shouldBlockAllPlugins)
         return kWKPluginLoadPolicyBlocked;
     return currentPluginLoadPolicy;
 }
 
-void TestController::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame)
+void TestController::didCommitNavigation(WKPageRef page, WKNavigationRef navigation)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
     mainWebView()->focus();
 }
 
-void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
+void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigation)
 {
     if (m_state != Resetting)
         return;
 
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKFrameCopyURL(frame));
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKFrameCopyURL(WKPageGetMainFrame(page)));
     if (!WKURLIsEqual(wkURL.get(), blankURL()))
         return;
 
@@ -1345,7 +1264,7 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
     singleton().notifyDone();
 }
 
-void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge)
+void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef authenticationChallenge)
 {
     WKProtectionSpaceRef protectionSpace = WKAuthenticationChallengeGetProtectionSpace(authenticationChallenge);
     WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);
@@ -1488,7 +1407,7 @@ void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailab
     printf("MISSING PLUGIN BUTTON PRESSED\n");
 }
 
-void TestController::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(listener);
 }
@@ -1503,17 +1422,16 @@ void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef li
     WKFramePolicyListenerUse(listener);
 }
 
-void TestController::decidePolicyForResponse(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForResponse(frame, response, listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationResponse(navigationResponse, listener);
 }
 
-void TestController::decidePolicyForResponse(WKFrameRef frame, WKURLResponseRef response, WKFramePolicyListenerRef listener)
+void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener)
 {
     // Even though Response was already checked by WKBundlePagePolicyClient, the check did not include plugins
     // so we have to re-check again.
-    WKRetainPtr<WKStringRef> wkMIMEType(AdoptWK, WKURLResponseCopyMIMEType(response));
-    if (WKFrameCanShowMIMEType(frame, wkMIMEType.get())) {
+    if (WKNavigationResponseCanShowMIMEType(navigationResponse)) {
         WKFramePolicyListenerUse(listener);
         return;
     }

@@ -1,3 +1,27 @@
+2015-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add WKPageNavigationClient as C SPI around API::NavigationClient, and adopt in WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=141217
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::copyWebCryptoMasterKey):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptions):
+        (WTR::TestController::didCommitNavigation):
+        (WTR::TestController::didFinishNavigation):
+        (WTR::TestController::canAuthenticateAgainstProtectionSpace):
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        (WTR::TestController::decidePolicyForPluginLoad):
+        (WTR::TestController::decidePolicyForNavigationAction):
+        (WTR::TestController::decidePolicyForNavigationResponse):
+        (WTR::TestController::didCommitLoadForFrame): Deleted.
+        (WTR::TestController::didFinishLoadForFrame): Deleted.
+        * WebKitTestRunner/TestController.h:
+        Adopt WKPageNavigationClient and adjust to its semantics (navigations are main-frame-only, etc.)
+
 2015-02-03  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Unreviewed. Add myself as a committer.

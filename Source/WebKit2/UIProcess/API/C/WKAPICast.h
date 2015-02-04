@@ -51,7 +51,11 @@
 #include <WebCore/Settings.h>
 
 namespace API {
+class FrameInfo;
+class Navigation;
+class NavigationAction;
 class NavigationData;
+class NavigationResponse;
 class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
@@ -125,6 +129,7 @@ WK_ADD_API_MAPPING(WKDatabaseManagerRef, WebDatabaseManagerProxy)
 WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)
 WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
+WK_ADD_API_MAPPING(WKFrameInfoRef, API::FrameInfo)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
 WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequestProxy)
@@ -134,7 +139,10 @@ WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManager)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
+WK_ADD_API_MAPPING(WKNavigationActionRef, API::NavigationAction)
 WK_ADD_API_MAPPING(WKNavigationDataRef, API::NavigationData)
+WK_ADD_API_MAPPING(WKNavigationRef, API::Navigation)
+WK_ADD_API_MAPPING(WKNavigationResponseRef, API::NavigationResponse)
 WK_ADD_API_MAPPING(WKNotificationManagerRef, WebNotificationManagerProxy)
 WK_ADD_API_MAPPING(WKNotificationPermissionRequestRef, NotificationPermissionRequest)
 WK_ADD_API_MAPPING(WKNotificationProviderRef, WebNotificationProvider)

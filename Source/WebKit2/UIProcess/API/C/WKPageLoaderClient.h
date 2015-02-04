@@ -29,18 +29,11 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKErrorRef.h>
 #include <WebKit/WKPageLoadTypes.h>
+#include <WebKit/WKPluginLoadPolicy.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-enum {
-    kWKPluginLoadPolicyLoadNormally = 0,
-    kWKPluginLoadPolicyBlocked,
-    kWKPluginLoadPolicyInactive,
-    kWKPluginLoadPolicyLoadUnsandboxed,
-};
-typedef uint32_t WKPluginLoadPolicy;
 
 enum {
     kWKWebGLLoadPolicyBlocked = 0,
