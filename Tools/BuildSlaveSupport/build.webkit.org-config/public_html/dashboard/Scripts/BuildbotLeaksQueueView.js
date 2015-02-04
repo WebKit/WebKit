@@ -65,7 +65,7 @@ BuildbotLeaksQueueView.prototype = {
                         var leaksViewerURL = iteration.resultURLs["view leaks"];
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Neutral, leakCount === 1 ? "unique leak" : "unique leaks", leakCount, leaksViewerURL);
                     } else
-                        var status = new StatusLineView(messageElement, StatusLineView.Status.Good, iteration.text, null, buildPageURL);
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, null, buildPageURL);
                 } else {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, null, buildPageURL);
