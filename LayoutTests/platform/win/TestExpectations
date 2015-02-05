@@ -2295,6 +2295,9 @@ webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failu
 
 platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 
+webkit.org/b/138676 imported/w3c/canvas/2d.line.join.parallel.html [ Failure ]
+webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
+
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################

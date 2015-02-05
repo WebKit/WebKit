@@ -2,6 +2,12 @@
 
         TestExpectations gardening.
 
+        * platform/win/TestExpectations: These two canvas tests fail on Windows only.
+
+2015-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        TestExpectations gardening.
+
         * TestExpectations: Updated expectations for tests that pass.
 
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
