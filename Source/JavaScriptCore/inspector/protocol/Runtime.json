@@ -163,7 +163,8 @@
             "name": "getProperties",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
-                { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the element itself, not to its prototype chain." }
+                { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the object itself, not to its prototype chain." },
+                { "name": "ownAndGetterProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging to the object itself, and getters in its prototype chain." }
             ],
             "returns": [
                 { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
