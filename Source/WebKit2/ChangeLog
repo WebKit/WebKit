@@ -1,3 +1,20 @@
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Properly check for mmap() error case
+        https://bugs.webkit.org/show_bug.cgi?id=141304
+
+        Reviewed by Anders Carlsson.
+
+        mmap() returns MAP_FAILED, which is (void*)-1, not a null pointer in
+        case of failure. This patch updates several wrong error checks in
+        WebKit2.
+
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::allocBuffer):
+        (IPC::ArgumentEncoder::reserve):
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage):
+
 2015-02-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Clean up WebInspectorProxy and use simpler inspector levels design

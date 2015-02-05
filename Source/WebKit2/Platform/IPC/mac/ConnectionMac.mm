@@ -283,8 +283,11 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 
     char stackBuffer[inlineMessageMaxSize];
     char* buffer = &stackBuffer[0];
-    if (messageSize > inlineMessageMaxSize)
+    if (messageSize > inlineMessageMaxSize) {
         buffer = (char*)mmap(0, messageSize, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        if (buffer == MAP_FAILED)
+            return false;
+    }
 
     bool isComplex = (numberOfPortDescriptors + numberOfOOLMemoryDescriptors > 0);
 
