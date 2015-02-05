@@ -2,6 +2,12 @@
 
         TestExpectations gardening.
 
+        * TestExpectations: Updated expectations for tests that pass.
+
+2015-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        TestExpectations gardening.
+
         * platform/mac/TestExpectations: Updated expectatiosn for tests that sometimes pass.
 
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>

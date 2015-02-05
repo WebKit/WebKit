@@ -271,9 +271,6 @@ webkit.org/b/138676 imported/w3c/canvas/security.drawImage.canvas.html [ Failure
 webkit.org/b/138676 imported/w3c/canvas/security.pattern.image.fillStyle.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.imageData.put.nonfinite.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.incomplete.empty.html [ Failure ]
-webkit.org/b/138676 imported/w3c/canvas/2d.gradient.interpolate.colouralpha.html [ Failure ]
-webkit.org/b/138676 imported/w3c/canvas/2d.line.join.parallel.html [ Failure ]
-webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 
 # Imported W3C canvas tests need to be changed such that they can be automatically verified
 webkit.org/b/138676 imported/w3c/canvas/2d.text.draw.fontface.repeat.html [ Skip ]
