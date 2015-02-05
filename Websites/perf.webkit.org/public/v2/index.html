@@ -78,7 +78,7 @@
                                 {{/if}}
                             {{else}}
                                 {{#if chartData}}
-                                    {{#link-to 'charts' (query-params paneList=paneList)}}
+                                    {{#link-to 'charts' (query-params paneList=paneList since=controller.since)}}
                                     {{interactive-chart
                                         chartData=chartData
                                         domain=controller.sharedDomain

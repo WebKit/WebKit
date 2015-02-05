@@ -59,7 +59,7 @@ App.IndexController = Ember.Controller.extend({
     _previousGrid: {},
     headerColumns: [],
     rows: [],
-    numberOfDays: 30,
+    numberOfDays: 7,
     editMode: false,
 
     gridChanged: function ()
@@ -119,6 +119,7 @@ App.IndexController = Ember.Controller.extend({
         numberOfDays = parseInt(numberOfDays);
         var present = Date.now();
         var past = present - numberOfDays * 24 * 3600 * 1000;
+        this.set('since', past);
         this.set('sharedDomain', [past, present]);
     }.observes('numberOfDays').on('init'),
 

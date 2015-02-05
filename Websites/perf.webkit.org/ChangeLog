@@ -1,5 +1,22 @@
 2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New perf dashboard doesn't preserve the number of days when clicking on a dashboard chart
+        https://bugs.webkit.org/show_bug.cgi?id=141280
+
+        Reviewed by Chris Dumez.
+
+        Fixed the bug by passing in "since" as a query parameter to the charts page.
+
+        Also fixed the styling issue that manifests when a JSON fetching fails on "Dashboard" page.
+
+        * public/v2/app.css: Fixed CSS rules for error messages shown in the place of charts.
+        * public/v2/app.js:
+        (App.IndexController): Changed the default number of days from one month to one week.
+        (App.IndexController._sharedDomainChanged): Set "since" property on the controller.
+        * public/v2/index.html: Pass in "since" property on the controller as a query parameter.
+
+2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         New perf dashboard erroneously clears zoom when poping history items
         https://bugs.webkit.org/show_bug.cgi?id=141278
 
