@@ -25,6 +25,7 @@ ControllerIOS.StartPlaybackControls = 2;
 /* Globals */
 ControllerIOS.gWirelessImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 245"><g fill="#1060FE"><path d="M193.6,6.3v121.6H6.4V6.3H193.6 M199.1,0.7H0.9v132.7h198.2V0.7L199.1,0.7z"/><path d="M43.5,139.3c15.8,8,35.3,12.7,56.5,12.7s40.7-4.7,56.5-12.7H43.5z"/></g><g text-anchor="middle" font-family="Helvetica Neue"><text x="100" y="204" fill="white" font-size="24">##DEVICE_TYPE##</text><text x="100" y="234" fill="#5C5C5C" font-size="21">##DEVICE_NAME##</text></g></svg>';
 ControllerIOS.gSimulateWirelessPlaybackTarget = false; // Used for testing when there are no wireless targets.
+ControllerIOS.gSimulateOptimizedFullscreenAvailable = false; // Used for testing when optimized fullscreen is not available.
 
 ControllerIOS.prototype = {
     addVideoListeners: function() {
@@ -150,7 +151,8 @@ ControllerIOS.prototype = {
 
         var inlinePlaybackPlaceholder = this.controls.inlinePlaybackPlaceholder = document.createElement('div');
         inlinePlaybackPlaceholder.setAttribute('pseudo', '-webkit-media-controls-inline-playback-placeholder');
-        inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
+        if (!ControllerIOS.gSimulateOptimizedFullscreenAvailable)
+            inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
         inlinePlaybackPlaceholder.setAttribute('aria-label', this.UIString('Display Optimized Full Screen'));
 
         var wirelessTargetPicker = this.controls.wirelessTargetPicker = document.createElement('button');
@@ -223,7 +225,7 @@ ControllerIOS.prototype = {
             this.controls.timelineBox.appendChild(this.controls.remainingTime);
         }
         if (!this.isAudio()) {
-            if ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('optimized'))
+            if (ControllerIOS.gSimulateOptimizedFullscreenAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('optimized')))
                 this.controls.panel.appendChild(this.controls.optimizedFullscreenButton);
             this.controls.panel.appendChild(this.controls.fullscreenButton);
         }
@@ -342,7 +344,7 @@ ControllerIOS.prototype = {
     handleBaseGestureChange: function(event) {
         if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined || this.controlsType == ControllerIOS.StartPlaybackControls)
             return;
-        
+
         var scaleDetectionThreshold = 0.2;
         if (event.scale > 1 + scaleDetectionThreshold || event.scale < 1 - scaleDetectionThreshold)
             delete this.lastDoubleTouchTime;
@@ -356,7 +358,7 @@ ControllerIOS.prototype = {
             return;
 
         var velocity = Math.abs(event.scale - 1) / duration;
-        
+
         var pinchOutVelocityThreshold = 2;
         var pinchOutGestureScaleThreshold = 1.25;
         if (velocity < pinchOutVelocityThreshold || event.scale < pinchOutGestureScaleThreshold)
@@ -375,7 +377,7 @@ ControllerIOS.prototype = {
             return;
 
         this.mostRecentNumberOfTargettedTouches = event.targetTouches.length;
-        
+
         if (this.controlsAreHidden()) {
             this.showControls();
             if (this.hideTimer)
@@ -458,19 +460,19 @@ ControllerIOS.prototype = {
         else
             this.video.webkitSetPresentationMode('optimized');
     },
-        
+
     handleOptimizedFullscreenTouchStart: function() {
         this.controls.optimizedFullscreenButton.classList.add('active');
     },
-        
+
     handleOptimizedFullscreenTouchEnd: function(event) {
         this.controls.optimizedFullscreenButton.classList.remove('active');
-        
+
         this.handleOptimizedFullscreenButtonClicked();
-        
+
         return true;
     },
-        
+
     handleOptimizedFullscreenTouchCancel: function(event) {
         this.controls.optimizedFullscreenButton.classList.remove('active');
         return true;
@@ -612,8 +614,8 @@ ControllerIOS.prototype = {
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
                 break;
             case 'optimized':
-                var backgroundImageSVG = "url('" + this.host.mediaUIImageData("optimized-fullscreen-placeholder") + "')";
-                this.controls.inlinePlaybackPlaceholder.style.backgroundImage = backgroundImageSVG;
+                var backgroundImage = "url('" + this.host.mediaUIImageData("optimized-fullscreen-placeholder") + "')";
+                this.controls.inlinePlaybackPlaceholder.style.backgroundImage = backgroundImage;
                 this.controls.inlinePlaybackPlaceholder.setAttribute('aria-label', "video playback placeholder");
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
                 break;
