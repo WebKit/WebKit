@@ -348,6 +348,16 @@ WebInspector.TimelineRuler.prototype = {
         if (!this._endTimePinned)
             ++dividerCount;
 
+        var dividerData = {
+            count: dividerCount,
+            firstTime: firstDividerTime,
+            lastTime: lastDividerTime,
+        }
+
+        if (Object.shallowEqual(dividerData, this._currentDividers))
+            return;
+        this._currentDividers = dividerData;
+
         var markerDividers = this._markersElement.querySelectorAll("." + WebInspector.TimelineRuler.DividerElementStyleClassName);
 
         var dividerElement = this._headerElement.firstChild;

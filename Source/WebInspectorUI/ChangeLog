@@ -1,3 +1,36 @@
+2015-02-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: eliminate some unnecessary layout/painting in timeline overview and ruler
+        https://bugs.webkit.org/show_bug.cgi?id=141293
+
+        Reviewed by Timothy Hatcher.
+
+        The timeline overview's ruler was forcing repaints of divider labels even if the labels
+        had not changed since the last requestAnimationFrame. Bail out early if nothing changed.
+
+        The timeline overview and its graphs were updating layout using requestAnimationFrame
+        even when the TimelineContentView is not visible. Fix this by propagating visibility
+        changes to subviews, and not updating layout when hidden.
+
+        The above change also fixes an assertion sometimes encountered when the timeline view
+        tries to cache an element's offset width, but cannot because it isn't visible.
+
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.shown):
+        (WebInspector.TimelineContentView.prototype.hidden):
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.get visible):
+        (WebInspector.TimelineOverview.prototype.shown):
+        (WebInspector.TimelineOverview.prototype.hidden):
+        (WebInspector.TimelineOverview.prototype._needsLayout):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype.get visible):
+        (WebInspector.TimelineOverviewGraph.prototype.shown):
+        (WebInspector.TimelineOverviewGraph.prototype.hidden):
+        (WebInspector.TimelineOverviewGraph.prototype.needsLayout):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+
 2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Console Support for Symbol Objects

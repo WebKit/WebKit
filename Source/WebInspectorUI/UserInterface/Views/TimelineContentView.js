@@ -167,8 +167,12 @@ WebInspector.TimelineContentView.prototype = {
         if (!this._currentTimelineView)
             return;
 
+        this._timelineOverview.shown();
         this._currentTimelineView.shown();
         this._clearTimelineNavigationItem.enabled = this._recording.isWritable();
+
+        if (!this._updating && WebInspector.timelineManager.activeRecording === this._recording && WebInspector.timelineManager.isCapturing())
+            this._startUpdatingCurrentTime();
     },
 
     hidden: function()
@@ -176,7 +180,11 @@ WebInspector.TimelineContentView.prototype = {
         if (!this._currentTimelineView)
             return;
 
+        this._timelineOverview.hidden();
         this._currentTimelineView.hidden();
+
+        if (this._updating)
+            this._stopUpdatingCurrentTime();
     },
 
     filterDidChange: function()

@@ -211,6 +211,29 @@ WebInspector.TimelineOverview.prototype = {
         this._timelineRuler.selectionEndTime = this._timelineRuler.selectionStartTime + x;
     },
 
+    get visible()
+    {
+        return this._visible;
+    },
+
+    shown: function()
+    {
+        this._visible = true;
+
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+            timelineOverviewGraph.shown();
+
+        this.updateLayout();
+    },
+
+    hidden: function()
+    {
+        this._visible = false;
+
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+            timelineOverviewGraph.hidden();
+    },
+
     addMarker: function(marker)
     {
         this._timelineRuler.addMarker(marker);
@@ -298,8 +321,12 @@ WebInspector.TimelineOverview.prototype = {
 
     _needsLayout: function()
     {
+        if (!this._visible)
+            return;
+
         if (this._scheduledLayoutUpdateIdentifier)
             return;
+
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
     },
 

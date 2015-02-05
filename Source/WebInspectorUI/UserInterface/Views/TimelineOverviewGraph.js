@@ -139,6 +139,22 @@ WebInspector.TimelineOverviewGraph.prototype = {
         this._timelineOverview = x;
     },
 
+    get visible()
+    {
+        return this._visible;
+    },
+
+    shown: function()
+    {
+        this._visible = true;
+        this.updateLayout();
+    },
+
+    hidden: function()
+    {
+        this._visible = false;
+    },
+
     reset: function()
     {
         // Implemented by sub-classes if needed.
@@ -165,6 +181,9 @@ WebInspector.TimelineOverviewGraph.prototype = {
 
     needsLayout: function()
     {
+        if (!this._visible)
+            return;
+
         if (this._scheduledLayoutUpdateIdentifier)
             return;
 
