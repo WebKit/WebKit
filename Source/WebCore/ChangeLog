@@ -1,3 +1,13 @@
+2015-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Remind ourselves to remove work-around code
+        https://bugs.webkit.org/show_bug.cgi?id=141289
+
+        Unreviewed gardening: Add a reminder FIXME to CSSParser
+        so we can remove the MSVC-specific hack in the future.
+
+        * css/CSSParser.cpp:
+
 2015-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Do not destroy RenderQuote's text fragment child when quotation mark string is changing.

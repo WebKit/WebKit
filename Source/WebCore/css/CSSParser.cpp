@@ -1501,6 +1501,8 @@ Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
     return result;
 }
 
+// FIXME(141289): The following two constructors are only needed because of a bug in MSVC 2013 (and prior).
+// We should remove this code as soon as a Visual Studio update that fixes this problem is released.
 CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
     : expression(WTF::move(original.expression))
     , length(original.length)
