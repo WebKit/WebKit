@@ -156,6 +156,9 @@ public:
     void deleteLineBoxesBeforeSimpleLineLayout();
     const SimpleLineLayout::Layout* simpleLineLayout() const;
 
+    bool contentIsKnownToFollow() { return m_contentIsKnownToFollow; }
+    void setContentIsKnownToFollow(bool contentIsKnownToFollow) { m_contentIsKnownToFollow = contentIsKnownToFollow; }
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() override;
@@ -191,21 +194,22 @@ private:
     void node() const = delete;
 
     // We put the bitfield first to minimize padding on 64-bit.
-    bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
-    bool m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
-    bool m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
-    bool m_hasBeginWS : 1; // Whether or not we begin with WS (only true if we aren't pre)
-    bool m_hasEndWS : 1; // Whether or not we end with WS (only true if we aren't pre)
-    bool m_linesDirty : 1; // This bit indicates that the text run has already dirtied specific
+    unsigned m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
+    unsigned m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
+    unsigned m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
+    unsigned m_hasBeginWS : 1; // Whether or not we begin with WS (only true if we aren't pre)
+    unsigned m_hasEndWS : 1; // Whether or not we end with WS (only true if we aren't pre)
+    unsigned m_linesDirty : 1; // This bit indicates that the text run has already dirtied specific
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
-    bool m_containsReversedText : 1;
-    bool m_isAllASCII : 1;
-    bool m_canUseSimpleFontCodePath : 1;
-    mutable bool m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
-    bool m_useBackslashAsYenSymbol : 1;
-    bool m_originalTextDiffersFromRendered : 1;
+    unsigned m_containsReversedText : 1;
+    unsigned m_isAllASCII : 1;
+    unsigned m_canUseSimpleFontCodePath : 1;
+    mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
+    unsigned m_useBackslashAsYenSymbol : 1;
+    unsigned m_originalTextDiffersFromRendered : 1;
+    unsigned m_contentIsKnownToFollow : 1;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
