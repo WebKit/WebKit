@@ -1,3 +1,18 @@
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Use deleteFile() in NetworkCacheStorageCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=141299
+
+        Reviewed by Antti Koivisto.
+
+        Use deleteFile() in NetworkCacheStorageCocoa.mm to simplify the code
+        a bit.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::removeEntry):
+        (WebKit::NetworkCacheStorage::clear):
+        (WebKit::NetworkCacheStorage::shrinkIfNeeded):
+
 2015-02-04  Antti Koivisto  <antti@apple.com>
 
         Avoid copying std::functions across threads in NetworkCacheStorage

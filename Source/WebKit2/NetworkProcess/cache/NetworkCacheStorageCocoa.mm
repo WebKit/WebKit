@@ -345,8 +345,7 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
     dispatch_async(m_ioQueue.get(), [this, filePathCapture] {
-        CString path = WebCore::fileSystemRepresentation(filePathCapture.string());
-        unlink(path.data());
+        WebCore::deleteFile(filePathCapture.string());
         if (m_approximateEntryCount)
             --m_approximateEntryCount;
     });
@@ -550,8 +549,7 @@ void NetworkCacheStorage::clear()
         traverseDirectory(directoryPath, DT_DIR, [&directoryPath](const String& subdirName) {
             String subdirPath = WebCore::pathByAppendingComponent(directoryPath, subdirName);
             traverseDirectory(subdirPath, DT_REG, [&subdirPath](const String& fileName) {
-                String filePath = WebCore::pathByAppendingComponent(subdirPath, fileName);
-                unlink(WebCore::fileSystemRepresentation(filePath).data());
+                WebCore::deleteFile(WebCore::pathByAppendingComponent(subdirPath, fileName));
             });
             rmdir(WebCore::fileSystemRepresentation(subdirPath).data());
         });
@@ -578,15 +576,13 @@ void NetworkCacheStorage::shrinkIfNeeded()
         String cachePath = cachePathCapture.string();
         size_t foundEntryCount = 0;
         size_t deletedCount = 0;
-        traverseCacheFiles(cachePath, [this, &foundEntryCount, &deletedCount](const String& fileName, const String& directory) {
-            String partitionPath = WebCore::pathByAppendingComponent(directory, fileName);
-            CString path = WebCore::fileSystemRepresentation(partitionPath);
+        traverseCacheFiles(cachePath, [this, &foundEntryCount, &deletedCount](const String& fileName, const String& partitionPath) {
             ++foundEntryCount;
             if (foundEntryCount % everyNthResourceToDelete)
                 return;
             ++deletedCount;
 
-            unlink(path.data());
+            WebCore::deleteFile(WebCore::pathByAppendingComponent(partitionPath, fileName));
 
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
