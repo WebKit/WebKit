@@ -82,21 +82,7 @@ BuildbotPerformanceQueueView.prototype = {
             new PopoverTracker(status.statusBubbleElement, this._presentPopoverForPerformanceQueue.bind(this), queue);
         }
 
-        function appendBuild(queues, label)
-        {
-            queues.forEach(function(queue) {
-                var releaseLabel = document.createElement("a");
-                releaseLabel.classList.add("queueLabel");
-                releaseLabel.textContent = queue.performanceTestName ? queue.performanceTestName : label;
-                releaseLabel.href = queue.overviewURL;
-                releaseLabel.target = "_blank";
-                this.element.appendChild(releaseLabel);
-
-                appendPerformanceQueueStatus.call(this, queue);
-            }.bind(this));
-        }
-
-        appendBuild.call(this, this.releaseQueues, 'Release');
+        this.appendBuildStyle.call(this, this.releaseQueues, 'Release', appendPerformanceQueueStatus);
     },
 
     addLinkToRow: function(rowElement, className, text, url)

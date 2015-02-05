@@ -39,6 +39,7 @@ BuildbotTestResults = function(buildbotIteration, info)
     this.uniqueLeakCount = info.uniqueLeakCount || 0;
     this.newPassesCount = info.newPassesCount || 0;
     this.missingCount = info.missingCount || 0;
+    this.crashCount = info.crashCount || 0;
 };
 
 BaseObject.addConstructorFunctions(BuildbotTestResults);

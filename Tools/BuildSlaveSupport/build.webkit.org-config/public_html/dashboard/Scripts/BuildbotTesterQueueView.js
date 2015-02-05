@@ -79,6 +79,13 @@ BuildbotTesterQueueView.prototype = {
                 } else if (!iteration.productive) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
+                } else if (queue.crashesOnly && !iteration.crashCount) {
+                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
+                } else if (queue.crashesOnly && iteration.crashCount) {
+                    var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "crash found" : "crashes found", undefined, url);
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
                     // Something wrong happened, but it was not a test failure.
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
@@ -122,22 +129,8 @@ BuildbotTesterQueueView.prototype = {
             }
         }
 
-        function appendBuild(queues, label)
-        {
-            queues.forEach(function(queue) {
-                var releaseLabel = document.createElement("a");
-                releaseLabel.classList.add("queueLabel");
-                releaseLabel.textContent = label;
-                releaseLabel.href = queue.overviewURL;
-                releaseLabel.target = "_blank";
-                this.element.appendChild(releaseLabel);
-
-                appendBuilderQueueStatus.call(this, queue);
-            }.bind(this));
-        }
-
-        appendBuild.call(this, this.releaseQueues, "Release");
-        appendBuild.call(this, this.debugQueues, "Debug");
+        this.appendBuildStyle.call(this, this.releaseQueues, "Release", appendBuilderQueueStatus);
+        this.appendBuildStyle.call(this, this.debugQueues, "Debug", appendBuilderQueueStatus);
     },
 
     _popoverContentForLayoutTestRegressions: function(iteration)

@@ -1,3 +1,36 @@
+2015-02-04  Dana Burkart  <dburkart@apple.com>
+
+        Botwatcher's Dashboard is cramped
+        https://bugs.webkit.org/show_bug.cgi?id=140273
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a heading key which will allow for arbitrary headings in builder queues.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus):
+        (BuildbotBuilderQueueView.prototype.update):
+        (BuildbotBuilderQueueView.prototype.update.appendBuildArchitecture): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotLeaksQueueView.js:
+        (BuildbotLeaksQueueView.prototype.update):
+        (BuildbotLeaksQueueView.prototype.update.appendBuild): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotPerformanceQueueView.js:
+        (BuildbotPerformanceQueueView.prototype.update):
+        (BuildbotPerformanceQueueView.prototype.update.appendBuild): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._unauthorizedAccess):
+        (BuildbotQueueView.prototype._appendBuild):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        (BuildbotTesterQueueView.prototype.update):
+        (BuildbotTesterQueueView.prototype.update.appendBuild): Deleted.
+
 2015-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         WKTR should not use -mainScreen to pick a color profile

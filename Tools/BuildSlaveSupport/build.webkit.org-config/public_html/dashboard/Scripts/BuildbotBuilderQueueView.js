@@ -103,7 +103,7 @@ BuildbotBuilderQueueView.prototype = {
                 var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentUnsuccessfulIteration ? "last successful build" : "latest build", null, url);
                 this.element.appendChild(status.element);
             } else {
-                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentUnsuccessfulIteration ? "last successful build" : "latest build");            
+                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentUnsuccessfulIteration ? "last successful build" : "latest build");
                 this.element.appendChild(status.element);
 
                 if (firstRecentUnsuccessfulIteration) {
@@ -113,27 +113,13 @@ BuildbotBuilderQueueView.prototype = {
             }
         }
 
-        function appendBuildArchitecture(queues, label)
-        {
-            queues.forEach(function(queue) {
-                var releaseLabel = document.createElement("a");
-                releaseLabel.classList.add("queueLabel");
-                releaseLabel.textContent = label;
-                releaseLabel.href = queue.overviewURL;
-                releaseLabel.target = "_blank";
-                this.element.appendChild(releaseLabel);
+        this.appendBuildStyle.call(this, this.universalReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (Universal)" : "Release", appendBuilderQueueStatus);
+        this.appendBuildStyle.call(this, this.sixtyFourBitReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (64-bit)" : "Release", appendBuilderQueueStatus);
+        this.appendBuildStyle.call(this, this.thirtyTwoBitReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (32-bit)" : "Release", appendBuilderQueueStatus);
 
-                appendBuilderQueueStatus.call(this, queue);
-            }.bind(this));
-        }
-
-        appendBuildArchitecture.call(this, this.universalReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (Universal)" : "Release");
-        appendBuildArchitecture.call(this, this.sixtyFourBitReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (64-bit)" : "Release");
-        appendBuildArchitecture.call(this, this.thirtyTwoBitReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (32-bit)" : "Release");
-
-        appendBuildArchitecture.call(this, this.universalDebugQueues, this.hasMultipleDebugBuilds ? "Debug (Universal)" : "Debug");
-        appendBuildArchitecture.call(this, this.sixtyFourBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (64-bit)" : "Debug");
-        appendBuildArchitecture.call(this, this.thirtyTwoBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (32-bit)" : "Debug");
+        this.appendBuildStyle.call(this, this.universalDebugQueues, this.hasMultipleDebugBuilds ? "Debug (Universal)" : "Debug", appendBuilderQueueStatus);
+        this.appendBuildStyle.call(this, this.sixtyFourBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (64-bit)" : "Debug", appendBuilderQueueStatus);
+        this.appendBuildStyle.call(this, this.thirtyTwoBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (32-bit)" : "Debug", appendBuilderQueueStatus);
     },
 
     _presentPopoverFailureLogs: function(element, popover, iteration)

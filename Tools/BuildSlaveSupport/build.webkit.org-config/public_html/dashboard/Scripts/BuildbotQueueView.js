@@ -286,6 +286,20 @@ BuildbotQueueView.prototype = {
         return fragment;
     },
 
+    appendBuildStyle: function(queues, defaultLabel, appendFunction)
+    {
+        queues.forEach(function(queue) {
+            var releaseLabel = document.createElement("a");
+            releaseLabel.classList.add("queueLabel");
+            releaseLabel.textContent = queue.heading ? queue.heading : defaultLabel;
+            releaseLabel.href = queue.overviewURL;
+            releaseLabel.target = "_blank";
+            this.element.appendChild(releaseLabel);
+
+            appendFunction.call(this, queue);
+        }.bind(this));
+    },
+
     _updateQueues: function()
     {
         this.releaseQueues.forEach(function(queue) { queue.update(); });
@@ -316,4 +330,5 @@ BuildbotQueueView.prototype = {
     {
         this.updateSoon();
     }
+
 };
