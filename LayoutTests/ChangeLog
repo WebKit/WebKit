@@ -1,5 +1,20 @@
 2015-02-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178363
+
+    2015-01-13  Andreas Kling  <akling@apple.com>
+
+            Element::normalizeAttributes() needs to handle arbitrary JS executing between loop iterations.
+            <https://webkit.org/b/140379>
+            <rdar://problem/19446901>
+
+            Reviewed by Benjamin Poulain.
+
+            * fast/dom/Element/normalize-crash2-expected.txt: Added.
+            * fast/dom/Element/normalize-crash2.html: Added.
+
+2015-02-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177165
 
     2014-12-10  Dean Jackson  <dino@apple.com>
