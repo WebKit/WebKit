@@ -20,7 +20,7 @@ App.Metric = App.NameLabelModel.extend({
     aggregator: DS.attr('string'),
     label: function ()
     {
-        return this.get('name') + ' : ' + this.get('aggregator');
+        return this.get('name') + (this.get('aggregator') ? ' : ' + this.get('aggregator') : '');
     }.property('name', 'aggregator'),
     path: function ()
     {
