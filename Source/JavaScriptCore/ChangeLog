@@ -1,3 +1,25 @@
+2015-02-05  Saam Barati  <saambarati1@gmail.com>
+
+        Crash in uninitialized deconstructing variable.
+        https://bugs.webkit.org/show_bug.cgi?id=141070
+
+        Reviewed by Michael Saboff.
+
+        According to the ES6 spec, when a destructuring pattern occurs
+        as the left hand side of an assignment inside a var declaration 
+        statement, the assignment must also have a right hand side value.
+        "var {x} = {};" is a legal syntactic statement, but,
+        "var {x};" is a syntactic error.
+
+        Section 13.2.2 of the latest draft ES6 spec specifies this requirement:
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-variable-statement
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclaration):
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        (JSC::Parser<LexerType>::parseForStatement):
+        * parser/Parser.h:
+
 2015-02-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, fix a build break on EFL port since r179648.
