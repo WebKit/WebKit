@@ -450,6 +450,12 @@ sub xcodeSDK
     return $xcodeSDK;
 }
 
+sub setXcodeSDK($)
+{
+    ($xcodeSDK) = @_;
+}
+
+
 sub xcodeSDKPlatformName()
 {
     determineXcodeSDK();
