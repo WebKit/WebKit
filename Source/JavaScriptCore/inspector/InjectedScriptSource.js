@@ -626,7 +626,7 @@ InjectedScript.prototype = {
         function createFakeValueDescriptor(name, descriptor, isOwnProperty)
         {
             try {
-                return {name: name, value: object[name], writable: descriptor.writable, configurable: descriptor.configurable, enumerable: descriptor.enumerable};
+                return {name: name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
             } catch (e) {
                 var errorDescriptor = {name: name, value: e, wasThrown: true};
                 if (isOwnProperty)
@@ -635,7 +635,7 @@ InjectedScript.prototype = {
             }
         }
 
-        function processDescriptor(descriptor, isOwnProperty)
+        function processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             // Own properties only.
             if (ownProperties) {
@@ -652,7 +652,7 @@ InjectedScript.prototype = {
                 } else if (descriptor.hasOwnProperty("get") && descriptor.get) {
                     // Getter property in the prototype chain. Create a fake value descriptor.
                     descriptors.push(createFakeValueDescriptor(descriptor.name, descriptor, isOwnProperty));
-                } else if (descriptor.possibleNativeBindingGetter) {
+                } else if (possibleNativeBindingGetter) {
                     // Possible getter property in the prototype chain.
                     descriptors.push(descriptor);
                 }
@@ -686,8 +686,7 @@ InjectedScript.prototype = {
                     // Developers may create such a descriptors, so we should be resilient:
                     // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
                     var fakeDescriptor = createFakeValueDescriptor(name, descriptor, isOwnProperty);
-                    fakeDescriptor.possibleNativeBindingGetter = true; // Native bindings.
-                    processDescriptor(fakeDescriptor, isOwnProperty);
+                    processDescriptor(fakeDescriptor, isOwnProperty, true);
                     continue;
                 }
 
