@@ -1,5 +1,20 @@
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179567
+
+    2015-02-02  Enrica Casucci  <enrica@apple.com>
+
+            Additional emoji support.
+            https://bugs.webkit.org/show_bug.cgi?id=141047
+            rdar://problem/19045135
+
+            Reviewed by Darin Adler.
+
+            * editing/deleting/delete-emoji.html: Added.
+            * editing/deleting/delete-emoji-expected.txt: Added.
+
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178953
 
     2015-01-21  Joseph Pecoraro  <pecoraro@apple.com>

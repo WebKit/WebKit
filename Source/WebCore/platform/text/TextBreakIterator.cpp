@@ -207,6 +207,10 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$MalV    = \\u0D4D;"              // Malayalam Sign Virama
         "$Mal1    = [\\u0D15-\\u0D39];"    // Malayalam Letter A,...,Ha
         "$RI      = [\\U0001F1E6-\\U0001F1FF];" // Emoji regional indicators
+        "$ZWJ     = \\u200D;"               // Zero width joiner
+        "$EmojiForModsAndSeqs = [\\U0001F466-\\U0001F469];" // Emoji that take Fitzpatrick modifiers AND participate in ZWJ sequences
+        "$EmojiForModsOnly = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6B4-\\U0001F6B6 \\U0001F6C0];" // Emoji that take Fitzpatrick modifiers
+        "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];" // Fitzpatrick modifiers
         "!!chain;"
         "!!forward;"
         "$CR $LF;"
@@ -225,6 +229,8 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$Tel0 $TelV $Tel1;"               // Telugu Virama (forward)
         "$Kan0 $KanV $Kan1;"               // Kannada Virama (forward)
         "$Mal0 $MalV $Mal1;"               // Malayalam Virama (forward)
+        "$ZWJ $EmojiForModsAndSeqs;"       // Don't break in emoji ZWJ sequences
+        "[$EmojiForModsAndSeqs $EmojiForModsOnly] $EmojiMods;" // Don't break between relevant emoji and Fitzpatrick modifier
         "!!reverse;"
         "$LF $CR;"
         "($L | $V | $LV | $LVT) $L;"
@@ -242,6 +248,8 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$Tel1 $TelV $Tel0;"               // Telugu Virama (backward)
         "$Kan1 $KanV $Kan0;"               // Kannada Virama (backward)
         "$Mal1 $MalV $Mal0;"               // Malayalam Virama (backward)
+        "$EmojiForModsAndSeqs $ZWJ;"       // Don't break in emoji ZWJ sequences
+        "$EmojiMods [$EmojiForModsAndSeqs $EmojiForModsOnly];" // Don't break between relevant emoji and Fitzpatrick modifier
         "!!safe_reverse;"
         "!!safe_forward;";
     static TextBreakIterator* staticCursorMovementIterator = initializeIteratorWithRules(kRules);
