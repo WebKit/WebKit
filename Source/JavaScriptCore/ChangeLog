@@ -1,3 +1,18 @@
+2015-02-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r178875. rdar://problem/19617631
+
+    2015-01-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: ASSERT expanding objects in console PrimitiveBindingTraits<T>::assertValueHasExpectedType
+            https://bugs.webkit.org/show_bug.cgi?id=140746
+
+            Reviewed by Timothy Hatcher.
+
+            * inspector/InjectedScriptSource.js:
+            Do not add impure properties to the descriptor object that will
+            eventually be sent to the frontend.
+
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r171691.
