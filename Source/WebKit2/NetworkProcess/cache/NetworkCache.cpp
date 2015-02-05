@@ -226,31 +226,22 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
     }
 
     auto startTime = std::chrono::system_clock::now();
-
     NetworkCacheKey storageKey = makeCacheKey(originalRequest);
     unsigned priority = originalRequest.priority();
 
-    // Captured data is going to be shuffled around threads. Avoid unsafe copying.
-    struct Capture {
-        WebCore::ResourceRequest originalRequest;
-        std::function<void (std::unique_ptr<Entry>)> completionHandler;
-    };
-    // FIXME: With C++14 this could use unique_ptr and initialized lambda capture
-    auto capture = std::make_shared<Capture>(Capture { originalRequest, completionHandler });
-
-    m_storage->retrieve(storageKey, priority, [this, capture, startTime](std::unique_ptr<NetworkCacheStorage::Entry> entry) {
+    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime](std::unique_ptr<NetworkCacheStorage::Entry> entry) {
         if (!entry) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
-            capture->completionHandler(nullptr);
+            completionHandler(nullptr);
             return false;
         }
-        auto decodedEntry = decodeStorageEntry(*entry, capture->originalRequest);
+        auto decodedEntry = decodeStorageEntry(*entry, originalRequest);
         bool success = !!decodedEntry;
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
 #endif
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%u time=%lldms", success, capture->originalRequest.priority(), elapsedMS);
-        capture->completionHandler(WTF::move(decodedEntry));
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%u time=%lldms", success, originalRequest.priority(), elapsedMS);
+        completionHandler(WTF::move(decodedEntry));
         return success;
     });
 }

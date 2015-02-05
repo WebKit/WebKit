@@ -32,6 +32,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/BloomFilter.h>
 #include <wtf/Deque.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -157,8 +158,21 @@ private:
         NetworkCacheKey key;
         std::function<bool (std::unique_ptr<Entry>)> completionHandler;
     };
-    void dispatchRetrieveOperation(const RetrieveOperation&);
+    void dispatchRetrieveOperation(std::unique_ptr<const RetrieveOperation>);
     void dispatchPendingRetrieveOperations();
+
+    struct StoreOperation {
+        NetworkCacheKey key;
+        Entry entry;
+        std::function<void (bool success)> completionHandler;
+    };
+
+    struct UpdateOperation {
+        NetworkCacheKey key;
+        Entry entry;
+        Entry existingEntry;
+        std::function<void (bool success)> completionHandler;
+    };
 
     const String m_directoryPath;
 
@@ -168,11 +182,12 @@ private:
     std::atomic<size_t> m_approximateEntryCount { 0 };
     std::atomic<bool> m_shrinkInProgress { false };
 
-    Vector<Deque<RetrieveOperation>> m_pendingRetrieveOperationsByPriority;
-    unsigned m_activeRetrieveOperationCount { 0 };
+    static const int maximumRetrievePriority = 4;
+    Deque<std::unique_ptr<const RetrieveOperation>> m_pendingRetrieveOperationsByPriority[maximumRetrievePriority + 1];
 
-    typedef std::pair<NetworkCacheKey, Entry> KeyEntryPair;
-    HashMap<NetworkCacheKey::HashType, std::shared_ptr<KeyEntryPair>, AlreadyHashed> m_writeCache;
+    HashSet<std::unique_ptr<const RetrieveOperation>> m_activeRetrieveOperations;
+    HashSet<std::unique_ptr<const StoreOperation>> m_activeStoreOperations;
+    HashSet<std::unique_ptr<const UpdateOperation>> m_activeUpdateOperations;
 
 #if PLATFORM(COCOA)
     mutable DispatchPtr<dispatch_queue_t> m_ioQueue;

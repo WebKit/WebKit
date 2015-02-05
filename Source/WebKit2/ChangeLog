@@ -1,3 +1,39 @@
+2015-02-04  Antti Koivisto  <antti@apple.com>
+
+        Avoid copying std::functions across threads in NetworkCacheStorage
+        https://bugs.webkit.org/show_bug.cgi?id=141273
+
+        Reviewed by Andreas Kling.
+
+        The current approach is risky. There is possiblity that captured variables are
+        deleted in an unexpected thread.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::retrieve):
+
+            The capture trick here is no longer needed.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            For each cache operation we create Retrive/Store/UpdateOperation object kept alive by the active operation map.
+            This object captures all parameters of the operation including the lambda. When the operation completes
+            the object is removed from the map in the main thread, ensuring safe destruction.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation):
+        (WebKit::NetworkCacheStorage::dispatchPendingRetrieveOperations):
+        (WebKit::retrieveActive):
+
+            Instead of maintaining a separate write cache we just look through the active write and update maps.
+
+        (WebKit::NetworkCacheStorage::retrieve):
+
+            Use fixed sized priority array rather than a dynamic one. Vector<Deque<std::unique_ptr>> doesn't quite work.
+
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+        (WebKit::NetworkCacheStorage::clear):
+
 2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         [Streams API] Implement a barebone ReadableStream interface
