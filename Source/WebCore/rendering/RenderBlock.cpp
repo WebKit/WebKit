@@ -1965,7 +1965,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         result = blockSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
 
     // Go ahead and fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
-    if (&rootBlock == this && (selectionState() != SelectionBoth && selectionState() != SelectionEnd) && !isRubyBase()) {
+    if (&rootBlock == this && (selectionState() != SelectionBoth && selectionState() != SelectionEnd) && !isRubyBase() && !isRubyText()) {
         result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
             lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalHeight(), cache, paintInfo));
     }
@@ -2010,7 +2010,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         }
 
         bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isTable(); // FIXME: Eventually we won't special-case table like this.
-        bool fillBlockGaps = !isRubyBase() && (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != SelectionNone));
+        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != SelectionNone)) && !isRubyBase() && !isRubyText();
         if (fillBlockGaps) {
             // We need to fill the vertical gap above this object.
             if (childState == SelectionEnd || childState == SelectionInside) {
