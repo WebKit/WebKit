@@ -129,16 +129,17 @@ void NetworkCacheStorage::initialize()
     ASSERT(RunLoop::isMain());
 
     StringCapture cachePathCapture(m_directoryPath);
-    auto& diskContentsFilter = m_contentsFilter;
     auto& entryCount = m_approximateEntryCount;
 
-    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture, &diskContentsFilter, &entryCount] {
+    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture, &entryCount] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [&diskContentsFilter, &entryCount](const String& fileName, const String&) {
+        traverseCacheFiles(cachePath, [this, &entryCount](const String& fileName, const String&) {
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
-            diskContentsFilter.add(hash);
+            dispatch_async(dispatch_get_main_queue(), [this, hash] {
+                m_contentsFilter.add(hash);
+            });
             ++entryCount;
         });
     });

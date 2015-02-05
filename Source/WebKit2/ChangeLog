@@ -1,5 +1,18 @@
 2015-02-05  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][Cocoa] Populate m_contentsFilter bloom filter from the main dispatch queue NetworkCacheStorage::initialize()
+        https://bugs.webkit.org/show_bug.cgi?id=141297
+
+        Reviewed by Antti Koivisto.
+
+        Populate m_contentsFilter bloom filter from the main dispatch queue
+        NetworkCacheStorage::initialize() to avoid thread-safety issues.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::initialize):
+
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
         Use deleteFile() in NetworkCacheStorageCocoa.mm
         https://bugs.webkit.org/show_bug.cgi?id=141299
 
