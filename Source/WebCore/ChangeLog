@@ -1,3 +1,29 @@
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Free memory read under MemoryCache::pruneLiveResourcesToSize()
+        https://bugs.webkit.org/show_bug.cgi?id=141292
+        <rdar://problem/19725522>
+
+        Reviewed by Antti Koivisto.
+
+        In MemoryCache::pruneLiveResourcesToSize(), we were iterating over the
+        m_liveDecodedResources ListHashSet and possibly calling
+        CachedResource::destroyDecodedData() on the current value. Doing so
+        would cause a call to ListHashSet::remove() to remove the value pointed
+        by the current iterator, thus invalidating our iterator.
+
+        In this patch, we increment the ListHashSet iterator *before* calling
+        CachedResource::destroyDecodedData(), while the current iterator is
+        still valid. Note that this is safe because unlike iteration of most
+        WTF Hash data structures, iteration is guaranteed safe against mutation
+        of the ListHashSet, except for removal of the item currently pointed to
+        by a given iterator.
+
+        Test: http/tests/cache/memory-cache-pruning.html
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+
 2015-02-05  Jer Noble  <jer.noble@apple.com>
 
         [Mac] HLS <video> will not fire 'progress' events, only 'stalled'.

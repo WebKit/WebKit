@@ -62,7 +62,7 @@ class SecurityOrigin;
 class MemoryCache {
     WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED;
     friend NeverDestroyed<MemoryCache>;
-
+    friend class Internals;
 public:
     struct TypeStatistic {
         int count;
@@ -117,6 +117,7 @@ public:
     WEBCORE_EXPORT void evictResources();
     
     void prune();
+    unsigned size() const { return m_liveSize + m_deadSize; }
 
     void setDeadDecodedDataDeletionInterval(std::chrono::milliseconds interval) { m_deadDecodedDataDeletionInterval = interval; }
     std::chrono::milliseconds deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }

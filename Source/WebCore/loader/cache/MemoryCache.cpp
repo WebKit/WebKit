@@ -300,7 +300,18 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
     // elapsedTime will evaluate to false as the currentTime will be a lot
     // greater than the current->m_lastDecodedAccessTime.
     // For more details see: https://bugs.webkit.org/show_bug.cgi?id=30209
-    for (auto* current : m_liveDecodedResources) {
+    auto it = m_liveDecodedResources.begin();
+    while (it != m_liveDecodedResources.end()) {
+        auto* current = *it;
+
+        // Increment the iterator now because the call to destroyDecodedData() below
+        // may cause a call to ListHashSet::remove() and invalidate the current
+        // iterator. Note that this is safe because unlike iteration of most
+        // WTF Hash data structures, iteration is guaranteed safe against mutation
+        // of the ListHashSet, except for removal of the item currently pointed to
+        // by a given iterator.
+        ++it;
+
         ASSERT(current->hasClients());
         if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
@@ -311,9 +322,8 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
             if (current->decodedDataIsPurgeable())
                 continue;
 
-            // Destroy our decoded data. This will remove us from 
-            // m_liveDecodedResources, and possibly move us to a different LRU 
-            // list in m_allResources.
+            // Destroy our decoded data. This will remove us from m_liveDecodedResources, and possibly move us
+            // to a different LRU list in m_allResources.
             current->destroyDecodedData();
 
             if (targetSize && m_liveSize <= targetSize)

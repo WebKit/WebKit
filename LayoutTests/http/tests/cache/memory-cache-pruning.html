@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=stylesheet href=../css/resources/shared.css>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script>
+function runTest() {
+    previousSize = internals.memoryCacheSize();
+    shouldBeTrue("previousSize > 0");
+    internals.pruneMemoryCacheToSize(0);
+    shouldBeTrue("internals.memoryCacheSize() < previousSize");
+    finishJSTest();    
+}
+</script>
+</head>
+<body onload="runTest()">
+<img src="../resources/square100.png"/>
+<img src="../resources/square128.png"/>
+<audio src="../resources/test.mp4"></audio>
+<video src="../resources/test.mp4"></video>
+<script>
+description("This test exercices the code path executed when the memory cache reaches its maximum size");
+jsTestIsAsync = true;
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

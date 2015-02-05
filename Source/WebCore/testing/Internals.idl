@@ -44,6 +44,8 @@ enum PageOverlayType {
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
     void clearMemoryCache();
+    void pruneMemoryCacheToSize(long size);
+    long memoryCacheSize();
 
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 

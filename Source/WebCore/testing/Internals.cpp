@@ -409,6 +409,17 @@ void Internals::clearMemoryCache()
     MemoryCache::singleton().evictResources();
 }
 
+void Internals::pruneMemoryCacheToSize(unsigned size)
+{
+    MemoryCache::singleton().pruneDeadResourcesToSize(size);
+    MemoryCache::singleton().pruneLiveResourcesToSize(size, true);
+}
+
+unsigned Internals::memoryCacheSize() const
+{
+    return MemoryCache::singleton().size();
+}
+
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
 {
     if (!node) {
