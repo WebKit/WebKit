@@ -258,7 +258,7 @@ static inline void applyCSSPropertyToTargetAndInstances(SVGElement& targetElemen
 
     CSSPropertyID id = cssPropertyID(attributeName.localName());
 
-    SVGElementInstance::InstanceUpdateBlocker blocker(&targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     applyCSSPropertyToTarget(targetElement, id, valueAsString);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
@@ -274,7 +274,7 @@ static inline void removeCSSPropertyFromTargetAndInstances(SVGElement& targetEle
 
     CSSPropertyID id = cssPropertyID(attributeName.localName());
 
-    SVGElementInstance::InstanceUpdateBlocker blocker(&targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     removeCSSPropertyFromTarget(targetElement, id);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
@@ -293,7 +293,7 @@ static inline void notifyTargetAndInstancesAboutAnimValChange(SVGElement& target
     if (attributeName == anyQName() || !targetElement.inDocument() || !targetElement.parentNode())
         return;
 
-    SVGElementInstance::InstanceUpdateBlocker blocker(&targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     notifyTargetAboutAnimValChange(targetElement, attributeName);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.

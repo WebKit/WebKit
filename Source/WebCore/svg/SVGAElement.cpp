@@ -126,7 +126,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    InstanceInvalidationGuard guard(*this);
 
     // Unlike other SVG*Element classes, SVGAElement only listens to SVGURIReference changes
     // as none of the other properties changes the linking behaviour for our <a> element.

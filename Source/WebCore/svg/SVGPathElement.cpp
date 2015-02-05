@@ -259,7 +259,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    InstanceInvalidationGuard guard(*this);
 
     RenderSVGPath* renderer = downcast<RenderSVGPath>(this->renderer());
 

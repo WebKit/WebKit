@@ -206,7 +206,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    InstanceInvalidationGuard guard(*this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         buildPendingResource();
