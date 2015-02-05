@@ -1,3 +1,13 @@
+2015-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] add method to toggle playback when in the background
+        https://bugs.webkit.org/show_bug.cgi?id=141270
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController togglePlaybackEvenWhenInBackground:]): Added.
+
 2015-02-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Support ClearKey encryption with AES128-encrypted HLS

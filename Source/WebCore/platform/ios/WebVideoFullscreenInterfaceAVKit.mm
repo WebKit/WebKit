@@ -241,6 +241,11 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     self.delegate->togglePlayState();
 }
 
+- (void)togglePlaybackEvenWhenInBackground:(id)sender
+{
+    [self togglePlayback:sender];
+}
+
 - (BOOL)isPlaying
 {
     return [self rate] != 0;
