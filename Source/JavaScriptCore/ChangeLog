@@ -1,5 +1,14 @@
 2015-02-04  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: Changed expected ERROR message to WARNING to make test bots happy.
+
+        Rubber stamped by Simon Fraser.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+
+2015-02-04  Mark Lam  <mark.lam@apple.com>
+
         r179576 introduce a deadlock potential during GC thread suspension.
         <https://webkit.org/b/141268>
 

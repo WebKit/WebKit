@@ -467,8 +467,7 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
                 kern_return_t error = thread_suspend(thread->platformThread);
                 ASSERT(error != KERN_SUCCESS);
 
-                WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
-                    "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] platformThread %p.",
+                WTFLogAlways("WARNING: JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] platformThread %p.",
                     error, index, numberOfThreads, thread, reinterpret_cast<void*>(thread->platformThread));
 
                 // Put the invalid thread on the threadsToBeDeleted list.
