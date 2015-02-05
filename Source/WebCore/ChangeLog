@@ -1,3 +1,13 @@
+2015-02-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed project file corrections.
+
+        Correct some parsing errors caused by recent manual editing of
+        the project files.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2015-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add method to toggle playback when in the background

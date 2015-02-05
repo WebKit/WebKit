@@ -7210,7 +7210,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObject.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\Font.cpp" />
+    <ClCompile Include="..\platform\graphics\Font.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -14912,6 +14914,7 @@
     </ClInclude>
     <ClInclude Include="..\svg\SVGURIReference.h">
       <Filter>svg</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\encryptedmedia\CDMPrivateClearKey.h">
       <Filter>Modules\encryptedmedia</Filter>
     </ClInclude>
@@ -15137,12 +15140,24 @@
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObject.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLQuery.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSampler.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSync.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLTransformFeedback.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLVertexArrayObject.h" />
-    <ClInclude Include="..\platform\graphics\Font.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLQuery.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSampler.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSync.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLTransformFeedback.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLVertexArrayObject.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\Font.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
