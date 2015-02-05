@@ -70,10 +70,10 @@ fast/images/animated-gif-window-resizing.html [ Skip ]
 fast/images/animated-gif-zooming.html [ Skip ]
 
 # Mavericks and prior do not support contentInset
-[ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
-[ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing-in-frame.html [ Skip ]
-[ MountainLion Mavericks ] platform/mac/fast/scrolling/scroll-select-bottom-test.html [ Skip ]
-[ MountainLion Mavericks ] platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html [ Skip ]
+[ Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
+[ Mavericks ] platform/mac/fast/events/content-inset-hit-testing-in-frame.html [ Skip ]
+[ Mavericks ] platform/mac/fast/scrolling/scroll-select-bottom-test.html [ Skip ]
+[ Mavericks ] platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html [ Skip ]
 
 # WK1 uses the native scrollview for scrolling by page.
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html

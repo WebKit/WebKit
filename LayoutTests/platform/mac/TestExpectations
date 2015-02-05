@@ -463,14 +463,6 @@ http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 webkit.org/b/124935 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 webkit.org/b/124935 [ Yosemite ] webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 
-# Some WebGL tests don't work properly on MountainLion
-[ MountainLion ] webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Pass Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Crash Pass Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
-
 [ Yosemite ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 
 # Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
@@ -518,7 +510,7 @@ plugins/npruntime/invoke-failure.html
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
-[ MountainLion Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
+[ Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
 # Needs ENABLE_SHADOW_DOM
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
@@ -632,11 +624,6 @@ webkit.org/b/84186 fast/text-autosizing
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
-webkit.org/b/126624 [ MountainLion ] webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Pass Failure Timeout ]
-
-# MountainLion doesn't support textures this large.
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Skip ]
-
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
@@ -729,7 +716,6 @@ webkit.org/b/112176 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyF
 webkit.org/b/112176 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
-# webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
 
 # Always very slow, frequently timing out (only on bots, not locally).
 webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
@@ -766,24 +752,18 @@ webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
-webkit.org/b/122508 [ MountainLion ] compositing/video/video-reflection.html [ Pass Timeout ]
-webkit.org/b/138662 [ MountainLion ] compositing/video/video-border-radius.html [ Skip ]
-
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/123369 [ Mavericks+ ] svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/123369 [ Mavericks+ ] svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/100846, webkit.org/b/136715
 inspector-protocol/debugger
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Pass Failure ]
-
-# SubtleCrypto is disabled on Mountain Lion
-webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 
@@ -801,8 +781,7 @@ webkit.org/b/123029 [ Debug ] platform/mac/editing/attributed-string [ Pass Cras
 
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Failure ]
 
-webkit.org/b/126455 [ MountainLion ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
-webkit.org/b/126586 [ Mavericks+ ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
+webkit.org/b/126586 webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
 
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 
@@ -818,10 +797,6 @@ webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncom
 
 # Some CSS region expected tests do not properly match CSS region's behavior.
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
-
-# These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
-[ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 
@@ -850,8 +825,8 @@ webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # These tests require an OpenType MATH font on the Apple bots.
-webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/large-operators.html [ Failure ]
-webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical.html [ Failure ]
+webkit.org/b/130322 [ Mavericks ] mathml/opentype/large-operators.html [ Failure ]
+webkit.org/b/130322 [ Mavericks ] mathml/opentype/vertical.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 
@@ -870,7 +845,7 @@ webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-[ MountainLion Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
+[ Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
 
 # <rdar://problem/16696298>
 webkit.org/b/131886 webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
@@ -879,22 +854,22 @@ webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
 
 # Mavericks and prior do not support web timing.
-[ MountainLion Mavericks ] fast/dom/navigation-type-back-forward.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/navigation-type-navigate.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/navigation-type-reload.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/webtiming-document-open.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/webtiming-navigate-within-document.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/webtiming.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/Window/web-timing-minimal-performance-now.html [ WontFix ]
-[ MountainLion Mavericks ] fast/dom/Window/window-properties-performance.html [ WontFix ]
-[ MountainLion Mavericks ] fast/performance [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-cross-origin-and-back1.html [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-cross-origin-redirect.php [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-no-origin.html [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-one-redirect.php [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-slow-load.php [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-ssl.php [ WontFix ]
-[ MountainLion Mavericks ] http/tests/misc/webtiming-two-redirects.php [ WontFix ]
+[ Mavericks ] fast/dom/navigation-type-back-forward.html [ WontFix ]
+[ Mavericks ] fast/dom/navigation-type-navigate.html [ WontFix ]
+[ Mavericks ] fast/dom/navigation-type-reload.html [ WontFix ]
+[ Mavericks ] fast/dom/webtiming-document-open.html [ WontFix ]
+[ Mavericks ] fast/dom/webtiming-navigate-within-document.html [ WontFix ]
+[ Mavericks ] fast/dom/webtiming.html [ WontFix ]
+[ Mavericks ] fast/dom/Window/web-timing-minimal-performance-now.html [ WontFix ]
+[ Mavericks ] fast/dom/Window/window-properties-performance.html [ WontFix ]
+[ Mavericks ] fast/performance [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-cross-origin-and-back1.html [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-cross-origin-redirect.php [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-no-origin.html [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-one-redirect.php [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-slow-load.php [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-ssl.php [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-two-redirects.php [ WontFix ]
 
 # This test, originally written for Chromium, historically was not testing anything on Mac because
 # resizing didn't work. Now the test fails. I believe this bug was never fixed for the Mac port.
@@ -905,10 +880,6 @@ webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
-
-webkit.org/b/131787 [ MountainLion ] fast/canvas/canvas-putImageData-zero-alpha.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/136718 fast/dynamic/layer-no-longer-paginated.html [ Skip ]
 
@@ -969,46 +940,16 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 media/track/track-datacue.html [ Skip ]
 ## --- End unimplemeted media tests ---
 
-## --- Start media tests failing on Mountain Lion and earlier ---
-# Mountain Lion and prior do not support custom media data loading
-Bug(jernoble) [ MountainLion ] media/video-src-blob.html [ WontFix ]
-
-# Mountain Lion and prior do not allow access to in-band text tracks
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html [ WontFix ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html [ WontFix ]
-
-# Mountain Lion and prior do not support HLS timed metadata
-Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ WontFix ]
-
-# Frequently times out on EWS, which is then misreported as crash.
-webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
-
-webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
-webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure Timeout ]
-webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Timeout ]
-webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Timeout ]
-webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Timeout ]
-[ MountainLion ] media/video-playbackrate.html [ Pass Failure Timeout ]
-
-# Mountain Lion and earlier do not support Encrypted Media Extensions.
-Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ WontFix ]
-## --- End media tests failing on Mountain Lion and earlier ---
-
 ## --- Start media tests failing on Mavericks and earlier ---
-# HTTP Auth in Media is not supported in Mavericks and Mountain Lion
-webkit.org/b/40382 [ Mavericks MountainLion ] http/tests/media/video-auth.html [ WontFix ]
+# HTTP Auth in Media is not supported in Mavericks
+webkit.org/b/40382 [ Mavericks ] http/tests/media/video-auth.html [ WontFix ]
 
 # HTML sandboxing produces two or three messages flakily.
 webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 
 # Mavericks and prior do not support Media Source.
-[ MountainLion Mavericks ] media/media-source [ WontFix ]
-[ MountainLion Mavericks ] http/tests/media/media-source/ [ WontFix ]
+[ Mavericks ] media/media-source [ WontFix ]
+[ Mavericks ] http/tests/media/media-source/ [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
 ## --- Start flaky media tests ---
@@ -1029,8 +970,8 @@ webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Timeout ]
 webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
 webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Timeout ]
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Timeout ]
-webkit.org/b/123522 [ Mavericks+ ] media/track/track-in-band-legacy-api.html [ Pass Failure Crash ]
-webkit.org/b/128312 [ Mavericks+ ] media/video-load-preload-metadata.html [ Pass Failure ]
+webkit.org/b/123522 media/track/track-in-band-legacy-api.html [ Pass Failure Crash ]
+webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
 webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure Timeout ]
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
@@ -1046,7 +987,6 @@ webkit.org/b/135160 [ Mavericks ] media/track/track-in-band-subtitles-too-large.
 webkit.org/b/135160 [ Yosemite+ ] media/track/track-in-band-subtitles-too-large.html [ Pass Failure Timeout Crash ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
-webkit.org/b/138798 [ MountainLion ] media/track/track-cues-sorted-before-dispatch.html [ Pass Failure Timeout ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/141084 [ Yosemite ] http/tests/media/video-preload.html [ Pass Timeout ]
@@ -1119,8 +1059,7 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.htm
 
 webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
 
-[ MountainLion ] media/media-document-audio-repaint.html [ Timeout ]
-[ Mavericks+ ] media/media-document-audio-repaint.html [ Failure ]
+media/media-document-audio-repaint.html [ Failure ]
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
@@ -1132,7 +1071,7 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-tra
 # REGRESSION(r156546): 7 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
-webkit.org/b/122021 [ Mavericks+ ] media/track/track-in-band-mode.html [ Failure ]
+webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
@@ -1156,13 +1095,11 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 # Some inspector tests failing after r173992
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Pass Failure Crash ]
 
-webkit.org/b/137319 [ MountainLion ] fast/css/test-setting-canvas-color.html [ Pass Crash Timeout ]
-
 # FIXME: Needs bugzilla (<rdar://problem/15393179>)
 [ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 [ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Failure ]
 
-webkit.org/b/137505 [ Mavericks+ ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
+webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15971968>)
 [ Yosemite+ ] platform/mac/accessibility/misspelled-attributed-string.html [ Pass Failure ]
@@ -1203,7 +1140,6 @@ webkit.org/b/137505 [ Mavericks+ ] media/track/track-forced-subtitles-in-band.ht
 # FIXME: Needs bugzilla (<rdar://problem/17458211>)
 [ Yosemite+ ] platform/mac/fast/text/systemFont.html [ Pass Failure ]
 [ Mavericks ] platform/mac/fast/text/systemFont.html [ Failure ]
-[ MountainLion ] platform/mac/fast/text/systemFont.html [ Pass ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17476688>)
 [ Yosemite+ ] media/media-source/media-source-tracks.html [ Skip ]
@@ -1263,7 +1199,7 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 [ Yosemite+ ] inspector/test-harness-trivially-works.html [ Skip ]
 
 # Specific to Yosemite's font fallback
-webkit.org/b/138328 [ Mavericks MountainLion ] platform/mac/fast/text/font-cursive-italic-cjk.html [ Skip ]
+webkit.org/b/138328 [ Mavericks ] platform/mac/fast/text/font-cursive-italic-cjk.html [ Skip ]
 
 webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeout ]
 
@@ -1273,43 +1209,16 @@ webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFail
 webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
 
 # Backdrop filters are supported in Yosemite and above only.
-[ MountainLion Mavericks ] css3/filters/backdrop [ WontFix ]
+[ Mavericks ] css3/filters/backdrop [ WontFix ]
 
-# These tests pass with a very small difference on 10.8 EWS bots that have ATI graphics cards, and fail on ones with NVidia cards.
-[ MountainLion ] compositing/hidpi-compositing-layer-with-subpixel-offset-accumulation-clipping.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] compositing/hidpi-compositing-layer-with-zero-sized-container.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass ImageOnlyFailure ]
-# Probably the same issue as above, but noticed earlier
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
-# More tests that pass on all regression test bots, but flakily fail on 10.8 EWS, possibly also on ATI graphics only.
-[ MountainLion ] fast/borders/hidpi-border-radius-outer-border-goes-rectangle.html [ Pass ImageOnlyFailure ]
-[ MountainLion ] fast/canvas/canvas-fillRect-shadow.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/canvas-scale-fillRect-shadow.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/canvas-scale-shadowBlur.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/canvas-shadow.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/canvas-transforms-fillRect-shadow.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/array-bounds-clamping.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/oes-texture-half-float-with-image.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565.html [ Pass Failure ]
-[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image.html [ Pass Failure ]
-webkit.org/b/81599 [ MountainLion ] canvas/philip/tests/2d.path.arc.scale.1.html [ Pass Failure ]
-webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-createPattern-fillRect-shadow.html [ Pass Failure ]
-webkit.org/b/81599 [ MountainLion ] fast/canvas/set-colors.html [ Pass Failure ]
-webkit.org/b/93560 [ MountainLion ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Pass Failure ]
-
-# These are like the above. They used to fail on 10.8 EWS, and they still fail on 10.9 EWS, presumably also on ATI graphics only.
-webkit.org/b/93560 [ MountainLion Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
-webkit.org/b/93560 [ MountainLion Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
-webkit.org/b/93560 [ MountainLion Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
-webkit.org/b/93560 [ MountainLion Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
-webkit.org/b/93560 [ MountainLion Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
+# They used to fail on 10.8 EWS, and they still fail on 10.9 EWS, presumably also on ATI graphics only.
+webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
+webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
+webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
+webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
+webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
 
 # These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
@@ -1317,177 +1226,166 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
 # Kerning, Ligatures, and Printer Fonts caused these tests to fail
 # The following tests are reftests
-webkit.org/b/139968 [ Mavericks+ ] css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/object-fit/object-fit-canvas.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/lists/rtl-marker.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/multicol/cell-shrinkback.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/multicol/newmulticol/breaks-3-columns-3.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/multicol/newmulticol/spanner-table.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/last-region-border-radius.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/table/td-width-fifty-percent-regression.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/font-kerning.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/whitespace/inline-whitespace-wrapping-7.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] imported/mozilla/svg/dynamic-text-07.svg [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/tspan-outline.html [ ImageOnlyFailure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/139968 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/object-fit/object-fit-canvas.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/lists/rtl-marker.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/multicol/cell-shrinkback.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/multicol/newmulticol/breaks-3-columns-3.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/multicol/newmulticol/spanner-table.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/last-region-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/table/td-width-fifty-percent-regression.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/text/font-kerning.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/text/whitespace/inline-whitespace-wrapping-7.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/139968 imported/mozilla/svg/dynamic-text-07.svg [ ImageOnlyFailure ]
+webkit.org/b/139968 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
+webkit.org/b/139968 platform/mac/fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
+webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
+webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 # The following tests' expected results don't look like render tree dumps
-webkit.org/b/139968 [ Mavericks+ ] accessibility/press-targets-center-point.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/pasteboard/5761530-1.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/fake-drag.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/move-by-word-visually-mac.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/canvas/canvas-measureText-ideographicSpace.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/content/content-quotes-01.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/content/content-quotes-05.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/content/content-quotes-07.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/css3-ch-unit.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/dom/Element/getClientRects.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/dom/Range/getClientRects.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/cssom/get-regions-by-content-horiz-bt.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/regions/cssom/get-regions-by-content-horiz-tb.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/repaint/selection-ruby-rl.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/sub-pixel/inline-block-with-padding.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/table/col-and-colgroup-offsets.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/decomposed-after-stacked-diacritics.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/glyph-reordering.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/content-editable-as-textarea.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-attributes.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-cell-spans.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-cells.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-detection.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-one-cell.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-sections.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] accessibility/table-with-rules.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/5057506-2.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/5057506.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/5825350-2.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] editing/selection/mixed-editability-10.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/forms/basic-textareas.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/forms/cursor-at-editable-content-boundary.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/frames/frame-scrolling-attribute.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/repaint/line-flow-with-floats-9.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/repaint/selection-rl.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/vertical-text-metrics-test.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] http/tests/navigation/javascriptlink-frames.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/masking-path-04-b.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/batik/text/textEffect2.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/batik/text/textEffect3.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/batik/text/textProperties.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/custom/text-filter.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/filters/filter-on-filter-for-text.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/filters/filter-on-tspan.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/filters/sourceAlpha.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug131020.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/animations/animate-text-nested-transforms.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/filters/feColorMatrix-values.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/repaint/text-mask-update.svg [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/lengthAdjust-text-metrics.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/text-rect-precision.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/accessibility/aria-columnrowheaders.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/accessibility/bounds-for-range.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/accessibility/document-links.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/accessibility/internal-link-anchors.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/fast/dom/character-index-for-point.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css1/box_properties/acid_test.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css2.1/t09-c5526c-display-00-e.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css2.1/t1202-counter-04-b.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css2.1/t1202-counters-04-b.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css3/selectors3/html/css3-modsel-161.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css3/selectors3/xhtml/css3-modsel-161.xml [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] css3/selectors3/xml/css3-modsel-161.xml [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/block/basic/011.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/block/basic/minheight.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/css/002.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/forms/focus-selection-textarea.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/forms/select-initial-position.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/invalid/008.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/overflow/003.xml [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/replaced/width100percent-textarea.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/basic/generic-family-reset.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/glyph-reordering.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/text-combine-image-test.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/video-layer-crash.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] scrollbars/overflow-scrollbar-combinations.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/custom/svg-fonts-in-html.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/video-layer-crash.html [ Failure ]
-# These tests have different expected results in mac-wk2 and mountainlion-wk2
-webkit.org/b/139968 [ MountainLion ] editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/block/basic/020.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/dynamic/012.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/dynamic/layer-hit-test-crash.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/layers/layer-visibility-sublayer.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/layers/layer-visibility.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/repaint/invisible-objects.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] fast/text/whitespace/028.html [ Failure ]
-webkit.org/b/139968 [ MountainLion ] platform/mac/editing/spelling/autocorrection-contraction.html [ Failure ]
+webkit.org/b/139968 accessibility/press-targets-center-point.html [ Failure ]
+webkit.org/b/139968 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
+webkit.org/b/139968 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
+webkit.org/b/139968 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+webkit.org/b/139968 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/139968 editing/pasteboard/5761530-1.html [ Failure ]
+webkit.org/b/139968 editing/selection/fake-drag.html [ Failure ]
+webkit.org/b/139968 editing/selection/move-by-word-visually-mac.html [ Failure ]
+webkit.org/b/139968 fast/canvas/canvas-measureText-ideographicSpace.html [ Failure ]
+webkit.org/b/139968 fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution.html [ Failure ]
+webkit.org/b/139968 fast/css/content/content-quotes-01.html [ Failure ]
+webkit.org/b/139968 fast/css/content/content-quotes-05.html [ Failure ]
+webkit.org/b/139968 fast/css/content/content-quotes-07.html [ Failure ]
+webkit.org/b/139968 fast/css/css3-ch-unit.html [ Failure ]
+webkit.org/b/139968 fast/dom/Element/getClientRects.html [ Failure ]
+webkit.org/b/139968 fast/dom/Range/getClientRects.html [ Failure ]
+webkit.org/b/139968 fast/regions/cssom/get-regions-by-content-horiz-bt.html [ Failure ]
+webkit.org/b/139968 fast/regions/cssom/get-regions-by-content-horiz-tb.html [ Failure ]
+webkit.org/b/139968 fast/repaint/selection-ruby-rl.html [ Failure ]
+webkit.org/b/139968 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
+webkit.org/b/139968 fast/table/col-and-colgroup-offsets.html [ Failure ]
+webkit.org/b/139968 fast/text/decomposed-after-stacked-diacritics.html [ Failure ]
+webkit.org/b/139968 fast/text/glyph-reordering.html [ Failure ]
+webkit.org/b/139968 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
+webkit.org/b/139968 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+webkit.org/b/139968 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
+webkit.org/b/139968 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
+webkit.org/b/139968 accessibility/content-editable-as-textarea.html [ Failure ]
+webkit.org/b/139968 accessibility/table-attributes.html [ Failure ]
+webkit.org/b/139968 accessibility/table-cell-spans.html [ Failure ]
+webkit.org/b/139968 accessibility/table-cells.html [ Failure ]
+webkit.org/b/139968 accessibility/table-detection.html [ Failure ]
+webkit.org/b/139968 accessibility/table-one-cell.html [ Failure ]
+webkit.org/b/139968 accessibility/table-sections.html [ Failure ]
+webkit.org/b/139968 accessibility/table-with-rules.html [ Failure ]
+webkit.org/b/139968 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
+webkit.org/b/139968 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
+webkit.org/b/139968 editing/selection/5057506-2.html [ Failure ]
+webkit.org/b/139968 editing/selection/5057506.html [ Failure ]
+webkit.org/b/139968 editing/selection/5825350-2.html [ Failure ]
+webkit.org/b/139968 editing/selection/mixed-editability-10.html [ Failure ]
+webkit.org/b/139968 fast/forms/basic-textareas.html [ Failure ]
+webkit.org/b/139968 fast/forms/cursor-at-editable-content-boundary.html [ Failure ]
+webkit.org/b/139968 fast/forms/text-control-intrinsic-widths.html [ Failure ]
+webkit.org/b/139968 fast/frames/frame-scrolling-attribute.html [ Failure ]
+webkit.org/b/139968 fast/repaint/line-flow-with-floats-9.html [ Failure ]
+webkit.org/b/139968 fast/repaint/selection-rl.html [ Failure ]
+webkit.org/b/139968 fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
+webkit.org/b/139968 fast/text/international/vertical-text-metrics-test.html [ Failure ]
+webkit.org/b/139968 http/tests/navigation/javascriptlink-frames.html [ Failure ]
+webkit.org/b/139968 svg/W3C-SVG-1.1/masking-path-04-b.svg [ Failure ]
+webkit.org/b/139968 svg/batik/text/textEffect2.svg [ Failure ]
+webkit.org/b/139968 svg/batik/text/textEffect3.svg [ Failure ]
+webkit.org/b/139968 svg/batik/text/textProperties.svg [ Failure ]
+webkit.org/b/139968 svg/custom/text-filter.svg [ Failure ]
+webkit.org/b/139968 svg/filters/filter-on-filter-for-text.svg [ Failure ]
+webkit.org/b/139968 svg/filters/filter-on-tspan.svg [ Failure ]
+webkit.org/b/139968 svg/filters/sourceAlpha.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
+webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
+webkit.org/b/139968 tables/mozilla/bugs/bug131020.html [ Failure ]
+webkit.org/b/139968 svg/animations/animate-text-nested-transforms.html [ Failure ]
+webkit.org/b/139968 svg/filters/feColorMatrix-values.svg [ Failure ]
+webkit.org/b/139968 svg/repaint/text-mask-update.svg [ Failure ]
+webkit.org/b/139968 svg/text/lengthAdjust-text-metrics.html [ Failure ]
+webkit.org/b/139968 svg/text/text-rect-precision.html [ Failure ]
+webkit.org/b/139968 platform/mac/accessibility/aria-columnrowheaders.html [ Failure ]
+webkit.org/b/139968 platform/mac/accessibility/bounds-for-range.html [ Failure ]
+webkit.org/b/139968 platform/mac/accessibility/document-links.html [ Failure ]
+webkit.org/b/139968 platform/mac/accessibility/internal-link-anchors.html [ Failure ]
+webkit.org/b/139968 platform/mac/fast/dom/character-index-for-point.html [ Failure ]
+webkit.org/b/139968 css1/box_properties/acid_test.html [ Pass Failure ]
+webkit.org/b/139968 css2.1/t09-c5526c-display-00-e.html [ Pass Failure ]
+webkit.org/b/139968 css2.1/t1202-counter-04-b.html [ Pass Failure ]
+webkit.org/b/139968 css2.1/t1202-counters-04-b.html [ Pass Failure ]
+webkit.org/b/139968 css3/selectors3/html/css3-modsel-161.html [ Failure ]
+webkit.org/b/139968 css3/selectors3/xhtml/css3-modsel-161.xml [ Failure ]
+webkit.org/b/139968 css3/selectors3/xml/css3-modsel-161.xml [ Failure ]
+webkit.org/b/139968 fast/block/basic/011.html [ Pass Failure ]
+webkit.org/b/139968 fast/block/basic/minheight.html [ Pass Failure ]
+webkit.org/b/139968 fast/css/002.html [ Pass Failure ]
+webkit.org/b/139968 fast/forms/focus-selection-textarea.html [ Failure ]
+webkit.org/b/139968 fast/forms/select-initial-position.html [ Failure ]
+webkit.org/b/139968 fast/invalid/008.html [ Pass Failure ]
+webkit.org/b/139968 fast/overflow/003.xml [ Pass Failure ]
+webkit.org/b/139968 fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
+webkit.org/b/139968 fast/replaced/width100percent-textarea.html [ Failure ]
+webkit.org/b/139968 fast/text/basic/generic-family-reset.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/glyph-reordering.html [ Failure ]
+webkit.org/b/139968 fast/text/international/text-combine-image-test.html [ Failure ]
+webkit.org/b/139968 media/video-layer-crash.html [ Failure ]
+webkit.org/b/139968 scrollbars/overflow-scrollbar-combinations.html [ Pass Failure ]
+webkit.org/b/139968 svg/custom/svg-fonts-in-html.html [ Pass Failure ]
+webkit.org/b/139968 media/video-layer-crash.html [ Failure ]
+
 # Fails on Mountain Lion and Yosemite on bots.
 webkit.org/b/139968 fast/text/atsui-rtl-override-selection.html [ Failure ]
 # These tests became flaky, text width gets slightly off.
-webkit.org/b/139968 [ Mavericks+ ] fast/block/margin-collapse/103.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/dom/52776.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/complex-text-opacity.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/hyphenate-locale.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/arabic-justify.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/bidi-AN-after-L.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/bidi-mirror-he-ar.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/bidi-neutral-directionality-paragraph-start.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/international/bidi-neutral-run.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1-SE/text-intro-05-t.svg [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/text-intro-05-t.svg [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] svg/text/text-intro-05-t.svg [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/controls-after-reload.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/139968 fast/block/margin-collapse/103.html [ Pass Failure ]
+webkit.org/b/139968 fast/dom/52776.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/complex-text-opacity.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/hyphenate-locale.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/international/arabic-justify.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/international/bidi-AN-after-L.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/international/bidi-mirror-he-ar.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/international/bidi-neutral-directionality-paragraph-start.html [ Pass Failure ]
+webkit.org/b/139968 fast/text/international/bidi-neutral-run.html [ Pass Failure ]
+webkit.org/b/139968 platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
+webkit.org/b/139968 sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Pass Failure ]
+webkit.org/b/139968 sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Pass Failure ]
+webkit.org/b/139968 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Pass Failure ]
+webkit.org/b/139968 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Pass Failure ]
+webkit.org/b/139968 svg/W3C-SVG-1.1-SE/text-intro-05-t.svg [ Pass Failure ]
+webkit.org/b/139968 svg/W3C-SVG-1.1/text-intro-05-t.svg [ Pass Failure ]
+webkit.org/b/139968 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
+webkit.org/b/139968 svg/text/text-intro-05-t.svg [ Pass Failure ]
+webkit.org/b/139968 tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
+webkit.org/b/139968 media/controls-after-reload.html [ Pass Failure ]
+webkit.org/b/139968 media/controls-without-preload.html [ Pass Failure ]
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]

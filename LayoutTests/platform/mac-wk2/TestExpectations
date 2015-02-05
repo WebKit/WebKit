@@ -215,10 +215,7 @@ webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.h
 webkit.org/b/117767 media/broken-video.html [ Timeout ]
 webkit.org/b/117767 media/event-attributes.html [ Timeout ]
 
-[ MountainLion ] media/video-played-collapse.html [ Timeout ]
-webkit.org/b/117962 [ Mavericks+ ] media/video-played-collapse.html [ Pass Failure ]
-
-webkit.org/b/81604 [ MountainLion ] media/video-loop.html [ Pass Timeout ]
+webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
@@ -254,10 +251,8 @@ webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [
 webkit.org/b/136554 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 webkit.org/b/139901 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html [ Pass Failure ]
 
-webkit.org/b/139820 [ Mavericks+ ] fast/frames/lots-of-objects.html [ Timeout ]
-webkit.org/b/139820 [ Mavericks+ ] fast/frames/lots-of-iframes.html [ Timeout ]
-webkit.org/b/121452 [ MountainLion Debug ] fast/frames/lots-of-objects.html [ Slow ]
-webkit.org/b/121452 [ MountainLion Debug ] fast/frames/lots-of-iframes.html [ Slow ]
+webkit.org/b/139820 fast/frames/lots-of-objects.html [ Timeout ]
+webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Timeout ]
 
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
@@ -310,11 +305,7 @@ webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 webkit.org/b/133227 plugins/snapshotting/set-plugin-size-to-tiny.html [ Failure ]
 webkit.org/b/133227 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
-webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
-
 fast/dom/frame-loading-via-document-write.html [ Timeout ]
-
-[ MountainLion ] fast/events/page-visibility-iframe-move-test.html [ Pass Failure ]
 
 [ Yosemite+ ] fast/speechsynthesis/speech-synthesis-cancel.html [ Pass Timeout ]
 
@@ -461,46 +452,46 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 ########################################
 ### START OF (6) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
 
-[ Mavericks+ ] fast/dom/call-a-constructor-as-a-function.html [ Failure ]
-[ Mavericks+ ] js/dom/constructor-length.html [ Failure ]
-[ Mavericks+ ] js/dom/global-constructors-attributes.html [ Failure ]
+fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+js/dom/constructor-length.html [ Failure ]
+js/dom/global-constructors-attributes.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
-[ Mavericks+ ] http/tests/security/appcache-in-private-browsing.html [ Skip ]
-[ Mavericks+ ] http/tests/security/appcache-switching-private-browsing.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
-[ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
-[ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cross-frame-access-private-browsing.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
-[ Mavericks+ ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
-[ Mavericks+ ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
-[ Mavericks+ ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
-[ Mavericks+ ] plugins/private-browsing-mode-2.html [ Skip ]
-[ Mavericks+ ] plugins/private-browsing-mode.html [ Skip ]
-[ Mavericks+ ] storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
-[ Mavericks+ ] storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
-[ Mavericks+ ] storage/websql/private-browsing-noread-nowrite.html [ Skip ]
+http/tests/security/appcache-in-private-browsing.html [ Skip ]
+http/tests/security/appcache-switching-private-browsing.html [ Skip ]
+http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
+http/tests/security/cross-frame-access-private-browsing.html [ Skip ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
+plugins/private-browsing-mode-2.html [ Skip ]
+plugins/private-browsing-mode.html [ Skip ]
+storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
+storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
+storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 
 # testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
-webkit.org/b/138687 [ Mavericks+ ] http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
-webkit.org/b/138687 [ Mavericks+ ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
+webkit.org/b/138687 http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/12829991>)
 # PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
-webkit.org/b/138688 [ Mavericks+ ] http/tests/navigation/ping-cookie.html [ Skip ]
+webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
-webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ]
-webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
-webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
-webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ]
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 
 # This test times out, likely because appcache still loads in WebProcess, not NetworkProcess
-webkit.org/b/138736 [ Mavericks+ ] http/tests/appcache/auth.html [ Skip ]
+webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
