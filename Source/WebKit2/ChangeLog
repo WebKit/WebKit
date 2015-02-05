@@ -1,3 +1,18 @@
+2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Selection callout does not follow selection when double-tap scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=141214
+
+        Reviewed by Benjamin Poulain.
+
+        Implement the delegate that gets called after UIScrollView
+        setContentOffset animations. When scrolling to a rect, do the normal
+        willScroll, didScroll actions to update the selection assistant.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]):
+        (-[WKWebView scrollViewDidEndScrollingAnimation:]):
+
 2015-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Layers that are created and destroyed in the same transaction shouldn't be encoded

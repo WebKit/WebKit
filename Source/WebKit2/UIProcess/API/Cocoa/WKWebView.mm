@@ -1019,7 +1019,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
-    // FIMXE: Some of this could be shared with _scrollToRect.
+    // FIXME: Some of this could be shared with _scrollToRect.
     const double visibleRectScaleChange = contentZoomScale(self) / scale;
     const WebCore::FloatRect visibleRect([self convertRect:self.bounds toView:self._currentContentView]);
     const WebCore::FloatRect unobscuredRect([self _contentRectForUserInteraction]);
@@ -1111,6 +1111,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     float scrollDistance = scrollViewOffsetDelta.diagonalLength();
     if (scrollDistance < minimumScrollDistance)
         return false;
+
+    [_contentView willStartZoomOrScroll];
 
     [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
     return true;
@@ -1404,6 +1406,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     ASSERT(scrollView == _scrollView);
     [self _updateVisibleContentRects];
     [_contentView didZoomToScale:scale];
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    [self _didFinishScrolling];
 }
 
 - (void)_frameOrBoundsChanged
