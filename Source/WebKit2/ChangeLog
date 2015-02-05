@@ -1,3 +1,16 @@
+2015-02-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Remove False Positive dispatch_source Leak in WebMemoryPressureHandler singleton
+        https://bugs.webkit.org/show_bug.cgi?id=141307
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.h:
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm:
+        (WebKit::WebMemoryPressureHandler::WebMemoryPressureHandler):
+        We want to keep the dispatch_source around, so just tie it to the
+        singleton so that it is not reported as a leak.
+
 2015-02-05  Antti Koivisto  <antti@apple.com>
 
         Switch to file backed buffer when resource is cached to disk

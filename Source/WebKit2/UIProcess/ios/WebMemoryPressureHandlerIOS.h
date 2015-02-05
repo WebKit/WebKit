@@ -28,7 +28,8 @@
 
 #if PLATFORM(IOS)
 
-#include <wtf/NeverDestroyed.h>
+#import <dispatch/dispatch.h>
+#import <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -39,6 +40,7 @@ public:
 
 private:
     WebMemoryPressureHandler();
+    dispatch_source_t _source;
 };
 
 } // namespace WebKit
