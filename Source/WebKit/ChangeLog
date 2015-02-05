@@ -1,3 +1,9 @@
+2015-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] 64-bit build fix after r179702 and r179709
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2015-02-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Windows build after r179702.
