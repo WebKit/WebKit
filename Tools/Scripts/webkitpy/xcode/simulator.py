@@ -110,13 +110,10 @@ class Runtime(object):
         :returns: A `Runtime` object with the specified identifier or throws a TypeError if it doesn't exist.
         :rtype: Runtime
         """
-        runtime = None
         for runtime in Simulator().runtimes:
             if runtime.identifier == identifier:
-                break
-        if runtime is None:
-            raise TypeError('A runtime with identifier "{identifier}" does not exist.'.format(identifier=identifier))
-        return runtime
+                return runtime
+        raise TypeError('A runtime with identifier "{identifier}" does not exist.'.format(identifier=identifier))
 
     def __eq__(self, other):
         return (self.version == other.version) and (self.identifier == other.identifier) and (self.is_internal_runtime == other.is_internal_runtime)
