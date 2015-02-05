@@ -1117,7 +1117,7 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 
 # FIXME: Needs bugzilla (<rdar://problem/16663912>)
 # Seems like this should happen everywhere, but it only does on Yosemite.
-[ Yosemite+ ] http/tests/navigation/post-frames-goback1.html [ Failure ]
+[ Yosemite+ ] http/tests/navigation/post-frames-goback1.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16664245>)
 # We should land updated results if we can't get this bug fixed in time.
@@ -1230,7 +1230,7 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 webkit.org/b/139968 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css/object-fit/object-fit-canvas.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 webkit.org/b/139968 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
@@ -1343,13 +1343,12 @@ webkit.org/b/139968 css1/box_properties/acid_test.html [ Pass Failure ]
 webkit.org/b/139968 css2.1/t09-c5526c-display-00-e.html [ Pass Failure ]
 webkit.org/b/139968 css2.1/t1202-counter-04-b.html [ Pass Failure ]
 webkit.org/b/139968 css2.1/t1202-counters-04-b.html [ Pass Failure ]
-webkit.org/b/139968 css3/selectors3/html/css3-modsel-161.html [ Failure ]
-webkit.org/b/139968 css3/selectors3/xhtml/css3-modsel-161.xml [ Failure ]
-webkit.org/b/139968 css3/selectors3/xml/css3-modsel-161.xml [ Failure ]
+webkit.org/b/139968 css3/selectors3/html/css3-modsel-161.html [ Pass Failure ]
+webkit.org/b/139968 css3/selectors3/xhtml/css3-modsel-161.xml [ Pass Failure ]
+webkit.org/b/139968 css3/selectors3/xml/css3-modsel-161.xml [ Pass Failure ]
 webkit.org/b/139968 fast/block/basic/011.html [ Pass Failure ]
 webkit.org/b/139968 fast/block/basic/minheight.html [ Pass Failure ]
 webkit.org/b/139968 fast/css/002.html [ Pass Failure ]
-webkit.org/b/139968 fast/forms/focus-selection-textarea.html [ Failure ]
 webkit.org/b/139968 fast/forms/select-initial-position.html [ Failure ]
 webkit.org/b/139968 fast/invalid/008.html [ Pass Failure ]
 webkit.org/b/139968 fast/overflow/003.xml [ Pass Failure ]
@@ -1400,3 +1399,6 @@ webkit.org/b/140589 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
+
+# Sometimes has an extra space at the end
+fast/forms/focus-selection-textarea.html [ Pass Failure ]

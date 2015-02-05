@@ -1,5 +1,11 @@
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
 
+        TestExpectations gardening.
+
+        * platform/mac/TestExpectations: Updated expectatiosn for tests that sometimes pass.
+
+2015-02-05  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/18216390> ASSERTION FAILED: !m_visibleDescendantStatusDirty in WebCore::RenderLayer::isVisuallyNonEmpty()
 
         fullscreen/full-screen-iframe-legacy.html is another affected test.
