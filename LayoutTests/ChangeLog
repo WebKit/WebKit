@@ -1,5 +1,16 @@
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178795
+
+    2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed gardening. Remove variable objectId from output.
+
+            * inspector/model/remote-object-get-properties-expected.txt:
+            * inspector/model/remote-object-get-properties.html:
+
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178768
 
     2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
