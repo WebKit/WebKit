@@ -1,3 +1,11 @@
+2015-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Set all tests of svg/W3C-SVG-1.1 and svg/W3C-SVG-1.1-SE to flaky.
+        Because all tests looks like flaky now. This will be handled on Bug 137138. Additionally
+        duplicated tests are removed.
+
+        * platform/efl/TestExpectations:
+
 2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         [Streams API] Implement a barebone ReadableStream interface
