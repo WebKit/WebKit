@@ -1,3 +1,64 @@
+2015-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r177377.
+
+    2014-12-16  Myles C. Maxfield  <litherum@gmail.com>
+
+        Ruby does not preserve expansion opportunities from enclosing context
+        https://bugs.webkit.org/show_bug.cgi?id=139618
+
+        Reviewed by David Hyatt.
+
+        There is currently no sharing of expansion opportunity information between
+        ruby bases and the text surrounding the ruby. This patch adds a bit on
+        RenderText, m_contentIsKnownToFollow, which affects how expansion
+        opportunities are handled at paint-time, as well as a bit on RenderRubyBase,
+        m_isAfterExpansion, which affects how expansions are calculated when laying
+        out a line. This patch also adds a field to RenderRubyBase which represents
+        the base's starting position within a ruby. This field is necessary because
+        an expansion from a line might occur at the very beginning of a ruby base,
+        so we have to remember some state from expansion time to RenderRubyBase
+        layout time.
+
+        Added more tests to fast/ruby/ruby-justification.html.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::setExpansionWithoutGrowing):
+        (WebCore::InlineBox::expansion):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::removeChild): Keep the bit on InlineTextBox up to
+        date.
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection): Set expansion
+        information in InlineFlowBoxes so the total expansion for a whole line
+        is held in the RootInlineBox's expansion.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::expansionBehavior):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateRubyForJustifiedText):
+        updateRubyForJustifiedText() had a bunch of problems with it. First of all,
+        it didn't actually set the InlineBoxes as dirty, so the second layout pass
+        sometimes wouldn't perform any updates. Secondarily, it didn't take
+        overhangs into account. Thirdly, it didn't mark the ruby base and text as
+        needing layout so that subsequent layouts would actually traverse into them.
+        (WebCore::RenderBlockFlow::computeExpansionForJustifiedText):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        This nested if triangle is super nasty, but I'm not sure of a better way to
+        write it.
+        (WebCore::updateRubyForJustifiedText): Deleted.
+        (WebCore::computeExpansionForJustifiedText): Deleted.
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::RenderRubyBase):
+        (WebCore::RenderRubyBase::adjustInlineDirectionLineBounds):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::contentIsKnownToFollow):
+        (WebCore::RenderText::setContentIsKnownToFollow):
+
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
         Merge r176262.

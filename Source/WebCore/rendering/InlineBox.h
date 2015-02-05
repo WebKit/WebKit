@@ -277,6 +277,12 @@ public:
         m_bitfields.setExpansion(newExpansion);
         m_logicalWidth += m_bitfields.expansion();
     }
+    void setExpansionWithoutGrowing(float newExpansion)
+    {
+        ASSERT(!m_expansion);
+        m_expansion = newExpansion;
+    }
+    float expansion() const { return m_expansion; }
 
 private:
     InlineBox* m_next; // The next element on the same line as us.
@@ -414,7 +420,6 @@ protected:
     void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }    
     bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
     void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
-    int expansion() { return m_bitfields.expansion(); }
     
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
