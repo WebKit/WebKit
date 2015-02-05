@@ -61,6 +61,7 @@
 
     "builders":   [ { "name": "Apple Yosemite (Leaks)", "type": "TestLeaks", "builddir": "yosemite-leaks",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot148"]
                     },
                     { "name": "Apple Yosemite Release (32-bit Build)", "type": "Build", "builddir": "yosemite-32bit-release",
@@ -74,10 +75,12 @@
                     },
                     { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "Test", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot124", "bot108"]
                     },
                     { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot144", "bot198"]
                     },
                     { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
@@ -115,10 +118,12 @@
                     },
                     { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "Test", "builddir": "yosemite-debug-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot182", "bot183"]
                     },
                     { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-debug-tests-wk2",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot184", "bot185"]
                     },
                     { "name": "Apple Yosemite LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "yosemite-cloop-debug",
