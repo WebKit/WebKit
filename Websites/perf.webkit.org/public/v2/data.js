@@ -360,6 +360,11 @@ TimeSeries.prototype.findPointByMeasurementId = function (measurementId)
     return this._series.find(function (point) { return point.measurement.id() == measurementId; });
 }
 
+TimeSeries.prototype.findPointAfterTime = function (time)
+{
+    return this._series.find(function (point) { return point.time >= time; });
+}
+
 TimeSeries.prototype.seriesBetweenPoints = function (startPoint, endPoint)
 {
     if (!startPoint.seriesIndex || !endPoint.seriesIndex)

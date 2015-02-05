@@ -1,5 +1,42 @@
 2015-02-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New perf dashboard should compare results to baseline and target
+        https://bugs.webkit.org/show_bug.cgi?id=141286
+
+        Reviewed by Chris Dumez.
+
+        Compare the selected value against baseline and target values as done in v1. e.g. "5% below target"
+        Also use d3.format to format the selected value to show four significant figures.
+
+        * public/v2/app.js:
+        (App.Pane.searchCommit):
+        (App.Pane._fetch): Create time series here via createChartData so that _computeStatus can use them
+        to compute the status text without having to recreate them.
+        (App.createChartData): Added.
+        (App.PaneController._updateDetails): Use 3d.format on current and old values.
+        (App.PaneController._computeStatus): Added. Computes the status text.
+        (App.PaneController._relativeDifferentToLaterPointInTimeSeries): Added.
+        (App.AnalysisTaskController._fetchedManifest): Use createChartData as done in App.Pane._fetch. Also
+        format the values using chartData.formatter.
+
+        * public/v2/chart-pane.css: Enlarge the status text. Show the status text in red if it's worse than
+        the baseline and in blue if it's better than the target.
+
+        * public/v2/data.js:
+        (TimeSeries.prototype.findPointAfterTime): Added.
+
+        * public/v2/index.html: Added a new tbody for the status text and the selected value. Also fixed
+        the bug that we were not showing the old value's unit.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._constructGraphIfPossible): Use chartData.formatter. Also cleaned up
+        the code to show the baseline and the target lines.
+
+        * public/v2/manifest.js:
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Added smallerIsBetter.
+
+2015-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix.
 
         * public/v2/app.js:

@@ -281,7 +281,7 @@ App.Pane = Ember.Object.extend({
         CommitLogs.fetchForTimeRange(repositoryId, null, null, keyword).then(function (commits) {
             if (self.isDestroyed || !self.get('chartData') || !commits.length)
                 return;
-            var currentRuns = self.get('chartData').current.timeSeriesByCommitTime().series();
+            var currentRuns = self.get('chartData').current.series();
             if (!currentRuns.length)
                 return;
 
@@ -329,7 +329,7 @@ App.Pane = Ember.Object.extend({
             App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(function (result) {
                 self.set('platform', result.platform);
                 self.set('metric', result.metric);
-                self.set('chartData', result.runs);
+                self.set('chartData', App.createChartData(result));
             }, function (result) {
                 if (!result || typeof(result) === "string")
                     self.set('failure', 'Failed to fetch the JSON with an error: ' + result);
@@ -364,6 +364,19 @@ App.Pane = Ember.Object.extend({
         return false;
     }
 });
+
+App.createChartData = function (data)
+{
+    var runs = data.runs;
+    return {
+        current: runs.current.timeSeriesByCommitTime(),
+        baseline: runs.baseline ? runs.baseline.timeSeriesByCommitTime() : null,
+        target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
+        unit: data.unit,
+        formatter: data.useSI ? d3.format('.4s') : d3.format('.4g'),
+        smallerIsBetter: data.smallerIsBetter,
+    };
+}
 
 App.encodePrettifiedJSON = function (plain)
 {
@@ -749,9 +762,11 @@ App.PaneController = Ember.ObjectController.extend({
                 buildURL = builder.urlFromBuildNumber(buildNumber);
         }
 
+        var chartData = this.get('chartData');
         this.set('details', Ember.Object.create({
-            currentValue: currentMeasurement.mean().toFixed(2),
-            oldValue: oldMeasurement && selectedPoints ? oldMeasurement.mean().toFixed(2) : null,
+            status: this._computeStatus(currentPoint),
+            currentValue: chartData.formatter(currentMeasurement.mean()),
+            oldValue: oldMeasurement && selectedPoints ? chartData.formatter(oldMeasurement.mean()) : null,
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),
@@ -764,6 +779,40 @@ App.PaneController = Ember.ObjectController.extend({
         var points = this.get('selectedPoints');
         this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !points || points.length < 2);
     }.observes('newAnalysisTaskName'),
+    _computeStatus: function (currentPoint)
+    {
+        var chartData = this.get('chartData');
+
+        var diffFromBaseline = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.baseline);
+        var diffFromTarget = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.target);
+
+        var label = '';
+        var className = '';
+        var formatter = d3.format('.3p');
+
+        var smallerIsBetter = chartData.smallerIsBetter;
+        if (diffFromBaseline !== undefined && diffFromBaseline > 0 == smallerIsBetter) {
+            label = formatter(Math.abs(diffFromBaseline)) + ' ' + (smallerIsBetter ? 'above' : 'below') + ' baseline';
+            className = 'worse';
+        } else if (diffFromTarget !== undefined && diffFromTarget < 0 == smallerIsBetter) {
+            label = formatter(Math.abs(diffFromTarget)) + ' ' + (smallerIsBetter ? 'below' : 'above') + ' target';
+            className = 'better';
+        } else if (diffFromTarget !== undefined)
+            label = formatter(Math.abs(diffFromTarget)) + ' until target';
+
+        return {className: className, label: label};
+    },
+    _relativeDifferentToLaterPointInTimeSeries: function (currentPoint, timeSeries)
+    {
+        if (!currentPoint || !timeSeries)
+            return undefined;
+        
+        var referencePoint = timeSeries.findPointAfterTime(currentPoint.time);
+        if (!referencePoint)
+            return undefined;
+
+        return (currentPoint.value - referencePoint.value) / referencePoint.value;
+    }
 });
 
 
@@ -835,17 +884,18 @@ App.AnalysisTaskController = Ember.Controller.extend({
         highlightedItems[start.measurement.id()] = true;
         highlightedItems[end.measurement.id()] = true;
 
+        var chartData = App.createChartData(data);
         var formatedPoints = currentTimeSeries.seriesBetweenPoints(start, end).map(function (point, index) {
             return {
                 id: point.measurement.id(),
                 measurement: point.measurement,
                 label: 'Point ' + (index + 1),
-                value: point.value + (runs.unit ? ' ' + runs.unit : ''),
+                value: chartData.formatter(point.value) + (data.unit ? ' ' + data.unit : ''),
             };
         });
 
         var margin = (end.time - start.time) * 0.1;
-        this.set('chartData', runs);
+        this.set('chartData', chartData);
         this.set('chartDomain', [start.time - margin, +end.time + margin]);
         this.set('highlightedItems', highlightedItems);
         this.set('analysisPoints', formatedPoints);

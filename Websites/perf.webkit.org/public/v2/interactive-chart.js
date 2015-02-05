@@ -66,8 +66,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         }
 
         if (this.get('showYAxis')) {
-            this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(6).tickFormat(
-                chartData.useSI ? d3.format("s") : d3.format(".3g"));
+            this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(6).tickFormat(chartData.formatter);
             this._yAxisLabels = svg.append("g")
                 .attr("class", "y axis");
         }
@@ -100,31 +99,24 @@ App.InteractiveChartComponent = Ember.Component.extend({
             this._highlights.remove();
         this._highlights = null;
 
-        this._currentTimeSeries = chartData.current.timeSeriesByCommitTime();
+        this._currentTimeSeries = chartData.current;
         this._currentTimeSeriesData = this._currentTimeSeries.series();
-        this._baselineTimeSeries = chartData.baseline ? chartData.baseline.timeSeriesByCommitTime() : null;
-        this._targetTimeSeries = chartData.target ? chartData.target.timeSeriesByCommitTime() : null;
+        this._baselineTimeSeries = chartData.baseline;
+        this._targetTimeSeries = chartData.target;
 
         this._yAxisUnit = chartData.unit;
 
-        var minMax = this._minMaxForAllTimeSeries();
-        var smallEnoughValue = minMax[0] - (minMax[1] - minMax[0]) * 10;
-        var largeEnoughValue = minMax[1] + (minMax[1] - minMax[0]) * 10;
-
-        // FIXME: Flip the sides based on smallerIsBetter-ness.
         if (this._baselineTimeSeries) {
-            var data = this._baselineTimeSeries.series();
-            this._areas.push(this._clippedContainer
+            this._paths.push(this._clippedContainer
                 .append("path")
-                .datum(data.map(function (point) { return {time: point.time, value: point.value, interval: point.interval ? point.interval : [point.value, largeEnoughValue]}; }))
-                .attr("class", "area baseline"));
+                .datum(this._baselineTimeSeries.series())
+                .attr("class", "baseline"));
         }
         if (this._targetTimeSeries) {
-            var data = this._targetTimeSeries.series();
-            this._areas.push(this._clippedContainer
+            this._paths.push(this._clippedContainer
                 .append("path")
-                .datum(data.map(function (point) { return {time: point.time, value: point.value, interval: point.interval ? point.interval : [smallEnoughValue, point.value]}; }))
-                .attr("class", "area target"));
+                .datum(this._targetTimeSeries.series())
+                .attr("class", "target"));
         }
 
         this._areas.push(this._clippedContainer
@@ -135,7 +127,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._paths.push(this._clippedContainer
             .append("path")
             .datum(this._currentTimeSeriesData)
-            .attr("class", "commit-time-line"));
+            .attr("class", "current"));
 
         this._dots.push(this._clippedContainer
             .selectAll(".dot")

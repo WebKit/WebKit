@@ -281,12 +281,9 @@ App.Manifest = Ember.Controller.extend({
                 'Heap': 'bytes',
                 'Allocations': 'bytes'
             }[suffix];
+            var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
 
-            // FIXME: Include this information in JSON and process it in RunsData.fetchRuns
-            runs.unit = unit;
-            runs.useSI = unit == 'bytes';
-
-            return {platform: platform, metric: metric, runs: runs};
+            return {platform: platform, metric: metric, runs: runs, unit: unit, useSI: unit == 'bytes', smallerIsBetter: smallerIsBetter};
         });
     },
 }).create();

@@ -254,10 +254,21 @@
                 {{/if}}
             {{/each}}
             </tbody>
-            <tr><th>Current</th><td>{{details.currentValue}} {{chartData.unit}}
-            {{#if details.oldValue}}
-                (from {{details.oldValue}})
-            {{/if}}</td></tr>
+            <tbody class="status">
+                <tr>
+                    <th>Current</th>
+                    <td>
+                        {{details.currentValue}} {{chartData.unit}}
+                        {{#if details.oldValue}}
+                            (from {{details.oldValue}} {{chartData.unit}})
+                        {{/if}}
+                        {{#if details.status.label}}
+                            <br>
+                            <span {{bind-attr class=details.status.className}}>{{details.status.label}}</span>
+                        {{/if}}
+                    </td>
+                </tr>
+            </tbody>
             {{#if details.buildNumber}}
                 <tr>
                     <th>Build</th>

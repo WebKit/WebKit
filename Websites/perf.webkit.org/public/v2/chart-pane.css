@@ -210,6 +210,7 @@
 .chart-pane .details-table td table td {
     word-break: break-word;
     border-top: solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
     padding: 0.2rem;
 }
 
@@ -230,6 +231,14 @@
 
 .chart-pane .details-table th:after {
     content: " : ";
+}
+
+.chart-pane .details-table .status th {
+    visibility: hidden;
+}
+
+.chart-pane .details-table .status td {
+    font-size: 1rem;
 }
 
 .chart-pane .chart {
@@ -257,10 +266,6 @@
     stroke-width: 1.5px;
 }
 
-.chart .commit-time-line {
-    stroke: #999;
-}
-
 .chart .dot {
     fill: #666;
     stroke: none;
@@ -272,16 +277,22 @@
     opacity: 0.8;
 }
 
-.chart path.area.baseline {
-    stroke: #f66;
-    fill: #fdd;
-    opacity: 0.4;
+.chart path.current {
+    stroke: #999;
 }
 
-.chart path.area.target {
+.chart path.baseline {
+    stroke: #f66;
+}
+.chart-pane .status .worse {
+    color: #c33;
+}
+
+.chart path.target {
     stroke: #66f;
-    fill: #ddf;
-    opacity: 0.4;
+}
+.chart-pane .status .better {
+    color: #33c;
 }
 
 .chart .axis,
