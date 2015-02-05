@@ -63,7 +63,14 @@ public:
     };
     // Completion handler may get called back synchronously on failure.
     void retrieve(const WebCore::ResourceRequest&, std::function<void (std::unique_ptr<Entry>)>);
-    void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PassRefPtr<WebCore::SharedBuffer>);
+
+    struct MappedBody {
+#if ENABLE(SHAREABLE_RESOURCE)
+        RefPtr<ShareableResource> shareableResource;
+        ShareableResource::Handle shareableResourceHandle;
+#endif
+    };
+    void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
     void update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
     void clear();

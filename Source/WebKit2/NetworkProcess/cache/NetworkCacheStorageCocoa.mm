@@ -81,6 +81,8 @@ NetworkCacheStorage::Data::Data(const uint8_t* data, size_t size)
 
 NetworkCacheStorage::Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
 {
+    if (!dispatchData)
+        return;
     const void* data;
     m_dispatchData = adoptDispatch(dispatch_data_create_map(dispatchData.get(), &data, &m_size));
     m_data = static_cast<const uint8_t*>(data);
@@ -164,7 +166,7 @@ static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, Fil
 
     switch (type) {
     case FileOpenType::Create:
-        oflag = O_WRONLY | O_CREAT | O_TRUNC | O_NONBLOCK;
+        oflag = O_RDWR | O_CREAT | O_TRUNC | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
         WebCore::makeAllDirectories(directoryPathForKey(key, cachePath));
         break;
@@ -250,6 +252,17 @@ static bool decodeEntryMetaData(EntryMetaData& metaData, dispatch_data_t fileDat
     return success;
 }
 
+static DispatchPtr<dispatch_data_t> mapFile(int fd, size_t offset, size_t size)
+{
+    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
+    if (map == MAP_FAILED)
+        return nullptr;
+    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_main_queue(), [map, size] {
+        munmap(map, size);
+    }));
+    return bodyMap;
+}
+
 static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t fileData, int fd, const NetworkCacheKey& key)
 {
     EntryMetaData metaData;
@@ -270,16 +283,12 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
         return nullptr;
     }
-    size_t mapSize = metaData.bodySize;
-    void* map = mmap(nullptr, mapSize, PROT_READ, MAP_PRIVATE, fd, metaData.bodyOffset);
-    if (!map) {
+
+    auto bodyData = mapFile(fd, metaData.bodyOffset, metaData.bodySize);
+    if (!bodyData) {
         LOG(NetworkCacheStorage, "(NetworkProcess) map failed");
         return nullptr;
     }
-
-    auto bodyData = adoptDispatch(dispatch_data_create(map, metaData.bodySize, dispatch_get_main_queue(), [map, mapSize] {
-        munmap(map, mapSize);
-    }));
 
     if (metaData.bodyChecksum != hashData(bodyData.get())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) data checksum mismatch");
@@ -329,12 +338,6 @@ static DispatchPtr<dispatch_data_t> encodeEntryHeader(const NetworkCacheKey& key
     Vector<uint8_t, 4096> filler(dataOffset - headerSize, 0);
     auto alignmentData = adoptDispatch(dispatch_data_create(filler.data(), filler.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
     return adoptDispatch(dispatch_data_create_concat(headerData.get(), alignmentData.get()));
-}
-
-static DispatchPtr<dispatch_data_t> encodeEntry(const NetworkCacheKey& key, const NetworkCacheStorage::Entry& entry)
-{
-    auto encodedHeader = encodeEntryHeader(key, entry);
-    return adoptDispatch(dispatch_data_create_concat(encodedHeader.get(), entry.body.dispatchData()));
 }
 
 void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
@@ -407,7 +410,7 @@ void NetworkCacheStorage::dispatchPendingRetrieveOperations()
     }
 }
 
-template <class T> bool retrieveActive(const T& operations, const NetworkCacheKey& key, std::function<bool (std::unique_ptr<NetworkCacheStorage::Entry>)>& completionHandler)
+template <class T> bool retrieveActive(const T& operations, const NetworkCacheKey& key, NetworkCacheStorage::RetrieveCompletionHandler& completionHandler)
 {
     for (auto& operation : operations) {
         if (operation->key == key) {
@@ -422,7 +425,7 @@ template <class T> bool retrieveActive(const T& operations, const NetworkCacheKe
     return false;
 }
 
-void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority, std::function<bool (std::unique_ptr<Entry>)> completionHandler)
+void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(priority <= maximumRetrievePriority);
@@ -438,28 +441,32 @@ void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority
         return;
 
     // Fetch from disk.
-    m_pendingRetrieveOperationsByPriority[priority].append(std::make_unique<RetrieveOperation>(RetrieveOperation { key, completionHandler }));
+    m_pendingRetrieveOperationsByPriority[priority].append(std::make_unique<RetrieveOperation>(RetrieveOperation { key, WTF::move(completionHandler) }));
     dispatchPendingRetrieveOperations();
 }
 
-void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, std::function<void (bool success)> completionHandler)
+void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, StoreCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     m_contentsFilter.add(key.hash());
     ++m_approximateEntryCount;
 
-    auto storeOperation = std::make_unique<StoreOperation>(StoreOperation { key, entry, completionHandler });
+    auto storeOperation = std::make_unique<StoreOperation>(StoreOperation { key, entry, WTF::move(completionHandler) });
     auto& store = *storeOperation;
     m_activeStoreOperations.add(WTF::move(storeOperation));
 
     StringCapture cachePathCapture(m_directoryPath);
     dispatch_async(m_backgroundIOQueue.get(), [this, &store, cachePathCapture] {
-        auto data = encodeEntry(store.key, store.entry);
+        auto encodedHeader = encodeEntryHeader(store.key, store.entry);
+        auto writeData = adoptDispatch(dispatch_data_create_concat(encodedHeader.get(), store.entry.body.dispatchData()));
+
+        size_t bodyOffset = dispatch_data_get_size(encodedHeader.get());
+        size_t bodySize = store.entry.body.size();
 
         int fd;
         auto channel = openFileForKey(store.key, FileOpenType::Create, cachePathCapture.string(), fd);
-        dispatch_io_write(channel.get(), 0, data.get(), dispatch_get_main_queue(), [this, &store](bool done, dispatch_data_t, int error) {
+        dispatch_io_write(channel.get(), 0, writeData.get(), dispatch_get_main_queue(), [this, &store, fd, bodyOffset, bodySize](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
             if (error) {
@@ -469,7 +476,11 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
                     --m_approximateEntryCount;
             }
 
-            store.completionHandler(!error);
+            bool shouldMapBody = !error && bodySize >= vm_page_size;
+            auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : nullptr;
+
+            Data bodyData(bodyMap, Data::Backing::Map);
+            store.completionHandler(!error, bodyData);
 
             m_activeStoreOperations.remove(&store);
         });
@@ -478,17 +489,17 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
     shrinkIfNeeded();
 }
 
-void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, std::function<void (bool success)> completionHandler)
+void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     if (!m_contentsFilter.mayContain(key.hash())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) existing entry not found, storing full entry");
-        store(key, updateEntry, completionHandler);
+        store(key, updateEntry, WTF::move(completionHandler));
         return;
     }
 
-    auto updateOperation = std::make_unique<UpdateOperation>(UpdateOperation { key, updateEntry, existingEntry, completionHandler });
+    auto updateOperation = std::make_unique<UpdateOperation>(UpdateOperation { key, updateEntry, existingEntry, WTF::move(completionHandler) });
     auto& update = *updateOperation;
     m_activeUpdateOperations.add(WTF::move(updateOperation));
 
@@ -502,7 +513,7 @@ void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& update
         if (pageRoundedHeaderSizeChanged) {
             LOG(NetworkCacheStorage, "(NetworkProcess) page-rounded header size changed, storing full entry");
             dispatch_async(dispatch_get_main_queue(), [this, &update] {
-                store(update.key, update.entry, update.completionHandler);
+                store(update.key, update.entry, WTF::move(update.completionHandler));
 
                 ASSERT(m_activeUpdateOperations.contains(&update));
                 m_activeUpdateOperations.remove(&update);
@@ -519,7 +530,7 @@ void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& update
             if (error)
                 removeEntry(update.key);
 
-            update.completionHandler(!error);
+            update.completionHandler(!error, Data());
 
             ASSERT(m_activeUpdateOperations.contains(&update));
             m_activeUpdateOperations.remove(&update);

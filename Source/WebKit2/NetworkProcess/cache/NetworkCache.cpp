@@ -281,7 +281,7 @@ static bool canStore(const WebCore::ResourceRequest& originalRequest, const WebC
     return false;
 }
 
-void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
+void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(responseData);
@@ -294,9 +294,19 @@ void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const 
     }
 
     auto key = makeCacheKey(originalRequest);
-    auto storageEntry = encodeStorageEntry(originalRequest, response, responseData);
+    auto storageEntry = encodeStorageEntry(originalRequest, response, WTF::move(responseData));
 
-    m_storage->store(key, storageEntry, [](bool success) {
+    m_storage->store(key, storageEntry, [completionHandler](bool success, const NetworkCacheStorage::Data& bodyData) {
+        MappedBody mappedBody;
+#if ENABLE(SHAREABLE_RESOURCE)
+        if (bodyData.isMap()) {
+            RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(bodyData.data()), bodyData.size());
+            mappedBody.shareableResource = sharedMemory ? ShareableResource::create(WTF::move(sharedMemory), 0, bodyData.size()) : nullptr;
+            if (mappedBody.shareableResource)
+                mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
+        }
+#endif
+        completionHandler(mappedBody);
         LOG(NetworkCache, "(NetworkProcess) store success=%d", success);
     });
 }
@@ -311,7 +321,7 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
     auto key = makeCacheKey(originalRequest);
     auto updateEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
 
-    m_storage->update(key, updateEntry, entry.storageEntry, [](bool success) {
+    m_storage->update(key, updateEntry, entry.storageEntry, [](bool success, const NetworkCacheStorage::Data&) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }

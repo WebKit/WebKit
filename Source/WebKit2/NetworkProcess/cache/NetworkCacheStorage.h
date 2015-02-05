@@ -59,6 +59,12 @@ public:
         : m_ptr(nullptr)
     {
     }
+    DispatchPtr(T ptr)
+        : m_ptr(ptr)
+    {
+        if (m_ptr)
+            dispatch_retain(m_ptr);
+    }
     DispatchPtr(const DispatchPtr& other)
         : m_ptr(other.m_ptr)
     {
@@ -137,9 +143,12 @@ public:
         Data body;
     };
     // This may call completion handler synchronously on failure.
-    void retrieve(const NetworkCacheKey&, unsigned priority, std::function<bool (std::unique_ptr<Entry>)>);
-    void store(const NetworkCacheKey&, const Entry&, std::function<void (bool success)>);
-    void update(const NetworkCacheKey&, const Entry& updateEntry, const Entry& existingEntry, std::function<void (bool success)>);
+    typedef std::function<bool (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
+    void retrieve(const NetworkCacheKey&, unsigned priority, RetrieveCompletionHandler&&);
+
+    typedef std::function<void (bool success, const Data& mappedBody)> StoreCompletionHandler;
+    void store(const NetworkCacheKey&, const Entry&, StoreCompletionHandler&&);
+    void update(const NetworkCacheKey&, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&&);
 
     void setMaximumSize(size_t);
     void clear();
@@ -156,7 +165,7 @@ private:
 
     struct RetrieveOperation {
         NetworkCacheKey key;
-        std::function<bool (std::unique_ptr<Entry>)> completionHandler;
+        RetrieveCompletionHandler completionHandler;
     };
     void dispatchRetrieveOperation(std::unique_ptr<const RetrieveOperation>);
     void dispatchPendingRetrieveOperations();
@@ -164,14 +173,14 @@ private:
     struct StoreOperation {
         NetworkCacheKey key;
         Entry entry;
-        std::function<void (bool success)> completionHandler;
+        StoreCompletionHandler completionHandler;
     };
 
     struct UpdateOperation {
         NetworkCacheKey key;
         Entry entry;
         Entry existingEntry;
-        std::function<void (bool success)> completionHandler;
+        StoreCompletionHandler completionHandler;
     };
 
     const String m_directoryPath;

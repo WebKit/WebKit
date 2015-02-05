@@ -336,8 +336,19 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
         }
 
         bool isPrivate = sessionID().isEphemeral();
-        if (hasCacheableRedirect && !isPrivate)
-            NetworkCache::singleton().store(originalRequest(), m_response, m_bufferedDataForCache.release());
+        if (hasCacheableRedirect && !isPrivate) {
+            // Keep the connection alive.
+            RefPtr<NetworkConnectionToWebProcess> connection(connectionToWebProcess());
+            RefPtr<NetworkResourceLoader> loader(this);
+            NetworkCache::singleton().store(originalRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
+#if ENABLE(SHAREABLE_RESOURCE)
+                if (mappedBody.shareableResourceHandle.isNull())
+                    return;
+                LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
+                loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
+#endif
+            });
+        }
     }
 #endif
 

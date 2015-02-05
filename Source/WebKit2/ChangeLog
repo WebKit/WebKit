@@ -1,3 +1,36 @@
+2015-02-05  Antti Koivisto  <antti@apple.com>
+
+        Switch to file backed buffer when resource is cached to disk
+        https://bugs.webkit.org/show_bug.cgi?id=141295
+
+        Reviewed by Chris Dumez.
+
+        Wire the DidCacheResource mechanism to the new disk cache.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+
+            Send DidCacheResource message to the web process so it can switch the resource to file backing.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::store):
+        (WebKit::NetworkCache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::DispatchPtr::DispatchPtr):
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::Data::Data):
+        (WebKit::mapFile):
+        (WebKit::decodeEntry):
+        (WebKit::retrieveActive):
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+
+            Map files larger than a memory page after a successful store.
+
+        (WebKit::NetworkCacheStorage::update):
+        (WebKit::encodeEntry): Deleted.
+
 2015-02-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Properly check for mmap() error case
