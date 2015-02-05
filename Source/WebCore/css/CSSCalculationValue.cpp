@@ -239,6 +239,7 @@ private:
         case CalcOther:
             ASSERT_NOT_REACHED();
         }
+        ASSERT_NOT_REACHED();
         return nullptr;
     }
 
@@ -308,14 +309,13 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
 {
     CalculationCategory leftCategory = leftSide.category();
     CalculationCategory rightCategory = rightSide.category();
-
-    if (leftCategory == CalcOther || rightCategory == CalcOther)
-        return CalcOther;
+    ASSERT(leftCategory < CalcOther);
+    ASSERT(rightCategory < CalcOther);
 
     switch (op) {
     case CalcAdd:
     case CalcSubtract:
-        if (leftCategory < CalcAngle || rightCategory < CalcAngle)
+        if (leftCategory < CalcAngle && rightCategory < CalcAngle)
             return addSubtractResult[leftCategory][rightCategory];
         if (leftCategory == rightCategory)
             return leftCategory;
@@ -346,7 +346,8 @@ class CSSCalcBinaryOperation final : public CSSCalcExpressionNode {
 public:
     static PassRefPtr<CSSCalcBinaryOperation> create(CalcOperator op, PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide)
     {
-        ASSERT(leftSide->category() != CalcOther && rightSide->category() != CalcOther);
+        ASSERT(leftSide->category() < CalcOther);
+        ASSERT(rightSide->category() < CalcOther);
 
         CalculationCategory newCategory = determineCategory(*leftSide, *rightSide, op);
 
@@ -360,7 +361,8 @@ public:
     {
         CalculationCategory leftCategory = leftSide->category();
         CalculationCategory rightCategory = rightSide->category();
-        ASSERT(leftCategory != CalcOther && rightCategory != CalcOther);
+        ASSERT(leftCategory < CalcOther);
+        ASSERT(rightCategory < CalcOther);
 
         bool isInteger = isIntegerResult(op, *leftSide, *rightSide);
 
