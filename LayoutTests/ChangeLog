@@ -2,6 +2,20 @@
 
         Merge r178953
 
+    2015-01-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: ASSERT expanding objects in console PrimitiveBindingTraits<T>::assertValueHasExpectedType
+            https://bugs.webkit.org/show_bug.cgi?id=140746
+
+            Reviewed by Timothy Hatcher.
+
+            * TestExpectations:
+            Unskip the test now that is doesn't ASSERT in debug builds.
+
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r178953
+
     2015-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
             Unreviewed, skip flakey inspector test.
