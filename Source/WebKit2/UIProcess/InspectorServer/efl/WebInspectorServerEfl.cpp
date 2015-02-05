@@ -84,7 +84,7 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
 
     ClientMap::iterator end = m_clientMap.end();
     for (ClientMap::iterator it = m_clientMap.begin(); it != end; ++it) {
-        WebPageProxy* webPage = it->value->page();
+        WebPageProxy* webPage = it->value->inspectedPage();
         if (it != m_clientMap.begin())
             builder.appendLiteral(", ");
         builder.appendLiteral("{ \"id\": ");

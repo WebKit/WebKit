@@ -591,7 +591,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
     if (priv->inspectorView) {
         GtkAllocation childAllocation = viewRect;
 
-        if (priv->inspectorAttachmentSide == AttachmentSideBottom) {
+        if (priv->inspectorAttachmentSide == AttachmentSide::Bottom) {
             int inspectorViewHeight = std::min(static_cast<int>(priv->inspectorViewSize), allocation->height);
             childAllocation.x = 0;
             childAllocation.y = allocation->height - inspectorViewHeight;

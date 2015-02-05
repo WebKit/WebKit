@@ -1,3 +1,103 @@
+2015-02-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Clean up WebInspectorProxy and use simpler inspector levels design
+        https://bugs.webkit.org/show_bug.cgi?id=141135
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector levels used to be managed by keeping a set of WebPageGroup
+        instances and doing pointer comparisons to check whether the inspected
+        view is itself a web inspector instance. This is unnecessary, as we
+        can maintain a mapping from WebPageProxy* to its corresponding level.
+
+        When an inspector instance is created, it is inserted into the mapping
+        along with its level. An inspector's level is 1 unless its inspected page
+        is in the mapping, then it is one greater that the inspected page's level.
+
+        The level is provided by inspectorLevel(), rather than a member variable.
+        WebInspectorProxy is created in the constructor of WebPageProxy. Thus, there
+        would be no chance to add the inspector page's level to the mapping before the
+        next level inspector tries to look it up when initializing its members.
+
+        This patch introduces other miscellaneous cleanups, such as naming m_page
+        to m_inspectedPage, using Ref and using an enum class for the attachment side.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorGetPage):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (resizeWebKitWebViewBaseFromAllocation):
+        * UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp:
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::pageLevelMap):
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::inspectorLevel):
+        (WebKit::WebInspectorProxy::inspectorPageGroupIdentifier):
+        (WebKit::WebInspectorProxy::inspectorPagePreferences):
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit::WebInspectorProxy::isFront):
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::show):
+        (WebKit::WebInspectorProxy::hide):
+        (WebKit::WebInspectorProxy::close):
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess):
+        (WebKit::WebInspectorProxy::showConsole):
+        (WebKit::WebInspectorProxy::showResources):
+        (WebKit::WebInspectorProxy::showMainResourceForFrame):
+        (WebKit::WebInspectorProxy::attachBottom):
+        (WebKit::WebInspectorProxy::attachRight):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::togglePageProfiling):
+        (WebKit::WebInspectorProxy::isInspectorPage):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::WebInspectorProxy::remoteFrontendConnected):
+        (WebKit::WebInspectorProxy::remoteFrontendDisconnected):
+        (WebKit::WebInspectorProxy::dispatchMessageFromRemoteFrontend):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::didClose):
+        (WebKit::WebInspectorPageGroups::singleton): Deleted.
+        (WebKit::WebInspectorPageGroups::inspectorLevel): Deleted.
+        (WebKit::WebInspectorPageGroups::isInspectorPageGroup): Deleted.
+        (WebKit::WebInspectorPageGroups::inspectorPageGroupLevel): Deleted.
+        (WebKit::WebInspectorPageGroups::inspectorPageGroupForLevel): Deleted.
+        (WebKit::WebInspectorPageGroups::createInspectorPageGroup): Deleted.
+        (WebKit::WebInspectorProxy::~WebInspectorProxy): Deleted.
+        (WebKit::WebInspectorProxy::inspectorPageGroup): Deleted.
+        (WebKit::WebInspectorProxy::setAttachedWindowHeight): Deleted.
+        (WebKit::WebInspectorProxy::enableRemoteInspection): Deleted.
+        (WebKit::WebInspectorProxy::open): Deleted.
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::create):
+        (WebKit::WebInspectorProxy::inspectedPage):
+        (WebKit::WebInspectorProxy::page): Deleted.
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::dockButtonClicked):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter attachRight:]):
+        (-[WKWebInspectorProxyObjCAdapter attachBottom:]):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::windowFrameDidChange):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (-[WKWebInspectorProxyObjCAdapter close]): Deleted.
+
 2015-02-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Populate m_contentsFilter bloom filter from the main dispatch queue NetworkCacheStorage::initialize()

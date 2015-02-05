@@ -30,6 +30,7 @@
 #include "WebInspectorProxy.h"
 
 #include "WebKitWebViewBasePrivate.h"
+#include "WebPageGroup.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/GtkUtilities.h>
@@ -58,9 +59,10 @@ void WebInspectorProxy::initializeInspectorClientGtk(const WKInspectorClientGtkB
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
-    ASSERT(m_page);
+    ASSERT(inspectedPage());
     ASSERT(!m_inspectorView);
-    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), nullptr, inspectorPageGroup(), nullptr, nullptr));
+    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifier(), false, false).leakRef();
+    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), nullptr, pageGroup.get(), nullptr, nullptr));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
@@ -68,9 +70,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 void WebInspectorProxy::dockButtonClicked(GtkWidget* button, WebInspectorProxy* inspector)
 {
     if (button == inspector->m_dockBottomButton)
-        inspector->attach(AttachmentSideBottom);
+        inspector->attach(AttachmentSide::Bottom);
     else if (button == inspector->m_dockRightButton)
-        inspector->attach(AttachmentSideRight);
+        inspector->attach(AttachmentSide::Right);
     else
         ASSERT_NOT_REACHED();
 }
@@ -83,7 +85,7 @@ void WebInspectorProxy::createInspectorWindow()
     ASSERT(!m_inspectorWindow);
     m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-    GtkWidget* inspectedViewParent = gtk_widget_get_toplevel(m_page->viewWidget());
+    GtkWidget* inspectedViewParent = gtk_widget_get_toplevel(inspectedPage()->viewWidget());
     if (WebCore::widgetIsOnscreenToplevelWindow(inspectedViewParent))
         gtk_window_set_transient_for(GTK_WINDOW(m_inspectorWindow), GTK_WINDOW(inspectedViewParent));
 
@@ -219,12 +221,12 @@ String WebInspectorProxy::inspectorBaseURL() const
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
-    return gtk_widget_get_allocated_height(m_page->viewWidget());
+    return gtk_widget_get_allocated_height(inspectedPage()->viewWidget());
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowWidth()
 {
-    return gtk_widget_get_allocated_width(m_page->viewWidget());
+    return gtk_widget_get_allocated_width(inspectedPage()->viewWidget());
 }
 
 void WebInspectorProxy::platformAttach()
@@ -241,7 +243,7 @@ void WebInspectorProxy::platformAttach()
     static const unsigned minimumAttachedWidth = 750;
     static const unsigned minimumAttachedHeight = 250;
 
-    if (m_attachmentSide == AttachmentSideBottom) {
+    if (m_attachmentSide == AttachmentSide::Bottom) {
         unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
     } else {
@@ -252,13 +254,13 @@ void WebInspectorProxy::platformAttach()
     if (m_client.attach(this))
         return;
 
-    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), m_inspectorView, m_attachmentSide);
+    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(inspectedPage()->viewWidget()), m_inspectorView, m_attachmentSide);
     gtk_widget_show(m_inspectorView);
 }
 
 void WebInspectorProxy::platformDetach()
 {
-    if (!m_page->isValid())
+    if (!inspectedPage()->isValid())
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
@@ -280,7 +282,7 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
         return;
 
     m_client.didChangeAttachedHeight(this, height);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(inspectedPage()->viewWidget()), height);
 }
 
 void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
@@ -289,7 +291,7 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
         return;
 
     m_client.didChangeAttachedWidth(this, width);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), width);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(inspectedPage()->viewWidget()), width);
 }
 
 void WebInspectorProxy::platformSetToolbarHeight(unsigned)

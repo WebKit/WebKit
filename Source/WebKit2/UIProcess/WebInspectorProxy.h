@@ -64,16 +64,16 @@ class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
 
-enum AttachmentSide {
-    AttachmentSideBottom,
-    AttachmentSideRight
+enum class AttachmentSide {
+    Bottom,
+    Right
 };
 
 class WebInspectorProxy : public API::ObjectImpl<API::Object::Type::Inspector>, public IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebInspectorProxy> create(WebPageProxy* page)
+    static Ref<WebInspectorProxy> create(WebPageProxy* inspectedPage)
     {
-        return adoptRef(new WebInspectorProxy(page));
+        return adoptRef(*new WebInspectorProxy(inspectedPage));
     }
 
     ~WebInspectorProxy();
@@ -81,7 +81,7 @@ public:
     void invalidate();
 
     // Public APIs
-    WebPageProxy* page() const { return m_page; }
+    WebPageProxy* inspectedPage() const { return m_inspectedPage; }
 
     bool isConnected() const { return !!m_inspectorPage; }
     bool isVisible() const { return m_isVisible; }
@@ -120,7 +120,7 @@ public:
     bool isAttached() const { return m_isAttached; }
     void attachRight();
     void attachBottom();
-    void attach(AttachmentSide = AttachmentSideBottom);
+    void attach(AttachmentSide = AttachmentSide::Bottom);
     void detach();
 
     void setAttachedWindowHeight(unsigned);
@@ -130,8 +130,8 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
-    static bool isInspectorPage(WebPageProxy&);
     static WebProcessPool& inspectorProcessPool();
+    static bool isInspectorPage(WebPageProxy&);
 
     // Provided by platform WebInspectorProxy implementations.
     String inspectorPageURL() const;
@@ -192,9 +192,10 @@ private:
 
     void open();
 
-    // FIXME: this should return the page group identifier, not an instance. The Mac port cannot
-    // directly provide a page group instance, and instances are not necessary to compute levels.
-    WebPageGroup* inspectorPageGroup() const;
+    // The inspector level is used to give different preferences to each inspector
+    // level by setting a per-level page group identifier.
+    unsigned inspectorLevel() const;
+    String inspectorPageGroupIdentifier() const;
     WebPreferences& inspectorPagePreferences() const;
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -212,7 +213,7 @@ private:
     static const unsigned initialWindowWidth;
     static const unsigned initialWindowHeight;
 
-    WebPageProxy* m_page {nullptr};
+    WebPageProxy* m_inspectedPage {nullptr};
     WebPageProxy* m_inspectorPage {nullptr};
 
     bool m_underTest {false};
@@ -223,14 +224,9 @@ private:
     bool m_showMessageSent {false};
     bool m_ignoreFirstBringToFront {false};
 
-    // The debugger stops all the pages in the same PageGroup. Having
-    // all the inspectors in the same group will make it impossible to debug
-    // the inspector code, so we use the level to make different page groups.
-    unsigned m_level;
-    
     IPC::Attachment m_connectionIdentifier;
 
-    AttachmentSide m_attachmentSide {AttachmentSideBottom};
+    AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 
 #if PLATFORM(MAC) && WK_API_ENABLED
     RetainPtr<WKWebInspectorWKWebView> m_inspectorView;

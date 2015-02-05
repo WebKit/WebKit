@@ -89,7 +89,7 @@ void WebInspectorProxy::createInspectorWindow()
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
-    ASSERT(m_page);
+    ASSERT(m_inspectedPage);
 
 #ifdef HAVE_ECORE_X
     const char* engine = "opengl_x11";
@@ -103,7 +103,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         return 0;
 
     WKContextRef wkContext = toAPI(&inspectorProcessPool());
-    WKPageGroupRef wkPageGroup = toAPI(inspectorPageGroup());
+    WKRetainPtr<WKStringRef> wkGroupIdentifier = adoptWK(WKStringCreateWithUTF8CString(inspectorPageGroupIdentifier().utf8().data()));
+    WKPageGroupRef wkPageGroup = WKPageGroupCreateWithIdentifier(wkGroupIdentifier.get());
 
     m_inspectorView = EWKViewCreate(wkContext, wkPageGroup, ecore_evas_get(m_inspectorWindow), /* smart */ 0);
     WKViewRef wkView = EWKViewGetWKView(m_inspectorView);
