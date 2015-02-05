@@ -1,3 +1,10 @@
+2015-02-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, fix a build break on EFL port since r179648.
+
+        * heap/MachineStackMarker.cpp: EFL port doesn't use previousThread variable. 
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+
 2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Console Support for Symbol Objects

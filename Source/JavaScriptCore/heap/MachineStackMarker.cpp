@@ -489,6 +489,7 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
             }
 #else
             UNUSED_PARAM(numberOfThreads);
+            UNUSED_PARAM(previousThread);
             ASSERT_UNUSED(success, success);
 #endif
         }
