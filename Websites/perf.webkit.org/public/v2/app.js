@@ -680,6 +680,8 @@ App.PaneController = Ember.ObjectController.extend({
     _overviewSelectionChanged: function ()
     {
         var overviewSelection = this.get('overviewSelection');
+        if (App.domainsAreEqual(overviewSelection, this.get('mainPlotDomain')))
+            return;
         this.set('mainPlotDomain', overviewSelection || this.get('overviewDomain'));
         Ember.run.debounce(this, 'propagateZoom', 100);
     }.observes('overviewSelection'),
@@ -701,6 +703,7 @@ App.PaneController = Ember.ObjectController.extend({
         var newSelection = this.get('parentController').get('sharedZoom');
         if (App.domainsAreEqual(newSelection, this.get('mainPlotDomain')))
             return;
+        this.set('mainPlotDomain', newSelection);
         this.set('overviewSelection', newSelection);
     }.observes('parentController.sharedZoom').on('init'),
     _updateDetails: function ()

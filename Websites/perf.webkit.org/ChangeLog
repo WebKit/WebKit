@@ -1,5 +1,23 @@
 2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New perf dashboard erroneously clears zoom when poping history items
+        https://bugs.webkit.org/show_bug.cgi?id=141278
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by _sharedZoomChanged updating overviewSelection without updating mainPlotDomain.
+
+        Updating overviewSelection resulted in _overviewSelectionChanged, which observes changes to overviewSelection,
+        to schedule a call to propagateZoom, which in turn overrode "sharedZoom" we just parsed from the query string.
+
+        * public/v2/app.js:
+        (App.PaneController._overviewSelectionChanged): Don't schedule propagateZoom if the selected domain is already
+        shown in the main plot.
+        (App.PaneController._sharedZoomChanged): Set both overviewSelection and mainPlotDomain to avoid overriding
+        "sharedZoom" via propagateZoom inside _overviewSelectionChanged.
+
+2015-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         New perf dashboard shows null as the aggregator name if no aggregation is done
         https://bugs.webkit.org/show_bug.cgi?id=141256
 
