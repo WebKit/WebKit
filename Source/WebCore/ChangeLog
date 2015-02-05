@@ -1,5 +1,40 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176262.
+
+    2014-11-17  David Hyatt  <hyatt@apple.com>
+
+        Improve Ruby selection (getting rid of overlap and improving gap filling)
+        https://bugs.webkit.org/show_bug.cgi?id=138250
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::blockSelectionGaps):
+        Add Ruby text in along with the Ruby base.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        Don't let block gaps get filled in here.
+
+        * rendering/RenderRubyBase.h:
+        Expose accessor to the ruby run.
+
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::rubyRun):
+        * rendering/RenderRubyText.h:
+        Add accessor to the ruby run.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::selectionBottom):
+        Improve selectionTop and selectionBottom of ruby bases to avoid the
+        ruby text. Improve the selectionTop and selectionBottom of ruby texts
+        to fill the gap up to the previous/next line as appropriate.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175260.
 
     2014-10-28  David Hyatt  <hyatt@apple.com>
