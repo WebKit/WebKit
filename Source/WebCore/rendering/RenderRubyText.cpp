@@ -32,6 +32,7 @@
 #include "config.h"
 
 #include "RenderRubyText.h"
+#include "RenderRubyRun.h"
 
 namespace WebCore {
 
@@ -42,6 +43,12 @@ RenderRubyText::RenderRubyText(Element& element, PassRef<RenderStyle> style)
 
 RenderRubyText::~RenderRubyText()
 {
+}
+
+RenderRubyRun* RenderRubyText::rubyRun() const
+{
+    ASSERT(parent());
+    return toRenderRubyRun(parent());
 }
 
 bool RenderRubyText::isChildAllowed(const RenderObject& child, const RenderStyle&) const

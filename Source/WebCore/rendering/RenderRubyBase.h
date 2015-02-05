@@ -46,6 +46,8 @@ public:
 
     virtual bool isRubyBase() const { return true; }
 
+    RenderRubyRun* rubyRun() const;
+
 private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
@@ -56,11 +58,11 @@ private:
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
 
-    RenderRubyRun* rubyRun() const;
-
     // Allow RenderRubyRun to manipulate the children within ruby bases.
     friend class RenderRubyRun;
 };
+
+RENDER_OBJECT_TYPE_CASTS(RenderRubyBase, isRubyBase())
 
 } // namespace WebCore
 
