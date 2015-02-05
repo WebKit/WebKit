@@ -457,10 +457,41 @@ void ScrollView::setScrollOffset(const IntPoint& offset)
     scrollTo(newOffset);
 }
 
+void ScrollView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
+{
+    // We should not attempt to actually modify (paint) platform widgets if the layout phase
+    // is not complete. Instead, defer the scroll event until the layout finishes.
+    if (shouldDeferScrollUpdateAfterContentSizeChange()) {
+        // We only care about the most recent scroll position change request
+        m_deferredScrollPositions = std::make_unique<std::pair<IntPoint, IntPoint>>(std::make_pair(oldPosition, newPosition));
+        return;
+    }
+
+    scrollPositionChangedViaPlatformWidgetImpl(oldPosition, newPosition);
+}
+
+void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
+{
+    ASSERT(!shouldDeferScrollUpdateAfterContentSizeChange());
+
+    if (!m_deferredScrollDelta && !m_deferredScrollPositions)
+        return;
+
+    ASSERT(static_cast<bool>(m_deferredScrollDelta) != static_cast<bool>(m_deferredScrollPositions));
+
+    if (m_deferredScrollDelta)
+        completeUpdatesAfterScrollTo(*m_deferredScrollDelta);
+    else if (m_deferredScrollPositions)
+        scrollPositionChangedViaPlatformWidgetImpl(m_deferredScrollPositions->first, m_deferredScrollPositions->second);
+    
+    m_deferredScrollDelta = nullptr;
+    m_deferredScrollPositions = nullptr;
+}
+
 void ScrollView::scrollTo(const IntSize& newOffset)
 {
     IntSize scrollDelta = newOffset - m_scrollOffset;
-    if (scrollDelta == IntSize())
+    if (scrollDelta.isZero())
         return;
     m_scrollOffset = newOffset;
 
@@ -473,6 +504,19 @@ void ScrollView::scrollTo(const IntSize& newOffset)
         return;
     }
 #endif
+    // We should not attempt to actually modify layer contents if the layout phase
+    // is not complete. Instead, defer the scroll event until the layout finishes.
+    if (shouldDeferScrollUpdateAfterContentSizeChange()) {
+        ASSERT(!m_deferredScrollDelta);
+        m_deferredScrollDelta = std::make_unique<IntSize>(scrollDelta);
+        return;
+    }
+
+    completeUpdatesAfterScrollTo(scrollDelta);
+}
+
+void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
+{
     updateLayerPositionsAfterScrolling();
     scrollContents(scrollDelta);
     updateCompositingLayersAfterScrolling();

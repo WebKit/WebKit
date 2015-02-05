@@ -235,7 +235,6 @@ public:
     virtual void setFixedVisibleContentRect(const IntRect&) override;
 #endif
     virtual void setScrollPosition(const IntPoint&) override;
-    void scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition);
     virtual void updateLayerPositionsAfterScrolling() override;
     virtual void updateCompositingLayersAfterScrolling() override;
     virtual bool requestScrollPositionUpdate(const IntPoint&) override;
@@ -521,6 +520,7 @@ private:
         InLayout,
         InViewSizeAdjust,
         InPostLayout,
+        InPostLayerPositionsUpdatedAfterLayout,
     };
     LayoutPhase layoutPhase() const { return m_layoutPhase; }
 
@@ -536,6 +536,10 @@ private:
     bool shouldLayoutAfterContentsResized() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
+
+    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
+
+    virtual void scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition) override;
 
     void applyOverflowToViewport(RenderElement*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();

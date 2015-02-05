@@ -1125,7 +1125,7 @@ void FrameView::layout(bool allowSubtree)
 
     if (!allowSubtree && m_layoutRoot) {
         m_layoutRoot->markContainingBlocksForLayout(false);
-        m_layoutRoot = 0;
+        m_layoutRoot = nullptr;
     }
 
     ASSERT(frame().view() == this);
@@ -1323,7 +1323,9 @@ void FrameView::layout(bool allowSubtree)
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 
     updateCompositingLayersAfterLayout();
-    
+
+    m_layoutPhase = InPostLayerPositionsUpdatedAfterLayout;
+
     m_layoutCount++;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(EFL)
@@ -1342,6 +1344,8 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(!root->needsLayout());
 
     updateCanBlitOnScrollRecursively();
+
+    handleDeferredScrollUpdateAfterContentSizeChange();
 
     if (document.hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
@@ -1370,6 +1374,11 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentation::didLayout(cookie, root);
 
     --m_nestedLayoutCount;
+}
+
+bool FrameView::shouldDeferScrollUpdateAfterContentSizeChange()
+{
+    return (m_layoutPhase < InPostLayout) && (m_layoutPhase != OutsideLayout);
 }
 
 RenderBox* FrameView::embeddedContentBox() const
@@ -2048,7 +2057,7 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
         renderer->setNeedsLayout();
 }
 
-void FrameView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
+void FrameView::scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition)
 {
     updateLayerPositionsAfterScrolling();
     updateCompositingLayersAfterScrolling();
@@ -2132,6 +2141,8 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 
 void FrameView::updateCompositingLayersAfterScrolling()
 {
+    ASSERT(m_layoutPhase >= InPostLayout || m_layoutPhase == OutsideLayout);
+
     if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
 
@@ -3675,6 +3686,11 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
 
 void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    if (m_layoutPhase == InViewSizeAdjust)
+        return;
+
+    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
+
 #ifndef NDEBUG
     bool fillWithRed;
     if (frame().document()->printing())

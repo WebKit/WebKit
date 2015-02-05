@@ -1,5 +1,51 @@
 2015-02-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178661
+
+    2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+            Layers need to be already updated before we call adjustViewSize
+            https://bugs.webkit.org/show_bug.cgi?id=135514
+
+            Reviewed by Simon Fraser.
+
+            Tested by 'fast/dynamic/layer-no-longer-paginated.html'
+
+            Defer painting operations until we have finished layout. This
+            has a couple of benefits:
+            (1) We do not attempt to modify render layers during layout.
+            (2) In WK1 we do not attempt to paint during layout.
+
+            Add a new virtual predicate to ScrollView indicating when we are in
+            layout so that calls to setContentsSize do not attempt
+            to adjust scrollbars.
+
+            Modify FrameView to set its ScrollView state to block paint
+            operations during layout. Also add a post-layout handler to
+            complete the scrollbar updates after layout is finished.
+
+            * WebCore.exp.in: Move linker symbol to ScrollView (from FrameView).
+            * page/FrameView.cpp:
+            (WebCore::FrameView::layout):
+            (WebCore::FrameView::shouldDeferScrollUpdateAfterContentSizeChange): Added.
+            (WebCore::FrameView::scrollPositionChangedViaPlatformWidget): Removed (Renamed).
+            (WebCore::FrameView::scrollPositionChangedViaPlatformWidgetImpl): Added (Renamed)
+            (WebCore::FrameView::paintContents): Do not paint if we are inside view size adjustment.
+            * page/FrameView.h:
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::scrollPositionChangedViaPlatformWidget): Added. Checks whether we need to defer
+            painting, and calls virtual scrollPositionChangedViaPlatformWidgetImpl if we do not.
+            (WebCore::FrameView::scrollPositionChangedViaPlatformWidgetImpl): Added.
+            (WebCore::ScrollView::handleDeferredScrollUpdateAfterContentSizeChange): Added.
+            (WebCore::ScrollView::scrollTo): If we should defer painting, cache the
+            the scroll delta and apply it after the layout is complete.
+            (WebCore::ScrollView::completeUpdatesAfterScrollTo): Split off part of 'scrollTo' into its own method
+            so we can reuse it in handleDeferredScrollUpdateAfterContentSizeChange.
+            * platform/ScrollView.h:
+            (WebCore::ScrollView::shouldDeferScrollUpdateAfterContentSizeChange): Added.
+
+2015-02-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178363
 
     2015-01-13  Andreas Kling  <akling@apple.com>

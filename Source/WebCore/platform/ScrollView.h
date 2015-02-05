@@ -373,6 +373,8 @@ public:
 
     virtual bool isScrollView() const override { return true; }
 
+    void scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition);
+
 protected:
     ScrollView();
 
@@ -408,9 +410,17 @@ protected:
     // Called to update the scrollbars to accurately reflect the state of the view.
     void updateScrollbars(const IntSize& desiredOffset);
 
+    virtual void handleDeferredScrollUpdateAfterContentSizeChange();
+
+    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() { return false; }
+
+    virtual void scrollPositionChangedViaPlatformWidgetImpl(const IntPoint&, const IntPoint&) { }
+
 private:
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+
+    void completeUpdatesAfterScrollTo(const IntSize& scrollDelta);
 
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
@@ -440,6 +450,10 @@ private:
     IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
+
+    std::unique_ptr<IntSize> m_deferredScrollDelta; // Needed for WebKit scrolling
+    std::unique_ptr<std::pair<IntPoint, IntPoint>> m_deferredScrollPositions; // Needed for platform widget scrolling
+
 
     int m_scrollbarsAvoidingResizer;
     bool m_scrollbarsSuppressed;
