@@ -33,6 +33,9 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderFlowThread.h"
+#include "RenderRubyBase.h"
+#include "RenderRubyRun.h"
+#include "RenderRubyText.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 #include <wtf/NeverDestroyed.h>
@@ -596,12 +599,40 @@ InlineBox* RootInlineBox::lastSelectedBox()
 LayoutUnit RootInlineBox::selectionTop() const
 {
     LayoutUnit selectionTop = m_lineTop;
-
+    
     if (m_hasAnnotationsBefore)
         selectionTop -= !renderer().style().isFlippedLinesWritingMode() ? computeOverAnnotationAdjustment(m_lineTop) : computeUnderAnnotationAdjustment(m_lineTop);
 
     if (renderer().style().isFlippedLinesWritingMode())
         return selectionTop;
+
+    if (renderer().isRubyBase()) {
+        // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text above us.
+        RenderRubyBase* base = &toRenderRubyBase(renderer());
+        RenderRubyRun* run = base->rubyRun();
+        if (run) {
+            RenderRubyText* text = run->rubyText();
+            if (text && text->logicalTop() < base->logicalTop()) {
+                // The ruby text is above the ruby base. Just return now in order to avoid painting on top of the ruby text.
+                return selectionTop;
+            }
+        }
+    } else if (renderer().isRubyText()) {
+        // The ruby text selection should go all the way to the selection top of the containing line.
+        RenderRubyText* text = &toRenderRubyText(renderer());
+        RenderRubyRun* run = text->rubyRun();
+        if (run && run->inlineBoxWrapper()) {
+            RenderRubyBase* base = run->rubyBase();
+            if (base && text->logicalTop() < base->logicalTop()) {
+                // The ruby text is above the ruby base.
+                const RootInlineBox& containingLine = run->inlineBoxWrapper()->root();
+                LayoutUnit enclosingSelectionTop = containingLine.selectionTop();
+                LayoutUnit deltaBetweenObjects = text->logicalTop() + run->logicalTop();
+                LayoutUnit selectionTopInRubyTextCoords = enclosingSelectionTop - deltaBetweenObjects;
+                return std::min(selectionTop, selectionTopInRubyTextCoords);
+            }
+        }
+    }
 
     LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : blockFlow().borderAndPaddingBefore();
     if (prevBottom < selectionTop && blockFlow().containsFloats()) {
@@ -651,9 +682,37 @@ LayoutUnit RootInlineBox::selectionBottom() const
 
     if (m_hasAnnotationsAfter)
         selectionBottom += !renderer().style().isFlippedLinesWritingMode() ? computeUnderAnnotationAdjustment(m_lineBottom) : computeOverAnnotationAdjustment(m_lineBottom);
-
+    
     if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
+    
+    if (renderer().isRubyBase()) {
+        // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text below us.
+        RenderRubyBase* base = &toRenderRubyBase(renderer());
+        RenderRubyRun* run = base->rubyRun();
+        if (run) {
+            RenderRubyText* text = run->rubyText();
+            if (text && text->logicalTop() > base->logicalTop()) {
+                // The ruby text is below the ruby base. Just return now in order to avoid painting on top of the ruby text.
+                return selectionBottom;
+            }
+        }
+    } else if (renderer().isRubyText()) {
+        // The ruby text selection should go all the way to the selection bottom of the containing line.
+        RenderRubyText* text = &toRenderRubyText(renderer());
+        RenderRubyRun* run = text->rubyRun();
+        if (run && run->inlineBoxWrapper()) {
+            RenderRubyBase* base = run->rubyBase();
+            if (base && text->logicalTop() > base->logicalTop()) {
+                // The ruby text is above the ruby base.
+                const RootInlineBox& containingLine = run->inlineBoxWrapper()->root();
+                LayoutUnit enclosingSelectionBottom = containingLine.selectionBottom();
+                LayoutUnit deltaBetweenObjects = text->logicalTop() + run->logicalTop();
+                LayoutUnit selectionBottomInRubyTextCoords = enclosingSelectionBottom - deltaBetweenObjects;
+                return std::min(selectionBottom, selectionBottomInRubyTextCoords);
+            }
+        }
+    }
 
     LayoutUnit nextTop = nextRootBox()->selectionTop();
     if (nextTop > selectionBottom && blockFlow().containsFloats()) {
