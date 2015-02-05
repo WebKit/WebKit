@@ -70,7 +70,7 @@ App.IndexController = Ember.Controller.extend({
 
         var dashboard = null;
         if (grid) {
-            dashboard = App.Dashboard.create({serialized: grid});
+            dashboard = this.store.createRecord('dashboard', {serialized: grid});
             if (!dashboard.get('headerColumns').length)
                 dashboard = null;
         }
