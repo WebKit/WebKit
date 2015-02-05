@@ -1,3 +1,15 @@
+2015-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/xmlhttprequest/event-listener-gc.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33342
+
+        Reviewed by Anders Carlsson.
+
+        Speculative fix.
+
+        * http/tests/xmlhttprequest/print-content-type.cgi: Make the resource uncacheable,
+        so that it doesn't load too quickly.
+
 2015-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More Unreviewed gardening.
