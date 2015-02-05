@@ -36,7 +36,7 @@ from webkitpy.port import driver, image_diff
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector import LeakDetector
 from webkitpy.port import config as port_config
-from webkitpy.xcode import simulator
+from webkitpy.xcode.simulator import Simulator
 
 
 _log = logging.getLogger(__name__)
@@ -179,10 +179,12 @@ class IOSSimulatorPort(Port):
 
     def setup_test_run(self):
         self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
-        time.sleep(2)
+        device_udid = self.testing_device.udid
+        Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
         self._executive.run_command([
             'open', '-a', os.path.join(self.developer_dir, 'Applications', 'iOS Simulator.app'),
-            '--args', '-CurrentDeviceUDID', self.testing_device.udid])
+            '--args', '-CurrentDeviceUDID', device_udid])
+        Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.BOOTED)
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
@@ -287,12 +289,8 @@ class IOSSimulatorPort(Port):
 
         device_type = self.get_option('device_type')
         runtime = self.get_option('runtime')
-        self._testing_device = simulator.Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester', device_type, runtime)
+        self._testing_device = Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester', device_type, runtime)
         return self.testing_device
-
-    def simulator_path(self, udid):
-        if udid:
-            return os.path.realpath(os.path.expanduser(os.path.join('~/Library/Developer/CoreSimulator/Devices', udid)))
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         crash_logs = {}

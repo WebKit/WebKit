@@ -1,3 +1,44 @@
+2015-02-05  Daniel Bates  <dabates@apple.com>
+
+        LayoutTestRelay does not install DumpRenderTree.app/WebKitTestRunnerApp.app
+        https://bugs.webkit.org/show_bug.cgi?id=139746
+        <rdar://problem/19283658>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issues where LayoutTestRelay may fail to install DumpRenderTree.app/WebKitTestRunnerApp.app
+        if the simulator device is not in state Booted.
+
+        Currently run-webkit-test --ios-sim executes LayoutTestRelay immediately after
+        launching/relaunching the iOS Simulator app and a simulator app can only be installed
+        on a device that is in the Booted state. LayoutTestRelay may run before the
+        device is booted and hence fail to install DumpRenderTree.app/WebKitTestRunnerApp.app.
+        We should defer executing LayoutTestRelay until the simulator device booted by
+        iOS Simulator is in the Booted state.
+
+        * Scripts/webkitpy/port/ios.py: Import webkitpy.xcode.simulator.Simulator to avoid prefixing
+        Simulator methods with the module name, simulator.
+        (IOSSimulatorPort.setup_test_run): Wait for the simulator device to be in the Booted state
+        after launching iOS Simulator. Also, wait until the simulator device is in the Shutdown state
+        before launching iOS Simulator to boot it.
+        (IOSSimulatorPort.testing_device): Fix up caller since we now import webkitpy.xcode.simulator.Simulator.
+        (IOSSimulatorPort.simulator_path): Deleted; moved this function to class Simulator and renamed to device_directory().
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.__init__): Remove parameter state and an instance variable of the same name, which represented
+        the state of the device when we created this object as part of parsing the output of `simctl list`. Callers
+        interested in the state of the device are more likely interested in the current state of the device as
+        opposed to the state of the device when the Device object was created.
+        (Device.state): Added; turn around and call Simulator.device_state() for the current state of the device.
+        (Device.path): Extracted implementation into Simulator.device_directory() so that it can be called
+        from both this function and Simulator.device_state().
+        (Device.create): Use Simulator.wait_until_device_is_in_state() to simplify the implementation of this function.
+        (Simulator.DeviceState): Added; class of constants.
+        (Simulator.wait_until_device_is_in_state): Added; this function does not return until the specified
+        device is in the specified state.
+        (Simulator.device_state): Added; parses the state of the device from the appropriate CoreSimulator device.plist file.
+        (Simulator.device_directory): Added.
+        (Simulator._parse_devices): Do not pass argument state to Device constructor as it no longer accepts it.
+
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         Disable retries on Mac debug testers
