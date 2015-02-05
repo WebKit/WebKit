@@ -1,3 +1,50 @@
+2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        [Streams API] Implement a barebone ReadableStream interface
+        https://bugs.webkit.org/show_bug.cgi?id=141045
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements the ReadableStream IDL (https://streams.spec.whatwg.org/#rs-model).
+        No functionality is yet added.
+        ReadableStreamSource is expected to be implemented for native sources (such as HTTP sources)
+        as well as JavaScript source through ReadableStreamJSSource.
+
+        Test: streams/readablestream-constructor.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/streams/ReadableStream.cpp: Added.
+        (WebCore::ReadableStream::create):
+        (WebCore::ReadableStream::ReadableStream):
+        (WebCore::ReadableStream::~ReadableStream):
+        (WebCore::ReadableStream::state):
+        (WebCore::ReadableStream::closed):
+        (WebCore::ReadableStream::ready):
+        * Modules/streams/ReadableStream.h: Added.
+        * Modules/streams/ReadableStream.idl: Added.
+        * Modules/streams/ReadableStreamSource.h: Added.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSReadableStreamCustom.cpp: Added.
+        (WebCore::JSReadableStream::read):
+        (WebCore::JSReadableStream::ready):
+        (WebCore::JSReadableStream::closed):
+        (WebCore::JSReadableStream::cancel):
+        (WebCore::JSReadableStream::pipeTo):
+        (WebCore::JSReadableStream::pipeThrough):
+        (WebCore::constructJSReadableStream):
+        * bindings/js/ReadableStreamJSSource.cpp: Added.
+        (WebCore::ReadableStreamJSSource::create):
+        (WebCore::ReadableStreamJSSource::ReadableStreamJSSource):
+        (WebCore::ReadableStreamJSSource::setInternalError):
+        * bindings/JSReadableStreamJSSource.h: Added.
+
 2015-02-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed project file corrections.

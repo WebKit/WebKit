@@ -1,3 +1,24 @@
+2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        [Streams API] Implement a barebone ReadableStream interface
+        https://bugs.webkit.org/show_bug.cgi?id=141045
+
+        Reviewed by Benjamin Poulain.
+
+        Added readablestream-constructor test that checks ReadableStream properties and state.
+        Rebased global-constructor-attributes.html expectations to add ReadableStream description.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-sim-deprecated/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * streams/readablestream-constructor-expected.txt: Added.
+        * streams/readablestream-constructor.html: Added.
+
 2015-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove Mountain Lion specific test expectations

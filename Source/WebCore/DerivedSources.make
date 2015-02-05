@@ -41,6 +41,7 @@ VPATH = \
     $(WebCore)/Modules/plugins \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/speech \
+    $(WebCore)/Modules/streams \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
@@ -167,6 +168,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
+    $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \

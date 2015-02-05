@@ -17,6 +17,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/proximity"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/speech"
+    "${WEBCORE_DIR}/Modules/streams"
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
@@ -142,6 +143,7 @@ set(WebCore_IDL_INCLUDES
     Modules/proximity
     Modules/quota
     Modules/speech
+    Modules/streams
     Modules/vibration
     Modules/webaudio
     Modules/webdatabase
@@ -268,6 +270,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/speech/SpeechSynthesisEvent.idl
     Modules/speech/SpeechSynthesisUtterance.idl
     Modules/speech/SpeechSynthesisVoice.idl
+
+    Modules/streams/ReadableStream.idl
 
     Modules/vibration/NavigatorVibration.idl
 
@@ -900,6 +904,8 @@ set(WebCore_SOURCES
     Modules/speech/SpeechSynthesisUtterance.cpp
     Modules/speech/SpeechSynthesisVoice.cpp
 
+    Modules/streams/ReadableStream.cpp
+
     Modules/vibration/NavigatorVibration.cpp
     Modules/vibration/Vibration.cpp
 
@@ -1127,6 +1133,8 @@ set(WebCore_SOURCES
     bindings/js/JSRTCPeerConnectionCustom.cpp
     bindings/js/JSRTCSessionDescriptionCustom.cpp
     bindings/js/JSRTCStatsResponseCustom.cpp
+    bindings/js/JSReadableStreamCustom.cpp
+    bindings/js/ReadableStreamJSSource.cpp
     bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
     bindings/js/JSSQLResultSetRowListCustom.cpp
     bindings/js/JSSQLTransactionCustom.cpp

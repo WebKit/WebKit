@@ -300,6 +300,9 @@
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
 #include "JSRangeException.cpp"
+#if ENABLE(STREAMS_API)
+#include "JSReadableStream.cpp"
+#endif
 #include "JSRect.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"
 #include "JSRGBColor.cpp"

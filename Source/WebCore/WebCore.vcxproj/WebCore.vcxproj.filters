@@ -34,6 +34,9 @@
     <Filter Include="Modules\notifications">
       <UniqueIdentifier>{a595ffcf-fa22-48a9-91ad-c528a75a62e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\streams">
+      <UniqueIdentifier>{d67ba5bd-6574-42f3-9da3-55f550747863}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Modules\webdatabase">
       <UniqueIdentifier>{5e0e9582-b4b4-452d-a6de-7c6b31f614e7}</UniqueIdentifier>
     </Filter>
@@ -461,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="..\Modules\notifications\WorkerGlobalScopeNotifications.cpp">
       <Filter>Modules\notifications</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\streams\ReadableStream.cpp">
+      <Filter>Modules\streams</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp">
       <Filter>Modules\webdatabase</Filter>
@@ -4395,6 +4401,12 @@
     <ClCompile Include="..\bindings\js\JSPluginElementFunctions.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSReadableStreamCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bindings\js\ReadableStreamJSSource.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSRequestAnimationFrameCallbackCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -5669,6 +5681,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRangeException.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSReadableStream.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRect.cpp">
@@ -13566,6 +13581,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWorkerNavigator.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSReadableStream.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h">
