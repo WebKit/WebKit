@@ -1460,16 +1460,22 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
-static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, int length)
+static PassRefPtr<Range> characterSubrange(Document& document, CharacterIterator& it, int offset, int length)
 {
     it.advance(offset);
+    if (it.atEnd())
+        return Range::create(document);
+
     RefPtr<Range> start = it.range();
 
     if (length > 1)
         it.advance(length - 1);
+    if (it.atEnd())
+        return Range::create(document);
+
     RefPtr<Range> end = it.range();
 
-    return Range::create(start->startContainer()->document(),
+    return Range::create(document,
         start->startContainer(), start->startOffset(), 
         end->endContainer(), end->endOffset());
 }
@@ -2379,7 +2385,7 @@ int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
 PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset, int characterCount)
 {
     CharacterIterator entireRangeIterator(*entireRange);
-    return characterSubrange(entireRangeIterator, characterOffset, characterCount);
+    return characterSubrange(entireRange->ownerDocument(), entireRangeIterator, characterOffset, characterCount);
 }
 
 static inline bool isInsideReplacedElement(TextIterator& iterator)
@@ -2599,7 +2605,7 @@ PassRefPtr<Range> findPlainText(const Range& range, const String& target, FindOp
 
     // Then, find the document position of the start and the end of the text.
     CharacterIterator computeRangeIterator(range, TextIteratorEntersTextControls);
-    return characterSubrange(computeRangeIterator, matchStart, matchLength);
+    return characterSubrange(range.ownerDocument(), computeRangeIterator, matchStart, matchLength);
 }
 
 }
