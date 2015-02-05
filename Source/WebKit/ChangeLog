@@ -1,3 +1,11 @@
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix Windows build after r179702.
+
+        Export a couple of extra symbols.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2015-02-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r179489.
