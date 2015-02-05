@@ -1,5 +1,14 @@
 2015-02-04  Mark Lam  <mark.lam@apple.com>
 
+        Undo gardening: Restoring the expected ERROR message since that is not the cause of the bot unhappiness.
+
+        Not reviewed.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+
+2015-02-04  Mark Lam  <mark.lam@apple.com>
+
         Gardening: Changed expected ERROR message to WARNING to make test bots happy.
 
         Rubber stamped by Simon Fraser.
