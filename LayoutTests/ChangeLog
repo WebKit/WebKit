@@ -1,3 +1,9 @@
+2015-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More Unreviewed gardening.
+
+        * platform/win/TestExpectations:
+
 2015-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Do not destroy RenderQuote's text fragment child when quotation mark string is changing.

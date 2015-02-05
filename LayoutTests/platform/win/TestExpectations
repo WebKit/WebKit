@@ -162,7 +162,7 @@ http/tests/local/blob/send-sliced-data-blob.html [ Skip ]
 # TODO BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html [ Skip ]
 
-# TODO Directory upload is not enabled.
+# Directory upload is not enabled.
 fast/forms/file/input-file-directory-upload.html [ Skip ]
 
 # TODO A test that failed because eventSender cannot send function-key events.
@@ -177,14 +177,14 @@ http/tests/webarchive [ Skip ]
 # TODO CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt/ [ Skip ]
 
-# TODO This port doesn't support detecting slow unload handlers.
+# Neither this port nor the mac port support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ Skip ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]
 
-# TODO Need to add functionality to DumpRenderTree to handle error pages
+# Need to add functionality to DumpRenderTree to handle error pages (mac as well)
 fast/history/back-forward-reset-after-error-handling.html [ Skip ]
 
-# TODO These tests require touch support
+# These tests require touch support
 fast/events/touch/ [ Skip ]
 
 # TODO No support for key event location in EventSender.
@@ -195,7 +195,7 @@ fast/events/frame-tab-focus.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
 fast/forms/focus2.html [ Failure ]
 
-# TODO No button tracked
+# No button tracked
 fast/events/mouseover-button.html [ Skip ]
 
 # TODO Accept header is handled by the browser
@@ -238,12 +238,12 @@ http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 crypto/subtle/rsa-indexeddb.html [ Skip ]
 inspector-protocol/indexeddb/basics.html [ Skip ]
 
-# TODO This port doesn't support DeviceMotion or DeviceOrientation.
+# Neither this port nor the mac port support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion/ [ Skip ]
 fast/dom/DeviceOrientation/ [ Skip ]
 fast/dom/Window/window-properties-device-orientation.html [ Skip ]
 
-# TODO Link prefetch is disabled by default
+# Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
 fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
@@ -276,13 +276,13 @@ webkit.org/b/53675 fast/events/scroll-event-during-modal-dialog.html [ Skip ]
 webkit.org/b/53675 fast/dom/Window/open-window-min-size.html [ Skip ]
 webkit.org/b/53675 js/dom/function-length.html [ Skip ]
 
-# TODO Datalist is not yet enabled.
+# Datalist is not yet enabled.
 fast/forms/datalist/ [ Skip ]
 
 # TODO Color input is not yet enabled.
 fast/forms/color/ [ Skip ]
 
-# TODO ENABLE_INPUT_TYPE_* are not enabled.
+# ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/29359 fast/forms/date [ Skip ]
 webkit.org/b/29359 fast/forms/datetime [ Skip ]
 webkit.org/b/29359 fast/forms/datetimelocal [ Skip ]
@@ -290,7 +290,7 @@ webkit.org/b/29359 fast/forms/month [ Skip ]
 webkit.org/b/29359 fast/forms/time [ Skip ]
 webkit.org/b/29359 fast/forms/week [ Skip ]
 
-# TODO ENABLE_GAMEPAD not enabled.
+# ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
@@ -342,7 +342,7 @@ webkit.org/b/42435 http/tests/misc/webtiming-ssl.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-two-redirects.php [ Skip ]
 webkit.org/b/42435 http/tests/w3c/webperf [ Skip ]
 
-# TODO Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1 [ Skip ]
 
 # TODO Application Cache Quotas
@@ -353,16 +353,16 @@ webkit.org/b/43458 http/tests/appcache/origin-quota-continued-download-multiple-
 # TODO Full Screen support is not yet enabled.
 fullscreen/ [ Skip ]
 
-# TODO viewport meta tag support
+# viewport meta tag support
 fast/viewport/ [ Skip ]
 
 # TODO Text Autosizing is not enabled
 webkit.org/b/84186 fast/text-autosizing [ Skip ]
 
-# TODO Pre-HMTL5 parser quirks only apply to the mac port for now.
+# Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 
-# TODO Requires WebP support.
+# Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
 fast/images/webp-image-decoding.html [ Skip ]
 fast/images/webp-color-profile-lossless.html [ Skip ]
@@ -379,7 +379,8 @@ fast/frames/location-redirect-user-gesture.html [ Skip ]
 fast/frames/meta-refresh-user-gesture.html [ Skip ]
 
 # TODO These require DRT setSerializeHTTPLoads implementation to be reliable.
-webkit.org/b/50758 http/tests/local/link-stylesheet-load-order.html [ Pass Failure ]
+webkit.org/b/50758 [ Release ] http/tests/local/link-stylesheet-load-order.html [ Pass Failure ]
+webkit.org/b/50758 [ Debug ] http/tests/local/link-stylesheet-load-order.html [ Skip ] # Crashing
 webkit.org/b/50758 [ Release ] http/tests/local/link-stylesheet-load-order-preload.html [ Pass Failure ]
 webkit.org/b/50758 [ Debug ] http/tests/local/link-stylesheet-load-order-preload.html [ Skip ]
 
@@ -389,15 +390,15 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html [ Skip ]
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
 
-# TODO DataTransferItems is not yet implemented.
+# DataTransferItems is not yet implemented.
 fast/events/clipboard-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
-# TODO Custom MIME type support in DataTransfer is not yet implemented.
+# Custom MIME type support in DataTransfer is not yet implemented.
 fast/events/drag-customData.html [ Skip ]
 
-# TODO Quota API is not supported.
+# Quota API is not supported.
 storage/storageinfo-missing-arguments.html [ Skip ]
 storage/storageinfo-no-callbacks.html [ Skip ]
 storage/storageinfo-query-usage.html [ Skip ]
@@ -406,7 +407,7 @@ storage/storagequota-query-usage.html [ Skip ]
 storage/storagequota-request-quota.html [ Skip ]
 fast/workers/worker-storagequota-query-usage.html [ Skip ]
 
-# TODO Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
+# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
@@ -419,27 +420,27 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 # TODO CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout/ [ Skip ]
 
-# TODO <style scoped> is not yet enabled.
+# <style scoped> is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped/ [ Skip ]
 
 # TODO ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap/ [ Skip ]
 
-# TODO ENABLE(SHADOW_DOM) is disabled.
+# ENABLE(SHADOW_DOM) is disabled.
 editing/shadow/ [ Skip ]
 fast/dom/shadow/ [ Skip ]
 fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]
 
-# TODO JSC does not support setIsolatedWorldSecurityOrigin
+# JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
 
 # TODO For now, Web Audio tests are disabled
 webkit.org/b/86914 webaudio/ [ Skip ]
 
-# TODO ENABLE(DRAGGABLE_REGION) is disabled
+# ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ Skip ]
 
-# TODO Font feature settings is not implemented.
+# Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
 
 # TODO Implement dumpProgressFinishedCallback
@@ -472,7 +473,7 @@ webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.h
 webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
-# TODO Skip because this platform does not support a paging mouse wheel event
+# Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Skip ]
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Skip ]
 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Skip ]
@@ -484,20 +485,20 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Skip ]
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Skip ]
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 
-# TODO Pointer Lock is not implemented.
+# Pointer Lock is not implemented.
 pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
 
 # TODO Vibration API is not implemented.
 vibration/ [ Skip ]
 
-# TODO Touch adjustment not enabled on Windows
+# Touch adjustment not enabled on Windows (or mac)
 webkit.org/b/78801 touchadjustment/ [ Skip ]
 
-# TODO Needs BatteryClient implementation.
+# Needs BatteryClient implementation.
 webkit.org/b/62698 batterystatus/ [ Skip ]
 
-# TODO Proximity Events is not supported.
+# Proximity Events is not supported.
 proximity/ [ Skip ]
 fast/events/constructors/device-proximity-event-constructor.html
 
@@ -510,7 +511,7 @@ compositing/visible-rect/  [ Skip ]
 # TODO CSS image-orientation property not yet supported
 fast/css/image-orientation/ [ Skip ]
 
-# TODO The textInputController.setComposition() implementation is missing
+# The textInputController.setComposition() implementation is missing
 fast/forms/input-set-composition-scroll.html [ Skip ]
 
 # TODO Interactive form validation not enabled on Windows
@@ -737,7 +738,8 @@ media/video-empty-source.html [ Failure ]
 
 # Needs to pass cookies to the media player
 webkit.org/b/33954 http/tests/media/video-cookie.html [ Skip ]
-webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
+webkit.org/b/34447 [ Release ] http/tests/media/video-referer.html [ Failure ]
+webkit.org/b/34447 [ Debug ] http/tests/media/video-referer.html [ Skip ] # Crashing
 
 # DumpRenderTree requires testRunner.setViewModeMediaFeature()
 fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
@@ -2014,6 +2016,9 @@ http/tests/workers/text-encoding.html [ Skip ] # Timeout
 http/tests/security/cross-frame-access-protocol-explicit-domain.html [ Skip ] # Timeout
 http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
 
+# Clear Key not implemented
+http/tests/media/clearkey/clear-key-hls-aes128.html	[ Skip ] # Timeout
+
 # SSL Configuration on Windows <rdar://problem/5345985>
 http/tests/navigation/ping-cross-origin-from-https.html [ Skip ] # Timeout
 http/tests/security/cross-frame-access-protocol.html [ Skip ] # Timeout
@@ -2025,7 +2030,8 @@ http/tests/navigation/anchor-frames.html
 webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ] # Timeout
 webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
-webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Timeout ]
+webkit.org/b/28467 [ Release ] http/tests/loading/preload-img-test.html [ Pass Timeout ]
+webkit.org/b/28467 [ Debug ] http/tests/loading/preload-img-test.html [ Skip ] # Crashing
 
 # Different tests sometimes time out on apple-windows-5
 #webkit.org/b/55579 http/tests/websocket [ Skip ]
@@ -2036,7 +2042,7 @@ http/tests/multipart/invalid-image-data-standalone.html [ Skip ] # Timeout
 # Not investigated yet
 webkit.org/b/51596 [ Release ] http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 webkit.org/b/51596 [ Debug ] http/tests/xmlhttprequest/basic-auth-nopassword.html [ Skip ]
-webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
+webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html [ Skip ] # Timeout or failure
 
 # <rdar://problem/5961006> LayoutTests that send an OPTIONS request don't work on Windows due to Apache 1.3
 #http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
@@ -2296,67 +2302,101 @@ platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
 
+[ Debug ] editing/pasteboard/copy-cut-paste-events-fired-when-disabled.html [ Skip ] # Crashing
+[ Debug ] editing/pasteboard/undoable-fragment-removes.html [ Skip ] # Crashing
+[ Debug ] editing/selection/5007143-2.html [ Skip ] # Crashing
+[ Debug ] fast/dom/adopt-node-crash.html [ Skip ] # Crashing
+[ Debug ] fast/dom/htmlallcollection-detached-node-children.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLDocument/document-all.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLAnchorElement/get-href-attribute-port.html [ Skip ] # Crashing
 [ Debug ] fast/events/autoscroll-in-textarea.html [ Skip ]
-[ Debug ] fast/events/autoscroll-overflow-hidden-longhands.html [ Skip ]
 [ Debug ] fast/events/autoscroll-in-textfield.html [ Skip ]
+[ Debug ] fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Skip ] # Crashing
+[ Debug ] fast/events/autoscroll-overflow-hidden-longhands.html [ Skip ]
 [ Debug ] fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
 [ Debug ] fast/events/backspace-navigates-back.html [ Skip ]
 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Skip ]
+[ Debug ] fast/events/before-unload-adopt-within-subframes.html [ Skip ] # Crashing
 [ Debug ] fast/events/change-overflow-on-overflow-change.html [ Skip ]
 [ Debug ] fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
+[ Debug ] fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Skip ] # Crashing
 [ Debug ] fast/events/drag-parent-node.html [ Skip ]
 [ Debug ] fast/events/drag-selects-image.html [ Skip ]
+[ Debug ] fast/events/drag-text-with-clear.html [ Skip ] # Crashing
 [ Debug ] fast/events/gc-freeze-with-attribute-listeners.html [ Skip ]
 [ Debug ] fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
+[ Debug ] fast/events/iframe-object-onload.html [ Skip ] # Crashing
 [ Debug ] fast/events/keypress-insert-tab.html [ Skip ]
 [ Debug ] fast/events/keypress-removed-node.html [ Skip ]
+[ Debug ] fast/events/label-focus.html [ Skip ] # Crashing
 [ Debug ] fast/events/mousedown_in_scrollbar.html [ Skip ]
 [ Debug ] fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Skip ]
+[ Debug ] fast/events/mouseenter-mouseleave-capture.html [ Skip ] # Crashing
 [ Debug ] fast/events/onblur-remove.html [ Skip ]
 [ Debug ] fast/events/onchange-click-hang.html [ Skip ]
+[ Debug ] fast/events/onchange-passwordfield.html [ Skip ] # Crashing
 [ Debug ] fast/events/page-scaled-mouse-click.html [ Skip ]
 [ Debug ] fast/events/page-visibility-null-view.html [ Skip ]
+[ Debug ] fast/events/pagehide-timeout.html [ Skip ] # Crashing
 [ Debug ] fast/forms/autofocus-input-css-style-change.html [ Skip ]
 [ Debug ] fast/forms/autofocus-keygen.html [ Skip ]
+[ Debug ] fast/forms/autofocus-opera-001.html [ Skip ] # Crashing
 [ Debug ] fast/forms/number/number-stepup-stepdown-from-renderer.html [ Skip ]
 [ Debug ] fast/forms/number/number-type-update-by-change-event.html [ Skip ]
+[ Debug ] fast/forms/number/number-validity-badinput.html [ Skip ] # Crashing
 [ Debug ] fast/frames/flattening/iframe-flattening-simple.html [ Skip ]
+[ Debug ] fast/frames/flattening/iframe-tiny.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-deep-nested-resize.html [ Skip ]
 [ Debug ] fast/frames/frame-display-none-focus.html [ Skip ]
 [ Debug ] fast/frames/frame-element-name.html [ Skip ]
+[ Debug ] fast/frames/frame-focus-blurs-active-element.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-inherit-noresize-from-frameset.html [ Skip ]
 [ Debug ] fast/frames/frame-js-url-clientWidth.html [ Skip ]
 [ Debug ] fast/frames/iframe-with-frameborder.html [ Skip ]
 [ Debug ] fast/frames/inline-object-inside-frameset.html [ Skip ]
+[ Debug ] fast/frames/invalid-frameset-compute-edge.html [ Skip ] # Crashing
 [ Debug ] fast/history/form-submit-in-frame.html [ Skip ]
 [ Debug ] fast/history/forward-during-load.html [ Skip ]
+[ Debug ] fast/history/gesture-before-onload-form-submit.html [ Skip ] # Crashing
 [ Debug ] fast/images/animated-gif-webkit-transform.html [ Skip ]
 [ Debug ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-left-edges.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-parsing.html [ Skip ]
+[ Debug ] fast/line-grid/line-align-right-edges.html [ Skip ] # Crashing
 [ Debug ] fast/loader/empty-embed-src-attribute.html [ Skip ]
 [ Debug ] fast/loader/external-script-URL-location.html [ Skip ]
+[ Debug ] fast/loader/file-URL-with-port-number.html [ Skip ] # Crashing
 [ Debug ] fast/overflow/scrollbar-click-retains-focus.html [ Skip ]
 [ Debug ] fast/overflow/scrollbar-position-update.html [ Skip ]
+[ Debug ] fast/overflow/scrollbar-restored.html [ Skip ] # Crashing
 [ Debug ] fast/regions/subtree-with-vert-lr.html [ Skip ]
 [ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Skip ]
 [ Debug ] fast/regions/subtree-with-vert-rl.html [ Skip ]
 [ Debug ] fast/repaint/4776765.html [ Skip ]
 [ Debug ] fast/repaint/text-selection-rect-in-overflow.html [ Skip ]
 [ Debug ] fast/repaint/fixed-move-after-scroll.html [ Skip ]
+[ Debug ] fast/repaint/fixed-position-transparency-with-overflow.html [ Skip ]
+[ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/absolute-position-change-containing-block.html [ Skip ]
 [ Debug ] fast/repaint/text-shadow-horizontal.html [ Skip ]
-[ Debug ] fast/repaint/fixed-position-transparency-with-overflow.html [ Skip ]
-[ Debug ] platform/win/fast/events/panScroll-preventDefault.html [ Skip ]
+[ Debug ] fast/repaint/text-shadow.html [ Skip ] # Crashing
 [ Debug ] http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/incremental/slow-utf8-css.html [ Skip ]
+[ Debug ] http/tests/incremental/slow-utf8-html.pl [ Skip ] # Crashing
 [ Debug ] http/tests/loading/preload-css-test.html [ Skip ]
 [ Debug ] http/tests/misc/javascript-url-stop-loaders.html [ Skip ]
+[ Debug ] http/tests/misc/last-modified-parsing.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/storage-prototype.html [ Skip ]
+[ Debug ] http/tests/security/isolatedWorld/string-prototype.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Skip ]
+[ Debug ] http/tests/security/originHeader/origin-header-for-data.html [ Skip ] # Crashing
 [ Debug ] http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/webgl/1.0.2/texImage2DHTML.html [ Skip ]
+[ Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Skip ] # Crashing
 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
+[ Debug ] platform/win/fast/events/panScroll-preventDefault.html [ Skip ]
+[ Debug ] platform/win/fast/forms/file/drag-and-drop-files.html [ Skip ] # Crashing
 [ Debug ] transforms/3d/general/perspective-non-layer.html [ Skip ]
 
 webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
@@ -2638,7 +2678,7 @@ fast/regions/nested-floated-region.html [ ImageOnlyFailure ]
 fast/regions/overflow/overflow-auto-after-float.html [ ImageOnlyFailure ]
 fast/regions/overflow/overflow-content-zero-height-region.html [ ImageOnlyFailure ]
 fast/regions/overflow/overflow-nested-regions.html [ ImageOnlyFailure ]
-[ Debug ] fast/regions/overflow/overflow-3dtransformed-region.html [ ImageOnlyFailure ]
+[ Debug ] fast/regions/overflow/overflow-3dtransformed-region.html [ Failure ]
 fast/regions/percentage-margins-mixed-ltr-dominant-regions.html [ ImageOnlyFailure ]
 fast/regions/percentage-margins-mixed-rtl-dominant-regions.html [ ImageOnlyFailure ]
 fast/regions/percentage-margins-rtl-variable-width-regions.html [ ImageOnlyFailure ]
