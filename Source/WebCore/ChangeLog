@@ -1,3 +1,20 @@
+2015-02-05  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] HLS <video> will not fire 'progress' events, only 'stalled'.
+        https://bugs.webkit.org/show_bug.cgi?id=141284
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/media/hls/hls-progress.html
+
+        totalBytes() will always return 0 for HLS streams, which will cause didLoadingProgress() to always
+        return false. Skip this optimization. 
+
+        Drive-by fix: duration() will always return 0 for this class as well. Use durationMediaTime() instead.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::didLoadingProgress):
+
 2015-02-05  Darin Adler  <darin@apple.com>
 
         Move InstanceInvalidationGuard/UpdateBlocker to SVGElement from SVGElementInstance

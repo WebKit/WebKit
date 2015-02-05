@@ -430,7 +430,7 @@ MediaTime MediaPlayerPrivateAVFoundation::maxTimeLoaded() const
 
 bool MediaPlayerPrivateAVFoundation::didLoadingProgress() const
 {
-    if (!duration() || !totalBytes())
+    if (!durationMediaTime())
         return false;
     MediaTime currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;

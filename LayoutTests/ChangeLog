@@ -1,3 +1,13 @@
+2015-02-05  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] HLS <video> will not fire 'progress' events, only 'stalled'.
+        https://bugs.webkit.org/show_bug.cgi?id=141284
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/media/hls/hls-progress-expected.txt: Added.
+        * http/tests/media/hls/hls-progress.html: Added.
+
 2015-02-05  Zalan Bujtas  <zalan@apple.com>
 
         [Mac] Unreviewed gardening.
