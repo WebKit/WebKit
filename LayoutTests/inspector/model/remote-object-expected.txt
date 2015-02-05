@@ -16,6 +16,24 @@ EXPRESSION: undefined
 }
 
 -----------------------------------------------------
+EXPRESSION: Symbol()
+{
+  "_type": "symbol",
+  "_subtype": "symbol",
+  "_objectId": "<filtered>",
+  "_description": "Symbol()"
+}
+
+-----------------------------------------------------
+EXPRESSION: Symbol('test')
+{
+  "_type": "symbol",
+  "_subtype": "symbol",
+  "_objectId": "<filtered>",
+  "_description": "Symbol(test)"
+}
+
+-----------------------------------------------------
 EXPRESSION: true
 {
   "_type": "boolean",
@@ -1396,7 +1414,7 @@ EXPRESSION: ({a: 1})
 }
 
 -----------------------------------------------------
-EXPRESSION: ({a: 1, b: "string", c :/regex/})
+EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol('sym')})
 {
   "_type": "object",
   "_objectId": "<filtered>",
@@ -1421,6 +1439,11 @@ EXPRESSION: ({a: 1, b: "string", c :/regex/})
         "type": "object",
         "subtype": "regexp",
         "value": "/regex/"
+      },
+      {
+        "name": "d",
+        "type": "symbol",
+        "value": "Symbol(sym)"
       }
     ]
   }

@@ -14,6 +14,10 @@ function test()
         {expression: "null"},
         {expression: "undefined"},
 
+        // Symbol
+        {expression: "Symbol()"},
+        {expression: "Symbol('test')"},
+
     // Primatives:
 
         // Boolean
@@ -83,7 +87,7 @@ function test()
         // Object
         {expression: "({})"},
         {expression: "({a: 1})"},
-        {expression: "({a: 1, b: \"string\", c :/regex/})"},
+        {expression: "({a: 1, b: \"string\", c: /regex/, d: Symbol('sym')})"},
         {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
         {expression: "function Foo() {}; new Foo"},
         {expression: "function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar"},

@@ -36,7 +36,7 @@ var Object = {}.constructor;
 
 function toString(obj)
 {
-    return "" + obj;
+    return String(obj);
 }
 
 function isUInt32(obj)
@@ -44,6 +44,11 @@ function isUInt32(obj)
     if (typeof obj === "number")
         return obj >>> 0 === obj && (obj > 0 || 1 / obj > 0);
     return "" + (obj >>> 0) === obj;
+}
+
+function isSymbol(obj)
+{
+    return typeof obj === "symbol";
 }
 
 var InjectedScript = function()
@@ -59,7 +64,7 @@ InjectedScript.primitiveTypes = {
     undefined: true,
     boolean: true,
     number: true,
-    string: true
+    string: true,
 }
 
 InjectedScript.CollectionMode = {
@@ -200,6 +205,9 @@ InjectedScript.prototype = {
         if (!this._isDefined(object))
             return false;
 
+        if (isSymbol(object))
+            return false;
+
         var collectionMode = InjectedScript.CollectionMode.AllProperties;
         if (ownProperties)
             collectionMode = InjectedScript.CollectionMode.OwnProperties;
@@ -231,7 +239,11 @@ InjectedScript.prototype = {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         var objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
+
         if (!this._isDefined(object))
+            return false;
+
+        if (isSymbol(object))
             return false;
 
         var descriptors = [];
@@ -669,6 +681,9 @@ InjectedScript.prototype = {
         if (this.isPrimitiveValue(obj))
             return null;
 
+        if (isSymbol(obj))
+            return toString(obj);
+
         var subtype = this._subtype(obj);
 
         if (subtype === "regexp")
@@ -938,6 +953,17 @@ InjectedScript.RemoteObject.prototype = {
                 }
                 this._appendPropertyPreview(preview, {name: name, type: type, value: toString(value)}, propertiesThreshold);
                 continue;
+            }
+
+            // Symbol.
+            if (isSymbol(value)) {
+                var symbolString = toString(value);
+                if (symbolString.length > maxLength) {
+                    symbolString = this._abbreviateString(symbolString, maxLength, true);
+                    preview.lossless = false;
+                }
+                this._appendPropertyPreview(preview, {name: name, type: type, value: symbolString}, propertiesThreshold);
+                return;
             }
 
             // Object.

@@ -1,3 +1,20 @@
+2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Console Support for Symbol Objects
+        https://bugs.webkit.org/show_bug.cgi?id=141173
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.prototype._isSymbol):
+        Symbols have an objectId because it is a non-primitive that cannot be passed
+        by value, however it cannot have properties, so handle some cases.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-formatted-symbol):
+        Give Symbol's their own color.
+
 2015-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Insertion bar (caret) is hidden behind the placeholder text in the style editor

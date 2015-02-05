@@ -337,6 +337,10 @@
     color: rgb(255, 88, 0);
 }
 
+.console-formatted-symbol {
+    color: rgb(63, 169, 156);
+}
+
 .console-formatted-null, .console-formatted-undefined {
     color: rgb(128, 128, 128);
 }

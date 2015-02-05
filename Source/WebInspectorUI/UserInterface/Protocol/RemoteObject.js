@@ -36,7 +36,7 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
         // handle
         this._objectId = objectId;
         this._description = description;
-        this._hasChildren = true;
+        this._hasChildren = type !== "symbol";
         this._preview = preview;
     } else {
         // Primitive or null object.
@@ -134,7 +134,7 @@ WebInspector.RemoteObject.prototype = {
 
     _getProperties: function(ownProperties, ownAndGetterProperties, callback)
     {
-        if (!this._objectId) {
+        if (!this._objectId || this._isSymbol()) {
             callback([]);
             return;
         }
@@ -188,7 +188,7 @@ WebInspector.RemoteObject.prototype = {
 
     setPropertyValue: function(name, value, callback)
     {
-        if (!this._objectId) {
+        if (!this._objectId || this._isSymbol()) {
             callback("Can't set a property of non-object.");
             return;
         }
@@ -221,6 +221,11 @@ WebInspector.RemoteObject.prototype = {
             }
             callback();
         }
+    },
+
+    _isSymbol: function()
+    {
+        return this.type === "symbol";
     },
 
     isCollectionType: function()
