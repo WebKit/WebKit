@@ -1,3 +1,13 @@
+2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        filter-build-webkit: reduce more unfiltered output
+        https://bugs.webkit.org/show_bug.cgi?id=141282
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/filter-build-webkit:
+        Report CompileDTraceScript and Preprocess lines as successful.
+
 2015-02-04  Dana Burkart  <dburkart@apple.com>
 
         Botwatcher's Dashboard is cramped
