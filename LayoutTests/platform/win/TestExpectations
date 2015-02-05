@@ -761,7 +761,8 @@ webkit.org/b/45021 media/context-menu-actions.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html [ Skip ]
 
-webkit.org/b/45603 http/tests/media/video-served-as-text.html [ Failure ]
+webkit.org/b/45603 [ Release ] http/tests/media/video-served-as-text.html [ Failure ]
+webkit.org/b/45603 [ Debug ] http/tests/media/video-served-as-text.html [ Skip ] # Crashing
 webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
@@ -1925,7 +1926,8 @@ webkit.org/b/140703 http/tests/misc/authentication-redirect-2/authentication-sen
 webkit.org/b/140703 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
-webkit.org/b/140703 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
+webkit.org/b/140703 [ Release ] http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
+webkit.org/b/140703 [ Debug ] http/tests/misc/link-rel-icon-beforeload.html [ Skip ] # Crashing
 webkit.org/b/140703 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/window-dot-stop.html [ Failure ]
 webkit.org/b/140703 http/tests/security/401-logout/401-logout.php [ Failure ]
@@ -2028,7 +2030,8 @@ http/tests/navigation/anchor-frames.html
 
 # Sometimes times out
 webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ] # Timeout
-webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
+webkit.org/b/25189 [ Release ] http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
+webkit.org/b/25189 [ Debug ] http/tests/incremental/slow-utf8-text.pl [ Skip ] # Crashing
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
 webkit.org/b/28467 [ Release ] http/tests/loading/preload-img-test.html [ Pass Timeout ]
 webkit.org/b/28467 [ Debug ] http/tests/loading/preload-img-test.html [ Skip ] # Crashing
@@ -2303,69 +2306,93 @@ platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
 
 [ Debug ] editing/pasteboard/copy-cut-paste-events-fired-when-disabled.html [ Skip ] # Crashing
+[ Debug ] editing/pasteboard/copy-display-none.html [ Skip ] # Crashing
 [ Debug ] editing/pasteboard/undoable-fragment-removes.html [ Skip ] # Crashing
+[ Debug ] editing/pasteboard/unrendered-br.html [ Skip ] # Crashing
 [ Debug ] editing/selection/5007143-2.html [ Skip ] # Crashing
+[ Debug ] editing/selection/5007143.html [ Skip ] # Crashing
 [ Debug ] fast/dom/adopt-node-crash.html [ Skip ] # Crashing
+[ Debug ] fast/dom/adopt-node-prevented.html [ Skip ] # Crashing
 [ Debug ] fast/dom/htmlallcollection-detached-node-children.html [ Skip ] # Crashing
+[ Debug ] fast/dom/htmlallcollection-reachable.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLDocument/document-all.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLDocument/document-open-return-value.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLAnchorElement/get-href-attribute-port.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLAnchorElement/remove-rel-attribute.html [ Skip ] # Crashing
 [ Debug ] fast/events/autoscroll-in-textarea.html [ Skip ]
 [ Debug ] fast/events/autoscroll-in-textfield.html [ Skip ]
 [ Debug ] fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Skip ] # Crashing
 [ Debug ] fast/events/autoscroll-overflow-hidden-longhands.html [ Skip ]
 [ Debug ] fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
+[ Debug ] fast/events/autoscroll-upwards-propagation.html [ Skip ] # Crashing
 [ Debug ] fast/events/backspace-navigates-back.html [ Skip ]
 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Skip ]
 [ Debug ] fast/events/before-unload-adopt-within-subframes.html [ Skip ] # Crashing
+[ Debug ] fast/events/before-unload-forbidden-navigation.html [ Skip ] # Crashing
 [ Debug ] fast/events/change-overflow-on-overflow-change.html [ Skip ]
 [ Debug ] fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
 [ Debug ] fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Skip ] # Crashing
+[ Debug ] fast/events/clear-drag-state.html [ Skip ] # Crashing
 [ Debug ] fast/events/drag-parent-node.html [ Skip ]
 [ Debug ] fast/events/drag-selects-image.html [ Skip ]
 [ Debug ] fast/events/drag-text-with-clear.html [ Skip ] # Crashing
+[ Debug ] fast/events/dropzone-001.html [ Skip ] # Crashing
 [ Debug ] fast/events/gc-freeze-with-attribute-listeners.html [ Skip ]
 [ Debug ] fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 [ Debug ] fast/events/iframe-object-onload.html [ Skip ] # Crashing
+[ Debug ] fast/events/iframe-onmousemove.html [ Skip ] # Crashing
 [ Debug ] fast/events/keypress-insert-tab.html [ Skip ]
 [ Debug ] fast/events/keypress-removed-node.html [ Skip ]
 [ Debug ] fast/events/label-focus.html [ Skip ] # Crashing
+[ Debug ] fast/events/media-element-focus-tab.html [ Skip ] # Crashing
 [ Debug ] fast/events/mousedown_in_scrollbar.html [ Skip ]
 [ Debug ] fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Skip ]
 [ Debug ] fast/events/mouseenter-mouseleave-capture.html [ Skip ] # Crashing
+[ Debug ] fast/events/mouseenter-mouseleave.html [ Skip ] # Crashing
 [ Debug ] fast/events/onblur-remove.html [ Skip ]
 [ Debug ] fast/events/onchange-click-hang.html [ Skip ]
 [ Debug ] fast/events/onchange-passwordfield.html [ Skip ] # Crashing
+[ Debug ] fast/events/onchange-range-slider.html [ Skip ] # Crashing
 [ Debug ] fast/events/page-scaled-mouse-click.html [ Skip ]
 [ Debug ] fast/events/page-visibility-null-view.html [ Skip ]
 [ Debug ] fast/events/pagehide-timeout.html [ Skip ] # Crashing
+[ Debug ] fast/events/pagehide-xhr-open.html [ Skip ] # Crashing
 [ Debug ] fast/forms/autofocus-input-css-style-change.html [ Skip ]
 [ Debug ] fast/forms/autofocus-keygen.html [ Skip ]
 [ Debug ] fast/forms/autofocus-opera-001.html [ Skip ] # Crashing
+[ Debug ] fast/forms/autofocus-opera-002.html [ Skip ] # Crashing
 [ Debug ] fast/forms/number/number-stepup-stepdown-from-renderer.html [ Skip ]
 [ Debug ] fast/forms/number/number-type-update-by-change-event.html [ Skip ]
 [ Debug ] fast/forms/number/number-validity-badinput.html [ Skip ] # Crashing
+[ Debug ] fast/forms/number/number-validation-message.html [ Skip ] # Crashing
 [ Debug ] fast/frames/flattening/iframe-flattening-simple.html [ Skip ]
 [ Debug ] fast/frames/flattening/iframe-tiny.html [ Skip ] # Crashing
+[ Debug ] fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-deep-nested-resize.html [ Skip ]
 [ Debug ] fast/frames/frame-display-none-focus.html [ Skip ]
 [ Debug ] fast/frames/frame-element-name.html [ Skip ]
 [ Debug ] fast/frames/frame-focus-blurs-active-element.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-inherit-noresize-from-frameset.html [ Skip ]
 [ Debug ] fast/frames/frame-js-url-clientWidth.html [ Skip ]
+[ Debug ] fast/frames/frame-length-fractional.html [ Skip ] # Crashing
 [ Debug ] fast/frames/iframe-with-frameborder.html [ Skip ]
 [ Debug ] fast/frames/inline-object-inside-frameset.html [ Skip ]
 [ Debug ] fast/frames/invalid-frameset-compute-edge.html [ Skip ] # Crashing
+[ Debug ] fast/frames/invalid-frameset.html [ Skip ] # Crashing
 [ Debug ] fast/history/form-submit-in-frame.html [ Skip ]
 [ Debug ] fast/history/forward-during-load.html [ Skip ]
 [ Debug ] fast/history/gesture-before-onload-form-submit.html [ Skip ] # Crashing
+[ Debug ] fast/history/gesture-before-onload-location-href.html [ Skip ] # Crashing
 [ Debug ] fast/images/animated-gif-webkit-transform.html [ Skip ]
 [ Debug ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-left-edges.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-parsing.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-right-edges.html [ Skip ] # Crashing
+[ Debug ] fast/line-grid/line-grid-contains-value.html [ Skip ] # Crashing
 [ Debug ] fast/loader/empty-embed-src-attribute.html [ Skip ]
 [ Debug ] fast/loader/external-script-URL-location.html [ Skip ]
 [ Debug ] fast/loader/file-URL-with-port-number.html [ Skip ] # Crashing
+[ Debug ] fast/overflow/setting-scrollTop-after-hide-show.html [ Skip ] # Crashing
 [ Debug ] fast/overflow/scrollbar-click-retains-focus.html [ Skip ]
 [ Debug ] fast/overflow/scrollbar-position-update.html [ Skip ]
 [ Debug ] fast/overflow/scrollbar-restored.html [ Skip ] # Crashing
@@ -2373,30 +2400,39 @@ platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Skip ]
 [ Debug ] fast/regions/subtree-with-vert-rl.html [ Skip ]
 [ Debug ] fast/repaint/4776765.html [ Skip ]
-[ Debug ] fast/repaint/text-selection-rect-in-overflow.html [ Skip ]
+[ Debug ] fast/repaint/absolute-position-change-containing-block.html [ Skip ]
+[ Debug ] fast/repaint/absolute-position-changed.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/fixed-move-after-scroll.html [ Skip ]
 [ Debug ] fast/repaint/fixed-position-transparency-with-overflow.html [ Skip ]
 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ] # Crashing
-[ Debug ] fast/repaint/absolute-position-change-containing-block.html [ Skip ]
+[ Debug ] fast/repaint/fixed-right-in-page-scale.html [ Skip ] # Crashing
+[ Debug ] fast/repaint/text-selection-rect-in-overflow.html [ Skip ]
 [ Debug ] fast/repaint/text-shadow-horizontal.html [ Skip ]
 [ Debug ] fast/repaint/text-shadow.html [ Skip ] # Crashing
+[ Debug ] fast/repaint/textarea-set-disabled.html [ Skip ] # Crashing
 [ Debug ] http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/incremental/slow-utf8-css.html [ Skip ]
 [ Debug ] http/tests/incremental/slow-utf8-html.pl [ Skip ] # Crashing
 [ Debug ] http/tests/loading/preload-css-test.html [ Skip ]
+[ Debug ] http/tests/loading/preload-slow-loading.php [ Skip ] # Crashing
+[ Debug ] http/tests/local/link-stylesheet-preferred.html [ Skip ] # Crashing
 [ Debug ] http/tests/misc/javascript-url-stop-loaders.html [ Skip ]
 [ Debug ] http/tests/misc/last-modified-parsing.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/storage-prototype.html [ Skip ]
 [ Debug ] http/tests/security/isolatedWorld/string-prototype.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/isolatedWorld/top-properties.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Skip ]
 [ Debug ] http/tests/security/originHeader/origin-header-for-data.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/originHeader/origin-header-for-empty.html [ Skip ] # Crashing
 [ Debug ] http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/webgl/1.0.2/texImage2DHTML.html [ Skip ]
 [ Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Skip ] # Crashing
 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
 [ Debug ] platform/win/fast/events/panScroll-preventDefault.html [ Skip ]
 [ Debug ] platform/win/fast/forms/file/drag-and-drop-files.html [ Skip ] # Crashing
+[ Debug ] platform/win/fast/text/uniscribe-item-boundary-crash.html [ Skip ] # Crashing
 [ Debug ] transforms/3d/general/perspective-non-layer.html [ Skip ]
 
 webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
@@ -2512,7 +2548,8 @@ fast/inline/positionedLifetime.html [ Failure ]
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
 fast/lists/li-style-alpha-huge-value-crash.html	 [ Pass Timeout ]
 
-fast/loader/file-protocol-fragment.html [ Failure ]
+[ Release ] fast/loader/file-protocol-fragment.html [ Failure ]
+[ Debug ] fast/loader/file-protocol-fragment.html [ Skip ] # Crashing
 webkit.org/b/97026 fast/loader/javascript-url-in-embed.html [ Failure ]
 fast/loader/main-document-url-for-non-http-loads.html [ Failure ]
 fast/loader/stop-provisional-loads.html [ Failure ]

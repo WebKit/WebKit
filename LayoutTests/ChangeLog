@@ -1,3 +1,9 @@
+2015-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Mark another group of assertion failures.
+
+        * platform/win/TestExpectations:
+
 2015-02-05  Jer Noble  <jer.noble@apple.com>
 
         [Mac] HLS <video> will not fire 'progress' events, only 'stalled'.
