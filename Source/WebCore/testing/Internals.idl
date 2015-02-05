@@ -119,6 +119,7 @@ enum PageOverlayType {
     [RaisesException] unsigned long locationFromRange(Element scope, Range range);
     [RaisesException] unsigned long lengthFromRange(Element scope, Range range);
     [RaisesException] DOMString rangeAsText(Range range);
+    [RaisesException] Range subrange(Range range, long rangeLocation, long rangeLength);
 
     [RaisesException] void setDelegatesScrolling(boolean enabled);
 
