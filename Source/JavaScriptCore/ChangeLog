@@ -1,3 +1,32 @@
+2015-02-04  Mark Lam  <mark.lam@apple.com>
+
+        r179576 introduce a deadlock potential during GC thread suspension.
+        <https://webkit.org/b/141268>
+
+        Reviewed by Michael Saboff.
+
+        http://trac.webkit.org/r179576 introduced a potential for deadlocking.
+        In the GC thread suspension loop, we currently delete
+        MachineThreads::Thread that we detect to be invalid.  This is unsafe
+        because we may have already suspended some threads, and one of those
+        suspended threads may still be holding the C heap lock which we need
+        for deleting the invalid thread.
+
+        The fix is to put the invalid threads in a separate toBeDeleted list,
+        and delete them only after GC has resumed all threads.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::removeCurrentThread):
+        - Undo refactoring removeThreadWithLockAlreadyAcquired() out of
+          removeCurrentThread() since it is no longer needed.
+
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        - Put invalid Threads on a threadsToBeDeleted list, and delete those
+          Threads only after all threads have been resumed.
+
+        (JSC::MachineThreads::removeThreadWithLockAlreadyAcquired): Deleted.
+        * heap/MachineStackMarker.h:
+
 2015-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up Object Property Descriptor Collection

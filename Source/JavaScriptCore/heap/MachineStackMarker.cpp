@@ -183,10 +183,12 @@ void MachineThreads::removeThread(void* p)
     static_cast<MachineThreads*>(p)->removeCurrentThread();
 }
 
-template<typename PlatformThread>
-void MachineThreads::removeThreadWithLockAlreadyAcquired(PlatformThread threadToRemove)
+void MachineThreads::removeCurrentThread()
 {
-    if (equalThread(threadToRemove, m_registeredThreads->platformThread)) {
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
+
+    MutexLocker lock(m_registeredThreadsMutex);
+    if (equalThread(currentPlatformThread, m_registeredThreads->platformThread)) {
         Thread* t = m_registeredThreads;
         m_registeredThreads = m_registeredThreads->next;
         delete t;
@@ -194,7 +196,7 @@ void MachineThreads::removeThreadWithLockAlreadyAcquired(PlatformThread threadTo
         Thread* last = m_registeredThreads;
         Thread* t;
         for (t = m_registeredThreads->next; t; t = t->next) {
-            if (equalThread(t->platformThread, threadToRemove)) {
+            if (equalThread(t->platformThread, currentPlatformThread)) {
                 last->next = t->next;
                 break;
             }
@@ -203,14 +205,6 @@ void MachineThreads::removeThreadWithLockAlreadyAcquired(PlatformThread threadTo
         ASSERT(t); // If t is NULL, we never found ourselves in the list.
         delete t;
     }
-}
-    
-void MachineThreads::removeCurrentThread()
-{
-    PlatformThread currentPlatformThread = getCurrentPlatformThread();
-
-    MutexLocker lock(m_registeredThreadsMutex);
-    removeThreadWithLockAlreadyAcquired(currentPlatformThread);
 }
     
 void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& registers)
@@ -456,7 +450,9 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
     PlatformThread currentPlatformThread = getCurrentPlatformThread();
     int numberOfThreads = 0; // Using 0 to denote that we haven't counted the number of threads yet.
     int index = 1;
+    Thread* threadsToBeDeleted = nullptr;
 
+    Thread* previousThread = nullptr;
     for (Thread* thread = m_registeredThreads; thread; index++) {
         if (!equalThread(thread->platformThread, currentPlatformThread)) {
             bool success = suspendThread(thread->platformThread);
@@ -474,9 +470,20 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
                 WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
                     "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] platformThread %p.",
                     error, index, numberOfThreads, thread, reinterpret_cast<void*>(thread->platformThread));
-                
+
+                // Put the invalid thread on the threadsToBeDeleted list.
+                // We can't just delete it here because we have suspended other
+                // threads, and they may still be holding the C heap lock which
+                // we need for deleting the invalid thread. Hence, we need to
+                // defer the deletion till after we have resumed all threads.
                 Thread* nextThread = thread->next;
-                removeThreadWithLockAlreadyAcquired(thread->platformThread);
+                thread->next = threadsToBeDeleted;
+                threadsToBeDeleted = thread;
+
+                if (previousThread)
+                    previousThread->next = nextThread;
+                else
+                    m_registeredThreads = nextThread;
                 thread = nextThread;
                 continue;
             }
@@ -485,6 +492,7 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
             ASSERT_UNUSED(success, success);
 #endif
         }
+        previousThread = thread;
         thread = thread->next;
     }
 
@@ -498,6 +506,12 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
             resumeThread(thread->platformThread);
     }
 
+    for (Thread* thread = threadsToBeDeleted; thread; ) {
+        Thread* nextThread = thread->next;
+        delete thread;
+        thread = nextThread;
+    }
+    
     return *size <= capacity;
 }
 
