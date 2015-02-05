@@ -49,6 +49,7 @@ WebInspector.SourceMapResource = function(url, sourceMap)
 
 WebInspector.SourceMapResource.prototype = {
     constructor: WebInspector.SourceMapResource,
+    __proto__: WebInspector.Resource.prototype,
 
     // Public
 
@@ -84,26 +85,36 @@ WebInspector.SourceMapResource.prototype = {
             // Force inline content to be asynchronous to match the expected load pattern.
             // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
             // Returns a promise.
-            return sourceMapResourceLoaded.call(this, null, inlineContent, this.mimeType, 200);
+            return sourceMapResourceLoaded.call(this, {content: inlineContent, mimeType: this.mimeType, status: 200});
         }
 
-        function sourceMapResourceLoadError(error, body, mimeType, statusCode)
+        function sourceMapResourceNotAvailable(error, content, mimeType, statusCode)
         {
             this.markAsFailed();
             return Promise.resolve({
-                error: error,
-                content: body.content,
+                error: WebInspector.UIString("An error occurred trying to load the resource."),
+                content: content,
                 mimeType: mimeType,
                 statusCode: statusCode
             });
         }
 
-        function sourceMapResourceLoaded(body, mimeType, statusCode)
+        function sourceMapResourceLoadError(error)
         {
+            // There was an error calling NetworkAgent.loadResource.
+            console.error(error || "There was an unknown error calling NetworkAgent.loadResource.");
+            this.markAsFailed();
+            return Promise.resolve({error: WebInspector.UIString("An error occurred trying to load the resource.")});
+        }
+
+        function sourceMapResourceLoaded(parameters)
+        {
+            var {error, content, mimeType, statusCode} = parameters;
+
             const base64encoded = false;
 
-            if (statusCode >= 400)
-                return sourceMapResourceLoadError(error, body, mimeType, statusCode);
+            if (statusCode >= 400 || error)
+                return sourceMapResourceNotAvailable(error, content, mimeType, statusCode);
 
             // FIXME: Add support for picking the best MIME-type. Right now the file extension is the best bet.
             // The constructor set MIME-type based on the file extension and we ignore mimeType here.
@@ -111,17 +122,15 @@ WebInspector.SourceMapResource.prototype = {
             this.markAsFinished();
 
             return Promise.resolve({
-                content: body.content,
+                content: content,
                 mimeType: mimeType,
                 base64encoded: base64encoded,
                 statusCode: statusCode
             });
         }
 
-        if (!NetworkAgent.loadResource) {
-            sourceMapResourceLoaded.call(this, "error: no NetworkAgent.loadResource");
-            return Promise.reject(new Error("No NetworkAgent.loadResource"));
-        }
+        if (!NetworkAgent.loadResource)
+            return sourceMapResourceLoadError.call(this);
 
         var frameIdentifier = null;
         if (this._sourceMap.originalSourceCode instanceof WebInspector.Resource && this._sourceMap.originalSourceCode.parentFrame)
@@ -163,5 +172,3 @@ WebInspector.SourceMapResource.prototype = {
         return new WebInspector.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
     }
 };
-
-WebInspector.SourceMapResource.prototype.__proto__ = WebInspector.Resource.prototype;

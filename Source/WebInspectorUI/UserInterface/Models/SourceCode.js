@@ -191,6 +191,7 @@ WebInspector.SourceCode.prototype = {
     {
         // Different backend APIs return one of `content, `body`, or `scriptSource`.
         var content = parameters.content || parameters.body || parameters.scriptSource;
+        var error = parameters.error;
         var base64Encoded = parameters.base64Encoded;
 
         var revision = this.revisionForRequestedContent;
@@ -201,6 +202,7 @@ WebInspector.SourceCode.prototype = {
         delete this._ignoreRevisionContentDidChangeEvent;
 
         return Promise.resolve({
+            error: error,
             sourceCode: this,
             content: content,
             base64Encoded: base64Encoded

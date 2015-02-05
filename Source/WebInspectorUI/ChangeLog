@@ -1,3 +1,30 @@
+2015-02-04  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: REGRESSION: Inline SourceMap resources show empty content when opened.
+        https://bugs.webkit.org/show_bug.cgi?id=141225
+
+        Reviewed by Timothy Hatcher.
+
+        Change WebInspector.SourceMapResource.prototype.requestContentFromBackend to correctly and consistently handle
+        calls to NetworkAgent. The helper function sourceMapResourceLoaded will now properly handle parameters as a single
+        payload, including manual calls in the case where the source map content is in a data URI. Also
+        WebInspector.SourceCode.prototype._processContent now properly handles an error string used for displaying
+        resource loading error messages in the resource content view.
+
+        * UserInterface/Models/Resource.js: drive-by style fix.
+
+        * UserInterface/Models/SourceCode.js:
+        (WebInspector.SourceCode.prototype._processContent):
+        Properly handle error string.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend):
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoaded):
+        Formerly sourceMapResourceLoadError, now handles parameters from the NetworkAgent correctly.
+
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoadError):
+        This function now handles NetworkAgent errors only.
+
 2015-02-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: eliminate some unnecessary layout/painting in timeline overview and ruler
