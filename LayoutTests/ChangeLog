@@ -1,3 +1,10 @@
+2015-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+        Mark compositing/reflections/masked-reflection-on-composited.html flaky.
+
+        * platform/mac/TestExpectations:
+
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/event-listener-gc.html is flaky
