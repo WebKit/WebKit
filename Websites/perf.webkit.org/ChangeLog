@@ -1,5 +1,11 @@
 2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed. Commit the forgotten change.
+
+        * public/include/manifest.php:
+
+2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         New perf dashboard should have multiple dashboard pages
         https://bugs.webkit.org/show_bug.cgi?id=141339
 

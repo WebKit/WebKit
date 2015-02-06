@@ -32,7 +32,7 @@ class ManifestGenerator {
             'repositories' => $this->repositories($repositories_table, $repositories_with_commit),
             'builders' => $this->builders(),
             'bugTrackers' => $this->bug_trackers($repositories_table),
-            'defaultDashboard' => config('defaultDashboard'),
+            'dashboards' => config('dashboards'),
         );
         return $this->manifest;
     }
