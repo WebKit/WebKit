@@ -56,6 +56,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
+#include <WebKit/WKContextPrivateMac.h>
 #include <WebKit/WKPagePrivateMac.h>
 #endif
 
@@ -391,6 +392,15 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
+    WKContextClientV1 contextClient = {
+        { 1, this },
+        0, // plugInAutoStartOriginHashesChanged
+        networkProcessDidCrash,
+        0, // plugInInformationBecameAvailable
+        0, // copyWebCryptoMasterKey
+    };
+    WKContextSetClient(m_context.get(), &contextClient.base);
+
     WKContextHistoryClientV0 historyClient = {
         { 0, this },
         didNavigateWithNavigationData,
@@ -691,6 +701,18 @@ const char* TestController::webProcessName()
 #endif
 }
 
+const char* TestController::networkProcessName()
+{
+    // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(IOS)
+    return "com.apple.WebKit.Networking";
+#elif PLATFORM(MAC)
+    return "com.apple.WebKit.Networking.Development";
+#else
+    return "NetworkProcess";
+#endif
+}
+
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
     bool isSVGW3CTest = strstr(test.pathOrURL(), "svg/W3C-SVG-1.1") || strstr(test.pathOrURL(), "svg\\W3C-SVG-1.1");
@@ -914,6 +936,11 @@ void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, W
 void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo)
 {
     *returnData = static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).leakRef();
+}
+
+void TestController::networkProcessDidCrash(WKContextRef context, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
 }
 
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
@@ -1198,6 +1225,19 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
         ASSERT_NOT_REACHED();
     }
     return m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody);
+}
+
+// WKContextClient
+
+void TestController::networkProcessDidCrash()
+{
+#if PLATFORM(COCOA)
+    pid_t pid = WKContextGetNetworkProcessIdentifier(m_context.get());
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
+#else
+    fprintf(stderr, "#CRASHED - %s\n", networkProcessName());
+#endif
+    exit(1);
 }
 
 // WKPageNavigationClient

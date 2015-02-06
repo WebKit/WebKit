@@ -448,9 +448,10 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessPr
     for (; it != end; ++it)
         it->value->processDidClose(networkProcessProxy);
 
-    m_networkProcess = nullptr;
-
     m_client.networkProcessDidCrash(this);
+
+    // Leave the process proxy around during client call, so that the client could query the process identifier.
+    m_networkProcess = nullptr;
 }
 
 void WebProcessPool::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
@@ -938,6 +939,16 @@ void WebProcessPool::setAdditionalPluginsDirectory(const String& directory)
     m_pluginInfoStore.setAdditionalPluginsDirectories(directories);
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#if ENABLE(NETWORK_PROCESS)
+PlatformProcessIdentifier WebProcessPool::networkProcessIdentifier()
+{
+    if (!m_networkProcess)
+        return 0;
+
+    return m_networkProcess->processIdentifier();
+}
+#endif
 
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {

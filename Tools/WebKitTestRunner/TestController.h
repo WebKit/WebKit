@@ -105,6 +105,7 @@ public:
     void reattachPageToWebProcess();
 
     static const char* webProcessName();
+    static const char* networkProcessName();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
@@ -149,6 +150,10 @@ private:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
     void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+
+    // WKContextClient
+    static void networkProcessDidCrash(WKContextRef, const void*);
+    void networkProcessDidCrash();
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);

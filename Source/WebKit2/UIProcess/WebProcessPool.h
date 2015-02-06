@@ -187,6 +187,10 @@ public:
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+    PlatformProcessIdentifier networkProcessIdentifier();
+#endif
+
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
     
