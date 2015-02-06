@@ -766,7 +766,7 @@ App.PaneController = Ember.ObjectController.extend({
         this.set('details', Ember.Object.create({
             status: this._computeStatus(currentPoint),
             currentValue: chartData.formatter(currentMeasurement.mean()),
-            oldValue: oldMeasurement && selectedPoints ? chartData.formatter(oldMeasurement.mean()) : null,
+            oldValue: oldMeasurement ? chartData.formatter(oldMeasurement.mean()) : null,
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),

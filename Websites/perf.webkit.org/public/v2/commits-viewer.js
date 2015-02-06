@@ -2,6 +2,7 @@ App.CommitsViewerComponent = Ember.Component.extend({
     repository: null,
     revisionInfo: null,
     commits: null,
+    visible: true,
     commitsChanged: function ()
     {
         var revisionInfo = this.get('revisionInfo');
@@ -30,4 +31,10 @@ App.CommitsViewerComponent = Ember.Component.extend({
                 self.set('commits', []);
         })
     }.observes('repository').observes('revisionInfo').on('init'),
+    actions: {
+        toggleVisibility: function ()
+        {
+            this.toggleProperty('visible');
+        }
+    }
 });

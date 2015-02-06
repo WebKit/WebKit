@@ -175,7 +175,7 @@
     overflow: scroll;
 }
 
-.analysis-chart-pane .details table {
+.analysis-chart-pane table {
     margin: 0.5rem;
 }
 
@@ -192,7 +192,8 @@
     overflow: scroll;
 }
 
-.chart-pane .details-table {
+.chart-pane .details-table,
+.chart-pane .commits-viewer {
     font-size: 0.8rem;
     width: 100%;
     table-layout: fixed;
@@ -203,26 +204,15 @@
     padding-right: 1px;
 }
 
-.chart-pane .details-table td table {
-    border-collapse: collapse;
-}
-
-.chart-pane .details-table td table td {
-    word-break: break-word;
-    border-top: solid 1px #ccc;
-    border-bottom: solid 1px #ccc;
-    padding: 0.2rem;
-}
-
-.chart-pane .details-table td table td a {
-    text-decoration: none;
-}
-
 .chart-pane .details-table th {
-    width: 7rem;
+    width: 30%;
     text-align: right;
     font-weight: normal;
     padding: 0;
+}
+
+.chart-pane .details-table td {
+    width: 70%;
 }
 
 .chart-pane .details-table .bugs th {
@@ -239,6 +229,52 @@
 
 .chart-pane .details-table .status td {
     font-size: 1rem;
+}
+
+.chart-pane .commits-viewer caption {
+    border-top: solid 1px #ccc;
+    font-weight: normal;
+    text-align: left;
+    padding: 0.2rem;
+    padding-left: 0.5rem;
+    cursor: pointer;
+}
+
+.chart-pane .commits-viewer caption:before {
+    display: inline-block;
+    width: 0.8rem;
+    content: "\25BE"; /* Down arrow */
+}
+
+.chart-pane .commits-viewer.hidden caption:before {
+    display: inline-block;
+    width: 0.8rem;
+    content: "\25B8"; /* Right arrow */
+}
+
+.chart-pane .commits {
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 0.2rem;
+}
+
+.chart-pane .commits-viewer {
+    border-collapse: collapse;
+}
+
+.chart-pane .commits-viewer td,
+.chart-pane .commits-viewer th {
+    word-break: break-word;
+    border-top: solid 1px #ccc;
+    padding: 0.2rem;
+}
+
+.chart-pane .commits-viewer th {
+    width: 20%;
+    font-weight: normal;
+}
+
+.chart-pane .commits-viewer td {
+    width: 60%;
 }
 
 .chart-pane .chart {

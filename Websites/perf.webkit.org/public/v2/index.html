@@ -269,6 +269,7 @@
                     </td>
                 </tr>
             </tbody>
+            <tbody>
             {{#if details.buildNumber}}
                 <tr>
                     <th>Build</th>
@@ -293,31 +294,40 @@
                         {{/if}}
                     </td>
                 </tr>
-                <tr>
-                    <td colspan="2">{{commits-viewer repository=repository revisionInfo=this}}</td>
-                </tr>
             {{/each}}
+            </tbody>
         </table>
+        <div class="commits">
+            {{#each details.revisions}}
+                {{commits-viewer repository=repository revisionInfo=this caption=name}}
+            {{/each}}
+        </div>
     </div>
     </script>
 
     <script type="text/x-handlebars" data-template-name="components/commits-viewer">
     {{#if commits}}
-        <table>
-            <tbody>
-                {{#each commits}}
-                    <tr>
-                        <td>
-                            {{#if url}}
-                                <a {{bind-attr href=url}} target="_blank">{{author}}</a>
-                            {{else}}
-                                {{author}}
-                            {{/if}}
-                        </td>
-                        <td>{{message}}</td>
-                    </tr>
-                {{/each}}
-            </tbody>
+        <table {{bind-attr class=":commits-viewer visible::hidden"}}>
+            {{#if caption}}
+                <caption {{action toggleVisibility}}>{{caption}} commits</caption>
+            {{/if}}
+            {{#if visible}}
+                <tbody>
+                    {{#each commits}}
+                        <tr>
+                            <th>
+                                {{#if url}}
+                                    <a {{bind-attr href=url}} target="_blank">{{revision}}</a>
+                                {{else}}
+                                    {{revision}}
+                                {{/if}}
+                            </th>
+                            <th>{{author}}</th>
+                            <td>{{message}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            {{/if}}
         </table>
     {{/if}}
     </script>
