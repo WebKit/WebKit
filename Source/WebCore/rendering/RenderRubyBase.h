@@ -48,17 +48,6 @@ public:
 
     RenderRubyRun* rubyRun() const;
 
-    void setIsAfterExpansion(bool isAfterExpansion) { m_isAfterExpansion = isAfterExpansion; }
-    bool isAfterExpansion() { return m_isAfterExpansion; }
-
-    void setInitialOffset(float initialOffset) { m_initialOffset = initialOffset; }
-
-    void reset()
-    {
-        m_initialOffset = 0;
-        m_isAfterExpansion = true;
-    }
-
 private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
@@ -71,9 +60,6 @@ private:
 
     // Allow RenderRubyRun to manipulate the children within ruby bases.
     friend class RenderRubyRun;
-
-    float m_initialOffset;
-    unsigned m_isAfterExpansion : 1;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderRubyBase, isRubyBase())
