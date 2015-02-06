@@ -1,3 +1,21 @@
+2015-02-06  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to use the DFG SetArgument node to indicate that someone set the value of a local out-of-band
+        https://bugs.webkit.org/show_bug.cgi?id=141337
+
+        Reviewed by Mark Lam.
+
+        This mainly involved ensuring that SetArgument behaves just like SetLocal from a CPS standpoint, but with a special case for those SetArguments that
+        are associated with the prologue.
+
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeSet):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        (JSC::DFG::CPSRethreadingPhase::specialCaseArguments):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeSetLocal): Deleted.
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeSetArgument): Deleted.
+
 2015-02-06  Mark Lam  <mark.lam@apple.com>
 
         MachineThreads should be ref counted.

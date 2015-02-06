@@ -54,6 +54,7 @@ public:
         freeUnnecessaryNodes();
         m_graph.clearReplacements();
         canonicalizeLocalsInBlocks();
+        specialCaseArguments();
         propagatePhis<LocalOperand>();
         propagatePhis<ArgumentOperand>();
         computeIsFlushed();
@@ -233,11 +234,6 @@ private:
             canonicalizeGetLocalFor<LocalOperand>(node, variable, variable->local().toLocal());
     }
     
-    void canonicalizeSetLocal(Node* node)
-    {
-        m_block->variablesAtTail.setOperand(node->local(), node);
-    }
-    
     template<NodeType nodeType, OperandKind operandKind>
     void canonicalizeFlushOrPhantomLocalFor(Node* node, VariableAccessData* variable, size_t idx)
     {
@@ -298,13 +294,9 @@ private:
             canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, variable->local().toLocal());
     }
     
-    void canonicalizeSetArgument(Node* node)
+    void canonicalizeSet(Node* node)
     {
-        VirtualRegister local = node->local();
-        ASSERT(local.isArgument());
-        int argument = local.toArgument();
-        m_block->variablesAtHead.setArgumentFirstTime(argument, node);
-        m_block->variablesAtTail.setArgumentFirstTime(argument, node);
+        m_block->variablesAtTail.setOperand(node->local(), node);
     }
     
     void canonicalizeLocalsInBlock()
@@ -369,7 +361,7 @@ private:
                 break;
                 
             case SetLocal:
-                canonicalizeSetLocal(node);
+                canonicalizeSet(node);
                 break;
                 
             case Flush:
@@ -381,7 +373,7 @@ private:
                 break;
                 
             case SetArgument:
-                canonicalizeSetArgument(node);
+                canonicalizeSet(node);
                 break;
                 
             case MovHint:
@@ -402,6 +394,16 @@ private:
             m_block = m_graph.block(blockIndex);
             canonicalizeLocalsInBlock();
         }
+    }
+    
+    void specialCaseArguments()
+    {
+        // Normally, a SetArgument denotes the start of a live range for a local's value on the stack.
+        // But those SetArguments used for the actual arguments to the machine CodeBlock get
+        // special-cased. We could have instead used two different node types - one for the arguments
+        // at the prologue case, and another for the other uses. But this seemed like IR overkill.
+        for (unsigned i = m_graph.m_arguments.size(); i--;)
+            m_graph.block(0)->variablesAtHead.setArgumentFirstTime(i, m_graph.m_arguments[i]);
     }
     
     template<OperandKind operandKind>
