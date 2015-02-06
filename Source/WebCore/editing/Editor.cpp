@@ -3386,15 +3386,8 @@ void Editor::scanSelectionForTelephoneNumbers()
     Position start = visibleSelection.start();
     Position end = visibleSelection.end();
     for (int i = 0; i < charactersToExtend; ++i) {
-        if (directionOfEnclosingBlock(start) == LTR)
-            start = start.previous(Character);
-        else
-            start = start.next(Character);
-
-        if (directionOfEnclosingBlock(end) == LTR)
-            end = end.next(Character);
-        else
-            end = end.previous(Character);
+        start = start.previous(Character);
+        end = end.next(Character);
     }
 
     FrameSelection extendedSelection;
