@@ -1,5 +1,14 @@
 2015-02-06  Alexey Proskuryakov  <ap@apple.com>
 
+        Correct expectations for inspector/css/selector-dynamic-specificity.html.
+
+        "Slow Pass Timeout" is not currently valid - if we expect a flaky timeout, we need
+        to expect it within the regular period of time with "Pass Timeout".
+
+        * platform/mac-wk2/TestExpectations:
+
+2015-02-06  Alexey Proskuryakov  <ap@apple.com>
+
         http/tests/xmlhttprequest/event-listener-gc.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33342
 

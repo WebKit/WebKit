@@ -312,7 +312,7 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 webkit.org/b/140084 [ Yosemite+ ] js/dom/dfg-inline-resolve.html [ Pass Timeout ]
 
 webkit.org/b/141252 [ Release Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Slow ]
-webkit.org/b/141252 [ Debug Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Slow Pass Timeout ]
+webkit.org/b/141252 [ Debug Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Pass Timeout ]
 
 ### END OF (3) Unclassified failures
 ########################################
