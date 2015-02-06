@@ -1,5 +1,19 @@
 2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The delta value in the chart pane sometimes doens't show '+' for a positive delta
+        https://bugs.webkit.org/show_bug.cgi?id=141340
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by computeStatus prefixing the value delta with '+' if it's greater than 0 after
+        it had already been formatted. Fixed the bug by using a formatter that always emits a sign symbol.
+
+        * public/v2/app.js:
+        (App.Pane.computeStatus):
+        (App.createChartData):
+
+2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix. currentPoint wasn't defined when selectedPoints was used to find points.
 
         * public/v2/app.js:
