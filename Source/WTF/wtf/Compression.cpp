@@ -69,7 +69,7 @@ std::unique_ptr<GenericCompressedData> GenericCompressedData::create(const uint8
     stream.next_in = const_cast<uint8_t*>(data);
 
     size_t currentOffset = OBJECT_OFFSETOF(GenericCompressedData, m_data);
-    size_t currentCapacity = MinimumSize;
+    size_t currentCapacity = fastMallocGoodSize(MinimumSize);
     Bytef* compressedData = static_cast<Bytef*>(fastMalloc(currentCapacity));
     memset(compressedData, 0, sizeof(GenericCompressedData));
     stream.next_out = compressedData + currentOffset;
@@ -94,6 +94,7 @@ std::unique_ptr<GenericCompressedData> GenericCompressedData::create(const uint8
                 // data in the future.
                 newCapacity = std::max(static_cast<size_t>(expectedSize + 8), currentCapacity + 8);
             }
+            newCapacity = fastMallocGoodSize(newCapacity);
             if (newCapacity >= dataLength)
                 goto fail;
             compressedData = static_cast<Bytef*>(fastRealloc(compressedData, newCapacity));

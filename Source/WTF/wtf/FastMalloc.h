@@ -35,6 +35,7 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t);
     WTF_EXPORT_PRIVATE char* fastStrDup(const char*);
     WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
+    WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 
     // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
     WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
@@ -98,6 +99,7 @@ namespace WTF {
 using WTF::fastCalloc;
 using WTF::fastFree;
 using WTF::fastMalloc;
+using WTF::fastMallocGoodSize;
 using WTF::fastMallocSize;
 using WTF::fastRealloc;
 using WTF::fastStrDup;

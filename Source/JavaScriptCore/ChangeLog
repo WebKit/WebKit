@@ -1,3 +1,17 @@
+2015-02-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179743.
+        https://bugs.webkit.org/show_bug.cgi?id=141335
+
+        caused missing symbols in non-WebKit clients of WTF::Vector
+        (Requested by kling on #webkit).
+
+        Reverted changeset:
+
+        "Remove WTF::fastMallocGoodSize()."
+        https://bugs.webkit.org/show_bug.cgi?id=141020
+        http://trac.webkit.org/changeset/179743
+
 2015-02-04  Filip Pizlo  <fpizlo@apple.com>
 
         Remove BytecodeGenerator::preserveLastVar() and replace it with a more robust mechanism for preserving non-temporary registers
