@@ -1,3 +1,10 @@
+2015-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+        Mark inspector/css/selector-specificity.html flaky with Crash too (already marked with Timeout).
+
+        * platform/mac/TestExpectations:
+
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         TestExpectations gardening.
