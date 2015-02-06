@@ -1,3 +1,22 @@
+2015-02-06  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r179758.
+
+    2015-02-06  Timothy Horton  <timothy_horton@apple.com>
+
+            REGRESSION: Lookup doesn't work in RTL
+            https://bugs.webkit.org/show_bug.cgi?id=141338
+            <rdar://problem/19738407>
+
+            Reviewed by Dan Bernstein.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::scanSelectionForTelephoneNumbers):
+            * editing/mac/DictionaryLookup.mm:
+            (WebCore::rangeExpandedAroundPositionByCharacters):
+            Positions are independent of writing direction, so we don't
+            need to (and shouldn't) do anything special for RTL here.
+
 2015-02-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178462. rdar://problem/19673708
