@@ -45,6 +45,7 @@ private:
     WebKitNotificationProvider(WebNotificationManagerProxy*);
 
     void cancelNotificationByID(uint64_t);
+    static void notificationCloseCallback(WebKitNotification*, WebKitNotificationProvider*);
 
     RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<uint64_t, GRefPtr<WebKitNotification>> m_notifications;

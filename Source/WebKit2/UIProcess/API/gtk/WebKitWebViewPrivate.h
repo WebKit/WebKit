@@ -59,7 +59,6 @@ void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
 void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);
 bool webkitWebViewEmitShowNotification(WebKitWebView*, WebKitNotification*);
-void webkitWebViewEmitCloseNotification(WebKitWebView*, WebKitNotification*);
 void webkitWebViewWebProcessCrashed(WebKitWebView*);
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 

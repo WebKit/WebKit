@@ -626,6 +626,7 @@ WebKitNotification
 webkit_notification_get_id
 webkit_notification_get_title
 webkit_notification_get_body
+webkit_notification_close
 
 <SUBSECTION Standard>
 WebKitNotificationClass

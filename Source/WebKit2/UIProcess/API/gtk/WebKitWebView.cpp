@@ -131,7 +131,6 @@ enum {
     AUTHENTICATE,
 
     SHOW_NOTIFICATION,
-    CLOSE_NOTIFICATION,
 
     LAST_SIGNAL
 };
@@ -155,9 +154,7 @@ enum {
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
 typedef HashMap<uint64_t, GRefPtr<GTask> > SnapshotResultsMap;
-#if USE(LIBNOTIFY)
-typedef HashMap<uint64_t, GRefPtr<NotifyNotification>> NotifyNotificationsMap;
-#endif
+
 class PageLoadStateObserver;
 
 struct _WebKitWebViewPrivate {
@@ -209,9 +206,6 @@ struct _WebKitWebViewPrivate {
     SnapshotResultsMap snapshotResultsMap;
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
 
-#if USE(LIBNOTIFY)
-    NotifyNotificationsMap notifyNotificationsMap;
-#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -583,41 +577,48 @@ static void webkitWebViewHandleDownloadRequest(WebKitWebViewBase* webViewBase, D
     webkitDownloadSetWebView(download.get(), WEBKIT_WEB_VIEW(webViewBase));
 }
 
-static gboolean webkitWebViewShowNotification(WebKitWebView* webView, WebKitNotification* webNotification)
+#if USE(LIBNOTIFY)
+static const char* gNotifyNotificationID = "wk-notify-notification";
+
+static void notifyNotificationClosed(NotifyNotification*, WebKitNotification* webNotification)
+{
+    g_object_set_data(G_OBJECT(webNotification), gNotifyNotificationID, nullptr);
+    webkit_notification_close(webNotification);
+}
+
+static void webNotificationClosed(WebKitNotification* webNotification)
+{
+    NotifyNotification* notification = NOTIFY_NOTIFICATION(g_object_get_data(G_OBJECT(webNotification), gNotifyNotificationID));
+    if (!notification)
+        return;
+
+    notify_notification_close(notification, nullptr);
+    g_object_set_data(G_OBJECT(webNotification), gNotifyNotificationID, nullptr);
+}
+#endif // USE(LIBNOTIFY)
+
+static gboolean webkitWebViewShowNotification(WebKitWebView*, WebKitNotification* webNotification)
 {
 #if USE(LIBNOTIFY)
     if (!notify_is_initted())
         notify_init(g_get_prgname());
 
-    GRefPtr<NotifyNotification> notification = webView->priv->notifyNotificationsMap.get(webkit_notification_get_id(webNotification));
+    NotifyNotification* notification = NOTIFY_NOTIFICATION(g_object_get_data(G_OBJECT(webNotification), gNotifyNotificationID));
     if (!notification) {
-        notification = adoptGRef(notify_notification_new(webkit_notification_get_title(webNotification),
-            webkit_notification_get_body(webNotification), nullptr));
-
-        webView->priv->notifyNotificationsMap.set(webkit_notification_get_id(webNotification), notification);
-    } else
-        notify_notification_update(notification.get(), webkit_notification_get_title(webNotification),
+        notification = notify_notification_new(webkit_notification_get_title(webNotification),
             webkit_notification_get_body(webNotification), nullptr);
 
-    notify_notification_show(notification.get(), nullptr);
-    return TRUE;
-#else
-    UNUSED_PARAM(webView);
-    UNUSED_PARAM(webNotification);
-    return FALSE;
-#endif
-}
-
-static gboolean webkitWebViewCloseNotification(WebKitWebView* webView, WebKitNotification* webNotification)
-{
-#if USE(LIBNOTIFY)
-    if (GRefPtr<NotifyNotification> notification = webView->priv->notifyNotificationsMap.get(webkit_notification_get_id(webNotification))) {
-        notify_notification_close(notification.get(), nullptr);
-        webView->priv->notifyNotificationsMap.remove(webkit_notification_get_id(webNotification));
+        g_signal_connect_object(notification, "closed", G_CALLBACK(notifyNotificationClosed), webNotification, static_cast<GConnectFlags>(0));
+        g_signal_connect(webNotification, "closed", G_CALLBACK(webNotificationClosed), nullptr);
+        g_object_set_data_full(G_OBJECT(webNotification), gNotifyNotificationID, notification, static_cast<GDestroyNotify>(g_object_unref));
+    } else {
+        notify_notification_update(notification, webkit_notification_get_title(webNotification),
+            webkit_notification_get_body(webNotification), nullptr);
     }
+
+    notify_notification_show(notification, nullptr);
     return TRUE;
 #else
-    UNUSED_PARAM(webView);
     UNUSED_PARAM(webNotification);
     return FALSE;
 #endif
@@ -784,7 +785,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
     webViewClass->authenticate = webkitWebViewAuthenticate;
     webViewClass->show_notification = webkitWebViewShowNotification;
-    webViewClass->close_notification = webkitWebViewCloseNotification;
 
     /**
      * WebKitWebView:web-context:
@@ -1714,30 +1714,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_BOOLEAN__OBJECT,
             G_TYPE_BOOLEAN, 1,
             WEBKIT_TYPE_NOTIFICATION);
-
-    /**
-     * WebKitNotification::close-notification:
-     * @web_view: the #WebKitWebView
-     * @notification: a #WebKitNofication
-     *
-     * This signal is emitted when a notification should be withdrawn.
-     *
-     * The default handler will close the notification using libnotify, if built with
-     * support for it.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked. %FALSE otherwise.
-     *
-     * Since: 2.8
-     */
-    signals[CLOSE_NOTIFICATION] =
-        g_signal_new("close-notification",
-            G_TYPE_FROM_CLASS(gObjectClass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(WebKitWebViewClass, close_notification),
-            g_signal_accumulator_true_handled, nullptr /* accumulator data */,
-            webkit_marshal_BOOLEAN__OBJECT,
-            G_TYPE_BOOLEAN, 1,
-            WEBKIT_TYPE_NOTIFICATION);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -2113,12 +2089,6 @@ bool webkitWebViewEmitShowNotification(WebKitWebView* webView, WebKitNotificatio
     gboolean handled;
     g_signal_emit(webView, signals[SHOW_NOTIFICATION], 0, webNotification, &handled);
     return handled;
-}
-
-void webkitWebViewEmitCloseNotification(WebKitWebView* webView, WebKitNotification* webNotification)
-{
-    gboolean handled;
-    g_signal_emit(webView, signals[CLOSE_NOTIFICATION], 0, webNotification, &handled);
 }
 
 /**

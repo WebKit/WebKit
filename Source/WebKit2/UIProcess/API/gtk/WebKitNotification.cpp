@@ -42,6 +42,12 @@ enum {
     PROP_BODY
 };
 
+enum {
+    CLOSED,
+
+    LAST_SIGNAL
+};
+
 struct _WebKitNotificationPrivate {
     CString title;
     CString body;
@@ -49,6 +55,8 @@ struct _WebKitNotificationPrivate {
 
     WebKitWebView* webView;
 };
+
+static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitNotification, webkit_notification, G_TYPE_OBJECT)
 
@@ -120,6 +128,27 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
             _("The body for the notification"),
             nullptr,
             WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitNotification::closed:
+     * @notification: the #WebKitNotification on which the signal is emitted
+     *
+     * Emitted when a notification has been withdrawn.
+     *
+     * The default handler will close the notification using libnotify, if built with
+     * support for it.
+     *
+     * Since: 2.8
+     */
+    signals[CLOSED] =
+        g_signal_new(
+            "closed",
+            G_TYPE_FROM_CLASS(notificationClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0,
+            nullptr,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 }
 
 WebKitNotification* webkitNotificationCreate(WebKitWebView* webView, const WebKit::WebNotification& webNotification)
@@ -186,4 +215,19 @@ const gchar* webkit_notification_get_body(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     return notification->priv->body.data();
+}
+
+/**
+ * webkit_notification_close:
+ * @notification: a #WebKitNotification
+ *
+ * Closes the notification.
+ *
+ * Since: 2.8
+ */
+void webkit_notification_close(WebKitNotification* notification)
+{
+    g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
+
+    g_signal_emit(notification, signals[CLOSED], 0);
 }

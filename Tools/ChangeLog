@@ -1,3 +1,17 @@
+2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove WebKitWebView::close-notification signal
+        https://bugs.webkit.org/show_bug.cgi?id=141330
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update notifications unit tests according to the API changes, and
+        add a test case to check that onclose event is fired when a
+        notification is closed by the user.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewNotification):
+
 2015-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         Dashboard doesn't consider building ASan a productive step

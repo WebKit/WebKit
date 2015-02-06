@@ -1,5 +1,46 @@
 2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Remove WebKitWebView::close-notification signal
+        https://bugs.webkit.org/show_bug.cgi?id=141330
+
+        Reviewed by Gustavo Noronha Silva.
+
+        In favor of a WebKitNotification::closed signal and
+        webkit_notification_close() method that both applications and
+        WebKit can use to close a notification. This also fixes the
+        onclose event that was not fired when the notification was
+        closed. It also brings back padding space in WebKitWebViewClass.
+
+        * UIProcess/API/gtk/WebKitNotification.cpp:
+        (webkit_notification_class_init): Add WebKitNotification::closed signal.
+        (webkit_notification_close): Emit WebKitNotification::closed.
+        * UIProcess/API/gtk/WebKitNotification.h:
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::notificationCloseCallback): Callback
+        for WebKitNotification::closed signal that notifies the WebProcess
+        and removes the notification from the map.
+        (WebKitNotificationProvider::show): Connect to WebKitNotification::closed.
+        (WebKitNotificationProvider::cancelNotificationByID): Call webkit_notification_close().
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (notifyNotificationClosed): The user closed the annotation, call
+        webkit_notification_close().
+        (webNotificationClosed): The WebKitNotification has been closed,
+        close the libnotify notification if it hasn't been closed yet.
+        (webkitWebViewShowNotification): Create the libnotifiy
+        notification if needed and associate it to the WebKitNotification
+        as user data. Connect to the closed signal of both, the libnotifiy
+        notification and the WebKit notification.
+        (webkitWebViewCloseNotification): Deleted.
+        (webkit_web_view_class_init): Remove close-notification signal and
+        the default hanlder.
+        (webkitWebViewEmitCloseNotification): Deleted.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add webkit_notification_close.
+
+2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         ASSERTION FAILED: !m_adoptionIsRequired in WTF::RefCountedBase::ref
         https://bugs.webkit.org/show_bug.cgi?id=141035
 
