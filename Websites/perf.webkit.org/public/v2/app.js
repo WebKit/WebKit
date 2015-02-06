@@ -803,13 +803,13 @@ App.PaneController = Ember.ObjectController.extend({
 
         var currentMeasurement;
         var previousPoint;
-        if (currentPoint) {
-            currentMeasurement = currentPoint.measurement;
+        if (!selectedPoints)
             previousPoint = currentPoint.series.previousPoint(currentPoint);
-        } else {
-            currentMeasurement = selectedPoints[selectedPoints.length - 1].measurement;
+        else {
+            currentPoint = selectedPoints[selectedPoints.length - 1];
             previousPoint = selectedPoints[0];
         }
+        var currentMeasurement = currentPoint.measurement;
         var oldMeasurement = previousPoint ? previousPoint.measurement : null;
 
         var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
@@ -827,7 +827,7 @@ App.PaneController = Ember.ObjectController.extend({
 
         var buildNumber = null;
         var buildURL = null;
-        if (currentPoint) {
+        if (!selectedPoints) {
             buildNumber = currentMeasurement.buildNumber();
             var builder = App.Manifest.builder(currentMeasurement.builderId());
             if (builder)

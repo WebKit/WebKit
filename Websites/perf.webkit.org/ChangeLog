@@ -1,5 +1,12 @@
 2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix. currentPoint wasn't defined when selectedPoints was used to find points.
+
+        * public/v2/app.js:
+        (App.PaneController._updateDetails):
+
+2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed. Commit the forgotten change.
 
         * public/include/manifest.php:
