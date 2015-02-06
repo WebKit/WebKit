@@ -1,3 +1,47 @@
+2015-02-06  Mark Lam  <mark.lam@apple.com>
+
+        MachineThreads should be ref counted.
+        <https://webkit.org/b/141317>
+
+        Reviewed by Filip Pizlo.
+
+        The VM's MachineThreads registry object is being referenced from other
+        threads as a raw pointer.  In a scenario where the VM is destructed on
+        the main thread, there is no guarantee that another thread isn't still
+        holding a reference to the registry and will eventually invoke
+        removeThread() on it on thread exit.  Hence, there's a possible use
+        after free scenario here.
+
+        The fix is to make MachineThreads ThreadSafeRefCounted, and have all
+        threads that references keep a RefPtr to it to ensure that it stays
+        alive until the very last thread is done with it.
+
+        * API/tests/testapi.mm:
+        (useVMFromOtherThread): - Renamed to be more descriptive.
+        (useVMFromOtherThreadAndOutliveVM):
+        - Added a test that has another thread which uses the VM outlive the
+          VM to confirm that there is no crash.
+
+          However, I was not actually able to get the VM to crash without this
+          patch because I wasn't always able to the thread destructor to be
+          called.  With this patch applied, I did verify with some logging that
+          the MachineThreads registry is only destructed after all threads
+          have removed themselves from it.
+
+        (threadMain): Deleted.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::gatherStackRoots):
+        * heap/Heap.h:
+        (JSC::Heap::machineThreads):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeCurrentThread):
+        * heap/MachineStackMarker.h:
+
 2015-02-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179743.
