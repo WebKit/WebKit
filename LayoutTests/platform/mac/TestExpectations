@@ -1390,3 +1390,8 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failu
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
+
+# Verified passing, so override generic skip
+webkit.org/b/89235 css3/line-break [ Pass ]
+webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
+webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
