@@ -345,9 +345,6 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     xpc_object_t reExecMessage = xpc_dictionary_create(0, 0, 0);
     xpc_dictionary_set_string(reExecMessage, "message-name", "re-exec");
 
-    cpu_type_t architecture = launchOptions.architecture == ProcessLauncher::LaunchOptions::MatchCurrentArchitecture ? _NSGetMachExecuteHeader()->cputype : launchOptions.architecture;
-    xpc_dictionary_set_uint64(reExecMessage, "architecture", (uint64_t)architecture);
-    
     xpc_object_t environment = xpc_array_create(0, 0);
     char** environmentPointer = environmentVariables.environmentPointer();
     Vector<CString> temps;

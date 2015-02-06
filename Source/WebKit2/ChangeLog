@@ -1,3 +1,18 @@
+2015-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't pass architecture to development plug-in XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=141309
+
+        Reviewed by Anders Carlsson.
+
+        We now have separate services for 32-bit and 64-bit.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::reexec):
+        (WebKit::XPCServiceEventHandler):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToReExecService):
+
 2015-02-05  Chris Dumez  <cdumez@apple.com>
 
         Use deleteEmptyDirectory() in NetworkCacheStorage::clear()

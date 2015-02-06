@@ -39,7 +39,6 @@ namespace WebKit {
 struct ReexecInfo {
     bool executableHeap;
     char** environment;
-    cpu_type_t cpuType;
 };
 
 static NO_RETURN void reexec(ReexecInfo *info)
@@ -64,9 +63,6 @@ static NO_RETURN void reexec(ReexecInfo *info)
         flags |= allowExecutableHeapFlag;
 
     posix_spawnattr_setflags(&attr, flags);
-
-    size_t outCount = 0;
-    posix_spawnattr_setbinpref_np(&attr, 1, &info->cpuType, &outCount);
 
     char path[4 * PATH_MAX];
     uint32_t pathLength = sizeof(path);
@@ -107,7 +103,6 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 ReexecInfo *info = static_cast<ReexecInfo *>(malloc(sizeof(ReexecInfo)));
 
                 info->executableHeap = xpc_dictionary_get_bool(event, "executable-heap");
-                info->cpuType = (cpu_type_t)xpc_dictionary_get_uint64(event, "architecture");
 
                 xpc_object_t environmentArray = xpc_dictionary_get_value(event, "environment");
                 size_t numberOfEnvironmentVariables = xpc_array_get_count(environmentArray);
