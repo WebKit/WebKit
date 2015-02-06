@@ -59,6 +59,13 @@ void MemoryPressureHandler::platformReleaseMemory(bool)
         IOSurfacePool::sharedPool().discardAllSurfaces();
     }
 #endif
+
+#if PLATFORM(IOS)
+    {
+        ReliefLogger log("Collecting JavaScript garbage");
+        gcController().garbageCollectNow();
+    }
+#endif
 }
 
 static dispatch_source_t _cache_event_source = 0;
