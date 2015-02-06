@@ -1,3 +1,20 @@
+2015-02-05  Timothy Hatcher  <timothy@apple.com>
+
+        Support overriding the deviceScaleFactor per WKWebView/WKView
+        https://bugs.webkit.org/show_bug.cgi?id=141311
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setOverrideDeviceScaleFactor:]):
+        (-[WKWebView _overrideDeviceScaleFactor]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _intrinsicDeviceScaleFactor]):
+        (-[WKView _setOverrideDeviceScaleFactor:]):
+        (-[WKView _overrideDeviceScaleFactor]):
+
 2015-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove WebKitWebView::close-notification signal

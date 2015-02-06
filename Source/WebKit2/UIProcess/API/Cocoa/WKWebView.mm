@@ -2530,6 +2530,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->setDrawsTransparentBackground(drawsTransparentBackground);
 }
 
+- (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
+{
+    [_wkView _setOverrideDeviceScaleFactor:deviceScaleFactor];
+}
+
+- (CGFloat)_overrideDeviceScaleFactor
+{
+    return [_wkView _overrideDeviceScaleFactor];
+}
+
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
     [_wkView _setTopContentInset:contentInset];

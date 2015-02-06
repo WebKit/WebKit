@@ -262,6 +262,8 @@ struct WKViewInterpretKeyEventsParameters {
     CGFloat _topContentInset;
     CGFloat _totalHeightOfBanners;
 
+    CGFloat _overrideDeviceScaleFactor;
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
     RetainPtr<WKActionMenuController> _actionMenuController;
@@ -2828,6 +2830,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (float)_intrinsicDeviceScaleFactor
 {
+    if (_data->_overrideDeviceScaleFactor)
+        return _data->_overrideDeviceScaleFactor;
     if (_data->_targetWindowForMovePreparation)
         return [_data->_targetWindowForMovePreparation backingScaleFactor];
     if (NSWindow *window = [self window])
@@ -4125,6 +4129,17 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)_ignoresAllEvents
 {
     return _data->_ignoresAllEvents;
+}
+
+- (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
+{
+    _data->_overrideDeviceScaleFactor = deviceScaleFactor;
+    _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
+}
+
+- (CGFloat)_overrideDeviceScaleFactor
+{
+    return _data->_overrideDeviceScaleFactor;
 }
 
 - (void)_dispatchSetTopContentInset
