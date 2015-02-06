@@ -231,9 +231,6 @@ RenderObject* RenderRubyRun::layoutSpecialExcludedChild(bool relayoutChildren)
 
 void RenderRubyRun::layout()
 {
-    if (RenderRubyBase* base = rubyBase())
-        base->reset();
-
     RenderBlockFlow::layout();
     
     RenderRubyText* rt = rubyText();
