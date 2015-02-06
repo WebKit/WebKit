@@ -1,3 +1,16 @@
+2015-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Use deleteEmptyDirectory() in NetworkCacheStorage::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=141314
+
+        Reviewed by Antti Koivisto.
+
+        Use deleteEmptyDirectory() in NetworkCacheStorage::clear() to simplify
+        the code a little bit.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::clear):
+
 2015-02-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Remove False Positive dispatch_source Leak in WebMemoryPressureHandler singleton

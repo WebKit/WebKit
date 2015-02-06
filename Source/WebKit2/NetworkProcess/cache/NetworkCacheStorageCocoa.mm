@@ -563,7 +563,7 @@ void NetworkCacheStorage::clear()
             traverseDirectory(subdirPath, DT_REG, [&subdirPath](const String& fileName) {
                 WebCore::deleteFile(WebCore::pathByAppendingComponent(subdirPath, fileName));
             });
-            rmdir(WebCore::fileSystemRepresentation(subdirPath).data());
+            WebCore::deleteEmptyDirectory(subdirPath);
         });
     });
 }
