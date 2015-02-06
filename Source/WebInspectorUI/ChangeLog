@@ -1,3 +1,23 @@
+2015-02-06  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: REGRESSION: CSS Resource appears as empty after editing it via Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=140586
+
+        Reviewed by Timothy Hatcher.
+
+        Update SourceCode#_processContent to properly handle the promise returned from CSSAgent so that the content
+        will properly update when a style has changed. Properly clear the existing _requestContentPromise on the
+        stylesheet so that the content will update correctly.
+
+        * UserInterface/Controllers/CSSStyleManager.js: Drive-by style updates.
+        (WebInspector.CSSStyleManager.prototype._fetchInfoForAllStyleSheets):
+        * UserInterface/Models/CSSStyleSheet.js: Drive-by inheritance style update.
+        (WebInspector.CSSStyleSheet.prototype.requestContentFromBackend): Remove unnecessary backend promise function call.
+        * UserInterface/Models/Resource.js: Drive-by removal of unused variable.
+        * UserInterface/Models/SourceCode.js:
+        (WebInspector.SourceCode.prototype.markContentAsStale): Clear _requestContentPromise.
+        (WebInspector.SourceCode.prototype._processContent): Handle `parameters.text` correctly.
+
 2015-02-04  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: REGRESSION: Inline SourceMap resources show empty content when opened.

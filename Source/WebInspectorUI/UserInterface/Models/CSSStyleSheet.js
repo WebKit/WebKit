@@ -49,6 +49,7 @@ WebInspector.CSSStyleSheet.Event = {
 
 WebInspector.CSSStyleSheet.prototype = {
     constructor: WebInspector.CSSStyleSheet,
+    __proto__: WebInspector.SourceCode.prototype,
 
     // Public
 
@@ -129,7 +130,7 @@ WebInspector.CSSStyleSheet.prototype = {
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        return CSSAgent.getStyleSheetText.promise(this._id);
+        return CSSAgent.getStyleSheetText(this._id);
     },
 
     noteContentDidChange: function()
@@ -144,5 +145,3 @@ WebInspector.CSSStyleSheet.prototype = {
         return true;
     }
 };
-
-WebInspector.CSSStyleSheet.prototype.__proto__ = WebInspector.SourceCode.prototype;

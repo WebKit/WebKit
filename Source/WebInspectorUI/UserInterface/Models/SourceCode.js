@@ -175,6 +175,7 @@ WebInspector.SourceCode.prototype = {
 
     markContentAsStale: function()
     {
+        this._requestContentPromise = null;
         this._contentReceived = false;
     },
 
@@ -189,8 +190,8 @@ WebInspector.SourceCode.prototype = {
 
     _processContent: function(parameters)
     {
-        // Different backend APIs return one of `content, `body`, or `scriptSource`.
-        var content = parameters.content || parameters.body || parameters.scriptSource;
+        // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
+        var content = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
         var error = parameters.error;
         var base64Encoded = parameters.base64Encoded;
 
