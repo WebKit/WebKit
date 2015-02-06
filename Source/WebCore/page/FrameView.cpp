@@ -1355,6 +1355,8 @@ void FrameView::layout(bool allowSubtree)
     if (m_needsFullRepaint)
         root->view().repaintRootContents();
 
+    ASSERT(!root->needsLayout());
+
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 
     updateCompositingLayersAfterLayout();
@@ -1375,8 +1377,6 @@ void FrameView::layout(bool allowSubtree)
 #if ENABLE(IOS_TOUCH_EVENTS)
     document.dirtyTouchEventRects();
 #endif
-
-    ASSERT(!root->needsLayout());
 
     updateCanBlitOnScrollRecursively();
 

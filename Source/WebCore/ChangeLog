@@ -1,3 +1,17 @@
+2015-02-05  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Fix ASSERTION FAILED: !root->needsLayout() in FrameView::layout()
+        https://bugs.webkit.org/show_bug.cgi?id=141032
+
+        Reviewed by Darin Adler.
+
+        This patch moves the !root->needsLayout() assert statement above
+        updateLayerPositionsAfterLayout() that can modify dirty bit system
+        when we have RenderMarquee.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2015-02-05  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Implement Append Error algorithm.
