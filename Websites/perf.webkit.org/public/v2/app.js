@@ -763,10 +763,14 @@ App.PaneController = Ember.ObjectController.extend({
         }
 
         var chartData = this.get('chartData');
+        var valueDiff = oldMeasurement ? chartData.formatter(currentMeasurement.mean() - oldMeasurement.mean()) : null;
+        if (valueDiff && valueDiff > 0)
+            valueDiff = '+' + valueDiff;
+
         this.set('details', Ember.Object.create({
             status: this._computeStatus(currentPoint),
             currentValue: chartData.formatter(currentMeasurement.mean()),
-            oldValue: oldMeasurement ? chartData.formatter(oldMeasurement.mean()) : null,
+            valueDiff: valueDiff,
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),

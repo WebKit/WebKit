@@ -259,8 +259,8 @@
                     <th>Current</th>
                     <td>
                         {{details.currentValue}} {{chartData.unit}}
-                        {{#if details.oldValue}}
-                            (from {{details.oldValue}} {{chartData.unit}})
+                        {{#if details.valueDiff}}
+                            ({{details.valueDiff}} {{chartData.unit}})
                         {{/if}}
                         {{#if details.status.label}}
                             <br>
