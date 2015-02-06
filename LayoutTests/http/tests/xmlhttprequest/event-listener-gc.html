@@ -16,8 +16,7 @@ function collect()
 
 function processStateChange(e)
 {
-    if (didCollect)
-        write("PASS: event handler fired after garbage collection.\n");
+    write("PASS: event handler fired" + (didCollect ? " after garbage collection" : "") + ", readyState: " + e.target.readyState + ".\n");
     if (e.target.readyState == 4) {
         if (window.testRunner)
             testRunner.notifyDone();
