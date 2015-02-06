@@ -1,3 +1,26 @@
+2015-02-06  Andreas Kling  <akling@apple.com>
+
+        Remove WTF::fastMallocGoodSize().
+        <https://webkit.org/b/141020>
+
+        Reviewed by Anders Carlsson.
+
+        bmalloc's good-size API just returns exactly whatever you pass it,
+        so it's of no utility to us anymore.
+
+        This gets rid of a bunch of pointless out-of-line calls in Vector
+        construction and growth.
+
+        * wtf/Compression.cpp:
+        (WTF::GenericCompressedData::create):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocGoodSize): Deleted.
+        * wtf/FastMalloc.h:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+
 2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         [Streams API] Implement a barebone ReadableStream interface

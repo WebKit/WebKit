@@ -1,3 +1,14 @@
+2015-02-06  Andreas Kling  <akling@apple.com>
+
+        Remove WTF::fastMallocGoodSize().
+        <https://webkit.org/b/141020>
+
+        Reviewed by Anders Carlsson.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerData::AssemblerData):
+        (JSC::AssemblerData::grow):
+
 2015-02-05  Michael Saboff  <msaboff@apple.com>
 
         CodeCache is not thread safe when adding the same source from two different threads

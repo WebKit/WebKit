@@ -153,15 +153,6 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 namespace WTF {
 
-size_t fastMallocGoodSize(size_t bytes)
-{
-#if OS(DARWIN)
-    return malloc_good_size(bytes);
-#else
-    return bytes;
-#endif
-}
-
 #if OS(WINDOWS)
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
@@ -295,12 +286,7 @@ size_t fastMallocSize(const void*)
 {
     return 1;
 }
-    
-size_t fastMallocGoodSize(size_t size)
-{
-    return size;
-}
-    
+
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
     return bmalloc::api::memalign(alignment, size);
@@ -2766,13 +2752,6 @@ static inline TCMalloc_PageHeap* getPageHeap()
 }
 
 #define pageheap getPageHeap()
-
-size_t fastMallocGoodSize(size_t bytes)
-{
-    if (!phinited)
-        TCMalloc_ThreadCache::InitModule();
-    return AllocationSize(bytes);
-}
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 
