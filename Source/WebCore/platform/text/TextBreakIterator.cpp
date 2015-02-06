@@ -207,6 +207,10 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$MalV    = \\u0D4D;"              // Malayalam Sign Virama
         "$Mal1    = [\\u0D15-\\u0D39];"    // Malayalam Letter A,...,Ha
         "$RI      = [\\U0001F1E6-\\U0001F1FF];" // Emoji regional indicators
+        "$ZWJ     = \\u200D;"               // Zero width joiner
+        "$EmojiForModsAndSeqs = [\\U0001F466-\\U0001F469];" // Emoji that take Fitzpatrick modifiers AND participate in ZWJ sequences
+        "$EmojiForModsOnly = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6B4-\\U0001F6B6 \\U0001F6C0];" // Emoji that take Fitzpatrick modifiers
+        "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];" // Fitzpatrick modifiers
         "!!chain;"
         "!!forward;"
         "$CR $LF;"
@@ -225,6 +229,8 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$Tel0 $TelV $Tel1;"               // Telugu Virama (forward)
         "$Kan0 $KanV $Kan1;"               // Kannada Virama (forward)
         "$Mal0 $MalV $Mal1;"               // Malayalam Virama (forward)
+        "$ZWJ $EmojiForModsAndSeqs;"       // Don't break in emoji ZWJ sequences
+        "[$EmojiForModsAndSeqs $EmojiForModsOnly] $EmojiMods;" // Don't break between relevant emoji and Fitzpatrick modifier
         "!!reverse;"
         "$LF $CR;"
         "($L | $V | $LV | $LVT) $L;"
@@ -242,6 +248,8 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$Tel1 $TelV $Tel0;"               // Telugu Virama (backward)
         "$Kan1 $KanV $Kan0;"               // Kannada Virama (backward)
         "$Mal1 $MalV $Mal0;"               // Malayalam Virama (backward)
+        "$EmojiForModsAndSeqs $ZWJ;"       // Don't break in emoji ZWJ sequences
+        "$EmojiMods [$EmojiForModsAndSeqs $EmojiForModsOnly];" // Don't break between relevant emoji and Fitzpatrick modifier
         "!!safe_reverse;"
         "!!safe_forward;";
     static TextBreakIterator* staticCursorMovementIterator = initializeIteratorWithRules(kRules);
@@ -397,6 +405,10 @@ static const char* uax14AssignmentsAfter =
     "$WJ = [:LineBreak = Word_Joiner:];"
     "$XX = [:LineBreak = Unknown:];"
     "$ZW = [:LineBreak = ZWSpace:];"
+    "$ZWJ = \\u200D;"
+    "$EmojiForModsAndSeqs = [\\U0001F466-\\U0001F469];"
+    "$EmojiForModsOnly = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6B4-\\U0001F6B6 \\U0001F6C0];"
+    "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];"
     "$dictionary = [:LineBreak = Complex_Context:];"
     "$ALPlus = [$AL $AI $SA $SG $XX];"
     "$ALcm = $ALPlus $CM*;"
@@ -473,6 +485,7 @@ static const char* uax14Forward =
     "$LB4NonBreaks [$SP $ZW];"
     "$CAN_CM $CM* [$SP $ZW];"
     "$CM+ [$SP $ZW];"
+    "[$EmojiForModsAndSeqs $EmojiMods] $ZWJ $EmojiForModsAndSeqs;"
     "$CAN_CM $CM+;"
     "$CM+;"
     "$CAN_CM $CM* $WJcm;"
@@ -539,7 +552,8 @@ static const char* uax14Forward =
     "$IScm ($ALcm | $HLcm);"
     "($ALcm | $HLcm | $NUcm) $OPcm;"
     "$CM+ $OPcm;"
-    "$CPcm ($ALcm | $HLcm | $NUcm);";
+    "$CPcm ($ALcm | $HLcm | $NUcm);"
+    "[$EmojiForModsAndSeqs $EmojiForModsOnly] $EmojiMods;";
 
 static const char* uax14Reverse =
     "!!reverse;"
@@ -577,6 +591,7 @@ static const char* uax14Reverse =
     "$LF $CR;"
     "[$SP $ZW] [$LB4NonBreaks-$CM];"
     "[$SP $ZW] $CM+ $CAN_CM;"
+    "$EmojiForModsAndSeqs $ZWJ [$EmojiForModsAndSeqs $EmojiMods];"
     "$CM+ $CAN_CM;"
     "$CM* $WJ $CM* $CAN_CM;"
     "$CM* $WJ [$LB8NonBreaks-$CM];"
@@ -633,7 +648,8 @@ static const char* uax14Reverse =
     "$CM* ($ALPlus | $HL) $CM* ($ALPlus | $HL);"
     "$CM* ($ALPlus | $HL) $CM* $IS;"
     "$CM* $OP $CM* ($ALPlus | $HL | $NU);"
-    "$CM* ($ALPlus | $HL | $NU) $CM* $CP;";
+    "$CM* ($ALPlus | $HL | $NU) $CM* $CP;"
+    "$EmojiMods [$EmojiForModsAndSeqs $EmojiForModsOnly];";
 
 static const char* uax14SafeForward =
     "!!safe_forward;"
