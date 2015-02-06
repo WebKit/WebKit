@@ -82,15 +82,8 @@ PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();
     for (int i = 0; i < numberOfCharactersToExpand; ++i) {
-        if (directionOfEnclosingBlock(start) == LTR)
-            start = start.previous(Character);
-        else
-            start = start.next(Character);
-
-        if (directionOfEnclosingBlock(end) == LTR)
-            end = end.next(Character);
-        else
-            end = end.previous(Character);
+        start = start.previous(Character);
+        end = end.next(Character);
     }
 
     return makeRange(start, end);
