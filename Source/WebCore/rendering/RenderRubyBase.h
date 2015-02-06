@@ -58,6 +58,8 @@ public:
         m_initialOffset = 0;
         m_isAfterExpansion = true;
     }
+    
+    virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
 
 private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;

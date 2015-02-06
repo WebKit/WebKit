@@ -1,5 +1,49 @@
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179366
+
+    2015-01-20  David Hyatt  <hyatt@apple.com>
+
+            Japanese line breaking rules need to be respected before and after Ruby.
+            https://bugs.webkit.org/show_bug.cgi?id=91588
+            <rdar://problem/17306535>
+
+            Reviewed by Dean Jackson.
+
+            Added fast/ruby/ruby-punctuation-avoid-breaking.html.
+
+            This patch has to add support for following line breaking rules at both
+            sides of a Ruby boundary. For breaking before a Ruby, unfortunately we
+            just hard-code the rules (and apply this hard-coding only to Ruby and not
+            to other inline replaced elements).
+
+            For breaking after a Ruby we do better. The Ruby run caches its prior characters
+            and line layout is able to obtain them and use them when deciding whether or not
+            to break. This means for the "after" side of a Ruby, we're able to behave the same
+            as if no Ruby was used.
+
+            * rendering/RenderBlockFlow.h:
+            (WebCore::RenderBlockFlow::cachePriorCharactersIfNeeded):
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+            * rendering/RenderRubyBase.cpp:
+            (WebCore::RenderRubyBase::cachePriorCharactersIfNeeded):
+            * rendering/RenderRubyBase.h:
+            * rendering/RenderRubyRun.cpp:
+            (WebCore::RenderRubyRun::RenderRubyRun):
+            (WebCore::RenderRubyRun::updatePriorContextFromCachedBreakIterator):
+            (WebCore::RenderRubyRun::canBreakBefore):
+            * rendering/RenderRubyRun.h:
+            * rendering/RenderRubyText.cpp:
+            (WebCore::RenderRubyText::canBreakBefore):
+            * rendering/RenderRubyText.h:
+            * rendering/line/BreakingContextInlineHeaders.h:
+            (WebCore::BreakingContext::handleReplaced):
+            (WebCore::BreakingContext::canBreakAtThisPosition):
+            (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179567
 
     2015-02-02  Enrica Casucci  <enrica@apple.com>

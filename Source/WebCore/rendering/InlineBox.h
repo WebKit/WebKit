@@ -22,7 +22,9 @@
 #define InlineBox_h
 
 #include "RenderBoxModelObject.h"
+#include "TextBreakIterator.h"
 #include "TextDirection.h"
+
 
 namespace WebCore {
 

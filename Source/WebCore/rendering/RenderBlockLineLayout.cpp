@@ -1172,6 +1172,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+        cachePriorCharactersIfNeeded(renderTextInfo.m_lineBreakIterator);
         renderTextInfo.m_lineBreakIterator.resetPriorContext();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
