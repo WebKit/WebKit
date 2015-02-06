@@ -512,3 +512,5 @@ webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnException
 webkit.org/b/139979 [ Yosemite+ ] fast/regions/layers/region-removed-during-animation.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/140607 [ Yosemite+ ] http/tests/navigation/navigation-interrupted-by-fragment.html [ Pass Timeout ]
+
+webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]

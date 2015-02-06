@@ -1094,7 +1094,8 @@ webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Pass 
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 # Some inspector tests failing after r173992
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Pass Failure Crash ]
+webkit.org/b/137157 [ Release ] inspector/page/main-frame-resource.html [ Pass Failure ]
+[ Debug ] inspector/page/main-frame-resource.html [ Pass Failure Slow ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15393179>)
 [ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
@@ -1402,3 +1403,5 @@ webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
 
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]
+
+webkit.org/b/141323 fast/images/animated-gif-iframe-webkit-transform.html [ Pass Failure ]
