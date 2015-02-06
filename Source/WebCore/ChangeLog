@@ -1,3 +1,27 @@
+2015-02-05  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Append Error algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=139439
+
+        Reviewed by Jer Noble.
+
+        If Source Buffer has not received first init segment, then it shall call endOfStream after receiving
+        Media Segment, as per Media Source spec. (from 17 July 2014) in paragraph 3.5.1 point 6.1.
+
+        Based this change on Editor's Draft 12 December 2014, as it clarifies order of events.
+
+        Test: media/media-source/media-source-append-media-segment-without-init.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::streamEndedWithError):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::validateInitializationSegment):
+        (WebCore::SourceBuffer::appendError):
+        * Modules/mediasource/SourceBuffer.h:
+
 2015-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Crash due to failing to dirty a removed text node's line box

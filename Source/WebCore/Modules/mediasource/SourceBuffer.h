@@ -92,6 +92,7 @@ public:
     void remove(double start, double end, ExceptionCode&);
     void remove(const MediaTime&, const MediaTime&, ExceptionCode&);
 
+    void appendError(bool);
     void abortIfUpdating();
     void removedFromMediaSource();
     void seekToTime(const MediaTime&);
