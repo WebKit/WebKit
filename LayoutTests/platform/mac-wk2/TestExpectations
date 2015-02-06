@@ -515,3 +515,5 @@ webkit.org/b/139979 [ Yosemite+ ] fast/regions/layers/region-removed-during-anim
 webkit.org/b/140607 [ Yosemite+ ] http/tests/navigation/navigation-interrupted-by-fragment.html [ Pass Timeout ]
 
 webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]
+
+webkit.org/b/141325 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Pass Failure ]
