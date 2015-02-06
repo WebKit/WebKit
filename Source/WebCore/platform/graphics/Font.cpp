@@ -620,13 +620,8 @@ Font::CodePath Font::characterRangeCodePath(const UChar* characters, unsigned le
     // Alternatively, we may as well consider binary search over a sorted
     // list of ranges.
     CodePath result = Simple;
-    bool previousCharacterIsEmojiGroupCandidate = false;
     for (unsigned i = 0; i < len; i++) {
         const UChar c = characters[i];
-        if (c == zeroWidthJoiner && previousCharacterIsEmojiGroupCandidate)
-            return Complex;
-
-        previousCharacterIsEmojiGroupCandidate = false;
         if (c < 0x2E5) // U+02E5 through U+02E9 (Modifier Letters : Tone letters)  
             continue;
         if (c <= 0x2E9) 
@@ -746,11 +741,7 @@ Font::CodePath Font::characterRangeCodePath(const UChar* characters, unsigned le
                 continue;
             if (supplementaryCharacter <= 0x1F1FF)
                 return Complex;
-    
-            if (supplementaryCharacter >= 0x1F466 && supplementaryCharacter <= 0x1F469) {
-                previousCharacterIsEmojiGroupCandidate = true;
-                continue;
-            }
+
             if (supplementaryCharacter < 0xE0100) // U+E0100 through U+E01EF Unicode variation selectors.
                 continue;
             if (supplementaryCharacter <= 0xE01EF)

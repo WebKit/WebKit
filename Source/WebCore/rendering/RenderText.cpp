@@ -1380,31 +1380,21 @@ enum HangulState {
     HangulStateBreak
 };
 
-static inline bool isHangulLVT(UChar32 character)
+inline bool isHangulLVT(UChar32 character)
 {
     return (character - HANGUL_SYLLABLE_START) % HANGUL_JONGSEONG_COUNT;
 }
 
-static inline bool isMark(UChar32 character)
+inline bool isMark(UChar32 c)
 {
-    int8_t charType = u_charType(character);
+    int8_t charType = u_charType(c);
     return charType == U_NON_SPACING_MARK || charType == U_ENCLOSING_MARK || charType == U_COMBINING_SPACING_MARK;
 }
 
-static inline bool isRegionalIndicator(UChar32 character)
+inline bool isRegionalIndicator(UChar32 c)
 {
     // National flag emoji each consists of a pair of regional indicator symbols.
-    return 0x1F1E6 <= character && character <= 0x1F1FF;
-}
-
-static inline bool isEmojiGroupCandidate(UChar32 character)
-{
-    return character >= 0x1F466 && character <= 0x1F469;
-}
-
-static inline bool isEmojiModifier(UChar32 character)
-{
-    return character >= 0x1F3FB && character <= 0x1F3FF;
+    return 0x1F1E6 <= c && c <= 0x1F1FF;
 }
 
 #endif
@@ -1416,9 +1406,6 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
     StringImpl& text = *m_text.impl();
     UChar32 character;
     bool sawRegionalIndicator = false;
-    bool sawEmojiGroupCandidate = false;
-    bool sawEmojiModifier = false;
-    
     while (current > 0) {
         if (U16_IS_TRAIL(text[--current]))
             --current;
@@ -1426,22 +1413,6 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
             break;
 
         UChar32 character = text.characterStartingAt(current);
-
-        if (sawEmojiGroupCandidate) {
-            sawEmojiGroupCandidate = false;
-            if (character == zeroWidthJoiner)
-                continue;
-            // We could have two emoji group candidates without a joiner in between.
-            // Those should not be treated as a group.
-            U16_FWD_1_UNSAFE(text, current);
-            break;
-        }
-
-        if (sawEmojiModifier) {
-            if (isEmojiModifier(character))
-                U16_FWD_1_UNSAFE(text, current);
-            break;
-        }
 
         if (sawRegionalIndicator) {
             // We don't check if the pair of regional indicator symbols before current position can actually be combined
@@ -1459,16 +1430,6 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
 
         if (isRegionalIndicator(character)) {
             sawRegionalIndicator = true;
-            continue;
-        }
-        
-        if (isEmojiModifier(character)) {
-            sawEmojiModifier = true;
-            continue;
-        }
-
-        if (isEmojiGroupCandidate(character)) {
-            sawEmojiGroupCandidate = true;
             continue;
         }
 
