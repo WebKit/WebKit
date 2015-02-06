@@ -705,8 +705,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
             previousFloatLogicalBottom = std::max(previousFloatLogicalBottom, oldLogicalTop + childBlockFlow->lowestFloatLogicalBottom());
     }
 
-    if (!child.needsLayout())
-        child.markForPaginationRelayoutIfNeeded();
+    child.markForPaginationRelayoutIfNeeded();
 
     bool childHadLayout = child.everHadLayout();
     bool childNeededLayout = child.needsLayout();
@@ -744,8 +743,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
         if (childBlockFlow) {
             if (!child.avoidsFloats() && childBlockFlow->containsFloats())
                 childBlockFlow->markAllDescendantsWithFloatsForLayout();
-            if (!child.needsLayout())
-                child.markForPaginationRelayoutIfNeeded();
+            child.markForPaginationRelayoutIfNeeded();
         }
     }
 
@@ -1543,8 +1541,7 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
         if (childRenderBlock) {
             if (!child.avoidsFloats() && childRenderBlock->containsFloats())
                 toRenderBlockFlow(childRenderBlock)->markAllDescendantsWithFloatsForLayout();
-            if (!child.needsLayout())
-                child.markForPaginationRelayoutIfNeeded();
+            child.markForPaginationRelayoutIfNeeded();
         }
 
         // Our guess was wrong. Make the child lay itself out again.
@@ -2428,13 +2425,11 @@ bool RenderBlockFlow::positionNewFloats()
 
         estimateRegionRangeForBoxChild(childBox);
 
+        childBox.markForPaginationRelayoutIfNeeded();
+        childBox.layoutIfNeeded();
+        
         LayoutState* layoutState = view().layoutState();
         bool isPaginated = layoutState->isPaginated();
-        if (isPaginated && !childBox.needsLayout())
-            childBox.markForPaginationRelayoutIfNeeded();
-        
-        childBox.layoutIfNeeded();
-
         if (isPaginated) {
             // If we are unsplittable and don't fit, then we need to move down.
             // We include our margins as part of the unsplittable area.

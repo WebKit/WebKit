@@ -1,5 +1,59 @@
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179627
+
+    2015-02-03  David Hyatt  <hyatt@apple.com>
+
+            Tables don't repaginate properly when the pagination height changes or the pagination offset changes.
+            https://bugs.webkit.org/show_bug.cgi?id=141207
+            <rdar://problem/18387659>
+
+            Reviewed by Dean Jackson.
+
+            * fast/multicol/table-dynamic-movement-expected.html: Added.
+            * fast/multicol/table-dynamic-movement.html: Added.
+
+    2015-02-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            When using SVG as an image, we should load datauri images when these images are not in the image cache.
+            https://bugs.webkit.org/show_bug.cgi?id=99677.
+
+            Reviewed by Darin Adler.
+
+            * svg/as-image/resources/image-with-nested-data-uri-images.svg: Added.
+            This SVG has a tree of depth = 5 of nested data URI images. All the data URI images are
+            SVG images expect the innermost one which is a png data URI image.
+
+            * svg/as-image/resources/image-with-nested-rects.svg: Added.
+            This SVG produces the same drawing as image-with-nested-data-uri-images.svg does but
+            it uses <rect> SVG elements instead.
+
+            * svg/as-image/svg-image-with-data-uri-background-expected.html: Added.
+            * svg/as-image/svg-image-with-data-uri-background.html: Added.
+            Test the data URI SVG as a css background image.
+
+            * svg/as-image/svg-image-with-data-uri-from-canvas-expected.html: Added.
+            * svg/as-image/svg-image-with-data-uri-from-canvas.html: Added.
+            Test the data URI image when it is the result of drawing an SVG image on a canvas object.
+
+            * svg/as-image/svg-image-with-data-uri-images-disabled-expected.html: Added.
+            * svg/as-image/svg-image-with-data-uri-images-disabled.html: Added.
+            Ensure the data uri images are not loaded if imagesEnabled is turned off.
+
+            * svg/as-image/svg-image-with-data-uri-reloading-expected.html: Added.
+            * svg/as-image/svg-image-with-data-uri-reloading.html: Added.
+            Test the data URI SVG when reloading the page.
+
+            * svg/as-image/svg-image-with-data-uri-use-data-uri-expected.svg: Added.
+            * svg/as-image/svg-image-with-data-uri-use-data-uri.svg: Added.
+            Test the data URI image when it is referenced from an SVG <use> tag.
+
+            * svg/as-image/svg-image-with-svg-data-uri-expected.html: Added.
+            * svg/as-image/svg-image-with-svg-data-uri.html: Added.
+            Test the data URI image when it is referenced from an HTML <img> tag.
+
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179366
 
     2015-01-20  David Hyatt  <hyatt@apple.com>
