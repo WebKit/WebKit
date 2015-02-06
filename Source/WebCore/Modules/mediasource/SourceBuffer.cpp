@@ -616,10 +616,10 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
     // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
-    // then run the end of stream algorithm with the error parameter set to "decode" and abort this algorithm.
+    // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
     if (result == ParsingFailed) {
         LOG(MediaSource, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - result = ParsingFailed", this);
-        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+        appendError(true);
         return;
     }
 
@@ -997,8 +997,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
     LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(%p)", this);
 
-    // 3.5.7 Initialization Segment Received
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
+    // 3.5.8 Initialization Segment Received (ctd)
+    // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-init-segment-received [Editor's Draft 09 January 2015]
+
     // 1. Update the duration attribute if it currently equals NaN:
     if (m_source->duration().isInvalid()) {
         // ↳ If the initialization segment contains a duration:
@@ -1009,16 +1010,18 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         m_source->setDurationInternal(newDuration);
     }
 
-    // 2. If the initialization segment has no audio, video, or text tracks, then run the end of stream
-    // algorithm with the error parameter set to "decode" and abort these steps.
+    // 2. If the initialization segment has no audio, video, or text tracks, then run the append error algorithm
+    // with the decode error parameter set to true and abort these steps.
     if (!segment.audioTracks.size() && !segment.videoTracks.size() && !segment.textTracks.size())
-        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
-
+        appendError(true);
 
     // 3. If the first initialization segment flag is true, then run the following steps:
     if (m_receivedFirstInitializationSegment) {
+
+        // 3.1. Verify the following properties. If any of the checks fail then run the append error algorithm
+        // with the decode error parameter set to true and abort these steps.
         if (!validateInitializationSegment(segment)) {
-            m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+            appendError(true);
             return;
         }
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
@@ -1058,6 +1061,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
             downcast<InbandTextTrack>(*textTrack).setPrivate(textTrackInfo.track);
         }
 
+        // 3.3 Set the need random access point flag on all track buffers to true.
         for (auto& trackBuffer : m_trackBufferMap.values())
             trackBuffer.needRandomAccessFlag = true;
     }
@@ -1068,13 +1072,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
     // 5. If the first initialization segment flag is false, then run the following steps:
     if (!m_receivedFirstInitializationSegment) {
         // 5.1 If the initialization segment contains tracks with codecs the user agent does not support,
-        // then run the end of stream algorithm with the error parameter set to "decode" and abort these steps.
+        // then run the append error algorithm with the decode error parameter set to true and abort these steps.
         // NOTE: This check is the responsibility of the SourceBufferPrivate.
 
         // 5.2 For each audio track in the initialization segment, run following steps:
         for (auto& audioTrackInfo : segment.audioTracks) {
             AudioTrackPrivate* audioTrackPrivate = audioTrackInfo.track.get();
 
+            // FIXME: Implement steps 5.2.1-5.2.8.1 as per Editor's Draft 09 January 2015, and reorder this
             // 5.2.1 Let new audio track be a new AudioTrack object.
             // 5.2.2 Generate a unique ID and assign it to the id property on new video track.
             RefPtr<AudioTrack> newAudioTrack = AudioTrack::create(this, audioTrackPrivate);
@@ -1115,6 +1120,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         for (auto& videoTrackInfo : segment.videoTracks) {
             VideoTrackPrivate* videoTrackPrivate = videoTrackInfo.track.get();
 
+            // FIXME: Implement steps 5.3.1-5.3.8.1 as per Editor's Draft 09 January 2015, and reorder this
             // 5.3.1 Let new video track be a new VideoTrack object.
             // 5.3.2 Generate a unique ID and assign it to the id property on new video track.
             RefPtr<VideoTrack> newVideoTrack = VideoTrack::create(this, videoTrackPrivate);
@@ -1155,6 +1161,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         for (auto& textTrackInfo : segment.textTracks) {
             InbandTextTrackPrivate* textTrackPrivate = textTrackInfo.track.get();
 
+            // FIXME: Implement steps 5.4.1-5.4.8.1 as per Editor's Draft 09 January 2015, and reorder this
             // 5.4.1 Let new text track be a new TextTrack object with its properties populated with the
             // appropriate information from the initialization segment.
             RefPtr<InbandTextTrack> newTextTrack = InbandTextTrack::create(scriptExecutionContext(), this, textTrackPrivate);
@@ -1189,6 +1196,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         // 5.5 If active track flag equals true, then run the following steps:
         if (activeTrackFlag) {
             // 5.5.1 Add this SourceBuffer to activeSourceBuffers.
+            // 5.5.2 Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
             setActive(true);
         }
 
@@ -1218,11 +1226,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
 {
-    // 3.5.7 Initialization Segment Received (ctd)
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
+    // FIXME: ordering of all 3.5.X (X>=7) functions needs to be updated to post-[24 July 2014 Editor's Draft] version
+    // 3.5.8 Initialization Segment Received (ctd)
+    // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-init-segment-received [Editor's Draft 09 January 2015]
 
-    // 3.1. Verify the following properties. If any of the checks fail then run the end of stream
-    // algorithm with the error parameter set to "decode" and abort these steps.
+    // Note: those are checks from step 3.1
     //   * The number of audio, video, and text tracks match what was in the first initialization segment.
     if (segment.audioTracks.size() != audioTracks()->length()
         || segment.videoTracks.size() != videoTracks()->length()
@@ -1289,10 +1297,44 @@ public:
     }
 };
 
+void SourceBuffer::appendError(bool decodeErrorParam)
+{
+    // 3.5.3 Append Error Algorithm
+    // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-append-error [Editor's Draft 09 January 2015]
+
+    ASSERT(m_updating);
+    // 1. Run the reset parser state algorithm.
+    resetParserState();
+
+    // 2. Set the updating attribute to false.
+    m_updating = false;
+
+    // 3. Queue a task to fire a simple event named error at this SourceBuffer object.
+    scheduleEvent(eventNames().errorEvent);
+
+    // 4. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+    scheduleEvent(eventNames().updateendEvent);
+
+    // 5. If decode error is true, then run the end of stream algorithm with the error parameter set to "decode".
+    if (decodeErrorParam)
+        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+}
+
 void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample> prpSample)
 {
     if (isRemoved())
         return;
+
+    // 3.5.1 Segment Parser Loop
+    // 6.1 If the first initialization segment received flag is false, then run the append error algorithm
+    //     with the decode error parameter set to true and abort this algorithm.
+    // Note: current design makes SourceBuffer somehow ignorant of append state - it's more a thing
+    //  of SourceBufferPrivate. That's why this check can't really be done in appendInternal.
+    //  unless we force some kind of design with state machine switching.
+    if (!m_receivedFirstInitializationSegment) {
+        appendError(true);
+        return;
+    }
 
     RefPtr<MediaSample> sample = prpSample;
 

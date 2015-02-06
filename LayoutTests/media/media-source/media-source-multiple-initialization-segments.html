@@ -48,7 +48,8 @@
 
     function secondUpdate() {
         consoleWrite('Test that a replacement initialization segment containing a track with a different codec but the same trackID fails.')
-        waitForEventOn(sourceBuffer, 'updateend', endTest, false, true);
+        waitForEventOn(sourceBuffer, 'error');
+        waitForEventOn(sourceBuffer, 'updateend');
         expected = true;
         initSegment = makeAInit(100, [
             makeATrack(2, '!moc', TRACK_KIND.VIDEO),

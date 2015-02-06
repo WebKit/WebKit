@@ -9,6 +9,8 @@ RUN(sourceBuffer.appendBuffer(initSegment))
 EVENT(updateend)
 Test that a replacement initialization segment containing a track with a different codec but the same trackID fails.
 RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(error)
+EVENT(updateend)
 EVENT(sourceended)
 END OF TEST
 

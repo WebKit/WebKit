@@ -1,3 +1,22 @@
+2015-02-06  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Append Error algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=139439
+
+        Reviewed by Jer Noble.
+
+        If Source Buffer has not received first init segment, then it shall call endOfStream after receiving
+        Media Segment, as per Media Source spec. (from 17 July 2014) in paragraph 3.5.1 point 6.1.
+        Added test which after creating SourceBuffer sends media sample, without any init segments.
+        Updated existing tests, so they correctly expect updateend and error as per Append Error algorithm.
+
+        * media/media-source/media-source-append-failed-expected.txt:
+        * media/media-source/media-source-append-failed.html:
+        * media/media-source/media-source-append-media-segment-without-init-expected.txt: Added.
+        * media/media-source/media-source-append-media-segment-without-init.html: Added.
+        * media/media-source/media-source-multiple-initialization-segments-expected.txt:
+        * media/media-source/media-source-multiple-initialization-segments.html:
+
 2015-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct expectations for inspector/css/selector-dynamic-specificity.html.

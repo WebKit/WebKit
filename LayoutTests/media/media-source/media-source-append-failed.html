@@ -25,6 +25,7 @@
 
         waitForEventOn(sourceBuffer, 'updatestart');
         waitForEventOn(sourceBuffer, 'update');
+        waitForEventOn(sourceBuffer, 'error');
         waitForEventOn(sourceBuffer, 'updateend');
         waitForEventOn(source, 'sourceended', endTest);
         initSegment = makeAnInvalidBox();
