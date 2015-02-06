@@ -92,7 +92,7 @@ App.Repository = App.NameLabelModel.extend({
     },
 });
 
-App.Dashboard = App.Model.extend({
+App.Dashboard = App.NameLabelModel.extend({
     serialized: DS.attr('string'),
     table: function ()
     {
@@ -152,7 +152,7 @@ App.MetricSerializer = App.PlatformSerializer = DS.RESTSerializer.extend({
             metrics: this._normalizeIdMap(payload['metrics']),
             repositories: this._normalizeIdMap(payload['repositories']),
             bugTrackers: this._normalizeIdMap(payload['bugTrackers']),
-            dashboards: [{id: 1, serialized: JSON.stringify(payload['defaultDashboard'])}],
+            dashboards: [],
         };
 
         for (var testId in payload['tests']) {
@@ -171,6 +171,17 @@ App.MetricSerializer = App.PlatformSerializer = DS.RESTSerializer.extend({
             if (!test['metrics'])
                 test['metrics'] = [];
             test['metrics'].push(metricId);
+        }
+
+        var id = 1;
+        var dashboardsInPayload = payload['dashboards'];
+        for (var dashboardName in dashboardsInPayload) {
+            results['dashboards'].push({
+                id: id,
+                name: dashboardName,
+                serialized: JSON.stringify(dashboardsInPayload[dashboardName])
+            });
+            id++;
         }
 
         return results;
@@ -211,6 +222,8 @@ App.Manifest = Ember.Controller.extend({
     _metricById: {},
     _builderById: {},
     _repositoryById: {},
+    _dashboardByName: {},
+    _defaultDashboardName: null,
     _fetchPromise: null,
     fetch: function (store)
     {
@@ -223,6 +236,8 @@ App.Manifest = Ember.Controller.extend({
     metric: function (id) { return this._metricById[id]; },
     builder: function (id) { return this._builderById[id]; },
     repository: function (id) { return this._repositoryById[id]; },
+    dashboardByName: function (name) { return this._dashboardByName[name]; },
+    defaultDashboardName: function () { return this._defaultDashboardName; },
     _fetchedManifest: function (store)
     {
         var startTime = Date.now();
@@ -259,7 +274,10 @@ App.Manifest = Ember.Controller.extend({
 
         this.set('bugTrackers', store.all('bugTracker').sortBy('name'));
 
-        this.set('defaultDashboard', store.all('dashboard').objectAt(0));
+        var dashboards = store.all('dashboard').sortBy('name');
+        this.set('dashboards', dashboards);
+        dashboards.forEach(function (dashboard) { self._dashboardByName[dashboard.get('name')] = dashboard; });
+        this._defaultDashboardName = dashboards.length ? dashboards[0].get('name') : null;
     },
     fetchRunsWithPlatformAndMetric: function (store, platformId, metricId)
     {

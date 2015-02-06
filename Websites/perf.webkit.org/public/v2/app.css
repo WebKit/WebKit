@@ -201,12 +201,12 @@ body {
     margin: 0;
     line-height: 1rem;
 }
-#navigation li:not(:last-child) a {
+#navigation li:not(:last-of-type) a {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
 }
-#navigation li:not(:first-child) a {
+#navigation li:not(:first-of-type) a {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
@@ -397,7 +397,7 @@ table.dashboard tbody td a.reset svg {
 }
 
 table.dashboard tbody td .chart {
-    border: solid 1px #ddd;
+    border: solid 0px #ddd;
     border-radius: 0.5rem;
     margin: 0.5rem 0.5rem;
 }

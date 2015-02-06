@@ -1,6 +1,8 @@
 window.App = Ember.Application.create();
 
 App.Router.map(function () {
+    this.resource('customDashboard', {path: 'dashboard/custom'});
+    this.resource('dashboard', {path: 'dashboard/:name'});
     this.resource('charts', {path: 'charts'});
     this.resource('analysis', {path: 'analysis'});
     this.resource('analysisTask', {path: 'analysis/task/:taskId'});
@@ -54,28 +56,47 @@ App.DashboardPaneProxyForPicker = Ember.ObjectProxy.extend({
     }.property('platformId', 'metricId'),
 });
 
-App.IndexController = Ember.Controller.extend({
+App.IndexRoute = Ember.Route.extend({
+    beforeModel: function ()
+    {
+        var self = this;
+        App.Manifest.fetch(this.store).then(function () {
+            self.transitionTo('dashboard', App.Manifest.defaultDashboardName());
+        });
+    },
+});
+
+App.DashboardRoute = Ember.Route.extend({
+    model: function (param)
+    {
+        return App.Manifest.fetch(this.store).then(function () {
+            return App.Manifest.dashboardByName(param.name);
+        });
+    },
+});
+
+App.CustomDashboardRoute = Ember.Route.extend({
+    controllerName: 'dashboard',
+    model: function (param)
+    {
+        return this.store.createRecord('dashboard', {serialized: param.grid});
+    },
+    renderTemplate: function()
+    {
+        this.render('dashboard');
+    }
+});
+
+App.DashboardController = Ember.Controller.extend({
     queryParams: ['grid', 'numberOfDays'],
-    _previousGrid: {},
     headerColumns: [],
     rows: [],
     numberOfDays: 7,
     editMode: false,
 
-    gridChanged: function ()
+    modelChanged: function ()
     {
-        var grid = this.get('grid');
-        if (grid === this._previousGrid)
-            return;
-
-        var dashboard = null;
-        if (grid) {
-            dashboard = this.store.createRecord('dashboard', {serialized: grid});
-            if (!dashboard.get('headerColumns').length)
-                dashboard = null;
-        }
-        if (!dashboard)
-            dashboard = App.Manifest.get('defaultDashboard');
+        var dashboard = this.get('model');
         if (!dashboard)
             return;
 
@@ -95,9 +116,9 @@ App.IndexController = Ember.Controller.extend({
         }));
 
         this.set('emptyRow', new Array(columnCount));
-    }.observes('grid', 'App.Manifest.defaultDashboard').on('init'),
+    }.observes('model').on('init'),
 
-    updateGrid: function()
+    computeGrid: function()
     {
         var headers = this.get('headerColumns').map(function (header) { return header.label; });
         var table = [headers].concat(this.get('rows').map(function (row) {
@@ -106,8 +127,7 @@ App.IndexController = Ember.Controller.extend({
                 return platformAndMetric[0] || platformAndMetric[1] ? platformAndMetric : [];
             }));
         }));
-        this._previousGrid = JSON.stringify(table);
-        this.set('grid', this._previousGrid);
+        return JSON.stringify(table);
     },
 
     _sharedDomainChanged: function ()
@@ -173,8 +193,10 @@ App.IndexController = Ember.Controller.extend({
         toggleEditMode: function ()
         {
             this.toggleProperty('editMode');
-            if (!this.get('editMode'))
-                this.updateGrid();
+            if (this.get('editMode'))
+                this.transitionToRoute('dashboard', 'custom', {name: null, queryParams: {grid: this.computeGrid()}});
+            else
+                this.set('grid', this.computeGrid());
         },
     },
 
@@ -362,7 +384,56 @@ App.Pane = Ember.Object.extend({
         if (typeof(id) == "string")
             return !!id.match(/^[A-Za-z0-9_]+$/);
         return false;
-    }
+    },
+    computeStatus: function (currentPoint, previousPoint)
+    {
+        var chartData = this.get('chartData');
+        var diffFromBaseline = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.baseline);
+        var diffFromTarget = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.target);
+
+        var label = '';
+        var className = '';
+        var formatter = d3.format('.3p');
+
+        var smallerIsBetter = chartData.smallerIsBetter;
+        if (diffFromBaseline !== undefined && diffFromBaseline > 0 == smallerIsBetter) {
+            label = formatter(Math.abs(diffFromBaseline)) + ' ' + (smallerIsBetter ? 'above' : 'below') + ' baseline';
+            className = 'worse';
+        } else if (diffFromTarget !== undefined && diffFromTarget < 0 == smallerIsBetter) {
+            label = formatter(Math.abs(diffFromTarget)) + ' ' + (smallerIsBetter ? 'below' : 'above') + ' target';
+            className = 'better';
+        } else if (diffFromTarget !== undefined)
+            label = formatter(Math.abs(diffFromTarget)) + ' until target';
+
+        var valueDelta = previousPoint ? chartData.deltaFormatter(currentPoint.value - previousPoint.value) : null;
+        if (valueDelta && valueDelta > 0)
+            valueDelta = '+' + valueDelta;
+
+        return {className: className, label: label, currentValue: chartData.formatter(currentPoint.value), valueDelta: valueDelta};
+    },
+    _relativeDifferentToLaterPointInTimeSeries: function (currentPoint, timeSeries)
+    {
+        if (!currentPoint || !timeSeries)
+            return undefined;
+
+        var referencePoint = timeSeries.findPointAfterTime(currentPoint.time);
+        if (!referencePoint)
+            return undefined;
+
+        return (currentPoint.value - referencePoint.value) / referencePoint.value;
+    },
+    latestStatus: function ()
+    {
+        var chartData = this.get('chartData');
+        if (!chartData || !chartData.current)
+            return null;
+
+        var lastPoint = chartData.current.lastPoint();
+        if (!lastPoint)
+            return null;
+
+        return this.computeStatus(lastPoint, chartData.current.previousPoint(lastPoint));
+    }.property('chartData'),
 });
 
 App.createChartData = function (data)
@@ -374,6 +445,7 @@ App.createChartData = function (data)
         target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
         unit: data.unit,
         formatter: data.useSI ? d3.format('.4s') : d3.format('.4g'),
+        deltaFormatter: data.useSI ? d3.format('.2s') : d3.format('.2g'),
         smallerIsBetter: data.smallerIsBetter,
     };
 }
@@ -730,15 +802,15 @@ App.PaneController = Ember.ObjectController.extend({
         }
 
         var currentMeasurement;
-        var oldMeasurement;
+        var previousPoint;
         if (currentPoint) {
             currentMeasurement = currentPoint.measurement;
-            var previousPoint = currentPoint.series.previousPoint(currentPoint);
-            oldMeasurement = previousPoint ? previousPoint.measurement : null;
+            previousPoint = currentPoint.series.previousPoint(currentPoint);
         } else {
             currentMeasurement = selectedPoints[selectedPoints.length - 1].measurement;
-            oldMeasurement = selectedPoints[0].measurement;            
+            previousPoint = selectedPoints[0];
         }
+        var oldMeasurement = previousPoint ? previousPoint.measurement : null;
 
         var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
         var revisions = App.Manifest.get('repositories')
@@ -762,15 +834,8 @@ App.PaneController = Ember.ObjectController.extend({
                 buildURL = builder.urlFromBuildNumber(buildNumber);
         }
 
-        var chartData = this.get('chartData');
-        var valueDiff = oldMeasurement ? chartData.formatter(currentMeasurement.mean() - oldMeasurement.mean()) : null;
-        if (valueDiff && valueDiff > 0)
-            valueDiff = '+' + valueDiff;
-
         this.set('details', Ember.Object.create({
-            status: this._computeStatus(currentPoint),
-            currentValue: chartData.formatter(currentMeasurement.mean()),
-            valueDiff: valueDiff,
+            status: this.get('model').computeStatus(currentPoint, previousPoint),
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),
@@ -783,40 +848,6 @@ App.PaneController = Ember.ObjectController.extend({
         var points = this.get('selectedPoints');
         this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !points || points.length < 2);
     }.observes('newAnalysisTaskName'),
-    _computeStatus: function (currentPoint)
-    {
-        var chartData = this.get('chartData');
-
-        var diffFromBaseline = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.baseline);
-        var diffFromTarget = this._relativeDifferentToLaterPointInTimeSeries(currentPoint, chartData.target);
-
-        var label = '';
-        var className = '';
-        var formatter = d3.format('.3p');
-
-        var smallerIsBetter = chartData.smallerIsBetter;
-        if (diffFromBaseline !== undefined && diffFromBaseline > 0 == smallerIsBetter) {
-            label = formatter(Math.abs(diffFromBaseline)) + ' ' + (smallerIsBetter ? 'above' : 'below') + ' baseline';
-            className = 'worse';
-        } else if (diffFromTarget !== undefined && diffFromTarget < 0 == smallerIsBetter) {
-            label = formatter(Math.abs(diffFromTarget)) + ' ' + (smallerIsBetter ? 'below' : 'above') + ' target';
-            className = 'better';
-        } else if (diffFromTarget !== undefined)
-            label = formatter(Math.abs(diffFromTarget)) + ' until target';
-
-        return {className: className, label: label};
-    },
-    _relativeDifferentToLaterPointInTimeSeries: function (currentPoint, timeSeries)
-    {
-        if (!currentPoint || !timeSeries)
-            return undefined;
-        
-        var referencePoint = timeSeries.findPointAfterTime(currentPoint.time);
-        if (!referencePoint)
-            return undefined;
-
-        return (currentPoint.value - referencePoint.value) / referencePoint.value;
-    }
 });
 
 

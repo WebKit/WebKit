@@ -405,6 +405,13 @@ TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime)
 
 TimeSeries.prototype.series = function () { return this._series; }
 
+TimeSeries.prototype.lastPoint = function ()
+{
+    if (!this._series || !this._series.length)
+        return null;
+    return this._series[this._series.length - 1];
+}
+
 TimeSeries.prototype.previousPoint = function (point)
 {
     if (!point.seriesIndex)

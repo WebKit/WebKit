@@ -3,6 +3,14 @@
 <head>
     <meta charset="utf-8">
     <title>WebKit Performance Monitor (Beta)</title>
+
+    <link rel="prefetch" href="../data/manifest.json">
+    <script type="application/json" src="../data/manifest.json"></script>
+
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="chart-pane.css">
+
+    <script src="js/jquery.min.js" defer></script>
     <script src="js/jquery.min.js" defer></script>
     <script src="js/handlebars.js" defer></script>
     <script src="js/ember.js" defer></script>
@@ -16,10 +24,8 @@
     <script src="popup.js" defer></script>
     <script src="interactive-chart.js" defer></script>
     <script src="commits-viewer.js" defer></script>
-    <link rel="stylesheet" href="app.css">
-    <link rel="stylesheet" href="chart-pane.css">
 
-    <script type="text/x-handlebars" data-template-name="index">
+    <script type="text/x-handlebars" data-template-name="dashboard">
         <header id="header">
             {{partial "navbar"}}
             {{view App.NumberOfDaysControlView tagName="ul" numberOfDays=numberOfDays}}
@@ -78,11 +84,19 @@
                                 {{/if}}
                             {{else}}
                                 {{#if chartData}}
+                                    <div class="dashboard-status">
+                                        {{#if latestStatus}}
+                                            {{latestStatus.currentValue}} {{chartData.unit}}
+                                            {{#if latestStatus.label}}
+                                                <span {{bind-attr class=":status-label latestStatus.className"}}>{{latestStatus.label}}</span>
+                                            {{/if}}
+                                        {{/if}}
+                                    </div>
                                     {{#link-to 'charts' (query-params paneList=paneList since=controller.since)}}
-                                    {{interactive-chart
-                                        chartData=chartData
-                                        domain=controller.sharedDomain
-                                        enableSelection=false}}
+                                        {{interactive-chart
+                                            chartData=chartData
+                                            domain=controller.sharedDomain
+                                            enableSelection=false}}
                                     {{/link-to}}
                                 {{else}}
                                     {{#if failure}}
@@ -258,9 +272,9 @@
                 <tr>
                     <th>Current</th>
                     <td>
-                        {{details.currentValue}} {{chartData.unit}}
-                        {{#if details.valueDiff}}
-                            ({{details.valueDiff}} {{chartData.unit}})
+                        {{details.status.currentValue}} {{chartData.unit}}
+                        {{#if details.status.valueDelta}}
+                            ({{details.status.valueDelta}} {{chartData.unit}})
                         {{/if}}
                         {{#if details.status.label}}
                             <br>
@@ -378,9 +392,13 @@
         <nav id="navigation" role="navigation">
             <h1><a href="#">WebKit Perf Monitor</a></h1>
             <ul>
-                {{#link-to 'index' tagName='li'}}
-                    {{#link-to 'index'}}Dashboard{{/link-to}}
-                {{/link-to}}
+                {{#each App.Manifest.dashboards}}
+                    {{#if name}}
+                        {{#link-to 'dashboard' name tagName='li'}}
+                            {{#link-to 'dashboard' name}}{{label}}{{/link-to}}
+                        {{/link-to}}
+                    {{/if}}
+                {{/each}}
                 {{#link-to 'charts' tagName='li'}}
                     {{#link-to 'charts'}}Charts{{/link-to}}
                 {{/link-to}}

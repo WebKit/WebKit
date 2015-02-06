@@ -1,3 +1,62 @@
+2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard should have multiple dashboard pages
+        https://bugs.webkit.org/show_bug.cgi?id=141339
+
+        Reviewed by Chris Dumez.
+
+        Added the support for multiple dashboard pages. Also added the status of the latest data point.
+        e.g. "5% better than target"
+
+        * public/v2/app.css: Tweaked the styles to work around the fact Ember.js creates empty script elements.
+        Also hid the border lines around charts on the dashboard page for a cleaner look.
+
+        * public/v2/app.js:
+        (App.IndexRoute): Added. Navigate to /dashboard/<defaultDashboardName> once the manifest.json is loaded.
+        (App.IndexRoute.beforeModel): Added.
+        (App.DashboardRoute): Added.
+        (App.DashboardRoute.model): Added. Return the dashboard specified by the name.
+        (App.CustomDashboardRoute): Added. This route is used for a customized dashboard specified by "grid".
+        (App.CustomDashboardRoute.model): Create a dashboard model from "grid" query parameter.
+        (App.CustomDashboardRoute.renderTemplate): Use the dashboard template.
+        (App.DashboardController): Renamed from App.IndexController.
+        (App.DashboardController.modelChanged): Renamed from gridChanged. Removed the code to deal with "grid"
+        and "defaultDashboard" as these are taken care of by newly added routers.
+        (App.DashboardController.computeGrid): Renamed from updateGrid. No longer updates "grid" since this is
+        now done in actions.toggleEditMode.
+        (App.DashboardController.actions.toggleEditMode): Navigate to CustomDashboardRoute when start editing
+        an existing dashboard.
+
+        (App.Pane.computeStatus): Moved from App.PaneController so that to be called in App.Pane.latestStatus.
+        Also moved the code to compute the delta with respect to the previous data point from _updateDetails.
+        (App.Pane._relativeDifferentToLaterPointInTimeSeries): Ditto.
+        (App.Pane.latestStatus): Added. Used by the dashboard template to show the status of the latest result.
+
+        (App.createChartData): Added deltaFormatter to show less significant digits for differences.
+
+        (App.PaneController._updateDetails): Updated per changes to computeStatus.
+
+        * public/v2/chart-pane.css: Added style rules for the status labels on the dashboard.
+
+        * public/v2/data.js:
+        (TimeSeries.prototype.lastPoint): Added.
+
+        * public/v2/index.html: Prefetch manifest.json as soon as possible, show the latest data points' status
+        on the dashboard, and enumerate all predefined dashboards.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._relayoutDataAndAxes): Slightly adjust the offset at which we show unit
+        for the dashboard page.
+
+        * public/v2/manifest.js:
+        (App.Dashboard): Inherit from App.NameLabelModel now that each predefined dashboard has a name.
+        (App.MetricSerializer.normalizePayload): Parse all predefined dashboards instead of a single dashboard.
+        IDs are generated for each dashboard for forward compatibility.
+        (App.Manifest):
+        (App.Manifest.dashboardByName): Added.
+        (App.Manifest.defaultDashboardName): Added.
+        (App.Manifest._fetchedManifest): Create dashboard model objects for all predefined ones.
+
 2015-02-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move commits viewer to the end of details view

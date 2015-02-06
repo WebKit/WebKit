@@ -320,15 +320,21 @@
 .chart path.baseline {
     stroke: #f66;
 }
-.chart-pane .status .worse {
+.chart-pane .status .worse,
+.dashboard-status .worse {
     color: #c33;
 }
 
 .chart path.target {
     stroke: #66f;
 }
-.chart-pane .status .better {
+.chart-pane .status .better,
+.dashboard-status .better {
     color: #33c;
+}
+
+.dashboard-status .status-label {
+    margin-left: 1rem;
 }
 
 .chart .axis,

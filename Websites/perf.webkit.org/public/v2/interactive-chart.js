@@ -288,7 +288,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._yAxisLabels.call(this._yAxis);
         if (this._yAxisUnitContainer)
             this._yAxisUnitContainer.remove();
-        var x = - 3 * this._rem;
+        var x = - 3.2 * this._rem;
         var y = this._contentHeight / 2;
         this._yAxisUnitContainer = this._yAxisLabels.append("text")
             .attr("transform", "rotate(90 0 0) translate(" + y + ", " + (-x) + ")")
