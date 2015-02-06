@@ -185,14 +185,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<L
         const AtomicString& range = argument.languageRange;
         if (range.isEmpty())
             continue;
-        if (range == "*")
-            return true;
-    }
-
-    for (const LanguageArgument& argument : argumentList) {
-        const AtomicString& range = argument.languageRange;
-        if (range.isEmpty())
-            continue;
 
         if (range == "*")
             return true;
