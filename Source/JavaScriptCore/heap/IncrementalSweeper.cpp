@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IncrementalSweeper.h"
 
-#include "DelayedReleaseScope.h"
 #include "Heap.h"
 #include "JSObject.h"
 #include "JSString.h"
@@ -68,7 +67,6 @@ void IncrementalSweeper::doWork()
 
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
-    DelayedReleaseScope scope(m_vm->heap.m_objectSpace);
     while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
         sweepNextBlock();
 

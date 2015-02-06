@@ -115,6 +115,7 @@ public:
     Heap(VM*, HeapType);
     ~Heap();
     JS_EXPORT_PRIVATE void lastChanceToFinalize();
+    void releaseDelayedReleasedObjects();
 
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
@@ -231,7 +232,6 @@ private:
     friend class CopiedBlock;
     friend class DeferGC;
     friend class DeferGCForAWhile;
-    friend class DelayedReleaseScope;
     friend class GCAwareJITStubRoutine;
     friend class GCLogging;
     friend class HandleSet;
@@ -387,6 +387,10 @@ private:
     Vector<DFG::Worklist*> m_suspendedCompilerWorklists;
 
     std::unique_ptr<HeapVerifier> m_verifier;
+#if USE(CF)
+    Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
+    unsigned m_delayedReleaseRecursionCount;
+#endif
 };
 
 } // namespace JSC

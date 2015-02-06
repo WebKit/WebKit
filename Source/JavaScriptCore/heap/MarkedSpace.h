@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-class DelayedReleaseScope;
 class Heap;
 class HeapIterationScope;
 class JSCell;
@@ -161,7 +160,6 @@ public:
 #endif
 
 private:
-    friend class DelayedReleaseScope;
     friend class LLIntOffsetsExtractor;
     friend class JIT;
 
@@ -177,8 +175,6 @@ private:
     bool m_isIterating;
     MarkedBlockSet m_blocks;
     Vector<MarkedBlock*> m_blocksWithNewObjects;
-
-    DelayedReleaseScope* m_currentDelayedReleaseScope;
 };
 
 template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope&, Functor& functor)

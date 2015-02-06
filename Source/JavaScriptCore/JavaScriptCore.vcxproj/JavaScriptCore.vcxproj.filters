@@ -3768,9 +3768,6 @@
     <ClInclude Include="..\runtime\StackAlignment.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\DelayedReleaseScope.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\bytecode\VariableWatchpointSet.h">
       <Filter>bytecode</Filter>
     </ClInclude>

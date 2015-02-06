@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MarkedAllocator.h"
 
-#include "DelayedReleaseScope.h"
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
@@ -62,46 +61,40 @@ bool MarkedAllocator::isPagedOut(double deadline)
 
 inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 {
-    // We need a while loop to check the free list because the DelayedReleaseScope 
-    // could cause arbitrary code to execute and exhaust the free list that we 
-    // thought had elements in it.
-    while (!m_freeList.head) {
-        DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
-        if (m_currentBlock) {
-            ASSERT(m_currentBlock == m_nextBlockToSweep);
-            m_currentBlock->didConsumeFreeList();
-            m_nextBlockToSweep = m_currentBlock->next();
-        }
+    if (m_currentBlock) {
+        ASSERT(m_currentBlock == m_nextBlockToSweep);
+        m_currentBlock->didConsumeFreeList();
+        m_nextBlockToSweep = m_currentBlock->next();
+    }
 
-        MarkedBlock* next;
-        for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
-            next = block->next();
+    MarkedBlock* next;
+    for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
+        next = block->next();
 
-            MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
-            
-            double utilization = ((double)MarkedBlock::blockSize - (double)freeList.bytes) / (double)MarkedBlock::blockSize;
-            if (utilization >= Options::minMarkedBlockUtilization()) {
-                ASSERT(freeList.bytes || !freeList.head);
-                m_blockList.remove(block);
-                m_retiredBlocks.push(block);
-                block->didRetireBlock(freeList);
-                continue;
-            }
-
-            if (bytes > block->cellSize()) {
-                block->stopAllocating(freeList);
-                continue;
-            }
-
-            m_currentBlock = block;
-            m_freeList = freeList;
-            break;
-        }
+        MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
         
-        if (!m_freeList.head) {
-            m_currentBlock = 0;
-            return 0;
+        double utilization = ((double)MarkedBlock::blockSize - (double)freeList.bytes) / (double)MarkedBlock::blockSize;
+        if (utilization >= Options::minMarkedBlockUtilization()) {
+            ASSERT(freeList.bytes || !freeList.head);
+            m_blockList.remove(block);
+            m_retiredBlocks.push(block);
+            block->didRetireBlock(freeList);
+            continue;
         }
+
+        if (bytes > block->cellSize()) {
+            block->stopAllocating(freeList);
+            continue;
+        }
+
+        m_currentBlock = block;
+        m_freeList = freeList;
+        break;
+    }
+    
+    if (!m_freeList.head) {
+        m_currentBlock = 0;
+        return 0;
     }
 
     ASSERT(m_freeList.head);
@@ -127,17 +120,6 @@ inline void* MarkedAllocator::tryAllocate(size_t bytes)
     ASSERT(!m_heap->isBusy());
     m_heap->m_operationInProgress = Allocation;
     void* result = tryAllocateHelper(bytes);
-
-    // Due to the DelayedReleaseScope in tryAllocateHelper, some other thread might have
-    // created a new block after we thought we didn't find any free cells. 
-    while (!result && m_currentBlock) {
-        // A new block was added by another thread so try popping the free list.
-        result = tryPopFreeList(bytes);
-        if (result)
-            break;
-        // The free list was empty, so call tryAllocateHelper to do the normal sweeping stuff.
-        result = tryAllocateHelper(bytes);
-    }
 
     m_heap->m_operationInProgress = NoOperation;
     ASSERT(result || !m_currentBlock);

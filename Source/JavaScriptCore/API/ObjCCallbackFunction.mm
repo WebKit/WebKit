@@ -30,7 +30,6 @@
 
 #import "APICallbackFunction.h"
 #import "APICast.h"
-#import "DelayedReleaseScope.h"
 #import "Error.h"
 #import "JSCJSValueInlines.h"
 #import "JSCell.h"

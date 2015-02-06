@@ -249,7 +249,7 @@ inline BlockAllocator& Heap::blockAllocator()
 template <typename T>
 inline void Heap::releaseSoon(RetainPtr<T>&& object)
 {
-    m_objectSpace.releaseSoon(WTF::move(object));
+    m_delayedReleaseObjects.append(WTF::move(object));
 }
 #endif
 

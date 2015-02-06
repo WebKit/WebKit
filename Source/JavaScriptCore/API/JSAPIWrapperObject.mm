@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSAPIWrapperObject.h"
 
-#include "DelayedReleaseScope.h"
 #include "JSCInlines.h"
 #include "JSCallbackObject.h"
 #include "JSVirtualMachineInternal.h"

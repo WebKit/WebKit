@@ -171,8 +171,10 @@ void JSLock::unlock(intptr_t unlockCount)
 
 void JSLock::willReleaseLock()
 {
-    if (m_vm)
+    if (m_vm) {
+        m_vm->heap.releaseDelayedReleasedObjects();
         m_vm->setStackPointerAtVMEntry(nullptr);
+    }
 
     if (m_entryAtomicStringTable) {
         wtfThreadData().setCurrentAtomicStringTable(m_entryAtomicStringTable);

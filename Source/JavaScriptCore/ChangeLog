@@ -1,3 +1,77 @@
+2015-02-05  Michael Saboff  <msaboff@apple.com>
+
+        CodeCache is not thread safe when adding the same source from two different threads
+        https://bugs.webkit.org/show_bug.cgi?id=141275
+
+        Reviewed by Mark Lam.
+
+        The issue for this bug is that one thread, takes a cache miss in CodeCache::getGlobalCodeBlock,
+        but in the process creates a cache entry with a nullptr UnlinkedCodeBlockType* which it
+        will fill in later in the function.  During the body of that function, it allocates
+        objects that may garbage collect.  During that garbage collection, we drop the all locks.
+        While the locks are released by the first thread, another thread can enter the VM and might
+        have exactly the same source and enter CodeCache::getGlobalCodeBlock() itself.  When it
+        looks up the code block, it sees it as a cache it and uses the nullptr UnlinkedCodeBlockType*
+        and crashes.  This fixes the problem by not dropping the locks during garbage collection.
+        There are other likely scenarios where we have a data structure like this code cache in an
+        unsafe state for arbitrary reentrance.
+
+        Moved the functionality of DelayedReleaseScope directly into Heap.  Changed it into
+        a simple list that is cleared with the new function Heap::releaseDelayedReleasedObjects.
+        Now we accumulate objects to be released and release them when all locks are dropped or
+        when destroying the Heap.  This eliminated the dropping and reaquiring of locks associated
+        with the old scope form of this list.
+
+        Given that all functionality of DelayedReleaseScope is now used and referenced by Heap
+        and the lock management no longer needs to be done, just made the list a member of Heap.
+        We do need to guard against the case that releasing an object can create more objects
+        by calling into JS.  That is why releaseDelayedReleasedObjects() is written to remove
+        an object to release so that we aren't recursively in Vector code.  The other thing we
+        do in releaseDelayedReleasedObjects() is to guard against recursive calls to itself using
+        the m_delayedReleaseRecursionCount.  We only release at the first entry into the function.
+        This case is already tested by testapi.mm.
+
+        * heap/DelayedReleaseScope.h: Removed file
+
+        * API/JSAPIWrapperObject.mm:
+        * API/ObjCCallbackFunction.mm:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::tryAllocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::didFinishIterating):
+        * heap/MarkedSpace.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::zombifyDeadObjects):
+        Removed references to DelayedReleaseScope and DelayedReleaseScope.h.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Initialized m_delayedReleaseRecursionCount.
+        (JSC::Heap::lastChanceToFinalize): Call releaseDelayedObjectsNow() as the VM is going away.
+        (JSC::Heap::releaseDelayedReleasedObjects): New function that released the accumulated
+        delayed release objects.
+
+        * heap/Heap.h:
+        (JSC::Heap::m_delayedReleaseObjects): List of objects to be released later.
+        (JSC::Heap::m_delayedReleaseRecursionCount): Counter to indicate that
+        releaseDelayedReleasedObjects is being called recursively.
+        * heap/HeapInlines.h:
+        (JSC::Heap::releaseSoon): Changed location of list to add delayed release objects.
+        
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+        Call Heap::releaseDelayedObjectsNow() when releasing the lock.
+
 2015-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar <calvaris@igalia.com>
 
         [Streams API] Implement a barebone ReadableStream interface

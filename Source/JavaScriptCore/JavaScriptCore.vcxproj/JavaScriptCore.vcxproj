@@ -1230,7 +1230,6 @@
     <ClInclude Include="..\heap\CopyWorkList.h" />
     <ClInclude Include="..\heap\CopyWriteBarrier.h" />
     <ClInclude Include="..\heap\DeferGC.h" />
-    <ClInclude Include="..\heap\DelayedReleaseScope.h" />
     <ClInclude Include="..\heap\EdenGCActivityCallback.h" />
     <ClInclude Include="..\heap\FullGCActivityCallback.h" />
     <ClInclude Include="..\heap\GCActivityCallback.h" />
