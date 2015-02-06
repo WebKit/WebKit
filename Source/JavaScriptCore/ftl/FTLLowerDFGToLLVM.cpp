@@ -735,7 +735,6 @@ private:
             break;
 
         case PhantomLocal:
-        case SetArgument:
         case LoopHint:
         case VariableWatchpoint:
         case FunctionReentryWatchpoint:

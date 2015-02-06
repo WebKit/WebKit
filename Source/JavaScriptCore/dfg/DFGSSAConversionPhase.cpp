@@ -198,8 +198,7 @@ public:
         //   - PhantomLocal becomes Phantom, and its child is whatever is specified by
         //     valueForOperand.
         //
-        //   - SetArgument is removed unless it's a captured variable. Note that GetArgument nodes
-        //     have already been inserted.
+        //   - SetArgument is removed. Note that GetArgument nodes have already been inserted.
         Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             valueForOperand.clear();
@@ -334,9 +333,6 @@ public:
                 }
                     
                 case SetArgument: {
-                    VariableAccessData* variable = node->variableAccessData();
-                    if (variable->isCaptured())
-                        break;
                     node->convertToPhantom();
                     break;
                 }
