@@ -70,7 +70,6 @@ namespace JSC {
 
         void setIndex(int index)
         {
-            ASSERT(!m_refCount);
 #ifndef NDEBUG
             m_didSetIndex = true;
 #endif

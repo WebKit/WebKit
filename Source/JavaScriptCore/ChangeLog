@@ -1,3 +1,37 @@
+2015-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove BytecodeGenerator::preserveLastVar() and replace it with a more robust mechanism for preserving non-temporary registers
+        https://bugs.webkit.org/show_bug.cgi?id=141211
+
+        Reviewed by Mark Lam.
+
+        Previously, the way non-temporary registers were preserved (i.e. not reclaimed anytime
+        we did newTemporary()) by calling preserveLastVar() after all non-temps are created. It
+        would raise the refcount on the last (highest-numbered) variable created, and rely on
+        the fact that register reclamation started at higher-numbered registers and worked its
+        way down. So any retained register would block any lower-numbered registers from being
+        reclaimed.
+        
+        Also, preserveLastVar() sets a thing called m_firstConstantIndex. It's unused.
+        
+        This removes preserveLastVar() and makes addVar() retain each register it creates. This
+        is more explicit, since addVar() is the mechanism for creating non-temporary registers.
+        
+        To make this work I had to remove an assertion that Register::setIndex() can only be
+        called when the refcount is zero. This method might be called after a var is created to
+        change its index. This previously worked because preserveLastVar() would be called after
+        we had already made all index changes, so the vars would still have refcount zero. Now
+        they have refcount 1. I think it's OK to lose this assertion; I can't remember this
+        assertion ever firing in a way that alerted me to a serious issue.
+        
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::preserveLastVar): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::addVar):
+        * bytecompiler/RegisterID.h:
+        (JSC::RegisterID::setIndex):
+
 2015-02-06  Andreas Kling  <akling@apple.com>
 
         Remove WTF::fastMallocGoodSize().

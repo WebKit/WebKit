@@ -630,7 +630,10 @@ namespace JSC {
         RegisterID* addVar()
         {
             ++m_codeBlock->m_numVars;
-            return newRegister();
+            RegisterID* result = newRegister();
+            ASSERT(VirtualRegister(result->index()).toLocal() == m_codeBlock->m_numVars - 1);
+            result->ref(); // We should never free this slot.
+            return result;
         }
 
         // Returns the index of the added var.
@@ -777,7 +780,6 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<Label, 32> m_labels;
         LabelScopeStore m_labelScopes;
-        RefPtr<RegisterID> m_lastVar;
         int m_finallyDepth;
         int m_localScopeDepth;
         CodeType m_codeType;
@@ -791,7 +793,6 @@ namespace JSC {
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;
 
-        int m_firstConstantIndex;
         int m_nextConstantOffset;
 
         int m_firstLazyFunction;

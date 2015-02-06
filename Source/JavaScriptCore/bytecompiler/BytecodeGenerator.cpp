@@ -151,12 +151,6 @@ bool BytecodeGenerator::addVar(
     return true;
 }
 
-void BytecodeGenerator::preserveLastVar()
-{
-    if ((m_firstConstantIndex = m_calleeRegisters.size()) != 0)
-        m_lastVar = &m_calleeRegisters.last();
-}
-
 BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
     : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
     , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
@@ -428,7 +422,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
         addParameter(simpleParameter->boundProperty(), index);
     }
-    preserveLastVar();
 
     // We declare the callee's name last because it should lose to a var, function, and/or parameter declaration.
     addCallee(functionNode, calleeRegister);
@@ -493,7 +486,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
         variables.append(varStack[i].first);
     }
     codeBlock->adoptVariables(variables);
-    preserveLastVar();
 }
 
 BytecodeGenerator::~BytecodeGenerator()
