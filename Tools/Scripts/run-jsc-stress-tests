@@ -1368,6 +1368,7 @@ end
 def runShellTestRunner
     if $remote
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
+        mysys("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", "mkdir -p #{$remoteDirectory}")
         mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
         remoteScript = "\""
         remoteScript += "cd #{$remoteDirectory} && "
