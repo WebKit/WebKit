@@ -6271,7 +6271,7 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     // Use the JS file provided by the Chrome client, or fallback to the default one.
     String jsString = page()->chrome().client().plugInExtraScript();
     if (!jsString)
-        jsString = plugInsJavaScript;
+        jsString = String(plugInsJavaScript, sizeof(plugInsJavaScript));
 
     m_frame->mainFrame().script().evaluateInWorld(ScriptSourceCode(jsString), world);
 
