@@ -587,6 +587,7 @@ private:
     virtual bool mediaPlayerIsFullscreenPermitted() const override;
     virtual bool mediaPlayerIsVideo() const override;
     virtual LayoutRect mediaPlayerContentBoxRect() const override;
+    virtual float mediaPlayerContentsScale() const override;
     virtual void mediaPlayerSetSize(const IntSize&) override;
     virtual void mediaPlayerPause() override;
     virtual void mediaPlayerPlay() override;

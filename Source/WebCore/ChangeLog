@@ -1,3 +1,30 @@
+2015-02-07  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Set -contentsScale on AVPlayerLayer to allow AVPlayer to select the appropriate HLS variant.
+        https://bugs.webkit.org/show_bug.cgi?id=141354
+        rdar://problem/19717591
+
+        Reviewed by Darin Adler.
+
+        AVPlayer will try to determine the correct HLS variant based on the bounds of an AVPlayerLayer.
+        When not in a layer tree, AVFoundation is not able to determine the correct mapping from logical
+        units to pixel values. To provide AVPlayer with that scaling value, set -contentsScale based on
+        both the current device scale and the current page scale.
+
+        Since this needs to be set at initialization time, before the AVPlayer is has any AVPlayerItems,
+        add some plumbing up from MediaPlayer to as the HTMLMediaElement for the appropriate contents
+        scale.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerContentsScale):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerContentsScale):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+
 2015-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         ASan complains about plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html

@@ -2990,6 +2990,9 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 
     m_layer->setContentsScale(contentsScale);
 
+    if (m_contentsLayer && m_contentsLayerPurpose == ContentsLayerForMedia)
+        m_contentsLayer->setContentsScale(contentsScale);
+
     if (tiledBacking()) {
         // Scale change may swap in a different set of tiles changing the custom child layers.
         if (m_isPageTiledBackingLayer)

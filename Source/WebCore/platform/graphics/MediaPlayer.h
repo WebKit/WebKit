@@ -228,6 +228,7 @@ public:
     virtual bool mediaPlayerIsFullscreenPermitted() const { return false; }
     virtual bool mediaPlayerIsVideo() const { return false; }
     virtual LayoutRect mediaPlayerContentBoxRect() const { return LayoutRect(); }
+    virtual float mediaPlayerContentsScale() const { return 1; }
     virtual void mediaPlayerSetSize(const IntSize&) { }
     virtual void mediaPlayerPause() { }
     virtual void mediaPlayerPlay() { }
