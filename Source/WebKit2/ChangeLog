@@ -1,3 +1,55 @@
+2015-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add API::HistoryClient and split some things out of API::NavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=141264
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/APIHistoryClient.h: Added.
+        (API::HistoryClient::~HistoryClient):
+        (API::HistoryClient::didNavigateWithNavigationData):
+        (API::HistoryClient::didPerformClientRedirect):
+        (API::HistoryClient::didPerformServerRedirect):
+        (API::HistoryClient::didUpdateHistoryTitle):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didNavigateWithNavigationData): Deleted.
+        (API::NavigationClient::didPerformClientRedirect): Deleted.
+        (API::NavigationClient::didPerformServerRedirect): Deleted.
+        (API::NavigationClient::didUpdateHistoryTitle): Deleted.
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::createHistoryClient):
+        (WebKit::NavigationState::HistoryClient::HistoryClient):
+        (WebKit::NavigationState::HistoryClient::~HistoryClient):
+        (WebKit::NavigationState::HistoryClient::didNavigateWithNavigationData):
+        (WebKit::NavigationState::HistoryClient::didPerformClientRedirect):
+        (WebKit::NavigationState::HistoryClient::didPerformServerRedirect):
+        (WebKit::NavigationState::HistoryClient::didUpdateHistoryTitle):
+        (WebKit::NavigationState::NavigationClient::didNavigateWithNavigationData): Deleted.
+        (WebKit::NavigationState::NavigationClient::didPerformClientRedirect): Deleted.
+        (WebKit::NavigationState::NavigationClient::didPerformServerRedirect): Deleted.
+        (WebKit::NavigationState::NavigationClient::didUpdateHistoryTitle): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setHistoryClient):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        * UIProcess/WebPageProxy.h:
+        Add a API::HistoryClient and move the few things that belong on it out of API::NavigationClient.
+        Adjust accordingly in WebPageProxy and NavigationState.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView setNavigationDelegate:]):
+        (-[WKWebView setUIDelegate:]):
+        (-[WKWebView _setHistoryDelegate:]):
+        Lazily push the NavigationState/UIDelegate clients down to WebPageProxy upon
+        installation of a delegate, so that alternative (C SPI) delegate setters can
+        be separately created.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-07  Antti Koivisto  <antti@apple.com>
 
         And as a further followup restore the 8bit test too.

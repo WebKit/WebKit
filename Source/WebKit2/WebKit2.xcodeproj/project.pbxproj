@@ -649,6 +649,7 @@
 		2DA944BD188511E700ED86DB /* NetworkProcessIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */; };
 		2DABA7721A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7711A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h */; };
 		2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7731A817EE600EF0F1A /* WKPluginLoadPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2DABA7761A82B42100EF0F1A /* APIHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */; };
 		2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */; };
 		2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */; };
 		2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */; };
@@ -2771,6 +2772,7 @@
 		2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessIOS.mm; path = NetworkProcess/ios/NetworkProcessIOS.mm; sourceTree = "<group>"; };
 		2DABA7711A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageRenderingProgressEventsInternal.h; sourceTree = "<group>"; };
 		2DABA7731A817EE600EF0F1A /* WKPluginLoadPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginLoadPolicy.h; sourceTree = "<group>"; };
+		2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHistoryClient.h; sourceTree = "<group>"; };
 		2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailViewInternal.h; sourceTree = "<group>"; };
 		2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartMagnificationController.h; path = ios/SmartMagnificationController.h; sourceTree = "<group>"; };
 		2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SmartMagnificationController.mm; path = ios/SmartMagnificationController.mm; sourceTree = "<group>"; };
@@ -6184,6 +6186,7 @@
 				37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */,
 				2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */,
 				2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */,
+				2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */,
 				7CE4D2061A46775700C7F152 /* APILegacyContextHistoryClient.h */,
 				1A2464F21891E45100234C5B /* APILoaderClient.h */,
 				7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */,
@@ -7786,6 +7789,7 @@
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */,
+				2DABA7761A82B42100EF0F1A /* APIHistoryClient.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,

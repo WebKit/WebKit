@@ -85,11 +85,6 @@ public:
 
     virtual PassRefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
 
-    virtual void didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&) { }
-    virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
-    virtual void didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
-    virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
-
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }
     virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) { }

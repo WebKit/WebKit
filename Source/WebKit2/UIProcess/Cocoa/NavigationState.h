@@ -30,6 +30,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIHistoryClient.h"
 #import "APINavigationClient.h"
 #import "PageLoadState.h"
 #import "ProcessThrottler.h"
@@ -57,6 +58,7 @@ public:
     static NavigationState& fromWebPage(WebPageProxy&);
 
     std::unique_ptr<API::NavigationClient> createNavigationClient();
+    std::unique_ptr<API::HistoryClient> createHistoryClient();
 
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);
@@ -94,11 +96,6 @@ private:
         virtual void processDidCrash(WebPageProxy&) override;
         virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
 
-        virtual void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&) override;
-        virtual void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
-        virtual void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
-        virtual void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&) override;
-
 #if USE(QUICK_LOOK)
         virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
         virtual void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
@@ -107,6 +104,20 @@ private:
         virtual void decidePolicyForNavigationAction(WebPageProxy&, API::NavigationAction&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
         virtual void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
 
+        NavigationState& m_navigationState;
+    };
+    
+    class HistoryClient final : public API::HistoryClient {
+    public:
+        explicit HistoryClient(NavigationState&);
+        ~HistoryClient();
+        
+    private:
+        virtual void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&) override;
+        virtual void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        virtual void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        virtual void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        
         NavigationState& m_navigationState;
     };
 

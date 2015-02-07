@@ -108,6 +108,11 @@ std::unique_ptr<API::NavigationClient> NavigationState::createNavigationClient()
 {
     return std::make_unique<NavigationClient>(*this);
 }
+    
+std::unique_ptr<API::HistoryClient> NavigationState::createHistoryClient()
+{
+    return std::make_unique<HistoryClient>(*this);
+}
 
 RetainPtr<id <WKNavigationDelegate> > NavigationState::navigationDelegate()
 {
@@ -634,8 +639,17 @@ void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainF
 #endif
 
 // HistoryDelegatePrivate support
+    
+NavigationState::HistoryClient::HistoryClient(NavigationState& navigationState)
+    : m_navigationState(navigationState)
+{
+}
 
-void NavigationState::NavigationClient::didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore& navigationDataStore)
+NavigationState::HistoryClient::~HistoryClient()
+{
+}
+
+void NavigationState::HistoryClient::didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore& navigationDataStore)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidNavigateWithNavigationData)
         return;
@@ -647,7 +661,7 @@ void NavigationState::NavigationClient::didNavigateWithNavigationData(WebKit::We
     [historyDelegate _webView:m_navigationState.m_webView didNavigateWithNavigationData:wrapper(*API::NavigationData::create(navigationDataStore))];
 }
 
-void NavigationState::NavigationClient::didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
+void NavigationState::HistoryClient::didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidPerformClientRedirectFromURLToURL)
         return;
@@ -659,7 +673,7 @@ void NavigationState::NavigationClient::didPerformClientRedirect(WebKit::WebPage
     [historyDelegate _webView:m_navigationState.m_webView didPerformClientRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
 }
 
-void NavigationState::NavigationClient::didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
+void NavigationState::HistoryClient::didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidPerformServerRedirectFromURLToURL)
         return;
@@ -671,7 +685,7 @@ void NavigationState::NavigationClient::didPerformServerRedirect(WebKit::WebPage
     [historyDelegate _webView:m_navigationState.m_webView didPerformServerRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
 }
 
-void NavigationState::NavigationClient::didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String& title, const WTF::String& url)
+void NavigationState::HistoryClient::didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String& title, const WTF::String& url)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidUpdateHistoryTitleForURL)
         return;

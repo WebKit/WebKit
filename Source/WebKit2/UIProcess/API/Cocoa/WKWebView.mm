@@ -357,11 +357,7 @@ static int32_t deviceOrientation()
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
-    _page->setNavigationClient(_navigationState->createNavigationClient());
-
     _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
-    _page->setUIClient(_uiDelegate->createUIClient());
-
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
     _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
 
@@ -412,6 +408,7 @@ static int32_t deviceOrientation()
 
 - (void)setNavigationDelegate:(id <WKNavigationDelegate>)navigationDelegate
 {
+    _page->setNavigationClient(_navigationState->createNavigationClient());
     _navigationState->setNavigationDelegate(navigationDelegate);
 }
 
@@ -422,6 +419,7 @@ static int32_t deviceOrientation()
 
 - (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
 {
+    _page->setUIClient(_uiDelegate->createUIClient());
     _uiDelegate->setDelegate(UIDelegate);
 }
 
@@ -1667,6 +1665,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_setHistoryDelegate:(id <WKHistoryDelegatePrivate>)historyDelegate
 {
+    _page->setHistoryClient(_navigationState->createHistoryClient());
     _navigationState->setHistoryDelegate(historyDelegate);
 }
 

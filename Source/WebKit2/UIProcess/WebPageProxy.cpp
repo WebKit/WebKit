@@ -33,6 +33,7 @@
 #include "APIFormClient.h"
 #include "APIFrameInfo.h"
 #include "APIGeometry.h"
+#include "APIHistoryClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
@@ -507,6 +508,11 @@ void WebPageProxy::setPreferences(WebPreferences& preferences)
     m_preferences->addPage(*this);
 
     preferencesDidChange();
+}
+    
+void WebPageProxy::setHistoryClient(std::unique_ptr<API::HistoryClient> historyClient)
+{
+    m_historyClient = WTF::move(historyClient);
 }
 
 void WebPageProxy::setNavigationClient(std::unique_ptr<API::NavigationClient> navigationClient)
@@ -3155,9 +3161,9 @@ void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& s
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == this);
 
-    if (m_navigationClient) {
+    if (m_historyClient) {
         if (frame->isMainFrame())
-            m_navigationClient->didNavigateWithNavigationData(*this, store);
+            m_historyClient->didNavigateWithNavigationData(*this, store);
     } else
         m_loaderClient->didNavigateWithNavigationData(*this, store, *frame);
     process().processPool().historyClient().didNavigateWithNavigationData(process().processPool(), *this, store, *frame);
@@ -3175,9 +3181,9 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    if (m_navigationClient) {
+    if (m_historyClient) {
         if (frame->isMainFrame())
-            m_navigationClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString);
+            m_historyClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString);
     } else
         m_loaderClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString, *frame);
     process().processPool().historyClient().didPerformClientRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
@@ -3195,9 +3201,9 @@ void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    if (m_navigationClient) {
+    if (m_historyClient) {
         if (frame->isMainFrame())
-            m_navigationClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString);
+            m_historyClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString);
     } else
         m_loaderClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString, *frame);
     process().processPool().historyClient().didPerformServerRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
@@ -3211,9 +3217,9 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
     MESSAGE_CHECK_URL(url);
 
-    if (m_navigationClient) {
+    if (m_historyClient) {
         if (frame->isMainFrame())
-            m_navigationClient->didUpdateHistoryTitle(*this, title, url);
+            m_historyClient->didUpdateHistoryTitle(*this, title, url);
     } else
         m_loaderClient->didUpdateHistoryTitle(*this, title, url, *frame);
     process().processPool().historyClient().didUpdateHistoryTitle(process().processPool(), *this, title, url, *frame);

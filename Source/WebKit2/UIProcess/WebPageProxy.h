@@ -115,6 +115,7 @@ namespace API {
 class ContextMenuClient;
 class FindClient;
 class FormClient;
+class HistoryClient;
 class LoaderClient;
 class Navigation;
 class NavigationClient;
@@ -316,6 +317,7 @@ public:
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void setFormClient(std::unique_ptr<API::FormClient>);
     void setNavigationClient(std::unique_ptr<API::NavigationClient>);
+    void setHistoryClient(std::unique_ptr<API::HistoryClient>);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
 
@@ -1374,6 +1376,7 @@ private:
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
     std::unique_ptr<API::NavigationClient> m_navigationClient;
+    std::unique_ptr<API::HistoryClient> m_historyClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;
 #if PLATFORM(EFL)
