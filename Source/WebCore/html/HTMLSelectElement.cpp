@@ -373,12 +373,12 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
     return validationMessageShadowTreeContains(child);
 }
 
-RefPtr<HTMLCollection> HTMLSelectElement::selectedOptions()
+Ref<HTMLCollection> HTMLSelectElement::selectedOptions()
 {
     return ensureCachedHTMLCollection(SelectedOptions);
 }
 
-RefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
+Ref<HTMLOptionsCollection> HTMLSelectElement::options()
 {
     return downcast<HTMLOptionsCollection>(ensureCachedHTMLCollection(SelectOptions).get());
 }

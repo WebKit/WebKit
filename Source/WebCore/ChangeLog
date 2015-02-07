@@ -1,3 +1,81 @@
+2015-02-06  Andreas Kling  <akling@apple.com>
+
+        Ref-ify various getters that return HTMLCollection.
+        <https://webkit.org/b/141336>
+
+        Reviewed by Anders Carlsson.
+
+        Make all the getters that return HTMLCollection objects (and never return nullptr)
+        return Ref instead of RefPtr.
+
+        Removed a couple of useless null checks that were exposed by this change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * dom/Document.cpp:
+        (WebCore::Document::ensureCachedCollection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        (WebCore::Document::iconURLs):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::ensureCachedHTMLCollection):
+        * dom/Element.h:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::suggestions):
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLDataListElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::elements):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLMapElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedOptions):
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::insertCell):
+        (WebCore::HTMLTableRowElement::deleteCell):
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::insertRow):
+        (WebCore::HTMLTableSectionElement::deleteRow):
+        (WebCore::HTMLTableSectionElement::rows):
+        * html/HTMLTableSectionElement.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::updateTickMarkValues):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+
 2015-02-06  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Implement audio track selection in fullscreen.

@@ -2901,10 +2901,10 @@ void Element::didRemoveAttribute(const QualifiedName& name, const AtomicString& 
     dispatchSubtreeModifiedEvent();
 }
 
-RefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType type)
+Ref<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType type)
 {
     if (HTMLCollection* collection = cachedHTMLCollection(type))
-        return collection;
+        return *collection;
 
     if (type == TableRows) {
         return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(downcast<HTMLTableElement>(*this), type);

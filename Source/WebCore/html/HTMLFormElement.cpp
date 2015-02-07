@@ -644,7 +644,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
     ASSERT_UNUSED(removed, removed);
 }
 
-RefPtr<HTMLCollection> HTMLFormElement::elements()
+Ref<HTMLCollection> HTMLFormElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }

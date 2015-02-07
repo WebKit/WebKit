@@ -67,8 +67,8 @@ public:
     WEBCORE_EXPORT String value() const;
     void setValue(const String&);
 
-    RefPtr<HTMLOptionsCollection> options();
-    RefPtr<HTMLCollection> selectedOptions();
+    Ref<HTMLOptionsCollection> options();
+    Ref<HTMLCollection> selectedOptions();
 
     void optionElementChildrenChanged();
 

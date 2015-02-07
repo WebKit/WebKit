@@ -60,8 +60,8 @@ public:
     RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    RefPtr<HTMLCollection> rows();
-    RefPtr<HTMLCollection> tBodies();
+    Ref<HTMLCollection> rows();
+    Ref<HTMLCollection> tBodies();
 
     const AtomicString& rules() const;
     const AtomicString& summary() const;

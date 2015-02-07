@@ -48,7 +48,7 @@ Ref<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLDataListElement(tagName, document));
 }
 
-RefPtr<HTMLCollection> HTMLDataListElement::options()
+Ref<HTMLCollection> HTMLDataListElement::options()
 {
     return ensureCachedHTMLCollection(DataListOptions);
 }

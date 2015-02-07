@@ -1741,7 +1741,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
 {
     Document& document = m_renderer->document();
-    RefPtr<HTMLCollection> links = document.links();
+    Ref<HTMLCollection> links = document.links();
     for (unsigned i = 0; Node* curr = links->item(i); i++) {
         RenderObject* obj = curr->renderer();
         if (obj) {

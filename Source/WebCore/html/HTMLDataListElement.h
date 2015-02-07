@@ -42,7 +42,7 @@ class HTMLDataListElement final : public HTMLElement {
 public:
     static Ref<HTMLDataListElement> create(const QualifiedName&, Document&);
 
-    RefPtr<HTMLCollection> options();
+    Ref<HTMLCollection> options();
 
     void optionElementChildrenChanged();
 

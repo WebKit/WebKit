@@ -550,12 +550,12 @@ bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == backgroundAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-RefPtr<HTMLCollection> HTMLTableElement::rows()
+Ref<HTMLCollection> HTMLTableElement::rows()
 {
     return ensureCachedHTMLCollection(TableRows);
 }
 
-RefPtr<HTMLCollection> HTMLTableElement::tBodies()
+Ref<HTMLCollection> HTMLTableElement::tBodies()
 {
     return ensureCachedHTMLCollection(TableTBodies);
 }

@@ -506,18 +506,18 @@ public:
 
     RefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
 
-    RefPtr<HTMLCollection> images();
-    RefPtr<HTMLCollection> embeds();
-    RefPtr<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
-    RefPtr<HTMLCollection> applets();
-    RefPtr<HTMLCollection> links();
-    RefPtr<HTMLCollection> forms();
-    RefPtr<HTMLCollection> anchors();
-    RefPtr<HTMLCollection> scripts();
-    RefPtr<HTMLCollection> all();
+    Ref<HTMLCollection> images();
+    Ref<HTMLCollection> embeds();
+    Ref<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
+    Ref<HTMLCollection> applets();
+    Ref<HTMLCollection> links();
+    Ref<HTMLCollection> forms();
+    Ref<HTMLCollection> anchors();
+    Ref<HTMLCollection> scripts();
+    Ref<HTMLCollection> all();
 
-    RefPtr<HTMLCollection> windowNamedItems(const AtomicString& name);
-    RefPtr<HTMLCollection> documentNamedItems(const AtomicString& name);
+    Ref<HTMLCollection> windowNamedItems(const AtomicString& name);
+    Ref<HTMLCollection> documentNamedItems(const AtomicString& name);
 
     // Other methods (not part of DOM)
     bool isSynthesized() const { return m_isSynthesized; }
@@ -1351,7 +1351,7 @@ private:
 
     Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint = nullptr);
 
-    RefPtr<HTMLCollection> ensureCachedCollection(CollectionType);
+    Ref<HTMLCollection> ensureCachedCollection(CollectionType);
 
 #if ENABLE(FULLSCREEN_API)
     void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);

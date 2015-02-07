@@ -45,7 +45,7 @@ public:
     RefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 
-    RefPtr<HTMLCollection> cells();
+    Ref<HTMLCollection> cells();
     void setCells(HTMLCollection *, ExceptionCode&);
 
 private:

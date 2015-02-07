@@ -94,7 +94,7 @@ EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, JSObject* slotBase, E
         return JSValue::encode(jsUndefined());
 
     if (UNLIKELY(document.documentNamedItemContainsMultipleElements(*atomicPropertyName))) {
-        RefPtr<HTMLCollection> collection = document.documentNamedItems(atomicPropertyName);
+        Ref<HTMLCollection> collection = document.documentNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
         return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
     }

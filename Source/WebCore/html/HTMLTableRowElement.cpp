@@ -120,8 +120,8 @@ int HTMLTableRowElement::sectionRowIndex() const
 
 RefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
 {
-    RefPtr<HTMLCollection> children = cells();
-    int numCells = children ? children->length() : 0;
+    Ref<HTMLCollection> children = cells();
+    int numCells = children->length();
     if (index < -1 || index > numCells) {
         ec = INDEX_SIZE_ERR;
         return 0;
@@ -143,8 +143,8 @@ RefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec
 
 void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
 {
-    RefPtr<HTMLCollection> children = cells();
-    int numCells = children ? children->length() : 0;
+    Ref<HTMLCollection> children = cells();
+    int numCells = children->length();
     if (index == -1)
         index = numCells-1;
     if (index >= 0 && index < numCells) {
@@ -154,7 +154,7 @@ void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
 }
 
-RefPtr<HTMLCollection> HTMLTableRowElement::cells()
+Ref<HTMLCollection> HTMLTableRowElement::cells()
 {
     return ensureCachedHTMLCollection(TRCells);
 }

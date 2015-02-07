@@ -703,9 +703,6 @@ HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::options(
     ASSERT(m_element);
     HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*m_element);
 
-    if (!selectElement.options())
-        return E_FAIL;
-
     *result = nullptr;
     RefPtr<HTMLOptionsCollection> options = selectElement.options();
     *result = DOMHTMLOptionsCollection::createInstance(options.get());

@@ -53,7 +53,7 @@ public:
     const AtomicString& vAlign() const;
     void setVAlign(const AtomicString&);
 
-    RefPtr<HTMLCollection> rows();
+    Ref<HTMLCollection> rows();
 
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);

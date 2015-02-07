@@ -81,7 +81,7 @@ static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, Encod
         return JSValue::encode(jsUndefined());
 
     if (UNLIKELY(downcast<HTMLDocument>(*document).windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
-        RefPtr<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
+        Ref<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
         return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
     }

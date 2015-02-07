@@ -42,7 +42,7 @@ class HTMLElement : public StyledElement {
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    RefPtr<HTMLCollection> children();
+    Ref<HTMLCollection> children();
 
     WEBCORE_EXPORT virtual String title() const override final;
 

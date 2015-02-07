@@ -229,7 +229,7 @@ Vector<Color> ColorInputType::suggestions() const
 #if ENABLE(DATALIST_ELEMENT)
     HTMLDataListElement* dataList = element().dataList();
     if (dataList) {
-        RefPtr<HTMLCollection> options = dataList->options();
+        Ref<HTMLCollection> options = dataList->options();
         for (unsigned i = 0; HTMLOptionElement* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
             if (!element().isValidValue(option->value()))
                 continue;

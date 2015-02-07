@@ -50,7 +50,7 @@ public:
     static Ref<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
-    RefPtr<HTMLCollection> elements();
+    Ref<HTMLCollection> elements();
     bool hasNamedElement(const AtomicString&);
     Vector<Ref<Element>> namedElements(const AtomicString&);
 

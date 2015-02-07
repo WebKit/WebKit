@@ -110,7 +110,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     HTMLElement::parseAttribute(name, value);
 }
 
-RefPtr<HTMLCollection> HTMLMapElement::areas()
+Ref<HTMLCollection> HTMLMapElement::areas()
 {
     return ensureCachedHTMLCollection(MapAreas);
 }

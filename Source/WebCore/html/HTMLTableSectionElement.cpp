@@ -59,8 +59,8 @@ const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeS
 RefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
 {
     RefPtr<HTMLTableRowElement> row;
-    RefPtr<HTMLCollection> children = rows();
-    int numRows = children ? (int)children->length() : 0;
+    Ref<HTMLCollection> children = rows();
+    int numRows = children->length();
     if (index < -1 || index > numRows)
         ec = INDEX_SIZE_ERR; // per the DOM
     else {
@@ -81,8 +81,8 @@ RefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode&
 
 void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
 {
-    RefPtr<HTMLCollection> children = rows();
-    int numRows = children ? (int)children->length() : 0;
+    Ref<HTMLCollection> children = rows();
+    int numRows = children->length();
     if (index == -1)
         index = numRows - 1;
     if (index >= 0 && index < numRows) {
@@ -145,7 +145,7 @@ void HTMLTableSectionElement::setVAlign(const AtomicString& value)
     setAttribute(valignAttr, value);
 }
 
-RefPtr<HTMLCollection> HTMLTableSectionElement::rows()
+Ref<HTMLCollection> HTMLTableSectionElement::rows()
 {
     return ensureCachedHTMLCollection(TSectionRows);
 }

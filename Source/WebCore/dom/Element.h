@@ -570,7 +570,7 @@ protected:
     void clearTabIndexExplicitlyIfNeeded();
     void setTabIndexExplicitly(short);
 
-    RefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
+    Ref<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType);
 
     // classAttributeChanged() exists to share code between

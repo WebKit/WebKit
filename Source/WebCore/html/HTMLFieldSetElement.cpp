@@ -159,7 +159,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
     return const_cast<HTMLLegendElement*>(childrenOfType<HTMLLegendElement>(*this).first());
 }
 
-RefPtr<HTMLCollection> HTMLFieldSetElement::elements()
+Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }
