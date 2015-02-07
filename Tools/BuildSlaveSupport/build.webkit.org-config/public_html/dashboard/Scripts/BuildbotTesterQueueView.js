@@ -79,12 +79,12 @@ BuildbotTesterQueueView.prototype = {
                 } else if (!iteration.productive) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
-                } else if (queue.crashesOnly && !iteration.crashCount) {
+                } else if (queue.crashesOnly && !layoutTestResults.crashCount) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
-                } else if (queue.crashesOnly && iteration.crashCount) {
+                } else if (queue.crashesOnly && layoutTestResults.crashCount) {
                     var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "crash found" : "crashes found", undefined, url);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.crashCount === 1 ? "crash found" : "crashes found", layoutTestResults.crashCount, url);
                     new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
                     // Something wrong happened, but it was not a test failure.

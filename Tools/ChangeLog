@@ -1,3 +1,14 @@
+2015-02-06  Dana Burkart  <dburkart@apple.com>
+
+        dashboard: BuildbotTesterQueueView crashesOnly logic is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=141349
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        (BuildbotTesterQueueView.prototype.update):
+
 2015-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         Report network process crashes during layout tests
