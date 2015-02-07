@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include <wtf/md5.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -37,7 +38,7 @@ class NetworkCacheDecoder;
 
 class NetworkCacheKey {
 public:
-    typedef unsigned HashType;
+    typedef MD5::Digest HashType;
 
     NetworkCacheKey() { }
     NetworkCacheKey(const NetworkCacheKey&);
@@ -47,10 +48,15 @@ public:
     const String& method() const { return m_method; }
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
-    HashType hash() const { return m_hash; }
 
-    String hashAsString() const;
+    HashType hash() const { return m_hash; }
+    unsigned shortHash() const  { return toShortHash(m_hash); }
+
+    static unsigned toShortHash(const HashType& hash) { return *reinterpret_cast<const unsigned*>(hash.data()); }
     static bool stringToHash(const String&, HashType&);
+
+    static size_t hashStringLength() { return 2 * sizeof(m_hash); }
+    String hashAsString() const;
 
     void encode(NetworkCacheEncoder&) const;
     static bool decode(NetworkCacheDecoder&, NetworkCacheKey&);

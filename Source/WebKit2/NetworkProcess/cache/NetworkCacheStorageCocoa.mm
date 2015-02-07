@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,8 @@
 
 namespace WebKit {
 
-static const char* networkCacheSubdirectory = "WebKitCache";
+static const char networkCacheSubdirectory[] = "WebKitCache";
+static const char versionDirectoryPrefix[] = "Version ";
 
 template <typename Function>
 static void traverseDirectory(const String& path, uint8_t type, const Function& function)
@@ -66,7 +67,7 @@ static void traverseCacheFiles(const String& cachePath, std::function<void (cons
     traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
         String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
         traverseDirectory(partitionPath, DT_REG, [&function, &partitionPath](const String& fileName) {
-            if (fileName.length() != 8)
+            if (fileName.length() != NetworkCacheKey::hashStringLength())
                 return;
             function(fileName, partitionPath);
         });
@@ -116,13 +117,21 @@ std::unique_ptr<NetworkCacheStorage> NetworkCacheStorage::open(const String& cac
     return std::unique_ptr<NetworkCacheStorage>(new NetworkCacheStorage(networkCachePath));
 }
 
-NetworkCacheStorage::NetworkCacheStorage(const String& directoryPath)
-    : m_directoryPath(directoryPath)
+static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
+{
+    String versionSubdirectory = versionDirectoryPrefix + String::number(NetworkCacheStorage::version);
+    return WebCore::pathByAppendingComponent(baseDirectoryPath, versionSubdirectory);
+}
+
+NetworkCacheStorage::NetworkCacheStorage(const String& baseDirectoryPath)
+    : m_baseDirectoryPath(baseDirectoryPath)
+    , m_directoryPath(makeVersionedDirectoryPath(baseDirectoryPath))
     , m_ioQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage", DISPATCH_QUEUE_CONCURRENT)))
     , m_backgroundIOQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage.Background", DISPATCH_QUEUE_CONCURRENT)))
 {
     dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
 
+    deleteOldVersions();
     initialize();
 }
 
@@ -139,8 +148,9 @@ void NetworkCacheStorage::initialize()
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
-            dispatch_async(dispatch_get_main_queue(), [this, hash] {
-                m_contentsFilter.add(hash);
+            unsigned shortHash = NetworkCacheKey::toShortHash(hash);
+            dispatch_async(dispatch_get_main_queue(), [this, shortHash] {
+                m_contentsFilter.add(shortHash);
             });
             ++entryCount;
         });
@@ -344,8 +354,8 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_contentsFilter.mayContain(key.hash()))
-        m_contentsFilter.remove(key.hash());
+    if (m_contentsFilter.mayContain(key.shortHash()))
+        m_contentsFilter.remove(key.shortHash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
     dispatch_async(m_ioQueue.get(), [this, filePathCapture] {
@@ -430,7 +440,7 @@ void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority
     ASSERT(RunLoop::isMain());
     ASSERT(priority <= maximumRetrievePriority);
 
-    if (!m_contentsFilter.mayContain(key.hash())) {
+    if (!m_contentsFilter.mayContain(key.shortHash())) {
         completionHandler(nullptr);
         return;
     }
@@ -449,7 +459,7 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
 {
     ASSERT(RunLoop::isMain());
 
-    m_contentsFilter.add(key.hash());
+    m_contentsFilter.add(key.shortHash());
     ++m_approximateEntryCount;
 
     auto storeOperation = std::make_unique<StoreOperation>(StoreOperation { key, entry, WTF::move(completionHandler) });
@@ -470,8 +480,8 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
             if (error) {
-                if (m_contentsFilter.mayContain(store.key.hash()))
-                    m_contentsFilter.remove(store.key.hash());
+                if (m_contentsFilter.mayContain(store.key.shortHash()))
+                    m_contentsFilter.remove(store.key.shortHash());
                 if (m_approximateEntryCount)
                     --m_approximateEntryCount;
             }
@@ -493,7 +503,7 @@ void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& update
 {
     ASSERT(RunLoop::isMain());
 
-    if (!m_contentsFilter.mayContain(key.hash())) {
+    if (!m_contentsFilter.mayContain(key.shortHash())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) existing entry not found, storing full entry");
         store(key, updateEntry, WTF::move(completionHandler));
         return;
@@ -599,15 +609,34 @@ void NetworkCacheStorage::shrinkIfNeeded()
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
-            dispatch_async(dispatch_get_main_queue(), [this, hash] {
-                if (m_contentsFilter.mayContain(hash))
-                    m_contentsFilter.remove(hash);
+            unsigned shortHash = NetworkCacheKey::toShortHash(hash);
+            dispatch_async(dispatch_get_main_queue(), [this, shortHash] {
+                if (m_contentsFilter.mayContain(shortHash))
+                    m_contentsFilter.remove(shortHash);
             });
         });
         m_approximateEntryCount = foundEntryCount - deletedCount;
         m_shrinkInProgress = false;
 
         LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed m_approximateEntryCount=%d", static_cast<size_t>(m_approximateEntryCount));
+    });
+}
+
+void NetworkCacheStorage::deleteOldVersions()
+{
+    // Delete V1 cache.
+    StringCapture cachePathCapture(m_baseDirectoryPath);
+    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture] {
+        String cachePath = cachePathCapture.string();
+        traverseDirectory(cachePath, DT_DIR, [&cachePath](const String& subdirName) {
+            if (subdirName.startsWith(versionDirectoryPrefix))
+                return;
+            String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
+            traverseDirectory(partitionPath, DT_REG, [&partitionPath](const String& fileName) {
+                WebCore::deleteFile(WebCore::pathByAppendingComponent(partitionPath, fileName));
+            });
+            WebCore::deleteEmptyDirectory(partitionPath);
+        });
     });
 }
 

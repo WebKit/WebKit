@@ -1,3 +1,56 @@
+2015-02-07  Antti Koivisto  <antti@apple.com>
+
+        Use longer hashes for cache keys
+        https://bugs.webkit.org/show_bug.cgi?id=141356
+
+        Reviewed by Darin Adler.
+
+        The current key hashes are 32bit. We should use longer hashes to eliminate collisions.
+
+        This patch switches us to using MD5 digests for the cache key hashes. As a result the file names for the cache
+        entries grow from 8 to 32 character.
+
+        Note that we don't need a cryptographic hash (full cache keys are verified against the entries).
+        MD5 just happens to be fast, convenient and available.
+
+        The patch also moves the whole cache hierarchy down to a versioned subdirectory ("WebKitCache/Version 2")
+        and deletes any old style cache files if they exist.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCacheCoder<MD5::Digest>::encode):
+        (WebKit::NetworkCacheCoder<MD5::Digest>::decode):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCacheKey::NetworkCacheKey):
+        (WebKit::hashString):
+        (WebKit::NetworkCacheKey::computeHash):
+        (WebKit::NetworkCacheKey::hashAsString):
+        (WebKit::NetworkCacheKey::stringToHash):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCacheKey::shortHash):
+        (WebKit::NetworkCacheKey::toShortHash):
+
+            32bit hash to use in the bloom filter.
+
+        (WebKit::NetworkCacheKey::hashStringLength):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            Bump the version.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::traverseCacheFiles):
+        (WebKit::makeVersionedDirectoryPath):
+        (WebKit::NetworkCacheStorage::NetworkCacheStorage):
+        (WebKit::NetworkCacheStorage::initialize):
+        (WebKit::NetworkCacheStorage::removeEntry):
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+        (WebKit::NetworkCacheStorage::shrinkIfNeeded):
+        (WebKit::NetworkCacheStorage::deleteOldVersions):
+
+            Wipe out the version 1 cache.
+
 2015-02-06  Chris Dumez  <cdumez@apple.com>
 
         Have SQLiteStatement::database() return a reference

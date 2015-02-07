@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,9 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheCoders.h"
+#include <wtf/ASCIICType.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -56,31 +59,61 @@ NetworkCacheKey::NetworkCacheKey(const String& method, const String& partition, 
 {
 }
 
-static NetworkCacheKey::HashType hashString(const String& string)
+static void hashString(MD5& md5, const String& string)
 {
-    // String::hash() masks away the top bits.
-    if (string.is8Bit())
-        return StringHasher::computeHash(string.characters8(), string.length());
-    return StringHasher::computeHash(string.characters16(), string.length());
+    const uint8_t zero = 0;
+    if (string.is8Bit()) {
+        md5.addBytes(string.characters8(), string.length());
+        md5.addBytes(&zero, 1);
+        return;
+    }
+    auto cString = string.utf8();
+    md5.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length());
+    md5.addBytes(&zero, 1);
 }
 
 NetworkCacheKey::HashType NetworkCacheKey::computeHash() const
 {
-    return WTF::pairIntHash(hashString(m_method), WTF::pairIntHash(hashString(m_identifier), hashString(m_partition)));
+    // We don't really need a cryptographic hash. The key is always verified against the entry header.
+    // MD5 just happens to be suitably sized, fast and available.
+    MD5 md5;
+    hashString(md5, m_method);
+    hashString(md5, m_partition);
+    hashString(md5, m_identifier);
+    MD5::Digest hash;
+    md5.checksum(hash);
+    return hash;
 }
 
 String NetworkCacheKey::hashAsString() const
 {
-    return String::format("%08x", m_hash);
+    StringBuilder builder;
+    for (auto byte : m_hash) {
+        builder.append(upperNibbleToASCIIHexDigit(byte));
+        builder.append(lowerNibbleToASCIIHexDigit(byte));
+    }
+    return builder.toString();
+}
+
+template <typename CharType> bool hexDigitsToHash(CharType* characters, NetworkCacheKey::HashType& hash)
+{
+    for (unsigned i = 0; i < sizeof(hash); ++i) {
+        auto high = characters[2 * i];
+        auto low = characters[2 * i + 1];
+        if (!isASCIIHexDigit(high) || !isASCIIHexDigit(low))
+            return false;
+        hash[i] = toASCIIHexValue(high, low);
+    }
+    return true;
 }
 
 bool NetworkCacheKey::stringToHash(const String& string, HashType& hash)
 {
-    if (string.length() != 8)
+    if (string.length() != hashStringLength())
         return false;
-    bool success;
-    hash = string.toUIntStrict(&success, 16);
-    return success;
+    if (string.is8Bit())
+        return hexDigitsToHash(string.characters8(), hash);
+    return hexDigitsToHash(string.characters16(), hash);
 }
 
 bool NetworkCacheKey::operator==(const NetworkCacheKey& other) const

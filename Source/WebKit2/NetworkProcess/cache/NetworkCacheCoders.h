@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/md5.h>
 
 namespace WebKit {
 
@@ -253,6 +254,11 @@ template<> struct NetworkCacheCoder<String> {
 template<> struct NetworkCacheCoder<WebCore::CertificateInfo> {
     static void encode(NetworkCacheEncoder&, const WebCore::CertificateInfo&);
     static bool decode(NetworkCacheDecoder&, WebCore::CertificateInfo&);
+};
+
+template<> struct NetworkCacheCoder<MD5::Digest> {
+    static void encode(NetworkCacheEncoder&, const MD5::Digest&);
+    static bool decode(NetworkCacheDecoder&, MD5::Digest&);
 };
 
 }

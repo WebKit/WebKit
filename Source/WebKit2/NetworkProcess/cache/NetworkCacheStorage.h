@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,12 +153,13 @@ public:
     void setMaximumSize(size_t);
     void clear();
 
-    static const unsigned version = 1;
+    static const unsigned version = 2;
 
 private:
     NetworkCacheStorage(const String& directoryPath);
 
     void initialize();
+    void deleteOldVersions();
     void shrinkIfNeeded();
 
     void removeEntry(const NetworkCacheKey&);
@@ -183,6 +184,7 @@ private:
         StoreCompletionHandler completionHandler;
     };
 
+    const String m_baseDirectoryPath;
     const String m_directoryPath;
 
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };

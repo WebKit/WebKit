@@ -240,6 +240,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
 #endif
+        fprintf(stderr, "retireved %d\n", success);
         LOG(NetworkCache, "(NetworkProcess) retrieve complete success=%d priority=%u time=%lldms", success, originalRequest.priority(), elapsedMS);
         completionHandler(WTF::move(decodedEntry));
         return success;
