@@ -90,7 +90,7 @@ public:
     bool returnInt64Results(int col, Vector<int64_t>&);
     bool returnDoubleResults(int col, Vector<double>&);
 
-    SQLiteDatabase* database() { return &m_database; }
+    SQLiteDatabase& database() { return m_database; }
     
     const String& query() const { return m_query; }
     

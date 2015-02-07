@@ -329,12 +329,12 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
             return AdvanceResult::Failure;
         }
 
-        SQLiteStatement objectStoreStatement(*m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
+        SQLiteStatement objectStoreStatement(m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
 
         if (objectStoreStatement.prepare() != SQLResultOk
             || objectStoreStatement.bindBlob(1, m_currentValueBuffer.data(), m_currentValueBuffer.size()) != SQLResultOk
             || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLResultOk) {
-            LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", m_statement->database()->lastError(), m_statement->database()->lastErrorMsg());
+            LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
             m_completed = true;
             m_errored = true;
             return AdvanceResult::Failure;
@@ -349,7 +349,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
             // Skip over it.
             return AdvanceResult::ShouldAdvanceAgain;
         } else {
-            LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", m_statement->database()->lastError(), m_statement->database()->lastErrorMsg());
+            LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
             m_completed = true;
             m_errored = true;
             return AdvanceResult::Failure;

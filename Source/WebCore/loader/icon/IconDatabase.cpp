@@ -1812,7 +1812,7 @@ void* IconDatabase::cleanupSyncThread()
 // 2 - Lazy construction of the Statement in the first place, in case we've never made this query before
 inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQLiteDatabase& db, const String& str)
 {
-    if (statement && (statement->database() != &db || statement->isExpired())) {
+    if (statement && (&statement->database() != &db || statement->isExpired())) {
         if (statement->isExpired())
             LOG(IconDatabase, "SQLiteStatement associated with %s is expired", str.ascii().data());
         statement = nullptr;
