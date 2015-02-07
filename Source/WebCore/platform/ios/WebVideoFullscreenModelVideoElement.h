@@ -83,6 +83,7 @@ private:
     WebVideoFullscreenInterface* m_videoFullscreenInterface;
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
+    Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
 
     void updateLegibleOptions();
 };

@@ -302,9 +302,18 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscree
     m_videoElement->setVideoFullscreenGravity(videoGravity);
 }
 
-void WebVideoFullscreenModelVideoElement::selectAudioMediaOption(uint64_t)
+void WebVideoFullscreenModelVideoElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
 {
-    // FIXME: 131236 Implement audio track selection.
+    AudioTrack* selectedAudioTrack = nullptr;
+
+    for (size_t index = 0; index < m_audioTracksForMenu.size(); ++index) {
+        auto& audioTrack = m_audioTracksForMenu[index];
+        audioTrack->setEnabled(index == static_cast<size_t>(selectedAudioIndex));
+        if (audioTrack->enabled())
+            selectedAudioTrack = audioTrack.get();
+    }
+
+    m_videoElement->audioTrackEnabledChanged(selectedAudioTrack);
 }
 
 void WebVideoFullscreenModelVideoElement::selectLegibleMediaOption(uint64_t index)
@@ -319,8 +328,10 @@ void WebVideoFullscreenModelVideoElement::selectLegibleMediaOption(uint64_t inde
 
 void WebVideoFullscreenModelVideoElement::updateLegibleOptions()
 {
+    AudioTrackList* audioTrackList = m_videoElement->audioTracks();
     TextTrackList* trackList = m_videoElement->textTracks();
-    if (!trackList || !m_videoElement->document().page() || !m_videoElement->mediaControlsHost())
+
+    if ((!trackList && !audioTrackList) || !m_videoElement->document().page() || !m_videoElement->mediaControlsHost())
         return;
     
     WTF::AtomicString displayMode = m_videoElement->mediaControlsHost()->captionDisplayMode();
@@ -328,6 +339,22 @@ void WebVideoFullscreenModelVideoElement::updateLegibleOptions()
     TextTrack* automaticItem = m_videoElement->mediaControlsHost()->captionMenuAutomaticItem();
     CaptionUserPreferences& captionPreferences = *m_videoElement->document().page()->group().captionPreferences();
     m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
+
+    m_audioTracksForMenu = captionPreferences.sortedTrackListForMenu(audioTrackList);
+    
+    Vector<String> audioTrackDisplayNames;
+    uint64_t selectedAudioIndex = 0;
+    
+    for (size_t index = 0; index < m_audioTracksForMenu.size(); ++index) {
+        auto& track = m_audioTracksForMenu[index];
+        audioTrackDisplayNames.append(captionPreferences.displayNameForTrack(track.get()));
+        
+        if (track->enabled())
+            selectedAudioIndex = index;
+    }
+    
+    m_videoFullscreenInterface->setAudioMediaSelectionOptions(audioTrackDisplayNames, selectedAudioIndex);
+
     Vector<String> trackDisplayNames;
     uint64_t selectedIndex = 0;
     uint64_t offIndex = 0;
