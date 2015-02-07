@@ -30,6 +30,13 @@ require 'rbconfig'
 require 'uri'
 require 'yaml'
 
+module URI
+    class SSH < Generic
+        DEFAULT_PORT = 22
+    end
+    @@schemes['SSH'] = SSH
+end
+
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
 WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
@@ -191,7 +198,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :shell
         $tarball = true
         $remote = true
-        uri = URI("ftp://" + arg)
+        uri = URI("ssh://" + arg)
         $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
     when '--child-processes'
         $numProcessors = arg.to_i

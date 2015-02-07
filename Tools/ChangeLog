@@ -1,3 +1,12 @@
+2015-02-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        run-jsc-stress-tests --remote should use the default ssh port
+        https://bugs.webkit.org/show_bug.cgi?id=141287
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-jsc-stress-tests: Extended URI module to be able to handle ssh scheme with the default 22 port number.
+
 2015-02-06  Dana Burkart  <dburkart@apple.com>
 
         dashboard: BuildbotTesterQueueView crashesOnly logic is wrong
