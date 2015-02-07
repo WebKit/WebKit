@@ -206,24 +206,15 @@ private:
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
 {
     if (is<PseudoElement>(referenceNode)) {
-        EventTarget* hostElement = downcast<PseudoElement>(referenceNode).hostElement();
-        ASSERT(hostElement);
-        return *hostElement;
+        ASSERT(downcast<PseudoElement>(referenceNode).hostElement());
+        return *downcast<PseudoElement>(referenceNode).hostElement();
     }
 
-    if (!referenceNode.isSVGElement() || !referenceNode.isInShadowTree())
-        return referenceNode;
-
-    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
-    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
-    auto& rootNode = referenceNode.treeScope().rootNode();
-    Element* shadowHostElement = is<ShadowRoot>(rootNode) ? downcast<ShadowRoot>(rootNode).hostElement() : nullptr;
-    // At this time, SVG nodes are not supported in non-<use> shadow trees.
-    if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
-        return referenceNode;
-    SVGUseElement& useElement = downcast<SVGUseElement>(*shadowHostElement);
-    if (SVGElementInstance* instance = useElement.instanceForShadowTreeElement(&referenceNode))
-        return *instance;
+    // Events sent to elements inside an SVG use element's shadow tree go to the use element.
+    if (is<SVGElement>(referenceNode)) {
+        if (auto* useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
+            return *useElement;
+    }
 
     return referenceNode;
 }

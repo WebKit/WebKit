@@ -1,3 +1,40 @@
+2015-02-07  Darin Adler  <darin@apple.com>
+
+        Stop dispatching events with SVGElementInstance objects as their targets
+        https://bugs.webkit.org/show_bug.cgi?id=141108
+
+        Reviewed by Anders Carlsson.
+
+        Many tests are no longer relevant once we aren't doing this any more.
+
+        * platform/gtk/svg/custom/use-instanceRoot-event-bubbling-expected.png: Removed.
+        * platform/gtk/svg/custom/use-instanceRoot-modifications-expected.png: Removed.
+        * platform/gtk/svg/custom/use-instanceRoot-modifications-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-instanceRoot-modifications-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-instanceRoot-modifications-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-instanceRoot-modifications-expected.txt: Removed.
+        * platform/mac/svg/custom/use-instanceRoot-event-bubbling-expected.png: Removed.
+        * platform/mac/svg/custom/use-instanceRoot-modifications-expected.png: Removed.
+        * platform/mac/svg/custom/use-instanceRoot-modifications-expected.txt: Removed.
+        * svg/custom/use-instanceRoot-modifications.svg: Removed.
+        * svg/custom/use-instanceRoot-with-use-removed-expected.txt: Removed.
+        * svg/custom/use-instanceRoot-with-use-removed.svg: Removed.
+
+        * svg/custom/resources/use-instanceRoot-event-bubbling.js: Updated this test to expect
+        the events to be dispatched with the SVGUseElement as the target. I talked this over with
+        Sam Weinig and we decided this is good behavior for now, and it almost matches what the
+        spec says. Might be worth refining later.
+        * svg/custom/use-instanceRoot-event-bubbling-expected.txt: Updated expected results.
+        * svg/custom/use-instanceRoot-event-bubbling.xhtml: Tweaked the test a little. It still
+        could use improvement; it's like half a "repaint test", which is strange.
+
+        * svg/custom/use-event-retargeting-expected.txt: Added. Got this test from Blink.
+        * svg/custom/use-event-retargeting.html: Added. Ditto.
+
+        * svg/custom/use-events-crash.svg: Added some more events, a second click, so that we
+        don't hang with the context menu up when running this. Also converted line endings to
+        use LF instead of CRLF.
+
 2015-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (OS X 10.10.2): http/tests/media/video-query-url.html frequently times out

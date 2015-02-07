@@ -8,6 +8,9 @@ function test()
     if (window.eventSender) {
 	eventSender.mouseMoveTo(370, 45);
 	eventSender.contextClick();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseUp();
     }
 }
 
