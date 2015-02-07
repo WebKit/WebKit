@@ -1,5 +1,12 @@
 2015-02-07  Antti Koivisto  <antti@apple.com>
 
+        And as a further followup restore the 8bit test too.
+
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::hashString):
+
+2015-02-07  Antti Koivisto  <antti@apple.com>
+
         Use longer hashes for cache keys
         https://bugs.webkit.org/show_bug.cgi?id=141356
 

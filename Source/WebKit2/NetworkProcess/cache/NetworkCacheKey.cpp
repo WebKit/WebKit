@@ -62,7 +62,7 @@ NetworkCacheKey::NetworkCacheKey(const String& method, const String& partition, 
 static void hashString(MD5& md5, const String& string)
 {
     const uint8_t zero = 0;
-    if (string.containsOnlyASCII()) {
+    if (string.is8Bit() && string.containsOnlyASCII()) {
         md5.addBytes(string.characters8(), string.length());
         md5.addBytes(&zero, 1);
         return;
