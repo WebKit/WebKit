@@ -186,7 +186,9 @@ static bool isYouTubeURL(const URL& url)
     return hostName == "m.youtube.com"
         || hostName == "youtu.be"
         || hostName == "www.youtube.com"
-        || hostName == "youtube.com";
+        || hostName == "youtube.com"
+        || hostName == "www.youtube-nocookie.com"
+        || hostName == "youtube-nocookie.com";
 }
 
 static const String& valueForKey(const YouTubePluginReplacement::KeyValueMap& dictionary, const String& key)
