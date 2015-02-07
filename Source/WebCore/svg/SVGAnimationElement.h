@@ -194,8 +194,9 @@ protected:
     AnimatedPropertyValueType m_toPropertyValueType;
 
     virtual void setTargetElement(SVGElement*) override;
-    virtual void setAttributeName(const QualifiedName&) override;
+    virtual void setAttributeName(const QualifiedName&) override { }
     bool hasInvalidCSSAttributeType() const { return m_hasInvalidCSSAttributeType; }
+    void checkInvalidCSSAttributeType(SVGElement*);
 
     virtual void updateAnimationMode();
     void setAnimationMode(AnimationMode animationMode) { m_animationMode = animationMode; }
@@ -204,8 +205,6 @@ protected:
 private:
     virtual void animationAttributeChanged() override;
     void setAttributeType(const AtomicString&);
-
-    void checkInvalidCSSAttributeType(SVGElement*);
 
     virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;

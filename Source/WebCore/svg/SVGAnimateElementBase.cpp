@@ -424,7 +424,8 @@ void SVGAnimateElementBase::setTargetElement(SVGElement* target)
 
 void SVGAnimateElementBase::setAttributeName(const QualifiedName& attributeName)
 {
-    SVGAnimationElement::setAttributeName(attributeName);
+    SVGSMILElement::setAttributeName(attributeName);
+    checkInvalidCSSAttributeType(targetElement());
     resetAnimatedPropertyType();
 }
 
