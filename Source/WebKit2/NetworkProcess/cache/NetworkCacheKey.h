@@ -28,7 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-#include <wtf/md5.h>
+#include <wtf/MD5.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

@@ -35,8 +35,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MD5.h>
 #include <wtf/Vector.h>
-#include <wtf/md5.h>
 
 namespace WebKit {
 
