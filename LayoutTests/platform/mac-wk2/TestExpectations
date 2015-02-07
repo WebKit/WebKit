@@ -517,3 +517,5 @@ webkit.org/b/140607 [ Yosemite+ ] http/tests/navigation/navigation-interrupted-b
 webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]
 
 webkit.org/b/141325 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Pass Failure ]
+
+webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Timeout ]

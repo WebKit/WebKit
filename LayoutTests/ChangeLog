@@ -1,3 +1,10 @@
+2015-02-07  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (OS X 10.10.2): http/tests/media/video-query-url.html frequently times out
+        https://bugs.webkit.org/show_bug.cgi?id=141085
+
+        * platform/mac-wk2/TestExpectations: Added an expectation.
+
 2015-02-06  Zalan Bujtas  <zalan@apple.com>
 
         ASSERT repaintContainer->hasLayer() in WebCore::RenderObject::repaintUsingContainer
