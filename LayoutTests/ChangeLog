@@ -1,5 +1,16 @@
 2015-02-08  David Kilzer  <ddkilzer@apple.com>
 
+        Skip fast/parser/document-open-in-unload.html on all WK2 platforms
+
+        Tracked by:
+        [WK2] fast/parser/document-open-in-unload.html makes the following test crash
+        <http://webkit.org/b/98345>
+
+        * platform/mac-wk2/TestExpectations: Move Skip expectation from here...
+        * platform/wk2/TestExpectations: ...to here with updated bug number.
+
+2015-02-08  David Kilzer  <ddkilzer@apple.com>
+
         Update section headers for mac-wk2/TestExpectations
 
         * platform/mac-wk2/TestExpectations:

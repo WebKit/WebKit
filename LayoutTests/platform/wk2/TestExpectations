@@ -215,6 +215,9 @@ webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [ Ski
 
 webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
 
+# Causes next test to crash only on WebKit2
+webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
