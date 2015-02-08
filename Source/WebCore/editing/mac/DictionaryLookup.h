@@ -30,7 +30,7 @@
 
 #include <wtf/PassRefPtr.h>
 
-@class NSDictionary;
+OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 

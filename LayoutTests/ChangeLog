@@ -1,3 +1,24 @@
+2015-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add some dictionary lookup tests
+        https://bugs.webkit.org/show_bug.cgi?id=141355
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-expected.txt: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-input-expected.txt: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-input.html: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-inside-selection-expected.txt: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-inside-selection.html: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-outside-selection-expected.txt: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-outside-selection.html: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-rtl-expected.txt: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup-rtl.html: Added.
+        * platform/mac/editing/dictionary-lookup/dictionary-lookup.html: Added.
+        * platform/mac/editing/dictionary-lookup/lookup-test.js: Added.
+        (runTest):
+        Add tests for various cases that we've had trouble with in the past.
+
 2015-02-07  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed gardening.

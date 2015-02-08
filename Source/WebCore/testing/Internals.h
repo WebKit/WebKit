@@ -162,6 +162,7 @@ public:
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
     String rangeAsText(const Range*, ExceptionCode&);
     PassRefPtr<Range> subrange(Range* range, int rangeLocation, int rangeLength, ExceptionCode&);
+    RefPtr<Range> rangeForDictionaryLookupAtLocation(int x, int y, ExceptionCode&);
 
     void setDelegatesScrolling(bool enabled, ExceptionCode&);
 

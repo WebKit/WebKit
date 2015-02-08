@@ -124,6 +124,7 @@ enum PageOverlayType {
     [RaisesException] unsigned long lengthFromRange(Element scope, Range range);
     [RaisesException] DOMString rangeAsText(Range range);
     [RaisesException] Range subrange(Range range, long rangeLocation, long rangeLength);
+    [RaisesException] Range rangeForDictionaryLookupAtLocation(long x, long y);
 
     [RaisesException] void setDelegatesScrolling(boolean enabled);
 

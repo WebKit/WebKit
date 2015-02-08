@@ -1,3 +1,28 @@
+2015-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add some dictionary lookup tests
+        https://bugs.webkit.org/show_bug.cgi?id=141355
+
+        Reviewed by Darin Adler.
+
+        Tests: platform/mac/editing/dictionary-lookup/dictionary-lookup-input.html
+               platform/mac/editing/dictionary-lookup/dictionary-lookup-inside-selection.html
+               platform/mac/editing/dictionary-lookup/dictionary-lookup-outside-selection.html
+               platform/mac/editing/dictionary-lookup/dictionary-lookup-rtl.html
+               platform/mac/editing/dictionary-lookup/dictionary-lookup.html
+
+        * WebCore.exp.in:
+        Remove an unneeded export.
+
+        * editing/mac/DictionaryLookup.h:
+        Use OBJC_CLASS instead of @class so that this can be included in pure-C++ files.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Expose rangeForDictionaryLookupAtHitTestResult fairly directly to JavaScript.
+
 2015-02-07  Chris Dumez  <cdumez@apple.com>
 
         Add Vector::removeFirstMatching() / removeAllMatching() methods taking lambda functions
