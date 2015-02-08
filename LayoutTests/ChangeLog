@@ -1,5 +1,12 @@
 2015-02-08  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/security/appcache-in-private-browsing.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=141370
+
+        * TestExpectations: Marking as such.
+
+2015-02-08  Alexey Proskuryakov  <ap@apple.com>
+
         Application cache abort() tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=87633
 
