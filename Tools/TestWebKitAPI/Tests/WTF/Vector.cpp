@@ -463,4 +463,58 @@ TEST(WTF_Vector, RemoveAll)
     EXPECT_TRUE(v2 == vExpected);
 }
 
+TEST(WTF_Vector, RemoveFirstMatching)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeFirstMatching([] (int value) { return value > 0; }));
+    EXPECT_FALSE(v.removeFirstMatching([] (int) { return true; }));
+    EXPECT_FALSE(v.removeFirstMatching([] (int) { return false; }));
+
+    v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
+    EXPECT_EQ(12U, v.size());
+    EXPECT_FALSE(v.removeFirstMatching([] (int) { return false; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_FALSE(v.removeFirstMatching([] (int value) { return value < 0; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_TRUE(v.removeFirstMatching([] (int value) { return value < 3; }));
+    EXPECT_EQ(11U, v.size());
+    EXPECT_TRUE(v == Vector<int>({3, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3}));
+    EXPECT_TRUE(v.removeFirstMatching([] (int value) { return value > 2; }));
+    EXPECT_EQ(10U, v.size());
+    EXPECT_TRUE(v == Vector<int>({2, 1, 2, 1, 2, 2, 1, 1, 1, 3}));
+    EXPECT_TRUE(v.removeFirstMatching([] (int value) { return value > 2; }));
+    EXPECT_EQ(9U, v.size());
+    EXPECT_TRUE(v == Vector<int>({2, 1, 2, 1, 2, 2, 1, 1, 1}));
+}
+
+TEST(WTF_Vector, RemoveAllMatching)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.removeAllMatching([] (int value) { return value > 0; }));
+    EXPECT_FALSE(v.removeAllMatching([] (int) { return true; }));
+    EXPECT_FALSE(v.removeAllMatching([] (int) { return false; }));
+
+    v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
+    EXPECT_EQ(12U, v.size());
+    EXPECT_EQ(0U, v.removeAllMatching([] (int) { return false; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_EQ(0U, v.removeAllMatching([] (int value) { return value < 0; }));
+    EXPECT_EQ(12U, v.size());
+    EXPECT_EQ(12U, v.removeAllMatching([] (int value) { return value > 0; }));
+    EXPECT_TRUE(v.isEmpty());
+
+    v = {3, 1, 2, 1, 2, 1, 3, 2, 2, 1, 1, 1, 3};
+    EXPECT_EQ(13U, v.size());
+    EXPECT_EQ(3U, v.removeAllMatching([] (int value) { return value > 2; }));
+    EXPECT_EQ(10U, v.size());
+    EXPECT_TRUE(v == Vector<int>({1, 2, 1, 2, 1, 2, 2, 1, 1, 1}));
+    EXPECT_EQ(6U, v.removeAllMatching([] (int value) { return value != 2; }));
+    EXPECT_EQ(4U, v.size());
+    EXPECT_TRUE(v == Vector<int>({2, 2, 2, 2}));
+    EXPECT_EQ(4U, v.removeAllMatching([] (int value) { return value == 2; }));
+    EXPECT_TRUE(v.isEmpty());
+}
+
 } // namespace TestWebKitAPI

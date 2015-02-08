@@ -12077,14 +12077,9 @@ void CSSParser::endDeclarationsForMarginBox()
 void CSSParser::deleteFontFaceOnlyValues()
 {
     ASSERT(m_hasFontFaceOnlyValues);
-    for (unsigned i = 0; i < m_parsedProperties.size();) {
-        CSSProperty& property = m_parsedProperties[i];
-        if (property.id() == CSSPropertyFontVariant && property.value()->isValueList()) {
-            m_parsedProperties.remove(i);
-            continue;
-        }
-        ++i;
-    }
+    m_parsedProperties.removeAllMatching([] (const CSSProperty& property) {
+        return property.id() == CSSPropertyFontVariant && property.value()->isValueList();
+    });
 }
 
 PassRefPtr<StyleKeyframe> CSSParser::createKeyframe(CSSParserValueList& keys)

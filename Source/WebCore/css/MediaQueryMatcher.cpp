@@ -130,12 +130,9 @@ void MediaQueryMatcher::removeListener(MediaQueryListListener* listener, MediaQu
     if (!m_document)
         return;
 
-    for (size_t i = 0; i < m_listeners.size(); ++i) {
-        if (*m_listeners[i]->listener() == *listener && m_listeners[i]->query() == query) {
-            m_listeners.remove(i);
-            return;
-        }
-    }
+    m_listeners.removeFirstMatching([listener, query] (const std::unique_ptr<Listener>& current) {
+        return *current->listener() == *listener && current->query() == query;
+    });
 }
 
 void MediaQueryMatcher::styleResolverChanged()

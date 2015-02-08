@@ -2965,16 +2965,13 @@ void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomicStr
     ASSERT(hasSyntheticAttrChildNodes());
     attrNode->detachFromElementWithValue(value);
 
-    auto* attrNodeList = attrNodeListForElement(*this);
-    for (unsigned i = 0; i < attrNodeList->size(); ++i) {
-        if (attrNodeList->at(i)->qualifiedName() == attrNode->qualifiedName()) {
-            attrNodeList->remove(i);
-            if (attrNodeList->isEmpty())
-                removeAttrNodeListForElement(*this);
-            return;
-        }
-    }
-    ASSERT_NOT_REACHED();
+    auto& attrNodeList = *attrNodeListForElement(*this);
+    bool found = attrNodeList.removeFirstMatching([attrNode] (const RefPtr<Attr>& attribute) {
+        return attribute->qualifiedName() == attrNode->qualifiedName();
+    });
+    ASSERT_UNUSED(found, found);
+    if (attrNodeList.isEmpty())
+        removeAttrNodeListForElement(*this);
 }
 
 void Element::detachAllAttrNodesFromElement()

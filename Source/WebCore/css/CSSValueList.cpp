@@ -50,21 +50,15 @@ CSSValueList::CSSValueList(CSSParserValueList& parserValues)
     }
 }
 
-bool CSSValueList::removeAll(CSSValue* val)
+bool CSSValueList::removeAll(CSSValue* value)
 {
     // FIXME: Why even take a pointer?
-    if (!val)
+    if (!value)
         return false;
 
-    bool found = false;
-    for (unsigned i = 0; i < m_values.size(); ++i) {
-        if (m_values[i].get().equals(*val)) {
-            m_values.remove(i);
-            found = true;
-        }
-    }
-
-    return found;
+    return m_values.removeAllMatching([value] (const Ref<CSSValue>& current) {
+        return current->equals(*value);
+    }) > 0;
 }
 
 bool CSSValueList::hasValue(CSSValue* val) const

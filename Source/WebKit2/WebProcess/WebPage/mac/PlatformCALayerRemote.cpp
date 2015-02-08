@@ -350,12 +350,9 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 {
     if (m_animations.remove(key)) {
-        for (size_t i = 0; i < m_properties.addedAnimations.size(); ++i) {
-            if (m_properties.addedAnimations[i].first == key) {
-                m_properties.addedAnimations.remove(i);
-                break;
-            }
-        }
+        m_properties.addedAnimations.removeFirstMatching([&key] (const std::pair<String, PlatformCAAnimationRemote::Properties>& pair) {
+            return pair.first == key;
+        });
     }
     m_properties.keyPathsOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);

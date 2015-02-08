@@ -185,14 +185,9 @@ bool MediaQuerySet::remove(const String& queryStringToRemove)
     if (!parsedQuery)
         return false;
     
-    for (size_t i = 0; i < m_queries.size(); ++i) {
-        MediaQuery* query = m_queries[i].get();
-        if (*query == *parsedQuery) {
-            m_queries.remove(i);
-            return true;
-        }
-    }
-    return false;
+    return m_queries.removeFirstMatching([&parsedQuery] (const std::unique_ptr<MediaQuery>& query) {
+        return *query == *parsedQuery;
+    });
 }
 
 void MediaQuerySet::addMediaQuery(std::unique_ptr<MediaQuery> mediaQuery)

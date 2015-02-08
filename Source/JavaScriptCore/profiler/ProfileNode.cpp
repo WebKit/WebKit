@@ -75,12 +75,9 @@ void ProfileNode::removeChild(ProfileNode* node)
     if (!node)
         return;
 
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        if (*node == m_children[i].get()) {
-            m_children.remove(i);
-            break;
-        }
-    }
+    m_children.removeFirstMatching([node] (const RefPtr<ProfileNode>& current) {
+        return *node == current.get();
+    });
 
 #ifndef NDEBUG
     size_t size = m_children.size();

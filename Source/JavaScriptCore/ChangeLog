@@ -1,3 +1,12 @@
+2015-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Add Vector::removeFirstMatching() / removeAllMatching() methods taking lambda functions
+        https://bugs.webkit.org/show_bug.cgi?id=141321
+
+        Reviewed by Darin Adler.
+
+        Use new Vector::removeFirstMatching() / removeAllMatching() methods.
+
 2015-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SSA shouldn't have SetArgument nodes

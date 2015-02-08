@@ -1952,12 +1952,9 @@ void Node::unregisterMutationObserver(MutationObserverRegistration* registration
     if (!registry)
         return;
 
-    for (size_t i = 0; i < registry->size(); ++i) {
-        if (registry->at(i).get() == registration) {
-            registry->remove(i);
-            return;
-        }
-    }
+    registry->removeFirstMatching([registration] (const std::unique_ptr<MutationObserverRegistration>& current) {
+        return current.get() == registration;
+    });
 }
 
 void Node::registerTransientMutationObserver(MutationObserverRegistration* registration)

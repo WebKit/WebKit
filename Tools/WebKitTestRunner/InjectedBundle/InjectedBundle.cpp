@@ -109,13 +109,9 @@ void InjectedBundle::didCreatePage(WKBundlePageRef page)
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 {
-    size_t size = m_pages.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_pages[i]->page() == page) {
-            m_pages.remove(i);
-            break;
-        }
-    }
+    m_pages.removeFirstMatching([page] (const std::unique_ptr<InjectedBundlePage>& current) {
+        return current->page() == page;
+    });
 }
 
 void InjectedBundle::didInitializePageGroup(WKBundlePageGroupRef pageGroup)

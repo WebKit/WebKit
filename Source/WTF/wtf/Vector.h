@@ -736,7 +736,9 @@ public:
     void remove(size_t position);
     void remove(size_t position, size_t length);
     template<typename U> bool removeFirst(const U&);
+    template<typename MatchFunction> bool removeFirstMatching(const MatchFunction&);
     template<typename U> unsigned removeAll(const U&);
+    template<typename MatchFunction> unsigned removeAllMatching(const MatchFunction&);
 
     void removeLast() 
     {
@@ -1314,10 +1316,20 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler>
 template<typename U>
 inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirst(const U& value)
 {
-    size_t index = find(value);
-    if (index != notFound) {
-        remove(index);
-        return true;
+    return removeFirstMatching([&value] (const T& current) {
+        return current == value;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename MatchFunction>
+inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirstMatching(const MatchFunction& matches)
+{
+    for (size_t i = 0; i < size(); ++i) {
+        if (matches(at(i))) {
+            remove(i);
+            return true;
+        }
     }
     return false;
 }
@@ -1326,11 +1338,20 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler>
 template<typename U>
 inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAll(const U& value)
 {
+    return removeAllMatching([&value] (const T& current) {
+        return current == value;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename MatchFunction>
+inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAllMatching(const MatchFunction& matches)
+{
     iterator holeBegin = end();
     iterator holeEnd = end();
     unsigned matchCount = 0;
     for (auto it = begin(), itEnd = end(); it != itEnd; ++it) {
-        if (*it == value) {
+        if (matches(*it)) {
             if (holeBegin == end())
                 holeBegin = it;
             else if (holeEnd != it) {

@@ -365,18 +365,16 @@ void TextureMapperAnimations::resume()
 
 void TextureMapperAnimations::remove(const String& name)
 {
-    for (int i = m_animations.size() - 1; i >= 0; --i) {
-        if (m_animations[i].name() == name)
-            m_animations.remove(i);
-    }
+    m_animations.removeAllMatching([&name] (const TextureMapperAnimation& animation) {
+        return animation.name() == name;
+    });
 }
 
 void TextureMapperAnimations::remove(const String& name, AnimatedPropertyID property)
 {
-    for (int i = m_animations.size() - 1; i >= 0; --i) {
-        if (m_animations[i].name() == name && m_animations[i].property() == property)
-            m_animations.remove(i);
-    }
+    m_animations.removeAllMatching([&name, property] (const TextureMapperAnimation& animation) {
+        return animation.name() == name && animation.property() == property;
+    });
 }
 
 void TextureMapperAnimations::apply(TextureMapperAnimation::Client* client)

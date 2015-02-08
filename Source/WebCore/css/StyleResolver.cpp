@@ -1191,10 +1191,9 @@ void StyleResolver::adjustStyleForMaskImages()
         }
 
         Vector<RefPtr<MaskImageOperation>>& pendingResources = m_state.maskImagesWithPendingSVGDocuments();
-        for (int i = pendingResources.size() - 1; i >= 0; i--) {
-            if (removedExternalResources.contains(pendingResources[i]))
-                pendingResources.remove(i);
-        }
+        pendingResources.removeAllMatching([&removedExternalResources] (const RefPtr<MaskImageOperation>& resource) {
+            return removedExternalResources.contains(resource);
+        });
     }
 }
 

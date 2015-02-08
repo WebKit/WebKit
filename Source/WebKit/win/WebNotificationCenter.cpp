@@ -200,15 +200,11 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::removeObserver(
     ObjectObserverList& observerList = it->value;
     ObserverListIterator end = observerList.end();
 
-    int i = 0;
-    for (ObserverListIterator it2 = observerList.begin(); it2 != end; ++it2, ++i) {
-        IUnknown* observedObject = it2->first.get();
-        IWebNotificationObserver* observer = it2->second.get();
-        if (observer == anObserver && (!anObject || anObject == observedObject)) {
-            observerList.remove(i);
-            break;
-        }
-    }
+    observerList.removeFirstMatching([anObject, anObserver] (const ObjectObserverPair& pair) {
+        IUnknown* observedObject = pair.first.get();
+        IWebNotificationObserver* observer = pair.second.get();
+        return observer == anObserver && (!anObject || anObject == observedObject);
+    });
 
     if (observerList.isEmpty())
         d->m_mappedObservers.remove(name);
