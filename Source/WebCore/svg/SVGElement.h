@@ -113,7 +113,7 @@ public:
     void setCursorImageValue(CSSCursorImageValue*);
     void cursorImageValueRemoved();
 
-    SVGElement* correspondingElement();
+    SVGElement* correspondingElement() const;
     SVGUseElement* correspondingUseElement() const;
 
     void setCorrespondingElement(SVGElement*);

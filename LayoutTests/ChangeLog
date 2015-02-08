@@ -1,3 +1,95 @@
+2015-02-08  Darin Adler  <darin@apple.com>
+
+        Make SVGUseElement work without creating any SVGElementInstance objects
+        https://bugs.webkit.org/show_bug.cgi?id=141374
+
+        Reviewed by Sam Weinig.
+
+        Results changed on some tests that expected the old "remove all content if a cycle is detected"
+        behavior from the <use> element. The new behavior is to inhibit cycles, but render everything
+        else, which is much easier to implement correctly and also makes logical sense. Changed all
+        those tests to be reference tests, which makes sense since they are focusing on what gets
+        rendered in these complex cases, and the expected results are a lot easier to understand in
+        SVG form than they were in txt/png form. This also means we can remove a lot of platform-specific
+        results since reference tests aren't sensitive to small platform differences in rendering.
+
+        * platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.png: Removed.
+        * platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png: Removed.
+        * platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png: Removed.
+        * platform/efl/svg/hixie/error/017-expected.png: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.png: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png: Removed.
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-3-expected.png: Removed.
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-recursion-1-expected.png: Removed.
+        * platform/gtk/svg/custom/use-recursion-1-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-recursion-2-expected.png: Removed.
+        * platform/gtk/svg/custom/use-recursion-2-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-recursion-3-expected.png: Removed.
+        * platform/gtk/svg/custom/use-recursion-3-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-recursion-4-expected.png: Removed.
+        * platform/gtk/svg/custom/use-recursion-4-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/017-expected.png: Removed.
+        * platform/ios-sim-deprecated/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-recursion-1-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-recursion-2-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-recursion-3-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-recursion-4-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/hixie/error/017-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-recursion-1-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-recursion-2-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-recursion-3-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-recursion-4-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-recursion-1-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-recursion-2-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-recursion-3-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-recursion-4-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/hixie/error/017-expected.txt: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.png: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png: Removed.
+        * platform/mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Removed.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png: Removed.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * platform/mac/svg/custom/use-recursion-1-expected.png: Removed.
+        * platform/mac/svg/custom/use-recursion-1-expected.txt: Removed.
+        * platform/mac/svg/custom/use-recursion-2-expected.png: Removed.
+        * platform/mac/svg/custom/use-recursion-2-expected.txt: Removed.
+        * platform/mac/svg/custom/use-recursion-3-expected.png: Removed.
+        * platform/mac/svg/custom/use-recursion-3-expected.txt: Removed.
+        * platform/mac/svg/custom/use-recursion-4-expected.png: Removed.
+        * platform/mac/svg/custom/use-recursion-4-expected.txt: Removed.
+        * platform/mac/svg/hixie/error/017-expected.png: Removed.
+        * platform/mac/svg/hixie/error/017-expected.txt: Removed.
+
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.svg: Added. Made this be a reference test,
+        and made it expect more of the recursion to work.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.svg: Added. More of the same.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.svg: Added. More of the same.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-3-expected.svg: Added. More of the same.
+        * svg/custom/use-recursion-1-expected.svg: Added. More of the same.
+        * svg/custom/use-recursion-2-expected.svg: Added. More of the same.
+        * svg/custom/use-recursion-3-expected.svg: Added. More of the same.
+        * svg/custom/use-recursion-4-expected.svg: Added. More of the same.
+        * svg/hixie/error/017-expected.txt: Removed.
+        * svg/hixie/error/017-expected.xml: Added. More of the same.
+
+        * svg/in-html/defs-after-use.html: Updated incorrect bug number in this test.
+
 2015-02-08  David Kilzer  <ddkilzer@apple.com>
 
         Skip fast/parser/document-open-in-unload.html on all WK2 platforms

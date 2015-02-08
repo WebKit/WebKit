@@ -1,3 +1,82 @@
+2015-02-08  Darin Adler  <darin@apple.com>
+
+        Make SVGUseElement work without creating any SVGElementInstance objects
+        https://bugs.webkit.org/show_bug.cgi?id=141374
+
+        Reviewed by Sam Weinig.
+
+        * dom/ElementIterator.h: Changed the * and -> operators to be const.
+        There is no need for the iterator itself to be modified just to dereference it.
+
+        * dom/TypedElementDescendantIterator.h: Added DoubleTypedElementDescendantIterator.
+        This allows callers to call descendantsOfType on two elements, as long as the caller
+        can guarantee that both have the same number of descendants of that type. It's handy
+        for walking a tree of cloned elements to set up something between each original and
+        its clone. In the future we might instead change the cloning machinery so it can do
+        this work as we clone, and if so, we could consider deleting this.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::correspondingElement): Made this const.
+        (WebCore::SVGElement::invalidateInstances): Got rid of the rule that said "this can
+        only be done for an element in a document", since it's useful to do this on an element
+        that has just been removed from a document. Removed the "updateStyleIfNeeded" call
+        here now that the other changes make it no longer needed. Removed an unimportant
+        assertion that we only invalidate use elements that are in a document; that's not
+        a necessary restriction. Streamlined the logic a bit.
+
+        * svg/SVGElement.h: Made correspondingElement const.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedInto): Removed an assertion about
+        m_targetElementInstance since that's gone now.
+        (WebCore::SVGUseElement::svgAttributeChanged): Changed code that transfers
+        size attributes to the shadow tree to use shadowTreeTargetClone instead of
+        m_targetElementInstance.
+        (WebCore::SVGUseElement::clearResourceReferences): Removed code to detach
+        m_targetElementInstance, and also the call to removeAllTargetReferencesForElement,
+        because we no longer use those.
+        (WebCore::SVGUseElement::buildPendingResource): Moved the code to build the
+        shadow tree in here and deleted the buildShadowAndInstanceTree function.
+        Also changed logic so that we use a pending resource any time the target is not
+        a valid one. That helps us correctly handle cases where we initially have an
+        invalid target, but later get a value one
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Deleted. The code here
+        was greatly simplified and moved into buildPendingResource.
+        (WebCore::SVGUseElement::buildInstanceTree): Deleted.
+        (WebCore::SVGUseElement::hasCycleUseReferencing): Deleted. Cycles are now
+        detected by the new isValidTarget function and so there's no need for a
+        separate explicit check for a cycle.
+        (WebCore::associateClonesWithOriginals): Added. Helper that makes
+        functions that build the shadow tree simpler and easier to read.
+        (WebCore::associateReplacementCloneWithOriginal): Added. Helper to
+        make associateReplacementClonesWithOriginals simple.
+        (WebCore::associateReplacementClonesWithOriginals): Added. Helper that
+        makes functions that build the shadow tree simpler and easier to read.
+        (WebCore::SVGUseElement::buildShadowTree): Call associateClonesWithOriginals
+        since associateInstancesWithShadowTreeElements no longer does this.
+        (WebCore::SVGUseElement::isValidTarget): Added. Covers all the different
+        reasons a target might not be valid: type of element, reference cycles, and
+        also "not in document" (refactored in here; not sure when that can happen
+        in practice, might be possible to remove it later).
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Add checks for
+        documents that are still loading; this used to be checked when building the
+        instance tree. Added calls to associateReplacementClonesWithOriginals and
+        associateClonesWithOriginals; that used to be done by later in the
+        associateInstancesWithShadowTreeElements function. Use isValidTarget so
+        we handle cycles as well as invalid target types.
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Added a call to
+        associateReplacementClonesWithOriginals, since we can no longer do that in
+        associateInstancesWithShadowTreeElements.
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements): Deleted.
+        (WebCore::SVGUseElement::instanceForShadowTreeElement): Deleted.
+        (WebCore::SVGUseElement::invalidateDependentShadowTrees): Removed a comment
+        that simply restated the name of the function.
+
+        * svg/SVGUseElement.h: Removed instanceForShadowTreeElement,
+        buildShadowAndInstanceTree, detachInstance, buildInstanceTree,
+        hasCycleUseReferencing, associateInstancesWithShadowTreeElements,
+        instanceForShadowTreeElement, and m_targetElementInstance. Added isValidTarget.
+
 2015-02-08  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add logging to validate the network cache efficacy (Part 1)

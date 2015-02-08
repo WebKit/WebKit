@@ -40,8 +40,8 @@ public:
     ElementIterator(const ContainerNode* root);
     ElementIterator(const ContainerNode* root, ElementType* current);
 
-    ElementType& operator*();
-    ElementType* operator->();
+    ElementType& operator*() const;
+    ElementType* operator->() const;
 
     bool operator==(const ElementIterator& other) const;
     bool operator!=(const ElementIterator& other) const;
@@ -211,7 +211,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseAnces
 }
 
 template <typename ElementType>
-inline ElementType& ElementIterator<ElementType>::operator*()
+inline ElementType& ElementIterator<ElementType>::operator*() const
 {
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
@@ -219,7 +219,7 @@ inline ElementType& ElementIterator<ElementType>::operator*()
 }
 
 template <typename ElementType>
-inline ElementType* ElementIterator<ElementType>::operator->()
+inline ElementType* ElementIterator<ElementType>::operator->() const
 {
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());

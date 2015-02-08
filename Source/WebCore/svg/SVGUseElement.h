@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class CachedSVGDocument;
-class SVGElementInstance;
 class SVGGElement;
 
 class SVGUseElement final : public SVGGraphicsElement,
@@ -45,7 +44,6 @@ public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
     virtual ~SVGUseElement();
 
-    SVGElementInstance* instanceForShadowTreeElement(Node*) const;
     void invalidateShadowTree();
     void invalidateDependentShadowTrees();
 
@@ -73,17 +71,11 @@ private:
     virtual void toClipPath(Path&) override;
 
     void clearResourceReferences();
-    void buildShadowAndInstanceTree(SVGElement& target);
-    void detachInstance();
 
     virtual bool haveLoadedRequiredResources() override { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 
     virtual void finishParsingChildren() override;
     virtual bool selfHasRelativeLengths() const override;
-
-    // Instance tree handling
-    void buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle, bool foundUse);
-    bool hasCycleUseReferencing(SVGUseElement*, SVGElementInstance* targetInstance, SVGElement*& newTarget);
 
     // Shadow tree handling.
     void buildShadowTree(SVGElement& target);
@@ -93,10 +85,7 @@ private:
     void transferEventListenersToShadowTree();
     void transferAttributesToShadowTreeReplacement(SVGGElement&) const;
     void transferSizeAttributesToShadowTreeTargetClone(SVGElement&) const;
-
-    // "Tree connector" 
-    void associateInstancesWithShadowTreeElements(Node* target, SVGElementInstance* targetInstance);
-    SVGElementInstance* instanceForShadowTreeElement(Node* element, SVGElementInstance* instance) const;
+    bool isValidTarget(Element*) const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGUseElement)
         DECLARE_ANIMATED_LENGTH(X, x)
@@ -123,7 +112,6 @@ private:
     bool m_wasInsertedByParser;
     bool m_haveFiredLoadEvent;
     bool m_needsShadowTreeRecreation;
-    RefPtr<SVGElementInstance> m_targetElementInstance;
     CachedResourceHandle<CachedSVGDocument> m_cachedDocument;
     Timer m_svgLoadEventTimer;
 };

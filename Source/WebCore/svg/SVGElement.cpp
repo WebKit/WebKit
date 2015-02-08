@@ -475,7 +475,7 @@ void SVGElement::cursorImageValueRemoved()
     m_svgRareData->setCursorImageValue(0);
 }
 
-SVGElement* SVGElement::correspondingElement()
+SVGElement* SVGElement::correspondingElement() const
 {
     ASSERT(!m_svgRareData || !m_svgRareData->correspondingElement() || correspondingUseElement());
     return m_svgRareData ? m_svgRareData->correspondingElement() : nullptr;
@@ -1207,28 +1207,16 @@ void SVGElement::accessKeyAction(bool sendMouseEvents)
 
 void SVGElement::invalidateInstances()
 {
-    if (!inDocument())
-        return;
-
     if (instanceUpdatesBlocked())
         return;
 
     auto& instances = this->instances();
-    if (instances.isEmpty())
-        return;
-
-    // Mark all use elements referencing 'element' for rebuilding
-    do {
+    while (!instances.isEmpty()) {
         SVGElement* instance = *instances.begin();
-        if (SVGUseElement* element = instance->correspondingUseElement()) {
-            ASSERT(element->inDocument());
-            element->invalidateShadowTree();
-        }
+        if (SVGUseElement* useElement = instance->correspondingUseElement())
+            useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);
     } while (!instances.isEmpty());
-
-    // FIXME: Why is this needed?
-    document().updateStyleIfNeeded();
 }
 
 }
