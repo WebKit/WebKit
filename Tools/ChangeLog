@@ -1,3 +1,20 @@
+2015-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] run-webkit-tests fails due to simulator devices from previous SDK installs being marked as unavailable
+        <http://webkit.org/b/141365>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Add unavailable_version_re precompiled regex.
+        (Simulator._parse_devices): Check for unavailable versions and
+        ignore them if found when parsing the output of
+        `xcrun simctl list`.
+        * Scripts/webkitpy/xcode/simulator_unittest.py:
+        (test_unavailable_devices): Add test with output from
+        `xcrun simctl list` with unavailable runtimes that fails before
+        the fix.
+
 2015-02-07  Chris Dumez  <cdumez@apple.com>
 
         Add Vector::removeFirstMatching() / removeAllMatching() methods taking lambda functions

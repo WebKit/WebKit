@@ -236,6 +236,7 @@ class Simulator(object):
     device_type_re = re.compile('(?P<name>[^(]+)\((?P<identifier>[^)]+)\)')
     runtime_re = re.compile(
         'iOS (?P<version>[0-9]+\.[0-9])(?P<internal> Internal)? \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+    unavailable_version_re = re.compile('-- Unavailable: (?P<identifier>[^ ]+) --')
     version_re = re.compile('-- iOS (?P<version>[0-9]+\.[0-9]+)(?P<internal> Internal)? --')
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
@@ -337,14 +338,21 @@ class Simulator(object):
                 current_runtime = self.runtime(version=version, is_internal_runtime=bool(version_match.group('internal')))
                 assert current_runtime
                 continue
+
+            unavailable_version_match = self.unavailable_version_re.match(line)
+            if unavailable_version_match:
+                current_runtime = None
+                continue
+
             device_match = self.devices_re.match(line)
             if not device_match:
                 raise RuntimeError('Expected an iOS Simulator device line, got "{}"'.format(line))
-            device = Device(name=device_match.group('name').rstrip(),
-                            udid=device_match.group('udid'),
-                            available=device_match.group('availability') is None,
-                            runtime=current_runtime)
-            current_runtime.devices.append(device)
+            if current_runtime:
+                device = Device(name=device_match.group('name').rstrip(),
+                                udid=device_match.group('udid'),
+                                available=device_match.group('availability') is None,
+                                runtime=current_runtime)
+                current_runtime.devices.append(device)
 
     def device_type(self, name=None, identifier=None):
         """
