@@ -1,3 +1,18 @@
+2015-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed gardening.
+        Remove svg/custom/use-events-crash.svg. It has no value anymore.
+        See webkit.org/b/141108
+
+        * platform/gtk/svg/custom/use-events-crash-expected.png: Removed.
+        * platform/gtk/svg/custom/use-events-crash-expected.txt: Removed.
+        * platform/ios-sim-deprecated/svg/custom/use-events-crash-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-events-crash-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/use-events-crash-expected.txt: Removed.
+        * platform/mac/svg/custom/use-events-crash-expected.png: Removed.
+        * platform/mac/svg/custom/use-events-crash-expected.txt: Removed.
+        * svg/custom/use-events-crash.svg: Removed.
+
 2015-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/event-listener-gc.html is flaky
