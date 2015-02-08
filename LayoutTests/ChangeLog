@@ -1,5 +1,14 @@
 2015-02-08  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening: Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()
+
+        Tracked by: <http://webkit.org/b/141371>
+
+        * platform/ios-simulator-wk2/TestExpectations: Mark tests as
+        crashing.
+
+2015-02-08  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r179391): Remove references to deleted SVG tests
 
         Fixes the following lint warnings:
