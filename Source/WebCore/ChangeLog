@@ -1,3 +1,18 @@
+2015-02-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: The input element with type="search" has no default focus outline
+        https://bugs.webkit.org/show_bug.cgi?id=140326
+
+        Reviewed by Darin Adler.
+
+        The platform RenderTheme takes care of the search field, and that code
+        was missing a check for whether the element was focused.
+
+        Test: fast/css/focus-ring-exists-for-search-field.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchField):
+
 2015-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Add some dictionary lookup tests

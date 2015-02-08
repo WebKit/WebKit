@@ -1572,11 +1572,17 @@ bool RenderThemeMac::paintSearchField(const RenderObject& o, const PaintInfo& pa
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
     [search setSearchButtonCell:nil];
 
-    [search drawWithFrame:NSRect(unzoomedRect) inView:documentViewFor(o)];
+    NSView *documentView = documentViewFor(o);
+    [search drawWithFrame:NSRect(unzoomedRect) inView:documentView];
 
     [search setControlView:nil];
     [search resetSearchButtonCell];
 
+    if (isFocused(o) && o.style().outlineStyleIsAuto()) {
+        if (wkDrawCellFocusRingWithFrameAtTime(search, NSRect(unzoomedRect), documentView, std::numeric_limits<double>::max()))
+            o.document().page()->focusController().setFocusedElementNeedsRepaint();
+    }
+    
     return false;
 }
 

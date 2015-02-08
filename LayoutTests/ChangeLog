@@ -1,3 +1,14 @@
+2015-02-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: The input element with type="search" has no default focus outline
+        https://bugs.webkit.org/show_bug.cgi?id=140326
+
+        Reviewed by Darin Adler.
+
+        * fast/css/focus-ring-exists-for-search-field.html: Added.
+        * platform/mac/fast/css/focus-ring-exists-for-search-field-expected.png: Added.
+        * platform/mac/fast/css/focus-ring-exists-for-search-field-expected.txt: Added.
+
 2015-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2
