@@ -4,8 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
  
-PASS isFirstImagePaused() is false
-PASS isSecondImagePaused() became true
+PASS !isFirstImagePaused() && isSecondImagePaused() became true
 PASS isFirstImagePaused() is false
 Translating images left so that first image is no longer visible, but second image is.
 PASS isFirstImagePaused() became true

@@ -70,8 +70,7 @@ function frameLoaded()
   ++numberFramesLoaded;
   if (numberFramesLoaded != 2)
     return;
-  shouldBeFalse("isFirstImagePaused()");
-  shouldBecomeEqual("isSecondImagePaused()", "true", translateImagesLeft);
+  shouldBecomeEqual("!isFirstImagePaused() && isSecondImagePaused()", "true", translateImagesLeft);
 }
 
 </script>

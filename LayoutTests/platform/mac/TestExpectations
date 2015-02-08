@@ -1404,4 +1404,3 @@ webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]
 
-webkit.org/b/141323 fast/images/animated-gif-iframe-webkit-transform.html [ Pass Failure ]

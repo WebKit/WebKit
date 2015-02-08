@@ -1,3 +1,17 @@
+2015-02-07  Chris Dumez  <cdumez@apple.com>
+
+        fast/images/animated-gif-iframe-webkit-transform.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=141323
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use shouldBecomeEqual() instead of shouldBe() to check for initial test
+        conditions. This should address the flakiness.
+
+        * fast/images/animated-gif-iframe-webkit-transform-expected.txt:
+        * fast/images/animated-gif-iframe-webkit-transform.html:
+        * platform/mac/TestExpectations:
+
 2015-02-07  Darin Adler  <darin@apple.com>
 
         Stop dispatching events with SVGElementInstance objects as their targets
