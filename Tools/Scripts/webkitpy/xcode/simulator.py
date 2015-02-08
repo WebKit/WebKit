@@ -1,3 +1,25 @@
+# Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 import itertools
 import logging
 import os
@@ -5,6 +27,8 @@ import plistlib
 import re
 import subprocess
 import time
+
+from webkitpy.common.host import Host
 
 _log = logging.getLogger(__name__)
 
@@ -216,7 +240,8 @@ class Simulator(object):
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 
-    def __init__(self):
+    def __init__(self, host=None):
+        self._host = host or Host()
         self.runtimes = []
         self.device_types = []
         self.refresh()
@@ -251,14 +276,7 @@ class Simulator(object):
         """
         Refresh runtime and device type information from ``simctl list``.
         """
-        command = ['xcrun', 'simctl', 'list']
-        simctl_p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = simctl_p.communicate()
-        if simctl_p.returncode != 0:
-            raise RuntimeError(
-                '{command} failed:\n{stdout}\n{stderr}'.format(command=' '.join(command), stdout=stdout, stderr=stderr))
-
-        lines = (line for line in stdout.splitlines())
+        lines = self._host.platform.xcode_simctl_list()
         device_types_header = next(lines)
         if device_types_header != '== Device Types ==':
             raise RuntimeError('Expected == Device Types == header but got: "{}"'.format(device_types_header))

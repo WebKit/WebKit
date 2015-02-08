@@ -1,3 +1,39 @@
+2015-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Make Simulator class testable
+        <http://webkit.org/b/141358>
+
+        Rubber-stamped by Darin Adler.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.xcode_simctl_list): Move `xcrun simctl list`
+        command to here from Simulator.refresh() in xcode/simulator.py
+        so that the output of the command can be mocked.
+
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__): Set self.expected_xcode_simctl_list
+        to None.
+        (MockPlatformInfo.xcode_simctl_list): Add method that returns
+        self.expected_xcode_simctl_list expectation.
+
+        * Scripts/webkitpy/xcode/simulator.py: Add missing copyright
+        and license header.
+        (Simulator.__init__): Add optional 'host' parameter to make it
+        possible to pass in a mock object for testing.  Set self._host
+        to 'host' parameter or create Host() object.
+        (Simulator.refresh): Call new PlatformInfo.xcode_simctl_list()
+        method.
+
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Add unit test
+        for current code.
+        (SimulatorTest):
+        (SimulatorTest.setUp):
+        (SimulatorTest._set_expected_xcrun_simctl_list):
+        (SimulatorTest.test_simulator_device_types):
+        (test_invalid_device_types_header):
+        (test_invalid_runtimes_header):
+        (test_invalid_devices_header):
+
 2015-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         run-jsc-stress-tests --remote should use the default ssh port
