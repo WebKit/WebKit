@@ -2262,6 +2262,7 @@ __ZNK7WebCore7Element26fastAttributeLookupAllowedERKNS_13QualifiedNameE
 #endif
 
 #if !ASSERT_DISABLED
+__ZN7WebCore21SQLiteDatabaseTracker24hasTransactionInProgressEv
 __ZN7WebCore27NoExceptionAssertionCheckerC1EPKci
 __ZN7WebCore27NoExceptionAssertionCheckerD1Ev
 #endif

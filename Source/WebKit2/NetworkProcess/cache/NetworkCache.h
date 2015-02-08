@@ -41,13 +41,15 @@ class URL;
 
 namespace WebKit {
 
+class NetworkCacheStatistics;
+
 class NetworkCache {
     WTF_MAKE_NONCOPYABLE(NetworkCache);
     friend class WTF::NeverDestroyed<NetworkCache>;
 public:
     static NetworkCache& singleton();
 
-    bool initialize(const String& cachePath);
+    bool initialize(const String& cachePath, bool enableEfficacyLogging);
     void setMaximumSize(size_t);
 
     bool isEnabled() const { return !!m_storage; }
@@ -75,11 +77,14 @@ public:
 
     void clear();
 
+    String storagePath() const;
+
 private:
     NetworkCache() = default;
     ~NetworkCache() = delete;
 
     std::unique_ptr<NetworkCacheStorage> m_storage;
+    std::unique_ptr<NetworkCacheStatistics> m_statistics;
 };
 
 }

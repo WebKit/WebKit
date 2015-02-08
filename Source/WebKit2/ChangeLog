@@ -1,3 +1,32 @@
+2015-02-08  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add logging to validate the network cache efficacy (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=141269
+        <rdar://problem/19632080>
+
+        Reviewed by Antti Koivisto.
+
+        Add console logging to validate the network cache efficacy. This will
+        tell us if how the network cache satisties requests, in particular:
+        - Request cannot be handled by the cache
+        - Entry was not in the cache but is no longer there (pruned)
+        - Entry is in the cache but is not usable
+        - Entry is in the cache and is used.
+
+        This patch introduces a SQLite-based network cache statistics storage
+        that is used to store requests we have seen before, and query if we
+        have seen a request before. The storage is lightweight as it only
+        stores hashes in the database, in a background thread.
+
+        The statistics cache is initially bootstapped from the network disk
+        cache so that we have data initially and get as accurate statistics
+        as possible from the start.
+
+        To maintain an acceptable level of performance, we have a hard limit
+        on the number of unique requests that are retained set to 100000.
+
+        Diagnostic logging for this will be added in a follow-up patch.
+
 2015-02-07  Chris Dumez  <cdumez@apple.com>
 
         Add Vector::removeFirstMatching() / removeAllMatching() methods taking lambda functions

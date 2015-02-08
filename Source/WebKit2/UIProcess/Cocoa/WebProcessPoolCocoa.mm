@@ -81,6 +81,7 @@ static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 
 #if ENABLE(NETWORK_CACHE)
 static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
+static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
 #endif
 
 namespace WebKit {
@@ -106,6 +107,7 @@ static void registerUserDefaultsIfNeeded()
 
 #if ENABLE(NETWORK_CACHE)
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitNetworkCacheEnabledDefaultsKey];
+    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
@@ -252,6 +254,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
 #if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCache = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
+    parameters.shouldEnableNetworkCacheEfficacyLogging = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
 }
 #endif

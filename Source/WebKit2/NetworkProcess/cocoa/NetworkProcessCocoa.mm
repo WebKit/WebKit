@@ -64,7 +64,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 #if ENABLE(NETWORK_CACHE)
-        if (parameters.shouldEnableNetworkCache && NetworkCache::singleton().initialize(m_diskCacheDirectory)) {
+        if (parameters.shouldEnableNetworkCache && NetworkCache::singleton().initialize(m_diskCacheDirectory, parameters.shouldEnableNetworkCacheEfficacyLogging)) {
             RetainPtr<NSURLCache> urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
             [NSURLCache setSharedURLCache:urlCache.get()];
             return;

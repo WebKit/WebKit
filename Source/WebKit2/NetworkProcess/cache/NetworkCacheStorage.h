@@ -155,6 +155,8 @@ public:
 
     static const unsigned version = 2;
 
+    const String& directoryPath() const { return m_directoryPath; }
+
 private:
     NetworkCacheStorage(const String& directoryPath);
 

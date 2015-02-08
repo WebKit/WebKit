@@ -45,6 +45,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << diskCacheDirectoryExtensionHandle;
 #if ENABLE(NETWORK_CACHE)
     encoder << shouldEnableNetworkCache;
+    encoder << shouldEnableNetworkCacheEfficacyLogging;
 #endif
     encoder << cookieStorageDirectory;
 #if PLATFORM(IOS)
@@ -85,6 +86,8 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
 #if ENABLE(NETWORK_CACHE)
     if (!decoder.decode(result.shouldEnableNetworkCache))
+        return false;
+    if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
         return false;
 #endif
     if (!decoder.decode(result.cookieStorageDirectory))

@@ -30,8 +30,7 @@
 
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
-#include <WebCore/FileSystem.h>
-#include <dirent.h>
+#include "NetworkCacheFileSystemPosix.h"
 #include <dispatch/dispatch.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -43,36 +42,6 @@ namespace WebKit {
 
 static const char networkCacheSubdirectory[] = "WebKitCache";
 static const char versionDirectoryPrefix[] = "Version ";
-
-template <typename Function>
-static void traverseDirectory(const String& path, uint8_t type, const Function& function)
-{
-    DIR* dir = opendir(WebCore::fileSystemRepresentation(path).data());
-    if (!dir)
-        return;
-    struct dirent* dp;
-    while ((dp = readdir(dir))) {
-        if (dp->d_type != type)
-            continue;
-        const char* name = dp->d_name;
-        if (!strcmp(name, ".") || !strcmp(name, ".."))
-            continue;
-        function(String(name));
-    }
-    closedir(dir);
-}
-
-static void traverseCacheFiles(const String& cachePath, std::function<void (const String& fileName, const String& partitionPath)> function)
-{
-    traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
-        String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
-        traverseDirectory(partitionPath, DT_REG, [&function, &partitionPath](const String& fileName) {
-            if (fileName.length() != NetworkCacheKey::hashStringLength())
-                return;
-            function(fileName, partitionPath);
-        });
-    });
-}
 
 NetworkCacheStorage::Data::Data(const uint8_t* data, size_t size)
     : m_dispatchData(adoptDispatch(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
