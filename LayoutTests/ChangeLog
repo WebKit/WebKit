@@ -1,3 +1,14 @@
+2015-02-07  Alexey Proskuryakov  <ap@apple.com>
+
+        fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=141364
+
+        Reviewed by Zalan Bujtas.
+
+        Speculative fix. Make sure that the plug-in has loaded before using it.
+
+        * fullscreen/full-screen-plugin.html:
+
 2015-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Add some dictionary lookup tests

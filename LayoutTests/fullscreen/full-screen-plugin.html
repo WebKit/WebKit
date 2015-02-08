@@ -6,12 +6,12 @@ if (window.testRunner) {
 </script>
 <div>
     <div>Test that plugin doesn't restart when taking it to full screen and back.</div>
-    <div id="result">Test didn't run'</div>
+    <div id="result">Test didn't run</div>
     <embed id="plugin" type="application/x-webkit-test-netscape" width="200" height="200"></embed>
 </div>
 
 <script>
-if ("webkitRequestFullScreen" in Element.prototype) {
+onload = function() {
     var callback;
     var fullscreenChanged = function(event)
     {
@@ -23,6 +23,7 @@ if ("webkitRequestFullScreen" in Element.prototype) {
     document.body.offsetTop;
     var plugin = document.getElementById('plugin');
     var testObject = plugin.testObject;
+    testObject.property = 'foo'; // Verify that setting a property works before going fullscreen.
 
     var spanEnteredFullScreen = function(event) {
         setTimeout(function () {
