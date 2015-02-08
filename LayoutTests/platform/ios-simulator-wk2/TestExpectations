@@ -409,12 +409,9 @@ svg/custom/pointer-events-on-svg-without-pointer.xhtml
 svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml
 svg/custom/prevent-default.svg
 svg/custom/scroll-hit-test.xhtml
-svg/custom/use-elementInstance-event-target.svg
-svg/custom/use-elementInstance-methods.svg
 svg/custom/use-event-handler-on-referenced-element.svg
 svg/custom/use-event-handler-on-use-element.svg
 svg/custom/use-instanceRoot-event-bubbling.xhtml
-svg/custom/use-instanceRoot-event-listeners.xhtml
 svg/custom/use-move-to-offset.svg
 svg/dom/viewspec-parser-1.html
 svg/dom/viewspec-parser-2.html

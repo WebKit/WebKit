@@ -1,3 +1,17 @@
+2015-02-08  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r179391): Remove references to deleted SVG tests
+
+        Fixes the following lint warnings:
+
+            --lint-test-files warnings:
+            LayoutTests/platform/ios-simulator-wk2/TestExpectations:412 Path does not exist. svg/custom/use-elementInstance-event-target.svg
+            LayoutTests/platform/ios-simulator-wk2/TestExpectations:413 Path does not exist. svg/custom/use-elementInstance-methods.svg
+            LayoutTests/platform/ios-simulator-wk2/TestExpectations:417 Path does not exist. svg/custom/use-instanceRoot-event-listeners.xhtml
+
+        * platform/ios-simulator-wk2/TestExpectations: Remove deleted
+        tests.
+
 2015-02-08  Alexey Proskuryakov  <ap@apple.com>
 
         AX: The input element with type="search" has no default focus outline
