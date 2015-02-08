@@ -129,10 +129,8 @@ ControllerIOS.prototype = {
             this.controls.inlinePlaybackPlaceholder.setAttribute('aria-label', deviceType + ", " + deviceName);
 
             this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
-            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.active);
         } else {
             this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
-            this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.active);
         }
     },
 
@@ -304,7 +302,7 @@ ControllerIOS.prototype = {
         if (intHours > 0)
             return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
 
-        return sign + String('00' + intMinutes).slice(intMinutes >= 10 ? -2 : -1) + ":" + String('00' + intSeconds).slice(-2);
+        return sign + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
     },
 
     handleTimelineChange: function(event) {

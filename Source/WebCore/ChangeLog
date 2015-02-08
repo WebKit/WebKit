@@ -1,3 +1,41 @@
+2015-02-07  Dean Jackson  <dino@apple.com>
+
+        Tweak inline playback controls to match system spec
+        https://bugs.webkit.org/show_bug.cgi?id=141375
+        <rdar://problem/19760754>
+
+        Reviewed by Sam Weinig.
+
+        Rework the UI of the inline media controls on iOS, to
+        better match the system specification. I've batched a
+        few changes into one patch because many of them are
+        inter-dependent, and not very aggressive. Changes are:
+
+        - updated artwork for the buttons.
+        - separate artwork for normal and active states.
+        - background images are now explicitly sized and positioned
+          in the middle of the element, allowing audio and video
+          to use the same glyphs even though the elements are
+          different sizes.
+        - use plus-darker blend mode on the button glyphs.
+        - rearranged some of the rules to group things in a
+          logical order.
+        - time should front-pad a "0" character, if less than 10.
+        - no need for an "active" class on the Airplay button (although
+          I won't be surprised if this changes back).
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (::-webkit-media-controls):
+        (video::-webkit-media-controls-wireless-playback-picker-button.active): Deleted.
+        (audio::-webkit-media-controls-wireless-playback-picker-button.active): Deleted.
+        (audio::-webkit-media-controls-play-button:active): Deleted.
+        (audio::-webkit-media-controls-play-button.paused): Deleted.
+        (video::-webkit-media-controls-timeline): Deleted.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): No need
+        for the "active" class.
+        (ControllerIOS.prototype.formatTime): Pad with a leading zero.
+
 2015-02-08  Darin Adler  <darin@apple.com>
 
         Make SVGUseElement work without creating any SVGElementInstance objects
