@@ -30,14 +30,16 @@ function test()
         testRunner.waitUntilDone();
     }
 
-    // Timeout ensures stack references to request are cleared when we collect.
-    // Start the timer before starting the load, so that it's guaranteed to fire first.
-    setTimeout('collect();', 0);
+    // Force layout now, as otherwise it will occur before our garbage collection timer,
+    // possibly delaying it until after XMLHttpRequest finishes.
+    document.body.offsetTop;
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = processStateChange;
-    request.open("GET", "print-content-type.cgi", true);
+    request.open("GET", "resources/print-headers.cgi", true);
     request.send(null);
+
+    setTimeout('collect();', 0);
 }
 </script>
 </head>
