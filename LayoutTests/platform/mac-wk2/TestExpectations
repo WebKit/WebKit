@@ -1,8 +1,8 @@
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 
-###### This file has six sections. When adding new tests, make sure to
-###### add to the right section:
+###### This file has seven sections. When adding new tests, make sure to
+###### add to the correct section:
 
 ### (1) Classified failures with bug reports
 ### (2) Classified failures without bug reports (yet)
@@ -10,6 +10,7 @@
 ### (4) Features that are not supported in WebKit2 and likely never will be
 ### (5) IndexedDB related failures
 ### (6) Features that are not supported in WebKit2, on Mavericks
+### (7) New WebKit2-only failures in Yosemite
 
 ########################################
 ### START OF (1) Classified failures with bug reports
@@ -497,10 +498,8 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
 
-# ======================================================================
-# Section 7
-# New WebKit2-only failures in Yosemite
-# ======================================================================
+########################################
+### START OF (7) New WebKit2-only failures in Yosemite
 
 # FIXME: Needs bugzilla (<rdar://problem/16678392>). Perhaps skip these tests?
 [ Yosemite+ ] fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
@@ -519,3 +518,6 @@ webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.h
 webkit.org/b/141325 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Pass Failure ]
 
 webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Timeout ]
+
+### END OF (7) New WebKit2-only failures in Yosemite
+########################################

@@ -1,5 +1,11 @@
 2015-02-08  David Kilzer  <ddkilzer@apple.com>
 
+        Update section headers for mac-wk2/TestExpectations
+
+        * platform/mac-wk2/TestExpectations:
+
+2015-02-08  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Gardening: Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()
 
         Tracked by: <http://webkit.org/b/141371>
