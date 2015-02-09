@@ -1,3 +1,14 @@
+2015-02-09  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r179771): [iOS] Gardening for compositing/layer-creation/subpixel-adjacent-layers-overlap.html
+
+        Test recently added for:
+        Convert the compositing overlap map to use LayoutRects
+        <http://webkit.org/b/141346>
+
+        * platform/ios-simulator/compositing/layer-creation/subpixel-adjacent-layers-overlap-expected.txt:
+        Add platform-specific results for ios-simulator.
+
 2015-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed GTK Gardening.
