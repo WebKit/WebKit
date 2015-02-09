@@ -1,5 +1,13 @@
 2015-02-09  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening: css3/masking/mask-repeat-space-padding.html
+
+        * platform/ios-simulator-wk2/TestExpectations: Remove
+        expectation since this is covered in
+        platform/ios-simulator/TestExpectations as an ImageOnlyFailure.
+
+2015-02-09  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Gardening for editing/execCommand/remove-list-item-1.html
 
         * platform/ios-simulator-wk1/TestExpectations:
