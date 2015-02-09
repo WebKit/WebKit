@@ -1,3 +1,19 @@
+2015-02-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Encapsulate DFG::Plan's beforeFTL timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=141360
+
+        Reviewed by Darin Adler.
+
+        Make the attribute private, it is an internal state.
+
+        Rename beforeFTL->timeBeforeFTL for readability.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+
 2015-02-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove DFGNode::hasArithNodeFlags()

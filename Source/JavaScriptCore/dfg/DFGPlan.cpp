@@ -151,7 +151,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     double before = 0;
     CString codeBlockName;
     if (reportCompileTimes()) {
-        before = currentTimeMS();
+        before = monotonicallyIncreasingTime();
         codeBlockName = toCString(*codeBlock);
     }
     
@@ -188,10 +188,10 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
 #endif
             break;
         }
-        double now = currentTimeMS();
+        double now = monotonicallyIncreasingTime();
         dataLog("Optimized ", codeBlockName, " using ", mode, " with ", pathName, " into ", finalizer ? finalizer->codeSize() : 0, " bytes in ", now - before, " ms");
         if (path == FTLPath)
-            dataLog(" (DFG: ", beforeFTL - before, ", LLVM: ", now - beforeFTL, ")");
+            dataLog(" (DFG: ", m_timeBeforeFTL - before, ", LLVM: ", now - m_timeBeforeFTL, ")");
         dataLog(".\n");
     }
 }
@@ -384,7 +384,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         FTL::lowerDFGToLLVM(state);
         
         if (reportCompileTimes())
-            beforeFTL = currentTimeMS();
+            m_timeBeforeFTL = monotonicallyIncreasingTime();
         
         if (Options::llvmAlwaysFailsBeforeCompile()) {
             FTL::fail(state);

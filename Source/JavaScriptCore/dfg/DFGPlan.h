@@ -97,8 +97,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     
     bool willTryToTierUp;
 
-    double beforeFTL;
-
     enum Stage { Preparing, Compiling, Compiled, Ready, Cancelled };
     Stage stage;
 
@@ -112,6 +110,8 @@ private:
     
     bool isStillValid();
     void reallyAdd(CommonData*);
+
+    double m_timeBeforeFTL;
 };
 
 #else // ENABLE(DFG_JIT)
