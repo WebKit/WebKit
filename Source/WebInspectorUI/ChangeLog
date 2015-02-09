@@ -1,3 +1,13 @@
+2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Uncaught exception when reporting wrong backend command call signature
+        https://bugs.webkit.org/show_bug.cgi?id=141401
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.prototype._invokeWithArguments): Fix wrong variable name.
+
 2015-02-06  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: REGRESSION: CSS Resource appears as empty after editing it via Styles sidebar

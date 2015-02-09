@@ -454,7 +454,7 @@ InspectorBackend.Command.prototype = {
             var optionalFlag = parameter["optional"];
 
             if (!commandArguments.length && !optionalFlag) {
-                console.error("Protocol Error: Invalid number of arguments for method '" + instance.qualifiedName + "' call. It must have the following arguments '" + JSON.stringify(signature) + "'.");
+                console.error("Protocol Error: Invalid number of arguments for method '" + instance.qualifiedName + "' call. It must have the following arguments '" + JSON.stringify(instance.callSignature) + "'.");
                 return;
             }
 
