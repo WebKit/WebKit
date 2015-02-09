@@ -39,7 +39,7 @@ lockDir=".lock_dir"
 trap "kill -9 0" INT HUP TERM
 
 echo 0 > ${indexFile}
-find . -maxdepth 1 -name 'test_script_*' > ${testList}
+find . -maxdepth 1 -name 'test_script_*' | sort -t '_' -k3nr > ${testList}
 
 lock_test_list() {
     until mkdir ${lockDir} 2> /dev/null; do sleep 0; done
