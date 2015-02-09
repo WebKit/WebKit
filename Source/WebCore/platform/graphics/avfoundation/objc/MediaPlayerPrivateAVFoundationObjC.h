@@ -167,7 +167,7 @@ private:
 
     virtual bool supportsAcceleratedRendering() const { return true; }
     virtual MediaTime mediaTimeForTimeValue(const MediaTime&) const;
-    virtual double maximumDurationToCacheMediaTime() const { return 5; }
+    virtual double maximumDurationToCacheMediaTime() const;
 
     virtual void createAVPlayer();
     virtual void createAVPlayerItem();
