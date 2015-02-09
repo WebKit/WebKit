@@ -78,9 +78,9 @@ GridSpan GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(con
     GridResolvedPosition resolvedFinalPosition = resolvedInitialPosition;
 
     if (initialPosition.isSpan())
-        resolvedFinalPosition = resolveGridPositionAgainstOppositePosition(gridContainerStyle, resolvedInitialPosition, initialPosition, finalPositionSide)->resolvedFinalPosition;
+        return *resolveGridPositionAgainstOppositePosition(gridContainerStyle, resolvedInitialPosition, initialPosition, finalPositionSide);
     else if (finalPosition.isSpan())
-        resolvedFinalPosition = resolveGridPositionAgainstOppositePosition(gridContainerStyle, resolvedInitialPosition, finalPosition, finalPositionSide)->resolvedFinalPosition;
+        return *resolveGridPositionAgainstOppositePosition(gridContainerStyle, resolvedInitialPosition, finalPosition, finalPositionSide);
 
     return GridSpan(resolvedInitialPosition, resolvedFinalPosition);
 }

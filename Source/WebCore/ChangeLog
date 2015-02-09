@@ -1,3 +1,30 @@
+2015-02-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: resolvedInitialPosition <= resolvedFinalPosition in WebCore::GridSpan::GridSpan
+        https://bugs.webkit.org/show_bug.cgi?id=141328
+
+        Reviewed by Darin Adler.
+
+        Whenever
+        GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition()
+        was trying to place an item with span, it was completely ignoring
+        the resolvedInitialPosition returned by
+        GridResolvedPosition::resolveGridPositionAgainstOppositePosition()
+        and only using the finalResolvedPosition. This works with an
+        unlimited grid which can indefinitely grow. But if the item spans
+        over the grid track limits, then it might happen that the final
+        resolved position is placed before the initial resolved position,
+        something that is forbidden.
+
+        The solution is to directly use the GridSpan returned by
+        GridResolvedPosition::resolveGridPositionAgainstOppositePosition(), if the item
+        does not surpass the track limits then the returned initialResolvedPosition
+        is identical to the provided one, otherwise it's properly corrected to respect
+        track boundaries.
+
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+
 2015-01-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks' growth limits must be >= base sizes
