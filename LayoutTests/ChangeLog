@@ -1,3 +1,13 @@
+2015-02-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, add new baseline since r179796.
+
+        New baseline was added by r179796. EFL port supports the test as well.
+        This patch adds new baseline based on EFL port.
+
+        * platform/efl/fast/css/focus-ring-exists-for-search-field-expected.png: Added.
+        * platform/efl/fast/css/focus-ring-exists-for-search-field-expected.txt: Added.
+
 2015-02-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver appears unresponsive when JavaScript alerts are triggered via focus or blur events
