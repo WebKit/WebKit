@@ -35,6 +35,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
+#include "DFGGraph.h"
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"
 #include "Heap.h"

@@ -28,17 +28,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
+namespace JSC { namespace DFG {
 
-namespace JSC {
+class Graph;
 
-class CodeBlock;
-class VM;
-
-namespace DFG {
-
-// Populate the Graph with a basic block of code from the CodeBlock,
-// starting at the provided bytecode index.
 bool parse(Graph&);
 
 } } // namespace JSC::DFG
