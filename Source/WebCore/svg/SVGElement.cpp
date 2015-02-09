@@ -72,11 +72,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(className)
 END_REGISTER_ANIMATED_PROPERTIES
 
-using namespace HTMLNames;
-using namespace SVGNames;
-
 static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicStringImpl*, CSSPropertyID>& map)
 {
+    using namespace HTMLNames;
+    using namespace SVGNames;
+
     // This list should include all base CSS and SVG CSS properties which are exposed as SVG XML attributes.
     static const QualifiedName* const attributeNames[] = {
         &alignment_baselineAttr,
@@ -164,6 +164,9 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
 
 static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
 {
+    using namespace HTMLNames;
+    using namespace SVGNames;
+
     struct TableEntry {
         const QualifiedName& attributeName;
         AnimatedPropertyType type;
@@ -242,6 +245,9 @@ static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& 
 
 static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
 {
+    using namespace HTMLNames;
+    using namespace SVGNames;
+
     struct TableEntry {
         const QualifiedName& attributeName;
         AnimatedPropertyType type;
@@ -508,7 +514,7 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
 {
     if (name == HTMLNames::classAttr)
         setClassNameBaseValue(value);
-    else if (name == tabindexAttr) {
+    else if (name == HTMLNames::tabindexAttr) {
         int tabindex = 0;
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();

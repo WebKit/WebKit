@@ -1,3 +1,20 @@
+2015-02-09  Darin Adler  <darin@apple.com>
+
+        Try to fix build on platforms that use SVG "all in one" file (Windows).
+
+        * svg/SVGAElement.cpp: Don't do "using namespace HTMLNames;" outside of
+        function boundaries, because that will be inherited by other files.
+        (WebCore::SVGAElement::isURLAttribute): Use XLinkNames directly here
+        instead of using HTMLNames implicitly.
+
+        * svg/SVGElement.cpp: Don't do "using namespace HTMLNames;" outside of
+        function boundaries, because that will be inherited by other files.
+        (WebCore::populateAttributeNameToCSSPropertyIDMap): Instead do it in here.
+        (WebCore::populateAttributeNameToAnimatedPropertyTypeMap): And here.
+        (WebCore::populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap): And here.
+        (WebCore::SVGElement::parseAttribute): And use HTMLNames directly here
+        instead of implicitly.
+
 2015-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] exit from fullscreen when player view controller calls delegate
