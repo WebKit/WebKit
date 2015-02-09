@@ -1,3 +1,23 @@
+2015-02-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r179809.
+
+    2015-02-08  Timothy Horton  <timothy_horton@apple.com>
+
+            Null deref in _clearImmediateActionState when closing a view with a DataDetectors popover open
+            https://bugs.webkit.org/show_bug.cgi?id=141377
+            <rdar://problem/19711203>
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            We can have already detached the page when DataDetectors calls us back
+            in interactionStoppedHandler. While we have kept a strong reference to the
+            page in the interactionStoppedHandler block, _page is nulled out.
+            It's OK to avoid doing this work, in any case, because closing a page
+            tears down the TextIndicator anyway.
+
 2015-02-02  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179066. rdar://problem/19670515
