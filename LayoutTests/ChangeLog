@@ -1,5 +1,17 @@
 2015-02-09  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening for editing/execCommand/remove-list-item-1.html
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        (editing/execCommand/remove-list-item-1.html): Mark as flakey.
+        When run (with or without --run-singly), this test always passes
+        the first time, but fails all subsequent times due to
+        EDITING DELEGATE: shouldChangeSelectedDOMRange:range
+        running in a different order.
+        * platform/ios-simulator-wk2/editing/execCommand/remove-list-item-1-expected.txt: Update.
+
+2015-02-09  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r179771): [iOS] Gardening for compositing/layer-creation/subpixel-adjacent-layers-overlap.html
 
         Test recently added for:
