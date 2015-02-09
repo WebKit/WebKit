@@ -249,22 +249,8 @@ private:
             }
             break;
         }
-            
-        case ArithAdd: {
-            SpeculatedType left = node->child1()->prediction();
-            SpeculatedType right = node->child2()->prediction();
-            
-            if (left && right) {
-                if (m_graph.addSpeculationMode(node, m_pass) != DontSpeculateInt32)
-                    changed |= mergePrediction(SpecInt32);
-                else if (m_graph.addShouldSpeculateMachineInt(node))
-                    changed |= mergePrediction(SpecInt52);
-                else
-                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-            }
-            break;
-        }
-            
+
+        case ArithAdd:
         case ArithSub: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -320,21 +306,8 @@ private:
             }
             break;
         }
-            
-        case ArithDiv: {
-            SpeculatedType left = node->child1()->prediction();
-            SpeculatedType right = node->child2()->prediction();
-            
-            if (left && right) {
-                if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
-                    && node->canSpeculateInt32(m_pass))
-                    changed |= mergePrediction(SpecInt32);
-                else
-                    changed |= mergePrediction(SpecBytecodeDouble);
-            }
-            break;
-        }
-            
+
+        case ArithDiv:
         case ArithMod: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -595,22 +568,13 @@ private:
             changed |= setPrediction(SpecInt32);
             break;
         }
-        case HasGenericProperty: {
-            changed |= setPrediction(SpecBoolean);
-            break;
-        }
-        case HasStructureProperty: {
-            changed |= setPrediction(SpecBoolean);
-            break;
-        }
+        case HasGenericProperty:
+        case HasStructureProperty:
         case HasIndexedProperty: {
             changed |= setPrediction(SpecBoolean);
             break;
         }
-        case GetStructurePropertyEnumerator: {
-            changed |= setPrediction(SpecCell);
-            break;
-        }
+        case GetStructurePropertyEnumerator:
         case GetGenericPropertyEnumerator: {
             changed |= setPrediction(SpecCell);
             break;
