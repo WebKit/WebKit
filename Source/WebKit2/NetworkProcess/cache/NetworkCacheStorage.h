@@ -29,7 +29,6 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheKey.h"
-#include <WebCore/ResourceResponse.h>
 #include <wtf/BloomFilter.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -45,8 +44,6 @@ class ArgumentDecoder;
 }
 
 namespace WebKit {
-
-class ShareableResource;
 
 #if PLATFORM(COCOA)
 template <typename T> class DispatchPtr;
@@ -192,7 +189,7 @@ private:
     size_t m_maximumSize { std::numeric_limits<size_t>::max() };
 
     BloomFilter<20> m_contentsFilter;
-    std::atomic<size_t> m_approximateEntryCount { 0 };
+    std::atomic<size_t> m_approximateSize { 0 };
     std::atomic<bool> m_shrinkInProgress { false };
 
     static const int maximumRetrievePriority = 4;

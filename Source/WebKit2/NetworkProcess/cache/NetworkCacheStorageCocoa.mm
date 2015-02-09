@@ -34,6 +34,7 @@
 #include <dispatch/dispatch.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -109,11 +110,10 @@ void NetworkCacheStorage::initialize()
     ASSERT(RunLoop::isMain());
 
     StringCapture cachePathCapture(m_directoryPath);
-    auto& entryCount = m_approximateEntryCount;
 
-    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture, &entryCount] {
+    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [this, &entryCount](const String& fileName, const String&) {
+        traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
@@ -121,7 +121,10 @@ void NetworkCacheStorage::initialize()
             dispatch_async(dispatch_get_main_queue(), [this, shortHash] {
                 m_contentsFilter.add(shortHash);
             });
-            ++entryCount;
+            auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
+            long long fileSize = 0;
+            WebCore::getFileSize(filePath, fileSize);
+            m_approximateSize += fileSize;
         });
     });
 }
@@ -323,14 +326,15 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
 {
     ASSERT(RunLoop::isMain());
 
+    // For simplicity we don't reduce m_approximateSize on removals caused by load or decode errors.
+    // The next cache shrink will update the size.
+
     if (m_contentsFilter.mayContain(key.shortHash()))
         m_contentsFilter.remove(key.shortHash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
-    dispatch_async(m_ioQueue.get(), [this, filePathCapture] {
+    dispatch_async(m_backgroundIOQueue.get(), [this, filePathCapture] {
         WebCore::deleteFile(filePathCapture.string());
-        if (m_approximateEntryCount)
-            --m_approximateEntryCount;
     });
 }
 
@@ -429,7 +433,6 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
     ASSERT(RunLoop::isMain());
 
     m_contentsFilter.add(key.shortHash());
-    ++m_approximateEntryCount;
 
     auto storeOperation = std::make_unique<StoreOperation>(StoreOperation { key, entry, WTF::move(completionHandler) });
     auto& store = *storeOperation;
@@ -441,19 +444,20 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
         auto writeData = adoptDispatch(dispatch_data_create_concat(encodedHeader.get(), store.entry.body.dispatchData()));
 
         size_t bodyOffset = dispatch_data_get_size(encodedHeader.get());
-        size_t bodySize = store.entry.body.size();
 
         int fd;
         auto channel = openFileForKey(store.key, FileOpenType::Create, cachePathCapture.string(), fd);
-        dispatch_io_write(channel.get(), 0, writeData.get(), dispatch_get_main_queue(), [this, &store, fd, bodyOffset, bodySize](bool done, dispatch_data_t, int error) {
+        dispatch_io_write(channel.get(), 0, writeData.get(), dispatch_get_main_queue(), [this, &store, fd, bodyOffset](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
             if (error) {
                 if (m_contentsFilter.mayContain(store.key.shortHash()))
                     m_contentsFilter.remove(store.key.shortHash());
-                if (m_approximateEntryCount)
-                    --m_approximateEntryCount;
             }
+            size_t bodySize = store.entry.body.size();
+            size_t totalSize = bodyOffset + bodySize;
+
+            m_approximateSize += totalSize;
 
             bool shouldMapBody = !error && bodySize >= vm_page_size;
             auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : nullptr;
@@ -531,7 +535,7 @@ void NetworkCacheStorage::clear()
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
     m_contentsFilter.clear();
-    m_approximateEntryCount = 0;
+    m_approximateSize = 0;
 
     StringCapture directoryPathCapture(m_directoryPath);
 
@@ -549,32 +553,35 @@ void NetworkCacheStorage::clear()
 
 void NetworkCacheStorage::shrinkIfNeeded()
 {
-    const size_t assumedAverageResourceSize { 48 * 1024 };
-    const size_t everyNthResourceToDelete { 4 };
+    ASSERT(RunLoop::isMain());
 
-    size_t estimatedCacheSize = assumedAverageResourceSize * m_approximateEntryCount;
+    static const double deletionProbability { 0.25 };
 
-    if (estimatedCacheSize <= m_maximumSize)
+    if (m_approximateSize <= m_maximumSize)
         return;
     if (m_shrinkInProgress)
         return;
     m_shrinkInProgress = true;
 
-    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache m_approximateEntryCount=%d estimatedCacheSize=%d, m_maximumSize=%d", static_cast<size_t>(m_approximateEntryCount), estimatedCacheSize, m_maximumSize);
+    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%d, m_maximumSize=%d", static_cast<size_t>(m_approximateSize), m_maximumSize);
+
+    m_approximateSize = 0;
 
     StringCapture cachePathCapture(m_directoryPath);
     dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
-        size_t foundEntryCount = 0;
-        size_t deletedCount = 0;
-        traverseCacheFiles(cachePath, [this, &foundEntryCount, &deletedCount](const String& fileName, const String& partitionPath) {
-            ++foundEntryCount;
-            if (foundEntryCount % everyNthResourceToDelete)
+        traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
+            auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
+
+            bool shouldDelete = randomNumber() < deletionProbability;
+            if (!shouldDelete) {
+                long long fileSize = 0;
+                WebCore::getFileSize(filePath, fileSize);
+                m_approximateSize += fileSize;
                 return;
-            ++deletedCount;
+            }
 
-            WebCore::deleteFile(WebCore::pathByAppendingComponent(partitionPath, fileName));
-
+            WebCore::deleteFile(filePath);
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
@@ -584,10 +591,9 @@ void NetworkCacheStorage::shrinkIfNeeded()
                     m_contentsFilter.remove(shortHash);
             });
         });
-        m_approximateEntryCount = foundEntryCount - deletedCount;
         m_shrinkInProgress = false;
 
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed m_approximateEntryCount=%d", static_cast<size_t>(m_approximateEntryCount));
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed approximateSize=%d", static_cast<size_t>(m_approximateSize));
     });
 }
 
