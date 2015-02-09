@@ -24,7 +24,6 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
-#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/NeverDestroyed.h>

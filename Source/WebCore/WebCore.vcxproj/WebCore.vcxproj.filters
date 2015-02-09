@@ -4437,9 +4437,6 @@
     <ClCompile Include="..\bindings\js\JSStyleSheetListCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSSVGElementInstanceCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSSVGLengthCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -5834,9 +5831,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElement.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElementInstance.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp">
@@ -13178,9 +13172,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElementInstance.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -14679,9 +14670,6 @@
       <Filter>svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGElement.h">
-      <Filter>svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGElementInstance.h">
       <Filter>svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGElementRareData.h">

@@ -24,7 +24,6 @@
 #include "Attribute.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"

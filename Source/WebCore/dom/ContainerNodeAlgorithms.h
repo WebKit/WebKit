@@ -78,8 +78,7 @@ namespace Private {
 
 }
 
-// Helper functions for TreeShared-derived classes, which have a 'Node' style interface
-// This applies to 'ContainerNode' and 'SVGElementInstance'
+// This no longer needs to be generic. It's only used for Node and ContainerNode now.
 template<class GenericNode, class GenericNodeContainer>
 inline void removeDetachedChildrenInContainer(GenericNodeContainer& container)
 {

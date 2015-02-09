@@ -27,7 +27,6 @@
 
 #include "Attribute.h"
 #include "RenderSVGResourceMasker.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGUnitTypes.h"

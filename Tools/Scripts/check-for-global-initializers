@@ -116,7 +116,6 @@ for my $file (sort @files) {
                 next if $shortName eq "Page.o";
                 next if $shortName eq "Range.o";
                 next if $shortName eq "RenderObject.o";
-                next if $shortName eq "SVGElementInstance.o";
                 next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "XMLHttpRequest.o";
             }

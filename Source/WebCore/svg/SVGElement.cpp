@@ -44,7 +44,6 @@
 #include "RenderSVGResourceMasker.h"
 #include "SVGCursorElement.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"

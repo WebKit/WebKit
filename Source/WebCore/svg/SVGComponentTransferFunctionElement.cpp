@@ -22,7 +22,6 @@
 #include "SVGComponentTransferFunctionElement.h"
 
 #include "Attribute.h"
-#include "SVGElementInstance.h"
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"

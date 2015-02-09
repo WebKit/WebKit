@@ -37,7 +37,6 @@
 #include "PseudoElement.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "TouchEvent.h"

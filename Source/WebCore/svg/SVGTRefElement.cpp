@@ -31,7 +31,6 @@
 #include "RenderSVGResource.h"
 #include "ShadowRoot.h"
 #include "SVGDocument.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "StyleInheritedData.h"
 #include "Text.h"

@@ -23,7 +23,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include <wtf/NeverDestroyed.h>

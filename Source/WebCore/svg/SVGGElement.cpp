@@ -24,7 +24,6 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include <wtf/NeverDestroyed.h>
 

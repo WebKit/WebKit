@@ -46,7 +46,6 @@ class Document;
 class SVGAttributeToPropertyMap;
 class SVGCursorElement;
 class SVGDocumentExtensions;
-class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;
 class SVGUseElement;
@@ -188,8 +187,6 @@ protected:
     class InstanceInvalidationGuard;
 
 private:
-    friend class SVGElementInstance;
-
     virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override final;
     virtual bool willRecalcStyle(Style::Change) override;
 

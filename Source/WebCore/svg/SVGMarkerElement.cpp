@@ -24,7 +24,6 @@
 
 #include "Attribute.h"
 #include "RenderSVGResourceMarker.h"
-#include "SVGElementInstance.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"

@@ -25,7 +25,6 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "RenderSVGResourceClipper.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
 #include "StyleResolver.h"

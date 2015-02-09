@@ -80,7 +80,6 @@
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "ScrollAnimator.h"

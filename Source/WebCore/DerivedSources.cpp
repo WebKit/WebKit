@@ -360,7 +360,6 @@
 #include "JSSVGDescElement.cpp"
 #include "JSSVGDocument.cpp"
 #include "JSSVGElement.cpp"
-#include "JSSVGElementInstance.cpp"
 #include "JSSVGEllipseElement.cpp"
 #include "JSSVGException.cpp"
 #include "JSSVGFEBlendElement.cpp"

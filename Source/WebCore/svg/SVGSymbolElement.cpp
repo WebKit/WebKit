@@ -22,7 +22,6 @@
 #include "SVGSymbolElement.h"
 
 #include "RenderSVGHiddenContainer.h"
-#include "SVGElementInstance.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include <wtf/NeverDestroyed.h>

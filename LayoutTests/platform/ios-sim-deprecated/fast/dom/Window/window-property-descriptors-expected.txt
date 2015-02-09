@@ -199,7 +199,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGDefsElement') is 'object
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGDescElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGDocument') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGElementInstance') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGEllipseElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGException') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'SVGFontElement') is 'object'

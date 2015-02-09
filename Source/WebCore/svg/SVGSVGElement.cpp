@@ -46,7 +46,6 @@
 #include "RenderWidget.h"
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
-#include "SVGElementInstance.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

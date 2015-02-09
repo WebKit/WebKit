@@ -35,7 +35,6 @@ PASS SVGCursorElement inherits SVGElement
 PASS SVGDefsElement inherits SVGGraphicsElement
 PASS SVGDescElement inherits SVGElement
 PASS SVGElement inherits Element
-FAIL SVGElementInstance should inherit EventTarget but got EventTarget instead
 FAIL SVGEllipseElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
 PASS SVGFontElement inherits SVGElement
 PASS SVGFontFaceElement inherits SVGElement

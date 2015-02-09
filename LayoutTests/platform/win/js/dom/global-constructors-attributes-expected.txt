@@ -1008,11 +1008,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGElement').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'SVGElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGElement').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SVGElementInstance').value is SVGElementInstance
-PASS Object.getOwnPropertyDescriptor(global, 'SVGElementInstance').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGElementInstance').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGElementInstance').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGElementInstance').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').value is SVGEllipseElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').hasOwnProperty('set') is false

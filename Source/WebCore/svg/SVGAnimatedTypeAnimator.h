@@ -23,7 +23,6 @@
 
 #include "SVGAnimatedProperty.h"
 #include "SVGAnimatedType.h"
-#include "SVGElementInstance.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

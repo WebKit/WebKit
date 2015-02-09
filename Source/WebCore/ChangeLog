@@ -1,3 +1,107 @@
+2015-02-08  Darin Adler  <darin@apple.com>
+
+        Remove the SVG instance tree
+        https://bugs.webkit.org/show_bug.cgi?id=140602
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt: Removed SVGElementInstance source files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::forwardsEventListeners): Deleted. Only returned true for JSSVGElementInstance.
+        (WebCore::correspondingElementWrapper): Deleted. Only used for JSSVGElementInstance.
+        (WebCore::createJSEventListenerForAttribute): Deleted. Argument type was JSSVGElementInstance.
+        (WebCore::createJSEventListenerForAdd): Removed most of the code; later we can delete this entirely.
+
+        * bindings/js/JSEventListener.h: Removed the overload of createJSEventListenerForAttribute
+        that takes a JSSVGElementInstance.
+
+        * bindings/js/JSSVGElementInstanceCustom.cpp: Removed.
+
+        * dom/ContainerNodeAlgorithms.h: Updated comment to reflect the fact that
+        this code is really now only used for ContainerNode and no longer needs to
+        exist in a generic form.
+
+        * dom/EventTarget.h: Removed forward declaration of SVGElementInstance.
+        * svg/SVGElement.h: Ditto.
+
+        * dom/EventTargetFactory.in: Removed SVGElementInstance.
+
+        * svg/SVGElementInstance.cpp: Removed.
+        * svg/SVGElementInstance.h: Removed.
+        * svg/SVGElementInstance.idl: Removed.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedInto): Removed obsolete comment.
+        (WebCore::SVGUseElement::instanceTreeIsLoading): Deleted. Unused
+        function that I forgot to delete in my last patch. It also had a
+        glaring mistake, a missing "return" before the recursive call to
+        itself that would cause it to return false when it should return true.
+
+        * svg/SVGUseElement.h: Removed instanceTreeIsLoading.
+
+        * dom/EventDispatcher.cpp: Removed include of SVGElementInstance.h.
+        * page/EventHandler.cpp: Ditto.
+        * rendering/svg/RenderSVGViewportContainer.cpp: Ditto.
+        * svg/SVGAElement.cpp: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateMotionElement.cpp: Ditto.
+        * svg/SVGAnimatedTypeAnimator.h: Ditto.
+        * svg/SVGAnimationElement.cpp: Ditto.
+        * svg/SVGCircleElement.cpp: Ditto.
+        * svg/SVGClipPathElement.cpp: Ditto.
+        * svg/SVGComponentTransferFunctionElement.cpp: Ditto.
+        * svg/SVGCursorElement.cpp: Ditto.
+        * svg/SVGElement.cpp: Ditto.
+        * svg/SVGEllipseElement.cpp: Ditto.
+        * svg/SVGFEBlendElement.cpp: Ditto.
+        * svg/SVGFEColorMatrixElement.cpp: Ditto.
+        * svg/SVGFECompositeElement.cpp: Ditto.
+        * svg/SVGFEConvolveMatrixElement.cpp: Ditto.
+        * svg/SVGFEDiffuseLightingElement.cpp: Ditto.
+        * svg/SVGFEDisplacementMapElement.cpp: Ditto.
+        * svg/SVGFEDropShadowElement.cpp: Ditto.
+        * svg/SVGFEGaussianBlurElement.cpp: Ditto.
+        * svg/SVGFEImageElement.cpp: Ditto.
+        * svg/SVGFELightElement.cpp: Ditto.
+        * svg/SVGFEMergeNodeElement.cpp: Ditto.
+        * svg/SVGFEMorphologyElement.cpp: Ditto.
+        * svg/SVGFEOffsetElement.cpp: Ditto.
+        * svg/SVGFESpecularLightingElement.cpp: Ditto.
+        * svg/SVGFETileElement.cpp: Ditto.
+        * svg/SVGFETurbulenceElement.cpp: Ditto.
+        * svg/SVGFilterElement.cpp: Ditto.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp: Ditto.
+        * svg/SVGForeignObjectElement.cpp: Ditto.
+        * svg/SVGGElement.cpp: Ditto.
+        * svg/SVGGradientElement.cpp: Ditto.
+        * svg/SVGGraphicsElement.cpp: Ditto.
+        * svg/SVGImageElement.cpp: Ditto.
+        * svg/SVGLineElement.cpp: Ditto.
+        * svg/SVGLinearGradientElement.cpp: Ditto.
+        * svg/SVGMarkerElement.cpp: Ditto.
+        * svg/SVGMaskElement.cpp: Ditto.
+        * svg/SVGPathElement.cpp: Ditto.
+        * svg/SVGPatternElement.cpp: Ditto.
+        * svg/SVGPolyElement.cpp: Ditto.
+        * svg/SVGRadialGradientElement.cpp: Ditto.
+        * svg/SVGRectElement.cpp: Ditto.
+        * svg/SVGSVGElement.cpp: Ditto.
+        * svg/SVGScriptElement.cpp: Ditto.
+        * svg/SVGStopElement.cpp: Ditto.
+        * svg/SVGSymbolElement.cpp: Ditto.
+        * svg/SVGTRefElement.cpp: Ditto.
+        * svg/SVGTextContentElement.cpp: Ditto.
+        * svg/SVGTextElement.cpp: Ditto.
+        * svg/SVGTextPathElement.cpp: Ditto.
+        * svg/SVGTextPositioningElement.cpp: Ditto.
+
 2015-02-07  Dean Jackson  <dino@apple.com>
 
         Tweak inline playback controls to match system spec

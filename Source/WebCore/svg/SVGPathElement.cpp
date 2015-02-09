@@ -24,7 +24,6 @@
 #include "Attribute.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
-#include "SVGElementInstance.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGPathSegArcAbs.h"

@@ -39,7 +39,6 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ShadowRoot.h"
-#include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGGElement.h"
 #include "SVGLengthContext.h"
@@ -153,7 +152,6 @@ static inline bool isWellFormedDocument(Document& document)
 
 Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode& rootParent)
 {
-    // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGGraphicsElement::insertedInto(rootParent);
     if (!rootParent.inDocument())
         return InsertionDone;
@@ -646,19 +644,6 @@ bool SVGUseElement::cachedDocumentIsStillLoading()
 {
     if (m_cachedDocument && m_cachedDocument->isLoading())
         return true;
-    return false;
-}
-
-bool SVGUseElement::instanceTreeIsLoading(SVGElementInstance* targetElementInstance)
-{
-    for (SVGElementInstance* instance = targetElementInstance->firstChild(); instance; instance = instance->nextSibling()) {
-        if (SVGUseElement* use = instance->correspondingUseElement()) {
-             if (use->cachedDocumentIsStillLoading())
-                 return true;
-        }
-        if (instance->hasChildNodes())
-            instanceTreeIsLoading(instance);
-    }
     return false;
 }
 

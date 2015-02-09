@@ -35,7 +35,6 @@
 #include "RenderObject.h"
 #include "SVGAnimateElement.h"
 #include "SVGElement.h"
-#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>

@@ -98,7 +98,6 @@ private:
 
     bool cachedDocumentIsStillLoading();
     Document* externalDocument() const;
-    bool instanceTreeIsLoading(SVGElementInstance*);
     virtual void notifyFinished(CachedResource*) override;
     Document* referencedDocument() const;
     void setCachedDocument(CachedResourceHandle<CachedSVGDocument>);

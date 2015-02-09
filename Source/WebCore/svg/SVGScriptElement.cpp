@@ -27,7 +27,6 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
-#include "SVGElementInstance.h"
 #include "XLinkNames.h"
 #include <wtf/NeverDestroyed.h>
 

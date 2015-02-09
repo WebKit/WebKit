@@ -1,3 +1,13 @@
+2015-02-08  Darin Adler  <darin@apple.com>
+
+        Remove the SVG instance tree
+        https://bugs.webkit.org/show_bug.cgi?id=140602
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/check-for-global-initializers: Removed special case for
+        SVGElementInstance.o.
+
 2015-02-07  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] run-webkit-tests fails due to simulator devices from previous SDK installs being marked as unavailable
