@@ -28,20 +28,20 @@ PASS window.getComputedStyle(gridMaxContentAndMaxContentFixedUnsortedConstrained
 Check that items are processed by ascending span to compute track breadths allowing extra space distribution.
 PASS window.getComputedStyle(gridMinContentFixedAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "15px 90px"
 PASS window.getComputedStyle(gridAutoAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "30px 60px"
-PASS window.getComputedStyle(gridMinContentAndMinContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "10px 40px"
+PASS window.getComputedStyle(gridMinContentAndMinContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 40px"
 PASS window.getComputedStyle(gridMaxContentAndMinContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 70px"
 PASS window.getComputedStyle(gridFixedMinContentAndMaxContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "10px 70px"
 PASS window.getComputedStyle(gridFixedMaxContentAndMinContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "50px 40px"
-PASS window.getComputedStyle(gridMinContentAndMaxContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "10px 90px"
+PASS window.getComputedStyle(gridMinContentAndMaxContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 90px"
 PASS window.getComputedStyle(gridMaxContentFixedAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "15px 70px"
 PASS window.getComputedStyle(gridAutoMinContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "50px 60px"
 PASS window.getComputedStyle(gridAutoMaxContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 90px"
-PASS window.getComputedStyle(gridMaxContentAndMinContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "55px 40px"
-PASS window.getComputedStyle(gridMaxContentAndMaxContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "75px 70px"
+PASS window.getComputedStyle(gridMaxContentAndMinContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "50px 40px"
+PASS window.getComputedStyle(gridMaxContentAndMaxContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "40px 70px"
 PASS window.getComputedStyle(gridMinContentFixedAndAutoAboveLimits, '').getPropertyValue('-webkit-grid-template-columns') is "15px 95px"
 PASS window.getComputedStyle(gridMaxContentFixedAndAutoAboveLimits, '').getPropertyValue('-webkit-grid-template-columns') is "65px 85px"
 PASS window.getComputedStyle(gridMinContentFixedAndFixedFixedAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "20px 20px 60px"
-PASS window.getComputedStyle(gridAutoAndFixedFixedAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "40px 20px 90px"
+PASS window.getComputedStyle(gridAutoAndFixedFixedAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px 60px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

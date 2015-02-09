@@ -1,3 +1,62 @@
+2015-01-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Tracks' growth limits must be >= base sizes
+        https://bugs.webkit.org/show_bug.cgi?id=140540
+
+        Reviewed by Antti Koivisto.
+
+        The track sizing algorithm is supposed to avoid those situations
+        but they easily (specially when we mix absolute lengths and
+        intrinsic lengths in min and max track sizing functions) and
+        frequently appear. In those cases the outcome from the algorithm
+        is wrong, tracks are not correctly sized.
+
+        In order to fulfill the restriction, m_usedBreadth and
+        m_maxBreadth are now private members of GridTrack and the class
+        now provides a couple of methods to modify them respecting the
+        growthLimit >= baseSize precondition.
+
+        Apart from that, the members and methods of GridTrack were also
+        renamed to match the ones used in the recent algorithm rewrite:
+        usedBreadth became baseSize and maxBreadth is now growthLimit.
+
+        Although the algorithm was not modified at all, this change
+        detected and fixed several invalid results (tracks and/or grids
+        bigger than expected).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridTrack::GridTrack): Renamed fields and methods. Added
+        assertions.
+        (WebCore::GridTrack::baseSize): Renamed from usedBreadth.
+        (WebCore::GridTrack::growthLimit): Renamed from maxBreadth.
+        (WebCore::GridTrack::setBaseSize):
+        (WebCore::GridTrack::setGrowthLimit):
+        (WebCore::GridTrack::growBaseSize): Renamed from growUsedBreadth.
+        (WebCore::GridTrack::growGrowthLimit): Renamed from growMaxBreadth.
+        (WebCore::GridTrack::growthLimitIsInfinite): New helper method.
+        (WebCore::GridTrack::growthLimitIfNotInfinite): Renamed from
+        maxBreadthIfNotInfinite.
+        (WebCore::GridTrack::isGrowthLimitBiggerThanBaseSize): New helper
+        method to verify ASSERTs are true.
+        (WebCore::GridTrack::ensureGrowthLimitIsBiggerThanBaseSize): Ditto.
+        (WebCore::GridTrackForNormalization::GridTrackForNormalization):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::sortByGridTrackGrowthPotential):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::populateGridPositions):
+        (WebCore::GridTrack::growUsedBreadth): Renamed to growBaseSize.
+        (WebCore::GridTrack::usedBreadth): Renamed to baseSize.
+        (WebCore::GridTrack::growMaxBreadth): Renamed to growGrowthLimit.
+        (WebCore::GridTrack::maxBreadthIfNotInfinite): Renamed to
+        growthLimitIfNotInfinite.
+        * rendering/RenderGrid.h:
+
 2015-02-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver appears unresponsive when JavaScript alerts are triggered via focus or blur events

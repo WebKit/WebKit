@@ -1,3 +1,13 @@
+2015-01-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Tracks' growth limits must be >= base sizes
+        https://bugs.webkit.org/show_bug.cgi?id=140540
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt:
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html:
+
 2015-02-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, add new baseline since r179796.
