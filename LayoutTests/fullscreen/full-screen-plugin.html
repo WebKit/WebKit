@@ -11,7 +11,8 @@ if (window.testRunner) {
 </div>
 
 <script>
-onload = function() {
+function test()
+{
     var callback;
     var fullscreenChanged = function(event)
     {
@@ -53,4 +54,16 @@ onload = function() {
     if (window.eventSender)
         eventSender.keyDown('a');
 }
+
+function checkForPlugin()
+{
+    var plugin = document.getElementById('plugin');
+    if (plugin.testObject)
+        test();
+    else
+        setTimeout(checkForPlugin, 100);
+}
+
+window.onload = checkForPlugin;
+
 </script>

@@ -1,3 +1,14 @@
+2015-02-08  Alexey Proskuryakov  <ap@apple.com>
+
+        fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=141364
+
+        Reviewed by Sam Weinig.
+
+        Make the test wait for the plug-in to become available.
+
+        * fullscreen/full-screen-plugin.html:
+
 2015-02-08  Darin Adler  <darin@apple.com>
 
         Remove the SVG instance tree
