@@ -1,3 +1,10 @@
+2015-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK Gardening.
+
+        * platform/gtk/TestExpectations: Mark new test failing
+        * platform/gtk/css2.1/t1508-c527-font-00-b-expected.txt: Added. Rebaseline after r177774.
+
 2015-01-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks' growth limits must be >= base sizes

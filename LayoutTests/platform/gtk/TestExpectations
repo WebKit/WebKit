@@ -531,6 +531,8 @@ webkit.org/b/133806 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFai
 # No support for Filters Level 2 on GTK yet
 Bug(GTK) css3/filters/backdrop [ Skip ]
 
+webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
