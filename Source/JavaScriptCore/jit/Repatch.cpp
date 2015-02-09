@@ -49,6 +49,7 @@
 #include "StructureRareDataInlines.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "ThunkGenerators.h"
+#include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
