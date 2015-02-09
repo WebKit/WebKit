@@ -1,3 +1,55 @@
+2015-02-07  Roger Fong  <roger_fong@apple.com>
+
+        WebGL 2: Texture call format, internal format, and type validation.
+        https://bugs.webkit.org/show_bug.cgi?id=141318.
+        <rdar://problem/19733828>
+
+        Reviewed by Brent Fulgham.
+
+        Tests will be covered by WebGL2 conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter): Add missing ExceptionCode argument.
+        (WebCore::WebGL2RenderingContext::copyTexImage2D): Validate texture formats based on GLES3 spec.
+        (WebCore::WebGL2RenderingContext::texSubImage2DBase): Validate using internal format from texture target.
+        (WebCore::WebGL2RenderingContext::texSubImage2DImpl): Validate using internal format from texture target.
+        (WebCore::WebGL2RenderingContext::texSubImage2D): Validate using internal format from texture target.
+        (WebCore::WebGL2RenderingContext::validateTexFuncParameters): Do extra validation for copyTexImage2D.
+        (WebCore::WebGL2RenderingContext::validateTexFuncFormatAndType): Validate internal format, format and type combination.
+        (WebCore::WebGL2RenderingContext::validateTexFuncData): Validate new data types.
+        This method now accepts an internal format argument.
+        (WebCore::WebGL2RenderingContext::baseInternalFormatFromInternalFormat):
+        Helper method to convert internal format to base internal format.
+        * html/canvas/WebGL2RenderingContext.h:
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Moved from WebGLRenderingContextBase.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters): Ditto.
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType): Ditto.
+        (WebCore::WebGLRenderingContext::validateTexFuncData): Ditto.
+        * html/canvas/WebGLRenderingContext.h:
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImage2DBase):
+        (WebCore::WebGLRenderingContextBase::validateTexFunc):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D): Deleted.
+        (WebCore::WebGLRenderingContextBase::texSubImage2DBase): Deleted.
+        (WebCore::WebGLRenderingContextBase::texSubImage2DImpl): Deleted.
+        (WebCore::WebGLRenderingContextBase::texSubImage2D): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncFormatAndType): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncParameters): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h: Modify validation type enums to differentiate between CopyImage, TexImage and TexSubImage calls.
+        (WebCore::ScopedDrawingBufferBinder::ScopedDrawingBufferBinder):  Moved from WebGLRenderingContextBase.
+        (WebCore::ScopedDrawingBufferBinder::~ScopedDrawingBufferBinder): Ditto.
+        (WebCore::clip1D): Ditto.
+        (WebCore::clip2D): Ditto.
+        * platform/graphics/GraphicsContext3D.h: Rename a typo'ed enum.
+
 2015-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179494.

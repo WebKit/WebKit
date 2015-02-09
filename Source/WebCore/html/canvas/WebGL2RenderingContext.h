@@ -48,7 +48,7 @@ public:
     void getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData);
     
     /* Framebuffer objects */
-    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname);
+    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
     void blitFramebuffer(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void framebufferTextureLayer(GC3Denum target, GC3Denum attachment, GC3Duint texture, GC3Dint level, GC3Dint layer);
     WebGLGetInfo getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname);
@@ -169,7 +169,41 @@ public:
     virtual Vector<String> getSupportedExtensions() override;
 
     virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;
-    bool validateCapability(const char* functionName, GC3Denum cap) override;
+    
+    virtual void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) override;
+    virtual void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&) override;
+    virtual void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) override;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Dsizei width, GC3Dsizei height,
+        GC3Denum format, GC3Denum type, ArrayBufferView*, ExceptionCode&) override;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&) override;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&) override;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&) override;
+#if ENABLE(VIDEO)
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&) override;
+#endif
+
+protected:
+    virtual bool validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level) override;
+    virtual bool validateTexFuncParameters(const char* functionName,
+        TexFuncValidationFunctionType,
+        GC3Denum target, GC3Dint level,
+        GC3Denum internalformat,
+        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
+        GC3Denum format, GC3Denum type) override;
+    virtual bool validateTexFuncData(const char* functionName, GC3Dint level,
+        GC3Dsizei width, GC3Dsizei height,
+        GC3Denum internalformat, GC3Denum format, GC3Denum type,
+        ArrayBufferView* pixels,
+        NullDisposition) override;
+    virtual bool validateCapability(const char* functionName, GC3Denum cap) override;
+    
+private:
+    GC3Denum baseInternalFormatFromInternalFormat(GC3Denum internalformat);
 };
 
 } // namespace WebCore

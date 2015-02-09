@@ -33,6 +33,7 @@
 #include "ImageBuffer.h"
 #include "Timer.h"
 #include "WebGLGetInfo.h"
+#include "WebGLObject.h"
 #include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
@@ -85,6 +86,54 @@ class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
 
+class ScopedDrawingBufferBinder {
+public:
+    ScopedDrawingBufferBinder(DrawingBuffer* drawingBuffer, WebGLFramebuffer* framebufferBinding)
+        : m_drawingBuffer(drawingBuffer)
+        , m_framebufferBinding(framebufferBinding)
+    {
+        // Commit DrawingBuffer if needed (e.g., for multisampling)
+        if (!m_framebufferBinding && m_drawingBuffer)
+            m_drawingBuffer->commit();
+    }
+    
+    ~ScopedDrawingBufferBinder()
+    {
+        // Restore DrawingBuffer if needed
+        if (!m_framebufferBinding && m_drawingBuffer)
+            m_drawingBuffer->bind();
+    }
+    
+private:
+    DrawingBuffer* m_drawingBuffer;
+    WebGLFramebuffer* m_framebufferBinding;
+};
+
+inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
+{
+    ASSERT(clippedStart && clippedRange);
+    if (start < 0) {
+        range += start;
+        start = 0;
+    }
+    GC3Dint end = start + range;
+    if (end > sourceRange)
+        range -= end - sourceRange;
+    *clippedStart = start;
+    *clippedRange = range;
+}
+
+// Returns false if no clipping is necessary, i.e., x, y, width, height stay the same.
+inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
+    GC3Dsizei sourceWidth, GC3Dsizei sourceHeight,
+    GC3Dint* clippedX, GC3Dint* clippedY, GC3Dsizei* clippedWidth, GC3Dsizei*clippedHeight)
+{
+    ASSERT(clippedX && clippedY && clippedWidth && clippedHeight);
+    clip1D(x, width, sourceWidth, clippedX, clippedWidth);
+    clip1D(y, height, sourceHeight, clippedY, clippedHeight);
+    return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
+}
+
 class WebGLRenderingContextBase : public CanvasRenderingContext, public ActiveDOMObject {
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement*, WebGLContextAttributes*, const String&);
@@ -132,7 +181,7 @@ public:
     void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                                  GC3Dsizei width, GC3Dsizei height, GC3Denum format, ArrayBufferView* data);
 
-    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border);
+    virtual void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) = 0;
     void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
     PassRefPtr<WebGLBuffer> createBuffer();
@@ -237,18 +286,18 @@ public:
     void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
     void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
 
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                       GC3Dsizei width, GC3Dsizei height,
-                       GC3Denum format, GC3Denum type, ArrayBufferView*, ExceptionCode&);
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                       GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&);
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                       GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&);
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                       GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&);
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Dsizei width, GC3Dsizei height,
+        GC3Denum format, GC3Denum type, ArrayBufferView*, ExceptionCode&) = 0;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&) = 0;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&) = 0;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&) = 0;
 #if ENABLE(VIDEO)
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                       GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&);
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+        GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&) = 0;
 #endif
 
     void uniform1f(const WebGLUniformLocation* location, GC3Dfloat x, ExceptionCode&);
@@ -584,8 +633,8 @@ protected:
 
     void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
     void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
-    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
+    virtual void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&) = 0;
+    virtual void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) = 0;
 
     void checkTextureCompleteness(const char*, bool);
 
@@ -624,15 +673,16 @@ protected:
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type, GC3Dint level);
+    virtual bool validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level) = 0;
 
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
     bool validateTexFuncLevel(const char* functionName, GC3Denum target, GC3Dint level);
 
     enum TexFuncValidationFunctionType {
-        NotTexSubImage2D,
-        TexSubImage2D,
+        TexImage,
+        TexSubImage,
+        CopyTexImage
     };
 
     enum TexFuncValidationSourceType {
@@ -650,12 +700,12 @@ protected:
 
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncParameters(const char* functionName,
-                                   TexFuncValidationFunctionType,
-                                   GC3Denum target, GC3Dint level,
-                                   GC3Denum internalformat,
-                                   GC3Dsizei width, GC3Dsizei height, GC3Dint border,
-                                   GC3Denum format, GC3Denum type);
+    virtual bool validateTexFuncParameters(const char* functionName,
+        TexFuncValidationFunctionType,
+        GC3Denum target, GC3Dint level,
+        GC3Denum internalformat,
+        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
+        GC3Denum format, GC3Denum type) = 0;
 
     enum NullDisposition {
         NullAllowed,
@@ -665,11 +715,11 @@ protected:
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncData(const char* functionName, GC3Dint level,
-                             GC3Dsizei width, GC3Dsizei height,
-                             GC3Denum format, GC3Denum type,
-                             ArrayBufferView* pixels,
-                             NullDisposition);
+    virtual bool validateTexFuncData(const char* functionName, GC3Dint level,
+        GC3Dsizei width, GC3Dsizei height,
+        GC3Denum internalformat, GC3Denum format, GC3Denum type,
+        ArrayBufferView* pixels,
+        NullDisposition) = 0;
 
     // Helper function to validate a given texture format is settable as in
     // you can supply data to texImage2D, or call texImage2D, copyTexImage2D and

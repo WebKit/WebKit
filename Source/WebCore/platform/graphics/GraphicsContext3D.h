@@ -508,7 +508,7 @@ public:
         COMPARE_REF_TO_TEXTURE = 0x884E,
         RGBA32F = 0x8814,
         RGB32F = 0x8815,
-        RGBA16 = 0x881A,
+        RGBA16F = 0x881A,
         RGB16F = 0x881B,
         VERTEX_ATTRIB_ARRAY_INTEGER = 0x88FD,
         MAX_ARRAY_TEXTURE_LAYERS = 0x88FF,

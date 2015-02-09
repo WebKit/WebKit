@@ -28,16 +28,23 @@
 #if ENABLE(WEBGL)
 #include "WebGL2RenderingContext.h"
 
+#include "CachedImage.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "Extensions3D.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
+#include "ImageData.h"
 #include "OESTextureFloat.h"
 #include "OESTextureFloatLinear.h"
 #include "OESTextureHalfFloat.h"
 #include "OESTextureHalfFloatLinear.h"
+#include "RenderBox.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
+#include "WebGLContextAttributes.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLDepthTexture.h"
@@ -82,11 +89,12 @@ void WebGL2RenderingContext::getBufferSubData(GC3Denum target, GC3Dint64 offset,
     UNUSED_PARAM(returnedData);
 }
 
-WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode& ec)
 {
     UNUSED_PARAM(target);
     UNUSED_PARAM(attachment);
     UNUSED_PARAM(pname);
+    UNUSED_PARAM(ec);
     return WebGLGetInfo();
 }
 
@@ -898,6 +906,812 @@ Vector<String> WebGL2RenderingContext::getSupportedExtensions()
     }
     
     return result;
+}
+
+void WebGL2RenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
+{
+    if (isContextLostOrPending())
+        return;
+    RefPtr<WebGLContextAttributes> attributes = getContextAttributes();
+    GC3Denum bufferFormat = attributes->alpha() ? GraphicsContext3D::RGBA : GraphicsContext3D::RGB;
+    if (!validateTexFuncParameters("copyTexImage2D", CopyTexImage, target, level, internalformat, width, height, border, bufferFormat, GraphicsContext3D::UNSIGNED_BYTE))
+        return;
+    if (!validateSettableTexFormat("copyTexImage2D", internalformat))
+        return;
+    WebGLTexture* tex = validateTextureBinding("copyTexImage2D", target, true);
+    if (!tex)
+        return;
+    if (!isTexInternalFormatColorBufferCombinationValid(internalformat, getBoundFramebufferColorFormat())) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "copyTexImage2D", "framebuffer is incompatible format");
+        return;
+    }
+    if (!isGLES2NPOTStrict() && level && WebGLTexture::isNPOT(width, height)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexImage2D", "level > 0 not power of 2");
+        return;
+    }
+    const char* reason = "framebuffer incomplete";
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "copyTexImage2D", reason);
+        return;
+    }
+    clearIfComposited();
+    if (isResourceSafe()) {
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+        m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    } else {
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+        GC3Dint clippedX, clippedY;
+        GC3Dsizei clippedWidth, clippedHeight;
+        if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+            m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border,
+                internalformat, GraphicsContext3D::UNSIGNED_BYTE, m_unpackAlignment);
+            if (clippedWidth > 0 && clippedHeight > 0) {
+                m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
+                    clippedX, clippedY, clippedWidth, clippedHeight);
+            }
+        } else
+            m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    }
+    // FIXME: if the framebuffer is not complete, none of the below should be executed.
+    tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
+}
+
+void WebGL2RenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode& ec)
+{
+    ec = 0;
+    ASSERT(!isContextLost());
+    if (!validateTexFuncParameters("texSubImage2D", TexSubImage, target, level, internalformat, width, height, 0, format, type))
+        return;
+    ASSERT(validateSize("texSubImage2D", xoffset, yoffset));
+    ASSERT(validateSettableTexFormat("texSubImage2D", format));
+    WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
+    if (!tex) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    ASSERT((xoffset + width) >= 0);
+    ASSERT((yoffset + height) >= 0);
+    ASSERT(tex->getWidth(target, level) >= (xoffset + width));
+    ASSERT(tex->getHeight(target, level) >= (yoffset + height));
+    ASSERT(tex->getInternalFormat(target, level) == format);
+    ASSERT(tex->getType(target, level) == type);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+}
+
+void WebGL2RenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+{
+    ec = 0;
+    Vector<uint8_t> data;
+    GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
+    if (!imageExtractor.extractSucceeded()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image");
+        return;
+    }
+    GraphicsContext3D::DataFormat sourceDataFormat = imageExtractor.imageSourceFormat();
+    GraphicsContext3D::AlphaOp alphaOp = imageExtractor.imageAlphaOp();
+    const void* imagePixelData = imageExtractor.imagePixelData();
+    
+    bool needConversion = true;
+    if (type == GraphicsContext3D::UNSIGNED_BYTE && sourceDataFormat == GraphicsContext3D::DataFormatRGBA8 && format == GraphicsContext3D::RGBA && alphaOp == GraphicsContext3D::AlphaDoNothing && !flipY)
+        needConversion = false;
+    else {
+        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
+            return;
+        }
+    }
+    
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+    
+    WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
+    GC3Denum internalformat = tex->getInternalFormat(target, level);
+    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(), internalformat, format, type,  needConversion ? data.data() : imagePixelData, ec);
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+}
+
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
+{
+    if (isContextLostOrPending() || !validateTexFuncData("texSubImage2D", level, width, height, GraphicsContext3D::NONE, format, type, pixels, NullNotAllowed) || !validateTexFunc("texSubImage2D", TexSubImage, SourceArrayBufferView, target, level, GraphicsContext3D::NONE, width, height, 0, format, type, xoffset, yoffset))
+        return;
+    
+    void* data = pixels->baseAddress();
+    Vector<uint8_t> tempData;
+    bool changeUnpackAlignment = false;
+    if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+        if (!m_context->extractTextureData(width, height, format, type,
+            m_unpackAlignment,
+            m_unpackFlipY, m_unpackPremultiplyAlpha,
+            data,
+            tempData))
+            return;
+        data = tempData.data();
+        changeUnpackAlignment = true;
+    }
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+    WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
+    GC3Denum internalformat = tex->getInternalFormat(target, level);
+    texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalformat, format, type, data, ec);
+    if (changeUnpackAlignment)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+}
+
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode& ec)
+{
+    ec = 0;
+    if (isContextLostOrPending() || !pixels || !validateTexFunc("texSubImage2D", TexSubImage, SourceImageData, target, level, GraphicsContext3D::NONE,  pixels->width(), pixels->height(), 0, format, type, xoffset, yoffset))
+        return;
+    
+    Vector<uint8_t> data;
+    bool needConversion = true;
+    // The data from ImageData is always of format RGBA8.
+    // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
+    if (format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE && !m_unpackFlipY && !m_unpackPremultiplyAlpha)
+        needConversion = false;
+    else {
+        if (!m_context->extractImageData(pixels, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image data");
+            return;
+        }
+    }
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+    
+    WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
+    GC3Denum internalformat = tex->getInternalFormat(target, level);
+    texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), internalformat, format, type, needConversion ? data.data() : pixels->data()->data(), ec);
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+}
+
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
+{
+    ec = 0;
+    if (isContextLostOrPending() || !validateHTMLImageElement("texSubImage2D", image, ec))
+        return;
+    
+    RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (imageForRender->isSVGImage())
+        imageForRender = drawImageIntoBuffer(imageForRender.get(), image->width(), image->height(), 1);
+    
+    if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLImageElement, target, level, GraphicsContext3D::NONE, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
+        return;
+    
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+}
+
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+    GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode& ec)
+{
+    ec = 0;
+    if (isContextLostOrPending() || !validateHTMLCanvasElement("texSubImage2D", canvas, ec)
+        || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLCanvasElement, target, level, GraphicsContext3D::NONE, canvas->width(), canvas->height(), 0, format, type, xoffset, yoffset))
+        return;
+    
+    RefPtr<ImageData> imageData = canvas->getImageData();
+    if (imageData)
+        texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get(), ec);
+    else
+        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+}
+
+#if ENABLE(VIDEO)
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode& ec)
+{
+    ec = 0;
+    if (isContextLostOrPending() || !validateHTMLVideoElement("texSubImage2D", video, ec)
+        || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLVideoElement, target, level, GraphicsContext3D::NONE, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
+        return;
+    
+    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
+    if (!image)
+        return;
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+}
+#endif
+
+bool WebGL2RenderingContext::validateTexFuncParameters(const char* functionName, TexFuncValidationFunctionType functionType, GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type)
+{
+    if (functionType == CopyTexImage) {
+        GC3Denum framebufferInternalFormat = 0;
+        WebGLSharedObject* object = m_framebufferBinding->getAttachmentObject(GraphicsContext3D::COLOR_ATTACHMENT0);
+        if (object->isTexture()) {
+            WebGLTexture* texture = reinterpret_cast<WebGLTexture*>(object);
+            framebufferInternalFormat = baseInternalFormatFromInternalFormat(texture->getInternalFormat(GraphicsContext3D::TEXTURE_2D, 0));
+        } else if (object->isRenderbuffer()) {
+            WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
+            framebufferInternalFormat = baseInternalFormatFromInternalFormat(renderBuffer->getInternalFormat());
+        }
+        
+        GC3Denum baseTextureInternalFormat = baseInternalFormatFromInternalFormat(internalformat);
+        bool validFormatCombination = true;
+        switch (framebufferInternalFormat) {
+        case GraphicsContext3D::RED:
+            if (baseTextureInternalFormat != GraphicsContext3D::LUMINANCE && baseTextureInternalFormat != GraphicsContext3D::RED)
+                validFormatCombination = false;
+            break;
+        case GraphicsContext3D::RG:
+            if (baseTextureInternalFormat != GraphicsContext3D::LUMINANCE && baseTextureInternalFormat != GraphicsContext3D::RED && baseTextureInternalFormat != GraphicsContext3D::RG)
+                validFormatCombination = false;
+            break;
+        case GraphicsContext3D::RGB:
+            if (baseTextureInternalFormat != GraphicsContext3D::LUMINANCE && baseTextureInternalFormat != GraphicsContext3D::RED && baseTextureInternalFormat != GraphicsContext3D::RG && baseTextureInternalFormat != GraphicsContext3D::RGB)
+                validFormatCombination = false;
+            break;
+        case GraphicsContext3D::RGBA:
+            if (baseTextureInternalFormat != GraphicsContext3D::ALPHA && baseTextureInternalFormat != GraphicsContext3D::LUMINANCE && baseTextureInternalFormat != GraphicsContext3D::LUMINANCE_ALPHA && baseTextureInternalFormat != GraphicsContext3D::RED && baseTextureInternalFormat != GraphicsContext3D::RG && baseTextureInternalFormat != GraphicsContext3D::RGB && baseTextureInternalFormat != GraphicsContext3D::RGBA)
+                validFormatCombination = false;
+            break;
+        case GraphicsContext3D::DEPTH_COMPONENT:
+            validFormatCombination = false;
+            break;
+        case GraphicsContext3D::DEPTH_STENCIL:
+            validFormatCombination = false;
+            break;
+        }
+        
+        if (!validFormatCombination) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "copyTexImage: invalid combination of framebuffer and texture formats");
+            return false;
+        }
+
+        ExceptionCode ec;
+        bool isSRGB = (getFramebufferAttachmentParameter(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, ec).getInt() == GraphicsContext3D::SRGB);
+        if (isSRGB != (framebufferInternalFormat == GraphicsContext3D::SRGB8 || framebufferInternalFormat == GraphicsContext3D::SRGB8_ALPHA8)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "framebuffer attachment color encoding and internal format do not match");
+        return false;
+        }
+    }
+    
+    // We absolutely have to validate the format and type combination.
+    // The texImage2D entry points taking HTMLImage, etc. will produce
+    // temporary data based on this combination, so it must be legal.
+    if (!validateTexFuncFormatAndType(functionName, internalformat, format, type, level) || !validateTexFuncLevel(functionName, target, level))
+        return false;
+    
+    if (width < 0 || height < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height < 0");
+        return false;
+    }
+    
+    GC3Dint maxTextureSizeForLevel = pow(2.0, m_maxTextureLevel - 1 - level);
+    switch (target) {
+    case GraphicsContext3D::TEXTURE_2D:
+        if (width > maxTextureSizeForLevel || height > maxTextureSizeForLevel) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height out of range");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        if (functionType != TexSubImage && width != height) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width != height for cube map");
+            return false;
+        }
+        // No need to check height here. For texImage width == height.
+        // For texSubImage that will be checked when checking yoffset + height is in range.
+        if (width > maxTextureSizeForLevel) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height out of range for cube map");
+            return false;
+        }
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
+        return false;
+    }
+    
+    if (border) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "border != 0");
+        return false;
+    }
+    
+    return true;
+}
+    
+bool WebGL2RenderingContext::validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level)
+{
+    // Verify that a valid format has been provided.
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+    case GraphicsContext3D::LUMINANCE:
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::RGBA:
+    case GraphicsContext3D::RGBA_INTEGER:
+    case GraphicsContext3D::RG:
+    case GraphicsContext3D::RG_INTEGER:
+    case GraphicsContext3D::RED_INTEGER:
+        break;
+    case GraphicsContext3D::DEPTH_STENCIL:
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        if (m_webglDepthTexture)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "depth texture formats not enabled");
+        return false;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture format");
+        return false;
+    }
+    
+    // Verify that a valid type has been provided.
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::BYTE:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+    case GraphicsContext3D::SHORT:
+    case GraphicsContext3D::UNSIGNED_INT:
+    case GraphicsContext3D::INT:
+    case GraphicsContext3D::UNSIGNED_INT_2_10_10_10_REV:
+    case GraphicsContext3D::UNSIGNED_INT_10F_11F_11F_REV:
+    case GraphicsContext3D::UNSIGNED_INT_5_9_9_9_REV:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        break;
+    case GraphicsContext3D::FLOAT:
+        if (m_oesTextureFloat)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
+    case GraphicsContext3D::HALF_FLOAT:
+    case GraphicsContext3D::HALF_FLOAT_OES:
+        if (m_oesTextureHalfFloat)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
+    case GraphicsContext3D::UNSIGNED_INT_24_8:
+    case GraphicsContext3D::FLOAT_32_UNSIGNED_INT_24_8_REV:
+        if (isDepthStencilSupported())
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
+    }
+    
+    // Veryify that a valid internal format has been provided.
+    switch (internalformat) {
+    case GraphicsContext3D::RGBA:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+    case GraphicsContext3D::LUMINANCE:
+    case GraphicsContext3D::ALPHA:
+    case GraphicsContext3D::RGBA32I:
+    case GraphicsContext3D::RGBA32UI:
+    case GraphicsContext3D::RGBA16I:
+    case GraphicsContext3D::RGBA16UI:
+    case GraphicsContext3D::RGBA8:
+    case GraphicsContext3D::RGBA8I:
+    case GraphicsContext3D::RGBA8UI:
+    case GraphicsContext3D::RGB10_A2:
+    case GraphicsContext3D::RGB10_A2UI:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RG32I:
+    case GraphicsContext3D::RG32UI:
+    case GraphicsContext3D::RG16I:
+    case GraphicsContext3D::RG16UI:
+    case GraphicsContext3D::RG8:
+    case GraphicsContext3D::RG8I:
+    case GraphicsContext3D::RG8UI:
+    case GraphicsContext3D::R32I:
+    case GraphicsContext3D::R32UI:
+    case GraphicsContext3D::R16I:
+    case GraphicsContext3D::R16UI:
+    case GraphicsContext3D::R8:
+    case GraphicsContext3D::R8I:
+    case GraphicsContext3D::R8UI:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGB8:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::RGBA32F:
+    case GraphicsContext3D::RGBA16F:
+    case GraphicsContext3D::RGBA8_SNORM:
+    case GraphicsContext3D::RGB32F:
+    case GraphicsContext3D::RGB32I:
+    case GraphicsContext3D::RGB32UI:
+    case GraphicsContext3D::RGB16F:
+    case GraphicsContext3D::RGB16I:
+    case GraphicsContext3D::RGB16UI:
+    case GraphicsContext3D::RGB8_SNORM:
+    case GraphicsContext3D::RGB8I:
+    case GraphicsContext3D::RGB8UI:
+    case GraphicsContext3D::SRGB8:
+    case GraphicsContext3D::R11F_G11F_B10F:
+    case GraphicsContext3D::RGB9_E5:
+    case GraphicsContext3D::RG32F:
+    case GraphicsContext3D::RG16F:
+    case GraphicsContext3D::RG8_SNORM:
+    case GraphicsContext3D::R32F:
+    case GraphicsContext3D::R16F:
+    case GraphicsContext3D::R8_SNORM:
+    case GraphicsContext3D::STENCIL_INDEX8:
+        break;
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT32F:
+    case GraphicsContext3D::DEPTH_COMPONENT24:
+        if (m_webglDepthTexture)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "depth texture formats not enabled");
+        return false;
+    case GraphicsContext3D::DEPTH32F_STENCIL8:
+    case GraphicsContext3D::DEPTH24_STENCIL8:
+        if (isDepthStencilSupported())
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture internal format");
+        return false;
+    case GraphicsContext3D::NONE:
+        // When calling validateTexFuncFormatAndType with internalformat == GraphicsContext3D::NONE, the intent is
+        // only to check for whether or not the format and type are valid types, which we have already done at this point.
+        return true;
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture internal format");
+        return false;
+    }
+
+    // Verify that the combination of format, internalformat and type is supported.
+    switch (format) {
+    case GraphicsContext3D::RGBA:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE
+            && (internalformat == GraphicsContext3D::RGBA || internalformat == GraphicsContext3D::RGBA8 || internalformat == GraphicsContext3D::RGB5_A1 || internalformat == GraphicsContext3D::RGBA4 || internalformat == GraphicsContext3D::SRGB8_ALPHA8))
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RGBA8_SNORM)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4
+            && (internalformat == GraphicsContext3D::RGBA || internalformat == GraphicsContext3D::RGBA4))
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1
+            && (internalformat == GraphicsContext3D::RGBA || internalformat == GraphicsContext3D::RGB5_A1))
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT_2_10_10_10_REV
+            && (internalformat == GraphicsContext3D::RGB10_A2 || internalformat == GraphicsContext3D::RGB5_A1))
+            break;
+        if ((type == GraphicsContext3D::HALF_FLOAT || type == GraphicsContext3D::HALF_FLOAT_OES) && internalformat == GraphicsContext3D::RGBA16F)
+            break;
+        if (type == GraphicsContext3D::FLOAT
+            && (internalformat == GraphicsContext3D::RGBA32F || internalformat == GraphicsContext3D::RGBA16F))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RGBA_INTEGER:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::RGBA8UI)
+        break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RGBA8I)
+        break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT && internalformat == GraphicsContext3D::RGBA16UI)
+        break;
+        if (type == GraphicsContext3D::SHORT && internalformat == GraphicsContext3D::RGBA16I)
+        break;
+        if (type == GraphicsContext3D::UNSIGNED_INT && internalformat == GraphicsContext3D::RGBA32UI)
+        break;
+        if (type == GraphicsContext3D::INT && internalformat == GraphicsContext3D::RGBA32I)
+        break;
+        if (type == GraphicsContext3D::UNSIGNED_INT_2_10_10_10_REV && internalformat == GraphicsContext3D::RGB10_A2UI)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RGB:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE
+            && (internalformat == GraphicsContext3D::RGB || internalformat == GraphicsContext3D::RGB8 || internalformat == GraphicsContext3D::RGB565
+            || internalformat == GraphicsContext3D::SRGB8))
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RGB8_SNORM)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT_5_6_5
+            && (internalformat == GraphicsContext3D::RGB || internalformat == GraphicsContext3D::RGB565))
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT_10F_11F_11F_REV && internalformat == GraphicsContext3D::R11F_G11F_B10F)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT_5_9_9_9_REV && internalformat == GraphicsContext3D::RGB9_E5)
+            break;
+        if ((type == GraphicsContext3D::HALF_FLOAT || type == GraphicsContext3D::HALF_FLOAT_OES)
+            && (internalformat == GraphicsContext3D::RGB16F || internalformat == GraphicsContext3D::R11F_G11F_B10F || internalformat == GraphicsContext3D::RGB9_E5))
+            break;
+        if (type == GraphicsContext3D::FLOAT
+            && (internalformat == GraphicsContext3D::RGB32F || internalformat == GraphicsContext3D::RGB16F || internalformat == GraphicsContext3D::R11F_G11F_B10F || internalformat == GraphicsContext3D::RGB9_E5))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RGB_INTEGER:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::RGB8UI)
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RGB8I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT && internalformat == GraphicsContext3D::RGB16UI)
+            break;
+        if (type == GraphicsContext3D::SHORT && internalformat == GraphicsContext3D::RGB16I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT && internalformat == GraphicsContext3D::RGB32UI)
+            break;
+        if (type == GraphicsContext3D::INT && internalformat == GraphicsContext3D::RGB32I)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RG:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::RG8)
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RG8_SNORM)
+            break;
+        if ((type == GraphicsContext3D::HALF_FLOAT || type == GraphicsContext3D::HALF_FLOAT_OES) && internalformat == GraphicsContext3D::RG16F)
+            break;
+        if (type == GraphicsContext3D::FLOAT
+            && (internalformat == GraphicsContext3D::RG32F || internalformat == GraphicsContext3D::RG16F))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RG_INTEGER:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::RG8UI)
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::RG8I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT && internalformat == GraphicsContext3D::RG16UI)
+            break;
+        if (type == GraphicsContext3D::SHORT && internalformat == GraphicsContext3D::RG16I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT && internalformat == GraphicsContext3D::RG32UI)
+            break;
+        if (type == GraphicsContext3D::INT && internalformat == GraphicsContext3D::RG32I)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RED:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::R8)
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::R8_SNORM)
+            break;
+        if ((type == GraphicsContext3D::HALF_FLOAT || type == GraphicsContext3D::HALF_FLOAT_OES) && internalformat == GraphicsContext3D::R16F)
+            break;
+        if (type == GraphicsContext3D::FLOAT
+            && (internalformat == GraphicsContext3D::R32F || internalformat == GraphicsContext3D::R16F))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::RED_INTEGER:
+        if (type == GraphicsContext3D::UNSIGNED_BYTE && internalformat == GraphicsContext3D::R8UI)
+            break;
+        if (type == GraphicsContext3D::BYTE && internalformat == GraphicsContext3D::R8I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_SHORT && internalformat == GraphicsContext3D::R16UI)
+            break;
+        if (type == GraphicsContext3D::SHORT && internalformat == GraphicsContext3D::R16I)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT && internalformat == GraphicsContext3D::R32UI)
+            break;
+        if (type == GraphicsContext3D::INT && internalformat == GraphicsContext3D::R32I)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        if (!m_webglDepthTexture) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format. DEPTH_COMPONENT not enabled");
+            return false;
+        }
+        if (type == GraphicsContext3D::UNSIGNED_SHORT && internalformat == GraphicsContext3D::DEPTH_COMPONENT16)
+            break;
+        if (type == GraphicsContext3D::UNSIGNED_INT
+            && (internalformat == GraphicsContext3D::DEPTH_COMPONENT24 || internalformat == GraphicsContext3D::DEPTH_COMPONENT16))
+            break;
+        if (type == GraphicsContext3D::FLOAT && internalformat == GraphicsContext3D::DEPTH_COMPONENT32F)
+            break;
+        if (level > 0) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "level must be 0 for DEPTH_COMPONENT format");
+            return false;
+        }
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::DEPTH_STENCIL:
+        if (!m_webglDepthTexture || !isDepthStencilSupported()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format. DEPTH_STENCIL not enabled");
+            return false;
+        }
+        if (type == GraphicsContext3D::UNSIGNED_INT_24_8 && internalformat == GraphicsContext3D::DEPTH24_STENCIL8)
+            break;
+        if (type == GraphicsContext3D::FLOAT_32_UNSIGNED_INT_24_8_REV && internalformat == GraphicsContext3D::DEPTH32F_STENCIL8)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    case GraphicsContext3D::ALPHA:
+    case GraphicsContext3D::LUMINANCE:
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+        if ((type == GraphicsContext3D::UNSIGNED_BYTE || type == GraphicsContext3D::HALF_FLOAT_OES || type == GraphicsContext3D::HALF_FLOAT || type == GraphicsContext3D::FLOAT) && internalformat == format)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid format, internalformat, and type combination");
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return true;
+}
+
+bool WebGL2RenderingContext::validateTexFuncData(const char* functionName, GC3Dint level,
+    GC3Dsizei width, GC3Dsizei height,
+    GC3Denum internalformat, GC3Denum format, GC3Denum type,
+    ArrayBufferView* pixels,
+    NullDisposition disposition)
+{
+    if (!pixels) {
+        if (disposition == NullAllowed)
+            return true;
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no pixels");
+        return false;
+    }
+
+    if (!validateTexFuncFormatAndType(functionName, internalformat, format, type, level))
+        return false;
+    if (!validateSettableTexFormat(functionName, format))
+        return false;
+    
+    switch (type) {
+    case GraphicsContext3D::BYTE:
+        if (pixels->getType() != JSC::TypeInt8) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type BYTE but ArrayBufferView not Int8Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        if (pixels->getType() != JSC::TypeUint8) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type UNSIGNED_BYTE but ArrayBufferView not Uint8Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::SHORT:
+        if (pixels->getType() != JSC::TypeInt16) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type SHORT but ArrayBufferView not Int16Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::UNSIGNED_SHORT:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        if (pixels->getType() != JSC::TypeUint16) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type UNSIGNED_SHORT but ArrayBufferView not Uint16Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::INT:
+        if (pixels->getType() != JSC::TypeInt32) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type INT but ArrayBufferView not Int32Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::UNSIGNED_INT:
+    case GraphicsContext3D::UNSIGNED_INT_2_10_10_10_REV:
+    case GraphicsContext3D::UNSIGNED_INT_10F_11F_11F_REV:
+        if (pixels->getType() != JSC::TypeUint32) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type UNSIGNED_INT but ArrayBufferView not Uint32Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::HALF_FLOAT:
+    case GraphicsContext3D::FLOAT:
+        if (pixels->getType() != JSC::TypeFloat32) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type FLOAT but ArrayBufferView not Float32Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
+        // As per the specification, ArrayBufferView should be null when
+        // OES_texture_half_float is enabled.
+        if (pixels) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type HALF_FLOAT_OES but ArrayBufferView is not NULL");
+            return false;
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    unsigned totalBytesRequired;
+    GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &totalBytesRequired, 0);
+    if (error != GraphicsContext3D::NO_ERROR) {
+        synthesizeGLError(error, functionName, "invalid texture dimensions");
+        return false;
+    }
+    if (pixels->byteLength() < totalBytesRequired) {
+        if (m_unpackAlignment != 1) {
+            error = m_context->computeImageSizeInBytes(format, type, width, height, 1, &totalBytesRequired, 0);
+            if (pixels->byteLength() == totalBytesRequired) {
+                synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request with UNPACK_ALIGNMENT > 1");
+                return false;
+            }
+        }
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
+        return false;
+    }
+    return true;
+}
+
+GC3Denum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GC3Denum internalformat)
+{
+    // Handles sized, unsized, and compressed internal formats.
+    switch (internalformat) {
+    case GraphicsContext3D::R8:
+    case GraphicsContext3D::R8_SNORM:
+    case GraphicsContext3D::R16F:
+    case GraphicsContext3D::R32F:
+    case GraphicsContext3D::R8I:
+    case GraphicsContext3D::R8UI:
+    case GraphicsContext3D::R16I:
+    case GraphicsContext3D::R16UI:
+    case GraphicsContext3D::R32I:
+    case GraphicsContext3D::R32UI:
+    case GraphicsContext3D::COMPRESSED_R11_EAC:
+    case GraphicsContext3D::COMPRESSED_SIGNED_R11_EAC:
+        return GraphicsContext3D::RED;
+    case GraphicsContext3D::RG8:
+    case GraphicsContext3D::RG8_SNORM:
+    case GraphicsContext3D::RG16F:
+    case GraphicsContext3D::RG32F:
+    case GraphicsContext3D::RG8I:
+    case GraphicsContext3D::RG8UI:
+    case GraphicsContext3D::RG16I:
+    case GraphicsContext3D::RG16UI:
+    case GraphicsContext3D::RG32I:
+    case GraphicsContext3D::RG32UI:
+    case GraphicsContext3D::COMPRESSED_RG11_EAC:
+    case GraphicsContext3D::COMPRESSED_SIGNED_RG11_EAC:
+        return GraphicsContext3D::RG;
+    case GraphicsContext3D::RGB8:
+    case GraphicsContext3D::RGB8_SNORM:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::SRGB8:
+    case GraphicsContext3D::RGB16F:
+    case GraphicsContext3D::RGB32F:
+    case GraphicsContext3D::RGB8I:
+    case GraphicsContext3D::RGB8UI:
+    case GraphicsContext3D::RGB16I:
+    case GraphicsContext3D::RGB16UI:
+    case GraphicsContext3D::RGB32I:
+    case GraphicsContext3D::RGB32UI:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::COMPRESSED_RGB8_ETC2:
+    case GraphicsContext3D::COMPRESSED_SRGB8_ETC2:
+        return GraphicsContext3D::RGB;
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGBA8:
+    case GraphicsContext3D::RGBA8_SNORM:
+    case GraphicsContext3D::RGB10_A2:
+    case GraphicsContext3D::RGB10_A2UI:
+    case GraphicsContext3D::SRGB8_ALPHA8:
+    case GraphicsContext3D::RGBA16F:
+    case GraphicsContext3D::RGBA32F:
+    case GraphicsContext3D::RGBA8I:
+    case GraphicsContext3D::RGBA8UI:
+    case GraphicsContext3D::RGBA16I:
+    case GraphicsContext3D::RGBA16UI:
+    case GraphicsContext3D::RGBA32I:
+    case GraphicsContext3D::RGBA32UI:
+    case GraphicsContext3D::RGBA:
+    case GraphicsContext3D::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+    case GraphicsContext3D::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+    case GraphicsContext3D::COMPRESSED_RGBA8_ETC2_EAC:
+    case GraphicsContext3D::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+        return GraphicsContext3D::RGBA;
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT24:
+    case GraphicsContext3D::DEPTH_COMPONENT32F:
+        return GraphicsContext3D::DEPTH_COMPONENT;
+    case GraphicsContext3D::DEPTH24_STENCIL8:
+    case GraphicsContext3D::DEPTH32F_STENCIL8:
+        return GraphicsContext3D::DEPTH_STENCIL;
+    case GraphicsContext3D::LUMINANCE:
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+    case GraphicsContext3D::ALPHA:
+        return internalformat;
+    default:
+        ASSERT_NOT_REACHED();
+        return GraphicsContext3D::NONE;
+    }
 }
 
 WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode& ec)
