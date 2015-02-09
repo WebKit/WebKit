@@ -347,13 +347,33 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
 
     RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel).get()));
 
-    CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+#if PLATFORM(IOS)
+    // <rdar://problem/7371198> - CoreGraphics changed the default caching behaviour in iOS 4.0 to kCGImageCachingTransient
+    // which caused a performance regression for us since the images had to be resampled/recreated every time we called
+    // CGContextDrawImage. We now tell CG to cache the drawn images. See also <rdar://problem/14366755> -
+    // CoreGraphics needs to un-deprecate kCGImageCachingTemporary since it's still not the default.
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    CGImageSetCachingFlags(image.get(), kCGImageCachingTemporary);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+#endif // PLATFORM(IOS)
 
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
 
     if (!imageUTI)
         return image.leakRef();
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (CFEqual(imageUTI, kUTTypeGIF)) {
+        CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+        return image.leakRef();
+    }
+#endif
 
     if (!CFEqual(imageUTI, xbmUTI))
         return image.leakRef();

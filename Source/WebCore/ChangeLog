@@ -1,3 +1,17 @@
+2015-02-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179494.
+        https://bugs.webkit.org/show_bug.cgi?id=141395
+
+        Caused slowdown in a WebKit client test scenario (Requested by
+        kling on #webkit).
+
+        Reverted changeset:
+
+        "[Cocoa] Make decoded image data purgeable ASAP."
+        https://bugs.webkit.org/show_bug.cgi?id=140298
+        http://trac.webkit.org/changeset/179494
+
 2015-02-09  Jer Noble  <jer.noble@apple.com>
 
         [WebAudio] AudioBufferSourceNodes should accurately play backwards if given a negative playbackRate.
