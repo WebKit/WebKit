@@ -2610,3 +2610,6 @@ platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
 # Mark as passing specific tests in folders that were skipped temporarily above.
 ##
 webkit.org/b/138970 fast/css/line-height-text-autosizing.html [ Pass ]
+
+# Skipped for mac as well:
+webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]

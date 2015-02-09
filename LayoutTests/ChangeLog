@@ -1,3 +1,18 @@
+2015-02-08  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Skip js/dom/create-lots-of-workers.html on ios-simulator
+
+        Already skipped on mac; marked as flakey on efl and gtk.
+
+        Fix tracked by:
+        REGRESSION: js/dom/create-lots-of-workers.html frequently crashes (sometimes in js/dom/cross-frame-bad-time.html)
+        <http://webkit.org/b/129758>
+        <rdar://problem/19760988>
+
+        * platform/ios-simulator/TestExpectations: Skip test.
+        * platform/mac/TestExpectations: Add comment about skipping on
+        ios-simulator.
+
 2015-02-08  Alexey Proskuryakov  <ap@apple.com>
 
         fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2
