@@ -95,7 +95,6 @@
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true) \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true) \
     macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, DEFAULT_FRAME_FLATTENING_ENABLED) \
-    macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(JavaScriptExperimentsEnabled, javaScriptExperimentsEnabled, Bool, bool, false) \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \
     macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, DEFAULT_TEXT_AREAS_ARE_RESIZABLE) \
@@ -226,6 +225,7 @@
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
     macro(SimpleLineLayoutDebugBordersEnabled, simpleLineLayoutDebugBordersEnabled, Bool, bool, false) \
+    macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
     macro(IgnoreViewportScalingConstraints, ignoreViewportScalingConstraints, Bool, bool, false) \
     \

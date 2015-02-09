@@ -1,3 +1,28 @@
+2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        REGRESSION(r179705): 2nd-level inspector availability no longer controlled by DeveloperExtrasEnabled user default
+        https://bugs.webkit.org/show_bug.cgi?id=141343
+
+        Reviewed by Timothy Hatcher.
+
+        The regression was caused by the switch to using WKWebViewConfiguration and
+        its default WebPreferences object, which is used to populate the inspector page's
+        Settings object. This WebPreferences is initialized with no identifier, so
+        only preferences in the FOR_EACH_WEBKIT_DEBUG_*_PREFERENCE macros are populated
+        from NSUserDefaults.
+
+        The simplest fix is to move DeveloperExtrasEnabled into the DEBUG group.
+
+        Previously, each inspector level had a unique identifier such as
+        __WebInspectorPageGroupLevelN__, and the n+1 level inspector was enabled
+        by toggling __WebInspectorPageGroupLevelN__.WebKit2DeveloperExrasEnabled.
+        With the move to the DEBUG group, the preference becomes simply
+        WebKitDeveloperExtrasEnabled, which enables any level of inspector.
+        (This does not clash with Safari's "Show Develop Menu" preference, which uses
+        the key "WebKitDeveloperExtrasEnabledPreferenceKey")
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2015-02-08  Antti Koivisto  <antti@apple.com>
 
         Measure cache size more accurately
