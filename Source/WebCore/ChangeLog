@@ -1,3 +1,25 @@
+2015-02-09  Jer Noble  <jer.noble@apple.com>
+
+        [WebAudio] AudioBufferSourceNodes should accurately play backwards if given a negative playbackRate.
+        https://bugs.webkit.org/show_bug.cgi?id=140955
+
+        Reviewed by Eric Carlson.
+
+        Tests: webaudio/audiobuffersource-negative-playbackrate-interpolated.html
+               webaudio/audiobuffersource-negative-playbackrate.html
+
+        Add support for playing an AudioBufferSourceNode at a negative playbackRate. Change the meaning of
+        start() to set the initial playback position at the end of the play range if the rate of playback
+        is negtive.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode): Allow the playbackRate AudioParam to range from [-32, 32].
+        (WebCore::AudioBufferSourceNode::renderFromBuffer): Change variable names from "start" and "end" to "min" and "max"
+            for clarity. Add a non-interpolated and interpolated render step for negative playback.
+        (WebCore::AudioBufferSourceNode::start): Drive-by fix: default value of grainDuration is not 0.02.
+        (WebCore::AudioBufferSourceNode::startPlaying): Start playing at the end of the buffer for negative playback.
+        (WebCore::AudioBufferSourceNode::totalPitchRate): Allow the pitch to be negative.
+
 2015-02-09  Darin Adler  <darin@apple.com>
 
         Try to fix build on platforms that use SVG "all in one" file (Windows).

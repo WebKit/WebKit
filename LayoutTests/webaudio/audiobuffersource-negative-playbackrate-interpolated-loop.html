@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audiobuffersource-negative-playbackrate-interpolated-loop</title>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+
+    <script>
+
+    var sampleRate = 44100.0;
+    var sourceFrames = 128;
+    var renderFrames = 10;
+    var testSpacingFrames = 0;
+    var startLoop = 100 / sampleRate;
+    var loopDuration = (renderFrames / 2) / sampleRate;
+    var endLoop = startLoop + loopDuration;
+
+    var tests = [{ 
+        description:"Test looping playback at -0.75 playbackRate",
+        offsetFrame:0,
+        renderFrames:renderFrames,
+        expected:[104,103.25,102.5,101.75,101,100.25,102,103.75,103,102.25],
+    }];
+
+    function go() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        context = new webkitOfflineAudioContext(1, renderFrames, sampleRate);
+
+        var bufferSource = context.createBufferSource();
+        bufferSource.buffer = createRamp(context, 0, 127, sourceFrames);
+
+        bufferSource.connect(context.destination);
+        bufferSource.playbackRate.value = -0.75;
+        bufferSource.loop = true;
+        bufferSource.loopStart = startLoop;
+        bufferSource.loopEnd = endLoop;
+        bufferSource.start(0, startLoop, loopDuration);
+        bufferSource.stop(loopDuration * 2);
+
+        context.oncomplete = checkAllTests;
+        context.startRendering();
+    }
+
+    </script>
+</head>
+<body onload="go()">
+</body>
+</html>

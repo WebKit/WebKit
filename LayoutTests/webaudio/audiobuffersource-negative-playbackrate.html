@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audiobuffersource-negative-playbackrate</title>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+
+    <script>
+
+    var sampleRate = 44100.0;
+    var sourceFrames = 128;
+    var renderFrames = 10;
+    var testSpacingFrames = 0;
+
+    var tests = [{ 
+        description:"Test playback at -1 playbackRate",
+        offsetFrame:0,
+        renderFrames:renderFrames,
+        expected:[127, 126, 125, 124, 123, 122, 121, 120, 119, 118],
+    }];
+
+    function go() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        context = new webkitOfflineAudioContext(1, renderFrames, sampleRate);
+
+        var bufferSource = context.createBufferSource();
+        bufferSource.buffer = createRamp(context, 0, 127, sourceFrames);
+
+        bufferSource.connect(context.destination);
+        bufferSource.playbackRate.value = -1;
+        bufferSource.start(0);
+
+        context.oncomplete = checkAllTests;
+        context.startRendering();
+    }
+
+    </script>
+</head>
+<body onload="go()">
+</body>
+</html>

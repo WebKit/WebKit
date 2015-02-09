@@ -1,3 +1,27 @@
+2015-02-09  Jer Noble  <jer.noble@apple.com>
+
+        [WebAudio] AudioBufferSourceNodes should accurately play backwards if given a negative playbackRate.
+        https://bugs.webkit.org/show_bug.cgi?id=140955
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/audiobuffersource-negative-playbackrate-expected.txt: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-expected.txt: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop-expected.txt: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop.html: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated.html:
+        * webaudio/audiobuffersource-negative-playbackrate-loop-expected.txt: Added.
+        * webaudio/audiobuffersource-negative-playbackrate-loop.html: Added.
+        * webaudio/audiobuffersource-negative-playbackrate.html:
+        * webaudio/resources/audiobuffersource-testing.js:
+        (createRamp):
+
+        Get rid of extra HRTF padding as it's now unnecessary.
+
+        * webaudio/resources/note-grain-on-testing.js:
+        (createSignalBuffer):
+        (verifyStartAndEndFrames):
+
 2015-02-09  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Gardening: css3/masking/mask-repeat-space-padding.html

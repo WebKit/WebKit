@@ -9,6 +9,21 @@ function createTestBuffer(context, sampleFrameLength) {
     return audioBuffer;
 }
 
+function createRamp(context, startValue, endValue, numberOfSamples) {
+    var audioBuffer = context.createBuffer(1, numberOfSamples, context.sampleRate);
+    var channelData = audioBuffer.getChannelData(0);
+
+    var delta = (endValue - startValue) / (numberOfSamples - 1);
+    var nextValue = startValue;
+
+    for (var i = 0; i < numberOfSamples; ++i) {
+        channelData[i] = nextValue;
+        nextValue += delta;
+    }
+
+    return audioBuffer;
+}
+
 function checkSingleTest(renderedBuffer, i) {
     var renderedData = renderedBuffer.getChannelData(0);
     var offsetFrame = i * testSpacingFrames;
