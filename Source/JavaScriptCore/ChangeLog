@@ -1,3 +1,53 @@
+2015-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should only have two mechanisms for describing effectfulness of nodes; previously there were three
+        https://bugs.webkit.org/show_bug.cgi?id=141369
+
+        Reviewed by Michael Saboff.
+
+        We previously used the NodeMightClobber and NodeClobbersWorld NodeFlags to describe
+        effectfulness.  Starting over a year ago, we introduced a more powerful mechanism - the
+        DFG::clobberize() function.  Now we only have one remaining client of the old NodeFlags,
+        and everyone else uses DFG::clobberize().  We should get rid of those NodeFlags and
+        finally switch everyone over to DFG::clobberize().
+        
+        Unfortunately there is still another place where effectfulness of nodes is described: the
+        AbstractInterpreter. This is because the AbstractInterpreter has special tuning both for
+        compile time performance and there are places where the AI is more precise than
+        clobberize() because of its flow-sensitivity.
+        
+        This means that after this change there will be only two places, rather than three, where
+        the effectfulness of a node has to be described:
+
+        - DFG::clobberize()
+        - DFG::AbstractInterpreter
+
+        * dfg/DFGClobberize.cpp:
+        (JSC::DFG::clobbersWorld):
+        * dfg/DFGClobberize.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteLength):
+        (JSC::DFG::FixupPhase::convertToGetArrayLength):
+        (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteOffset):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isPredictedNumerical): Deleted.
+        (JSC::DFG::Graph::byValIsPure): Deleted.
+        (JSC::DFG::Graph::clobbersWorld): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::convertToGetLocalUnlinked):
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::convertToMultiPutByOffset):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGNodeType.h:
+
 2015-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build

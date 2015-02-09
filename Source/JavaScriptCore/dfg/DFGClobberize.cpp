@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,19 @@ bool writesOverlap(Graph& graph, Node* node, AbstractHeap heap)
     AbstractHeapOverlaps addWrite(heap);
     clobberize(graph, node, noOp, addWrite, noOp);
     return addWrite.result();
+}
+
+bool clobbersWorld(Graph& graph, Node* node)
+{
+    bool result = false;
+    clobberize(
+        graph, node, NoOpClobberize(),
+        [&] (AbstractHeap heap) {
+            if (heap == AbstractHeap(World))
+                result = true;
+        },
+        NoOpClobberize());
+    return result;
 }
 
 } } // namespace JSC::DFG

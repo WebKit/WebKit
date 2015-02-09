@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,22 +139,22 @@ namespace JSC { namespace DFG {
     macro(ArithCos, NodeResultNumber) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
-    macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
     \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\
     /* this must be the directly subsequent property put. Note that PutByVal */\
     /* opcodes use VarArgs beause they may have up to 4 children. */\
-    macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
-    macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
-    macro(PutByVal, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
-    macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
-    macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetByIdFlush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutByIdFlush, NodeMustGenerate | NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetByVal, NodeResultJS | NodeMustGenerate) \
+    macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
+    macro(GetById, NodeResultJS | NodeMustGenerate) \
+    macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \
+    macro(PutById, NodeMustGenerate) \
+    macro(PutByIdFlush, NodeMustGenerate | NodeMustGenerate) \
+    macro(PutByIdDirect, NodeMustGenerate) \
     macro(CheckStructure, NodeMustGenerate) \
     macro(GetExecutable, NodeResultJS) \
     macro(PutStructure, NodeMustGenerate) \
@@ -193,8 +193,8 @@ namespace JSC { namespace DFG {
     macro(CheckInBounds, NodeMustGenerate) \
     \
     /* Optimizations for array mutation. */\
-    macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ArrayPop, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ArrayPush, NodeResultJS | NodeMustGenerate) \
+    macro(ArrayPop, NodeResultJS | NodeMustGenerate) \
     \
     /* Optimizations for regular expression matching. */\
     macro(RegExpExec, NodeResultJS | NodeMustGenerate) \
@@ -206,26 +206,26 @@ namespace JSC { namespace DFG {
     macro(StringFromCharCode, NodeResultJS) \
     \
     /* Nodes for comparison operations. */\
-    macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
-    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
-    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
-    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
-    macro(CompareEq, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
+    macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareEq, NodeResultBoolean | NodeMustGenerate) \
     macro(CompareEqConstant, NodeResultBoolean) \
     macro(CompareStrictEq, NodeResultBoolean) \
     \
     /* Calls. */\
-    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSize, NodeResultJS | NodeMustGenerate) \
     macro(NewArrayBuffer, NodeResultJS) \
-    macro(NewTypedArray, NodeResultJS | NodeClobbersWorld | NodeMustGenerate) \
+    macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
     \
     /* Support for allocation sinking. */\
@@ -249,11 +249,11 @@ namespace JSC { namespace DFG {
     macro(IsFunction, NodeResultBoolean) \
     macro(TypeOf, NodeResultJS) \
     macro(LogicalNot, NodeResultBoolean) \
-    macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ToString, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
+    macro(ToString, NodeResultJS | NodeMustGenerate) \
     macro(NewStringObject, NodeResultJS) \
     macro(MakeRope, NodeResultJS) \
-    macro(In, NodeResultBoolean | NodeMustGenerate | NodeClobbersWorld) \
+    macro(In, NodeResultBoolean | NodeMustGenerate) \
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     \
@@ -269,8 +269,8 @@ namespace JSC { namespace DFG {
     macro(TearOffArguments, NodeMustGenerate) \
     macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate) \
     macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \
-    macro(GetMyArgumentsLengthSafe, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetMyArgumentByValSafe, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetMyArgumentsLengthSafe, NodeResultJS | NodeMustGenerate) \
+    macro(GetMyArgumentByValSafe, NodeResultJS | NodeMustGenerate) \
     macro(CheckArgumentsNotCreated, NodeMustGenerate) \
     \
     /* Nodes for creating functions. */\

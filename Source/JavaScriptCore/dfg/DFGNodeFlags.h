@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,8 +46,7 @@ namespace JSC { namespace DFG {
                                 
 #define NodeMustGenerate                 0x0008 // set on nodes that have side effects, and may not trivially be removed by DCE.
 #define NodeHasVarArgs                   0x0010
-#define NodeClobbersWorld                0x0020
-#define NodeMightClobber                 0x0040
+// 0x0020 and 0x0040 are free.
                                 
 #define NodeBehaviorMask                 0x0780
 #define NodeMayOverflowInBaseline        0x0080

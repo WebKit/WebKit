@@ -74,12 +74,6 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     if (flags & NodeHasVarArgs)
         out.print(comma, "VarArgs");
     
-    if (flags & NodeClobbersWorld)
-        out.print(comma, "Clobbers");
-    
-    if (flags & NodeMightClobber)
-        out.print(comma, "MightClobber");
-    
     if (flags & NodeResultMask) {
         if (!(flags & NodeBytecodeUsesAsNumber) && !(flags & NodeBytecodeNeedsNegZero))
             out.print(comma, "PureInt");

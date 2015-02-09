@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,14 +161,14 @@ private:
         case ValueAdd: {
             if (attemptToMakeIntegerAdd(node)) {
                 node->setOp(ArithAdd);
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (Node::shouldSpeculateNumberOrBooleanExpectingDefined(node->child1().node(), node->child2().node())) {
                 fixDoubleOrBooleanEdge(node->child1());
                 fixDoubleOrBooleanEdge(node->child2());
                 node->setOp(ArithAdd);
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 node->setResult(NodeResultDouble);
                 break;
             }
@@ -382,26 +382,26 @@ private:
                 && Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
                 fixEdge<BooleanUse>(node->child1());
                 fixEdge<BooleanUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (Node::shouldSpeculateInt32OrBoolean(node->child1().node(), node->child2().node())) {
                 fixIntOrBooleanEdge(node->child1());
                 fixIntOrBooleanEdge(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (enableInt52()
                 && Node::shouldSpeculateMachineInt(node->child1().node(), node->child2().node())) {
                 fixEdge<Int52RepUse>(node->child1());
                 fixEdge<Int52RepUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (Node::shouldSpeculateNumberOrBoolean(node->child1().node(), node->child2().node())) {
                 fixDoubleOrBooleanEdge(node->child1());
                 fixDoubleOrBooleanEdge(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->op() != CompareEq)
@@ -409,31 +409,31 @@ private:
             if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
                 fixEdge<StringIdentUse>(node->child1());
                 fixEdge<StringIdentUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObjectOrOther()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectOrOtherUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateObjectOrOther() && node->child2()->shouldSpeculateObject()) {
                 fixEdge<ObjectOrOtherUse>(node->child1());
                 fixEdge<ObjectUse>(node->child2());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             break;
@@ -829,7 +829,7 @@ private:
         case NewTypedArray: {
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
-                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             break;
@@ -1947,7 +1947,7 @@ private:
         // We can use a BitLShift here because typed arrays will never have a byteLength
         // that overflows int32.
         node->setOp(BitLShift);
-        node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+        node->clearFlags(NodeMustGenerate);
         observeUseKindOnNode(length, Int32Use);
         observeUseKindOnNode(shiftAmount, Int32Use);
         node->child1() = Edge(length, Int32Use);
@@ -1958,7 +1958,7 @@ private:
     void convertToGetArrayLength(Node* node, ArrayMode arrayMode)
     {
         node->setOp(GetArrayLength);
-        node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+        node->clearFlags(NodeMustGenerate);
         fixEdge<KnownCellUse>(node->child1());
         node->setArrayMode(arrayMode);
             
@@ -1991,7 +1991,7 @@ private:
             0, neverNeedsStorage);
         
         node->setOp(GetTypedArrayByteOffset);
-        node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+        node->clearFlags(NodeMustGenerate);
         fixEdge<KnownCellUse>(node->child1());
         return true;
     }

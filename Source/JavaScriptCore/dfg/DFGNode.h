@@ -448,7 +448,7 @@ struct Node {
             m_op = Int52Constant;
         else
             m_op = JSConstant;
-        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
+        m_flags &= ~NodeMustGenerate;
         m_opInfo = bitwise_cast<uintptr_t>(value);
         children.reset();
     }
@@ -464,7 +464,7 @@ struct Node {
     void convertToGetLocalUnlinked(VirtualRegister local)
     {
         m_op = GetLocalUnlinked;
-        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
+        m_flags &= ~NodeMustGenerate;
         m_opInfo = local.offset();
         m_opInfo2 = VirtualRegister().offset();
         children.reset();
@@ -478,7 +478,7 @@ struct Node {
         children.child2().setUseKind(KnownCellUse);
         children.setChild1(storage);
         m_op = GetByOffset;
-        m_flags &= ~(NodeClobbersWorld | NodeMustGenerate);
+        m_flags &= ~NodeMustGenerate;
     }
     
     void convertToMultiGetByOffset(MultiGetByOffsetData* data)
@@ -487,7 +487,6 @@ struct Node {
         m_opInfo = bitwise_cast<intptr_t>(data);
         child1().setUseKind(CellUse);
         m_op = MultiGetByOffset;
-        m_flags &= ~NodeClobbersWorld;
         ASSERT(m_flags & NodeMustGenerate);
     }
     
@@ -499,7 +498,6 @@ struct Node {
         children.setChild2(children.child1());
         children.setChild1(storage);
         m_op = PutByOffset;
-        m_flags &= ~NodeClobbersWorld;
     }
     
     void convertToMultiPutByOffset(MultiPutByOffsetData* data)
@@ -507,7 +505,6 @@ struct Node {
         ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush);
         m_opInfo = bitwise_cast<intptr_t>(data);
         m_op = MultiPutByOffset;
-        m_flags &= ~NodeClobbersWorld;
     }
     
     void convertToPutByOffsetHint()
