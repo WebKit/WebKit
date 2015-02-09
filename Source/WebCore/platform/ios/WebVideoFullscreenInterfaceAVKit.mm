@@ -217,6 +217,13 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     completionHandler(self.fullscreenInterface->fullscreenMayReturnToInline());
 }
 
+- (void)playerViewControllerWillCancelOptimizedFullscree:(AVPlayerViewController *)playerViewController
+{
+    UNUSED_PARAM(playerViewController);
+    ASSERT(self.delegate);
+    self.delegate->requestExitFullscreen();
+}
+
 - (void)play:(id)sender
 {
     UNUSED_PARAM(sender);

@@ -1,3 +1,14 @@
+2015-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] exit from fullscreen when player view controller calls delegate
+        https://bugs.webkit.org/show_bug.cgi?id=141350
+
+        Reviewed by Jer Noble.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController playerViewControllerWillCancelOptimizedFullscree:]): New, ask delegate
+            to exit from fullscreen.
+
 2015-02-06  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: resolvedInitialPosition <= resolvedFinalPosition in WebCore::GridSpan::GridSpan
