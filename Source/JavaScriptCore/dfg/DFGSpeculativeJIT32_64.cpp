@@ -649,10 +649,6 @@ void SpeculativeJIT::emitCall(Node* node)
     CallLinkInfo::CallType callType = isCall ? CallLinkInfo::Call : CallLinkInfo::Construct;
 
     Edge calleeEdge = m_jit.graph().m_varArgChildren[node->firstChild()];
-    JSValueOperand callee(this, calleeEdge);
-    GPRReg calleeTagGPR = callee.tagGPR();
-    GPRReg calleePayloadGPR = callee.payloadGPR();
-    use(calleeEdge);
 
     // The call instruction's first child is either the function (normal call) or the
     // receiver (method call). subsequent children are the arguments.
@@ -661,8 +657,6 @@ void SpeculativeJIT::emitCall(Node* node)
     int numArgs = numPassedArgs + dummyThisArgument;
 
     m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(JSStack::ArgumentCount));
-    m_jit.store32(calleePayloadGPR, calleeFramePayloadSlot(JSStack::Callee));
-    m_jit.store32(calleeTagGPR, calleeFrameTagSlot(JSStack::Callee));
 
     for (int i = 0; i < numPassedArgs; i++) {
         Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -674,6 +668,13 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.store32(argTagGPR, calleeArgumentTagSlot(i + dummyThisArgument));
         m_jit.store32(argPayloadGPR, calleeArgumentPayloadSlot(i + dummyThisArgument));
     }
+
+    JSValueOperand callee(this, calleeEdge);
+    GPRReg calleeTagGPR = callee.tagGPR();
+    GPRReg calleePayloadGPR = callee.payloadGPR();
+    use(calleeEdge);
+    m_jit.store32(calleePayloadGPR, calleeFramePayloadSlot(JSStack::Callee));
+    m_jit.store32(calleeTagGPR, calleeFrameTagSlot(JSStack::Callee));
 
     flushRegisters();
 
