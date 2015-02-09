@@ -223,10 +223,10 @@ public:
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
     void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
+    void setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive) { m_selector->setAttributeValueMatchingIsCaseInsensitive(isCaseInsensitive); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
     void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
-
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 #if ENABLE(CSS_SELECTORS_LEVEL4)

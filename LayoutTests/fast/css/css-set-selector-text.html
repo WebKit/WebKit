@@ -57,6 +57,12 @@ testSelectorRoundTrip('[a|="b"]');
 testSelectorRoundTrip('[a^="b"]');
 testSelectorRoundTrip('[a$="b"]');
 testSelectorRoundTrip('[a*="b"]');
+testSelectorRoundTrip('[a="b" i]');
+testSelectorRoundTrip('[a~="b" i]');
+testSelectorRoundTrip('[a|="b" i]');
+testSelectorRoundTrip('[a^="b" i]');
+testSelectorRoundTrip('[a$="b" i]');
+testSelectorRoundTrip('[a*="b" i]');
 
 debug('');
 

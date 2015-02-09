@@ -1,3 +1,36 @@
+2015-02-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add parsing support for CSS Selector L4's case-insensitive attribute
+        https://bugs.webkit.org/show_bug.cgi?id=141373
+
+        Reviewed by Darin Adler.
+
+        This patch adds parsing for the case-insensitive attribute value
+        matching of CSS Selectors Level 4: http://dev.w3.org/csswg/selectors-4/#attribute-case
+        Excuse of a grammar: http://dev.w3.org/csswg/selectors-4/#grammar
+
+        This patch also covers serialization for CSSOM. The serialization
+        is defined here: http://dev.w3.org/csswg/cssom/#serializing-selectors
+
+        Matching is completely ignored in this patch. All the simple selectors
+        are treated as regular attribute selectors.
+
+        Tests: fast/css/parsing-css-attribute-case-insensitive-value-1.html
+               fast/css/parsing-css-attribute-case-insensitive-value-2.html
+               fast/css/parsing-css-attribute-case-insensitive-value-3.html
+               fast/css/parsing-css-attribute-case-insensitive-value-4.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setAttributeValueMatchingIsCaseInsensitive):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::setAttributeValueMatchingIsCaseInsensitive):
+        (WebCore::CSSSelector::attributeValueMatchingIsCaseInsensitive):
+
 2015-02-08  Darin Adler  <darin@apple.com>
 
         Fix CMake-based build.

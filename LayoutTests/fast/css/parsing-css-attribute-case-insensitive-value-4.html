@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+    :matches(#notthere >> div, #target) {
+        background-color: red;
+    }
+
+    /* This selector list is invalid because the attribute flag "invalid" is invalid. */
+    :matches(#nothere >> valid, #notthere >> [invalid="yep" invalid], #target) {
+        background-color: blue;
+    }
+
+    :matches(#notthere >> foobar, #target) {
+        color: lime;
+    }
+
+    /* This selector list is invalid because the attribute flag "u" is invalid. */
+    :matches(#nothere >> valid, #notthere >> [invalid="yep" u], #target) {
+        color: blue;
+    }
+
+</style>
+</head>
+<body>
+<div id="target" style="display:none;"></div>
+</body>
+<script>
+description('This test verify that invalid case-insenstivie attribute value matching (e.g. [foo=bar i]) do not affect surrounding rules.');
+
+shouldBeEqualToString("getComputedStyle(document.getElementById('target')).color", "rgb(0, 255, 0)");
+shouldBeEqualToString("getComputedStyle(document.getElementById('target')).backgroundColor", "rgb(255, 0, 0)");
+shouldBe("document.getElementById('style-container').sheet.cssRules.length", "2");
+shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ":matches(#notthere >> div, #target)");
+shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].cssText", ":matches(#notthere >> div, #target) { background-color: red; }");
+shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[1].selectorText", ":matches(#notthere >> foobar, #target)");
+shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[1].cssText", ":matches(#notthere >> foobar, #target) { color: lime; }");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -61,6 +61,7 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     , m_isForPage(false)
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
     , m_descendantDoubleChildSyntax(false)
+    , m_caseInsensitiveAttributeValueMatching(false)
 {
     const AtomicString& tagLocalName = tagQName.localName();
     const AtomicString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
@@ -683,7 +684,10 @@ String CSSSelector::selectorText(const String& rightSide) const
             }
             if (cs->match() != CSSSelector::Set) {
                 serializeString(cs->value(), str);
-                str.append(']');
+                if (cs->attributeValueMatchingIsCaseInsensitive())
+                    str.appendLiteral(" i]");
+                else
+                    str.append(']');
             }
         } else if (cs->match() == CSSSelector::PagePseudoClass) {
             switch (cs->pagePseudoClassType()) {

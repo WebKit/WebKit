@@ -306,7 +306,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %destructor { delete $$; } nth_selector_ending
 
 %union { bool boolean; }
-%type <boolean> declaration declaration_list decl_list priority
+%type <boolean> attrib_flags declaration declaration_list decl_list priority
 
 %union { CSSSelector::Match match; }
 %type <match> match
@@ -1263,24 +1263,39 @@ attrib:
         $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom), parser->m_context.isHTMLDocument);
         $$->setMatch(CSSSelector::Set);
     }
-    | '[' maybe_space IDENT maybe_space match maybe_space ident_or_string maybe_space ']' {
+    | '[' maybe_space IDENT maybe_space match maybe_space ident_or_string maybe_space attrib_flags ']' {
         $$ = new CSSParserSelector;
         $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom), parser->m_context.isHTMLDocument);
         $$->setMatch($5);
         $$->setValue($7);
+        $$->setAttributeValueMatchingIsCaseInsensitive($9);
     }
     | '[' maybe_space namespace_selector IDENT maybe_space ']' {
         $$ = new CSSParserSelector;
         $$->setAttribute(parser->determineNameInNamespace($3, $4), parser->m_context.isHTMLDocument);
         $$->setMatch(CSSSelector::Set);
     }
-    | '[' maybe_space namespace_selector IDENT maybe_space match maybe_space ident_or_string maybe_space ']' {
+    | '[' maybe_space namespace_selector IDENT maybe_space match maybe_space ident_or_string maybe_space attrib_flags ']' {
         $$ = new CSSParserSelector;
         $$->setAttribute(parser->determineNameInNamespace($3, $4), parser->m_context.isHTMLDocument);
         $$->setMatch($6);
         $$->setValue($8);
+        $$->setAttributeValueMatchingIsCaseInsensitive($10);
     }
   ;
+
+attrib_flags:
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    IDENT maybe_space {
+        if (UNLIKELY($1.length() != 1 || !isASCIIAlphaCaselessEqual($1[0], 'i')))
+            YYERROR;
+        $$ = true;
+    }
+    |
+#endif
+    /* empty */ {
+        $$ = false;
+    }
 
 match:
     '=' {

@@ -234,6 +234,7 @@ namespace WebCore {
         const QualifiedName& attribute() const;
         const AtomicString& attributeCanonicalLocalName() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
+        bool attributeValueMatchingIsCaseInsensitive() const;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
         const Vector<LanguageArgument>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
 #endif
@@ -242,6 +243,7 @@ namespace WebCore {
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
         void setArgument(const AtomicString&);
+        void setAttributeValueMatchingIsCaseInsensitive(bool);
 #if ENABLE(CSS_SELECTORS_LEVEL4)
         void setLangArgumentList(std::unique_ptr<Vector<LanguageArgument>>);
 #endif
@@ -331,6 +333,7 @@ namespace WebCore {
         unsigned m_isForPage             : 1;
         unsigned m_tagIsForNamespaceRule : 1;
         unsigned m_descendantDoubleChildSyntax : 1;
+        unsigned m_caseInsensitiveAttributeValueMatching : 1;
 
         unsigned simpleSelectorSpecificityForPage() const;
 
@@ -472,6 +475,7 @@ inline CSSSelector::CSSSelector()
     , m_isForPage(false)
     , m_tagIsForNamespaceRule(false)
     , m_descendantDoubleChildSyntax(false)
+    , m_caseInsensitiveAttributeValueMatching(false)
 {
 }
 
@@ -487,6 +491,7 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_isForPage(o.m_isForPage)
     , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
     , m_descendantDoubleChildSyntax(o.m_descendantDoubleChildSyntax)
+    , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
 {
     if (o.m_hasRareData) {
         m_data.m_rareData = o.m_data.m_rareData;
@@ -538,6 +543,16 @@ inline const AtomicString& CSSSelector::value() const
     return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value);
 }
 
+inline void CSSSelector::setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive)
+{
+    ASSERT(isAttributeSelector() && match() != CSSSelector::Set);
+    m_caseInsensitiveAttributeValueMatching = isCaseInsensitive;
+}
+
+inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
+{
+    return m_caseInsensitiveAttributeValueMatching;
+}
 
 } // namespace WebCore
 

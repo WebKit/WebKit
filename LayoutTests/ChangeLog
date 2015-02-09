@@ -1,3 +1,32 @@
+2015-02-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add parsing support for CSS Selector L4's case-insensitive attribute
+        https://bugs.webkit.org/show_bug.cgi?id=141373
+
+        Reviewed by Darin Adler.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        Basic round-trip serialization through CSSOM.
+
+        * fast/css/parsing-css-attribute-case-insensitive-value-1-expected.txt: Added.
+        * fast/css/parsing-css-attribute-case-insensitive-value-1.html: Added.
+        Simple cases by themself and used in complex selectors.
+
+        * fast/css/parsing-css-attribute-case-insensitive-value-2-expected.txt: Added.
+        * fast/css/parsing-css-attribute-case-insensitive-value-2.html: Added.
+        Less simple cases, all kinds of valid syntax for case-insensitive attributes.
+
+        * fast/css/parsing-css-attribute-case-insensitive-value-3-expected.txt: Added.
+        * fast/css/parsing-css-attribute-case-insensitive-value-3.html: Added.
+        Cases that must be treated as invalid selectors.
+
+        * fast/css/parsing-css-attribute-case-insensitive-value-4-expected.txt: Added.
+        * fast/css/parsing-css-attribute-case-insensitive-value-4.html: Added.
+        Verify that invalid rules do not affect surrounding valid rules.
+
 2015-02-08  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Skip js/dom/create-lots-of-workers.html on ios-simulator
