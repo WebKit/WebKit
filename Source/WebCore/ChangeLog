@@ -1,6 +1,13 @@
 2015-02-08  Darin Adler  <darin@apple.com>
 
-        Fix build.
+        Fix CMake-based build.
+
+        * CMakeLists.txt: Added a dependency on the CMakeLists.txt itself, analogous
+        to the one I added in DerivedSources.make.
+
+2015-02-08  Darin Adler  <darin@apple.com>
+
+        Fix debug build.
 
         * bindings/js/JSEventListener.h: Removed a call to forwardEventListeners.
 
