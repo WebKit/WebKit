@@ -1,3 +1,20 @@
+2015-02-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver appears unresponsive when JavaScript alerts are triggered via focus or blur events
+        https://bugs.webkit.org/show_bug.cgi?id=140485
+
+        Reviewed by Anders Carlsson.
+
+        If setting an accessibility attribute results in a modal alert being displayed, it can cause VoiceOver
+        to hang. A simple solution is perform the actual work after a short delay, which will ensure the call
+        returns without hanging.
+
+        Test: platform/mac/accessibility/setting-attributes-is-asynchronous.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySetValue:forAttribute:]):
+
 2015-02-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Add parsing support for CSS Selector L4's case-insensitive attribute

@@ -1532,7 +1532,9 @@ bool AccessibilityUIElement::hasPopup() const
 
 void AccessibilityUIElement::takeFocus()
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilitySetValue:@YES forAttribute:NSAccessibilityFocusedAttribute];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::takeSelection()

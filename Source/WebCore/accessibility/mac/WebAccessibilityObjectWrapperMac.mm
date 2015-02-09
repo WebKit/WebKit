@@ -3246,6 +3246,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 {
+    // In case anything we do by changing values causes an alert or other modal
+    // behaviors, we need to return now, so that VoiceOver doesn't hang indefinitely.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _accessibilitySetValue:value forAttribute:attributeName];
+    });
+}
+
+- (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
+{
     if (![self updateObjectBackingStore])
         return;
     

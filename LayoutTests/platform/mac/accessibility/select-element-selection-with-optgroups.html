@@ -26,6 +26,7 @@
     description("This tests that setting selection within a list box works correctly if there are optgroups");
 
     if (window.accessibilityController) {
+          window.jsTestIsAsync = true;
 
           document.getElementById("suite").focus();
           var selectElement = accessibilityController.focusedElement;
@@ -36,17 +37,26 @@
           var option2 = selectElement.childAtIndex(2);
           var option3 = selectElement.childAtIndex(4);
 
+          // Selection operations happen after a delay so they don't hang. Check the result on a timeout.
           selectElement.setSelectedChild(option1);
-          shouldBe("selectElement.selectedChildrenCount", "1");
-          shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
+          setTimeout(function() {
+              shouldBe("selectElement.selectedChildrenCount", "1");
+              shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
 
-          selectElement.setSelectedChild(option2);
-          shouldBe("selectElement.selectedChildrenCount", "1");
-          shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option2)");
+              selectElement.setSelectedChild(option2);
+              setTimeout(function() {
+                  shouldBe("selectElement.selectedChildrenCount", "1");
+                  shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option2)");
 
-          selectElement.setSelectedChild(option3);
-          shouldBe("selectElement.selectedChildrenCount", "1");
-          shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option3)");
+                  selectElement.setSelectedChild(option3);
+                  setTimeout(function() {
+                      shouldBe("selectElement.selectedChildrenCount", "1");
+                      shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option3)");
+                      finishJSTest();
+                  }, 1);
+              }, 1);
+           }, 1);
+        
     }
 
 </script>

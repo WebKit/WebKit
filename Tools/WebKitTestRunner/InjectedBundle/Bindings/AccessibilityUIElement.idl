@@ -168,6 +168,7 @@ interface AccessibilityUIElement {
     readonly attribute AccessibilityUIElement verticalScrollbar;
 
     void scrollToMakeVisible();
+    void takeFocus();
 
     // Text markers.
     AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);

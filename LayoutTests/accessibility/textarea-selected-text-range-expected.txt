@@ -1,7 +1,7 @@
-(4,0) = {4, 0}
+PASS textArea.selectedTextRange is '{4, 0}'
+PASS textArea.selectedTextRange is '{8, 2}'
+PASS textArea.selectedTextRange is '{25, 0}'
+PASS successfullyParsed is true
 
-(8,2) = {8, 2}
-
-(100,0) = {25, 0}
-
+TEST COMPLETE
 

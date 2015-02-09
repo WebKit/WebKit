@@ -1,8 +1,5 @@
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<script src="../resources/js-test-pre.js"></script>
 <body>
     
     <div id="result"></div>
@@ -15,23 +12,31 @@ line 3
 
     <script>
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
-
+            window.jsTestIsAsync = true;
             var area1 = document.getElementById("area1");
             area1.focus();
 
             var textArea = accessibilityController.focusedElement;
 
             textArea.setSelectedTextRange(4,0);
-            result.innerText += "(4,0) = " + textArea.selectedTextRange + "\n\n";
 
-            textArea.setSelectedTextRange(8,2);
-            result.innerText += "(8,2) = " + textArea.selectedTextRange + "\n\n";
-
-            textArea.setSelectedTextRange(100,0);
-            result.innerText += "(100,0) = " + textArea.selectedTextRange + "\n\n";
+            // After setting a property through accessibility, the value won't be updated immediately, so we
+            // must check after a timeout to re-verify the value.
+            setTimeout(function() {
+                shouldBe("textArea.selectedTextRange", "'{4, 0}'");
+                textArea.setSelectedTextRange(8,2);
+                setTimeout(function() {
+                    shouldBe("textArea.selectedTextRange", "'{8, 2}'");
+                    textArea.setSelectedTextRange(100,0);
+                    setTimeout(function() {
+                        shouldBe("textArea.selectedTextRange", "'{25, 0}'");
+                        finishJSTest();
+                    }, 1);
+                }, 1);
+            }, 1);
 
         }
     </script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
