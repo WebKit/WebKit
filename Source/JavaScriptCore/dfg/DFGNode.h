@@ -772,26 +772,6 @@ struct Node {
         return m_opInfo;
     }
     
-    bool hasArithNodeFlags()
-    {
-        switch (op()) {
-        case UInt32ToNumber:
-        case ArithAdd:
-        case ArithSub:
-        case ArithNegate:
-        case ArithMul:
-        case ArithAbs:
-        case ArithMin:
-        case ArithMax:
-        case ArithMod:
-        case ArithDiv:
-        case ValueAdd:
-            return true;
-        default:
-            return false;
-        }
-    }
-    
     // This corrects the arithmetic node flags, so that irrelevant bits are
     // ignored. In particular, anything other than ArithMul does not need
     // to know if it can speculate on negative zero.
