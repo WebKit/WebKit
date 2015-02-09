@@ -115,7 +115,8 @@ using namespace WebKit;
 
 - (void)_clearImmediateActionState
 {
-    _page->clearTextIndicator();
+    if (_page)
+        _page->clearTextIndicator();
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
