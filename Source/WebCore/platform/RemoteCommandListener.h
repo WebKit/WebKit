@@ -38,7 +38,7 @@ public:
 
 class RemoteCommandListener {
 public:
-    static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
     RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { }
     virtual ~RemoteCommandListener() { }
 

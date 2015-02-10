@@ -33,9 +33,9 @@ namespace WebCore {
 
 class IDBFactoryBackendInterface;
 
-class DatabaseProvider : public RefCounted<DatabaseProvider> {
+class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
 public:
-    virtual ~DatabaseProvider();
+    WEBCORE_EXPORT virtual ~DatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
     IDBFactoryBackendInterface* idbFactoryBackend();

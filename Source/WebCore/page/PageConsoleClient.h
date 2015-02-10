@@ -45,7 +45,7 @@ class Page;
 
 typedef Vector<RefPtr<JSC::Profile>> ProfilesArray;
 
-class PageConsoleClient final : public JSC::ConsoleClient {
+class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient {
 public:
     explicit PageConsoleClient(Page&);
     virtual ~PageConsoleClient();

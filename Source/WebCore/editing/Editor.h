@@ -129,7 +129,7 @@ public:
     WEBCORE_EXPORT void copy();
     WEBCORE_EXPORT void paste();
     void paste(Pasteboard&);
-    void pasteAsPlainText();
+    WEBCORE_EXPORT void pasteAsPlainText();
     WEBCORE_EXPORT void performDelete();
 
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);

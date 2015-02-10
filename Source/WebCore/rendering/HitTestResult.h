@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT explicit HitTestResult(const LayoutPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
     WEBCORE_EXPORT HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
-    explicit HitTestResult(const HitTestLocation&);
+    WEBCORE_EXPORT explicit HitTestResult(const HitTestLocation&);
     WEBCORE_EXPORT HitTestResult(const HitTestResult&);
     WEBCORE_EXPORT ~HitTestResult();
     WEBCORE_EXPORT HitTestResult& operator=(const HitTestResult&);
@@ -82,7 +82,7 @@ public:
     const LayoutPoint& localPoint() const { return m_localPoint; }
     void setLocalPoint(const LayoutPoint& p) { m_localPoint = p; }
 
-    void setToNonShadowAncestor();
+    WEBCORE_EXPORT void setToNonShadowAncestor();
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 

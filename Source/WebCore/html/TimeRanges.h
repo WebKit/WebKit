@@ -64,7 +64,7 @@ public:
 
 private:
     WEBCORE_EXPORT explicit TimeRanges();
-    TimeRanges(double start, double end);
+    WEBCORE_EXPORT TimeRanges(double start, double end);
     TimeRanges(const PlatformTimeRanges&);
 
 

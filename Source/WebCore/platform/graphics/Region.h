@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT void intersect(const Region&);
     WEBCORE_EXPORT void subtract(const Region&);
 
-    void translate(const IntSize&);
+    WEBCORE_EXPORT void translate(const IntSize&);
 
     // Returns true if the query region is a subset of this region.
     WEBCORE_EXPORT bool contains(const Region&) const;

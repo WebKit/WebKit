@@ -172,8 +172,8 @@ private:
         CachedResource* m_tail {nullptr};
     };
 
-    void pruneDeadResourcesToSize(unsigned targetSize);
-    void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
+    WEBCORE_EXPORT void pruneDeadResourcesToSize(unsigned targetSize);
+    WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.

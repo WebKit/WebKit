@@ -137,7 +137,7 @@ struct FileMetadata;
 WEBCORE_EXPORT bool fileExists(const String&);
 WEBCORE_EXPORT bool deleteFile(const String&);
 WEBCORE_EXPORT bool deleteEmptyDirectory(const String&);
-bool getFileSize(const String&, long long& result);
+WEBCORE_EXPORT bool getFileSize(const String&, long long& result);
 WEBCORE_EXPORT bool getFileModificationTime(const String&, time_t& result);
 WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not all platforms store file creation time.
 bool getFileMetadata(const String&, FileMetadata&);

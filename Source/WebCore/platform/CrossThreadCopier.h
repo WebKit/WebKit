@@ -158,13 +158,13 @@ namespace WebCore {
         enum class CursorType;
     }
     template<> struct CrossThreadCopierBase<false, false, IndexedDB::TransactionMode> {
-        static IndexedDB::TransactionMode copy(const IndexedDB::TransactionMode&);
+        WEBCORE_EXPORT static IndexedDB::TransactionMode copy(const IndexedDB::TransactionMode&);
     };
     template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorDirection> {
-        static IndexedDB::CursorDirection copy(const IndexedDB::CursorDirection&);
+        WEBCORE_EXPORT static IndexedDB::CursorDirection copy(const IndexedDB::CursorDirection&);
     };
     template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorType> {
-        static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
+        WEBCORE_EXPORT static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
     };
 
     struct IDBDatabaseMetadata;

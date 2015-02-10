@@ -50,7 +50,7 @@ namespace WebCore {
 #endif
 }
 
-@interface DOMNodeFilter : DOMObject <DOMNodeFilter>
+WEBCORE_EXPORT @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 @end
 
 @interface DOMNativeXPathNSResolver : DOMObject <DOMXPathNSResolver>

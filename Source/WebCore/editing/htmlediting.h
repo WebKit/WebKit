@@ -120,7 +120,7 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node*);
 bool areIdenticalElements(const Node*, const Node*);
 bool isNonTableCellHTMLBlockElement(const Node*);
 
-TextDirection directionOfEnclosingBlock(const Position&);
+WEBCORE_EXPORT TextDirection directionOfEnclosingBlock(const Position&);
 
 // -------------------------------------------------------------------------
 // Position

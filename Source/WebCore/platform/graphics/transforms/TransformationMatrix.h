@@ -148,7 +148,7 @@ public:
 
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
     // box computations but may not be what is wanted in other contexts.
-    IntRect mapRect(const IntRect&) const;
+    WEBCORE_EXPORT IntRect mapRect(const IntRect&) const;
     LayoutRect mapRect(const LayoutRect&) const;
 
     // If the matrix has 3D components, the z component of the result is

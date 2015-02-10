@@ -68,7 +68,7 @@ namespace WebCore {
         bool worldIsNormal() const { return m_worldIsNormal; }
 
     protected:
-        static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;
+        WEBCORE_EXPORT static const JSC::ClassInfo s_info;
 
     public:
         static const JSC::ClassInfo* info() { return &s_info; }

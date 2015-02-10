@@ -54,7 +54,7 @@ class PlatformCAAnimation;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
-class PlatformCALayer : public RefCounted<PlatformCALayer> {
+class WEBCORE_EXPORT PlatformCALayer : public RefCounted<PlatformCALayer> {
 #if PLATFORM(COCOA)
     friend class PlatformCALayerMac;
 #elif PLATFORM(WIN)

@@ -67,7 +67,7 @@ namespace WebCore {
 
         void removeCredentials();
 
-        ResourceRequestCachePolicy cachePolicy() const;
+        WEBCORE_EXPORT ResourceRequestCachePolicy cachePolicy() const;
         WEBCORE_EXPORT void setCachePolicy(ResourceRequestCachePolicy cachePolicy);
         
         double timeoutInterval() const; // May return 0 when using platform default.
@@ -82,10 +82,10 @@ namespace WebCore {
         const HTTPHeaderMap& httpHeaderFields() const;
         WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
-        String httpHeaderField(const String& name) const;
-        String httpHeaderField(HTTPHeaderName) const;
-        void setHTTPHeaderField(const String& name, const String& value);
-        void setHTTPHeaderField(HTTPHeaderName, const String& value);
+        WEBCORE_EXPORT String httpHeaderField(const String& name) const;
+        WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
+        WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
+        WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
         void addHTTPHeaderField(const String& name, const String& value);
 
         // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
@@ -127,7 +127,7 @@ namespace WebCore {
         WEBCORE_EXPORT ResourceLoadPriority priority() const;
         WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
-        bool isConditional() const;
+        WEBCORE_EXPORT bool isConditional() const;
         void makeUnconditional();
 
         // Whether the associated ResourceHandleClient needs to be notified of

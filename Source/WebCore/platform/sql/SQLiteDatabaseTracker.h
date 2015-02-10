@@ -32,8 +32,8 @@ namespace WebCore {
 
 namespace SQLiteDatabaseTracker {
 
-void decrementTransactionInProgressCount();
-void incrementTransactionInProgressCount();
+WEBCORE_EXPORT void decrementTransactionInProgressCount();
+WEBCORE_EXPORT void incrementTransactionInProgressCount();
 
 WEBCORE_EXPORT void setClient(SQLiteDatabaseTrackerClient*);
 

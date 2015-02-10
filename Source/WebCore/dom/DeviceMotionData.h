@@ -83,7 +83,7 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<DeviceMotionData> create();
-    static Ref<DeviceMotionData> create(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create(PassRefPtr<Acceleration>, PassRefPtr<Acceleration> accelerationIncludingGravity,
                                         PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval);
 
     const Acceleration* acceleration() const { return m_acceleration.get(); }

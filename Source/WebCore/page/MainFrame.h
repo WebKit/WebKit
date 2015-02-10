@@ -61,7 +61,7 @@ public:
     void resetLatchingState();
 #endif // PLATFORM(MAC)
 
-    DiagnosticLoggingClient& diagnosticLoggingClient() const;
+    WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
 private:
     MainFrame(Page&, PageConfiguration&);

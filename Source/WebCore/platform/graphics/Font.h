@@ -91,7 +91,7 @@ public:
         return adoptRef(*new Font(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
     }
 
-    ~Font();
+    WEBCORE_EXPORT ~Font();
 
     static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
 

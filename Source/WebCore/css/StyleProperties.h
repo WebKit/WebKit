@@ -87,7 +87,7 @@ public:
     PropertyReference propertyAt(unsigned) const;
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
-    String getPropertyValue(CSSPropertyID) const;
+    WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;

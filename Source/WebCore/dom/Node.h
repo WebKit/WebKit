@@ -278,7 +278,7 @@ public:
     void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
-    Element* shadowHost() const;
+    WEBCORE_EXPORT Element* shadowHost() const;
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
     // Deprecated. Should use shadowHost() and check the return value.
     WEBCORE_EXPORT Node* deprecatedShadowAncestorNode() const;

@@ -164,7 +164,7 @@ private:
 
     void purgeTimerFired();
 
-    void purgeInactiveFontDataIfNeeded();
+    WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
 
     // FIXME: This method should eventually be removed.
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);

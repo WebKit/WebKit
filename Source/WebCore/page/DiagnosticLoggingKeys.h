@@ -105,10 +105,10 @@ public:
     static String unusedReasonReloadKey();
     static String unusedReasonTypeMismatchKey();
     static String usedKey();
-    static String userKey();
+    WEBCORE_EXPORT static String userKey();
     static String videoKey();
-    static String webViewKey();
-    static String zoomedKey();
+    WEBCORE_EXPORT static String webViewKey();
+    WEBCORE_EXPORT static String zoomedKey();
 
     // Success / Failure keys.
     static String successKey();

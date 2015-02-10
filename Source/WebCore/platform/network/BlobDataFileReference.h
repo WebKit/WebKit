@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class BlobDataFileReference : public RefCounted<BlobDataFileReference> {
+class WEBCORE_EXPORT BlobDataFileReference : public RefCounted<BlobDataFileReference> {
 public:
     static Ref<BlobDataFileReference> create(const String& path)
     {

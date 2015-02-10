@@ -64,7 +64,7 @@ protected:
     virtual ~PlatformSpeechSynthesizerClient() { }
 };
 
-class PlatformSpeechSynthesizer {
+class WEBCORE_EXPORT PlatformSpeechSynthesizer {
 public:
     WEBCORE_EXPORT explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
 

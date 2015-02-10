@@ -93,7 +93,7 @@ public:
     WEBCORE_EXPORT virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
 
     WEBCORE_EXPORT virtual void setEnabled(bool) override;
-    virtual bool isEnabled() const override;
+    WEBCORE_EXPORT virtual bool isEnabled() const override;
 
     WEBCORE_EXPORT virtual void setPrivateBrowsingEnabled(bool flag) override;
     bool isPrivateBrowsingEnabled() const;

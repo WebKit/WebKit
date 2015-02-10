@@ -182,7 +182,7 @@ private:
     // NOTE: This array has (GlyphPage::size) elements if m_fontForAllGlyphs is null.
     const Font* m_perGlyphFontData[0];
 
-    static unsigned s_count;
+    WEBCORE_EXPORT static unsigned s_count;
 };
 
 #if COMPILER(MSVC)

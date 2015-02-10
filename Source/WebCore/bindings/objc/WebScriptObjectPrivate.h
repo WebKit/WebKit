@@ -70,7 +70,7 @@ namespace WebCore {
 - (BOOL)hasWebScriptKey:(NSString *)name;
 @end
 
-@interface WebScriptObjectPrivate : NSObject
+WEBCORE_EXPORT @interface WebScriptObjectPrivate : NSObject
 {
 @public
     JSC::JSObject *imp;

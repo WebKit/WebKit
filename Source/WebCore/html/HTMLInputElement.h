@@ -169,7 +169,7 @@ public:
 
     void setType(const AtomicString&);
 
-    virtual String value() const override final;
+    WEBCORE_EXPORT virtual String value() const override final;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT void setValueForUser(const String&);

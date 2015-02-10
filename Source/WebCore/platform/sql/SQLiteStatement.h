@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT unsigned bindParameterCount() const;
 
     WEBCORE_EXPORT int step();
-    int finalize();
+    WEBCORE_EXPORT int finalize();
     WEBCORE_EXPORT int reset();
     
     int prepareAndStep() { if (int error = prepare()) return error; return step(); }

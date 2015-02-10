@@ -102,8 +102,8 @@ public:
     OverlayType overlayType() { return m_overlayType; }
 
     WEBCORE_EXPORT IntRect bounds() const;
-    IntRect frame() const;
-    void setFrame(IntRect);
+    WEBCORE_EXPORT IntRect frame() const;
+    WEBCORE_EXPORT void setFrame(IntRect);
 
     RGBA32 backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32);

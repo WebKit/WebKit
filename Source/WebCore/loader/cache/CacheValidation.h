@@ -44,13 +44,13 @@ struct RedirectChainCacheStatus {
     double endOfValidity;
 };
 
-double computeCurrentAge(const ResourceResponse&, double responseTimestamp);
-double computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, double responseTimestamp);
-void updateResponseHeadersAfterRevalidation(ResourceResponse&, const ResourceResponse& validatingResponse);
-void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&);
+WEBCORE_EXPORT double computeCurrentAge(const ResourceResponse&, double responseTimestamp);
+WEBCORE_EXPORT double computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, double responseTimestamp);
+WEBCORE_EXPORT void updateResponseHeadersAfterRevalidation(ResourceResponse&, const ResourceResponse& validatingResponse);
+WEBCORE_EXPORT void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&);
 
 enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRedirection };
-bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
+WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
 
 }
 

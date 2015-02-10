@@ -99,10 +99,10 @@ public:
     
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.
-    bool cacheControlContainsNoCache() const;
-    bool cacheControlContainsNoStore() const;
-    bool cacheControlContainsMustRevalidate() const;
-    bool hasCacheValidatorFields() const;
+    WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
+    WEBCORE_EXPORT bool cacheControlContainsNoStore() const;
+    WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
+    WEBCORE_EXPORT bool hasCacheValidatorFields() const;
     double cacheControlMaxAge() const;
     double date() const;
     double age() const;

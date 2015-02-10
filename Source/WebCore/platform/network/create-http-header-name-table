@@ -230,7 +230,7 @@ header_file.write('const size_t minHTTPHeaderNameLength = %u;\n' % len(min(http_
 header_file.write('const size_t maxHTTPHeaderNameLength = %u;\n' % len(max(http_header_names, key=len)));
 header_file.write('''
 bool findHTTPHeaderName(StringView, HTTPHeaderName&);
-StringView httpHeaderNameString(HTTPHeaderName);
+WEBCORE_EXPORT StringView httpHeaderNameString(HTTPHeaderName);
 
 } // namespace WebCore
 

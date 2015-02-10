@@ -47,7 +47,7 @@ public:
     static Ref<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontGlyphs(fontSelector)); }
     static Ref<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontGlyphs(platformData)); }
 
-    ~FontGlyphs();
+    WEBCORE_EXPORT ~FontGlyphs();
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 

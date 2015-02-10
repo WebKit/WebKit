@@ -40,7 +40,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    static TestSerializedScriptValueInterface* toWrapped(JSC::JSValue);
+    WEBCORE_EXPORT static TestSerializedScriptValueInterface* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestSerializedScriptValueInterface();
 

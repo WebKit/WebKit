@@ -858,7 +858,7 @@ sub GenerateHeader
         } elsif ($interfaceName eq "DOMStringList") {
             push(@headerContent, "    static PassRefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
         } else {
-            push(@headerContent, "    static $implType* toWrapped(JSC::JSValue);\n");
+            push(@headerContent, "    WEBCORE_EXPORT static $implType* toWrapped(JSC::JSValue);\n");
         }
     }
 
@@ -915,7 +915,7 @@ sub GenerateHeader
     if ($interfaceName eq "Node") {
         push(@headerContent, "\n");
         push(@headerContent, "protected:\n");
-        push(@headerContent, "    static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;\n");
+        push(@headerContent, "    WEBCORE_EXPORT static const JSC::ClassInfo s_info;\n");
         push(@headerContent, "public:\n");
         push(@headerContent, "    static const JSC::ClassInfo* info() { return &s_info; }\n\n");
     } else {

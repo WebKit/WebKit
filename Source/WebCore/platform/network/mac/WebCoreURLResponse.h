@@ -39,7 +39,7 @@ typedef struct _CFURLResponse* CFURLResponseRef;
 @class NSURLResponse;
 
 namespace WebCore {
-NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
+WEBCORE_EXPORT NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 }
 #endif // __OBJC__
 

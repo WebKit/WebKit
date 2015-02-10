@@ -29,10 +29,10 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 
-NSString *DOMException = @"DOMException";
-NSString *DOMRangeException = @"DOMRangeException";
-NSString *DOMEventException = @"DOMEventException";
-NSString *DOMXPathException = @"DOMXPathException";
+WEBCORE_EXPORT NSString *DOMException = @"DOMException";
+WEBCORE_EXPORT NSString *DOMRangeException = @"DOMRangeException";
+WEBCORE_EXPORT NSString *DOMEventException = @"DOMEventException";
+WEBCORE_EXPORT NSString *DOMXPathException = @"DOMXPathException";
 
 namespace WebCore {
 
