@@ -1,3 +1,14 @@
+2015-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] NSData over retain in WKBrowsingContextController loadData
+        https://bugs.webkit.org/show_bug.cgi?id=141437
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        API::Data::createWithoutCopying will automatically do the retaining / releasing for us.
+
 2015-02-10  Zhuo Li  <zachli@apple.com>
 
         [WK2] Add support for registering url schemes to bypass Content Security Policy.

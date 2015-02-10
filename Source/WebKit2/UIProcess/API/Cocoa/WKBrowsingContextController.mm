@@ -240,7 +240,6 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
     RefPtr<API::Data> apiData;
     if (data) {
         // FIXME: This should copy the data.
-        [data retain];
         apiData = API::Data::createWithoutCopying(data);
     }
 
