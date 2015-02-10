@@ -140,16 +140,11 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction)
 
     emitLoad(arguments, regT1, regT0);
     callOperation(operationSizeFrameForVarargs, regT1, regT0, -firstFreeRegister, firstVarArgOffset);
-    // This is spectacularly dirty. We want to pass four arguments to operationSetupVarargsFrame. On x86-32 we
-    // will pass them on the stack. We want four stack slots, or 16 bytes. Extending the stack by 8 bytes
-    // over where we planned on pointing the FP gives us enough room. The reason is that the FP gives an
-    // extra CallerFrameAndPC bytes beyond where SP should point prior to the call. So if we just did
-    // move(returnValueGPR, stackPointerRegister), we'd have enough room for passing two args, or 8
-    // bytes - except that we'd have a misaligned stack. So if we subtract *another* CallerFrameAndPC
-    // bytes, we are up to 16 bytes of spare room *and* we have an aligned stack. Gross, but correct!
-    addPtr(TrustedImm32(-sizeof(CallerFrameAndPC)), returnValueGPR, stackPointerRegister);
-    emitLoad(arguments, regT2, regT1);
-    callOperation(operationSetupVarargsFrame, returnValueGPR, regT2, regT1, firstVarArgOffset);
+    move(TrustedImm32(-firstFreeRegister), regT1);
+    emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
+    addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
+    emitLoad(arguments, regT2, regT4);
+    callOperation(operationSetupVarargsFrame, regT1, regT2, regT4, firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
 
     if (canOptimize)

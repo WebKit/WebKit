@@ -34,6 +34,23 @@
 
 namespace JSC {
 
+void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthIncludesThis, GPRReg numUsedSlotsGPR, GPRReg resultGPR)
+{
+    jit.move(numUsedSlotsGPR, resultGPR);
+    jit.addPtr(lengthGPR, resultGPR);
+    jit.addPtr(CCallHelpers::TrustedImm32(JSStack::CallFrameHeaderSize + (lengthIncludesThis? 0 : 1)), resultGPR);
+    
+    // resultGPR now has the required frame size in Register units
+    // Round resultGPR to next multiple of stackAlignmentRegisters()
+    jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1), resultGPR);
+    jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), resultGPR);
+    
+    // Now resultGPR has the right stack frame offset in Register units.
+    jit.negPtr(resultGPR);
+    jit.lshiftPtr(CCallHelpers::Imm32(3), resultGPR);
+    jit.addPtr(GPRInfo::callFrameRegister, resultGPR);
+}
+
 void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, int inlineStackOffset, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
 {
     CCallHelpers::JumpList end;
@@ -48,19 +65,8 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
         endVarArgs.link(&jit);
     }
     slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(Arguments::MaxArguments + 1)));
-    // scratchGPR1: argumentCountIncludingThis
-    jit.move(numUsedSlotsGPR, scratchGPR2);
-    jit.addPtr(scratchGPR1, scratchGPR2);
-    jit.addPtr(CCallHelpers::TrustedImm32(JSStack::CallFrameHeaderSize), scratchGPR2);
-    // scratchGPR2 now has the required frame size in Register units
-    // Round scratchGPR2 to next multiple of stackAlignmentRegisters()
-    jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1), scratchGPR2);
-    jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), scratchGPR2);
-
-    jit.negPtr(scratchGPR2);
-    jit.lshiftPtr(CCallHelpers::Imm32(3), scratchGPR2);
-    jit.addPtr(GPRInfo::callFrameRegister, scratchGPR2);
-    // scratchGPR2: newCallFrame
+    
+    emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
 
     slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(jit.vm()->addressOfStackLimit()), scratchGPR2));
 

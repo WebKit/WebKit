@@ -80,9 +80,11 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction)
 
     emitGetVirtualRegister(arguments, regT1);
     callOperation(operationSizeFrameForVarargs, regT1, -firstFreeRegister, firstVarArgOffset);
-    move(returnValueGPR, stackPointerRegister);
-    emitGetVirtualRegister(arguments, regT1);
-    callOperation(operationSetupVarargsFrame, returnValueGPR, regT1, firstVarArgOffset);
+    move(TrustedImm32(-firstFreeRegister), regT1);
+    emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
+    addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(void*)))), regT1, stackPointerRegister);
+    emitGetVirtualRegister(arguments, regT2);
+    callOperation(operationSetupVarargsFrame, regT1, regT2, firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
 
     if (canOptimize)

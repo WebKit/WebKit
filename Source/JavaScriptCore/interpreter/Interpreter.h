@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 #include "LLIntData.h"
 #include "Opcode.h"
 #include "SourceProvider.h"
+#include "StackAlignment.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
@@ -298,10 +299,19 @@ namespace JSC {
     };
 
     JSValue eval(CallFrame*);
-    CallFrame* sizeFrameForVarargs(CallFrame* exec, JSStack*, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
-    void loadVarargs(CallFrame* execCaller, VirtualRegister firstElementDest, VirtualRegister countDest, JSValue source, uint32_t offset);
-    void setupVarargsFrame(CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset);
-    void setupVarargsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset);
+
+    inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
+    {
+        unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(
+            stackAlignmentRegisters(),
+            numUsedStackSlots + argumentCountIncludingThis + JSStack::CallFrameHeaderSize);
+        return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
+    }
+
+    unsigned sizeFrameForVarargs(CallFrame* exec, JSStack*, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
+    void loadVarargs(CallFrame* execCaller, VirtualRegister firstElementDest, JSValue source, uint32_t offset, uint32_t length);
+    void setupVarargsFrame(CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
+    void setupVarargsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
     
 } // namespace JSC
 

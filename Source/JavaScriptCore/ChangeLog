@@ -1,3 +1,50 @@
+2015-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        op_call_varargs should only load the length once
+        https://bugs.webkit.org/show_bug.cgi?id=141440
+        rdar://problem/19761683
+
+        Reviewed by Michael Saboff.
+        
+        Refactors the pair of calls that set up the varargs frame so that the first call returns the
+        length, and the second call uses the length returned by the first one. It turns out that this
+        gave me an opportunity to shorten a lot of the code.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeFrameForVarargs):
+        (JSC::loadVarargs):
+        (JSC::setupVarargsFrame):
+        (JSC::setupVarargsFrameAndSetThis):
+        * interpreter/Interpreter.h:
+        (JSC::calleeFrameForVarargs):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetVarargsFrame):
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToArguments):
+        * runtime/Arguments.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+        * runtime/VM.h:
+        * tests/stress/call-varargs-length-effects.js: Added.
+        (foo):
+        (bar):
+
 2015-02-10  Michael Saboff  <msaboff@apple.com>
 
         Crash in JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq

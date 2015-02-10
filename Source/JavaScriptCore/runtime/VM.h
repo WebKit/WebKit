@@ -410,6 +410,7 @@ public:
     const ClassInfo* const jsFinalObjectClassInfo;
 
     JSValue hostCallReturnValue;
+    unsigned varargsLength;
     ExecState* newCallFrameReturnValue;
     VMEntryFrame* vmEntryFrameForThrow;
     ExecState* callFrameForThrow;

@@ -84,7 +84,7 @@ public:
         return m_numArguments; 
     }
         
-    void copyToArguments(ExecState*, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstArgumentOffset);
+    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
     void tearOffForCloning(CallFrame*);

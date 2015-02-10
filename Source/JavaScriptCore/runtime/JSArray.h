@@ -132,7 +132,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE void fillArgList(ExecState*, MarkedArgumentBuffer&);
-    JS_EXPORT_PRIVATE void copyToArguments(ExecState*, VirtualRegister firstElementDest, uint32_t length, int32_t firstVarArgOffset);
+    JS_EXPORT_PRIVATE void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {

@@ -87,22 +87,13 @@ void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken t
     
 static EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState*);
 
-void Arguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstVarArgOffset)
+void Arguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
-    uint32_t length = copyLength + firstVarArgOffset;
-
-    if (UNLIKELY(m_overrodeLength)) {
-        length = min(get(exec, exec->propertyNames().length).toUInt32(exec), length);
-        for (unsigned i = firstVarArgOffset; i < length; i++)
-            exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
-        return;
-    }
-    ASSERT(length == this->length(exec));
-    for (size_t i = firstVarArgOffset; i < length; ++i) {
-        if (JSValue value = tryGetArgument(i))
-            exec->r(firstElementDest + i - firstVarArgOffset) = value;
+    for (unsigned i = 0; i < length; ++i) {
+        if (JSValue value = tryGetArgument(i + offset))
+            exec->r(firstElementDest + i) = value;
         else {
-            exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
+            exec->r(firstElementDest + i) = get(exec, i + offset);
             if (UNLIKELY(exec->vm().exception()))
                 return;
         }

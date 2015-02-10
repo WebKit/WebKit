@@ -1570,12 +1570,12 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         args.append(get(exec, i));
 }
 
-void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstVarArgOffset)
+void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
-    unsigned i = firstVarArgOffset;
+    unsigned i = offset;
     WriteBarrier<Unknown>* vector;
     unsigned vectorEnd;
-    unsigned length = copyLength + firstVarArgOffset;
+    length += offset; // We like to think of the length as being our length, rather than the output length.
     ASSERT(length == this->length());
     switch (indexingType()) {
     case ArrayClass:
@@ -1602,7 +1602,7 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
             double v = m_butterfly->contiguousDouble()[i];
             if (v != v)
                 break;
-            exec->r(firstElementDest + i - firstVarArgOffset) = JSValue(JSValue::EncodeAsDouble, v);
+            exec->r(firstElementDest + i - offset) = JSValue(JSValue::EncodeAsDouble, v);
         }
         break;
     }
@@ -1627,11 +1627,11 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        exec->r(firstElementDest + i - firstVarArgOffset) = v.get();
+        exec->r(firstElementDest + i - offset) = v.get();
     }
     
     for (; i < length; ++i) {
-        exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
+        exec->r(firstElementDest + i - offset) = get(exec, i);
         if (UNLIKELY(exec->vm().exception()))
             return;
     }
