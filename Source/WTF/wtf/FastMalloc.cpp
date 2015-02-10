@@ -323,7 +323,7 @@ TryMallocReturnValue tryFastRealloc(void* p, size_t n)
     
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 {
-    return fastCalloc(numElements, elementSize);
+    return tryFastZeroedMalloc(numElements * elementSize);
 }
     
 void releaseFastMallocFreeMemoryForThisThread()

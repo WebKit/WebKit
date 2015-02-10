@@ -1,3 +1,14 @@
+2015-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: tryFastCalloc is no longer "try"
+        https://bugs.webkit.org/show_bug.cgi?id=141406
+
+        Reviewed by Darin Adler.
+
+        This causes crashes on some WebKit regression test bots.
+
+        * wtf/FastMalloc.cpp: (WTF::tryFastCalloc): Fix what looks like a copy/paste mistake.
+
 2015-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] GC sometimes stuck in an infinite loop if parallel GC is enabled
