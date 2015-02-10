@@ -1,3 +1,17 @@
+2015-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] don't get out of sync when interrupt/resume calls are not balanced
+        https://bugs.webkit.org/show_bug.cgi?id=141310
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated media/video-interruption-with-resume-allowing-play.html.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::beginInterruption): Count interruptions.
+        (WebCore::MediaSession::endInterruption): Ignore calls when m_interruptionCount is already zero.
+        * platform/audio/MediaSession.h:
+
 2015-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GMutexLocker build issue

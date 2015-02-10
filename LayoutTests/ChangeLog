@@ -1,3 +1,14 @@
+2015-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] don't get out of sync when interrupt/resume calls are not balanced
+        https://bugs.webkit.org/show_bug.cgi?id=141310
+
+        Reviewed by Jer Noble.
+
+        * media/video-interruption-with-resume-allowing-play-expected.txt:
+        * media/video-interruption-with-resume-allowing-play.html: Updated to test unbalanced calls 
+            to begin/end interruption.
+
 2015-02-10  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK Gardening.

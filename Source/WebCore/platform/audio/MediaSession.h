@@ -122,6 +122,7 @@ private:
     Timer m_clientDataBufferingTimer;
     State m_state;
     State m_stateToRestore;
+    int m_interruptionCount { 0 };
     bool m_notifyingClient;
 };
 

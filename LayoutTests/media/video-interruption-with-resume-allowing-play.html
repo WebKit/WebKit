@@ -4,6 +4,7 @@
         <script src=video-test.js></script>
         <script>
             var state = 0;
+            var resumeCount = 0;
 
             function checkState()
             {
@@ -15,6 +16,7 @@
                     setTimeout(checkState, 100);
                     consoleWrite("");
                     break;
+
                 case "interrupted":
                     consoleWrite("100ms timer fired...");
                     testExpected("video.paused", true);
@@ -22,10 +24,14 @@
                     run("internals.endMediaSessionInterruption('MayResumePlaying')");
                     consoleWrite("");
                     break;
+
                 case "resuming":
                     testExpected("video.paused", false);
                     consoleWrite("");
-                    endTest();
+                    if (++resumeCount == 2)
+                        endTest();
+                    state = "playing";
+                    setTimeout(checkState, 100);
                     break;
                 }
             }

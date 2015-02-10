@@ -81,9 +81,9 @@ void MediaSession::setState(State state)
 
 void MediaSession::beginInterruption(InterruptionType type)
 {
-    LOG(Media, "MediaSession::beginInterruption(%p), state = %s", this, stateName(m_state));
+    LOG(Media, "MediaSession::beginInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
 
-    if (type == EnteringBackground && client().overrideBackgroundPlaybackRestriction())
+    if (++m_interruptionCount > 1 || (type == EnteringBackground && client().overrideBackgroundPlaybackRestriction()))
         return;
 
     m_stateToRestore = state();
@@ -95,7 +95,15 @@ void MediaSession::beginInterruption(InterruptionType type)
 
 void MediaSession::endInterruption(EndInterruptionFlags flags)
 {
-    LOG(Media, "MediaSession::endInterruption(%p) - flags = %i, stateToRestore = %s", this, (int)flags, stateName(m_stateToRestore));
+    LOG(Media, "MediaSession::endInterruption(%p) - flags = %i, stateToRestore = %s, interruption count = %i", this, (int)flags, stateName(m_stateToRestore), m_interruptionCount);
+
+    if (!m_interruptionCount) {
+        LOG(Media, "MediaSession::endInterruption(%p) - !! ignoring spurious interruption end !!", this);
+        return;
+    }
+
+    if (--m_interruptionCount)
+        return;
 
     State stateToRestore = m_stateToRestore;
     m_stateToRestore = Idle;
