@@ -30,6 +30,7 @@ messages -> WebProcess LegacyReceiver {
     SetCacheModel(uint32_t cacheModel)
     RegisterURLSchemeAsEmptyDocument(String scheme)
     RegisterURLSchemeAsSecure(String scheme)
+    RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
     SetDomainRelaxationForbiddenForURLScheme(String scheme)
     RegisterURLSchemeAsLocal(String scheme)
     RegisterURLSchemeAsNoAccess(String scheme)

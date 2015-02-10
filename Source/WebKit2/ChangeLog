@@ -1,3 +1,27 @@
+2015-02-10  Zhuo Li  <zachli@apple.com>
+
+        [WK2] Add support for registering url schemes to bypass Content Security Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=140736
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2015-02-10  Sanghyup Lee  <sh53.lee@samsung.com>
 
         [EFL] Use a variable to set flicking time instead of hardcoding

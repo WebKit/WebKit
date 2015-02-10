@@ -82,6 +82,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegistererdAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
+    encoder << urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     encoder << urlSchemesForWhichDomainRelaxationIsForbidden;
     encoder << urlSchemesRegisteredAsLocal;
     encoder << urlSchemesRegisteredAsNoAccess;
@@ -186,6 +187,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegisteredAsSecure))
+        return false;
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy))
         return false;
     if (!decoder.decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
         return false;

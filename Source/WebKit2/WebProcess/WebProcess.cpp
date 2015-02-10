@@ -313,6 +313,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (size_t i = 0; i < parameters.urlSchemesRegisteredAsSecure.size(); ++i)
         registerURLSchemeAsSecure(parameters.urlSchemesRegisteredAsSecure[i]);
 
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy.size(); ++i)
+        registerURLSchemeAsBypassingContentSecurityPolicy(parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy[i]);
+
     for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
         setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
 
@@ -413,6 +416,11 @@ void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 {
     SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
 }
 
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const

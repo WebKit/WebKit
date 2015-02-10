@@ -379,6 +379,11 @@ void WKContextRegisterURLSchemeAsSecure(WKContextRef contextRef, WKStringRef url
     toImpl(contextRef)->registerURLSchemeAsSecure(toImpl(urlScheme)->string());
 }
 
+void WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy(WKContextRef contextRef, WKStringRef urlScheme)
+{
+    toImpl(contextRef)->registerURLSchemeAsBypassingContentSecurityPolicy(toImpl(urlScheme)->string());
+}
+
 void WKContextRegisterURLSchemeAsCachePartitioned(WKContextRef contextRef, WKStringRef urlScheme)
 {
 #if ENABLE(CACHE_PARTITIONING)
