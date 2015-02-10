@@ -1,3 +1,25 @@
+2015-02-10  Michael Saboff  <msaboff@apple.com>
+
+        Crash in JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq
+        https://bugs.webkit.org/show_bug.cgi?id=139398
+
+        Reviewed by Filip Pizlo.
+
+        Due to CFA analysis, the CompareStrictEq node was determined to be unreachable, but later
+        was determined to be reachable.  When we go to lower to LLVM, the edges for the CompareStrictEq
+        node are UntypedUse which we can't compile.  Fixed this by checking that the IR before
+        lowering can still be handled by the FTL.
+
+        Had to add GetArgument as a node that the FTL can compile as the SSA conversion phase converts
+        a SetArgument to a GetArgument.  Before this change FTL::canCompile() would never see a GetArgument
+        node.  With the check right before lowering, we see this node.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl): Added a final FTL::canCompile() check before lowering
+        to verify that after all the transformations we still have valid IR for the FTL.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile): Added GetArgument as a node the FTL can compile.
+
 2015-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Remove unused DFG::SpeculativeJIT::calleeFrameOffset().

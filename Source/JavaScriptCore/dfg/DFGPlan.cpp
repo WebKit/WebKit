@@ -364,6 +364,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performOSRAvailabilityAnalysis(dfg);
         performWatchpointCollection(dfg);
         
+        if (FTL::canCompile(dfg) == FTL::CannotCompile) {
+            finalizer = std::make_unique<FailedFinalizer>(*this);
+            return FailPath;
+        }
+
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
         bool haveLLVM;
@@ -379,7 +384,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             finalizer = std::make_unique<FailedFinalizer>(*this);
             return FailPath;
         }
-            
+
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
         
