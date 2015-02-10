@@ -1,3 +1,26 @@
+2015-02-10  Julien Isorce  <j.isorce@samsung.com>
+
+        Render: properly update body's background image
+        https://bugs.webkit.org/show_bug.cgi?id=140183
+
+        When HTML and BODY renderers are both composited the
+        skipBodyBackground condition should also take into account
+        if the HTML's layer can draw its contents.
+
+        Reviewed by Darin Adler.
+
+        Test: animations/animation-background-image.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::skipBodyBackground): Do not skip
+        if document's layer cannot draw its content.
+        Previously both body and html did not paint the background
+        when they are both composited.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentChanged): Also redisplay
+        the content.
+
 2015-02-10  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] don't get out of sync when interrupt/resume calls are not balanced

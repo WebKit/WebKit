@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script language="JavaScript">
+
+function onLoad() {
+    document.body.style.background = "url(../resources/apple.jpg)";
+
+    var div = document.getElementById("div");
+    div.style.zIndex = "-1";
+
+    var trans = document.createElement("div");
+    trans.style.backgroundColor = "blue";
+    trans.style.width = "360px";
+    trans.style.height = "150px";
+    trans.style.position = "absolute";
+    trans.style.top = "100px";
+    trans.style.left = "100px";
+    trans.style.webkitTransform = "translateZ(0)";
+
+    div.appendChild(trans);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+</script>
+
+<style>
+body {
+    width: 1024px;
+    height: 720px;
+    left: 0px;
+    top: 0px;
+    margin: 0px;
+    position: absolute;
+    z-index: -1;
+}
+</style>
+
+</head>
+<body onload="onLoad()">
+<div id="div" style="background-color: red; position: relative; top: 32px; left: 32px; width: 200px; height: 200px;"></div>
+</body>
+</html>
+

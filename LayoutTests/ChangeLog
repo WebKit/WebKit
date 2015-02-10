@@ -1,3 +1,17 @@
+2015-02-10  Julien Isorce  <j.isorce@samsung.com>
+
+        Render: properly update body's background image
+        https://bugs.webkit.org/show_bug.cgi?id=140183
+
+        When HTML and BODY renderers are both composited the
+        skipBodyBackground condition should also take into account
+        if the HTML's layer can draw its contents.
+
+        Reviewed by Darin Adler.
+
+        * compositing/backgrounds/background-image-with-negative-zindex-expected.html: Added.
+        * compositing/backgrounds/background-image-with-negative-zindex.html: Added.
+
 2015-02-10  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] don't get out of sync when interrupt/resume calls are not balanced
