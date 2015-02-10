@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+<style>
+    #testInner {
+        position: absolute;
+        width: 600px;
+        top: 400px;
+        left: 200px;;
+        padding: 1em;
+        background: yellow;
+        box-shadow: 0 0 0.5em gray;
+    }
+
+    .marker {
+        position: fixed;
+        background: black;
+        color: white;
+        top: 200px;
+        padding: 1em;
+    }
+
+    .spacer {
+        height: 200px;
+    }
+
+    button {
+        position: fixed;
+        top: 100px;
+        left: 200px;
+        padding: 2em;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .trigger #testInner {
+        -webkit-transform: translateY(-200px);
+    }
+</style>
+</head>
+<body>
+<button onclick="toggleRunning()">
+  CLICK ME to start / stop test
+</button>
+<div class="marker">Correct top position</div>
+<div id="parent" class="trigger">
+  <div id="testInner">test element</div>
+</div>
+<p class="spacer">.</p>
+<p class="spacer">.</p>
+<p class="spacer">.</p>
+<p class="spacer">.</p>
+<p class="spacer">.</p>
+<p class="spacer">.</p>
+<p class="spacer" id="last">.</p>
+
+<script>
+var INTERVAL_MS = 17;
+var testElement = document.getElementById('testInner');
+var testContainerElement = document.getElementById('parent');
+
+var state = {};
+state.triggerTranslationOnOrOff = false;
+state.running = false;
+state.intervalId = 0;
+
+function updateState()
+{
+    var translated = testContainerElement.classList.contains('trigger');
+    state.scrolled = !translated;
+}
+
+function toggleRunning()
+{
+    state.running = !state.running;
+    if (state.running) {
+        updateState();
+        state.intervalId = setInterval(runSequence, INTERVAL_MS);
+    } else {
+        clearInterval(state.intervalId);
+    }
+}
+
+function doExpensiveContentUpdate()
+{
+    var content = 'I should be stable at the correct position and not flicker above/below';
+    if (state.scrolled)
+        content += '.';
+
+    testElement.innerHTML = content;
+
+    var lastElement = document.getElementById('last');
+    var startTime = Date.now();
+    for (var i = 0; i < 1000; i++) {
+        lastElement.innerHTML = (lastElement.innerHTML + '.');
+    }
+    var domWriteTimeMs = Date.now() - startTime;
+    if (domWriteTimeMs > 2 * INTERVAL_MS)
+        lastElement.innerHTML = '';
+}
+
+function runSequence()
+{
+    doExpensiveContentUpdate();
+
+    var newScrollTop;
+    if (state.scrolled) {
+        testContainerElement.classList.add('trigger');
+        newScrollTop = 0;
+    } else {
+        testContainerElement.classList.remove('trigger');
+        newScrollTop = 200;
+    }
+
+    document.body.scrollTop = newScrollTop;
+    state.scrolled = !state.scrolled;
+}
+
+</script>
+</body>
+
