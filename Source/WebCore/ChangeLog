@@ -1,3 +1,17 @@
+2015-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Check for self-assignment in Length::operator=(const Length&)
+        https://bugs.webkit.org/show_bug.cgi?id=141402
+
+        Reviewed by Andreas Kling.
+
+        Check for self-assignment in Length::operator=(const Length&) as
+        calling memcpy() with the same source and destination addresses has
+        undefined behavior.
+
+        * platform/Length.h:
+        (WebCore::Length::operator=):
+
 2015-02-09  Roger Fong  <roger_fong@apple.com>
 
         WebGL: Update 1.0.2 conformance layout tests and address new failure.

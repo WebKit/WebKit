@@ -179,6 +179,9 @@ inline Length::Length(Length&& other)
 
 inline Length& Length::operator=(const Length& other)
 {
+    if (this == &other)
+        return *this;
+
     if (other.isCalculated())
         other.ref();
     if (isCalculated())
