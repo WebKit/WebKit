@@ -1,3 +1,24 @@
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r176240.
+
+    2014-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK1] Sometimes, missing tiles in -webkit-overflow-scrolling: touch in UIWebViews
+            https://bugs.webkit.org/show_bug.cgi?id=138815
+            rdar://problem/18746203
+
+            Reviewed by Tim Horton.
+
+            The scroll-velocity-related data members on FrameView, added in r168233, were uninitialized in UIWebViews,
+            so FrameView::computeCoverageRect() could return garbage results, leading to too much or too little tile coverage.
+
+            We still add additional coverage from the new inclusion of a margin area, but, for simplicity, leave that the same
+            between WK1 and WK2 for now.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::FrameView):
+
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179567
