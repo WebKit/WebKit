@@ -1,3 +1,49 @@
+2015-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GMutexLocker build issue
+        https://bugs.webkit.org/show_bug.cgi?id=141381
+
+        Reviewed by Žan Doberšek.
+
+        Use always WTF::GMutexLocker because newer glib versions have a
+        GMutexLocker in the public API.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::provideInput):
+        (WebCore::AudioSourceProviderGStreamer::handleAudioBuffer):
+        (WebCore::AudioSourceProviderGStreamer::clearAdapters):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkTimeoutCallback):
+        (webkitVideoSinkRender):
+        (unlockSampleMutex):
+        (webkitVideoSinkUnlockStop):
+        (webkitVideoSinkStart):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekDataCb):
+        (webKitWebSrcSetMediaPlayer):
+        (StreamingClient::createReadBuffer):
+        (StreamingClient::handleResponseReceived):
+        (StreamingClient::handleDataReceived):
+        (StreamingClient::handleNotifyFinished):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+
 2015-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Update WEBCORE_EXPORT to prepare to start using it.

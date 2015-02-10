@@ -150,7 +150,7 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
 
 void AudioSourceProviderGStreamer::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    GMutexLocker<GMutex> lock(m_adapterMutex);
+    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
     copyGStreamerBuffersToAudioChannel(m_frontLeftAdapter, bus, 0, framesToProcess);
     copyGStreamerBuffersToAudioChannel(m_frontRightAdapter, bus, 1, framesToProcess);
 }
@@ -177,7 +177,7 @@ GstFlowReturn AudioSourceProviderGStreamer::handleAudioBuffer(GstAppSink* sink)
     GstAudioInfo info;
     gst_audio_info_from_caps(&info, caps);
 
-    GMutexLocker<GMutex> lock(m_adapterMutex);
+    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
 
     // Check the first audio channel. The buffer is supposed to store
     // data of a single channel anyway.
@@ -339,7 +339,7 @@ void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
 
 void AudioSourceProviderGStreamer::clearAdapters()
 {
-    GMutexLocker<GMutex> lock(m_adapterMutex);
+    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
     gst_adapter_clear(m_frontLeftAdapter);
     gst_adapter_clear(m_frontRightAdapter);
 }
