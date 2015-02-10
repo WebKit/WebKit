@@ -533,6 +533,16 @@ Bug(GTK) css3/filters/backdrop [ Skip ]
 
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 
+webkit.org/b/141423 css3/calc/line-height.html [ Failure ]
+webkit.org/b/141419 editing/deleting/delete-emoji.html [ Failure ]
+webkit.org/b/141423 editing/pasteboard/simplfiying-markup-should-not-strip-content.html [ Failure ]
+webkit.org/b/141423 fast/css/font-shorthand-from-longhands.html [ Failure ]
+webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
+webkit.org/b/141423 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
+webkit.org/b/141423 fast/css/getComputedStyle/computed-style-without-renderer.html [ Failure ]
+webkit.org/b/141423 fast/css/line-height-text-autosizing.html [ Failure ]
+webkit.org/b/141423 fast/css/getComputedStyle/computed-style.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,10 @@
+2015-02-10  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK Gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/font-face-in-media-rule-expected.txt: Added. Rebaselined after r177774.
+
 2015-02-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Activate media tests. (Unreviewed)
