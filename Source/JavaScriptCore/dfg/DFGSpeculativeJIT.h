@@ -717,11 +717,6 @@ public:
     void compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg, GPRReg scratch2Reg);
     void compileInstanceOf(Node*);
     
-    ptrdiff_t calleeFrameOffset(int numArgs)
-    {
-        return virtualRegisterForLocal(m_jit.graph().m_nextMachineLocal - 1 + JSStack::CallFrameHeaderSize + numArgs).offset() * sizeof(Register);
-    }
-    
     // Access to our fixed callee CallFrame.
     MacroAssembler::Address calleeFrameSlot(int slot)
     {

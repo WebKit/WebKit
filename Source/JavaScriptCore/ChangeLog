@@ -1,3 +1,17 @@
+2015-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove unused DFG::SpeculativeJIT::calleeFrameOffset().
+
+        Rubber stamped by Michael Saboff.
+        
+        Not only was this not used, I believe that the math was wrong. The callee frame doesn't
+        actually land past m_nextMachineLocal; instead it lands just below wherever we put SP and
+        that decision is made elsewhere. Also, it makes no sense to subtract 1 from
+        m_nextMachineLocal when trying to deduce the number of in-use stack slots.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::calleeFrameOffset): Deleted.
+
 2015-02-10  Saam Barati  <saambarati1@gmail.com>
 
         Parser::parseVarDeclarationList gets the wrong JSToken for the last identifier
