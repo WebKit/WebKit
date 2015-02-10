@@ -49,7 +49,7 @@ class NSRunLoop;
 // The lock is automatically freed at the bottom of the runloop. No need to unlock.
 // Note that calling this function may hang your UI for several seconds. Don't use
 // unless you have to.
-void WebThreadLock(void);
+WEBCORE_EXPORT void WebThreadLock(void);
     
 // This is a no-op for compatibility only. It will go away. Please don't use.
 WEBCORE_EXPORT void WebThreadUnlock(void);

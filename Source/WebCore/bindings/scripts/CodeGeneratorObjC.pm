@@ -831,7 +831,7 @@ sub GenerateHeader
     }
 
     # - Begin @interface or @protocol
-    my $interfaceDeclaration = ($isProtocol ? "\@protocol $className" : "\@interface $className : $parentName");
+    my $interfaceDeclaration = ($isProtocol ? "\@protocol $className" : "WEBCORE_EXPORT \@interface $className : $parentName");
     $interfaceDeclaration .= " <" . join(", ", @protocolsToImplement) . ">" if @protocolsToImplement > 0;
     $interfaceDeclaration .= "\n";
 

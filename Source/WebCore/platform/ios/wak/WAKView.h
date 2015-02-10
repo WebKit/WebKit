@@ -38,7 +38,7 @@ extern NSString *WAKViewDidScrollNotification;
 
 @class WAKWindow;
 
-@interface WAKView : WAKResponder
+WEBCORE_EXPORT @interface WAKView : WAKResponder
 
 + (WAKView *)focusView;
 

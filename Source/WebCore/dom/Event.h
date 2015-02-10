@@ -180,7 +180,7 @@ public:
 
 protected:
     Event();
-    Event(const AtomicString& type, bool canBubble, bool cancelable);
+    WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
     Event(const AtomicString& type, bool canBubble, bool cancelable, double timestamp);
     Event(const AtomicString& type, const EventInit&);
 

@@ -244,7 +244,7 @@ public:
     void delayedScrollEventTimerFired();
 
     void viewportContentsChanged();
-    void resumeVisibleImageAnimationsIncludingSubframes();
+    WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 

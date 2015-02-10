@@ -96,7 +96,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 namespace WebCore {
 
 // FIXME: Does this need to be declared in the header file?
-NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
+WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
 // Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
 PasteboardWebContent::PasteboardWebContent()

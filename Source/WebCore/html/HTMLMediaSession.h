@@ -61,7 +61,7 @@ public:
     void setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement&, bool);
 #endif
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
-    bool allowsAlternateFullscreen(const HTMLMediaElement&) const;
+    WEBCORE_EXPORT bool allowsAlternateFullscreen(const HTMLMediaElement&) const;
     MediaPlayer::Preload effectivePreloadForElement(const HTMLMediaElement&) const;
 
     void applyMediaPlayerRestrictions(const HTMLMediaElement&);

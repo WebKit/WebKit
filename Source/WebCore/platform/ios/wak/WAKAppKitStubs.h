@@ -209,7 +209,7 @@ typedef enum _NSSelectionDirection {
     NSSelectingPrevious
 } NSSelectionDirection;
 
-@interface NSCursor : NSObject
+WEBCORE_EXPORT @interface NSCursor : NSObject
 + (void)setHiddenUntilMouseMoves:(BOOL)flag;
 @end
 

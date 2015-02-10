@@ -135,7 +135,7 @@ static unsigned mainThreadLockCount;
 static unsigned otherThreadLockCount;
 static unsigned sMainThreadModalCount;
 
-volatile bool webThreadShouldYield;
+WEBCORE_EXPORT volatile bool webThreadShouldYield;
 
 static pthread_mutex_t WebCoreReleaseLock;
 static void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL _cmd);

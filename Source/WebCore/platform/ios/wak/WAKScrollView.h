@@ -34,7 +34,7 @@
 
 @class WAKClipView;
 
-@interface WAKScrollView : WAKView <WebCoreFrameScrollView>
+WEBCORE_EXPORT @interface WAKScrollView : WAKView <WebCoreFrameScrollView>
 {
     WAKView *_documentView;  // Only here so the ObjC instance stays around.
     WAKClipView *_contentView;

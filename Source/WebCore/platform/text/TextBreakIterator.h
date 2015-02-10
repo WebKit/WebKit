@@ -64,7 +64,7 @@ bool isWordTextBreak(TextBreakIterator*);
 
 const int TextBreakDone = -1;
 
-bool isCJKLocale(const AtomicString&);
+WEBCORE_EXPORT bool isCJKLocale(const AtomicString&);
 
 class LazyLineBreakIterator {
 public:

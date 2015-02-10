@@ -1,3 +1,37 @@
+2015-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add more WEBCORE_EXPORT macros for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=141430
+
+        Reviewed by Tim Horton.
+
+        * bindings/objc/WebScriptObject.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+        * dom/Event.h:
+        * dom/Node.h:
+        * editing/FrameSelection.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLMediaSession.h:
+        * page/Frame.h:
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/wak/WAKAppKitStubs.h:
+        * platform/ios/wak/WAKClipView.h:
+        * platform/ios/wak/WAKScrollView.h:
+        * platform/ios/wak/WAKView.h:
+        * platform/ios/wak/WAKWindow.h:
+        * platform/ios/wak/WAKWindow.mm:
+        * platform/ios/wak/WKContentObservation.h:
+        * platform/ios/wak/WKGraphics.h:
+        * platform/ios/wak/WebCoreThread.h:
+        * platform/ios/wak/WebCoreThread.mm:
+        * platform/ios/wak/WebCoreThreadRun.h:
+        * platform/ios/wak/WebCoreThreadSystemInterface.h:
+        * platform/network/ios/QuickLook.h:
+        * platform/text/TextBreakIterator.h:
+
 2015-02-09  David Hyatt  <hyatt@apple.com>
 
         text-underline-position: under is broken

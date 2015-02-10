@@ -61,7 +61,7 @@ Class QLPreviewConverterClass();
 NSString *QLTypeCopyBestMimeTypeForFileNameAndMimeType(NSString *fileName, NSString *mimeType);
 NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
 
-NSSet *QLPreviewGetSupportedMIMETypesSet();
+WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
 
 // Used for setting the permissions on the saved QL content
 NSDictionary *QLFileAttributes();
@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT ~QuickLookHandle();
 
     WEBCORE_EXPORT bool didReceiveDataArray(CFArrayRef);
-    bool didReceiveData(CFDataRef);
+    WEBCORE_EXPORT bool didReceiveData(CFDataRef);
     WEBCORE_EXPORT bool didFinishLoading();
     WEBCORE_EXPORT void didFail();
 

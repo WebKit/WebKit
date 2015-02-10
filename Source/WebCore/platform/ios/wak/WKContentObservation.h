@@ -44,7 +44,7 @@ bool WKObservingContentChanges(void);
 WEBCORE_EXPORT void WKStopObservingContentChanges(void);
 WEBCORE_EXPORT void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges);
 
-WKContentChange WKObservedContentChange(void);
+WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
 void WKSetObservedContentChange(WKContentChange aChange);
 
 WEBCORE_EXPORT int WebThreadCountOfObservedContentModifiers(void);

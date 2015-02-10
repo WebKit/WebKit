@@ -30,7 +30,7 @@
 
 #import "WAKView.h"
 
-@interface WAKClipView : WAKView
+WEBCORE_EXPORT @interface WAKClipView : WAKView
 
 @property (nonatomic, readonly) WAKView *documentView;
 @property (nonatomic, assign) BOOL copiesOnScroll;

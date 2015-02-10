@@ -66,7 +66,7 @@ typedef enum {
 extern NSString * const WAKWindowScreenScaleDidChangeNotification;
 extern NSString * const WAKWindowVisibilityDidChangeNotification;
 
-@interface WAKWindow : WAKResponder
+WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 {
     CALayer* _hostLayer;
     LegacyTileCache* _tileCache;

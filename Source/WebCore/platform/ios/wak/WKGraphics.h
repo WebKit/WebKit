@@ -37,10 +37,10 @@ typedef uint32_t CGFontAntialiasingStyle;
 extern "C" {
 #endif
 
-CGContextRef WKGetCurrentGraphicsContext(void);
-void WKSetCurrentGraphicsContext(CGContextRef context);
+WEBCORE_EXPORT CGContextRef WKGetCurrentGraphicsContext(void);
+WEBCORE_EXPORT void WKSetCurrentGraphicsContext(CGContextRef);
 
-void WKRectFill(CGContextRef context, CGRect aRect);
+WEBCORE_EXPORT void WKRectFill(CGContextRef, CGRect aRect);
 void WKRectFillUsingOperation(CGContextRef, CGRect, WKCompositeOperation);
 
 CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file);

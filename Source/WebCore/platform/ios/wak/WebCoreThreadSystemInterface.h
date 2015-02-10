@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-void InitWebCoreThreadSystemInterface(void);
+WEBCORE_EXPORT void InitWebCoreThreadSystemInterface(void);
 
 #ifdef __cplusplus
 }

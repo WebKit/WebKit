@@ -90,10 +90,10 @@ public:
     virtual void setActivatedSubmit(bool) { }
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    bool autocorrect() const;
+    WEBCORE_EXPORT bool autocorrect() const;
     void setAutocorrect(bool);
 
-    WebAutocapitalizeType autocapitalizeType() const;
+    WEBCORE_EXPORT WebAutocapitalizeType autocapitalizeType() const;
     const AtomicString& autocapitalize() const;
     void setAutocapitalize(const AtomicString&);
 #endif

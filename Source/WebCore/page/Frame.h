@@ -252,7 +252,7 @@ namespace WebCore {
         WEBCORE_EXPORT void clearRangedSelectionInitialExtent();
         WEBCORE_EXPORT void setRangedSelectionInitialExtentToCurrentSelectionStart();
         WEBCORE_EXPORT void setRangedSelectionInitialExtentToCurrentSelectionEnd();
-        VisibleSelection rangedSelectionBase() const;
+        WEBCORE_EXPORT VisibleSelection rangedSelectionBase() const;
         WEBCORE_EXPORT VisibleSelection rangedSelectionInitialExtent() const;
         WEBCORE_EXPORT void recursiveSetUpdateAppearanceEnabled(bool);
         WEBCORE_EXPORT NSArray* interpretationsForCurrentRoot() const;
