@@ -2259,3 +2259,6 @@ transitions/cubic-bezier-overflow-transform.html
 transitions/default-timing-function.html
 transitions/extra-transition.html
 transitions/interrupt-transform-transition.html
+
+# Crashes when running all tests, but not by itself.
+webkit.org/b/141436 fast/loader/subframe-navigate-during-main-frame-load.html [ Crash Pass ]

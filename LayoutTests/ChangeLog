@@ -1,3 +1,11 @@
+2015-02-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening: fast/loader/subframe-navigate-during-main-frame-load.html crashes running all tests
+
+        * platform/ios-simulator-wk2/TestExpectations: Mark
+        fast/loader/subframe-navigate-during-main-frame-load.html as
+        flakey.
+
 2015-02-10  Julien Isorce  <j.isorce@samsung.com>
 
         Render: properly update body's background image
