@@ -99,6 +99,97 @@ var Statistics = new (function () {
             2.368026, 2.367566, 2.367115, 2.366674, 2.366243, 2.365821, 2.365407, 2.365002, 2.364606, 2.364217]
     };
 
+    this.MovingAverageStrategies = [
+        {
+            id: 1,
+            label: 'Simple Moving Average',
+            parameterList: [
+                {label: "Backward window size", value: 5, min: 2, step: 1},
+                {label: "Forward window size", value: 3, min: 0, step: 1}
+            ],
+            execute: function (backwardWindowSize, forwardWindowSize, values) {
+                var averages = new Array(values.length);
+                // We use naive O(n^2) algorithm for simplicy as well as to avoid accumulating round-off errors.
+                for (var i = 0; i < values.length; i++) {
+                    var sum = 0;
+                    var count = 0;
+                    for (var j = i - backwardWindowSize; j < i + backwardWindowSize; j++) {
+                        if (j >= 0 && j < values.length) {
+                            sum += values[j];
+                            count++;
+                        }
+                    }
+                    averages[i] = sum / count;
+                }
+                return averages;
+            },
+
+        },
+        {
+            id: 2,
+            label: 'Cumulative Moving Average',
+            execute: function (values) {
+                var averages = new Array(values.length);
+                var sum = 0;
+                for (var i = 0; i < values.length; i++) {
+                    sum += values[i];
+                    averages[i] = sum / (i + 1);
+                }
+                return averages;
+            }
+        },
+        {
+            id: 3,
+            label: 'Exponential Moving Average',
+            parameterList: [{label: "Smoothing factor", value: 0.1, min: 0.001, max: 0.9}],
+            execute: function (smoothingFactor, values) {
+                if (!values.length || typeof(smoothingFactor) !== "number")
+                    return null;
+
+                var averages = new Array(values.length);
+                var movingAverage = 0;
+                averages[0] = values[0];
+                for (var i = 1; i < values.length; i++)
+                    averages[i] = smoothingFactor * values[i] + (1 - smoothingFactor) * averages[i - 1];
+                return averages;
+            }
+        },
+    ];
+
+    this.EnvelopingStrategies = [
+        {
+            id: 100,
+            label: 'Average Difference',
+            description: 'The average difference between consecutive values.',
+            execute: function (values, movingAverages) {
+                if (values.length < 1)
+                    return NaN;
+
+                var diff = 0;
+                for (var i = 1; i < values.length; i++)
+                    diff += Math.abs(values[i] - values[i - 1]);
+
+                return diff / values.length;
+            }
+        },
+        {
+            id: 101,
+            label: 'Moving Average Standard Deviation',
+            description: 'The square root of the average deviation from the moving average with Bessel\'s correction.',
+            execute: function (values, movingAverages) {
+                if (values.length < 1)
+                    return NaN;
+
+                var diffSquareSum = 0;
+                for (var i = 1; i < values.length; i++) {
+                    var diff = (values[i] - movingAverages[i]);
+                    diffSquareSum += diff * diff;
+                }
+
+                return Math.sqrt(diffSquareSum / (values.length - 1));
+            }
+        },
+    ];
 })();
 
 if (typeof module != 'undefined') {

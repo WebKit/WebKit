@@ -1,3 +1,82 @@
+2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard should have the ability to overlay moving average with an envelope
+        https://bugs.webkit.org/show_bug.cgi?id=141438
+
+        Reviewed by Andreas Kling.
+
+        This patch adds three kinds of moving average strategies and two kinds of enveloping strategies:
+
+        Simple Moving Average - The moving average x̄_i of x_i is computed as the arithmetic mean of values
+        from x_(i - n) though x_(i + m) where n is a non-negative integer and m is a positive integer. It takes
+        n, backward window size, and m, forward window size, as an argument.
+
+        Cumulative Moving Average - x̄_i is computed as the arithmetic mean of all values x_0 though x_i.
+        That is, x̄_1 = x_1 and x̄_i = ((i - 1) * M_(i - 1) + x_i) / i for all i > 1.
+
+        Exponential Moving Average - x̄_i is computed as the weighted average of x_i and x̄_(i - 1) with α as
+        an argument specifying x_i's weight. To be precise, x̄_1 = x_1 and x̄_i = α * x_i + (α - 1) x̄_(i-1).
+
+
+        Average Difference - The enveloping delta d is computed as the arithmetic mean of the difference
+        between each x_i and x̄_i.
+
+        Moving Average Standard Deviation - d is computed like the standard deviation except the deviation
+        for each term is measured from the moving average instead of the sample arithmetic mean. i.e. it uses
+        the average of (x_i - x̄_i)^2 as the "sample variance" instead of the conventional (x_i - x̄)^2 where
+        x̄ is the sample mean of all x_i's. This change was necessary since our time series is non-stationary.
+
+
+        Each strategy is cloned for an App.Pane instance so that its parameterList can be configured per pane.
+        The configuration of the currently chosen strategies is saved in the query string for convenience.
+
+        Also added the "stat pane" to choose a moving average strategy and a enveloping strategy in each pane.
+
+        * public/v2/app.css: Specify the fill color for all SVG groups in the pane toolbar icons.
+
+        * public/v2/app.js:
+        (App.Pane._fetch): Delegate the creation of 'chartData' to _computeChartData.
+        (App.Pane.updateStatisticsTools): Added. Clones moving average and enveloping strategies for this pane.
+        (App.Pane._cloneStrategy): Added. Clones a strategy for a new pane.
+        (App.Pane._configureStrategy): Added. Finds and configures a strategy from the configuration retrieved
+        from the query string via ChartsController.
+        (App.Pane._computeChartData): Added. Creates chartData from fetchedData.
+        (App.Pane._computeMovingAverage): Added. Computes the moving average and the envelope.
+        (App.Pane._executeStrategy): Added.
+        (App.Pane._updateStrategyConfigIfNeeded): Pushes the strategy configurations to the query string via
+        ChartsController.
+        (App.ChartsController._parsePaneList): Merged the query string arguments for the range and point
+        selections, and added two new arguments for the moving average and the enveloping configurations.
+        (App.ChartsController._serializePaneList): Ditto.
+        (App.ChartsController._scheduleQueryStringUpdate): Observes strategy configurations.
+        (App.PaneController.actions.toggleBugsPane): Hides the stat pane.
+        (App.PaneController.actions.toggleSearchPane): Hides the stat pane.
+        (App.PaneController.actions.toggleStatPane): Added.
+
+        * public/v2/chart-pane.css: Added CSS rules for the new stat pane. Also added .foreground class for the
+        current (as opposed to baseline and target) time series for when it's the most foreground graph without
+        moving average and its envelope overlapping on top of it.
+
+        * public/v2/index.html: Added the templates for the stat pane and the corresponding icon (Σ).
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent.chartDataDidChange): Unset _totalWidth and _totalHeight to avoid exiting
+        early inside _updateDimensionsIfNeeded when chartData changes after the initial layout.
+        (App.InteractiveChartComponent.didInsertElement): Attach event listeners here instead of inside
+        _constructGraphIfPossible since that could be called multiple times on the same SVG element.
+        (App.InteractiveChartComponent._constructGraphIfPossible): Clear down the old SVG element we created
+        but don't bother removing individual paths and circles. Added the code to show the moving average time
+        series when there is one. Also add "foreground" class on SVG elements for the current time series when
+        we're not showing the moving average. chart-pane.css has been updated to "dim down" the current time
+        series when "foreground" is not set.
+        (App.InteractiveChartComponent._minMaxForAllTimeSeries): Take the moving average time series into
+        account when computing the y-axis range.
+        (App.InteractiveChartComponent._brushChanged): Removed 'selectionIsLocked' argument as it's useless.
+
+        * public/v2/js/statistics.js:
+        (Statistics.MovingAverageStrategies): Added.
+        (Statistics.EnvelopingStrategies): Added.
+
 2015-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         The delta value in the chart pane sometimes doens't show '+' for a positive delta

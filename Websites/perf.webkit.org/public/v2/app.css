@@ -121,12 +121,15 @@ body {
 }
 .icon-button g {
     stroke: #ccc;
+    fill: #ccc;
 }
 .icon-button:hover g {
     stroke: #666;
+    fill: #666;
 }
 .disabled .icon-button:hover g {
     stroke: #ccc;
+    fill: #ccc;
 }
 
 

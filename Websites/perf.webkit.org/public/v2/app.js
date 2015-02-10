@@ -351,7 +351,8 @@ App.Pane = Ember.Object.extend({
             App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(function (result) {
                 self.set('platform', result.platform);
                 self.set('metric', result.metric);
-                self.set('chartData', App.createChartData(result));
+                self.set('fetchedData', result);
+                self._computeChartData();
             }, function (result) {
                 if (!result || typeof(result) === "string")
                     self.set('failure', 'Failed to fetch the JSON with an error: ' + result);
@@ -431,6 +432,100 @@ App.Pane = Ember.Object.extend({
 
         return this.computeStatus(lastPoint, chartData.current.previousPoint(lastPoint));
     }.property('chartData'),
+    updateStatisticsTools: function ()
+    {
+        var movingAverageStrategies = Statistics.MovingAverageStrategies.map(this._cloneStrategy.bind(this));
+        this.set('movingAverageStrategies', [{label: 'None'}].concat(movingAverageStrategies));
+        this.set('chosenMovingAverageStrategy', this._configureStrategy(movingAverageStrategies, this.get('movingAverageConfig')));
+
+        var envelopingStrategies = Statistics.EnvelopingStrategies.map(this._cloneStrategy.bind(this));
+        this.set('envelopingStrategies', [{label: 'None'}].concat(envelopingStrategies));
+        this.set('chosenEnvelopingStrategy', this._configureStrategy(envelopingStrategies, this.get('envelopingConfig')));
+    }.on('init'),
+    _cloneStrategy: function (strategy)
+    {
+        var parameterList = (strategy.parameterList || []).map(function (param) { return Ember.Object.create(param); });
+        return Ember.Object.create({
+            id: strategy.id,
+            label: strategy.label,
+            description: strategy.description,
+            parameterList: parameterList,
+            execute: strategy.execute,
+        });
+    },
+    _configureStrategy: function (strategies, config)
+    {
+        if (!config || !config[0])
+            return null;
+
+        var id = config[0];
+        var chosenStrategy = strategies.find(function (strategy) { return strategy.id == id });
+        if (!chosenStrategy)
+            return null;
+
+        for (var i = 0; i < chosenStrategy.parameters.length; i++)
+            chosenStrategy.parameters[i] = parseFloat(config[i + 1]);
+
+        return chosenStrategy;
+    },
+    _computeChartData: function ()
+    {
+        if (!this.get('fetchedData'))
+            return;
+
+        var chartData = App.createChartData(this.get('fetchedData'));
+        chartData.movingAverage = this._computeMovingAverage(chartData);
+
+        this._updateStrategyConfigIfNeeded(this.get('chosenMovingAverageStrategy'), 'movingAverageConfig');
+        this._updateStrategyConfigIfNeeded(this.get('chosenEnvelopingStrategy'), 'envelopingConfig');
+
+        this.set('chartData', chartData);
+    }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
+        'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
+    _computeMovingAverage: function (chartData)
+    {
+        var currentTimeSeriesData = chartData.current.series();
+        var movingAverageStrategy = this.get('chosenMovingAverageStrategy');
+        if (!movingAverageStrategy || !movingAverageStrategy.execute)
+            return null;
+
+        var movingAverageValues = this._executeStrategy(movingAverageStrategy, currentTimeSeriesData);
+        if (!movingAverageValues)
+            return null;
+
+        var envelopeDelta = null;
+        var envelopingStrategy = this.get('chosenEnvelopingStrategy');
+        if (envelopingStrategy && envelopingStrategy.execute)
+            envelopeDelta = this._executeStrategy(envelopingStrategy, currentTimeSeriesData, [movingAverageValues]);
+        
+        return new TimeSeries(currentTimeSeriesData.map(function (point, index) {
+            var value = movingAverageValues[index];
+            return {
+                measurement: point.measurement,
+                time: point.time,
+                value: value,
+                interval: envelopeDelta !== null ? [value - envelopeDelta, value + envelopeDelta] : null,
+            }
+        }));
+    },
+    _executeStrategy: function (strategy, currentTimeSeriesData, additionalArguments)
+    {
+        var parameters = (strategy.parameterList || []).map(function (param) {
+            var parsed = parseFloat(param.value);
+            return Math.min(param.max || Infinity, Math.max(param.min || -Infinity, isNaN(parsed) ? 0 : parsed));
+        });
+        parameters.push(currentTimeSeriesData.map(function (point) { return point.value }));
+        return strategy.execute.apply(window, parameters.concat(additionalArguments));
+    },
+    _updateStrategyConfigIfNeeded: function (strategy, configName)
+    {
+        var config = null;
+        if (strategy && strategy.execute)
+            config = [strategy.id].concat((strategy.parameterList || []).map(function (param) { return param.value; }));
+
+        if (JSON.stringify(config) != JSON.stringify(this.get(configName)))
+            this.set(configName, config);
+    },
 });
 
 App.createChartData = function (data)
@@ -552,26 +647,30 @@ App.ChartsController = Ember.Controller.extend({
         if (!parsedPaneList)
             return null;
 
-        // Don't re-create all panes.
+        // FIXME: Don't re-create all panes.
         var self = this;
         return parsedPaneList.map(function (paneInfo) {
             var timeRange = null;
-            if (paneInfo[3] && paneInfo[3] instanceof Array) {
-                var timeRange = paneInfo[3];
+            var selectedItem = null;
+            if (paneInfo[2] instanceof Array) {
+                var timeRange = paneInfo[2];
                 try {
                     timeRange = [new Date(timeRange[0]), new Date(timeRange[1])];
                 } catch (error) {
                     console.log("Failed to parse the time range:", timeRange, error);
                 }
-            }
+            } else
+                selectedItem = paneInfo[2];
+
             return App.Pane.create({
                 store: self.store,
                 info: paneInfo,
                 platformId: paneInfo[0],
                 metricId: paneInfo[1],
-                selectedItem: paneInfo[2],
+                selectedItem: selectedItem,
                 timeRange: timeRange,
-                timeRangeIsLocked: !!paneInfo[4],
+                movingAverageConfig: paneInfo[3],
+                envelopingConfig: paneInfo[4],
             });
         });
     },
@@ -580,13 +679,14 @@ App.ChartsController = Ember.Controller.extend({
     {
         if (!panes.length)
             return undefined;
+        var self = this;
         return App.encodePrettifiedJSON(panes.map(function (pane) {
             return [
                 pane.get('platformId'),
                 pane.get('metricId'),
-                pane.get('selectedItem'),
-                pane.get('timeRange') ? pane.get('timeRange').map(function (date) { return date.getTime() }) : null,
-                !!pane.get('timeRangeIsLocked'),
+                pane.get('timeRange') ? pane.get('timeRange').map(function (date) { return date.getTime() }) : pane.get('selectedItem'),
+                pane.get('movingAverageConfig'),
+                pane.get('envelopingConfig'),
             ];
         }));
     },
@@ -594,8 +694,8 @@ App.ChartsController = Ember.Controller.extend({
     _scheduleQueryStringUpdate: function ()
     {
         Ember.run.debounce(this, '_updateQueryString', 1000);
-    }.observes('sharedZoom', 'panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem',
-        'panes.@each.timeRange', 'panes.@each.timeRangeIsLocked'),
+    }.observes('sharedZoom', 'panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem', 'panes.@each.timeRange',
+        'panes.@each.movingAverageConfig', 'panes.@each.envelopingConfig'),
 
     _updateQueryString: function ()
     {
@@ -711,8 +811,10 @@ App.PaneController = Ember.ObjectController.extend({
         },
         toggleBugsPane: function ()
         {
-            if (this.toggleProperty('showingAnalysisPane'))
+            if (this.toggleProperty('showingAnalysisPane')) {
                 this.set('showingSearchPane', false);
+                this.set('showingStatPane', false);
+            }
         },
         createAnalysisTask: function ()
         {
@@ -743,12 +845,21 @@ App.PaneController = Ember.ObjectController.extend({
             var model = this.get('model');
             if (!model.get('commitSearchRepository'))
                 model.set('commitSearchRepository', App.Manifest.repositoriesWithReportedCommits[0]);
-            if (this.toggleProperty('showingSearchPane'))
+            if (this.toggleProperty('showingSearchPane')) {
                 this.set('showingAnalysisPane', false);
+                this.set('showingStatPane', false);
+            }
         },
         searchCommit: function () {
             var model = this.get('model');
             model.searchCommit(model.get('commitSearchRepository'), model.get('commitSearchKeyword'));                
+        },
+        toggleStatPane: function ()
+        {
+            if (this.toggleProperty('showingStatPane')) {
+                this.set('showingSearchPane', false);
+                this.set('showingAnalysisPane', false);
+            }
         },
         zoomed: function (selection)
         {
@@ -786,7 +897,7 @@ App.PaneController = Ember.ObjectController.extend({
         var newSelection = this.get('parentController').get('sharedZoom');
         if (App.domainsAreEqual(newSelection, this.get('mainPlotDomain')))
             return;
-        this.set('mainPlotDomain', newSelection);
+        this.set('mainPlotDomain', newSelection || this.get('overviewDomain'));
         this.set('overviewSelection', newSelection);
     }.observes('parentController.sharedZoom').on('init'),
     _updateDetails: function ()

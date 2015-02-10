@@ -18,6 +18,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
         if (!chartData)
             return;
         this._needsConstruction = true;
+        this._totalWidth = undefined;
+        this._totalHeight = undefined;
         this._constructGraphIfPossible(chartData);
     }.observes('chartData').on('init'),
     didInsertElement: function ()
@@ -25,6 +27,14 @@ App.InteractiveChartComponent = Ember.Component.extend({
         var chartData = this.get('chartData');
         if (chartData)
             this._constructGraphIfPossible(chartData);
+
+        if (this.get('interactive')) {
+            var element = this.get('element');
+            this._attachEventListener(element, "mousemove", this._mouseMoved.bind(this));
+            this._attachEventListener(element, "mouseleave", this._mouseLeft.bind(this));
+            this._attachEventListener(element, "mousedown", this._mouseDown.bind(this));
+            this._attachEventListener($(element).parents("[tabindex]"), "keydown", this._keyPressed.bind(this));
+        }
     },
     willClearRender: function ()
     {
@@ -47,7 +57,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._x = d3.time.scale();
         this._y = d3.scale.linear();
 
-        // FIXME: Tear down the old SVG element.
+        if (this._svgElement)
+            this._svgElement.remove();
         this._svgElement = d3.select(element).append("svg")
                 .attr("width", "100%")
                 .attr("height", "100%");
@@ -86,23 +97,16 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .y0(function(point) { return point.interval ? yScale(point.interval[0]) : null; })
             .y1(function(point) { return point.interval ? yScale(point.interval[1]) : null; });
 
-        if (this._paths)
-            this._paths.forEach(function (path) { path.remove(); });
         this._paths = [];
-        if (this._areas)
-            this._areas.forEach(function (area) { area.remove(); });
         this._areas = [];
-        if (this._dots)
-            this._dots.forEach(function (dot) { dots.remove(); });
         this._dots = [];
-        if (this._highlights)
-            this._highlights.remove();
         this._highlights = null;
 
         this._currentTimeSeries = chartData.current;
         this._currentTimeSeriesData = this._currentTimeSeries.series();
         this._baselineTimeSeries = chartData.baseline;
         this._targetTimeSeries = chartData.target;
+        this._movingAverageTimeSeries = chartData.movingAverage;
 
         this._yAxisUnit = chartData.unit;
 
@@ -119,29 +123,36 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("class", "target"));
         }
 
+        var foregroundClass = this._movingAverageTimeSeries ? '' : ' foreground';
         this._areas.push(this._clippedContainer
             .append("path")
             .datum(this._currentTimeSeriesData)
-            .attr("class", "area"));
+            .attr("class", "area" + foregroundClass));
 
         this._paths.push(this._clippedContainer
             .append("path")
             .datum(this._currentTimeSeriesData)
-            .attr("class", "current"));
+            .attr("class", "current" + foregroundClass));
 
         this._dots.push(this._clippedContainer
             .selectAll(".dot")
                 .data(this._currentTimeSeriesData)
             .enter().append("circle")
-                .attr("class", "dot")
+                .attr("class", "dot" + foregroundClass)
                 .attr("r", this.get('chartPointRadius') || 1));
 
-        if (this.get('interactive')) {
-            this._attachEventListener(element, "mousemove", this._mouseMoved.bind(this));
-            this._attachEventListener(element, "mouseleave", this._mouseLeft.bind(this));
-            this._attachEventListener(element, "mousedown", this._mouseDown.bind(this));
-            this._attachEventListener($(element).parents("[tabindex]"), "keydown", this._keyPressed.bind(this));
+        if (this._movingAverageTimeSeries) {
+            this._paths.push(this._clippedContainer
+                .append("path")
+                .datum(this._movingAverageTimeSeries.series())
+                .attr("class", "movingAverage"));
+            this._areas.push(this._clippedContainer
+                .append("path")
+                .datum(this._movingAverageTimeSeries.series())
+                .attr("class", "envelope"));
+        }
 
+        if (this.get('interactive')) {
             this._currentItemLine = this._clippedContainer
                 .append("line")
                 .attr("class", "current-item");
@@ -331,9 +342,10 @@ App.InteractiveChartComponent = Ember.Component.extend({
         var currentRange = this._currentTimeSeries.minMaxForTimeRange(startTime, endTime);
         var baselineRange = this._baselineTimeSeries ? this._baselineTimeSeries.minMaxForTimeRange(startTime, endTime) : [Number.MAX_VALUE, Number.MIN_VALUE];
         var targetRange = this._targetTimeSeries ? this._targetTimeSeries.minMaxForTimeRange(startTime, endTime) : [Number.MAX_VALUE, Number.MIN_VALUE];
+        var movingAverageRange = this._movingAverageTimeSeries ? this._movingAverageTimeSeries.minMaxForTimeRange(startTime, endTime) : [Number.MAX_VALUE, Number.MIN_VALUE];
         return [
-            Math.min(currentRange[0], baselineRange[0], targetRange[0]),
-            Math.max(currentRange[1], baselineRange[1], targetRange[1]),
+            Math.min(currentRange[0], baselineRange[0], targetRange[0], movingAverageRange[0]),
+            Math.max(currentRange[1], baselineRange[1], targetRange[1], movingAverageRange[1]),
         ];
     },
     _currentSelection: function ()
@@ -378,7 +390,6 @@ App.InteractiveChartComponent = Ember.Component.extend({
             if (!this._brushExtent)
                 return;
 
-            this.set('selectionIsLocked', false);
             this._setCurrentSelection(undefined);
 
             // Avoid locking the indicator in _mouseDown when the brush was cleared in the same mousedown event.
@@ -391,7 +402,6 @@ App.InteractiveChartComponent = Ember.Component.extend({
             return;
         }
 
-        this.set('selectionIsLocked', true);
         this._setCurrentSelection(this._brush.extent());
     },
     _keyPressed: function (event)

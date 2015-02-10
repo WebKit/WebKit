@@ -50,6 +50,13 @@
     top: 0.55rem;
 }
 
+.chart-pane a.stat-button {
+    display: inline-block;
+    position: absolute;
+    right: 3.15rem;
+    top: 0.55rem;
+}
+
 .chart-pane a.bugs-button {
     display: inline-block;
     position: absolute;
@@ -64,36 +71,75 @@
     top: 0.55rem;
 }
 
-.search-pane, .analysis-pane {
+.popup-pane {
     position: absolute;
     top: 1.7rem;
     border: 1px solid #bbb;
-    padding: 0;
+    font-size: 0.8rem;
+    padding: 0.2rem;
     border-radius: 0.5rem;
     display: table;
     background: white;
+}
+
+.popup-pane.hidden {
+    display: none;
+}
+
+.stat-pane {
+    right: 2.6rem;
+    padding: 0;
+}
+
+.stat-pane fieldset {
+    border: solid 1px #ccc;
+    border-radius: 0.5rem;
+    margin: 0.2rem;
+    padding: 0;
+}
+
+.stat-option {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8rem;
+}
+
+.stat-option h1 {
+    font-size: inherit;
+    line-height: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    margin: 0;
+    border-top: solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
+}
+
+.stat-option:first-child h1 {
+    border-top: none;
+}
+
+.stat-option > * {
+    display: block;
+    margin: 0.1rem 0.5rem 0.1rem 1rem;
+}
+
+.stat-option input {
+    width: 4rem;
+}
+
+.stat-option p {
+    max-width: 15rem;
 }
 
 .analysis-pane {
     right: 1.3rem;
 }
 
-.analysis-pane table {
+.analysis-pane > * {
     margin: 0.2rem;
-    font-size: 0.8rem;
-}
-
-.analysis-pane th {
-    font-weight: normal;
 }
 
 .search-pane {
     right: 0rem;
-}
-
-.analysis-pane.hidden,
-.search-pane.hidden {
-    display: none;
 }
 
 .search-pane input {
@@ -103,15 +149,15 @@
     border: none;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
-    padding: 0.5rem;
-    font-size: 1rem;
+    padding: 0.2rem;
+    font-size: 0.8rem;
     margin: 0;
 }
 
 .search-pane .repositories {
     display: table-cell;
     vertical-align: middle;
-    padding: 0 0.5rem;
+    padding: 0;
 }
 
 .search-pane input:focus {
@@ -303,8 +349,11 @@
 }
 
 .chart .dot {
-    fill: #666;
+    fill: #ccc;
     stroke: none;
+}
+.chart .dot.foreground {
+    fill: #666;
 }
 
 .chart path.area {
@@ -312,9 +361,27 @@
     fill: #ccc;
     opacity: 0.8;
 }
+.chart path.area.foreground {
+}
 
 .chart path.current {
+    stroke: #ccc;
+}
+
+.chart path.current.foreground {
     stroke: #999;
+}
+
+.chart path.movingAverage {
+    stroke: #363;
+    fill: none;
+    opacity: 0.8;
+}
+
+.chart path.envelope {
+    stroke: none;
+    fill: #6c6;
+    opacity: 0.4;
 }
 
 .chart path.baseline {
