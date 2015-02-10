@@ -824,8 +824,8 @@ webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Skip ]
 webkit.org/b/95806 media/video-source-error-no-candidate.html [ Pass Failure ]
 webkit.org/b/95806 media/video-source-moved.html [ Pass Failure ]
 
-media/controls-styling.html [ Skip ] # Crashing
-media/media-document-audio-repaint.html [ Skip ] # Timeout
+#media/controls-styling.html [ Skip ] # Crashing
+#media/media-document-audio-repaint.html [ Skip ] # Timeout
 webkit.org/b/25465 media/video-zoom-controls.html [ Skip ] # Crashing
 
 # Resolution media query is not yet enabled.
@@ -856,7 +856,7 @@ webkit.org/b/106477 media/video-controls-captions-trackmenu-includes-enabled-tra
 webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
 
 # Windows does not support custom media data loading
-media/video-src-blob.html [ Skip ]
+#media/video-src-blob.html [ Skip ]
 webkit.org/b/113106 media/track/track-prefer-captions.html [ Skip ]
 
 # The logic in this test is no longer correct for Apple ports
@@ -877,8 +877,8 @@ webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Skip ] #  [ Timeou
 webkit.org/b/117322 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/62024 http/tests/media/video-cross-site.html [ Skip ] # Crash
-media/audio-constructor-src.html [ Skip ] #  [ Timeout ]
-media/audio-delete-while-slider-thumb-clicked.html	[ Skip ] #  [ Timeout ]
+media/audio-constructor-src.html [ Skip ] #  Timeout
+media/audio-delete-while-slider-thumb-clicked.html [ Skip ] # Timeout
 media/track/track-in-band-legacy-api.html [ Skip ]
 media/track/track-in-band-mode.html [ Skip ]
 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Skip ]
@@ -897,7 +897,7 @@ webkit.org/b/122166 media/track/video-track.html [ Skip ] # Crashing
 webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Skip ] #  [ Timeout ]
 webkit.org/b/122166 media/media-controls-invalid-url.html [ Skip ] # Crashing
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Skip ] # Crashing
-webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
+webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Skip ] # Crashing
 
 # Test introduced in r157133 fails. State of colorspace management on Windows is unclear.
 media/video-canvas-drawing-output.html [ Skip ] #  [ Timeout ]
@@ -921,264 +921,67 @@ webkit.org/b/128943 media/media-load-event.html [ Skip ] #  [ Timeout ]
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 media/track/track-datacue-value.html [ Skip ]
 
-# Crashing due to a decoding bug
-media/video-played-collapse.html [ Skip ] # Crash
-media/video-currentTime-delay.html [ Skip ] # Crash
-media/video-timeupdate-during-playback.html [ Skip ] # Crash
-webkit.org/b/113076 media/video-volume.html [ Skip ] # Crashing
-media/video-paused-0-rate.html [ Skip ] # Crashing
-media/video-pause-immediately.html [ Skip ] # Crashing
-media/video-src-source.html [ Skip ] # Crashing
-media/video-seekable.html [ Skip ] # Crashing
-media/video-load-readyState.html [ Skip ] # Crashing
-media/controls-right-click-on-timebar.html [ Skip ] # Crashing
-media/video-controls-transformed.html [ Skip ] # Crashing
-media/media-controller-time-constant.html [ Skip ] # Crashing
-media/video-controller-child-rate.html [ Skip ] # Crashing
-media/video-trackmenu-selection.html [ Skip ] # Crashing
-media/video-system-sleep.html [ Skip ] # Crashing
-media/video-extreme-playbackrate-crash.html [ Skip ] # Crashing
-media/video-display-toggle.html [ Skip ] # Crashing
-media/video-timeupdate-reverse-play.html [ Skip ] # Crashing
-media/video-remove-insert-repaints.html [ Skip ] # Crashing
-media/video-restricted-no-preload-metadata.html [ Skip ] # Crashing
-media/video-seek-by-small-increment.html [ Skip ] # Crashing
-media/video-controller-currentTime.html [ Skip ] # Crashing
-media/media-controller-timeupdate.html [ Skip ] # Crashing
-media/media-extension-with-fragment.html [ Skip ] # Crashing
-media/video-muted.html [ Skip ] # Crashing
-media/event-attributes.html [ Skip ] # Crashing
-media/no-autoplay-with-user-gesture-requirement.html [ Skip ] # Crashing
-media/video-controller-currentTime-rate.html [ Skip ] # Crashing
-media/video-layer-crash.html [ Skip ] # Crashing
-media/video-zoom.html [ Skip ] # Crashing
-media/video-object-fit-change.html [ Skip ] # Crashing
-media/video-load-preload-metadata.html [ Skip ] # Crashing
-media/remove-from-document.html [ Skip ] # Crashing
-media/restore-from-page-cache.html [ Skip ] # Crashing
-media/volume-bar-empty-when-muted.html [ Skip ] # Crashing
-media/sources-fallback-codecs.html [ Skip ] # Crashing
-media/auto-play-in-sandbox-with-allow-scripts.html [ Skip ] # Crashing
-media/video-played-reset.html [ Skip ] # Crashing
-media/media-captions-no-controls.html [ Skip ] # Crashing
-media/video-transformed.html [ Skip ] # Crashing
-media/media-controller-drag-crash.html [ Skip ] # Crashing
-media/video-ended-seek-crash.html [ Skip ] # Crashing
-media/video-concurrent-playback.html [ Skip ] # Crashing
-media/video-load-networkState.html [ Skip ] # Crashing
-media/video-seek-past-end-playing.html [ Skip ] # Crashing
-media/video-dom-src.html [ Skip ] # Crashing
-media/video-seek-multiple.html [ Skip ] # Crashing
-media/video-interruption-with-resume-allowing-play.html [ Skip ] # Crashing
-media/media-controller-time-clamp.html [ Skip ] # Crashing
+# Crashing
+media/media-controller.html [ Skip ] # Crashing
 media/media-controller-playbackrate.html [ Skip ] # Crashing
-media/video-load-preload-none.html [ Skip ] # Crashing
-media/video-background-playback.html [ Skip ] # Crashing
-media/video-autoplay.html [ Skip ] # Crashing
-media/video-object-fit.html [ Skip ] # Crashing
-media/video-plays-past-end-of-test.html [ Skip ] # Crashing
-media/media-controller-playback.html [ Skip ] # Crashing
-media/video-single-valid-source.html [ Skip ] # Crashing
-media/video-duration-known-after-eos.html [ Skip ] # Crashing
-media/media-event-listeners.html [ Skip ] # Crashing
 media/controls-after-reload.html [ Skip ] # Crashing
-media/video-canvas-alpha.html [ Skip ] # Crashing
-media/video-pause-empty-events.html [ Skip ] # Crashing
-media/video-seek-double.html [ Skip ] # Crashing
-media/video-currentTime-set.html [ Skip ] # Crashing
-media/video-replaces-poster.html [ Skip ] # Crashing
-media/video-source-load.html [ Skip ] # Crashing
-media/media-controller-time.html [ Skip ] # Crashing
-media/video-reverse-play-duration.html [ Skip ] # Crashing
-media/video-src.html [ Skip ] # Crashing
-media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html [ Skip ] # Crashing
-media/video-display-aspect-ratio.html [ Skip ] # Crashing
-media/video-ended-event-slow-motion-playback.html [ Skip ] # Crashing
-media/video-buffered.html [ Skip ] # Crashing
-media/video-poster-delayed.html [ Skip ] # Crashing
-media/video-delay-load-event.html [ Skip ] # Crashing
-media/video-dom-autoplay.html [ Skip ] # Crashing
-media/video-controls-rendering.html [ Skip ] # Crashing
-media/muted-video-is-playing-audio.html [ Skip ] # Crashing
-media/video-source-type.html [ Skip ] # Crashing
-media/video-played-ranges-1.html [ Skip ] # Crashing
-media/video-seek-past-end-paused.html [ Skip ] # Crashing
-media/video-loop.html [ Skip ] # Crashing
-media/video-seek-with-negative-playback.html [ Skip ] # Crashing
-media/video-currentTime.html [ Skip ] # Crashing
-media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ] # Crashing
-media/video-element-other-namespace-crash.html [ Skip ] # Crashing
-media/video-controls.html [ Skip ] # Crashing
-media/video-volume-slider-drag.html [ Skip ] # Crashing
 media/controls-without-preload.html [ Skip ] # Crashing
-media/video-src-set.html [ Skip ] # Crashing
-media/video-source-media.html [ Skip ] # Crashing
-media/video-volume-slider.html [ Skip ] # Crashing
-media/video-fast-seek.html [ Skip ] # Crashing
-media/video-playbackrate.html [ Skip ] # Crashing
-media/video-currentsrc-cleared.html [ Skip ] # Crashing
-media/video-remote-control-playpause.html [ Skip ] # Crashing
-media/video-defaultplaybackrate-before-load.html [ Skip ] # Crashing
-media/video-controls-zoomed.html [ Skip ] # Crashing
-media/nodesFromRect-shadowContent.html [ Skip ] # Crashing
-media/video-src-change.html [ Skip ] # Crashing
-media/video-preload.html [ Skip ] # Crashing
-media/media-controller-unpause.html [ Skip ] # Crashing
-media/video-controls-audiotracks-trackmenu.html [ Skip ] # Crashing
-media/video-src-remove.html [ Skip ] # Crashing
-media/media-fullscreen-inline.html [ Skip ] # Crashing
-media/video-aspect-ratio.html [ Skip ] # Crashing
-media/controls-drag-timebar.html [ Skip ] # Crashing
-media/video-seeking.html [ Skip ] # Crashing
-media/video-append-source.html [ Skip ] # Crashing
+media/video-autoplay.html [ Skip ] # Crashing
+media/video-controls-transformed.html [ Skip ] # Crashing
+media/video-display-aspect-ratio.html [ Skip ] # Crashing
 media/video-fullscreeen-only-controls.html [ Skip ] # Crashing
-media/video-no-autoplay.html [ Skip ] # Crashing
-media/video-source-error.html [ Skip ] # Crashing
-media/video-interruption-with-resume-not-allowing-play.html [ Skip ] # Crashing
-media/track/track-cues-seeking.html [ Skip ] # Crashing
-media/track/track-cue-rendering-tree-is-removed-properly.html [ Skip ] # Crashing
-media/track/track-mode.html [ Skip ] # Crashing
-media/track/track-cue-inline-assertion-crash.html [ Skip ] # Crashing
-media/track/track-css-user-override.html [ Skip ] # Crashing
-media/track/track-css-matching-default.html [ Skip ] # Crashing
-media/track/track-css-matching.html [ Skip ] # Crashing
-media/track/track-cues-missed.html [ Skip ] # Crashing
-media/track/track-cues-cuechange.html [ Skip ] # Crashing
-media/track/track-css-matching-timestamps.html [ Skip ] # Crashing
-media/track/track-cue-rendering-with-padding.html [ Skip ] # Crashing
-media/track/track-cue-rendering-on-resize.html [ Skip ] # Crashing
-media/track/track-insert-after-load-crash.html [ Skip ] # Crashing
-media/track/track-disabled-addcue.html [ Skip ] # Crashing
-media/track/track-cue-rendering-snap-to-lines-not-set.html [ Skip ] # Crashing
-media/track/track-cue-empty-text-crash.html [ Skip ] # Crashing
-media/track/track-css-all-cues.html [ Skip ] # Crashing
-media/track/track-cue-rendering-horizontal.html [ Skip ] # Crashing
-media/track/track-cues-pause-on-exit.html [ Skip ] # Crashing
-media/track/track-css-property-whitelist.html [ Skip ] # Crashing
-media/track/track-automatic-subtitles.html [ Skip ] # Crashing
-media/track/track-long-captions-file.html [ Skip ] # Crashing
-media/track/track-long-word-container-sizing.html [ Skip ] # Crashing
-media/track/track-cues-enter-exit.html [ Skip ] # Crashing
-media/track/track-mode-triggers-loading.html [ Skip ] # Crashing
-media/track/track-css-cue-lifetime.html [ Skip ] # Crashing
-media/track/track-disabled.html [ Skip ] # Crashing
-media/track/track-mode-not-changed-by-new-track.html [ Skip ] # Crashing
-media/track/media-element-enqueue-event-crash.html [ Skip ] # Crashing
-media/track/track-active-cues.html [ Skip ] # Crashing
-media/track/track-cue-rendering-rtl.html [ Skip ] # Crashing
-media/track/track-css-matching-lang.html [ Skip ] # Crashing
-media/track/track-cue-rendering-empty-cue-crash.html [ Skip ] # Crashing
-media/track/track-cue-container-rendering-position.html [ Skip ] # Crashing
-media/track/track-delete-during-setup.html [ Skip ] # Crashing
-media/track/track-legacyapi-with-automatic-mode.html [ Skip ] # Crashing
-media/track/regions-webvtt/vtt-region-display.html [ Skip ] # Crashing
-media/track/regions-webvtt/vtt-region-dom-layout.html [ Skip ] # Crashing
-media/track/track-cue-rendering.html [ Skip ] # Crashing
-media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Crashing
-media/track/track-cue-overlap-snap-to-lines-not-set.html [ Skip ] # Crashing
-media/track/track-remove-active-cue-crash.html [ Skip ] # Crashing
-media/track/track-remove-quickly.html [ Skip ] # Crashing
-media/video-play-empty-events.html [ Skip ] # Crashing
-media/video-restricted-no-preload-auto.html [ Skip ] # Crashing
-media/media-controls-cancel-events.html [ Skip ] # Crashing
-media/media-controls-timeline-updates.html [ Skip ] # Crashing
-media/video-currentTime-set2.html [ Skip ] # Crashing
-media/video-source.html [ Skip ] # Crashing
 media/video-fullscreeen-only-playback.html [ Skip ] # Crashing
-media/video-frame-accurate-seek.html [ Skip ] # Crashing
-media/video-src-empty.html [ Skip ] # Crashing
-media/video-play-require-user-gesture.html [ Skip ] # Crashing
-media/video-ended-event-negative-playback.html [ Skip ] # Crashing
-media/video-seek-after-end.html [ Skip ] # Crashing
-media/video-set-rate-from-pause.html [ Skip ] # Crashing
-media/controls-strict.html [ Skip ] # Crashing
-media/W3C/video/src/src_removal_does_not_trigger_loadstart.html [ Skip ] # Crashing
-media/W3C/video/readyState/readyState_during_canplay.html [ Skip ] # Crashing
-media/W3C/video/readyState/readyState_during_canplaythrough.html [ Skip ] # Crashing
-media/W3C/video/readyState/readyState_during_playing.html [ Skip ] # Crashing
-media/W3C/video/readyState/readyState_during_loadeddata.html [ Skip ] # Crashing
-media/W3C/video/paused/paused_false_during_play.html [ Skip ] # Crashing
-media/W3C/video/paused/paused_true_during_pause.html [ Skip ] # Crashing
-media/W3C/video/networkState/networkState_during_loadstart.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadedmetadata.html [ Skip ] # Crashing
-media/W3C/video/events/event_canplaythrough_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadstart.html [ Skip ] # Crashing
-media/W3C/video/events/event_playing_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_order_loadedmetadata_loadeddata.html [ Skip ] # Crashing
-media/W3C/video/events/event_order_canplay_playing.html [ Skip ] # Crashing
-media/W3C/video/events/event_canplay.html [ Skip ] # Crashing
-media/W3C/video/events/event_play_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_progress_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadstart_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_order_loadstart_progress.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadeddata.html [ Skip ] # Crashing
-media/W3C/video/events/event_play.html [ Skip ] # Crashing
-media/W3C/video/events/event_canplaythrough.html [ Skip ] # Crashing
-media/W3C/video/events/event_progress.html [ Skip ] # Crashing
-media/W3C/video/events/event_playing.html [ Skip ] # Crashing
-media/W3C/video/events/event_pause_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_order_canplay_canplaythrough.html [ Skip ] # Crashing
-media/W3C/video/events/event_timeupdate_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_canplay_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadedmetadata_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_loadeddata_manual.html [ Skip ] # Crashing
-media/W3C/video/events/event_timeupdate.html [ Skip ] # Crashing
-http/tests/media/reload-after-dialog.html [ Skip ] # Crashing
-http/tests/media/video-error-abort.html [ Skip ] # Crashing
-http/tests/media/hls/hls-audio-tracks.html [ Skip ] # Crashing
-http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ] # Crashing
-http/tests/media/hls/video-controls-live-stream.html [ Skip ] # Crashing
-http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ] # Crashing
-http/tests/media/video-query-url.html [ Skip ] # Crashing
-http/tests/media/video-load-suspend.html [ Skip ] # Crashing
-http/tests/media/video-load-twice.html [ Skip ] # Crashing
-http/tests/media/video-play-progress.html [ Skip ] # Crashing
+media/video-load-networkState.html [ Skip ] # Crashing
+media/video-object-fit.html [ Skip ] # Crashing
+media/video-object-fit-change.html [ Skip ] # Crashing
+media/video-remove-insert-repaints.html [ Skip ] # Crashing
+media/video-volume-slider.html [ Skip ] # Crashing
+media/video-volume-slider-drag.html [ Skip ] # Crashing
+
+media/controls-strict.html [ Failure ]
+media/controls-styling.html [ Failure ]
+media/media-controls-timeline-updates.html [ Failure ]
+media/sources-fallback-codecs.html [ Failure ]
+media/track/track-css-user-override.html [ Failure ]
+media/track/track-cue-rendering.html [ Failure ]
+media/track/track-disabled.html [ Failure ]
+media/track/track-long-word-container-sizing.html [ Failure ]
+media/video-controls-audiotracks-trackmenu.html [ Failure ]
+media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
+media/video-controls-rendering.html [ Failure ]
+media/video-display-toggle.html [ Failure ]
+media/video-layer-crash.html [ Failure ]
+media/video-load-preload-metadata.html [ Failure ]
+media/video-pause-immediately.html [ Failure ]
+media/video-src-blob.html [ Failure ]
 
 # Timeouts
+media/audio-constructor-preload.html [ Skip ] # Timeout
+media/audio-data-url.html [ Skip ] # Timeout
 media/audio-only-video-intrinsic-size.html [ Skip ] # Timeout
 media/audio-play-event.html [ Skip ] # Timeout
-media/media-document-audio-controls-visible.html [ Skip ] # Timeout
 media/media-blocked-by-beforeload.html [ Skip ] # Timeout
-media/media-volume-slider-rendered-below.html [ Skip ] # Timeout
-media/video-does-not-loop.html [ Skip ] # Timeout
 media/media-captions.html [ Skip ] # Timeout
 media/media-continues-playing-after-replace-source.html [ Skip ] # Timeout
-media/video-defaultmuted.html [ Skip ] # Timeout
-media/audio-data-url.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-kind.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-language.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-style.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-mkv-chapters.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-kind.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-addtrack.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-mpegts-metadata.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-addtrack.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-mode.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-style.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-mode.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-srt-mkv-track-order.html [ Skip ] # Timeout
-media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Skip ] # Timeout
-media/track/track-language-preference.html [ Skip ] # Timeout
-media/track/video/video-track-mkv-theora-language.html [ Skip ] # Timeout
-media/track/video/video-track-mkv-theora-selected.html [ Skip ] # Timeout
-media/track/video/video-track-mkv-theora-addtrack.html [ Skip ] # Timeout
+media/media-controls-cancel-events.html [ Skip ] # Timeout
+media/media-document-audio-controls-visible.html [ Skip ] # Timeout
+media/media-document-audio-repaint.html [ Skip ] # Timeout
+media/media-volume-slider-rendered-below.html [ Skip ] # Timeout
+media/track/track-cues-cuechange.html [ Skip ] # Timeout
+media/track/track-cues-enter-exit.html [ Skip ] # Timeout
+media/track/track-cues-missed.html [ Skip ] # Timeout
+media/track/track-cues-pause-on-exit.html [ Skip ] # Timeout
+media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Timeout
 media/track/track-datacue.html [ Skip ] # Timeout
-media/track/track-load-error-readyState.html [ Skip ] # Timeout
-media/track/audio/audio-track-mkv-vorbis-language.html [ Skip ] # Timeout
-media/track/audio/audio-track-mkv-vorbis-enabled.html [ Skip ] # Timeout
-media/track/audio/audio-track-mkv-vorbis-addtrack.html [ Skip ] # Timeout
+media/track/track-language-preference.html [ Skip ] # Timeout
+media/track/track-long-captions-file.html [ Skip ] # Timeout
+media/track/track-mode.html	[ Skip ] # Timeout
+media/track/w3c/track/webvtt/basic.html	[ Skip ] # Timeout
+media/video-defaultmuted.html [ Skip ] # Timeout
+media/video-does-not-loop.html [ Skip ] # Timeout
 media/video-rtl.html [ Skip ] # Timeout
-media/audio-constructor-preload.html [ Skip ] # Timeout
+media/video-seek-with-negative-playback.html [ Skip ] # Timeout
 media/video-size-intrinsic-scale.html [ Skip ] # Timeout
-http/tests/media/hls/video-cookie.html [ Skip ] # Timeout
-http/tests/media/video-play-waiting.html [ Skip ] # Timeout
-http/tests/media/media-stream/disconnected-frame-already.html [ Skip ] # Timeout
-http/tests/media/media-stream/disconnected-frame.html [ Skip ] # Timeout
-http/tests/media/media-stream/disconnected-frame-permission-denied.html [ Skip ] # Timeout
-http/tests/media/video-buffered-range-contains-currentTime.html [ Skip ] # Timeout
 
 # Extra whitespace in the output
 media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
