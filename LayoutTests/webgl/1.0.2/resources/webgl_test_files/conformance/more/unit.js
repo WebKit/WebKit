@@ -390,6 +390,38 @@ function assertArrayEquals(name, v, p) {
   return true;
 }
 
+function assertArrayEqualsWithEpsilon(name, v, p, l) {
+if (l == null) { l = p; p = v; v = name; name = null; }
+if (!v) {
+testFailed("assertArrayEqualsWithEpsilon: first array undefined", name, v, p);
+return false;
+}
+if (!p) {
+testFailed("assertArrayEqualsWithEpsilon: second array undefined", name, v, p);
+return false;
+}
+if (!l) {
+testFailed("assertArrayEqualsWithEpsilon: limit array undefined", name, v, p);
+return false;
+}
+if (v.length != p.length) {
+testFailed("assertArrayEqualsWithEpsilon", name, v, p, l);
+return false;
+}
+if (v.length != l.length) {
+testFailed("assertArrayEqualsWithEpsilon", name, v, p, l);
+return false;
+}
+for (var ii = 0; ii < v.length; ++ii) {
+if (Math.abs(v[ii]- p[ii])>l[ii]) {
+testFailed("assertArrayEqualsWithEpsilon", name, v, p, l);
+return false;
+}
+}
+testPassed("assertArrayEqualsWithEpsilon", name, v, p, l);
+return true;
+}
+
 function assertNotEquals(name, v, p) {
   if (p == null) { p = v; v = name; name = null; }
   if (compare(v, p)) {

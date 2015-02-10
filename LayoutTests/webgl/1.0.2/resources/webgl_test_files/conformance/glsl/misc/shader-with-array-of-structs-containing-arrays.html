@@ -109,8 +109,6 @@ for (var ii = 0; ii < 2; ++ii) {
 
 var program = wtu.setupProgram(gl, ["vshader", "fshader-with-one-element-arrays"], ["a_position"]);
 var green_loc = gl.getUniformLocation(program, "u_colors[0].color[0]");
-var zeroth_color = gl.getUniformLocation(program, "u_colors[0].color");
-shouldBeTrue("zeroth_color != undefined");
 gl.uniform4fv(green_loc, [0, 1, 0, 1]);
 wtu.clearAndDrawUnitQuad(gl);
 wtu.checkCanvas(gl, [0, 255, 0, 255], "Should be green");

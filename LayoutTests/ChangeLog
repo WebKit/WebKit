@@ -1,3 +1,35 @@
+2015-02-09  Roger Fong  <roger_fong@apple.com>
+
+        WebGL: Update 1.0.2 conformance layout tests and address new failure.
+        https://bugs.webkit.org/show_bug.cgi?id=141408.
+        <rdar://problem/19773236>
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/bad-arguments-test-expected.txt: Removed.
+        * fast/canvas/webgl/bad-arguments-test.html: Removed. Redundant test case.
+        * webgl/1.0.2/resources/webgl_test_files/README.md:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/attribs/gl-disabled-vertex-attrib.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/context/context-creation-and-destruction.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/extensions/webgl-debug-shaders.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/extensions/webgl-depth-texture.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/glsl/misc/shader-with-array-of-structs-containing-arrays.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/misc/bad-arguments-test.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/misc/webgl-specific.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/more/functions/uniformMatrixBadArgs.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/more/util.js:
+        (VBO.prototype.use):
+        * webgl/1.0.2/resources/webgl_test_files/conformance/rendering/multisample-corruption.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/fragmentShader.frag:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/glsl-generator.js:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/vertexShader.vert:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        * webgl/1.0.2/resources/webgl_test_files/test-guidelines.md:
+        * webgl/1.0.2/resources/webgl_test_files/webgl-conformance-tests.html:
+
 2015-02-09  Jer Noble  <jer.noble@apple.com>
 
         [WebAudio] AudioBufferSourceNodes should accurately play backwards if given a negative playbackRate.

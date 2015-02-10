@@ -72,15 +72,13 @@ function shouldBeEmptyString(command) {
 }
 
 for (var i = 0; i < testArguments.length; ++i) {
-  var func, func2, func3;
+  var func, func2;
   if (testArguments[i].throws) {
     func = shouldThrow;
     func2 = shouldThrow;
-    func3 = shouldThrow;
   } else {
     func = shouldBeUndefined;
     func2 = shouldBeNull;
-    func3 = shouldBeEmptyString;
   }
   argument = testArguments[i].value;
   func("context.compileShader(argument)");
@@ -102,15 +100,15 @@ for (var i = 0; i < testArguments.length; ++i) {
   func("context.uniform2iv(argument, new Int32Array([0, 0]))");
   func("context.uniformMatrix2fv(argument, false, new Float32Array([0.0, 0.0, 0.0, 0.0]))");
 
+  func2("context.getProgramInfoLog(argument)");
   func2("context.getProgramParameter(argument, 0)");
+  func2("context.getShaderInfoLog(argument)");
   func2("context.getShaderParameter(argument, 0)");
+  func2("context.getShaderSource(argument)");
   func2("context.getUniform(argument, loc)");
   func2("context.getUniform(program, argument)");
   func2("context.getUniformLocation(argument, 'u_modelViewProjMatrix')");
 
-  func3("context.getProgramInfoLog(argument)");
-  func3("context.getShaderInfoLog(argument)");
-  func3("context.getShaderSource(argument)");
 }
 
 var successfullyParsed = true;

@@ -55,6 +55,7 @@ var shader = null;
 var program = null;
 var info = null;
 var translatedSource;
+var newTranslatedSource;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
@@ -117,9 +118,9 @@ function runTestEnabled() {
 
             // if no source has been defined or compileShader() has not been called,
             // getTranslatedShaderSource() should return an empty string.
-            shouldBeNull("ext.getTranslatedShaderSource(shader)");
+            shouldBe("ext.getTranslatedShaderSource(shader)", '""');
             gl.shaderSource(shader, info.source);
-            shouldBeNull("ext.getTranslatedShaderSource(shader)");
+            shouldBe("ext.getTranslatedShaderSource(shader)", '""');
             gl.compileShader(shader);
             shouldBeTrue("gl.getShaderParameter(shader, gl.COMPILE_STATUS)");
             translatedSource = ext.getTranslatedShaderSource(shader);

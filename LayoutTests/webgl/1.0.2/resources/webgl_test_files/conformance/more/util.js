@@ -841,7 +841,7 @@ VBO.prototype = {
     if (!this.initialized) this.init();
     var gl = this.gl;
     for (var i=0; i<arguments.length; i++) {
-      if (arguments[i] == null) continue;
+	  if (arguments[i] == null || arguments[i] == -1) continue;
       gl.bindBuffer(gl.ARRAY_BUFFER, this.vbos[i]);
       gl.vertexAttribPointer(arguments[i], this.data[i].size, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(arguments[i]);

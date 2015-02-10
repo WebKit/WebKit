@@ -44,20 +44,20 @@
 attribute vec4 a_position;
 attribute vec4 a_color;
 varying vec4 v_color;
+bool isCorrectColor(vec4 v) {
+  return v.x == 0.0 && v.y == 0.0 && v.z == 0.0 && v.w == 1.0;
+}
 void main() {
   gl_Position = a_position;
-  v_color = a_color;
+  v_color = isCorrectColor(a_color) ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
 }
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
 precision mediump float;
 varying vec4 v_color;
-bool isCorrectColor(vec4 v) {
-  return v.x == 0.0 && v.y == 0.0 && v.z == 0.0 && v.w == 1.0;
-}
 void main() {
-  gl_FragColor = isCorrectColor(v_color) ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
+  gl_FragColor = v_color;
 }
 </script>
 

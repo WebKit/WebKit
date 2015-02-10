@@ -1,7 +1,7 @@
 Contributing WebGL conformance tests Guidelines
 ===============================================
 
-Thank you for contibuting to the WebGL conformance tests.
+Thank you for contributing to the WebGL conformance tests.
 Please try to follow these guidelines when submitting a test.
 
 *   If you're new to git [here's a terse set of instructions](http://www.khronos.org/webgl/wiki/Using_Github_To_Contribute "Using Github to Contribute").
@@ -43,7 +43,7 @@ These lines appears at the top of every html and js file under sdk/tests/conform
 *   Please use code similar to the code in existing tests
 
     Ideally, copy an existing test and modify it for your new test. Try not to duplicate
-    code that already exists where approriate. In particular
+    code that already exists where appropriate. In particular
 
     *   use the functions in WebGLTestUtils rather than duplicating functionality.
 
@@ -91,7 +91,7 @@ These lines appears at the top of every html and js file under sdk/tests/conform
              name in `opt_attribs` is bound to the corresponding location in `opt_locations`.
 
         *    If you need to wait for a composite call `WebGLTestUtils.waitForComposite`.
-             As compositing is a browser specfic thing this provides a central place to
+             As compositing is a browser specific thing this provides a central place to
              update all tests that rely on compositing to function.
 
     *   Code/Tag Order
@@ -133,17 +133,17 @@ These lines appears at the top of every html and js file under sdk/tests/conform
                 runNextTest();
 
             Remember the tests need to run without timing out even and slow mobile devices.
-            The harness resets the timeout timer everytime a test reports success or failure
+            The harness resets the timeout timer every time a test reports success or failure
             so as long as some part of your test calls `testPassed` or `testFailed` or one of the
             many wrappers (`shouldXXX`, `glErrorShouldBe`, `WebGLTestUtils.checkCanvasXXX`, etc..)
             every so often the harness will not timeout your test.
 
-        *   The test harness requries the global variable `successfullyParse` to be set to true.
+        *   The test harness requires the global variable `successfullyParse` to be set to true.
             This usually appears at the end of a file.
 
                 var successfullyParsed = true;
 
-    *   Do not use browser specfic code.
+    *   Do not use browser specific code.
 
         *   Do not check the browser version. Use feature detection.
 
@@ -151,7 +151,7 @@ These lines appears at the top of every html and js file under sdk/tests/conform
             other tests can go through the same abstraction and the workaround is isolated
             to one place.
 
-        *   Vendors may place test harness specific code in the testing infrustructure.
+        *   Vendors may place test harness specific code in the testing infrastructure.
 
                 resources/js-test-pre.js
                 conformance/more/unit.js
@@ -164,11 +164,11 @@ These lines appears at the top of every html and js file under sdk/tests/conform
 
     *   All JavaScript must start with "use strict";
 
-*   If adding a new test edit the approriate 00_test_list.txt file
+*   If adding a new test edit the appropriate 00_test_list.txt file
 
     Each folder has a 00_test_list.txt file that lists the test in that folder.
     Each new test should be prefixed with the option `--min-version <version>` where
-    version is 1 more than the newest official verison. At the time of this writing
+    version is 1 more than the newest official version. At the time of this writing
     all new tests should be prefixed with `--min-version 1.0.2`
 
 

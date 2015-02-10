@@ -252,9 +252,9 @@ var runFeatureTest = function(params) {
   var wtu = WebGLTestUtils;
   var gridRes = params.gridRes;
   var vertexTolerance = params.tolerance || 0;
-  var fragmentTolerance = vertexTolerance;
+  var fragmentTolerance = params.tolerance || 1;
   if ('fragmentTolerance' in params)
-    fragmentTolerance = params.fragmentTolerance || 0;
+    fragmentTolerance = params.fragmentTolerance;
 
   description("Testing GLSL feature: " + params.feature);
 

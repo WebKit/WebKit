@@ -2617,10 +2617,8 @@ WebGLGetInfo WebGLRenderingContextBase::getProgramParameter(WebGLProgram* progra
 String WebGLRenderingContextBase::getProgramInfoLog(WebGLProgram* program, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLostOrPending())
+    if (isContextLostOrPending() || !validateWebGLObject("getProgramInfoLog", program))
         return String();
-    if (!validateWebGLObject("getProgramInfoLog", program))
-        return "";
     return ensureNotNull(m_context->getProgramInfoLog(objectOrZero(program)));
 }
 
@@ -2714,10 +2712,8 @@ WebGLGetInfo WebGLRenderingContextBase::getShaderParameter(WebGLShader* shader, 
 String WebGLRenderingContextBase::getShaderInfoLog(WebGLShader* shader, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLostOrPending())
+    if (isContextLostOrPending() || !validateWebGLObject("getShaderInfoLog", shader))
         return String();
-    if (!validateWebGLObject("getShaderInfoLog", shader))
-        return "";
     return ensureNotNull(m_context->getShaderInfoLog(objectOrZero(shader)));
 }
 
@@ -2756,10 +2752,8 @@ PassRefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContextBase::getShaderPreci
 String WebGLRenderingContextBase::getShaderSource(WebGLShader* shader, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLostOrPending())
+    if (isContextLostOrPending() || !validateWebGLObject("getShaderSource", shader))
         return String();
-    if (!validateWebGLObject("getShaderSource", shader))
-        return "";
     return ensureNotNull(shader->getSource());
 }
 

@@ -144,7 +144,8 @@ function start() {
   var reportType = WebGLTestHarnessModule.TestHarness.reportType;
   var pageCount = 0;
   var folderCount = 0;
-  var autoScroll = true;
+  var autoScrollEnabled = true; // Whether the user prefers to auto scroll
+  var autoScroll = true; // Whether auto scroll is actually performed
 
   var Page = function(reporter, folder, testIndex, url) {
     this.reporter = reporter;
@@ -297,7 +298,7 @@ function start() {
     button.type = 'button';
     button.value = 'run';
     button.onclick = function() {
-      autoScroll = true;
+      autoScroll = autoScrollEnabled;
       that.run();
     };
     if (reporter.noWebGL) {
@@ -771,9 +772,15 @@ function start() {
   var button = document.getElementById("runTestsButton");
   button.disabled = true;
   button.onclick = function() {
-    autoScroll = true;
+    autoScroll = autoScrollEnabled;
     reporter.postTestStartToServer();
     testHarness.runTests();
+  };
+  var autoScrollCheckbox = document.getElementById("autoScrollCheckbox");
+  autoScrollCheckbox.checked = autoScrollEnabled;
+  autoScrollCheckbox.onclick = function() {
+    autoScrollEnabled = autoScrollCheckbox.checked;
+    autoScroll = autoScrollEnabled;
   };
   var textbutton = document.getElementById("showTextSummary");
   textbutton.onclick = function() {
@@ -829,6 +836,9 @@ function start() {
               </span>
               <br/>
               <input type="button" value="run tests" id="runTestsButton"/>
+              <br/>
+              <input type="checkbox" id="autoScrollCheckbox"/>
+              <label for="autoScrollCheckbox">auto scroll</label>
               <br/>
               <input type="button" style="visibility: hidden;" value="display text summary" id="showTextSummary"/>
               <div id="nowebgl" class="nowebgl" style="display: none;">

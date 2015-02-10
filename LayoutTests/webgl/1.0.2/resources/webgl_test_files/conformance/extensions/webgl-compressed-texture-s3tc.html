@@ -609,7 +609,7 @@ function compareRect(
                 if (actual[actualOffset + jj] != expected[jj]) {
                     failed = true;
                     var was = actual[actualOffset + 0].toString();
-                    for (j = 1; j < 4; ++j) {
+                    for (var j = 1; j < 4; ++j) {
                         was += "," + actual[actualOffset + j];
                     }
                     testFailed('at (' + xx + ', ' + yy +

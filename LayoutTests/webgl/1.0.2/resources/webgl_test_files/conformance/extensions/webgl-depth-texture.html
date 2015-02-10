@@ -273,29 +273,14 @@ function runTestExtension() {
 
         dumpIt(gl, res, "--depth--");
 
-        // Check that each pixel's RGB are the same and that it's value is less
-        // than the previous pixel in either direction. Basically verify we have a
-        // gradient.
+        // Check that each pixel's R value is less than that of the previous pixel
+        // in either direction. Basically verify we have a gradient.
         var success = true;
         for (var yy = 0; yy < res; ++yy) {
           for (var xx = 0; xx < res; ++xx) {
             var actual = (yy * res + xx) * 4;
             var left = actual - 4;
             var down = actual - res * 4;
-
-            if (actualPixels[actual + 0] != actualPixels[actual + 1]) {
-                testFailed('R != G');
-                success = false;
-            }
-            if (actualPixels[actual + 0] != actualPixels[actual + 2]) {
-                testFailed('R != B');
-                success = false;
-            }
-            // ALPHA is implementation dependent
-            if (actualPixels[actual + 3] != 0xFF && actualPixels[actual + 3] != actualPixels[actual + 0]) {
-                testFailed('A != 255 && A != R');
-                success = false;
-            }
 
             if (xx > 0) {
               if (actualPixels[actual] <= actualPixels[left]) {
