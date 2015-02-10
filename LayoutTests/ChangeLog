@@ -1,5 +1,25 @@
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r178490.
+
+    2015-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+            Graphics corruption after Find on some pages
+            https://bugs.webkit.org/show_bug.cgi?id=140489
+
+            Reviewed by Zalan Bujtas.
+
+            Two new tests. The first one just reports that we have an opaque compositing
+            layer. The second one tests the the user-visible symptom of the missing
+            background.
+
+            * compositing/contents-opaque/opaque-with-scrolled-expected.txt: Added.
+            * compositing/contents-opaque/opaque-with-scrolled.html: Added.
+            * fast/backgrounds/opaque-scrolled-paint-background-expected.html: Added.
+            * fast/backgrounds/opaque-scrolled-paint-background.html: Added.
+
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r178426.
 
     2015-01-14  Jer Noble  <jer.noble@apple.com>
