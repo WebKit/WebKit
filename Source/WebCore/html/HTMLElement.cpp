@@ -953,15 +953,6 @@ void HTMLElement::calculateAndAdjustDirectionality()
 void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType changeType)
 {
     // FIXME: This function looks suspicious.
-    if (document().renderView() && (changeType == ElementRemoved || changeType == TextRemoved)) {
-        Node* node = beforeChange ? beforeChange->nextSibling() : nullptr;
-        for (; node; node = node->nextSibling()) {
-            if (elementAffectsDirectionality(*node))
-                continue;
-
-            setHasDirAutoFlagRecursively(node, false);
-        }
-    }
 
     if (!selfOrAncestorHasDirAutoAttribute())
         return;
