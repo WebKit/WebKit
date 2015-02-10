@@ -1,5 +1,12 @@
 2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix.
+
+        * public/v2/app.js:
+        (set get App.Pane.Ember.Object.extend):
+
+2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         New perf dashboard should have the ability to overlay moving average with an envelope
         https://bugs.webkit.org/show_bug.cgi?id=141438
 

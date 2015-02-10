@@ -463,8 +463,10 @@ App.Pane = Ember.Object.extend({
         if (!chosenStrategy)
             return null;
 
-        for (var i = 0; i < chosenStrategy.parameters.length; i++)
-            chosenStrategy.parameters[i] = parseFloat(config[i + 1]);
+        if (chosenStrategy.parameterList) {
+            for (var i = 0; i < chosenStrategy.parameterList.length; i++)
+                chosenStrategy.parameterList[i].value = parseFloat(config[i + 1]);
+        }
 
         return chosenStrategy;
     },
