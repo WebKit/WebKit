@@ -323,7 +323,7 @@ CodeMirror.extendMode("css", {
             if (lastContent === ":") // Space in "prop: value" but not in a selectors "a:link" or "div::after" or media queries "(max-device-width:480px)".
                 return state.state === "prop";
             if (lastContent === ")" && (content !== ")" && content !== ",")) {
-                if (token === "number") // linear-gradient(rgb(...)0%,rgb(...)100%)
+                if (/\bnumber\b/.test(token)) // linear-gradient(rgb(...)0%,rgb(...)100%)
                     return true;
                 if (state.state === "prop") // -webkit-transform:rotate(...)translate(...);
                     return true;
