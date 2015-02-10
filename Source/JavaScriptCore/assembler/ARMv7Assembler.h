@@ -1194,7 +1194,7 @@ public:
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(imm.isUInt12());
-        ASSERT(!(imm.isUInt12() & 1));
+        ASSERT(!(imm.getUInt12() & 1));
 
         if (!((rt | rn) & 8) && imm.isUInt6())
             m_formatter.oneWordOp5Imm5Reg3Reg3(OP_LDRH_imm_T1, imm.getUInt6() >> 1, rn, rt);

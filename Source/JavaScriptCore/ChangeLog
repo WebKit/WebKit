@@ -1,5 +1,19 @@
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179187.
+
+    2015-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+            [ARM] Typo fix after r176083
+            https://bugs.webkit.org/show_bug.cgi?id=140937
+
+            Reviewed by Anders Carlsson.
+
+            * assembler/ARMv7Assembler.h:
+            (JSC::ARMv7Assembler::ldrh):
+
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176083.
 
     2014-11-13  Benjamin Poulain  <benjamin@webkit.org>
