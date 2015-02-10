@@ -188,7 +188,7 @@ public:
     }
 
     // Used to calculate the underline offset for TextUnderlinePositionUnder.
-    float maxLogicalTop() const;
+    float maxLogicalBottom() const;
 
     Node* getLogicalStartBoxWithNode(InlineBox*&) const;
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;

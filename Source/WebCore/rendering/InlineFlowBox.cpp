@@ -748,7 +748,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     }
 }
 
-void InlineFlowBox::computeMaxLogicalTop(float& maxLogicalTop) const
+void InlineFlowBox::computeMaxLogicalBottom(float& maxLogicalBottom) const
 {
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
@@ -757,11 +757,9 @@ void InlineFlowBox::computeMaxLogicalTop(float& maxLogicalTop) const
         if (descendantsHaveSameLineHeightAndBaseline())
             continue;
 
-        maxLogicalTop = std::max<float>(maxLogicalTop, child->y());
-        float localMaxLogicalTop = 0;
+        maxLogicalBottom = std::max<float>(maxLogicalBottom, child->logicalBottom());
         if (is<InlineFlowBox>(*child))
-            downcast<InlineFlowBox>(*child).computeMaxLogicalTop(localMaxLogicalTop);
-        maxLogicalTop = std::max<float>(maxLogicalTop, localMaxLogicalTop);
+            downcast<InlineFlowBox>(*child).computeMaxLogicalBottom(maxLogicalBottom);
     }
 }
 

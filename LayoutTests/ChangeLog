@@ -1,3 +1,14 @@
+2015-02-09  David Hyatt  <hyatt@apple.com>
+
+        text-underline-position: under is broken
+        https://bugs.webkit.org/show_bug.cgi?id=141400
+        <rdar://problem/18569583>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/text-underline-position-under-expected.html: Added.
+        * fast/text/text-underline-position-under.html: Added.
+
 2015-02-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r168046): Crash in WebCore::InlineBox::renderer / WebCore::RenderFlowThread::checkLinesConsistency
