@@ -253,10 +253,20 @@ public:
     }
 #endif
 
-    void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, GPRReg to)
+    void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
-        loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
+        loadPtr(Address(from, entry * sizeof(Register)), to);
     }
+    void emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
+    {
+        load32(Address(from, entry * sizeof(Register)), to);
+    }
+#if USE(JSVALUE64)
+    void emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEntry entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
+    {
+        load64(Address(from, entry * sizeof(Register)), to);
+    }
+#endif // USE(JSVALUE64)
     void emitPutToCallFrameHeader(GPRReg from, JSStack::CallFrameHeaderEntry entry)
     {
         storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));

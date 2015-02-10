@@ -203,8 +203,10 @@ namespace JSC  {
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
+        Register& r(VirtualRegister);
         // Read a register for a non-constant
         Register& uncheckedR(int);
+        Register& uncheckedR(VirtualRegister);
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }

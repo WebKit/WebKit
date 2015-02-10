@@ -1,5 +1,92 @@
 2015-02-09  Filip Pizlo  <fpizlo@apple.com>
 
+        Varargs frame set-up should be factored out for use by other JITs
+        https://bugs.webkit.org/show_bug.cgi?id=141388
+
+        Reviewed by Michael Saboff.
+        
+        Previously the code that dealt with varargs always assumed that we were setting up a varargs call
+        frame by literally following the execution semantics of op_call_varargs. This isn't how it'll
+        happen once the DFG and FTL do varargs calls, or when varargs calls get inlined. The DFG and FTL
+        don't literally execute bytecode; for example their stack frame layout has absolutely nothing in
+        common with what the bytecode says, and that will never change.
+        
+        This patch makes two changes:
+        
+        Setting up the varargs callee frame can be done in smaller steps: particularly in the case of a
+        varargs call that gets inlined, we aren't going to actually want to set up a callee frame in
+        full - we just want to put the arguments somewhere, and that place will not have much (if
+        anything) in common with the call frame format. This patch factors that out into something called
+        a loadVarargs. The thing we used to call loadVarargs is now called setupVarargsFrame. This patch
+        also separates loading varargs from setting this, since the fact that those two things are done
+        together is a detail made explicit in bytecode but it's not at all required in the higher-tier
+        engines. In the process of factoring this code out, I found a bunch of off-by-one errors in the
+        various calculations. I fixed them. The distance from the caller's frame pointer to the callee
+        frame pointer is always:
+        
+            numUsedCallerSlots + argCount + 1 + CallFrameSize
+        
+        where numUsedCallerSlots is toLocal(firstFreeRegister) - 1, which simplifies down to just
+        -firstFreeRegister. The code now speaks of numUsedCallerSlots rather than firstFreeRegister,
+        since the latter is a bytecode peculiarity that doesn't apply in the DFG or FTL. In the DFG, the
+        internally-computed frame size, minus the parameter slots, will be used for numUsedCallerSlots.
+        In the FTL, we will essentially compute numUsedCallerSlots dynamically by subtracting SP from FP.
+        Eventually, LLVM might give us some cleaner way of doing this, but it probably doesn't matter
+        very much.
+        
+        The arguments forwarding optimization is factored out of the Baseline JIT: the DFG and FTL will
+        want to do this optimization as well, but it involves quite a bit of code. So, this code is now
+        factored out into SetupVarargsFrame.h|cpp, so that other JITs can use it. In the process of factoring
+        this code out I noticed that the 32-bit and 64-bit code is nearly identical, so I combined them.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::ExecState::r):
+        (JSC::ExecState::uncheckedR):
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::operator+):
+        (JSC::VirtualRegister::operator-):
+        (JSC::VirtualRegister::operator+=):
+        (JSC::VirtualRegister::operator-=):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeFrameForVarargs):
+        (JSC::loadVarargs):
+        (JSC::setupVarargsFrame):
+        (JSC::setupVarargsFrameAndSetThis):
+        * interpreter/Interpreter.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeaderPtr):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader32):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader64):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::emitGetFromCallFrameHeaderPtr): Deleted.
+        (JSC::JIT::emitGetFromCallFrameHeader32): Deleted.
+        (JSC::JIT::emitGetFromCallFrameHeader64): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/SetupVarargsFrame.cpp: Added.
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h: Added.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToArguments):
+        * runtime/Arguments.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+
+2015-02-09  Filip Pizlo  <fpizlo@apple.com>
+
         DFG call codegen should resolve the callee operand as late as possible
         https://bugs.webkit.org/show_bug.cgi?id=141398
 

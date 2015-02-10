@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -87,22 +87,25 @@ void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken t
     
 static EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState*);
 
-void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t copyLength, int32_t firstVarArgOffset)
+void Arguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstVarArgOffset)
 {
     uint32_t length = copyLength + firstVarArgOffset;
 
     if (UNLIKELY(m_overrodeLength)) {
         length = min(get(exec, exec->propertyNames().length).toUInt32(exec), length);
         for (unsigned i = firstVarArgOffset; i < length; i++)
-            callFrame->setArgument(i, get(exec, i));
+            exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
         return;
     }
     ASSERT(length == this->length(exec));
     for (size_t i = firstVarArgOffset; i < length; ++i) {
         if (JSValue value = tryGetArgument(i))
-            callFrame->setArgument(i - firstVarArgOffset, value);
-        else
-            callFrame->setArgument(i - firstVarArgOffset, get(exec, i));
+            exec->r(firstElementDest + i - firstVarArgOffset) = value;
+        else {
+            exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
+            if (UNLIKELY(exec->vm().exception()))
+                return;
+        }
     }
 }
 

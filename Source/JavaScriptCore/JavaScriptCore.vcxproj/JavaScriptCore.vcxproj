@@ -620,6 +620,7 @@
     <ClCompile Include="..\jit\JITStubs.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\jit\SetupVarargsFrame.cpp" />
     <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\Reg.cpp" />
     <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
@@ -1353,6 +1354,7 @@
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
+    <ClInclude Include="..\jit\SetupVarargsFrame.h" />
     <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h" />
     <ClInclude Include="..\jit\Reg.h" />
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />

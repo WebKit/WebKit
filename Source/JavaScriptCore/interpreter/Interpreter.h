@@ -298,8 +298,11 @@ namespace JSC {
     };
 
     JSValue eval(CallFrame*);
-    CallFrame* sizeFrameForVarargs(CallFrame*, JSStack*, JSValue, int, uint32_t firstVarArgOffset);
-    void loadVarargs(CallFrame*, CallFrame*, JSValue, JSValue, uint32_t firstVarArgOffset);
+    CallFrame* sizeFrameForVarargs(CallFrame* exec, JSStack*, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
+    void loadVarargs(CallFrame* execCaller, VirtualRegister firstElementDest, VirtualRegister countDest, JSValue source, uint32_t offset);
+    void setupVarargsFrame(CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset);
+    void setupVarargsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset);
+    
 } // namespace JSC
 
 #endif // Interpreter_h

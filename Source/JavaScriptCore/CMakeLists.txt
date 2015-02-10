@@ -349,6 +349,7 @@ set(JavaScriptCore_SOURCES
     jit/JITStubs.cpp
     jit/JITThunks.cpp
     jit/JITToDFGDeferredCompilationCallback.cpp
+    jit/SetupVarargsFrame.cpp
     jit/PolymorphicCallStubRoutine.cpp
     jit/Reg.cpp
     jit/RegisterPreservationWrapperGenerator.cpp

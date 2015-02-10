@@ -632,6 +632,8 @@
 		0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */; };
 		0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A30170D40BF00BB722C /* DFGJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */; };
+		0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEE98431A89227500754E93 /* SetupVarargsFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */; };
 		0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */; };
 		0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB4B51C16B62772003F696B /* DFGLongLivedState.cpp */; };
@@ -2313,6 +2315,8 @@
 		0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCode.cpp; path = dfg/DFGJITCode.cpp; sourceTree = "<group>"; };
 		0FEA0A30170D40BF00BB722C /* DFGJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCode.h; path = dfg/DFGJITCode.h; sourceTree = "<group>"; };
 		0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssembler.cpp; sourceTree = "<group>"; };
+		0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupVarargsFrame.h; sourceTree = "<group>"; };
+		0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetupVarargsFrame.cpp; sourceTree = "<group>"; };
 		0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitJumpPlaceholder.cpp; path = dfg/DFGOSRExitJumpPlaceholder.cpp; sourceTree = "<group>"; };
 		0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitJumpPlaceholder.h; path = dfg/DFGOSRExitJumpPlaceholder.h; sourceTree = "<group>"; };
 		0FF4272F158EBD44004CB9FF /* Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Disassembler.h; path = disassembler/Disassembler.h; sourceTree = "<group>"; };
@@ -3792,6 +3796,8 @@
 				0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */,
 				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
+				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
+				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
 				0FE834151A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp */,
 				0FE834161A6EF97B00D04847 /* PolymorphicCallStubRoutine.h */,
 				0FA7A8E918B413C80052371D /* Reg.cpp */,
@@ -5510,6 +5516,7 @@
 				C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */,
 				C2EAA3FA149A835E00FCE112 /* CopiedSpace.h in Headers */,
 				C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */,
+				0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */,
 				0FC3CCFD19ADA410006AC72A /* DFGBlockMapInlines.h in Headers */,
 				0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
@@ -7137,6 +7144,7 @@
 				A7CA3AE717DA41AE006538AF /* JSWeakMap.cpp in Sources */,
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 				1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */,
+				0FEE98431A89227500754E93 /* SetupVarargsFrame.cpp in Sources */,
 				86E3C618167BABEE006D760A /* JSWrapperMap.mm in Sources */,
 				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,

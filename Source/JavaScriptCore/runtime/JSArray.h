@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -132,7 +132,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE void fillArgList(ExecState*, MarkedArgumentBuffer&);
-    JS_EXPORT_PRIVATE void copyToArguments(ExecState*, CallFrame*, uint32_t length, int32_t firstVarArgOffset);
+    JS_EXPORT_PRIVATE void copyToArguments(ExecState*, VirtualRegister firstElementDest, uint32_t length, int32_t firstVarArgOffset);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {

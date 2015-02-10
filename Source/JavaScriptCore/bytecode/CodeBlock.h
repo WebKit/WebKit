@@ -1236,10 +1236,20 @@ inline Register& ExecState::r(int index)
     return this[index];
 }
 
+inline Register& ExecState::r(VirtualRegister reg)
+{
+    return r(reg.offset());
+}
+
 inline Register& ExecState::uncheckedR(int index)
 {
     RELEASE_ASSERT(index < FirstConstantRegisterIndex);
     return this[index];
+}
+
+inline Register& ExecState::uncheckedR(VirtualRegister reg)
+{
+    return uncheckedR(reg.offset());
 }
 
 inline JSValue ExecState::argumentAfterCapture(size_t argument)

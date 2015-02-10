@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2014, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -84,7 +84,7 @@ public:
         return m_numArguments; 
     }
         
-    void copyToArguments(ExecState*, CallFrame*, uint32_t copyLength, int32_t firstArgumentOffset);
+    void copyToArguments(ExecState*, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstArgumentOffset);
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
     void tearOffForCloning(CallFrame*);

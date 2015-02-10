@@ -1165,7 +1165,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     // - Set up a call frame while respecting the variable arguments.
     
     ExecState* execCallee = sizeFrameForVarargs(exec, &vm.interpreter->stack(),
-        LLINT_OP_C(4).jsValue(), pc[5].u.operand, pc[6].u.operand);
+        LLINT_OP_C(4).jsValue(), -pc[5].u.operand, pc[6].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     vm.newCallFrameReturnValue = execCallee;
@@ -1184,7 +1184,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     
     ExecState* execCallee = vm.newCallFrameReturnValue;
 
-    loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
+    setupVarargsFrameAndSetThis(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
@@ -1205,7 +1205,7 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
     
     ExecState* execCallee = vm.newCallFrameReturnValue;
     
-    loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
+    setupVarargsFrameAndSetThis(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;

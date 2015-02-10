@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2013, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -1570,7 +1570,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         args.append(get(exec, i));
 }
 
-void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t copyLength, int32_t firstVarArgOffset)
+void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, uint32_t copyLength, int32_t firstVarArgOffset)
 {
     unsigned i = firstVarArgOffset;
     WriteBarrier<Unknown>* vector;
@@ -1602,7 +1602,7 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t co
             double v = m_butterfly->contiguousDouble()[i];
             if (v != v)
                 break;
-            callFrame->setArgument(i - firstVarArgOffset, JSValue(JSValue::EncodeAsDouble, v));
+            exec->r(firstElementDest + i - firstVarArgOffset) = JSValue(JSValue::EncodeAsDouble, v);
         }
         break;
     }
@@ -1627,11 +1627,14 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t co
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        callFrame->setArgument(i - firstVarArgOffset, v.get());
+        exec->r(firstElementDest + i - firstVarArgOffset) = v.get();
     }
     
-    for (; i < length; ++i)
-        callFrame->setArgument(i - firstVarArgOffset, get(exec, i));
+    for (; i < length; ++i) {
+        exec->r(firstElementDest + i - firstVarArgOffset) = get(exec, i);
+        if (UNLIKELY(exec->vm().exception()))
+            return;
+    }
 }
 
 template<IndexingType arrayIndexingType>

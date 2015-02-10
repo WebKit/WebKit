@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "SetupVarargsFrame.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
 #include <wtf/StringPrintStream.h>
@@ -54,7 +55,7 @@ void JIT::emitPutCallResult(Instruction* instruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::compileLoadVarargs(Instruction* instruction)
+void JIT::compileSetupVarargsFrame(Instruction* instruction)
 {
     int thisValue = instruction[3].u.operand;
     int arguments = instruction[4].u.operand;
@@ -70,66 +71,27 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     if (canOptimize) {
         emitGetVirtualRegister(arguments, regT0);
         slowCase.append(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(JSValue()))));
-
-        emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT0);
-        if (firstVarArgOffset) {
-            Jump sufficientArguments = branch32(GreaterThan, regT0, TrustedImm32(firstVarArgOffset + 1));
-            move(TrustedImm32(1), regT0);
-            Jump endVarArgs = jump();
-            sufficientArguments.link(this);
-            sub32(TrustedImm32(firstVarArgOffset), regT0);
-            endVarArgs.link(this);
-        }
-        slowCase.append(branch32(Above, regT0, TrustedImm32(Arguments::MaxArguments + 1)));
-        // regT0: argumentCountIncludingThis
-        move(regT0, regT1);
-        add64(TrustedImm32(-firstFreeRegister + JSStack::CallFrameHeaderSize), regT1);
-        // regT1 now has the required frame size in Register units
-        // Round regT1 to next multiple of stackAlignmentRegisters()
-        add64(TrustedImm32(stackAlignmentRegisters() - 1), regT1);
-        and64(TrustedImm32(~(stackAlignmentRegisters() - 1)), regT1);
-
-        neg64(regT1);
-        lshift64(TrustedImm32(3), regT1);
-        addPtr(callFrameRegister, regT1);
-        // regT1: newCallFrame
-
-        slowCase.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), regT1));
-
-        // Initialize ArgumentCount.
-        store32(regT0, Address(regT1, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-
-        // Initialize 'this'.
-        emitGetVirtualRegister(thisValue, regT2);
-        store64(regT2, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
-
-        // Copy arguments.
-        signExtend32ToPtr(regT0, regT0);
-        end.append(branchSub64(Zero, TrustedImm32(1), regT0));
-        // regT0: argumentCount
-
-        Label copyLoop = label();
-        load64(BaseIndex(callFrameRegister, regT0, TimesEight, (CallFrame::thisArgumentOffset() + firstVarArgOffset) * static_cast<int>(sizeof(Register))), regT2);
-        store64(regT2, BaseIndex(regT1, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
-        branchSub64(NonZero, TrustedImm32(1), regT0).linkTo(copyLoop, this);
-
+        
+        move(TrustedImm32(-firstFreeRegister), regT1);
+        emitSetupVarargsFrameFastCase(*this, regT1, regT0, regT1, regT2, 0, firstVarArgOffset, slowCase);
         end.append(jump());
+        slowCase.link(this);
     }
 
-    if (canOptimize)
-        slowCase.link(this);
-
     emitGetVirtualRegister(arguments, regT1);
-    callOperation(operationSizeFrameForVarargs, regT1, firstFreeRegister, firstVarArgOffset);
+    callOperation(operationSizeFrameForVarargs, regT1, -firstFreeRegister, firstVarArgOffset);
     move(returnValueGPR, stackPointerRegister);
-    emitGetVirtualRegister(thisValue, regT1);
-    emitGetVirtualRegister(arguments, regT2);
-    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT2, firstVarArgOffset);
+    emitGetVirtualRegister(arguments, regT1);
+    callOperation(operationSetupVarargsFrame, returnValueGPR, regT1, firstVarArgOffset);
     move(returnValueGPR, regT1);
 
     if (canOptimize)
         end.link(this);
     
+    // Initialize 'this'.
+    emitGetVirtualRegister(thisValue, regT0);
+    store64(regT0, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+
     addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), regT1, stackPointerRegister);
 }
 
@@ -188,7 +150,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_varargs), call_and_call_varargs_opcodes_must_be_same_length);
     COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct_varargs), call_and_construct_varargs_opcodes_must_be_same_length);
     if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs)
-        compileLoadVarargs(instruction);
+        compileSetupVarargsFrame(instruction);
     else {
         int argCount = instruction[3].u.operand;
         int registerOffset = -instruction[4].u.operand;
