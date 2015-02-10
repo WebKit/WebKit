@@ -153,8 +153,9 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView
     if (!coordinatesScrollingForFrameView(frameView))
         return false;
 
-    if (frameView->inProgrammaticScroll() || frameView->frame().document()->inPageCache())
-        updateScrollPositionAfterAsyncScroll(frameView->scrollLayerID(), scrollPosition, frameView->inProgrammaticScroll(), SetScrollingLayerPosition);
+    bool isProgrammaticScroll = frameView->inProgrammaticScroll();
+    if (isProgrammaticScroll || frameView->frame().document()->inPageCache())
+        updateScrollPositionAfterAsyncScroll(frameView->scrollLayerID(), scrollPosition, isProgrammaticScroll, SetScrollingLayerPosition);
 
     // If this frame view's document is being put into the page cache, we don't want to update our
     // main frame scroll position. Just let the FrameView think that we did.
@@ -165,7 +166,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView
     if (!stateNode)
         return false;
 
-    stateNode->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
+    stateNode->setRequestedScrollPosition(scrollPosition, isProgrammaticScroll);
     return true;
 }
 
@@ -173,6 +174,10 @@ void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(Scr
 {
     ScheduledScrollUpdate scrollUpdate(nodeID, scrollPosition, programmaticScroll, scrollingLayerPositionAction);
     
+    // For programmatic scrolls, requestScrollPositionUpdate() has already called updateScrollPositionAfterAsyncScroll().
+    if (programmaticScroll)
+        return;
+
     if (m_updateNodeScrollPositionTimer.isActive()) {
         if (m_scheduledScrollUpdate.matchesUpdateType(scrollUpdate)) {
             m_scheduledScrollUpdate.scrollPosition = scrollPosition;
