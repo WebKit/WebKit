@@ -2076,7 +2076,7 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
         }
         generator.emitMove(local.get(), propertyName);
         if (generator.vm()->typeProfiler())
-            generator.emitTypeProfilerExpressionInfo(m_lexpr->position(), JSTextPosition(-1, m_lexpr->position().offset + ident.length(), -1));
+            generator.emitTypeProfilerExpressionInfo(simpleBinding->divotStart(), simpleBinding->divotEnd());
         return;
     }
 

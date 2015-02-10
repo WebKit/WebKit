@@ -1,3 +1,24 @@
+2015-02-10  Saam Barati  <saambarati1@gmail.com>
+
+        Parser::parseVarDeclarationList gets the wrong JSToken for the last identifier
+        https://bugs.webkit.org/show_bug.cgi?id=141272
+
+        Reviewed by Oliver Hunt.
+
+        This patch fixes a bug where the wrong text location would be 
+        assigned to a variable declaration inside a ForIn/ForOf loop. 
+        It also fixes a bug in the type profiler where the type profiler 
+        emits the wrong text offset for a ForIn loop's variable declarator 
+        when it's not a pattern node.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitLoopHeader):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        * tests/typeProfiler/loop.js:
+        (testForIn):
+        (testForOf):
+
 2015-02-09  Saam Barati  <saambarati1@gmail.com>
 
         JSC's Type Profiler doesn't profile the type of the looping variable in ForOf/ForIn loops

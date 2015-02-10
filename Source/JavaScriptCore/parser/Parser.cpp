@@ -452,6 +452,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
     TreeExpression head = 0;
     TreeExpression tail = 0;
     const Identifier* lastIdent;
+    JSToken lastIdentToken; 
     do {
         lastIdent = 0;
         lastPattern = 0;
@@ -466,6 +467,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             identStart = varStart;
             const Identifier* name = m_token.m_data.ident;
             lastIdent = name;
+            lastIdentToken = m_token;
             next();
             hasInitializer = match(EQUAL);
             failIfFalseIfStrict(declareVariable(name), "Cannot declare a variable named ", name->impl(), " in strict mode");
@@ -506,7 +508,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             tail = context.appendToCommaExpr(location, head, tail, node);
     } while (match(COMMA));
     if (lastIdent)
-        lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0, m_token);
+        lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0, lastIdentToken);
     return head;
 }
 
