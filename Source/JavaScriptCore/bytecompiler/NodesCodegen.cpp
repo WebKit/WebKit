@@ -2027,7 +2027,11 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
             RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), ident, resolveScopeInfo);
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             generator.emitPutToScope(scope, ident, propertyName, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, resolveScopeInfo);
+            if (generator.vm()->typeProfiler())
+                generator.emitProfileType(propertyName, resolveScopeInfo.isLocal() ? ProfileTypeBytecodePutToLocalScope : ProfileTypeBytecodePutToScope, &ident);
         }
+        if (generator.vm()->typeProfiler())
+            generator.emitTypeProfilerExpressionInfo(m_lexpr->position(), JSTextPosition(-1, m_lexpr->position().offset + ident.length(), -1));
         return;
     }
     if (m_lexpr->isDotAccessorNode()) {
@@ -2036,6 +2040,10 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
         RegisterID* base = generator.emitNode(assignNode->base());
         generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
         generator.emitPutById(base, ident, propertyName);
+        if (generator.vm()->typeProfiler()) {
+            generator.emitProfileType(propertyName, ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
+            generator.emitTypeProfilerExpressionInfo(assignNode->divotStart(), assignNode->divotEnd());
+        }
         return;
     }
     if (m_lexpr->isBracketAccessorNode()) {
@@ -2044,6 +2052,10 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
         RegisterID* subscript = generator.emitNode(assignNode->subscript());
         generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
         generator.emitPutByVal(base.get(), subscript, propertyName);
+        if (generator.vm()->typeProfiler()) {
+            generator.emitProfileType(propertyName, ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
+            generator.emitTypeProfilerExpressionInfo(assignNode->divotStart(), assignNode->divotEnd());
+        }
         return;
     }
 
@@ -2063,6 +2075,8 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
             return;
         }
         generator.emitMove(local.get(), propertyName);
+        if (generator.vm()->typeProfiler())
+            generator.emitTypeProfilerExpressionInfo(m_lexpr->position(), JSTextPosition(-1, m_lexpr->position().offset + ident.length(), -1));
         return;
     }
 
@@ -2235,7 +2249,11 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
                 RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), ident, resolveScopeInfo);
                 generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
                 generator.emitPutToScope(scope, ident, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, resolveScopeInfo);
+                if (generator.vm()->typeProfiler())
+                    generator.emitProfileType(value, resolveScopeInfo.isLocal() ? ProfileTypeBytecodePutToLocalScope : ProfileTypeBytecodePutToScope, &ident);
             }
+            if (generator.vm()->typeProfiler())
+                generator.emitTypeProfilerExpressionInfo(m_lexpr->position(), JSTextPosition(-1, m_lexpr->position().offset + ident.length(), -1));
         } else if (m_lexpr->isDotAccessorNode()) {
             DotAccessorNode* assignNode = static_cast<DotAccessorNode*>(m_lexpr);
             const Identifier& ident = assignNode->identifier();
@@ -2243,6 +2261,10 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             
             generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
             generator.emitPutById(base.get(), ident, value);
+            if (generator.vm()->typeProfiler()) {
+                generator.emitProfileType(value, ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
+                generator.emitTypeProfilerExpressionInfo(assignNode->divotStart(), assignNode->divotEnd());
+            }
         } else if (m_lexpr->isBracketAccessorNode()) {
             BracketAccessorNode* assignNode = static_cast<BracketAccessorNode*>(m_lexpr);
             RefPtr<RegisterID> base = generator.emitNode(assignNode->base());
@@ -2250,6 +2272,10 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             
             generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
             generator.emitPutByVal(base.get(), subscript, value);
+            if (generator.vm()->typeProfiler()) {
+                generator.emitProfileType(value, ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
+                generator.emitTypeProfilerExpressionInfo(assignNode->divotStart(), assignNode->divotEnd());
+            }
         } else {
             ASSERT(m_lexpr->isDeconstructionNode());
             DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
