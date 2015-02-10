@@ -1,5 +1,28 @@
 2015-02-09  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::StackLayoutPhase should always set the scopeRegister to VirtualRegister() because the DFG doesn't do anything to make its value valid
+        https://bugs.webkit.org/show_bug.cgi?id=141412
+
+        Reviewed by Michael Saboff.
+        
+        StackLayoutPhase was attempting to ensure that the register that
+        CodeBlock::scopeRegister() points to is the right one for the DFG. But the DFG did nothing
+        else to maintain the validity of the scopeRegister(). It wasn't captured as far as I can
+        tell. StackLayoutPhase didn't explicitly mark it live. PreciseLocalClobberize didn't mark
+        it as being live. So, by the time we got here the register referred to by
+        CodeBlock::scopeRegister() would have been junk. Moreover, CodeBlock::scopeRegister() was
+        not used for DFG code blocks, and was hardly ever used outside of bytecode generation.
+        
+        So, this patch just removes the code to manipulate this field and replaces it with an
+        unconditional setScopeRegister(VirtualRegister()). Setting it to the invalid register
+        ensures that any attempst to read the scopeRegister in a DFG or FTL frame immediately
+        punts.
+
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+
+2015-02-09  Filip Pizlo  <fpizlo@apple.com>
+
         Varargs frame set-up should be factored out for use by other JITs
         https://bugs.webkit.org/show_bug.cgi?id=141388
 

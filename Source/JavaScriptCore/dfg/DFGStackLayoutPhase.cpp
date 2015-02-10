@@ -168,10 +168,8 @@ public:
                 virtualRegisterForLocal(allocation[codeBlock()->activationRegister().toLocal()]));
         }
         
-        if (codeBlock()->scopeRegister().isValid()) {
-            unsigned scopeRegisterAllocation = allocation[codeBlock()->scopeRegister().toLocal()];
-            codeBlock()->setScopeRegister(scopeRegisterAllocation == UINT_MAX ? VirtualRegister() : virtualRegisterForLocal(scopeRegisterAllocation));
-        }
+        // This register is never valid for DFG code blocks.
+        codeBlock()->setScopeRegister(VirtualRegister());
 
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
             InlineVariableData data = m_graph.m_inlineVariableData[i];
