@@ -79,12 +79,8 @@ body.mac-platform.legacy.window-inactive .sidebar {
     right: -3px;
 }
 
-.sidebar.collapsed.right > .resizer {
-    left: -5px;
-}
-
-.sidebar.collapsed.left > .resizer {
-    right: -5px;
+.sidebar.collapsed {
+    display: none;
 }
 
 .sidebar.left {

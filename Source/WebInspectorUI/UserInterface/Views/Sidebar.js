@@ -41,7 +41,6 @@ WebInspector.Sidebar = function(element, side, sidebarPanels, role, label) {
     this._resizeElement = document.createElement("div");
     this._resizeElement.classList.add(WebInspector.Sidebar.ResizeElementStyleClassName);
     this._resizeElement.addEventListener("mousedown", this._resizerMouseDown.bind(this), false);
-    this._resizeElement.addEventListener("dblclick", this._resizerDoubleClicked.bind(this), false);
     this._element.insertBefore(this._resizeElement, this._element.firstChild);
 
     this._sidebarPanels = [];
@@ -258,14 +257,6 @@ WebInspector.Sidebar.prototype = {
         this.selectedSidebarPanel = event.target.selectedNavigationItem ? event.target.selectedNavigationItem.identifier : null;
     },
 
-    _resizerDoubleClicked: function(event)
-    {
-        this.collapsed = !this.collapsed;
-
-        event.preventDefault();
-        event.stopPropagation();
-    },
-
     _resizerMouseDown: function(event)
     {
         if (event.button !== 0 || event.ctrlKey)
@@ -275,6 +266,9 @@ WebInspector.Sidebar.prototype = {
 
         this._resizerMouseMovedEventListener = this._resizerMouseMoved.bind(this);
         this._resizerMouseUpEventListener = this._resizerMouseUp.bind(this);
+
+        this._widthBeforeResize = this.width;
+        this._resizerMouseDownX = event.pageX;
 
         // Register these listeners on the document so we can track the mouse if it leaves the resizer.
         document.addEventListener("mousemove", this._resizerMouseMovedEventListener, false);
@@ -286,11 +280,12 @@ WebInspector.Sidebar.prototype = {
 
     _resizerMouseMoved: function(event)
     {
-        if (this._side === WebInspector.Sidebar.Sides.Left)
-            var newWidth = event.pageX - this._element.totalOffsetLeft;
-        else
-            var newWidth = this._element.totalOffsetLeft + this._element.offsetWidth - event.pageX;
+        var deltaX = this._resizerMouseDownX - event.pageX;
 
+        if (this._side === WebInspector.Sidebar.Sides.Left)
+            deltaX *= -1;
+
+        var newWidth = deltaX + this._widthBeforeResize;
         this.width = newWidth;
         this.collapsed = (newWidth < (this.minimumWidth / 2));
 

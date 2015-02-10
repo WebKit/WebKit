@@ -1,3 +1,20 @@
+2015-02-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make collapsed sidebars undraggable
+        https://bugs.webkit.org/show_bug.cgi?id=140664
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar.collapsed):
+        (.sidebar.collapsed.right > .resizer): Deleted.
+        (.sidebar.collapsed.left > .resizer): Deleted.
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar):
+        (WebInspector.Sidebar.prototype._resizerMouseDown):
+        (WebInspector.Sidebar.prototype._resizerMouseMoved):
+        (WebInspector.Sidebar.prototype._resizerDoubleClicked): Deleted.
+
 2015-02-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS Pretty Printing: still fails fails to put space between rgb(...) and numbers in minified gradients
