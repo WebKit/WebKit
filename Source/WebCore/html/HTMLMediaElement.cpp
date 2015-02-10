@@ -2371,7 +2371,7 @@ void HTMLMediaElement::seekWithTolerance(double time, double negativeTolerance, 
     // 3 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
     // already running. Abort that other instance of the algorithm without waiting for the step that
     // it is running to complete.
-    if (m_seeking) {
+    if (m_seekTimer.isActive()) {
         m_seekTimer.stop();
         m_pendingSeek = nullptr;
     }

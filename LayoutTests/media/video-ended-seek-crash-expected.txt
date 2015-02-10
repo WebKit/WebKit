@@ -1,0 +1,11 @@
+
+EVENT(canplaythrough)
+RUN(video.currentTime = video.duration - 0.1)
+RUN(video.play())
+EVENT(ended)
+RUN(video.setAttribute("loop", "loop"))
+RUN(video.currentTime = 0)
+RUN(video.play())
+EVENT(seeked)
+END OF TEST
+

@@ -1,5 +1,29 @@
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r178426.
+
+    2015-01-14  Jer Noble  <jer.noble@apple.com>
+
+            Null-deref crash when seeking immediately before looping.
+            https://bugs.webkit.org/show_bug.cgi?id=140394
+
+            Reviewed by Eric Carlson.
+
+            It is possible for finishSeek() to be called when a seek() has caused a pending seek task
+            to be scheduled, but before that pending seek task is run. In this case, if a seek request
+            is issued, the existing pending seek task will not be cancelled, which will cause a crash
+            when the pending seek task is run.
+
+            When checking whether an existing seek task needs to be cancelled, check the actual timer,
+            rather than the m_seeking boolean, so that this case is covered.
+
+            Test: media/video-ended-seek-crash.html
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::seekWithTolerance):
+
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176240.
 
     2014-11-17  Simon Fraser  <simon.fraser@apple.com>
