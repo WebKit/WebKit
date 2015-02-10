@@ -63,6 +63,7 @@ private:
     static Eina_Bool flickAnimatorCallback(void*);
 
     static const int s_historyCapacity = 5;
+    static constexpr float s_flickTime = 1.0;
 
     EwkView* m_ewkView;
     IntPoint m_lastPoint;
@@ -232,7 +233,7 @@ void GestureHandler::handlePanFinished()
 Eina_Bool GestureHandler::flickAnimatorCallback(void* data)
 {
     GestureHandler* gestureHandler = static_cast<GestureHandler*>(data);
-    float multiplier = easeInOutQuad(gestureHandler->m_flickIndex, 0, 1.0, gestureHandler->m_flickDuration);
+    float multiplier = easeInOutQuad(gestureHandler->m_flickIndex, 0, s_flickTime, gestureHandler->m_flickDuration);
     float offsetWidth = gestureHandler->m_flickOffset.width() * multiplier;
     float offsetHeight = gestureHandler->m_flickOffset.height() * multiplier;
     offsetWidth = (offsetWidth > 0) ? ceilf(offsetWidth) : floorf(offsetWidth);
@@ -251,7 +252,7 @@ Eina_Bool GestureHandler::flickAnimatorCallback(void* data)
 void GestureHandler::handleFlick(const IntSize& offset)
 {
     m_flickOffset = offset;
-    m_flickIndex = m_flickDuration = 1 / ecore_animator_frametime_get();
+    m_flickIndex = m_flickDuration = s_flickTime / ecore_animator_frametime_get();
     m_flickAnimator = ecore_animator_add(flickAnimatorCallback, this);
 }
 

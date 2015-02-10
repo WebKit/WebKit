@@ -1,3 +1,18 @@
+2015-02-10  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL] Use a variable to set flicking time instead of hardcoding
+        https://bugs.webkit.org/show_bug.cgi?id=138950
+
+        Reviewed by Gyuyoung Kim.
+
+        Currently time of flick gesture animation is hardcoded as one second.
+        This patch added a static variable to increase readability.
+
+        * UIProcess/API/efl/GestureRecognizer.cpp:
+        (WebKit::GestureHandler::GestureHandler):
+        (WebKit::GestureHandler::flickAnimatorCallback):
+        (WebKit::GestureHandler::handleFlick):
+
 2015-02-09  Enrica Casucci  <enrica@apple.com>
 
         Selection flickers when trying to change size of selection.
