@@ -1424,6 +1424,44 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     loadWithDocumentLoader(newDocumentLoader, type, 0, AllowNavigationToInvalidURL::Yes);
 }
 
+static void logNavigation(MainFrame& frame, FrameLoadType type)
+{
+    String navigationDescription;
+    switch (type) {
+    case FrameLoadType::Standard:
+        navigationDescription = ASCIILiteral("standard");
+        break;
+    case FrameLoadType::Back:
+        navigationDescription = ASCIILiteral("back");
+        break;
+    case FrameLoadType::Forward:
+        navigationDescription = ASCIILiteral("forward");
+        break;
+    case FrameLoadType::IndexedBackForward:
+        navigationDescription = ASCIILiteral("indexedBackForward");
+        break;
+    case FrameLoadType::Reload:
+        navigationDescription = ASCIILiteral("reload");
+        break;
+    case FrameLoadType::Same:
+        navigationDescription = ASCIILiteral("same");
+        break;
+    case FrameLoadType::ReloadFromOrigin:
+        navigationDescription = ASCIILiteral("reloadFromOrigin");
+        break;
+    case FrameLoadType::Replace:
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+        // Not logging those for now.
+        return;
+    }
+
+    if (frame.settings().diagnosticLoggingEnabled()) {
+        if (auto* client = frame.diagnosticLoggingClient())
+            client->logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription);
+    }
+}
+
+
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
 {
     // Retain because dispatchBeforeLoadEvent may release the last reference to it.
@@ -1441,6 +1479,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (m_frame.document())
         m_previousURL = m_frame.document()->url();
+
+    // Log main frame navigation types.
+    if (m_frame.isMainFrame())
+        logNavigation(static_cast<MainFrame&>(m_frame), type);
 
     policyChecker().setLoadType(type);
     RefPtr<FormState> formState = prpFormState;
