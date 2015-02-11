@@ -1,5 +1,74 @@
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179576, r179648.
+
+    2015-02-04  Mark Lam  <mark.lam@apple.com>
+
+            r179576 introduce a deadlock potential during GC thread suspension.
+            <https://webkit.org/b/141268>
+
+            Reviewed by Michael Saboff.
+
+            http://trac.webkit.org/r179576 introduced a potential for deadlocking.
+            In the GC thread suspension loop, we currently delete
+            MachineThreads::Thread that we detect to be invalid.  This is unsafe
+            because we may have already suspended some threads, and one of those
+            suspended threads may still be holding the C heap lock which we need
+            for deleting the invalid thread.
+
+            The fix is to put the invalid threads in a separate toBeDeleted list,
+            and delete them only after GC has resumed all threads.
+
+            * heap/MachineStackMarker.cpp:
+            (JSC::MachineThreads::removeCurrentThread):
+            - Undo refactoring removeThreadWithLockAlreadyAcquired() out of
+            removeCurrentThread() since it is no longer needed.
+
+            (JSC::MachineThreads::tryCopyOtherThreadStacks):
+            - Put invalid Threads on a threadsToBeDeleted list, and delete those
+            Threads only after all threads have been resumed.
+
+            (JSC::MachineThreads::removeThreadWithLockAlreadyAcquired): Deleted.
+            * heap/MachineStackMarker.h:
+
+    2015-02-03  Mark Lam  <mark.lam@apple.com>
+
+            Workaround a thread library bug where thread destructors may not get called.
+            <https://webkit.org/b/141209>
+
+            Reviewed by Michael Saboff.
+
+            There's a bug where thread destructors may not get called.  As far as
+            we know, this only manifests on darwin ports.  We will work around this
+            by checking at GC time if the platform thread is still valid.  If not,
+            we'll purge it from the VM's registeredThreads list before proceeding
+            with thread scanning activity.
+
+            Note: it is important that we do this invalid thread detection during
+            suspension, because the validity (and liveness) of the other thread is
+            only guaranteed while it is suspended.
+
+            * API/tests/testapi.mm:
+            (threadMain):
+            - Added a test to enter the VM from another thread before we GC on
+              the main thread.
+
+            * heap/MachineStackMarker.cpp:
+            (JSC::MachineThreads::removeThreadWithLockAlreadyAcquired):
+            (JSC::MachineThreads::removeCurrentThread):
+            - refactored removeThreadWithLockAlreadyAcquired() out from
+              removeCurrentThread() so that we can also call it for purging invalid
+              threads.
+            (JSC::suspendThread):
+            - Added a return status to tell if the suspension succeeded or not.
+            (JSC::MachineThreads::tryCopyOtherThreadStacks):
+            - Check if the suspension failed, and purge the thread if we can't
+              suspend it.  Failure to suspend implies that the thread has
+              terminated without calling its destructor.
+            * heap/MachineStackMarker.h:
+
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r179187.
 
     2015-01-27  Csaba Osztrogonác  <ossy@webkit.org>
