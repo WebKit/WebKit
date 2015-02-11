@@ -1,3 +1,19 @@
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r179563
+
+    2015-02-03  Jer Noble  <jer.noble@apple.com>
+
+            [Mac][EME] Crash in CDMSessionMediaSourceAVFObjC::layerDidReceiveError() - NSError not KVO compliant for key NSUnderlyingError.
+            https://bugs.webkit.org/show_bug.cgi?id=140529
+
+            Reviewed by Darin Adler.
+
+            The underlying error should be fetched from the userInfo dictionary, not the error itself.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::systemCodeForError):
+
 2015-02-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179366
