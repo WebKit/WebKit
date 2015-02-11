@@ -1,3 +1,17 @@
+2015-02-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing should be disabled when graphics card does not support it.
+        https://bugs.webkit.org/show_bug.cgi?id=140667
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::scrollNonCompositedContents):
+        (AcceleratedCompositingContext::acceleratedCompositingAvailable):
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2015-02-09  Brent Fulgham  <bfulgham@apple.com>
 
         AX: [Win] OBJID_CLIENT comparisons broken in 64-bit builds

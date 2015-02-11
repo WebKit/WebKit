@@ -5051,6 +5051,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
+#if USE(TEXTURE_MAPPER_GL)
+    static bool acceleratedCompositingAvailable = AcceleratedCompositingContext::acceleratedCompositingAvailable();
+    enabled = enabled && acceleratedCompositingAvailable;
+#endif
     settings.setAcceleratedCompositingEnabled(enabled);
 
     hr = prefsPrivate->showDebugBorders(&enabled);

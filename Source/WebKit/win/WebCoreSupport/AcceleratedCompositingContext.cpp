@@ -29,10 +29,12 @@
 
 #include "WebView.h"
 
+#include <WebCore/DefWndProcWindowClass.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayerTextureMapper.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
@@ -241,6 +243,77 @@ void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& s
 {
     m_nonCompositedContentLayer->setNeedsDisplay();
     scheduleLayerFlush();
+}
+
+bool AcceleratedCompositingContext::acceleratedCompositingAvailable()
+{
+    const int width = 10;
+    const int height = 10;
+
+    // Create test window to render texture in.
+    HWND testWindow = ::CreateWindowEx(WS_EX_NOACTIVATE, defWndProcWindowClassName(), L"AcceleratedCompositingTesterWindow", WS_POPUP | WS_VISIBLE | WS_DISABLED, -width, -height, width, height, 0, 0, 0, 0);
+
+    if (!testWindow)
+        return false;
+
+    // Create GL context.
+    std::unique_ptr<WebCore::GLContext> context = GLContext::createContextForWindow(testWindow, GLContext::sharingContext());
+
+    if (!context) {
+        ::DestroyWindow(testWindow);
+        return false;
+    }
+
+    context->makeContextCurrent();
+
+    std::unique_ptr<WebCore::TextureMapper> textureMapper = TextureMapperGL::create(TextureMapper::OpenGLMode);
+
+    if (!textureMapper) {
+        ::DestroyWindow(testWindow);
+        return false;
+    }
+
+    // Create texture.
+    RefPtr<BitmapTexture> texture = textureMapper->createTexture();
+
+    if (!texture) {
+        ::DestroyWindow(testWindow);
+        return false;
+    }
+
+    texture->reset(IntSize(width, height));
+
+    // Copy bitmap data to texture.
+    const int bitmapSize = width * height;
+    int data[bitmapSize];
+    const COLORREF colorRed = RGB(255, 0, 0);
+    const COLORREF colorGreen = RGB(0, 255, 0);
+    for (int i = 0; i < bitmapSize; i++)
+        data[i] = colorGreen;
+    IntRect targetRect(0, 0, width, height);
+    IntPoint offset(0, 0);
+    int bytesPerLine = width * 4;
+    BitmapTexture::UpdateContentsFlag flags = BitmapTexture::UpdateCanModifyOriginalImageData;
+    texture->updateContents(data, targetRect, offset, bytesPerLine, flags);
+
+    // Render texture.
+    textureMapper->beginPainting();
+    FloatRect rect(0, 0, width, height);
+    textureMapper->drawTexture(*texture, rect);
+    textureMapper->endPainting();
+
+    // Set color of pixel (0, 0) to red, to make sure it is different from the bitmap color.
+    HWndDC hdc(testWindow);
+    ::SetPixel(hdc, 0, 0, colorRed);
+
+    context->swapBuffers();
+
+    // Check if pixel (0, 0) has expected color.
+    COLORREF pixelColor = ::GetPixel(hdc, 0, 0);
+
+    ::DestroyWindow(testWindow);
+
+    return pixelColor == colorGreen;
 }
 
 void AcceleratedCompositingContext::scheduleLayerFlush()
