@@ -274,6 +274,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/InputMethodFilter.cpp
     UIProcess/gtk/RedirectedXCompositeWindow.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
+    UIProcess/gtk/WebColorPickerGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp
     UIProcess/gtk/WebFullScreenClientGtk.cpp
     UIProcess/gtk/WebInspectorClientGtk.cpp

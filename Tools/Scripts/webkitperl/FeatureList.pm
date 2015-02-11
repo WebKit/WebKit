@@ -257,7 +257,7 @@ my @features = (
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
 
     { option => "input-type-color", desc => "Toggle Input Type Color support",
-      define => "ENABLE_INPUT_TYPE_COLOR", default => isEfl(), value => \$inputTypeColorSupport },
+      define => "ENABLE_INPUT_TYPE_COLOR", default => (isEfl() || isGtk()), value => \$inputTypeColorSupport },
 
     { option => "input-type-date", desc => "Toggle Input Type Date support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },

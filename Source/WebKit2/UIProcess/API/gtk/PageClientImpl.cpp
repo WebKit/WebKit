@@ -32,6 +32,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
+#include "WebColorPickerGtk.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -226,10 +227,9 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
+PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect)
 {
-    notImplemented();
-    return 0;
+    return WebColorPickerGtk::create(*page, color, rect);
 }
 #endif
 

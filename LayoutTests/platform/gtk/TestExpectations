@@ -160,9 +160,6 @@ http/tests/notifications/legacy/double-show.html
 # Datalist is not yet enabled.
 webkit.org/b/98934 fast/forms/datalist [ Skip ]
 
-# Color input is not yet enabled.
-webkit.org/b/98935 fast/forms/color [ Skip ]
-
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/98936 fast/forms/date [ Skip ]
 webkit.org/b/98936 fast/forms/datetime [ Skip ]
