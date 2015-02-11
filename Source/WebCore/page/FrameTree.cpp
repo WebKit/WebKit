@@ -424,11 +424,13 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
     printIndent(indent);
     printf("  ownerElement=%p\n", frame.ownerElement());
     printIndent(indent);
-    printf("  frameView=%p\n", view);
+    printf("  frameView=%p (needs layout %d)\n", view, view ? view->needsLayout() : false);
     printIndent(indent);
-    printf("  document=%p\n", frame.document());
+    printf("  renderView=%p\n", view ? view->renderView() : nullptr);
     printIndent(indent);
-    printf("  uri=%s\n\n", frame.document()->documentURI().utf8().data());
+    printf("  document=%p (needs style recalc %d)\n", frame.document(), frame.document() ? frame.document()->needsStyleRecalc() : false);
+    printIndent(indent);
+    printf("  uri=%s\n", frame.document()->documentURI().utf8().data());
 
     for (WebCore::Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);

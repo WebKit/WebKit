@@ -1,3 +1,19 @@
+2015-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the showFrameTree() output slightly
+        https://bugs.webkit.org/show_bug.cgi?id=141482
+
+        Reviewed by Zalan Bujtas.
+
+        Have showFrameTree() show the Frame's RenderView so it can be correlated with
+        layer dumps, and show styleRecalc and needsLayout state.
+
+        * page/FrameTree.cpp:
+        (printFrames):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive): Add an explanatory
+        comment about why we don't walk the Frame tree.
+
 2015-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Stop using WebCore.exp.in on Mac and iOS.
