@@ -6213,7 +6213,7 @@ bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const
 {
     lResult = 0;
 
-    if (lParam != OBJID_CLIENT)
+    if (static_cast<LONG>(lParam) != OBJID_CLIENT)
         return false;
 
     AXObjectCache::enableAccessibility();
