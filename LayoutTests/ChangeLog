@@ -1,5 +1,20 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179627
+
+    2015-02-03  David Hyatt  <hyatt@apple.com>
+
+            Tables don't repaginate properly when the pagination height changes or the pagination offset changes.
+            https://bugs.webkit.org/show_bug.cgi?id=141207
+            <rdar://problem/18387659>
+
+            Reviewed by Dean Jackson.
+
+            * fast/multicol/table-dynamic-movement-expected.html: Added.
+            * fast/multicol/table-dynamic-movement.html: Added.
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179597
 
     2015-02-03  Maciej Stachowiak  <mjs@apple.com>

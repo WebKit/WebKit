@@ -1,5 +1,45 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179627
+
+    2015-02-03  David Hyatt  <hyatt@apple.com>
+
+            Tables don't repaginate properly when the pagination height changes or the pagination offset changes.
+            https://bugs.webkit.org/show_bug.cgi?id=141207
+            <rdar://problem/18387659>
+
+            Reviewed by Dean Jackson.
+
+            Added fast/multicol/table-dynamic-movement.html
+
+            Change markForPaginationRelayoutIfNeeded to be called always and to check needsLayout inside it.
+
+            Make RenderTable override markForPaginationRelayoutIfNeeded and also dirty the sections if the table
+            ended up getting marked for relayout.
+
+            Make sure rows do the right thing as well.
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::layoutPositionedObjects):
+            (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded):
+            * rendering/RenderBlock.h:
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::layoutBlockChild):
+            (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+            (WebCore::RenderBlockFlow::positionNewFloats):
+            * rendering/RenderDeprecatedFlexibleBox.cpp:
+            (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+            (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+            * rendering/RenderTable.cpp:
+            (WebCore::RenderTable::markForPaginationRelayoutIfNeeded):
+            * rendering/RenderTable.h:
+            * rendering/RenderTableRow.cpp:
+            (WebCore::RenderTableRow::layout):
+            * rendering/RenderTableSection.cpp:
+            (WebCore::RenderTableSection::layout):
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179597
 
     2015-02-03  Maciej Stachowiak  <mjs@apple.com>
