@@ -1,5 +1,30 @@
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179843.
+
+    2015-02-09  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Disable the currentTime estimation code in HTMLMediaElement for Yosemite+
+            https://bugs.webkit.org/show_bug.cgi?id=141399
+
+            Reviewed by Eric Carlson.
+
+            Apparenty -[AVPlayer rate] means different things for HLS and progressive content; for progressive,
+            the -rate is the actual rate of playback. For HLS, the -rate is the requested rate, and will return
+            the requested value even if time is not progressing.
+
+            We added the currentTime estimation engine because asking AVFoundation for its -currentTime used to
+            be expensive, but we've been assured that in recent iOS and OS X releases, -currentTime should be
+            very fast. That, in combination with the HLS behavior of -rate and how it breaks the currentTime
+            estimation, means we should probably turn it off for iOS and Yosemite.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime): Move implementation to .mm.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime): Disable on iOS and >=10.10.
+
+2015-02-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r178571.
 
     2015-01-15  Ryosuke Niwa  <rniwa@webkit.org>

@@ -1599,6 +1599,15 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
     return timeValue;
 }
 
+double MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime() const
+{
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1010
+    return 0;
+#else
+    return 5;
+#endif
+}
+
 void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
 {
     if (!m_videoLayer)
