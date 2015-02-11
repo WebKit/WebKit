@@ -2503,7 +2503,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
     const bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     const bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
     const bool shouldMarkLink = textCheckingOptions & TextCheckingTypeLink;
-    const bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
+    const bool shouldPerformReplacement = textCheckingOptions & (TextCheckingTypeQuote | TextCheckingTypeDash | TextCheckingTypeReplacement);
     const bool shouldShowCorrectionPanel = textCheckingOptions & TextCheckingTypeShowCorrectionPanel;
     const bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & TextCheckingTypeCorrection);
 #if !USE(AUTOCORRECTION_PANEL)
