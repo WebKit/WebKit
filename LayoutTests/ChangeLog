@@ -1,5 +1,11 @@
 2015-02-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Tests of fast/ruby needs to have new baseline since r172874.
+
+        * platform/efl/TestExpectations:
+
+2015-02-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed EFL gardening. Some tests of imported/mozilla/svg/ have been failed since r177330.
         Mark those tests to ImageOnlyFailure.
 
