@@ -1,3 +1,24 @@
+2015-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        SetupVarargsFrame should not assume that an inline stack frame would have identical layout to a normal stack frame
+        https://bugs.webkit.org/show_bug.cgi?id=141485
+
+        Reviewed by Oliver Hunt.
+        
+        The inlineStackOffset argument was meant to make it easy for the DFG to use this helper for
+        vararg calls from inlined code, but that doesn't work since the DFG inline call frame
+        doesn't actually put the argument count at the JSStack::ArgumentCount offset. In fact there
+        is really no such thing as an inlineStackOffset except when we OSR exit; while the code is
+        running the stack layout is compacted so that the stackOffset is not meaningful.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h:
+
 2015-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Split FTL::JSCall into the part that knows about call inline caching and the part that interacts with LLVM patchpoints

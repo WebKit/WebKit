@@ -133,7 +133,7 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction)
         slowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
         
         move(TrustedImm32(-firstFreeRegister), regT1);
-        emitSetupVarargsFrameFastCase(*this, regT1, regT0, regT1, regT2, 0, firstVarArgOffset, slowCase);
+        emitSetupVarargsFrameFastCase(*this, regT1, regT0, regT1, regT2, firstVarArgOffset, slowCase);
         end.append(jump());
         slowCase.link(this);
     }

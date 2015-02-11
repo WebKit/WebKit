@@ -51,11 +51,16 @@ void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthInclude
     jit.addPtr(GPRInfo::callFrameRegister, resultGPR);
 }
 
-void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, int inlineStackOffset, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
 {
     CCallHelpers::JumpList end;
     
-    jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, (inlineStackOffset + JSStack::ArgumentCount) * sizeof(Register) + PayloadOffset), scratchGPR1);
+    if (argCountRecovery.isConstant()) {
+        // FIXME: We could constant-fold a lot of the computation below in this case.
+        // https://bugs.webkit.org/show_bug.cgi?id=141486
+        jit.move(CCallHelpers::TrustedImm32(argCountRecovery.constant().asInt32()), scratchGPR1);
+    } else
+        jit.load32(CCallHelpers::payloadFor(argCountRecovery.virtualRegister()), scratchGPR1);
     if (firstVarArgOffset) {
         CCallHelpers::Jump sufficientArguments = jit.branch32(CCallHelpers::GreaterThan, scratchGPR1, CCallHelpers::TrustedImm32(firstVarArgOffset + 1));
         jit.move(CCallHelpers::TrustedImm32(1), scratchGPR1);
@@ -79,18 +84,28 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
     // scratchGPR1: argumentCount
 
     CCallHelpers::Label copyLoop = jit.label();
+    int argOffset = (firstArgumentReg.offset() - 1 + firstVarArgOffset) * static_cast<int>(sizeof(Register));
 #if USE(JSVALUE64)
-    jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, (CallFrame::thisArgumentOffset() + inlineStackOffset + firstVarArgOffset) * static_cast<int>(sizeof(Register))), scratchGPR3);
+    jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset), scratchGPR3);
     jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
 #else // USE(JSVALUE64), so this begins the 32-bit case
-    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, (CallFrame::thisArgumentOffset() + inlineStackOffset + firstVarArgOffset) * static_cast<int>(sizeof(Register)) + TagOffset), scratchGPR3);
+    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset + TagOffset), scratchGPR3);
     jit.store32(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)) + TagOffset));
-    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, (CallFrame::thisArgumentOffset() + inlineStackOffset + firstVarArgOffset) * static_cast<int>(sizeof(Register)) + PayloadOffset), scratchGPR3);
+    jit.load32(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset + PayloadOffset), scratchGPR3);
     jit.store32(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)) + PayloadOffset));
 #endif // USE(JSVALUE64), end of 32-bit case
     jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
     
     done.link(&jit);
+}
+
+void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    emitSetupVarargsFrameFastCase(
+        jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3,
+        ValueRecovery::displacedInJSStack(VirtualRegister(JSStack::ArgumentCount), DataFormatInt32),
+        VirtualRegister(CallFrame::argumentOffset(0)),
+        firstVarArgOffset, slowCase);
 }
 
 } // namespace JSC

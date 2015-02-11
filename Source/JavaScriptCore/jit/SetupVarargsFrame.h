@@ -37,7 +37,10 @@ void emitSetVarargsFrame(CCallHelpers&, GPRReg lengthGPR, bool lengthIncludesThi
 
 // Assumes that SP refers to the last in-use stack location, and after this returns SP will point to
 // the newly created frame plus the native header. scratchGPR2 may be the same as numUsedSlotsGPR.
-void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, int inlineStackOffset, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
+void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
+
+// Variant that assumes normal stack frame.
+void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
 
 } // namespace JSC
 
