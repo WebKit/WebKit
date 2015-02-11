@@ -263,12 +263,12 @@ template<typename ElementType> inline DoubleTypedElementDescendantIteratorAdapte
 
 template<typename ElementType> inline auto DoubleTypedElementDescendantIteratorAdapter<ElementType>::begin() -> Iterator
 {
-    return { m_pair.first.begin(), m_pair.second.begin() };
+    return Iterator(m_pair.first.begin(), m_pair.second.begin());
 }
 
 template<typename ElementType> inline auto DoubleTypedElementDescendantIteratorAdapter<ElementType>::end() -> Iterator
 {
-    return { m_pair.first.end(), m_pair.second.end() };
+    return Iterator(m_pair.first.end(), m_pair.second.end());
 }
 
 // DoubleTypedElementDescendantIterator

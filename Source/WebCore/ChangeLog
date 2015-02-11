@@ -1,3 +1,13 @@
+2015-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Fix debug build after r179807.
+        https://bugs.webkit.org/show_bug.cgi?id=141461
+
+        Reviewed by Benjamin Poulain.
+
+        * dom/TypedElementDescendantIterator.h:
+        Explicitly call Iterator constructor to reduce complexity when iterating descendantsOfType.
+
 2015-02-10  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add logging to validate the network cache efficacy (Part 2)
