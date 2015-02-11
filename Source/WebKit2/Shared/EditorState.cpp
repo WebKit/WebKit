@@ -29,10 +29,6 @@
 #include "Arguments.h"
 #include "WebCoreArgumentCoders.h"
 
-#if PLATFORM(IOS)
-#include <WebCore/SelectionRect.h>
-#endif
-
 namespace WebKit {
 
 void EditorState::encode(IPC::ArgumentEncoder& encoder) const

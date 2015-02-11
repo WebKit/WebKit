@@ -28,6 +28,7 @@
 #import "WKContentView.h"
 
 #import "AssistedNodeInformation.h"
+#import "EditorState.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKActionSheetAssistant.h"
@@ -73,6 +74,14 @@ typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *auto
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
 
 namespace WebKit {
+struct WKSelectionDrawingInfo {
+    enum class SelectionType { None, Plugin, Range };
+    WKSelectionDrawingInfo();
+    explicit WKSelectionDrawingInfo(const EditorState&);
+    SelectionType type;
+    WebCore::IntRect caretRect;
+    Vector<WebCore::SelectionRect> selectionRects;
+};
 struct WKAutoCorrectionData {
     String fontName;
     CGFloat fontSize;
@@ -130,6 +139,8 @@ struct WKAutoCorrectionData {
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
 
     CGPoint _lastInteractionLocation;
+
+    WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;

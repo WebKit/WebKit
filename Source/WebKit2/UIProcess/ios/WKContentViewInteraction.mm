@@ -82,6 +82,58 @@ SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSStr
 using namespace WebCore;
 using namespace WebKit;
 
+namespace WebKit {
+
+WKSelectionDrawingInfo::WKSelectionDrawingInfo()
+    : type(SelectionType::None)
+{
+}
+
+WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
+{
+    if (editorState.selectionIsNone) {
+        type = SelectionType::None;
+        return;
+    }
+
+    if (editorState.isInPlugin) {
+        type = SelectionType::Plugin;
+        return;
+    }
+
+    type = SelectionType::Range;
+    caretRect = editorState.caretRectAtEnd;
+    selectionRects = editorState.selectionRects;
+}
+
+inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
+{
+    if (a.type != b.type)
+        return false;
+
+    if (a.type == WKSelectionDrawingInfo::SelectionType::Range) {
+        if (a.caretRect != b.caretRect)
+            return false;
+
+        if (a.selectionRects.size() != b.selectionRects.size())
+            return false;
+
+        for (unsigned i = 0; i < a.selectionRects.size(); ++i) {
+            if (a.selectionRects[i].rect() != b.selectionRects[i].rect())
+                return false;
+        }
+    }
+
+    return true;
+}
+
+inline bool operator!=(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
+{
+    return !(a == b);
+}
+
+} // namespace WebKit
+
 static const float highlightDelay = 0.12;
 static const float tapAndHoldDelay  = 0.75;
 const CGFloat minimumTapHighlightRadius = 2.0;
@@ -391,7 +443,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     }
 
     _selectionNeedsUpdate = YES;
-    [self _updateChangedSelection];
+    [self _updateChangedSelection:YES];
     [self _updateTapHighlight];
 }
 
@@ -2659,8 +2711,19 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (void)_updateChangedSelection
 {
+    [self _updateChangedSelection:NO];
+}
+
+- (void)_updateChangedSelection:(BOOL)force
+{
     if (!_selectionNeedsUpdate)
         return;
+
+    WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
+    if (!force && selectionDrawingInfo == _lastSelectionDrawingInfo)
+        return;
+
+    _lastSelectionDrawingInfo = selectionDrawingInfo;
 
     // FIXME: We need to figure out what to do if the selection is changed by Javascript.
     if (_textSelectionAssistant) {
