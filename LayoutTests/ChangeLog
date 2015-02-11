@@ -1,3 +1,14 @@
+2015-02-11  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION(r179166): Crash when accessing document.dir on a document with no elements
+        <rdar://problem/19804351>
+        https://bugs.webkit.org/show_bug.cgi?id=141480
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/document-dir-empty-document-crash-expected.txt: Added.
+        * fast/dom/document-dir-empty-document-crash.html: Added.
+
 2015-02-11  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (iOS 8): PDFs embedded in <object>/<embed> tag don't load at all

@@ -110,7 +110,7 @@ int HTMLDocument::height()
 const AtomicString& HTMLDocument::dir() const
 {
     auto* documentElement = this->documentElement();
-    if (!is<HTMLHtmlElement>(*documentElement))
+    if (!is<HTMLHtmlElement>(documentElement))
         return nullAtom;
     return downcast<HTMLHtmlElement>(*documentElement).dir();
 }

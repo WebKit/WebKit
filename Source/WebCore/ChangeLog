@@ -1,3 +1,17 @@
+2015-02-11  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION(r179166): Crash when accessing document.dir on a document with no elements
+        <rdar://problem/19804351>
+        https://bugs.webkit.org/show_bug.cgi?id=141480
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/dom/document-dir-empty-document-crash.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir):
+        Don't unnecessarily dereference the documentElement. is<HTMLHtmlElement>() will handle null just fine.
+
 2015-02-11  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/141492> extract-localizable-strings.pl shouldn't update the target file if the contents haven't changed
