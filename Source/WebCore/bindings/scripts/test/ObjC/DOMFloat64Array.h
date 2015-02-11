@@ -31,7 +31,7 @@
 @class DOMFloat32Array;
 @class DOMInt32Array;
 
-@interface DOMFloat64Array : DOMArrayBufferView
+WEBCORE_EXPORT @interface DOMFloat64Array : DOMArrayBufferView
 - (DOMInt32Array *)foo:(DOMFloat32Array *)array;
 @end
 

@@ -29,7 +29,7 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestSerializedScriptValueInterface : DOMObject
+WEBCORE_EXPORT @interface DOMTestSerializedScriptValueInterface : DOMObject
 @property (strong) NSString *value;
 @property (readonly, strong) NSString *readonlyValue;
 @property (strong) NSString *cachedValue;

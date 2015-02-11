@@ -34,7 +34,7 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestCallback : DOMObject
+WEBCORE_EXPORT @interface DOMTestCallback : DOMObject
 - (BOOL)callbackWithNoParam;
 - (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam;
 - (BOOL)callbackWithSerializedScriptValueParam:(NSString *)srzParam strArg:(NSString *)strArg;

@@ -59,7 +59,7 @@ enum {
 } WEBKIT_ENUM_AVAILABLE_MAC(TBD);
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestObj : DOMObject
+WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (readonly) int readOnlyLongAttr;
 @property (readonly, copy) NSString *readOnlyStringAttr;
 @property (readonly, strong) DOMTestObj *readOnlyTestObjAttr;

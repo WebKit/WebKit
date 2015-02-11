@@ -27,5 +27,5 @@
 #import <WebCore/DOMObject.h>
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestOverloadedConstructors : DOMObject
+WEBCORE_EXPORT @interface DOMTestOverloadedConstructors : DOMObject
 @end

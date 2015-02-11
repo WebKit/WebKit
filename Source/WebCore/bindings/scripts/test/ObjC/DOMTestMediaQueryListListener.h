@@ -29,6 +29,6 @@
 @class DOMMediaQueryListListener;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestMediaQueryListListener : DOMObject
+WEBCORE_EXPORT @interface DOMTestMediaQueryListListener : DOMObject
 - (void)method:(DOMMediaQueryListListener *)listener;
 @end

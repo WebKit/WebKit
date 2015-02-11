@@ -30,7 +30,7 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestActiveDOMObject : DOMObject
+WEBCORE_EXPORT @interface DOMTestActiveDOMObject : DOMObject
 @property (readonly) int excitingAttr;
 
 - (void)excitingFunction:(DOMNode *)nextChild;

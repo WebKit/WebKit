@@ -32,7 +32,7 @@
 @protocol DOMEventListener;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestEventTarget : DOMObject
+WEBCORE_EXPORT @interface DOMTestEventTarget : DOMObject
 - (DOMNode *)item:(unsigned)index;
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;

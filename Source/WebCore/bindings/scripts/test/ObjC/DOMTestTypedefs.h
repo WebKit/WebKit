@@ -30,7 +30,7 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestTypedefs : DOMObject
+WEBCORE_EXPORT @interface DOMTestTypedefs : DOMObject
 @property unsigned long long unsignedLongLongAttr;
 @property (strong) NSString *immutableSerializedScriptValue;
 @property int attrWithGetterException;

@@ -29,6 +29,6 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestCustomNamedGetter : DOMObject
+WEBCORE_EXPORT @interface DOMTestCustomNamedGetter : DOMObject
 - (void)anotherFunction:(NSString *)str;
 @end

@@ -29,7 +29,7 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestNondeterministic : DOMObject
+WEBCORE_EXPORT @interface DOMTestNondeterministic : DOMObject
 @property (readonly) int nondeterministicReadonlyAttr;
 @property (copy) NSString *nondeterministicWriteableAttr;
 @property (copy) NSString *nondeterministicExceptionAttr;

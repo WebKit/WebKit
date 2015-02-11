@@ -29,6 +29,6 @@
 @class NSString;
 
 WEBKIT_CLASS_AVAILABLE_MAC(TBD)
-@interface DOMTestException : DOMObject
+WEBCORE_EXPORT @interface DOMTestException : DOMObject
 @property (readonly, copy) NSString *name;
 @end

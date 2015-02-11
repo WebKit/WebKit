@@ -1,5 +1,29 @@
 2015-02-10  Alex Christensen  <achristensen@webkit.org>
 
+        Fix bindings tests after r179886.
+
+        * bindings/scripts/test/ObjC/DOMFloat64Array.h:
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObject.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetter.h:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestEventTarget.h:
+        * bindings/scripts/test/ObjC/DOMTestException.h:
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachable.h:
+        * bindings/scripts/test/ObjC/DOMTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestNode.h:
+        * bindings/scripts/test/ObjC/DOMTestNondeterministic.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructors.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.h:
+        * bindings/scripts/test/ObjC/DOMattribute.h:
+        * bindings/scripts/test/ObjC/DOMreadonly.h:
+
+2015-02-10  Alex Christensen  <achristensen@webkit.org>
+
         Stop using WebCore.exp.in on Mac and iOS.
         https://bugs.webkit.org/show_bug.cgi?id=141413
 
