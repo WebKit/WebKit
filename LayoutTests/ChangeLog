@@ -1,3 +1,15 @@
+2015-02-11  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Div having contentEditable and display:flex cannot be edited if it is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=141218
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests if an editable flexbox can be reedited after erasing all texts in it.
+
+        * fast/events/key-events-in-editable-flexbox-expected.txt: Added.
+        * fast/events/key-events-in-editable-flexbox.html: Added.
+
 2015-02-11  Dana Burkart  <dburkart@apple.com>
 
         http/tests/cache/disk-cache-validation.html generates a lot of Perl errors
