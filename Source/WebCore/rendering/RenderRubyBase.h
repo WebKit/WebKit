@@ -48,6 +48,8 @@ public:
 
     RenderRubyRun* rubyRun() const;
 
+    virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
+
 private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
