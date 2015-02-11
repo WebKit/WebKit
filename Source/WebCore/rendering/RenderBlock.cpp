@@ -1432,8 +1432,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
         if (relayoutChildren && r.needsPreferredWidthsRecalculation())
             r.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
         
-        if (!r.needsLayout())
-            r.markForPaginationRelayoutIfNeeded();
+        r.markForPaginationRelayoutIfNeeded();
         
         // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
@@ -1481,8 +1480,7 @@ void RenderBlock::markPositionedObjectsForLayout()
 
 void RenderBlock::markForPaginationRelayoutIfNeeded()
 {
-    ASSERT(!needsLayout());
-    if (needsLayout())
+    if (needsLayout() || !view().layoutState()->isPaginated())
         return;
 
     if (view().layoutState()->pageLogicalHeightChanged() || (view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()))
