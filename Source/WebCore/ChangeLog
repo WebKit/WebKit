@@ -1,3 +1,17 @@
+2015-02-11  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/141492> extract-localizable-strings.pl shouldn't update the target file if the contents haven't changed
+
+        Avoid updating the target file if the contents haven't changed. This prevents Xcode from copying the identical
+        file into the framework and resigning it, which avoids the resulting relinking of all targets that depend on
+        the framework.
+
+        Reviewed by Dan Bernstein.
+
+        * extract-localizable-strings.pl: Write our output to a temporary file. If the output differs from the
+        existing contents of the target file, move the temporary file over the target file. Otherwise, delete
+        the temporary file.
+
 2015-02-11  Chris Dumez  <cdumez@apple.com>
 
         Turn recent assertions into release assertions to help track down crash in DocumentLoader::stopLoadingForPolicyChange()

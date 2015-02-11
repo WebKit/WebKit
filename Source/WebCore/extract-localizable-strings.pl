@@ -43,6 +43,8 @@
 # The exceptions file has a list of strings in quotes, filenames, and filename/string pairs separated by :.
 
 use strict;
+use File::Compare;
+use File::Copy;
 use Getopt::Long;
 no warnings 'deprecated';
 
@@ -401,9 +403,17 @@ for my $key (sort keys %commentByKey) {
 if (-e "$fileToUpdate") {
     if (!$verify) {
         # Write out the strings file as UTF-8
-        open STRINGS, ">", "$fileToUpdate" or die;
+        my $temporaryFile = "$fileToUpdate.updated";
+        open STRINGS, ">", $temporaryFile or die;
         print STRINGS $localizedStrings;
         close STRINGS;
+
+        # Avoid updating the target file's modification time if the contents have not changed.
+        if (compare($temporaryFile, $fileToUpdate)) {
+            move($temporaryFile, $fileToUpdate);
+        } else {
+            unlink $temporaryFile;
+        }
     } else {
         open STRINGS, $fileToUpdate or die;
 
