@@ -1,3 +1,16 @@
+2015-02-10  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177849
+
+    2015-01-01  Jeff Miller  <jeffm@apple.com>
+
+            Update user-visible copyright strings to include 2015
+            https://bugs.webkit.org/show_bug.cgi?id=139880
+
+            Reviewed by Darin Adler.
+
+            * Info.plist:
+
 2015-02-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178875. rdar://problem/19617631
