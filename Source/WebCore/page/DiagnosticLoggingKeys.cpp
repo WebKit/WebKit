@@ -88,4 +88,9 @@ String DiagnosticLoggingKeys::pageLoadedKey()
     return WTF::ASCIILiteral("pageLoaded");
 }
 
+WTF::String DiagnosticLoggingKeys::navigationKey()
+{
+    return WTF::ASCIILiteral("navigation");
+}
+
 }
