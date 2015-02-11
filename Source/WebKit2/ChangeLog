@@ -1,3 +1,15 @@
+2015-02-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][EFL] Suppress a warning of unused params
+        https://bugs.webkit.org/show_bug.cgi?id=141474
+
+        Reviewed by Darin Adler.
+
+        Drop unused argument name, `directoryName`.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+
 2015-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add default color chooser implementation using GtkColorChooserDialog

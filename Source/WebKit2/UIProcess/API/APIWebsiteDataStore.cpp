@@ -70,7 +70,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     return configuration;
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String&)
 {
     // FIXME: Implement.
     return String();
