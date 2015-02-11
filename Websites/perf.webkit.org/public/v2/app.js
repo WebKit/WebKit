@@ -297,6 +297,7 @@ App.Pane = Ember.Object.extend({
     metricId: null,
     metric: null,
     selectedItem: null,
+    showFullYAxis: false,
     searchCommit: function (repository, keyword) {
         var self = this;
         var repositoryId = repository.get('id');
@@ -476,30 +477,36 @@ App.Pane = Ember.Object.extend({
             return;
 
         var chartData = App.createChartData(this.get('fetchedData'));
-        chartData.movingAverage = this._computeMovingAverage(chartData);
 
-        this._updateStrategyConfigIfNeeded(this.get('chosenMovingAverageStrategy'), 'movingAverageConfig');
-        this._updateStrategyConfigIfNeeded(this.get('chosenEnvelopingStrategy'), 'envelopingConfig');
+        var movingAverageStrategy = this.get('chosenMovingAverageStrategy');
+        this._updateStrategyConfigIfNeeded(movingAverageStrategy, 'movingAverageConfig');
+
+        var envelopingStrategy = this.get('chosenEnvelopingStrategy');
+        this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
+
+        if (!movingAverageStrategy || !movingAverageStrategy.execute) {
+            movingAverageStrategy = Statistics.MovingAverageStrategies[0];
+            chartData.hideMovingAverage = true;
+        }
+        if (!envelopingStrategy || !envelopingStrategy.execute) {
+            envelopingStrategy = Statistics.EnvelopingStrategies[0];
+            chartData.hideEnvelope = true;
+        }
+
+        chartData.movingAverage = this._computeMovingAverage(chartData, movingAverageStrategy, envelopingStrategy);
 
         this.set('chartData', chartData);
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
         'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
-    _computeMovingAverage: function (chartData)
+    _computeMovingAverage: function (chartData, movingAverageStrategy, envelopingStrategy)
     {
         var currentTimeSeriesData = chartData.current.series();
-        var movingAverageStrategy = this.get('chosenMovingAverageStrategy');
-        if (!movingAverageStrategy || !movingAverageStrategy.execute)
-            return null;
-
         var movingAverageValues = this._executeStrategy(movingAverageStrategy, currentTimeSeriesData);
         if (!movingAverageValues)
             return null;
 
-        var envelopeDelta = null;
-        var envelopingStrategy = this.get('chosenEnvelopingStrategy');
-        if (envelopingStrategy && envelopingStrategy.execute)
-            envelopeDelta = this._executeStrategy(envelopingStrategy, currentTimeSeriesData, [movingAverageValues]);
-        
+        var envelopeDelta = this._executeStrategy(envelopingStrategy, currentTimeSeriesData, [movingAverageValues]);
+
         return new TimeSeries(currentTimeSeriesData.map(function (point, index) {
             var value = movingAverageValues[index];
             return {
@@ -671,8 +678,9 @@ App.ChartsController = Ember.Controller.extend({
                 metricId: paneInfo[1],
                 selectedItem: selectedItem,
                 timeRange: timeRange,
-                movingAverageConfig: paneInfo[3],
-                envelopingConfig: paneInfo[4],
+                showFullYAxis: paneInfo[3],
+                movingAverageConfig: paneInfo[4],
+                envelopingConfig: paneInfo[5],
             });
         });
     },
@@ -687,6 +695,7 @@ App.ChartsController = Ember.Controller.extend({
                 pane.get('platformId'),
                 pane.get('metricId'),
                 pane.get('timeRange') ? pane.get('timeRange').map(function (date) { return date.getTime() }) : pane.get('selectedItem'),
+                pane.get('showFullYAxis'),
                 pane.get('movingAverageConfig'),
                 pane.get('envelopingConfig'),
             ];
@@ -697,7 +706,7 @@ App.ChartsController = Ember.Controller.extend({
     {
         Ember.run.debounce(this, '_updateQueryString', 1000);
     }.observes('sharedZoom', 'panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem', 'panes.@each.timeRange',
-        'panes.@each.movingAverageConfig', 'panes.@each.envelopingConfig'),
+        'panes.@each.showFullYAxis', 'panes.@each.movingAverageConfig', 'panes.@each.envelopingConfig'),
 
     _updateQueryString: function ()
     {

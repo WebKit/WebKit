@@ -104,8 +104,8 @@ var Statistics = new (function () {
             id: 1,
             label: 'Simple Moving Average',
             parameterList: [
-                {label: "Backward window size", value: 5, min: 2, step: 1},
-                {label: "Forward window size", value: 3, min: 0, step: 1}
+                {label: "Backward window size", value: 8, min: 2, step: 1},
+                {label: "Forward window size", value: 4, min: 0, step: 1}
             ],
             execute: function (backwardWindowSize, forwardWindowSize, values) {
                 var averages = new Array(values.length);

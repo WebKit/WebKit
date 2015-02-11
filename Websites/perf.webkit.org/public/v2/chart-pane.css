@@ -442,6 +442,10 @@
     stroke: none;
 }
 
+.chart .axis.interactive text {
+    cursor: pointer;
+}
+
 .chart .rangeBar {
     display: block;
     background-color: #fc6;

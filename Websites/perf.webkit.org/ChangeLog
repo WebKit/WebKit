@@ -1,5 +1,42 @@
 2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New perf dashboard shouldn't always show outliners
+        https://bugs.webkit.org/show_bug.cgi?id=141445
+
+        Reviewed by Chris Dumez.
+
+        Use the simple moving average with an average difference envelope to compute the y-axis range to show
+        to avoid expanding it spuriously to show one off outlier.
+
+        * public/v2/app.js:
+        (App.Pane): Don't show the full y-axis range by default.
+        (App.Pane._computeChartData): Use the first strategies for the moving average and the enveloping if
+        one is not specified by the user but without showing them in the charts.
+        (App.Pane._computeMovingAverage): Takes moving average and enveloping strategies as arguments instead
+        of retrieving via chosenMovingAverageStrategy and chosenEnvelopingStrategy.
+
+        (App.ChartsController._parsePaneList): Added showFullYAxis as a query string argument to each pane.
+        (App.ChartsController._serializePaneList): Ditto.
+
+        * public/v2/chart-pane.css: Added a CSS rule for when y-axis is clickable.
+
+        * public/v2/index.html: Pass in showFullYAxis as an argument to the main interactive chart.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._constructGraphIfPossible): Add an event listener on y-axis labels when
+        the chart is interactive so that toggle showFullYAxis. Also hide the moving average and/or the envelope
+        if they are not specified by the user (i.e. only used to adjust y-axis range).
+        (App.InteractiveChartComponent._updateDomain): Don't exit early if y-axis domains are different even if
+        x-axis domain remained the same. Without this change, the charts would never redraw.
+        (App.InteractiveChartComponent._minMaxForAllTimeSeries): Use the moving average instead of the current
+        time series to compute the y-axis range if showFullYAxis is false. When showFullYAxis is true, expand
+        y-axis all the way down to 0 or the minimum value in the current time series whichever is smaller.
+
+        * public/v2/js/statistics.js:
+        (Statistics.MovingAverageStrategies): Use a wider window in Simple Moving Average by default.
+
+2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix.
 
         * public/v2/app.js:
