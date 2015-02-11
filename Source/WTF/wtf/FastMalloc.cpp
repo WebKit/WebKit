@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
-// Copyright (C) 2005, 2006, 2007, 2008, 2009, 2011, 2015 Apple Inc. All rights reserved.
+// Copyright (C) 2005-2009, 2011, 2015 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -77,18 +77,17 @@
 #include "config.h"
 #include "FastMalloc.h"
 
-#include "Assertions.h"
+#include "CheckedArithmetic.h"
 #include "CurrentTime.h"
-
 #include <limits>
+#include <string.h>
+#include <wtf/DataLog.h>
+
 #if OS(WINDOWS)
 #include <windows.h>
 #else
 #include <pthread.h>
 #endif
-#include <string.h>
-#include <wtf/DataLog.h>
-#include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
 #include <mach/mach_init.h>
@@ -273,37 +272,55 @@ namespace WTF {
 
 void* fastMalloc(size_t size)
 {
-    return bmalloc::api::malloc(size);
+    void* result = bmalloc::api::malloc(size);
+    if (!result)
+        CRASH();
+    return result;
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)
 {
-    return fastZeroedMalloc(numElements * elementSize);
+    Checked<size_t> checkedSize = elementSize;
+    checkedSize *= numElements;
+    void* result = fastZeroedMalloc(checkedSize.unsafeGet());
+    if (!result)
+        CRASH();
+    return result;
 }
-    
+
 void* fastRealloc(void* object, size_t size)
 {
-    return bmalloc::api::realloc(object, size);
+    void* result = bmalloc::api::realloc(object, size);
+    if (!result)
+        CRASH();
+    return result;
 }
-    
+
 void fastFree(void* object)
 {
     bmalloc::api::free(object);
 }
-    
+
 size_t fastMallocSize(const void*)
 {
+    // FIXME: This is incorrect; best fix is probably to remove this function.
+    // Caller currently are all using this for assertion, not to actually check
+    // the size of the allocation, so maybe we can come up with something for that.
     return 1;
 }
-    
+
 size_t fastMallocGoodSize(size_t size)
 {
+    // FIXME: This is non-helpful; fastMallocGoodSize will be removed soon.
     return size;
 }
-    
+
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
-    return bmalloc::api::memalign(alignment, size);
+    void* result = bmalloc::api::memalign(alignment, size);
+    if (!result)
+        CRASH();
+    return result;
 }
 
 void fastAlignedFree(void* p) 
@@ -313,17 +330,21 @@ void fastAlignedFree(void* p)
 
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
-    return fastMalloc(size);
+    return bmalloc::api::malloc(size);
 }
     
-TryMallocReturnValue tryFastRealloc(void* p, size_t n)
+TryMallocReturnValue tryFastRealloc(void* object, size_t size)
 {
-    return fastRealloc(p, n);
+    return bmalloc::api::realloc(object, size);
 }
     
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 {
-    return tryFastZeroedMalloc(numElements * elementSize);
+    Checked<size_t, RecordOverflow> checkedSize = elementSize;
+    checkedSize *= numElements;
+    if (checkedSize.hasOverflowed())
+        return nullptr;
+    return tryFastZeroedMalloc(checkedSize.unsafeGet());
 }
     
 void releaseFastMallocFreeMemoryForThisThread()
@@ -338,6 +359,7 @@ void releaseFastMallocFreeMemory()
 
 FastMallocStatistics fastMallocStatistics()
 {
+    // FIXME: This is incorrect; needs an implementation or to be removed.
     FastMallocStatistics statistics = { 0, 0, 0 };
     return statistics;
 }

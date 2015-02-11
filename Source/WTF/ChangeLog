@@ -1,3 +1,24 @@
+2015-02-10  Darin Adler  <darin@apple.com>
+
+        Add the crash-on-failure behavior to bmalloc-based fastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=141434
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/FastMalloc.cpp: Removed unneeded includes.
+        (WTF::fastMalloc): Added null check and CRASH.
+        (WTF::fastCalloc): Added overflow checking, null check, and CRASH.
+        (WTF::fastRealloc): Added null check and CRASH.
+        (WTF::fastMallocSize): Added FIXME comment.
+        (WTF::fastMallocGoodSize): Added FIXME comment.
+        (WTF::fastAlignedMalloc): Added null check and CRASH.
+        (WTF::tryFastMalloc): Changed to call bmalloc directly instead of
+        calling fastMalloc, since fastMalloc will now crash on failure.
+        (WTF::tryFastRealloc): Changed to call bmalloc directly instead of
+        calling fastRealloc, since fastRealloc will now crash on failure.
+        (WTF::tryFastCalloc): Added overflow checking.
+        (WTF::fastMallocStatistics): Added FIXME comment.
+
 2015-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GMutexLocker build issue
