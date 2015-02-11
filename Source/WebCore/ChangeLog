@@ -1,3 +1,17 @@
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r174295
+
+    2014-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix for MSVC 2013 SP 3.
+
+            The std::array initializer is not fully implemented in SP3 and causes a
+            build error.
+
+            * platform/graphics/transforms/AffineTransform.cpp: Use old style assignment
+            initialization for MSVC builds until this bug is fixed.
+
 2014-12-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176896.
