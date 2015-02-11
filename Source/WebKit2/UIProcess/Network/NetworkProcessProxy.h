@@ -91,9 +91,6 @@ private:
     void didCreateNetworkConnectionToWebProcess(const IPC::Attachment&);
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
     void didDeleteWebsiteData(uint64_t callbackID);
-    void logDiagnosticMessage(uint64_t pageID, const String& message, const String& description);
-    void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result);
-    void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value);
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

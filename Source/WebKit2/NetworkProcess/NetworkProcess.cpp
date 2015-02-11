@@ -301,21 +301,6 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
     parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }
 
-void NetworkProcess::logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description)
-{
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessage(webPageID, message, description), 0);
-}
-
-void NetworkProcess::logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
-{
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithResult(webPageID, message, description, result), 0);
-}
-
-void NetworkProcess::logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, const String& value)
-{
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithValue(webPageID, message, description, value), 0);
-}
-
 void NetworkProcess::terminate()
 {
     platformTerminate();

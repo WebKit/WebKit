@@ -31,9 +31,6 @@
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkCacheFileSystemPosix.h"
-#include "NetworkProcess.h"
-#include <WebCore/DiagnosticLoggingKeys.h>
-#include <WebCore/DiagnosticLoggingResultType.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SQLiteDatabaseTracker.h>
 #include <WebCore/SQLiteStatement.h>
@@ -168,42 +165,40 @@ void NetworkCacheStatistics::shrinkIfNeeded()
     });
 }
 
-void NetworkCacheStatistics::recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
+void NetworkCacheStatistics::recordNotUsingCacheForRequest(const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
 {
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasEverRequested) {
+    queryWasEverRequested(hash, [this, hash, requestURL](bool wasEverRequested) {
         if (wasEverRequested) {
-            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously requested but is not handled by the cache", webPageID, requestURL.string().ascii().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::unhandledRequestFailureKey());
+            LOG(NetworkCache, "(NetworkProcess) %s was previously requested but is not handled by the cache", requestURL.string().ascii().data());
+            // FIXME: Do diagnostic logging.
         } else
             markAsRequested(hash);
     });
 }
 
-void NetworkCacheStatistics::recordRetrievalFailure(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
+void NetworkCacheStatistics::recordRetrievalFailure(const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
 {
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested) {
+    queryWasEverRequested(hash, [this, hash, requestURL](bool wasPreviouslyRequested) {
         if (wasPreviouslyRequested) {
-            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously cached but is no longer in the cache", webPageID, requestURL.string().ascii().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::noLongerInCacheFailureKey());
+            LOG(NetworkCache, "(NetworkProcess) %s was previously cached but is no longer in the cache", requestURL.string().ascii().data());
+            // FIXME: Do diagnostic logging.
         } else
             markAsRequested(hash);
     });
 }
 
-void NetworkCacheStatistics::recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request, bool success)
+void NetworkCacheStatistics::recordRetrievedCachedEntry(const NetworkCacheKey& key, const WebCore::ResourceRequest& request, bool success)
 {
     WebCore::URL requestURL = request.url();
-    if (success) {
-        LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache and is used", webPageID, requestURL.string().ascii().data());
-        NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingResultPass);
-    } else {
-        LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but wasn't used", webPageID, requestURL.string().ascii().data());
-        NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryFailureKey());
-    }
+    if (success)
+        LOG(NetworkCache, "(NetworkProcess) %s is in the cache and is used", requestURL.string().ascii().data());
+    else
+        LOG(NetworkCache, "(NetworkProcess) %s is in the cache but wasn't used", requestURL.string().ascii().data());
+    // FIXME: Do diagnostic logging.
 }
 
 void NetworkCacheStatistics::markAsRequested(const String& hash)

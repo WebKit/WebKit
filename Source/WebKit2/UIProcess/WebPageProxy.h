@@ -988,11 +988,6 @@ public:
 
     void setShouldDispatchFakeMouseMoveEvents(bool);
 
-    // Diagnostic messages logging.
-    void logDiagnosticMessage(const String& message, const String& description);
-    void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result);
-    void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value);
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();
@@ -1241,6 +1236,11 @@ private:
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
     void setCursorHiddenUntilMouseMoves(bool);
+
+    // Diagnostic messages logging.
+    void logDiagnosticMessage(const String& message, const String& description);
+    void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result);
+    void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();

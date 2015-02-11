@@ -141,7 +141,7 @@ void NetworkResourceLoader::start()
     }
 
     RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().retrieve(originalRequest(), m_parameters.webPageID, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
+    NetworkCache::singleton().retrieve(originalRequest(), [loader](std::unique_ptr<NetworkCache::Entry> entry) {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
             return;

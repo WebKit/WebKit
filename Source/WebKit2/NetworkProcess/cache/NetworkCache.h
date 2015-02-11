@@ -64,7 +64,7 @@ public:
         bool needsRevalidation;
     };
     // Completion handler may get called back synchronously on failure.
-    void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)>);
+    void retrieve(const WebCore::ResourceRequest&, std::function<void (std::unique_ptr<Entry>)>);
 
     struct MappedBody {
 #if ENABLE(SHAREABLE_RESOURCE)
