@@ -268,7 +268,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEvent(WebEvent *);
+    WEBCORE_EXPORT void touchEvent(WebEvent *);
 #endif
 
 #if !PLATFORM(IOS)

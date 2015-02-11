@@ -1,3 +1,11 @@
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add a few more WEBCORE_EXPORT macros for debug and iOS builds.
+
+        * page/EventHandler.h:
+        * page/ios/WebEventRegion.h:
+        * platform/sql/SQLiteDatabaseTracker.h:
+
 2015-02-11  Darin Adler  <darin@apple.com>
 
         REGRESSION(r179476): It broke the !ENABLE(PICTURE_SIZES) build
