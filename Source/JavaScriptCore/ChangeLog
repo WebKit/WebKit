@@ -1,5 +1,12 @@
 2015-02-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix build.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
+2015-02-10  Filip Pizlo  <fpizlo@apple.com>
+
         op_call_varargs should only load the length once
         https://bugs.webkit.org/show_bug.cgi?id=141440
         rdar://problem/19761683

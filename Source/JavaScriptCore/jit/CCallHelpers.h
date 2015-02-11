@@ -1394,6 +1394,7 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, TrustedImm32 arg4, GPRReg arg5)
     {
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
         poke(arg4, POKE_ARGUMENT_OFFSET);
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
