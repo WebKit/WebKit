@@ -1,3 +1,19 @@
+2015-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Turn recent assertions into release assertions to help track down crash in DocumentLoader::stopLoadingForPolicyChange()
+        https://bugs.webkit.org/show_bug.cgi?id=141484
+        <rdar://problem/13811738>
+
+        Reviewed by Andy Estes.
+
+        Turn recent assertions into release assertions to help track down crash in
+        DocumentLoader::stopLoadingForPolicyChange(). This should increase the
+        likelyhood of tripping them so that we better understand why this happens.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::detachFromFrame):
+
 2015-02-11  Jer Noble  <jer.noble@apple.com>
 
         [MSE] SampleMap::addRange() returns an inverted iterator_range, possibly causing a crash when that iterator_range is traversed.
