@@ -511,3 +511,4 @@ EXPORTS
         symbolWithPointer(?uninstallPageOverlay@PageOverlayController@WebCore@@QAEXPAVPageOverlay@2@W4FadeMode@32@@Z, ?uninstallPageOverlay@PageOverlayController@WebCore@@QEAAXPEAVPageOverlay@2@W4FadeMode@32@@Z)
         symbolWithPointer(?source@ResourceResponseBase@WebCore@@QBE?AW4Source@12@XZ, ?source@ResourceResponseBase@WebCore@@QEBA?AW4Source@12@XZ)
         symbolWithPointer(?toWrapped@JSXMLHttpRequest@WebCore@@SAPAVXMLHttpRequest@2@VJSValue@JSC@@@Z, ?toWrapped@JSXMLHttpRequest@WebCore@@SAPEAVXMLHttpRequest@2@VJSValue@JSC@@@Z)
+        ?s_info@JSDOMGlobalObject@WebCore@@1UClassInfo@JSC@@B

@@ -1,3 +1,9 @@
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2015-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] 64-bit build fix after r179702 and r179709
