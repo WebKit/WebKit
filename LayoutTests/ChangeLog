@@ -1,3 +1,23 @@
+2015-02-11  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK+ Gardening 11 February.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/pasteboard/onpaste-text-html-expected.txt: Rebaselined after r179168.
+        * platform/gtk/fast/css/outline-auto-empty-rects-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/fast/css/pseudo-invalid-form-invalidation-optimization-expected.txt: Added. Rebaselined after r177664.
+        * platform/gtk/fast/css/pseudo-valid-form-invalidation-optimization-expected.txt: Added. Rebaselined after r177664.
+        * platform/gtk/fast/forms/basic-buttons-expected.txt: Rebaselined after r178078.
+        * platform/gtk/fast/line-grid/line-align-right-edges-expected.txt: Rebaselined after r177128.
+        * platform/gtk/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/fast/table/022-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/fast/text/wbr-pre-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/fast/text/whitespace/019-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/fast/text/whitespace/023-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt: Added. Rebaselined after r177490.
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/svg/custom/glyph-selection-lang-attribute-expected.txt: Rebaselined after r177490.
+
 2015-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add default color chooser implementation using GtkColorChooserDialog

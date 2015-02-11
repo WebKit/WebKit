@@ -42,7 +42,7 @@ layer at (0,0) size 800x378
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,25) size 157x19 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x17
-                text run at (1,1) width 104: "(26, 16) (22, 12)"
+                text run at (1,1) width 104: "(26, 26) (22, 22)"
             RenderTableCell {TD} at (386,19) size 132x32 [r=1 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 38x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (8,4) size 22x17
@@ -60,8 +60,8 @@ layer at (0,0) size 800x378
                 RenderBlock (anonymous) at (2,2) size 10x17
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,55) size 157x19 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 88x17
-                text run at (1,1) width 88: "(21, 4) (17, 0)"
+              RenderText {#text} at (1,1) size 104x17
+                text run at (1,1) width 104: "(21, 14) (17, 10)"
             RenderTableCell {TD} at (386,51) size 132x27 [r=2 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 26x21 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (2,2) size 22x17
@@ -80,7 +80,7 @@ layer at (0,0) size 800x378
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,95) size 157x19 [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x17
-                text run at (1,1) width 104: "(33, 16) (29, 12)"
+                text run at (1,1) width 104: "(33, 26) (29, 22)"
             RenderTableCell {TD} at (386,78) size 132x53 [r=3 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 52x47 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (15,15) size 22x17
@@ -98,8 +98,8 @@ layer at (0,0) size 800x378
                 RenderBlock (anonymous) at (4,4) size 10x17
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,137) size 157x19 [r=4 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 88x17
-                text run at (1,1) width 88: "(25, 8) (21, 4)"
+              RenderText {#text} at (1,1) size 104x17
+                text run at (1,1) width 104: "(25, 18) (21, 14)"
             RenderTableCell {TD} at (386,131) size 132x31 [r=4 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 30x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (4,4) size 22x17
@@ -118,7 +118,7 @@ layer at (0,0) size 800x378
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,168) size 157x19 [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x17
-                text run at (1,1) width 104: "(26, 16) (22, 12)"
+                text run at (1,1) width 104: "(26, 26) (22, 22)"
             RenderTableCell {TD} at (386,162) size 132x32 [r=5 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 38x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (8,4) size 22x17
@@ -137,7 +137,7 @@ layer at (0,0) size 800x378
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,201) size 157x19 [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x17
-                text run at (1,1) width 104: "(27, 18) (23, 14)"
+                text run at (1,1) width 104: "(27, 28) (23, 24)"
             RenderTableCell {TD} at (386,194) size 132x33 [r=6 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 40x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (9,5) size 22x17
@@ -156,7 +156,7 @@ layer at (0,0) size 800x378
                   RenderImage {IMG} at (0,4) size 10x10
             RenderTableCell {TD} at (229,251) size 157x19 [r=7 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x17
-                text run at (1,1) width 104: "(61, 44) (57, 40)"
+                text run at (1,1) width 104: "(61, 54) (57, 50)"
             RenderTableCell {TD} at (386,227) size 132x67 [r=7 c=3 rs=1 cs=1]
               RenderButton {INPUT} at (3,3) size 66x61 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (22,22) size 22x17

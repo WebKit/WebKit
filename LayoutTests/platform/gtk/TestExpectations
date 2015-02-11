@@ -540,6 +540,22 @@ webkit.org/b/141423 fast/css/getComputedStyle/computed-style-without-renderer.ht
 webkit.org/b/141423 fast/css/line-height-text-autosizing.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style.html [ Failure ]
 
+#Pointer and hover media queries.
+webkit.org/b/141466 fast/media/mq-any-hover-matchMedia.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-any-hover-styling.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-any-pointer-matchMedia.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-any-pointer-styling.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-hover-matchMedia.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-hover-styling.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-pointer-matchMedia.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-pointer-styling.html [ Failure ]
+webkit.org/b/141466 fast/media/mq-pointer.html [ Failure ]
+
+webkit.org/b/141468 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
+webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+webkit.org/b/141469 http/tests/media/hls/hls-progress.html [ Failure ]
+webkit.org/b/141423 svg/css/getComputedStyle-basic.xhtml [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
