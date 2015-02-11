@@ -1,3 +1,14 @@
+2015-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add logging to validate the network cache efficacy (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=141345
+        <rdar://problem/19632080>
+
+        Reviewed by Sam Weinig.
+
+        Add a few more diagnostic logging keys for the network cache efficacy
+        logging.
+
 2015-02-11  Sam Weinig  <sam@webkit.org>
 
         REGRESSION(r179166): Crash when accessing document.dir on a document with no elements

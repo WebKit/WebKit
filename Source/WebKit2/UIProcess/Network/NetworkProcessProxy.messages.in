@@ -28,6 +28,11 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DidReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
     DidDeleteWebsiteData(uint64_t callbackID)
+
+    # Diagnostic messages logging
+    LogDiagnosticMessage(uint64_t pageID, String message, String description)
+    LogDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result)
+    LogDiagnosticMessageWithValue(uint64_t pageID, String message, String description, String value)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

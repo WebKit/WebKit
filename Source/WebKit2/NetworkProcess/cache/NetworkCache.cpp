@@ -218,7 +218,7 @@ static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
     return NetworkCacheKey(request.httpMethod(), partition, request.url().string());
 }
 
-void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std::function<void (std::unique_ptr<Entry>)> completionHandler)
+void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
 {
     ASSERT(isEnabled());
 
@@ -227,7 +227,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
     NetworkCacheKey storageKey = makeCacheKey(originalRequest);
     if (!canRetrieve(originalRequest)) {
         if (m_statistics)
-            m_statistics->recordNotUsingCacheForRequest(storageKey, originalRequest);
+            m_statistics->recordNotUsingCacheForRequest(webPageID, storageKey, originalRequest);
 
         completionHandler(nullptr);
         return;
@@ -236,12 +236,12 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
     auto startTime = std::chrono::system_clock::now();
     unsigned priority = originalRequest.priority();
 
-    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey](std::unique_ptr<NetworkCacheStorage::Entry> entry) {
+    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<NetworkCacheStorage::Entry> entry) {
         if (!entry) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
             if (m_statistics)
-                m_statistics->recordRetrievalFailure(storageKey, originalRequest);
+                m_statistics->recordRetrievalFailure(webPageID, storageKey, originalRequest);
 
             completionHandler(nullptr);
             return false;
@@ -249,7 +249,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, std
         auto decodedEntry = decodeStorageEntry(*entry, originalRequest);
         bool success = !!decodedEntry;
         if (m_statistics)
-            m_statistics->recordRetrievedCachedEntry(storageKey, originalRequest, success);
+            m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, success);
 
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();

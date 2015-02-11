@@ -230,6 +230,39 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 #endif
 }
 
+void NetworkProcessProxy::logDiagnosticMessage(uint64_t pageID, const String& message, const String& description)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
+    // but for now we simply drop the message in the rare case this happens.
+    if (!page)
+        return;
+
+    page->logDiagnosticMessage(message, description);
+}
+
+void NetworkProcessProxy::logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
+    // but for now we simply drop the message in the rare case this happens.
+    if (!page)
+        return;
+
+    page->logDiagnosticMessageWithResult(message, description, result);
+}
+
+void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
+    // but for now we simply drop the message in the rare case this happens.
+    if (!page)
+        return;
+
+    page->logDiagnosticMessageWithValue(message, description, value);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
