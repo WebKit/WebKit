@@ -1,5 +1,23 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179706
+
+    2015-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+            Crash due to failing to dirty a removed text node's line box
+            https://bugs.webkit.org/show_bug.cgi?id=136544
+
+            Reviewed by David Hyatt.
+
+            Test: fast/text/remove-text-node-linebox-not-dirty-crash.html
+
+            * rendering/RenderLineBoxList.cpp:
+            (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild): Make the check for dirtying the next
+            line box a bit more inclusive to avoid a case of a line box for a destroyed render object not
+            being dirtied. In particular, when the text node's parent has no line boxes but contains BRs.
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179772
 
     2015-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
