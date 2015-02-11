@@ -1,5 +1,30 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179597
+
+    2015-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+            Crash when printing snapshotted plugins
+            https://bugs.webkit.org/show_bug.cgi?id=141212
+
+            Reviewed by Simon Fraser.
+
+            Test: plugins/snapshotting/print-snapshotted-plugin.html
+
+            * html/HTMLPlugInImageElement.cpp:
+            (WebCore::HTMLPlugInImageElement::childShouldCreateRenderer): New
+            method. If the current renderer is a snapshotted plugin, only
+            allow children to create renderers if they are part of the
+            snapshot shadow dom. Otherwise RenderEmbeddedObject invariants
+            will be violated. This DOM class can have many other renderers, but they
+            can just follow their own rules.
+            (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay): Make this
+            const-correct, and don't create UA shadow DOM as a side effect if it doesn't
+            already exist.
+            * html/HTMLPlugInImageElement.h:
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179569
 
     2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
