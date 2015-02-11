@@ -43,6 +43,8 @@ namespace WebCore {
 
 RenderRubyRun::RenderRubyRun(Document& document, PassRef<RenderStyle> style)
     : RenderBlockFlow(document, WTF::move(style))
+    , m_lastCharacter(0)
+    , m_secondToLastCharacter(0)
 {
     setReplaced(true);
     setInline(true);
@@ -325,6 +327,19 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
         startOverhang = std::min<int>(startOverhang, std::min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));
     if (endOverhang)
         endOverhang = std::min<int>(endOverhang, std::min<int>(toRenderText(endRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+}
+
+void RenderRubyRun::updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator& iterator) const
+{
+    iterator.setPriorContext(m_lastCharacter, m_secondToLastCharacter);
+}
+
+bool RenderRubyRun::canBreakBefore(const LazyLineBreakIterator& iterator) const
+{
+    RenderRubyText* rubyText = this->rubyText();
+    if (!rubyText)
+        return true;
+    return rubyText->canBreakBefore(iterator);
 }
 
 } // namespace WebCore

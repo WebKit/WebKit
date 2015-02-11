@@ -45,7 +45,9 @@ public:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     
     RenderRubyRun* rubyRun() const;
-
+    
+    bool canBreakBefore(const LazyLineBreakIterator&) const;
+   
 private:
     virtual const char* renderName() const override { return "RenderRubyText"; }
     virtual bool isRubyText() const override { return true; }

@@ -1,3 +1,22 @@
+2015-02-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r179366
+
+    2015-01-20  David Hyatt  <hyatt@apple.com>
+
+            Japanese line breaking rules need to be respected before and after Ruby.
+            https://bugs.webkit.org/show_bug.cgi?id=91588
+            <rdar://problem/17306535>
+
+            Reviewed by Dean Jackson.
+
+            * fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.txt:
+            * fast/ruby/ruby-block-style-not-updated-with-before-after-content.html:
+            * fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.txt:
+            * fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html:
+            * fast/ruby/ruby-punctuation-avoid-breaking-expected.html: Added.
+            * fast/ruby/ruby-punctuation-avoid-breaking.html: Added.
+
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
         Merge r176262.

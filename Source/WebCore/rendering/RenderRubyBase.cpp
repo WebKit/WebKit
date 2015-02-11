@@ -154,4 +154,11 @@ void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     logicalWidth -= inset;
 }
 
+void RenderRubyBase::cachePriorCharactersIfNeeded(const LazyLineBreakIterator& lineBreakIterator)
+{
+    auto* run = rubyRun();
+    if (run)
+        run->setCachedPriorCharacters(lineBreakIterator.lastCharacter(), lineBreakIterator.secondToLastCharacter());
+}
+
 } // namespace WebCore
