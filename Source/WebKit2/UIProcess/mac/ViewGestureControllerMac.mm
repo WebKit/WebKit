@@ -398,6 +398,9 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
     CGFloat maxProgress = (direction == SwipeDirection::Left) ? 1 : 0;
     CGFloat minProgress = (direction == SwipeDirection::Right) ? -1 : 0;
     RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Left) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    if (!targetItem)
+        return;
+    
     __block bool swipeCancelled = false;
 
     ASSERT(!m_swipeCancellationTracker);

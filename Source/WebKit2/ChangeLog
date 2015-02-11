@@ -1,5 +1,23 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179736
+
+    2015-02-05  Tim Horton  <timothy_horton@apple.com>
+
+            Null deref in ViewGestureController::beginSwipeGesture when swiping while script is navigating
+            https://bugs.webkit.org/show_bug.cgi?id=141308
+            <rdar://problem/18460046>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::trackSwipeGesture):
+            If script navigates (history.back, probably other cases too) while in the middle of
+            building up enough scroll events to start a swipe, it can destroy the history item
+            that we were planning to swipe to. If this happens, bail from the swipe.
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179586
 
     2015-02-03  Timothy Horton  <timothy_horton@apple.com>
