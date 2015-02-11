@@ -717,44 +717,6 @@ public:
     void compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg, GPRReg scratch2Reg);
     void compileInstanceOf(Node*);
     
-    // Access to our fixed callee CallFrame.
-    MacroAssembler::Address calleeFrameSlot(int slot)
-    {
-        ASSERT(slot >= JSStack::CallerFrameAndPCSize);
-        return MacroAssembler::Address(MacroAssembler::stackPointerRegister, sizeof(Register) * (slot - JSStack::CallerFrameAndPCSize));
-    }
-
-    // Access to our fixed callee CallFrame.
-    MacroAssembler::Address calleeArgumentSlot(int argument)
-    {
-        return calleeFrameSlot(virtualRegisterForArgument(argument).offset());
-    }
-
-    MacroAssembler::Address calleeFrameTagSlot(int slot)
-    {
-        return calleeFrameSlot(slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-    }
-
-    MacroAssembler::Address calleeFramePayloadSlot(int slot)
-    {
-        return calleeFrameSlot(slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-
-    MacroAssembler::Address calleeArgumentTagSlot(int argument)
-    {
-        return calleeArgumentSlot(argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-    }
-
-    MacroAssembler::Address calleeArgumentPayloadSlot(int argument)
-    {
-        return calleeArgumentSlot(argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-
-    MacroAssembler::Address calleeFrameCallerFrame()
-    {
-        return calleeFrameSlot(0).withOffset(CallFrame::callerFrameOffset());
-    }
-
     void emitCall(Node*);
     
     int32_t framePointerOffsetToGetActivationRegisters()

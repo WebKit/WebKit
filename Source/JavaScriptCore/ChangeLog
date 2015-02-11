@@ -1,5 +1,33 @@
 2015-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        The callee frame helpers in DFG::SpeculativeJIT should be available to other JITs
+        https://bugs.webkit.org/show_bug.cgi?id=141493
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::calleeFrameSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeArgumentSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeFrameTagSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeFramePayloadSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeArgumentTagSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeArgumentPayloadSlot): Deleted.
+        (JSC::DFG::SpeculativeJIT::calleeFrameCallerFrame): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::calleeFrameSlot):
+        (JSC::AssemblyHelpers::calleeArgumentSlot):
+        (JSC::AssemblyHelpers::calleeFrameTagSlot):
+        (JSC::AssemblyHelpers::calleeFramePayloadSlot):
+        (JSC::AssemblyHelpers::calleeArgumentTagSlot):
+        (JSC::AssemblyHelpers::calleeArgumentPayloadSlot):
+        (JSC::AssemblyHelpers::calleeFrameCallerFrame):
+
+2015-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         SetupVarargsFrame should not assume that an inline stack frame would have identical layout to a normal stack frame
         https://bugs.webkit.org/show_bug.cgi?id=141485
 

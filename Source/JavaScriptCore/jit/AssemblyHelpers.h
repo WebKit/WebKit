@@ -366,6 +366,44 @@ public:
         return payloadFor(static_cast<VirtualRegister>(operand));
     }
 
+    // Access to our fixed callee CallFrame.
+    Address calleeFrameSlot(int slot)
+    {
+        ASSERT(slot >= JSStack::CallerFrameAndPCSize);
+        return MacroAssembler::Address(MacroAssembler::stackPointerRegister, sizeof(Register) * (slot - JSStack::CallerFrameAndPCSize));
+    }
+
+    // Access to our fixed callee CallFrame.
+    Address calleeArgumentSlot(int argument)
+    {
+        return calleeFrameSlot(virtualRegisterForArgument(argument).offset());
+    }
+
+    Address calleeFrameTagSlot(int slot)
+    {
+        return calleeFrameSlot(slot).withOffset(TagOffset);
+    }
+
+    Address calleeFramePayloadSlot(int slot)
+    {
+        return calleeFrameSlot(slot).withOffset(PayloadOffset);
+    }
+
+    Address calleeArgumentTagSlot(int argument)
+    {
+        return calleeArgumentSlot(argument).withOffset(TagOffset);
+    }
+
+    Address calleeArgumentPayloadSlot(int argument)
+    {
+        return calleeArgumentSlot(argument).withOffset(PayloadOffset);
+    }
+
+    Address calleeFrameCallerFrame()
+    {
+        return calleeFrameSlot(0).withOffset(CallFrame::callerFrameOffset());
+    }
+
     Jump branchIfCellNotObject(GPRReg cellReg)
     {
         return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
