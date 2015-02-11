@@ -35,7 +35,6 @@
 #include "Logging.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
-#include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLineBreak.h"
@@ -935,8 +934,8 @@ bool Position::isCandidate() const
 
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
-
-    if (is<RenderBlockFlow>(*renderer) || is<RenderFlexibleBox>(*renderer)) {
+        
+    if (is<RenderBlockFlow>(*renderer)) {
         RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
         if (block.logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
