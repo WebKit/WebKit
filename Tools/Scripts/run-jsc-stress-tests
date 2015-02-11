@@ -46,8 +46,6 @@ raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
 HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
 
-IMPORTANT_ENVS = ["JSC_timeout"]
-
 begin
     require 'shellwords'
 rescue Exception => e
@@ -492,12 +490,7 @@ class Plan
         script += "cd .runner\n"
 
         script += "export DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd)\n"
-        IMPORTANT_ENVS.each {
-            | key |
-            if ENV[key]
-                script += "export #{key}=#{Shellwords.shellescape(ENV[key])}\n"
-            end
-        }
+        script += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])}\n"
         script += "#{shellCommand} || exit 1"
         "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape((Pathname.new("..") + @name).to_s)}"
     end
@@ -1382,8 +1375,9 @@ def runShellTestRunner
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf #{$tarFileName} && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
-        remoteScript += "DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" sh runscript"
-        remoteScript += "\""
+        remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
+        remoteScript += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])} && "
+        remoteScript += "sh runscript\""
         runAndMonitorTestRunnerCommand("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {

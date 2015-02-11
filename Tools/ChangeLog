@@ -1,3 +1,14 @@
+2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        run-jsc-stress-tests should pass JSC_timeout to remote hosts
+        https://bugs.webkit.org/show_bug.cgi?id=141164
+
+        Reviewed by Darin Adler.
+
+        Additonally removed IMPORTANT_ENVS, since JSC_timeout was the only one.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add default color chooser implementation using GtkColorChooserDialog
