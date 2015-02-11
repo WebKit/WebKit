@@ -87,22 +87,6 @@ def escapeAll(array)
     }.join(' ')
 end
 
-begin
-    $numProcessors = `sysctl -n hw.activecpu 2>/dev/null`.to_i
-rescue
-    $numProcessors = 0
-end
-
-if $numProcessors == 0
-    $numProcessors = `nproc --all 2>/dev/null`.to_i
-end
-if $numProcessors == 0
-    $numProcessors = 1
-end
-
-if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
-    $numProcessors = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
-end
 
 $jscPath = nil
 $doNotMessWithVMPath = false
@@ -199,7 +183,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         uri = URI("ssh://" + arg)
         $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
     when '--child-processes'
-        $numProcessors = arg.to_i
+        $numChildProcesses = arg.to_i
     when '--arch'
         $architecture = arg
     when '--os'
@@ -542,7 +526,7 @@ end
 def addRunCommand(kind, command, outputHandler, errorHandler)
     $didAddRunCommand = true
     plan = Plan.new($benchmarkDirectory, command, baseOutputName(kind), outputHandler, errorHandler)
-    if $numProcessors > 1 and $runCommandOptions[:isSlow]
+    if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
     else
         $runlist << plan
@@ -1249,17 +1233,6 @@ def prepareMakeTestRunner
     }
 end
 
-if $enableFTL and ENV["JSC_timeout"]
-    # Currently, using the FTL is a performance regression particularly in real
-    # (i.e. non-loopy) benchmarks. Account for this in the timeout.
-    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i * 2).to_s
-end
-
-if ENV["JSC_timeout"]
-    # In the worst case, the processors just interfere with each other.
-    # Increase the timeout proportionally to the number of processors.
-    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i.to_f * Math.sqrt($numProcessors)).to_i.to_s
-end
     
 puts
 
@@ -1296,6 +1269,35 @@ def sshRead(cmd)
     }
     raise "#{$?}" unless $?.success?
     result
+end
+
+def runCommandOnTester(cmd)
+    if $remote
+        result = sshRead(cmd)
+    else
+        result = `#{cmd}`
+    end
+end
+
+def numberOfProcessors
+    begin
+        numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
+    rescue
+        numProcessors = 0
+    end
+
+    if numProcessors == 0
+        begin
+            numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
+        rescue
+            numProcessors == 0
+        end
+    end
+
+    if numProcessors == 0
+        numProcessors = 1
+    end
+    return numProcessors
 end
 
 def runAndMonitorTestRunnerCommand(*cmd)
@@ -1389,7 +1391,7 @@ end
 def runMakeTestRunner
     raise if $remote
     Dir.chdir($runnerDir) {
-        runAndMonitorTestRunnerCommand("make", "-j", $numProcessors.to_s, "-s", "-f", "Makefile")
+        runAndMonitorTestRunnerCommand("make", "-j", $numChildProcesses.to_s, "-s", "-f", "Makefile")
     }
 end
 
@@ -1433,6 +1435,26 @@ Dir.mkdir($outputDir) unless $outputDir.directory?
 
 $outputDir = $outputDir.realpath
 $runnerDir = $outputDir + ".runner"
+
+if !$numChildProcesses
+    if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
+        $numChildProcesses = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
+    else
+        $numChildProcesses = numberOfProcessors
+    end
+end
+
+if $enableFTL and ENV["JSC_timeout"]
+    # Currently, using the FTL is a performance regression particularly in real
+    # (i.e. non-loopy) benchmarks. Account for this in the timeout.
+    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i * 2).to_s
+end
+
+if ENV["JSC_timeout"]
+    # In the worst case, the processors just interfere with each other.
+    # Increase the timeout proportionally to the number of processors.
+    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
+end
 
 def runBundle
     raise unless $bundle

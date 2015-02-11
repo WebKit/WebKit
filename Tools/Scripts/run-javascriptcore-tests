@@ -47,6 +47,7 @@ my $root;
 my $showHelp;
 my $extraTests;
 my $jsDriverArgs;
+my $childProcesses;
 
 my $buildJSC = 1;
 
@@ -80,6 +81,7 @@ Usage: $programName [options] [options to pass to build system]
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
   --extra-tests=                Path to a file containing extra tests
+  --child-processes=            Specify the number of child processes.
 
 EOF
 
@@ -93,6 +95,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
+    'child-processes=s' => \$childProcesses,
     'help' => \$showHelp
 );
 
@@ -276,6 +279,11 @@ sub runJSCStressTests
     if ($remoteHost) {
         push(@jscStressDriverCmd, "--remote");
         push(@jscStressDriverCmd, $remoteHost);
+    }
+
+    if ($childProcesses) {
+        push(@jscStressDriverCmd, "--child-processes");
+        push(@jscStressDriverCmd, $childProcesses);
     }
 
     # End option processing, the rest of the arguments are tests

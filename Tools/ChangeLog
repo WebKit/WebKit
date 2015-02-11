@@ -1,5 +1,19 @@
 2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        run-jsc-stress tests should detect the number of processors on the remote machine too
+        https://bugs.webkit.org/show_bug.cgi?id=141196
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Pass through the --child-processes argument.
+        * Scripts/run-jsc-stress-tests: Added determineNumberOfProcessors function
+        to detect the number of local and remote processors with the same algorithm.
+        Additionally introduced $numChildProcesses to emphasize it isn't necessarily
+        same as $numProcessors.
+
+2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         run-jsc-stress-tests should pass JSC_timeout to remote hosts
         https://bugs.webkit.org/show_bug.cgi?id=141164
 
