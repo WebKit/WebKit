@@ -59,7 +59,7 @@ public:
     void shrink(T*);
     void shrink(size_t);
 
-    void clear() { shrink(0ul); }
+    void clear() { shrink(static_cast<size_t>(0)); }
     bool isEmpty() { return !m_size; }
 
 private:

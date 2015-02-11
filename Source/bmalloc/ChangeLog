@@ -1,3 +1,17 @@
+2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        bmalloc buildfix on 32 bit Linux (x86/ARM)
+        https://bugs.webkit.org/show_bug.cgi?id=141472
+
+        Reviewed by Gyuyoung Kim.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToMultipleOf):
+        * bmalloc/FixedVector.h:
+        (bmalloc::FixedVector::clear):
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::sizeClass):
+
 2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][GTK] Use bmalloc instead of tcmalloc

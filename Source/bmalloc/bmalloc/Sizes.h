@@ -100,7 +100,7 @@ namespace Sizes {
     inline size_t sizeClass(size_t size)
     {
         static const size_t sizeClassMask = (mediumMax / alignment) - 1;
-        return mask((size - 1ul) / alignment, sizeClassMask);
+        return mask((size - 1) / alignment, sizeClassMask);
     }
 
     inline size_t objectSize(size_t sizeClass)

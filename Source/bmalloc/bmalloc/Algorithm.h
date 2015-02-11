@@ -70,7 +70,7 @@ inline constexpr bool isPowerOfTwo(size_t size)
 template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)
 {
     BASSERT(isPowerOfTwo(divisor));
-    return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(x) + (divisor - 1ul)) & ~(divisor - 1ul));
+    return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(x) + (divisor - 1)) & ~(divisor - 1));
 }
 
 template<size_t divisor, typename T> inline constexpr T roundUpToMultipleOf(T x)
