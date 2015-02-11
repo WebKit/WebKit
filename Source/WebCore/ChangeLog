@@ -1,3 +1,21 @@
+2015-02-11  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Activate ReliefLogger of a memory pressure handler for linux system.
+        https://bugs.webkit.org/show_bug.cgi?id=123611
+
+        Reviewed by Anders Carlsson.
+
+        Put more logs for the time when a system goes under memory pressure or viceversa.
+
+        No new tests since no engine behavior changed.
+
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        (WebCore::MemoryPressureHandler::waitForMemoryPressureEvent): Wait a memory pressure event
+        from cgroup in a seperated thread. Once a pressure event happens, respondToMemoryPressure()
+        would be called to get back some resources.
+        (WebCore::MemoryPressureHandler::install): Install memoryPressureHandler module
+        to make it work.
+
 2015-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Final preparations to switch to WEBCORE_EXPORT.

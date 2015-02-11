@@ -684,6 +684,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     serviceController.refreshExistingServices();
 #endif
 
+#if OS(LINUX)
+    parameters.shouldEnableMemoryPressureReliefLogging = true;
+#endif
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

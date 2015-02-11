@@ -276,6 +276,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_usesNetworkProcess = parameters.usesNetworkProcess;
 #endif
 
+#if OS(LINUX)
+    WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
+#endif
+
     platformInitializeWebProcess(WTF::move(parameters));
 
     WTF::setCurrentThreadIsUserInitiated();

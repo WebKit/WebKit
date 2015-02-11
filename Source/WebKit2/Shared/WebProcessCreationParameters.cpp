@@ -33,6 +33,7 @@ namespace WebKit {
 
 WebProcessCreationParameters::WebProcessCreationParameters()
     : shouldAlwaysUseComplexTextCodePath(false)
+    , shouldEnableMemoryPressureReliefLogging(false)
     , shouldUseFontSmoothing(true)
     , defaultRequestTimeoutInterval(INT_MAX)
 #if PLATFORM(COCOA)
@@ -41,7 +42,6 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldEnableKerningAndLigaturesByDefault(false)
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
-    , shouldEnableMemoryPressureReliefLogging(false)
 #endif
 #if ENABLE(NETWORK_PROCESS)
     , usesNetworkProcess(false)
@@ -100,6 +100,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #endif
     encoder.encodeEnum(cacheModel);
     encoder << shouldAlwaysUseComplexTextCodePath;
+    encoder << shouldEnableMemoryPressureReliefLogging;
     encoder << shouldUseFontSmoothing;
     encoder << iconDatabaseEnabled;
     encoder << terminationTimeout;
@@ -121,7 +122,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldEnableKerningAndLigaturesByDefault;
     encoder << shouldEnableJIT;
     encoder << shouldEnableFTLJIT;
-    encoder << shouldEnableMemoryPressureReliefLogging;
     encoder << !!bundleParameterData;
     if (bundleParameterData)
         encoder << bundleParameterData->dataReference();
@@ -220,6 +220,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.shouldAlwaysUseComplexTextCodePath))
         return false;
+    if (!decoder.decode(parameters.shouldEnableMemoryPressureReliefLogging))
+        return false;
     if (!decoder.decode(parameters.shouldUseFontSmoothing))
         return false;
     if (!decoder.decode(parameters.iconDatabaseEnabled))
@@ -260,9 +262,7 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.shouldEnableFTLJIT))
         return false;
-    if (!decoder.decode(parameters.shouldEnableMemoryPressureReliefLogging))
-        return false;
-    
+
     bool hasBundleParameterData;
     if (!decoder.decode(hasBundleParameterData))
         return false;

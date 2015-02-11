@@ -97,9 +97,16 @@ void MemoryPressureHandler::waitForMemoryPressureEvent(void*)
         return;
     }
 
-    memoryPressureHandler().m_underMemoryPressure = true;
-    callOnMainThread([] {
-        memoryPressureHandler().respondToMemoryPressure(true);
+    // FIXME: Current memcg does not provide any way for users to know how serious the memory pressure is.
+    // So we assume all notifications from memcg are critical for now. If memcg had better inferfaces
+    // to get a detailed memory pressure level in the future, we should update here accordingly.
+    bool critical = true;
+    if (ReliefLogger::loggingEnabled())
+        LOG(MemoryPressure, "Got memory pressure notification (%s)", critical ? "critical" : "non-critical");
+
+    memoryPressureHandler().setUnderMemoryPressure(critical);
+    callOnMainThread([critical] {
+        memoryPressureHandler().respondToMemoryPressure(critical);
     });
 }
 
@@ -156,7 +163,10 @@ void MemoryPressureHandler::install()
         return;
     }
 
-    m_underMemoryPressure = false;
+    if (ReliefLogger::loggingEnabled() && isUnderMemoryPressure())
+        LOG(MemoryPressure, "System is no longer under memory pressure.");
+
+    setUnderMemoryPressure(false);
     m_installed = true;
 }
 

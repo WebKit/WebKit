@@ -109,6 +109,7 @@ struct WebProcessCreationParameters {
     CacheModel cacheModel;
 
     bool shouldAlwaysUseComplexTextCodePath;
+    bool shouldEnableMemoryPressureReliefLogging;
     bool shouldUseFontSmoothing;
 
     bool iconDatabaseEnabled;
@@ -143,7 +144,6 @@ struct WebProcessCreationParameters {
     bool shouldEnableKerningAndLigaturesByDefault;
     bool shouldEnableJIT;
     bool shouldEnableFTLJIT;
-    bool shouldEnableMemoryPressureReliefLogging;
     
     RefPtr<API::Data> bundleParameterData;
 
