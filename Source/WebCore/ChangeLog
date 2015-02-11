@@ -1,3 +1,10 @@
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Final preparations to switch to WEBCORE_EXPORT.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Export the vtable and a function.
+
 2015-02-11  Sam Weinig  <sam@webkit.org>
 
         performance.now can crash if accessed from a window that has navigated

@@ -63,7 +63,7 @@ public:
     virtual void fullscreenMayReturnToInline() = 0;
 };
 
-class WebVideoFullscreenInterfaceAVKit
+class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
     , public ThreadSafeRefCounted<WebVideoFullscreenInterfaceAVKit> {
 
@@ -93,7 +93,7 @@ public:
 
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
     void setIsOptimized(bool);
-    bool mayAutomaticallyShowVideoOptimized();
+    WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized();
     bool fullscreenMayReturnToInline();
 
 protected:
