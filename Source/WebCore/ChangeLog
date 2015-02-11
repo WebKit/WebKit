@@ -1,3 +1,25 @@
+2015-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Optimize MutableStyleProperties::removePropertiesInSet()
+        https://bugs.webkit.org/show_bug.cgi?id=141460
+
+        Reviewed by Andreas Kling.
+
+        Optimize MutableStyleProperties::removePropertiesInSet() by doing an
+        in-place removal of the vector properties, using the new and efficient
+        Vector::removalAllMatching().
+
+        I see a ~11% speed-up on CSS/CSSPropertySetterGetter.html performance
+        test.
+
+        This change was inspired by the following Blink revision:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=189387
+
+        Test: PerformanceTests/CSS/CSSPropertySetterGetter.html
+
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::removePropertiesInSet):
+
 2015-02-10  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Fix debug build after r179807.

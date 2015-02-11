@@ -1133,23 +1133,10 @@ bool MutableStyleProperties::removePropertiesInSet(const CSSPropertyID* set, uns
     for (unsigned i = 0; i < length; ++i)
         toRemove.add(set[i]);
 
-    Vector<CSSProperty> newProperties;
-    newProperties.reserveInitialCapacity(m_propertyVector.size());
-
-    unsigned size = m_propertyVector.size();
-    for (unsigned n = 0; n < size; ++n) {
-        const CSSProperty& property = m_propertyVector.at(n);
+    return m_propertyVector.removeAllMatching([&toRemove] (const CSSProperty& property) {
         // Not quite sure if the isImportant test is needed but it matches the existing behavior.
-        if (!property.isImportant()) {
-            if (toRemove.contains(property.id()))
-                continue;
-        }
-        newProperties.append(property);
-    }
-
-    bool changed = newProperties.size() != m_propertyVector.size();
-    m_propertyVector = newProperties;
-    return changed;
+        return !property.isImportant() && toRemove.contains(property.id());
+    }) > 0;
 }
 
 int ImmutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
