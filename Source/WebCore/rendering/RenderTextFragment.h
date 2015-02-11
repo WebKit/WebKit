@@ -51,6 +51,7 @@ public:
     
     RenderBlock* blockForAccompanyingFirstLetter();
 
+    void setContentString(const String& text);
     StringImpl* contentString() const { return m_contentString.impl(); }
 
     virtual void setText(const String&, bool force = false) override;

@@ -88,7 +88,6 @@ void RenderTextFragment::setText(const String& text, bool force)
     m_end = textLength();
     if (!m_firstLetter)
         return;
-    ASSERT(!m_contentString);
     m_firstLetter->destroy();
     m_firstLetter = 0;
     if (!textNode())
@@ -117,6 +116,12 @@ RenderBlock* RenderTextFragment::blockForAccompanyingFirstLetter()
             return &block;
     }
     return nullptr;
+}
+
+void RenderTextFragment::setContentString(const String& text)
+{
+    m_contentString = text;
+    setText(text);
 }
 
 } // namespace WebCore
