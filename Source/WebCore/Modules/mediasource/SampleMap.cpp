@@ -252,7 +252,7 @@ PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSampl
         return value.second->presentationTime() <= endTime;
     });
 
-    return iterator_range(rangeStart.base(), rangeEnd.base());
+    return iterator_range(rangeEnd.base(), rangeStart.base());
 }
 
 DecodeOrderSampleMap::reverse_iterator_range DecodeOrderSampleMap::findDependentSamples(MediaSample* sample)
