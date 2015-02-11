@@ -1,5 +1,15 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179587
+
+    2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Commit the forgotten expected result supposed to be added in r179569.
+
+            * editing/inserting/smart-quote-with-all-configurations-expected.txt: Added.
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179569
 
     2015-02-03  Ryosuke Niwa  <rniwa@webkit.org>
