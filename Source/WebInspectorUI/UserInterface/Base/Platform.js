@@ -58,6 +58,10 @@ WebInspector.Platform = {
                 WebInspector.Platform.version.release = 8;
                 WebInspector.Platform.isLegacyMacOS = true;
                 break;
+            default:
+                WebInspector.Platform.version.name = "unknown-mac";
+                WebInspector.Platform.version.release = parseInt(osVersionMatch[2]);
+                break;
         }
     }
 })();

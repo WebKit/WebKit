@@ -1,3 +1,14 @@
+2015-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better handle unknown release versions
+        https://bugs.webkit.org/show_bug.cgi?id=141454
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Platform.js:
+        If given an unknown Mac OS X version, at least parse
+        the version number in WebInspector.Platform.
+
 2015-02-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Make collapsed sidebars undraggable
