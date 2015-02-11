@@ -339,7 +339,10 @@ static RenderTextFragment* fragmentChild(RenderObject* lastChild)
     if (!lastChild)
         return nullptr;
 
-    if (!(lastChild->isText() && toRenderText(lastChild)->isTextFragment()))
+    if (!lastChild->isText())
+        return nullptr;
+    
+    if (!toRenderText(lastChild)->isTextFragment())
         return nullptr;
 
     return toRenderTextFragment(lastChild);
