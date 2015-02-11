@@ -37,7 +37,7 @@ public:
 
 inline EndTag& EndTag::operator=(const BeginTag& other)
 {
-    memcpy(this, &other, sizeof(BoundaryTag));
+    std::memcpy(this, &other, sizeof(BoundaryTag));
     setEnd(true);
     return *this;
 }

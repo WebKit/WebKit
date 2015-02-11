@@ -67,7 +67,13 @@ private:
 
     // Align to vmPageSize to avoid sharing physical pages with metadata.
     // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
-    alignas(vmPageSize) char m_memory[];
+#if BPLATFORM(IOS)
+    char m_memory[] __attribute__((aligned(16384)));
+    static_assert(vmPageSize == 16384, "vmPageSize and alignment must be same");
+#else
+    char m_memory[] __attribute__((aligned(4096)));
+    static_assert(vmPageSize == 4096, "vmPageSize and alignment must be same");
+#endif
 };
 
 inline LargeChunk* LargeChunk::get(void* object)

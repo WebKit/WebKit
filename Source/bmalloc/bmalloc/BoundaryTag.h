@@ -29,6 +29,7 @@
 #include "BAssert.h"
 #include "Range.h"
 #include "Sizes.h"
+#include <cstring>
 
 namespace bmalloc {
 
@@ -54,7 +55,7 @@ public:
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
 
     bool isNull() { return !m_size; }
-    void clear() { memset(this, 0, sizeof(*this)); }
+    void clear() { std::memset(this, 0, sizeof(*this)); }
     
     size_t size() { return m_size; }
     unsigned compactBegin() { return m_compactBegin; }

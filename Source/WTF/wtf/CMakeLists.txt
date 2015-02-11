@@ -213,6 +213,7 @@ set(WTF_SOURCES
 )
 
 set(WTF_INCLUDE_DIRECTORIES
+    "${BMALLOC_DIR}"
     "${WTF_DIR}"
     "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
@@ -226,6 +227,7 @@ set(WTF_INCLUDE_DIRECTORIES
 
 set(WTF_LIBRARIES
     ${CMAKE_DL_LIBS}
+    bmalloc
 )
 
 list(APPEND WTF_SOURCES

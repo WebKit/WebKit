@@ -64,7 +64,7 @@ private:
     Function m_function;
 };
 
-template<typename Object, typename Function> const std::chrono::seconds AsyncTask<Object, Function>::exitDelay;
+template<typename Object, typename Function> const constexpr std::chrono::seconds AsyncTask<Object, Function>::exitDelay;
 
 template<typename Object, typename Function>
 AsyncTask<Object, Function>::AsyncTask(Object& object, const Function& function)

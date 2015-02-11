@@ -35,9 +35,9 @@ template<class Traits> class Line;
 template<class Traits> class Page;
 
 struct SmallTraits {
-    typedef Chunk<SmallTraits> Chunk;
-    typedef Line<SmallTraits> Line;
-    typedef Page<SmallTraits> Page;
+    typedef Chunk<SmallTraits> ChunkType;
+    typedef Line<SmallTraits> LineType;
+    typedef Page<SmallTraits> PageType;
 
     static const size_t lineSize = smallLineSize;
     static const size_t minimumObjectSize = alignment;

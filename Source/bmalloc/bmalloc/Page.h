@@ -36,8 +36,9 @@ namespace bmalloc {
 template<typename Traits>
 class Page {
 public:
-    typedef typename Traits::Chunk Chunk;
-    typedef typename Traits::Line Line;
+    typedef typename Traits::ChunkType Chunk;
+    typedef typename Traits::LineType Line;
+
     static const size_t lineSize = Traits::lineSize;
     static const size_t lineCount = vmPageSize / lineSize;
 

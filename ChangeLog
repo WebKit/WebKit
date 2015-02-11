@@ -1,3 +1,15 @@
+2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][GTK] Use bmalloc instead of tcmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=140162
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add bmalloc directory to build list.
+
+        * CMakeLists.txt: Define BMALLOC_DIR directory.
+        * Source/CMakeLists.txt: Add bmalloc path to sub-directories list.
+
 2015-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add default color chooser implementation using GtkColorChooserDialog

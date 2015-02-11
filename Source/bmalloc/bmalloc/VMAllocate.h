@@ -31,13 +31,20 @@
 #include "Sizes.h"
 #include "Syscall.h"
 #include <algorithm>
-#include <mach/vm_statistics.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
+#if BOS(DARWIN)
+#include <mach/vm_statistics.h>
+#endif
+
 namespace bmalloc {
 
+#if BOS(DARWIN)
 #define BMALLOC_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
+#else
+#define BMALLOC_VM_TAG -1
+#endif
 
 inline size_t vmSize(size_t size)
 {
@@ -107,13 +114,21 @@ inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
 {
     vmValidate(p, vmSize);
+#if BOS(DARWIN)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
+#else
+    SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
+#endif
 }
 
 inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 {
     vmValidate(p, vmSize);
+#if BOS(DARWIN)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
+#else
+    SYSCALL(madvise(p, vmSize, MADV_NORMAL));
+#endif
 }
 
 // Trims requests that are un-page-aligned. NOTE: size must be at least a page.

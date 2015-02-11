@@ -29,7 +29,7 @@
 #include "Inline.h"
 #include "VMAllocate.h"
 #include <cstddef>
-#include <string>
+#include <cstring>
 
 namespace bmalloc {
 
@@ -112,7 +112,7 @@ void Vector<T>::push(const T* begin, const T* end)
     size_t newSize = m_size + (end - begin);
     if (newSize > m_capacity)
         growCapacity(newSize);
-    memcpy(this->end(), begin, (end - begin) * sizeof(T));
+    std::memcpy(this->end(), begin, (end - begin) * sizeof(T));
     m_size = newSize;
 }
 
@@ -148,7 +148,7 @@ void Vector<T>::reallocateBuffer(size_t newCapacity)
     size_t vmSize = bmalloc::vmSize(newCapacity * sizeof(T));
     T* newBuffer = static_cast<T*>(vmAllocate(vmSize));
     if (m_buffer) {
-        memcpy(newBuffer, m_buffer, m_size * sizeof(T));
+        std::memcpy(newBuffer, m_buffer, m_size * sizeof(T));
         vmDeallocate(m_buffer, bmalloc::vmSize(m_capacity * sizeof(T)));
     }
 

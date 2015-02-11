@@ -56,7 +56,8 @@ void* Allocator::allocate(size_t alignment, size_t size)
 
     if (!m_isBmallocEnabled) {
         void* result = nullptr;
-        posix_memalign(&result, alignment, size);
+        if (posix_memalign(&result, alignment, size))
+            return nullptr;
         return result;
     }
     

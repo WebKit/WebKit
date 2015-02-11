@@ -4,6 +4,7 @@ project(WebKit)
 # -----------------------------------------------------------------------------
 # Default library type
 # -----------------------------------------------------------------------------
+set(BMALLOC_DIR "${CMAKE_SOURCE_DIR}/Source/bmalloc")
 set(WTF_DIR "${CMAKE_SOURCE_DIR}/Source/WTF")
 set(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")
 set(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore")

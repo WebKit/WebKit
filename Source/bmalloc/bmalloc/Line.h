@@ -36,7 +36,8 @@ namespace bmalloc {
 template<class Traits>
 class Line {
 public:
-    typedef typename Traits::Chunk Chunk;
+    typedef typename Traits::ChunkType Chunk;
+
     static const size_t minimumObjectSize = Traits::minimumObjectSize;
     static const size_t lineSize = Traits::lineSize;
     

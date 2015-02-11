@@ -30,8 +30,16 @@
 #include "Inline.h"
 #include <mutex>
 #include <pthread.h>
-#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+
+#if defined(__has_include)
+#if __has_include(<System/pthread_machdep.h>)
 #include <System/pthread_machdep.h>
+#define HAVE_PTHREAD_MACHDEP_H 1
+#else
+#define HAVE_PTHREAD_MACHDEP_H 0
+#endif
+#else
+#define HAVE_PTHREAD_MACHDEP_H 0
 #endif
 
 namespace bmalloc {
@@ -50,7 +58,7 @@ private:
     static void destructor(void*);
 };
 
-#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#if HAVE_PTHREAD_MACHDEP_H
 
 class Cache;
 template<typename T> struct PerThreadStorage;
@@ -100,7 +108,7 @@ template<typename T> bool PerThreadStorage<T>::s_didInitialize;
 template<typename T> pthread_key_t PerThreadStorage<T>::s_key;
 template<typename T> std::once_flag PerThreadStorage<T>::s_onceFlag;
 
-#endif // defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#endif
 
 template<typename T>
 INLINE T* PerThread<T>::getFastCase()

@@ -1,3 +1,38 @@
+2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][GTK] Use bmalloc instead of tcmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=140162
+
+        Reviewed by Carlos Garcia Campos.
+
+        Support to use bmalloc on EFL and GTK ports.
+
+        * CMakeLists.txt: Added.
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate):
+            Fix unused return value caused by posix_memalign().
+        * bmalloc/AsyncTask.h:
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::clear):
+        * bmalloc/Chunk.h:
+            Change Traits::Page with Traits::PageType in order to fix
+            -fpermitive build error on EFL and GTK port. 
+        * bmalloc/EndTag.h:
+        (bmalloc::EndTag::operator=):
+        * bmalloc/Line.h: ditto.
+        * bmalloc/MediumTraits.h:
+        * bmalloc/Page.h: ditto.
+        * bmalloc/PerThread.h:
+            EFL port doesn't support __has_include definition yet.
+            Define HAVE_PTHREAD_MACHDEP_H according to check if __has_include is supported.
+        * bmalloc/SmallTraits.h: ditto.
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmDeallocatePhysicalPages):
+        (bmalloc::vmAllocatePhysicalPages):
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::push):
+        (bmalloc::Vector<T>::reallocateBuffer):
+
 2015-01-31  Sam Weinig  <sam@webkit.org>
 
         Remove even more Mountain Lion support

@@ -1,3 +1,15 @@
+2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][GTK] Use bmalloc instead of tcmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=140162
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/CMakeLists.txt:
+        * wtf/FastMalloc.cpp:
+            Enable bmalloc on GTK ports, but EFL port will enable it when bmalloc supports
+            memory statistics.
+
 2015-02-10  Darin Adler  <darin@apple.com>
 
         Add the crash-on-failure behavior to bmalloc-based fastMalloc

@@ -35,8 +35,9 @@ namespace bmalloc {
 template<class Traits>
 class Chunk {
 public:
-    typedef typename Traits::Page Page;
-    typedef typename Traits::Line Line;
+    typedef typename Traits::PageType Page;
+    typedef typename Traits::LineType Line;
+
     static const size_t lineSize = Traits::lineSize;
     static const size_t chunkSize = Traits::chunkSize;
     static const size_t chunkOffset = Traits::chunkOffset;
@@ -62,7 +63,13 @@ private:
 
     // Align to vmPageSize to avoid sharing physical pages with metadata.
     // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
-    alignas(vmPageSize) char m_memory[];
+#if BPLATFORM(IOS)
+    char m_memory[] __attribute__((aligned(16384)));
+    static_assert(vmPageSize == 16384, "vmPageSize and alignment must be same");
+#else
+    char m_memory[] __attribute__((aligned(4096)));
+    static_assert(vmPageSize == 4096, "vmPageSize and alignment must be same");
+#endif
 };
 
 template<class Traits>
