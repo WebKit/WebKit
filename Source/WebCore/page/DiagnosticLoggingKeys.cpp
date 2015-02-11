@@ -103,6 +103,11 @@ String DiagnosticLoggingKeys::navigationKey()
     return ASCIILiteral("navigation");
 }
 
+String DiagnosticLoggingKeys::networkCacheKey()
+{
+    return ASCIILiteral("networkCache");
+}
+
 String DiagnosticLoggingKeys::networkKey()
 {
     return ASCIILiteral("network");
@@ -131,6 +136,11 @@ String DiagnosticLoggingKeys::pageCacheKey()
 String DiagnosticLoggingKeys::noDocumentLoaderKey()
 {
     return ASCIILiteral("noDocumentLoader");
+}
+
+String DiagnosticLoggingKeys::noLongerInCacheFailureKey()
+{
+    return ASCIILiteral("noLongerInCacheFailure");
 }
 
 String DiagnosticLoggingKeys::otherKey()
@@ -298,6 +308,11 @@ String DiagnosticLoggingKeys::resourceResponseKey()
     return ASCIILiteral("resourceResponse");
 }
 
+String DiagnosticLoggingKeys::retrievalKey()
+{
+    return ASCIILiteral("retrieval");
+}
+
 String DiagnosticLoggingKeys::revalidatingKey()
 {
     return ASCIILiteral("revalidating");
@@ -331,6 +346,16 @@ String DiagnosticLoggingKeys::styleSheetKey()
 String DiagnosticLoggingKeys::svgDocumentKey()
 {
     return ASCIILiteral("svgDocument");
+}
+
+String DiagnosticLoggingKeys::unhandledRequestFailureKey()
+{
+    return ASCIILiteral("unhandledRequestFailure");
+}
+
+String DiagnosticLoggingKeys::unusableCachedEntryFailureKey()
+{
+    return ASCIILiteral("unusableCachedEntryFailure");
 }
 
 String DiagnosticLoggingKeys::unusedKey()

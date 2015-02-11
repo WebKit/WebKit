@@ -230,6 +230,30 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 #endif
 }
 
+void NetworkProcessProxy::logDiagnosticMessage(uint64_t pageID, const String& message, const String& description)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    MESSAGE_CHECK(page);
+
+    page->logDiagnosticMessage(message, description);
+}
+
+void NetworkProcessProxy::logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    MESSAGE_CHECK(page);
+
+    page->logDiagnosticMessageWithResult(message, description, result);
+}
+
+void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    MESSAGE_CHECK(page);
+
+    page->logDiagnosticMessageWithValue(message, description, value);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

@@ -44,9 +44,9 @@ public:
 
     void clear();
 
-    void recordNotUsingCacheForRequest(const NetworkCacheKey&, const WebCore::ResourceRequest&);
-    void recordRetrievalFailure(const NetworkCacheKey&, const WebCore::ResourceRequest&);
-    void recordRetrievedCachedEntry(const NetworkCacheKey&, const WebCore::ResourceRequest&, bool success);
+    void recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&);
+    void recordRetrievalFailure(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&);
+    void recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&, bool success);
 
 private:
     explicit NetworkCacheStatistics(const String& databasePath);

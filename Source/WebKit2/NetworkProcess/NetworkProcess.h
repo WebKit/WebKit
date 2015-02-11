@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
+#include <WebCore/DiagnosticLoggingResultType.h>
 #include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -74,6 +75,11 @@ public:
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
+
+    // Diagnostic messages logging.
+    void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description);
+    void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType);
+    void logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, const String& value);
 
 private:
     NetworkProcess();
