@@ -2262,3 +2262,6 @@ transitions/interrupt-transform-transition.html
 
 # Crashes when running all tests, but not by itself.
 webkit.org/b/141436 fast/loader/subframe-navigate-during-main-frame-load.html [ Crash Pass ]
+
+# Unskip otherwise globally-skipped test
+fast/replaced/pdf-as-object-and-embed.html [ Pass ]
