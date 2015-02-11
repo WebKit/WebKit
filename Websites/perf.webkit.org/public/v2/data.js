@@ -372,7 +372,7 @@ TimeSeries.prototype.seriesBetweenPoints = function (startPoint, endPoint)
     return this._series.slice(startPoint.seriesIndex, endPoint.seriesIndex + 1);
 }
 
-TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime)
+TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime, ignoreOutlier)
 {
     var data = this._series;
     var i = 0;
@@ -389,6 +389,8 @@ TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime)
     var max = Number.MIN_VALUE;
     for (; i < data.length; i++) {
         var point = data[i];
+        if (point.isOutlier && ignoreOutlier)
+            continue;
         var currentMin = point.interval ? point.interval[0] : point.value;
         var currentMax = point.interval ? point.interval[1] : point.value;
 

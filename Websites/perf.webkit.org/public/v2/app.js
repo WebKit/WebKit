@@ -484,38 +484,44 @@ App.Pane = Ember.Object.extend({
         var envelopingStrategy = this.get('chosenEnvelopingStrategy');
         this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
 
-        if (!movingAverageStrategy || !movingAverageStrategy.execute) {
-            movingAverageStrategy = Statistics.MovingAverageStrategies[0];
-            chartData.hideMovingAverage = true;
-        }
-        if (!envelopingStrategy || !envelopingStrategy.execute) {
-            envelopingStrategy = Statistics.EnvelopingStrategies[0];
-            chartData.hideEnvelope = true;
-        }
-
-        chartData.movingAverage = this._computeMovingAverage(chartData, movingAverageStrategy, envelopingStrategy);
+        chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy);
 
         this.set('chartData', chartData);
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
         'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
-    _computeMovingAverage: function (chartData, movingAverageStrategy, envelopingStrategy)
+    _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy)
     {
         var currentTimeSeriesData = chartData.current.series();
-        var movingAverageValues = this._executeStrategy(movingAverageStrategy, currentTimeSeriesData);
+        var movingAverageIsSetByUser = movingAverageStrategy && movingAverageStrategy.execute;
+        var movingAverageValues = this._executeStrategy(
+            movingAverageIsSetByUser ? movingAverageStrategy : Statistics.MovingAverageStrategies[0], currentTimeSeriesData);
         if (!movingAverageValues)
             return null;
 
-        var envelopeDelta = this._executeStrategy(envelopingStrategy, currentTimeSeriesData, [movingAverageValues]);
+        var envelopeIsSetByUser = envelopingStrategy && envelopingStrategy.execute;
+        var envelopeDelta = this._executeStrategy(envelopeIsSetByUser ? envelopingStrategy : Statistics.EnvelopingStrategies[0],
+            currentTimeSeriesData, [movingAverageValues]);
 
-        return new TimeSeries(currentTimeSeriesData.map(function (point, index) {
-            var value = movingAverageValues[index];
-            return {
-                measurement: point.measurement,
-                time: point.time,
-                value: value,
-                interval: envelopeDelta !== null ? [value - envelopeDelta, value + envelopeDelta] : null,
-            }
-        }));
+        for (var i = 0; i < currentTimeSeriesData.length; i++) {
+            var currentValue = currentTimeSeriesData[i].value;
+            var movingAverageValue = movingAverageValues[i];
+            if (currentValue < movingAverageValue - envelopeDelta || movingAverageValue + envelopeDelta < currentValue)
+                currentTimeSeriesData[i].isOutlier = true;
+        }
+        if (!envelopeIsSetByUser)
+            envelopeDelta = null;
+
+        if (movingAverageIsSetByUser) {
+            return new TimeSeries(currentTimeSeriesData.map(function (point, index) {
+                var value = movingAverageValues[index];
+                return {
+                    measurement: point.measurement,
+                    time: point.time,
+                    value: value,
+                    interval: envelopeDelta !== null ? [value - envelopeDelta, value + envelopeDelta] : null,
+                }
+            }));            
+        }
     },
     _executeStrategy: function (strategy, currentTimeSeriesData, additionalArguments)
     {

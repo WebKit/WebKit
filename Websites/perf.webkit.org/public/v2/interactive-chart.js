@@ -128,7 +128,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("class", "target"));
         }
 
-        var movingAverageIsVisible = this._movingAverageTimeSeries && !chartData.hideMovingAverage;
+        var movingAverageIsVisible = this._movingAverageTimeSeries;
         var foregroundClass = movingAverageIsVisible ? '' : ' foreground';
         this._areas.push(this._clippedContainer
             .append("path")
@@ -153,12 +153,10 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .datum(this._movingAverageTimeSeries.series())
                 .attr("class", "movingAverage"));
 
-            if (!chartData.hideEnvelope) {
-                this._areas.push(this._clippedContainer
-                    .append("path")
-                    .datum(this._movingAverageTimeSeries.series())
-                    .attr("class", "envelope"));
-            }
+            this._areas.push(this._clippedContainer
+                .append("path")
+                .datum(this._movingAverageTimeSeries.series())
+                .attr("class", "envelope"));
         }
 
         if (isInteractive) {
@@ -336,33 +334,33 @@ App.InteractiveChartComponent = Ember.Component.extend({
     },
     _computeYAxisDomain: function (startTime, endTime)
     {
-        var range = this._minMaxForAllTimeSeries(startTime, endTime);
+        var shouldShowFullYAxis = this.get('showFullYAxis');
+        var range = this._minMaxForAllTimeSeries(startTime, endTime, !shouldShowFullYAxis);
         var min = range[0];
         var max = range[1];
         if (max < min)
             min = max = 0;
+        else if (shouldShowFullYAxis)
+            min = Math.min(min, 0);
         var diff = max - min;
         var margin = diff * 0.05;
 
         yExtent = [min - margin, max + margin];
-//        if (yMin !== undefined)
-//            yExtent[0] = parseInt(yMin);
         return yExtent;
     },
-    _minMaxForAllTimeSeries: function (startTime, endTime)
+    _minMaxForAllTimeSeries: function (startTime, endTime, ignoreOutliners)
     {
-        var shouldShowFullYAxis = this.get('showFullYAxis');
-        var mainTimeSeries = this._movingAverageTimeSeries && !shouldShowFullYAxis ? this._movingAverageTimeSeries : this._currentTimeSeries;
-        var currentRange = mainTimeSeries.minMaxForTimeRange(startTime, endTime);
-        if (shouldShowFullYAxis)
-            currentRange[0] = Math.min(0, currentRange[0]);
-
-        var baselineRange = this._baselineTimeSeries ? this._baselineTimeSeries.minMaxForTimeRange(startTime, endTime) : [Number.MAX_VALUE, Number.MIN_VALUE];
-        var targetRange = this._targetTimeSeries ? this._targetTimeSeries.minMaxForTimeRange(startTime, endTime) : [Number.MAX_VALUE, Number.MIN_VALUE];
-        return [
-            Math.min(currentRange[0], baselineRange[0], targetRange[0]),
-            Math.max(currentRange[1], baselineRange[1], targetRange[1]),
-        ];
+        var seriesList = [this._currentTimeSeries, this._movingAverageTimeSeries, this._baselineTimeSeries, this._targetTimeSeries];
+        var min = Infinity;
+        var max = -Infinity;
+        for (var i = 0; i < seriesList.length; i++) {
+            if (seriesList[i]) {
+                var minMax = seriesList[i].minMaxForTimeRange(startTime, endTime, ignoreOutliners);
+                min = Math.min(min, minMax[0]);
+                max = Math.max(max, minMax[1]);
+            }
+        }
+        return [min, max];
     },
     _currentSelection: function ()
     {

@@ -1,3 +1,30 @@
+2015-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard shows too much space around interesting data points
+        https://bugs.webkit.org/show_bug.cgi?id=141487
+
+        Reviewed by Chris Dumez.
+
+        Revise the y-axis range adjustment algorithm in r179913. Instead of showing the entire moving average,
+        show the current time series excluding points in the series outside the moving average envelope.
+
+        * public/v2/app.js:
+        (App.Pane._computeChartData): Don't deal with missing moving average or enveloping strategy here.
+        (App.Pane._computeMovingAverageAndOutliers): Set isOutliner to true on all data points in the current
+        time series if the point lies outside the moving average envelope. Don't expose the moving average or
+        the envelope computed for this purpose if they're not set by the user.
+
+        * public/v2/data.js:
+        (TimeSeries.prototype.minMaxForTimeRange): Takes a boolean argument, ignoreOutlier. When the flag is set
+        to true, min/max computation will ignore any point in the series with non-falsy "isOutliner" property.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._constructGraphIfPossible): Unsupport hideMovingAverage and hideEnvelope.
+        (App.InteractiveChartComponent._computeYAxisDomain): Removed the commented out code. Also moved the code
+        to deal with showFullYAxis here.
+        (App.InteractiveChartComponent._minMaxForAllTimeSeries): Rewrote the code. Takes ignoreOutliners as an
+        argument instead of directly inspecting showFullYAxis.
+
 2015-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         New perf dashboard shouldn't always show outliners
