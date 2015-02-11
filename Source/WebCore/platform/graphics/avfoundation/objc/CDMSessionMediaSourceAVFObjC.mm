@@ -186,7 +186,7 @@ static NSInteger systemCodeForError(NSError *error)
     if (code != AVErrorUnknown)
         return code;
 
-    NSError* underlyingError = [error valueForKey:NSUnderlyingErrorKey];
+    NSError* underlyingError = [error.userInfo valueForKey:NSUnderlyingErrorKey];
     if (!underlyingError || ![underlyingError isKindOfClass:[NSError class]])
         return code;
     
