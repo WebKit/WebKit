@@ -1,3 +1,15 @@
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using WebCore.exp.in on Mac and iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=141413
+
+        Reviewed by Dan Bates.
+
+        * Configurations/Base.xcconfig:
+        Make symbols hidden by default unless exported by WEBCORE_EXPORT macros.
+        * platform/PlatformExportMacros.h:
+        Start using WEBCORE_EXPORT on Mac and iOS (but not Windows yet).
+
 2015-02-11  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Div having contentEditable and display:flex cannot be edited if it is empty.
