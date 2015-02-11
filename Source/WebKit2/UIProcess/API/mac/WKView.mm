@@ -4358,6 +4358,18 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nil;
 }
 
+- (void)_prepareForImmediateActionAnimation
+{
+}
+
+- (void)_cancelImmediateActionAnimation
+{
+}
+
+- (void)_completeImmediateActionAnimation
+{
+}
+
 - (void)_dismissContentRelativeChildWindows
 {
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).

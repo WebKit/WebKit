@@ -160,6 +160,8 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    [_wkView _prepareForImmediateActionAnimation];
+
     [_wkView _dismissContentRelativeChildWindows];
 
     _page->setMaintainsInactiveSelection(true);
@@ -207,6 +209,8 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    [_wkView _cancelImmediateActionAnimation];
+
     _page->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
     _page->setMaintainsInactiveSelection(false);
@@ -216,6 +220,8 @@ using namespace WebKit;
 {
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
+
+    [_wkView _completeImmediateActionAnimation];
 
     _page->setTextIndicatorAnimationProgress(1);
 }

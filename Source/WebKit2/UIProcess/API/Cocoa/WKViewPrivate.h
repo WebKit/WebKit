@@ -134,6 +134,10 @@
 // do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
 - (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData;
 
+- (void)_prepareForImmediateActionAnimation;
+- (void)_cancelImmediateActionAnimation;
+- (void)_completeImmediateActionAnimation;
+
 - (void)_dismissContentRelativeChildWindows;
 #endif
 
