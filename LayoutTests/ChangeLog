@@ -1,3 +1,10 @@
+2015-02-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Some tests of imported/mozilla/svg/ have been failed since r177330.
+        Mark those tests to ImageOnlyFailure.
+
+        * platform/efl/TestExpectations:
+
 2015-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(?): inspector/css/selector-dynamic-specificity.html sometimes crashes
