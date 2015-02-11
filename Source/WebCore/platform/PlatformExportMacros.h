@@ -32,40 +32,19 @@
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
-#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
-    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
-#define WEBCORE_IS_LINKED_IN_SAME_BINARY 1
-#endif
-
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
-#define WEBKIT_EXPORTDATA WTF_EXPORT
+// FIXME: Get rid of WebKitExports.def.in and make this work on Windows.
+#if !PLATFORM(WIN)
+#define WEBCORE_EXPORT WTF_EXPORT
 #else
-#define WEBKIT_EXPORTDATA WTF_IMPORT
-#endif
-
-// FIXME: This should be WTF_EXPORT once WEBCORE_EXPORT is used instead of WebCore.exp.in.
 #define WEBCORE_EXPORT
+#endif
 
 #else // !USE(EXPORT_MACROS)
 
 #define WEBCORE_EXPORT
-
-#if OS(WINDOWS) && !COMPILER(GCC)
-
-#if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
-#define WEBKIT_EXPORTDATA __declspec(dllexport)
-#else
-#define WEBKIT_EXPORTDATA __declspec(dllimport)
-#endif
-
-#else // !PLATFORM...
-
-#define WEBKIT_EXPORTDATA
-
-#endif // !PLATFORM...
 
 #endif // USE(EXPORT_MACROS)
 
