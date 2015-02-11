@@ -1,5 +1,28 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179750
+
+    2015-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+            REGRESSION(r179706): Caused memory corruption on some tests (Requested by _ap_ on #webkit).
+            https://bugs.webkit.org/show_bug.cgi?id=141324
+
+            Reviewed by Alexey Proskuryakov.
+
+            No new tests. This is caught by existing tests under ASAN, and I don't know how to reproduce
+            it without ASAN.
+
+            * rendering/RenderLineBoxList.cpp:
+            (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild): Give up
+            and just always invalidate the next line. It's too hard to come up
+            with the condition that catches all needed cases, doesn't itself
+            cause a crash, and isn't overzealous. And we do this for the
+            previous line anyway.  Also clean up the code a bit since it
+            confusingly reuses a variable, and declares it uninitialized, for
+            no good reason.
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179706
 
     2015-02-05  Maciej Stachowiak  <mjs@apple.com>
