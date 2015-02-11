@@ -113,6 +113,11 @@ public:
     WEBCORE_EXPORT String fragmentIdentifier() const;
     WEBCORE_EXPORT bool hasFragmentIdentifier() const;
 
+    // Unlike user() and pass(), these functions don't decode escape sequences.
+    // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
+    String encodedUser() const;
+    String encodedPass() const;
+
     WEBCORE_EXPORT String baseAsString() const;
 
     WEBCORE_EXPORT String fileSystemPath() const;
@@ -253,6 +258,7 @@ WEBCORE_EXPORT String mimeTypeFromURL(const URL&);
 WEBCORE_EXPORT String decodeURLEscapeSequences(const String&);
 String decodeURLEscapeSequences(const String&, const TextEncoding&);
 
+// FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
 WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
 
 #if PLATFORM(IOS)
