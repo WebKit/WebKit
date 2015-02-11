@@ -1,3 +1,12 @@
+2015-02-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Don't set flag fuse-ld on the C/C++ compiler flags, but on the linker flags.
+        https://bugs.webkit.org/show_bug.cgi?id=141481
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsCommon.cmake: Move -fuse-ld=gold to the linker flags.
+
 2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][GTK] Use bmalloc instead of tcmalloc
