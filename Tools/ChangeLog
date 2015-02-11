@@ -1,5 +1,18 @@
 2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Make run-jsc-stress-tests --remote work with make-based runner
+        https://bugs.webkit.org/show_bug.cgi?id=141079
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Pass through the --shell-runner and --make-runner arguments.
+        * Scripts/run-jsc-stress-tests: Made the make-based runner the default runner,
+        except for remote testing on Darwin. Unified runShellTestRunner and runMakeTestRunner
+        to avoid code duplication.
+
+2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         run-jsc-stress tests should detect the number of processors on the remote machine too
         https://bugs.webkit.org/show_bug.cgi?id=141196
 

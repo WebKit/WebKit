@@ -98,7 +98,7 @@ $bundle = nil
 $tarball = false
 $tarFileName = "payload.tar.gz"
 $copyVM = false
-$testRunnerType = :make
+$testRunnerType = nil
 $remoteUser = nil
 $remoteHost = nil
 $remotePort = nil
@@ -126,6 +126,7 @@ def usage
     puts "                            e.g. darwin, linux & windows."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
+    puts "--make-runner               Uses the faster make-based runner."
     puts "--remote                    Specify a remote host on which to run tests."
     puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--help               (-h)   Print this message."
@@ -146,6 +147,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--arch', GetoptLong::REQUIRED_ARGUMENT],
                ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
+               ['--make-runner', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
@@ -175,9 +177,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $copyVM = true
     when '--shell-runner'
         $testRunnerType = :shell
+    when '--make-runner'
+        $testRunnerType = :make
     when '--remote'
         $copyVM = true
-        $testRunnerType = :shell
         $tarball = true
         $remote = true
         uri = URI("ssh://" + arg)
@@ -261,6 +264,14 @@ end
 
 $architecture = determineArchitecture unless $architecture
 $hostOS = determineOS unless $hostOS
+
+if !$testRunnerType
+    if $remote and $hostOS == "darwin"
+        $testRunnerType = :shell
+    else
+        $testRunnerType = :make
+    end
+end
 
 $numFailures = 0
 
@@ -1245,17 +1256,6 @@ def cleanRunnerDirectory
     }
 end
 
-def runTestRunner
-    case $testRunnerType
-    when :shell
-        runShellTestRunner
-    when :make
-        runMakeTestRunner
-    else
-        raise "Unknown test runner type: #{$testRunnerType.to_s}"
-    end
-end
-
 def sshRead(cmd)
     raise unless $remote
 
@@ -1367,7 +1367,16 @@ def runAndMonitorTestRunnerCommand(*cmd)
     end
 end
 
-def runShellTestRunner
+def runTestRunner
+    case $testRunnerType
+    when :shell
+        testRunnerCommand = "sh runscript"
+    when :make
+        testRunnerCommand = "make -j #{$numChildProcesses.to_s} -s -f Makefile"
+    else
+        raise "Unknown test runner type: #{$testRunnerType.to_s}"
+    end
+
     if $remote
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
         mysys("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", "mkdir -p #{$remoteDirectory}")
@@ -1379,20 +1388,13 @@ def runShellTestRunner
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
         remoteScript += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])} && "
-        remoteScript += "sh runscript\""
+        remoteScript += "#{testRunnerCommand}\""
         runAndMonitorTestRunnerCommand("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
         Dir.chdir($runnerDir) {
-            runAndMonitorTestRunnerCommand("sh", "runscript")
+            runAndMonitorTestRunnerCommand(testRunnerCommand)
         }
     end
-end
-
-def runMakeTestRunner
-    raise if $remote
-    Dir.chdir($runnerDir) {
-        runAndMonitorTestRunnerCommand("make", "-j", $numChildProcesses.to_s, "-s", "-f", "Makefile")
-    }
 end
 
 def detectFailures

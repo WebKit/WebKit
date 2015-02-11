@@ -48,6 +48,8 @@ my $showHelp;
 my $extraTests;
 my $jsDriverArgs;
 my $childProcesses;
+my $shellRunner;
+my $makeRunner;
 
 my $buildJSC = 1;
 
@@ -82,6 +84,9 @@ Usage: $programName [options] [options to pass to build system]
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
   --extra-tests=                Path to a file containing extra tests
   --child-processes=            Specify the number of child processes.
+  --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
+                                In general the shell runner is slower than the make runner.
+  --make-runner                 Uses the faster make-based runner.
 
 EOF
 
@@ -96,6 +101,8 @@ GetOptions(
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
     'child-processes=s' => \$childProcesses,
+    'shell-runner' => \$shellRunner,
+    'make-runner' => \$makeRunner,
     'help' => \$showHelp
 );
 
@@ -284,6 +291,14 @@ sub runJSCStressTests
     if ($childProcesses) {
         push(@jscStressDriverCmd, "--child-processes");
         push(@jscStressDriverCmd, $childProcesses);
+    }
+
+    if ($shellRunner) {
+        push(@jscStressDriverCmd, "--shell-runner");
+    }
+
+    if ($makeRunner) {
+        push(@jscStressDriverCmd, "--make-runner");
     }
 
     # End option processing, the rest of the arguments are tests
