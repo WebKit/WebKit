@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,57 +33,21 @@
 
 namespace JSC { namespace FTL {
 
+using namespace DFG;
+
 JSCall::JSCall()
     : m_stackmapID(UINT_MAX)
-    , m_node(nullptr)
-    , m_callLinkInfo(nullptr)
     , m_instructionOffset(UINT_MAX)
 {
 }
 
-JSCall::JSCall(unsigned stackmapID, DFG::Node* node)
-    : m_stackmapID(stackmapID)
-    , m_node(node)
-    , m_callLinkInfo(nullptr)
+JSCall::JSCall(unsigned stackmapID, Node* node)
+    : JSCallBase(
+        node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call,
+        node->origin.semantic)
+    , m_stackmapID(stackmapID)
     , m_instructionOffset(0)
 {
-}
-
-void JSCall::emit(CCallHelpers& jit)
-{
-    m_callLinkInfo = jit.codeBlock()->addCallLinkInfo();
-    
-    CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-        CCallHelpers::NotEqual, GPRInfo::regT0, m_targetToCheck,
-        CCallHelpers::TrustedImmPtr(0));
-    
-    m_fastCall = jit.nearCall();
-    CCallHelpers::Jump done = jit.jump();
-    
-    slowPath.link(&jit);
-    
-    jit.move(CCallHelpers::TrustedImmPtr(m_callLinkInfo), GPRInfo::regT2);
-    m_slowCall = jit.nearCall();
-    
-    done.link(&jit);
-}
-
-void JSCall::link(VM& vm, LinkBuffer& linkBuffer)
-{
-    ThunkGenerator generator = linkThunkGeneratorFor(
-        m_node->op() == DFG::Construct ? CodeForConstruct : CodeForCall,
-        MustPreserveRegisters);
-    
-    linkBuffer.link(
-        m_slowCall, FunctionPtr(vm.getCTIStub(generator).code().executableAddress()));
-    
-    m_callLinkInfo->isFTL = true;
-    m_callLinkInfo->callType = m_node->op() == DFG::Construct ? CallLinkInfo::Construct : CallLinkInfo::Call;
-    m_callLinkInfo->codeOrigin = m_node->origin.semantic;
-    m_callLinkInfo->callReturnLocation = linkBuffer.locationOfNearCall(m_slowCall);
-    m_callLinkInfo->hotPathBegin = linkBuffer.locationOf(m_targetToCheck);
-    m_callLinkInfo->hotPathOther = linkBuffer.locationOfNearCall(m_fastCall);
-    m_callLinkInfo->calleeGPR = GPRInfo::regT0;
 }
 
 } } // namespace JSC::FTL

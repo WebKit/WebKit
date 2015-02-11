@@ -55,7 +55,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
         ASSERT(opcodeID == op_call_varargs);
         return CallVarargs;
     }
-        
+    
     CallLinkInfo()
         : isFTL(false)
         , hasSeenShouldRepatch(false)
@@ -71,9 +71,13 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
             remove();
     }
     
-    CodeSpecializationKind specializationKind() const
+    static CodeSpecializationKind specializationKindFor(CallType callType)
     {
         return specializationFromIsConstruct(callType == Construct || callType == ConstructVarargs);
+    }
+    CodeSpecializationKind specializationKind() const
+    {
+        return specializationKindFor(static_cast<CallType>(callType));
     }
 
     CodeLocationNearCall callReturnLocation;

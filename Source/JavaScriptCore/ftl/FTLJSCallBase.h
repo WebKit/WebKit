@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLJSCall_h
-#define FTLJSCall_h
+#ifndef FTLJSCallBase_h
+#define FTLJSCallBase_h
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLJSCallBase.h"
+#include "CCallHelpers.h"
+#include "CallLinkInfo.h"
+#include "CodeOrigin.h"
 
 namespace JSC {
 
-namespace DFG {
-struct Node;
-}
+class LinkBuffer;
 
 namespace FTL {
 
-class JSCall : public JSCallBase {
+class JSCallBase {
 public:
-    JSCall();
-    JSCall(unsigned stackmapID, DFG::Node*);
+    JSCallBase();
+    JSCallBase(CallLinkInfo::CallType, CodeOrigin);
     
-    unsigned stackmapID() const { return m_stackmapID; }
-    
-    bool operator<(const JSCall& other) const
-    {
-        return m_instructionOffset < other.m_instructionOffset;
-    }
+    void emit(CCallHelpers&);
+    void link(VM&, LinkBuffer&);
     
 private:
-    unsigned m_stackmapID;
-
-public:
-    uint32_t m_instructionOffset;
+    CallLinkInfo::CallType m_type;
+    CodeOrigin m_origin;
+    CCallHelpers::DataLabelPtr m_targetToCheck;
+    CCallHelpers::Call m_fastCall;
+    CCallHelpers::Call m_slowCall;
+    CallLinkInfo* m_callLinkInfo;
 };
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLJSCall_h
+#endif // FTLJSCallBase_h
 

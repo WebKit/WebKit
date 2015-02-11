@@ -1,5 +1,32 @@
 2015-02-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Split FTL::JSCall into the part that knows about call inline caching and the part that interacts with LLVM patchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=141455
+
+        Reviewed by Mark Lam.
+        
+        The newly introduced FTL::JSCallBase can be used to build other things, like the FTL portion
+        of https://bugs.webkit.org/show_bug.cgi?id=141332.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::specializationKindFor):
+        (JSC::CallLinkInfo::specializationKind):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        (JSC::FTL::JSCall::emit): Deleted.
+        (JSC::FTL::JSCall::link): Deleted.
+        * ftl/FTLJSCall.h:
+        * ftl/FTLJSCallBase.cpp: Added.
+        (JSC::FTL::JSCallBase::JSCallBase):
+        (JSC::FTL::JSCallBase::emit):
+        (JSC::FTL::JSCallBase::link):
+        * ftl/FTLJSCallBase.h: Added.
+
+2015-02-10  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build.
 
         * jit/CCallHelpers.h:

@@ -510,6 +510,7 @@
     <ClCompile Include="..\ftl\FTLJITCode.cpp" />
     <ClCompile Include="..\ftl\FTLJITFinalizer.cpp" />
     <ClCompile Include="..\ftl\FTLJSCall.cpp" />
+    <ClCompile Include="..\ftl\FTLJSCallBase.cpp" />
     <ClCompile Include="..\ftl\FTLLink.cpp" />
     <ClCompile Include="..\ftl\FTLLocation.cpp" />
     <ClCompile Include="..\ftl\FTLLowerDFGToLLVM.cpp" />
@@ -1191,6 +1192,7 @@
     <ClInclude Include="..\ftl\FTLJITCode.h" />
     <ClInclude Include="..\ftl\FTLJITFinalizer.h" />
     <ClInclude Include="..\ftl\FTLJSCall.h" />
+    <ClInclude Include="..\ftl\FTLJSCallBase.h" />
     <ClInclude Include="..\ftl\FTLLink.h" />
     <ClInclude Include="..\ftl\FTLLocation.h" />
     <ClInclude Include="..\ftl\FTLLowerDFGToLLVM.h" />

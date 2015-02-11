@@ -843,6 +843,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLJITCode.cpp
         ftl/FTLJITFinalizer.cpp
         ftl/FTLJSCall.cpp
+        ftl/FTLJSCallBase.cpp
         ftl/FTLLink.cpp
         ftl/FTLLocation.cpp
         ftl/FTLLowerDFGToLLVM.cpp
