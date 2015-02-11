@@ -1,3 +1,11 @@
+2015-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(?): inspector/css/selector-dynamic-specificity.html sometimes crashes
+        https://bugs.webkit.org/show_bug.cgi?id=141118
+
+        * platform/mac-wk2/TestExpectations: Skpping the test, I'm concerned that it may
+        be affecting other tests.
+
 2015-02-09  David Hyatt  <hyatt@apple.com>
 
         text-underline-position: under is broken
