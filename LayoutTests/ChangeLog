@@ -1,3 +1,12 @@
+2015-02-11  Dana Burkart  <dburkart@apple.com>
+
+        http/tests/cache/disk-cache-validation.html generates a lot of Perl errors
+        https://bugs.webkit.org/show_bug.cgi?id=141393
+
+        Reviewed by Darin Adler.
+
+        * http/tests/cache/resources/generate-response.cgi:
+
 2015-02-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Tests of fast/ruby needs to have new baseline since r172874.

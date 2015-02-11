@@ -6,7 +6,7 @@ use HTTP::Date;
 my $query = new CGI;
 @names = $query->param;
 
-if ($query->http("If-None-Match") eq "match") {
+if ($query->http && $query->http("If-None-Match") eq "match") {
     print "Status: 304\n";
 }
 
