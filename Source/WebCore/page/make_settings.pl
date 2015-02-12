@@ -239,12 +239,18 @@ sub printGetterAndSetter($$$$)
 {
     my ($file, $settingName, $type, $setNeedsStyleRecalcInAllFrames) = @_;
     my $setterFunctionName = setterFunctionName($settingName);
+    
+    my $webcoreExport = "";
+    if ($setNeedsStyleRecalcInAllFrames) {
+        $webcoreExport = "WEBCORE_EXPORT"; # Export is only needed if the definition is not in the header.
+    }
+    
     if (lc(substr($type, 0, 1)) eq substr($type, 0, 1)) {
         print $file "    $type $settingName() const { return m_$settingName; } \\\n";
-        print $file "    WEBCORE_EXPORT void $setterFunctionName($type $settingName)";
+        print $file "    $webcoreExport void $setterFunctionName($type $settingName)";
     } else {
         print $file "    const $type& $settingName() { return m_$settingName; } \\\n";
-        print $file "    WEBCORE_EXPORT void $setterFunctionName(const $type& $settingName)";
+        print $file "    $webcoreExport void $setterFunctionName(const $type& $settingName)";
     }
     if ($setNeedsStyleRecalcInAllFrames) {
         print $file "; \\\n";

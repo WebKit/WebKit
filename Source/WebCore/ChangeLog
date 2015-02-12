@@ -1,5 +1,15 @@
 2015-02-11  Alex Christensen  <achristensen@webkit.org>
 
+        Fix more weak external symbol errors.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * page/make_settings.pl:
+        (printGetterAndSetter):
+        Remove some WEBCORE_EXPORT macros.
+
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
         Do not export functions defined in headers.
         This prevents weak external symbol errors in some configurations.
 
