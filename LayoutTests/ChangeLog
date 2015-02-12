@@ -1,3 +1,18 @@
+2015-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r179883. rdar://problem/19790645
+
+    2015-02-09  David Hyatt  <hyatt@apple.com>
+
+            text-underline-position: under is broken
+            https://bugs.webkit.org/show_bug.cgi?id=141400
+            <rdar://problem/18569583>
+
+            Reviewed by Simon Fraser.
+
+            * fast/text/text-underline-position-under-expected.html: Added.
+            * fast/text/text-underline-position-under.html: Added.
+
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177377
