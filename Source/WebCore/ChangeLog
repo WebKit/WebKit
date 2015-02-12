@@ -1,3 +1,21 @@
+2015-01-12  Pratik Solanki  <psolanki@apple.com>
+
+        <rdar://problem/17889529> CrashTracer: [USER] com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::SharedBuffer::createPurgeableBuffer const + 14
+
+        Rubber-stamped by Matthew Hanson.
+
+        Speculative fix for the above crash. The current theory is that a timer is being fired for a
+        CachedResource that has been freed. Add a marker field in CachedResource to do an early
+        return from CachedResource::makePurgeable() when this happens.
+
+        No new tests because I can't reproduce the crash.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::makePurgeable):
+        * loader/cache/CachedResource.h:
+
 2015-02-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179883. rdar://problem/19790645
