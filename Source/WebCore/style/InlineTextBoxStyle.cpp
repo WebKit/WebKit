@@ -46,7 +46,7 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     case TextUnderlinePositionUnder: {
         ASSERT(inlineTextBox);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        float offset = inlineTextBox->root().maxLogicalTop() - inlineTextBox->logicalTop();
+        float offset = inlineTextBox->root().maxLogicalBottom() - inlineTextBox->logicalBottom();
         return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0);
     }
     }

@@ -1,3 +1,38 @@
+2015-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r179883. rdar://problem/19790645
+
+    2015-02-09  David Hyatt  <hyatt@apple.com>
+
+            text-underline-position: under is broken
+            https://bugs.webkit.org/show_bug.cgi?id=141400
+            <rdar://problem/18569583>
+
+            Reviewed by Simon Fraser.
+
+            Added fast/text/text-underline-position-under.html
+
+            * rendering/InlineFlowBox.cpp:
+            (WebCore::InlineFlowBox::computeMaxLogicalBottom):
+            (WebCore::InlineFlowBox::computeMaxLogicalTop): Deleted.
+            * rendering/InlineFlowBox.h:
+            Switch to using the bottom to compute the offset. Using the top is incorrect, since
+            the heights of boxes can vary.
+
+            Fix a bug where the y() of the box was being used instead of the logical value, making the result
+            wrong for vertical text.
+
+            * rendering/RootInlineBox.cpp:
+            (WebCore::RootInlineBox::maxLogicalBottom):
+            (WebCore::RootInlineBox::maxLogicalTop): Deleted.
+            Switch to using the bottom instead of the top. Make sure the root box contributes its own bottom,
+            since the old code just ignored the root's placement.
+
+            * rendering/RootInlineBox.h:
+            * style/InlineTextBoxStyle.cpp:
+            (WebCore::computeUnderlineOffset):
+            Call the bottom function now instead of the top.
+
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177377
