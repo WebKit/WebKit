@@ -1,3 +1,9 @@
+2015-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        Removed empty directory.
+
+        * WinCELauncher: Removed.
+
 2015-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         run-jsc-stress-tests --remote should be able add the necessary libraries to the bundle on Linux
