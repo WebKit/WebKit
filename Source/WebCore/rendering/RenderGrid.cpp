@@ -584,9 +584,6 @@ public:
 
     RenderBox& gridItem() const { return m_gridItem; }
     GridCoordinate coordinate() const { return m_coordinate; }
-#if !ASSERT_DISABLED
-    size_t span() const { return m_span; }
-#endif
 
     bool operator<(const GridItemWithSpan other) const
     {
@@ -622,14 +619,12 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(GridTrackSizingDirectio
     HashSet<RenderBox*> itemsSet;
     for (auto trackIndex : sizingData.contentSizedTracksIndex) {
         GridIterator iterator(m_grid, direction, trackIndex);
-        GridTrack& track = (direction == ForColumns) ? sizingData.columnTracks[trackIndex] : sizingData.rowTracks[trackIndex];
 
         while (RenderBox* gridItem = iterator.nextGridItem()) {
             if (itemsSet.add(gridItem).isNewEntry) {
                 const GridCoordinate& coordinate = cachedGridCoordinate(*gridItem);
-                if (integerSpanForDirection(coordinate, direction) == 1)
-                    resolveContentBasedTrackSizingFunctionsForNonSpanningItems(direction, coordinate, *gridItem, track, sizingData.columnTracks);
-                else if (!spanningItemCrossesFlexibleSizedTracks(coordinate, direction))
+                // We should not include items spanning more than one track that span tracks with flexible sizing functions.
+                if (integerSpanForDirection(coordinate, direction) == 1 || !spanningItemCrossesFlexibleSizedTracks(coordinate, direction))
                     sizingData.itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, coordinate, direction));
             }
         }
@@ -650,25 +645,8 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(GridTrackSizingDirectio
     }
 }
 
-void RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection direction, const GridCoordinate& coordinate, RenderBox& gridItem, GridTrack& track, Vector<GridTrack>& columnTracks)
-{
-    const GridResolvedPosition trackPosition = (direction == ForColumns) ? coordinate.columns.resolvedInitialPosition : coordinate.rows.resolvedInitialPosition;
-    GridTrackSize trackSize = gridTrackSize(direction, trackPosition.toInt());
-
-    if (trackSize.hasMinContentMinTrackBreadth())
-        track.setBaseSize(std::max(track.baseSize(), minContentForChild(gridItem, direction, columnTracks)));
-    else if (trackSize.hasMaxContentMinTrackBreadth())
-        track.setBaseSize(std::max(track.baseSize(), maxContentForChild(gridItem, direction, columnTracks)));
-
-    if (trackSize.hasMinContentMaxTrackBreadth())
-        track.setGrowthLimit(std::max(track.growthLimit(), minContentForChild(gridItem, direction, columnTracks)));
-    else if (trackSize.hasMaxContentMaxTrackBreadth())
-        track.setGrowthLimit(std::max(track.growthLimit(), maxContentForChild(gridItem, direction, columnTracks)));
-}
-
 void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection direction, GridSizingData& sizingData, GridItemWithSpan& gridItemWithSpan, FilterFunction filterFunction, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction, FilterFunction growAboveMaxBreadthFilterFunction)
 {
-    ASSERT(gridItemWithSpan.span() > 1);
     const GridCoordinate& coordinate = gridItemWithSpan.coordinate();
     const GridResolvedPosition initialTrackPosition = (direction == ForColumns) ? coordinate.columns.resolvedInitialPosition : coordinate.rows.resolvedInitialPosition;
     const GridResolvedPosition finalTrackPosition = (direction == ForColumns) ? coordinate.columns.resolvedFinalPosition : coordinate.rows.resolvedFinalPosition;

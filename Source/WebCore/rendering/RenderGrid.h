@@ -91,7 +91,6 @@ private:
     typedef const LayoutUnit& (GridTrack::* AccumulatorGetter)() const;
     typedef void (GridTrack::* AccumulatorGrowFunction)(LayoutUnit);
     typedef bool (GridTrackSize::* FilterFunction)() const;
-    void resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection, const GridCoordinate&, RenderBox& gridItem, GridTrack&, Vector<GridTrack>& columnTracks);
     void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, GridItemWithSpan&, FilterFunction, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction, FilterFunction growAboveMaxBreadthFilterFunction = nullptr);
     void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<unsigned>* growAboveMaxBreadthTrackIndexes, AccumulatorGetter, AccumulatorGrowFunction, GridSizingData&, LayoutUnit& availableLogicalSpace);
 

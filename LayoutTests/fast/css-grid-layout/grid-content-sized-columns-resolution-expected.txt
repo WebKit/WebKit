@@ -13,7 +13,7 @@ PASS window.getComputedStyle(gridMaxContentAndMaxContentFixed, '').getPropertyVa
 
 Check that items are processed by ascending span to compute track breadths forbidding extra space distribution.
 PASS window.getComputedStyle(gridMinContentFixedAndAutoUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "0px 40px"
-PASS window.getComputedStyle(gridAutoAndAutoUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "10px 30px"
+PASS window.getComputedStyle(gridAutoAndAutoUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "5px 35px"
 PASS window.getComputedStyle(gridMinContentAndMinContentFixedUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "0px 40px"
 PASS window.getComputedStyle(gridMaxContentAndMinContentUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "0px 70px"
 PASS window.getComputedStyle(gridFixedMinContentAndMaxContentUnsortedConstrained, '').getPropertyValue('-webkit-grid-template-columns') is "10px 70px"
@@ -27,7 +27,7 @@ PASS window.getComputedStyle(gridMaxContentAndMaxContentFixedUnsortedConstrained
 
 Check that items are processed by ascending span to compute track breadths allowing extra space distribution.
 PASS window.getComputedStyle(gridMinContentFixedAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "15px 90px"
-PASS window.getComputedStyle(gridAutoAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "60px 30px"
+PASS window.getComputedStyle(gridAutoAndAutoUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "30px 60px"
 PASS window.getComputedStyle(gridMinContentAndMinContentFixedUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 40px"
 PASS window.getComputedStyle(gridMaxContentAndMinContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "0px 70px"
 PASS window.getComputedStyle(gridFixedMinContentAndMaxContentUnsorted, '').getPropertyValue('-webkit-grid-template-columns') is "10px 70px"
