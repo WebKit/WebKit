@@ -32,6 +32,7 @@
 #include <webkit2/WebKitAuthenticationRequest.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitColorChooserRequest.h>
 #include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitFormSubmissionRequest.h>
@@ -244,12 +245,13 @@ struct _WebKitWebViewClass {
                                                 GTlsCertificateFlags         errors);
     gboolean   (* show_notification)           (WebKitWebView               *web_view,
                                                 WebKitNotification          *notification);
+    gboolean   (* run_color_chooser)           (WebKitWebView               *web_view,
+                                                WebKitColorChooserRequest   *request);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
-    void (*_webkit_reserved4) (void);
 };
 
 WEBKIT_API GType

@@ -132,6 +132,8 @@ enum {
 
     SHOW_NOTIFICATION,
 
+    RUN_COLOR_CHOOSER,
+
     LAST_SIGNAL
 };
 
@@ -1714,6 +1716,40 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_BOOLEAN__OBJECT,
             G_TYPE_BOOLEAN, 1,
             WEBKIT_TYPE_NOTIFICATION);
+
+     /**
+      * WebKitWebView::run-color-chooser:
+      * @web_view: the #WebKitWebView on which the signal is emitted
+      * @request: a #WebKitColorChooserRequest
+      *
+      * This signal is emitted when the user interacts with a &lt;input
+      * type='color' /&gt; HTML element, requesting from WebKit to show
+      * a dialog to select a color. To let the application know the details of
+      * the color chooser, as well as to allow the client application to either
+      * cancel the request or perform an actual color selection, the signal will
+      * pass an instance of the #WebKitColorChooserRequest in the @request
+      * argument.
+      *
+      * It is possible to handle this request asynchronously by increasing the
+      * reference count of the request.
+      *
+      * The default signal handler will asynchronously run a regular
+      * #GtkColorChooser for the user to interact with.
+      *
+      * Returns: %TRUE to stop other handlers from being invoked for the event.
+      *   %FALSE to propagate the event further.
+      *
+      * Since: 2.8
+      */
+    signals[RUN_COLOR_CHOOSER] =
+        g_signal_new("run-color-chooser",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, run_color_chooser),
+            g_signal_accumulator_true_handled, nullptr,
+            webkit_marshal_BOOLEAN__OBJECT,
+            G_TYPE_BOOLEAN, 1,
+            WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -2088,6 +2124,13 @@ bool webkitWebViewEmitShowNotification(WebKitWebView* webView, WebKitNotificatio
 {
     gboolean handled;
     g_signal_emit(webView, signals[SHOW_NOTIFICATION], 0, webNotification, &handled);
+    return handled;
+}
+
+bool webkitWebViewEmitRunColorChooser(WebKitWebView* webView, WebKitColorChooserRequest* request)
+{
+    gboolean handled;
+    g_signal_emit(webView, signals[RUN_COLOR_CHOOSER], 0, request, &handled);
     return handled;
 }
 

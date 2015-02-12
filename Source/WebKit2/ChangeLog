@@ -1,3 +1,56 @@
+2015-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to allow overriding the default color chooser implementation
+        https://bugs.webkit.org/show_bug.cgi?id=98935
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add API to allow the user to override the default UI of color
+        chooser. Similar to the file chooser API, a new run-color-chooser
+        signal is added to WebKitWebView that passes a WebKitColorChooserRequest
+        parameter to the signal.
+
+        Initial patch by Arnaud Renevier <a.renevier@sisa.samsung.com>.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createColorPicker): Create a
+        WebKitColorChooser is the view widget is a WebKitWebView or a
+        WebColorPicker otherwise,
+        * UIProcess/API/gtk/WebKitColorChooser.cpp: Added.
+        (WebKit::WebKitColorChooser::create):
+        (WebKit::WebKitColorChooser::WebKitColorChooser):
+        (WebKit::WebKitColorChooser::~WebKitColorChooser):
+        (WebKit::WebKitColorChooser::endPicker): Chain up to parent class
+        when not having a request, or finish the request if we have one.
+        (WebKit::WebKitColorChooser::colorChooserRequestFinished):
+        (WebKit::WebKitColorChooser::colorChooserRequestRGBAChanged):
+        (WebKit::WebKitColorChooser::showColorPicker): Create a new
+        WebKitColorChooserRequest and emit WebKitWebView::run-color-chooser.
+        If the signal is not handled, fallback to the default color
+        chooser dialog implemented by the parent class.
+        * UIProcess/API/gtk/WebKitColorChooser.h: Added.
+        * UIProcess/API/gtk/WebKitColorChooserRequest.cpp: Added.
+        (webkitColorChooserRequestGetProperty):
+        (webkitColorChooserRequestSetProperty):
+        (webkit_color_chooser_request_class_init):
+        (webkit_color_chooser_request_set_rgba):
+        (webkit_color_chooser_request_get_rgba):
+        (webkit_color_chooser_request_get_element_rectangle):
+        (webkit_color_chooser_request_finish):
+        (webkit_color_chooser_request_cancel):
+        (webkitColorChooserRequestCreate):
+        * UIProcess/API/gtk/WebKitColorChooserRequest.h: Added.
+        * UIProcess/API/gtk/WebKitColorChooserRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add run-color-chooser signal.
+        (webkitWebViewEmitRunColorChooser): Emit run-color-chooser signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for WebKitColorChooserRequest.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitColorChooserRequest.h
+
 2015-02-11  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix.

@@ -857,6 +857,108 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
     webkit_file_chooser_request_cancel(fileChooserRequest);
 }
 
+class ColorChooserTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ColorChooserTest);
+
+    static gboolean runColorChooserCallback(WebKitWebView*, WebKitColorChooserRequest* request, ColorChooserTest* test)
+    {
+        test->runColorChooser(request);
+        return TRUE;
+    }
+
+    static void requestFinishedCallback(WebKitColorChooserRequest* request, ColorChooserTest* test)
+    {
+        g_assert(test->m_request.get() == request);
+        test->m_request = nullptr;
+        if (g_main_loop_is_running(test->m_mainLoop))
+            g_main_loop_quit(test->m_mainLoop);
+    }
+
+    ColorChooserTest()
+    {
+        g_signal_connect(m_webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), this);
+    }
+
+    void runColorChooser(WebKitColorChooserRequest* request)
+    {
+        g_assert(WEBKIT_IS_COLOR_CHOOSER_REQUEST(request));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+        m_request = request;
+        g_signal_connect(request, "finished", G_CALLBACK(requestFinishedCallback), this);
+        g_main_loop_quit(m_mainLoop);
+    }
+
+    void finishRequest()
+    {
+        g_assert(m_request.get());
+        webkit_color_chooser_request_finish(m_request.get());
+        g_assert(!m_request);
+    }
+
+    void cancelRequest()
+    {
+        g_assert(m_request.get());
+        webkit_color_chooser_request_cancel(m_request.get());
+        g_assert(!m_request);
+    }
+
+    WebKitColorChooserRequest* clickMouseButtonAndWaitForColorChooserRequest(int x, int y)
+    {
+        clickMouseButton(x, y);
+        g_main_loop_run(m_mainLoop);
+        g_assert(m_request.get());
+        return m_request.get();
+    }
+
+private:
+    GRefPtr<WebKitColorChooserRequest> m_request;
+};
+
+static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer)
+{
+    static const char* colorChooserHTMLFormat = "<html><body><input style='position:absolute;left:1;top:1;margin:0;padding:0;width:45;height:25' type='color' %s/></body></html>";
+    test->showInWindowAndWaitUntilMapped();
+
+    GUniquePtr<char> defaultColorHTML(g_strdup_printf(colorChooserHTMLFormat, ""));
+    test->loadHtml(defaultColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    WebKitColorChooserRequest* request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+
+    // Default color is black (#000000).
+    GdkRGBA rgba1;
+    GdkRGBA rgba2 = { 0., 0., 0., 1. };
+    webkit_color_chooser_request_get_rgba(request, &rgba1);
+    g_assert(gdk_rgba_equal(&rgba1, &rgba2));
+
+    // Set a different color.
+    rgba2.green = 1;
+    webkit_color_chooser_request_set_rgba(request, &rgba2);
+    webkit_color_chooser_request_get_rgba(request, &rgba1);
+    g_assert(gdk_rgba_equal(&rgba1, &rgba2));
+
+    GdkRectangle rect;
+    webkit_color_chooser_request_get_element_rectangle(request, &rect);
+    g_assert_cmpint(rect.x, == , 1);
+    g_assert_cmpint(rect.y, == , 1);
+    g_assert_cmpint(rect.width, == , 45);
+    g_assert_cmpint(rect.height, == , 25);
+
+    test->finishRequest();
+
+    // Use an initial color.
+    GUniquePtr<char> initialColorHTML(g_strdup_printf(colorChooserHTMLFormat, "value='#FF00FF'"));
+    test->loadHtml(initialColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+
+    webkit_color_chooser_request_get_rgba(request, &rgba1);
+    GdkRGBA rgba3 = { 1., 0., 1., 1. };
+    g_assert(gdk_rgba_equal(&rgba1, &rgba3));
+
+    test->cancelRequest();
+}
+
 void beforeAll()
 {
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
@@ -870,6 +972,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
     UIClientTest::add("WebKitWebView", "audio-usermedia-permission-request", testWebViewAudioOnlyUserMediaPermissionRequests);
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
+    ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
 }
 
 void afterAll()

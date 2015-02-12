@@ -1247,3 +1247,26 @@ WEBKIT_WEB_HIT_TEST_RESULT_GET_CLASS
 WebKitWebHitTestResultPrivate
 webkit_web_hit_test_result_get_type
 </SECTION>
+
+<SECTION>
+<FILE>WebKitColorChooserRequest</FILE>
+WebKitColorChooserRequest
+webkit_color_chooser_request_get_rgba
+webkit_color_chooser_request_set_rgba
+webkit_color_chooser_request_get_element_rectangle
+webkit_color_chooser_request_finish
+webkit_color_chooser_request_cancel
+
+<SUBSECTION Standard>
+WebKitColorChooserRequestClass
+WEBKIT_TYPE_COLOR_CHOOSER_REQUEST
+WEBKIT_COLOR_CHOOSER_REQUEST
+WEBKIT_IS_COLOR_CHOOSER_REQUEST
+WEBKIT_COLOR_CHOOSER_REQUEST_CLASS
+WEBKIT_IS_COLOR_CHOOSER_REQUEST_CLASS
+WEBKIT_COLOR_CHOOSER_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitColorChooserRequestPrivate
+webkit_color_chooser_request_get_type
+</SECTION>

@@ -501,6 +501,51 @@ static gboolean scrollEventCallback(WebKitWebView *webView, const GdkEventScroll
     return browserWindowZoomOut(window);
 }
 
+#if GTK_CHECK_VERSION(3, 12, 0)
+static void colorChooserRGBAChanged(GtkColorChooser *colorChooser, GParamSpec *paramSpec, WebKitColorChooserRequest *request)
+{
+    GdkRGBA rgba;
+    gtk_color_chooser_get_rgba(colorChooser, &rgba);
+    webkit_color_chooser_request_set_rgba(request, &rgba);
+}
+
+static void popoverColorClosed(GtkWidget *popover, WebKitColorChooserRequest *request)
+{
+    webkit_color_chooser_request_finish(request);
+}
+
+static void colorChooserRequestFinished(WebKitColorChooserRequest *request, GtkWidget *popover)
+{
+    g_object_unref(request);
+    gtk_widget_destroy(popover);
+}
+
+static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChooserRequest *request, BrowserWindow *window)
+{
+    GtkWidget *popover = gtk_popover_new(GTK_WIDGET(webView));
+
+    GdkRectangle rectangle;
+    webkit_color_chooser_request_get_element_rectangle(request, &rectangle);
+    gtk_popover_set_pointing_to(GTK_POPOVER(popover), &rectangle);
+
+    GtkWidget *colorChooser = gtk_color_chooser_widget_new();
+    GdkRGBA rgba;
+    webkit_color_chooser_request_get_rgba(request, &rgba);
+    gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorChooser), &rgba);
+    g_signal_connect(colorChooser, "notify::rgba", G_CALLBACK(colorChooserRGBAChanged), request);
+    gtk_container_add(GTK_CONTAINER(popover), colorChooser);
+    gtk_widget_show(colorChooser);
+
+    g_object_ref(request);
+    g_signal_connect_object(popover, "hide", G_CALLBACK(popoverColorClosed), request, 0);
+    g_signal_connect_object(request, "finished", G_CALLBACK(colorChooserRequestFinished), popover, 0);
+
+    gtk_widget_show(popover);
+
+    return TRUE;
+}
+#endif /* GTK_CHECK_VERSION(3, 12, 0) */
+
 static void browserWindowUpdateZoomActions(BrowserWindow *window)
 {
     gtk_widget_set_sensitive(window->zoomInItem, browserWindowCanZoomIn(window));
@@ -838,6 +883,9 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "leave-fullscreen", G_CALLBACK(webViewLeaveFullScreen), window);
     g_signal_connect(window->webView, "notify::is-loading", G_CALLBACK(webViewIsLoadingChanged), window);
     g_signal_connect(window->webView, "scroll-event", G_CALLBACK(scrollEventCallback), window);
+#if GTK_CHECK_VERSION(3, 12, 0)
+    g_signal_connect(window->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), window);
+#endif
 
     g_signal_connect(webkit_web_view_get_context(window->webView), "download-started", G_CALLBACK(downloadStarted), window);
 
