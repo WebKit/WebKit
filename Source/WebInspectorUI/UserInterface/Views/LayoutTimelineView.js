@@ -229,7 +229,7 @@ WebInspector.LayoutTimelineView.prototype = {
         this._updateHighlight();
 
         if (!treeElement.record.sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
+            WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
             return;
         }
 
@@ -255,7 +255,7 @@ WebInspector.LayoutTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
+        WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
     },
 
     _updateHighlight: function()

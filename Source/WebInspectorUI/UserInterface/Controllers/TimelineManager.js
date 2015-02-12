@@ -411,6 +411,10 @@ WebInspector.TimelineManager.prototype = {
 
         var identifier = this._nextRecordingIdentifier++;
         var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
+        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Network));
+        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Layout));
+        newRecording.addTimeline(new WebInspector.Timeline(WebInspector.TimelineRecord.Type.Script));
+
         this._recordings.push(newRecording);
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});
 

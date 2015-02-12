@@ -40,7 +40,7 @@ WebInspector.ContentView = function(representedObject)
             return new WebInspector.ScriptContentView(representedObject);
 
         if (representedObject instanceof WebInspector.TimelineRecording)
-            return new WebInspector.TimelineContentView(representedObject);
+            return new WebInspector.TimelineRecordingContentView(representedObject);
 
         if (representedObject instanceof WebInspector.DOMStorageObject)
             return new WebInspector.DOMStorageContentView(representedObject);

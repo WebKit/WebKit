@@ -239,7 +239,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.conte
     top: 175px;
 }
 
-.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content {
+.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing > .content {
  /* This hides the scrollbar. The view shows a scrollbar, we don't need two. */
     padding-right: 16px;
     right: -16px;

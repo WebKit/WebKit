@@ -1,5 +1,149 @@
 2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: support adding and removing timelines to the timeline sidebar panel and overview
+        https://bugs.webkit.org/show_bug.cgi?id=138434
+
+        Reviewed by Timothy Hatcher.
+
+        A timeline recording's timelines should not be static. This patch adds relevant machinery to
+        dynamically add and remove timelines from the Timeline model object and its various views.
+
+        From the model side, this is a simple change that adds TimelineAdded and TimelineRemoved events.
+        The timeline views and timeline sidebar require more extensive changes to support this functionality.
+        Instead of keeping a fixed set of timeline tree elements, the sidebar view now adds and removes
+        tree elements to reflect the available timelines for the displayed timeline recording.
+
+        This change also includes several minor cleanups, such as appending 'Element' to view properties that
+        are DOM elements, and renaming TimelineContentView to TimelineRecordingContentView.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Populate predefined network, layout, and script timelines here after constructing the recording.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/Timeline.js:
+        Move hardcoded class names and localized strings to these base class methods. This is not implemented
+        using overridden methods because not all timeline types have their own subclasses. Add a dummy
+        implementation of saveIdentityToCookie() to avoid warnings when saving sidebar panel selection state.
+
+        (WebInspector.Timeline.prototype.get type):
+        (WebInspector.Timeline.prototype.get displayName): Added.
+        (WebInspector.Timeline.prototype.get iconClassName): Added.
+        (WebInspector.Timeline.prototype.addRecord):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        (WebInspector.TimelineRecording.prototype.addTimeline.set timeline): Added.
+        (WebInspector.TimelineRecording.prototype.addTimeline): Added.
+        (WebInspector.TimelineRecording.prototype.removeTimeline.get this): Added.
+        (WebInspector.TimelineRecording.prototype.removeTimeline): Added.
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        * UserInterface/Views/LayoutTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle): Deleted.
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+        (WebInspector.LayoutTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie): Fix error message formatting.
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        * UserInterface/Views/NetworkTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle): Deleted.
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/ScriptTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle): Deleted.
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+        (WebInspector.ScriptTimelineView.prototype._closeStatusButtonClicked):
+        * UserInterface/Views/TimelineOverview.js:
+        Convert this class to use the representedObject class pattern. It manages its own mapping from timelines
+        to overview graph views. Append 'Element' to some properties holding DOM elements.
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get visibleDuration):
+        (WebInspector.TimelineOverview.prototype.reset):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype._handleScrollEvent):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview.prototype._timelineRemoved):
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+        * UserInterface/Views/TimelineRecordingContentView.css: Renamed from Source/WebInspectorUI/UserInterface/Views/TimelineContentView.css.
+        Remove hard-coded top offsets and heights that need to be dynamically calculated.
+        (.content-view.timeline-recording > .timeline-overview):
+        (.content-view.timeline-recording > .view-container):
+        (.content-view.timeline-recording > .view-container > .timeline-view > .data-grid td):
+        (.content-view.timeline-recording > .view-container > .timeline-view > .data-grid table.data):
+        * UserInterface/Views/TimelineRecordingContentView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/TimelineContentView.js.
+        Manage timeline views and path components dynamically. Adjust view heights as necessary. Append 'Element'
+        to some properties holding DOM elements.
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype.showOverviewTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.showTimelineViewForTimeline):
+        (WebInspector.TimelineRecordingContentView.prototype.get allowedNavigationSidebarPanels):
+        (WebInspector.TimelineRecordingContentView.prototype.get supportsSplitContentBrowser):
+        (WebInspector.TimelineRecordingContentView.prototype.get navigationItems):
+        (WebInspector.TimelineRecordingContentView.prototype.get currentTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        (WebInspector.TimelineRecordingContentView.prototype.hidden):
+        (WebInspector.TimelineRecordingContentView.prototype.filterDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype.updateLayout):
+        (WebInspector.TimelineRecordingContentView.prototype.saveToCookie):
+        (WebInspector.TimelineRecordingContentView.prototype.restoreFromCookie):
+        (WebInspector.TimelineRecordingContentView.prototype.get matchTreeElementAgainstCustomFilters.checkTimeBounds):
+        (WebInspector.TimelineRecordingContentView.prototype.get matchTreeElementAgainstCustomFilters):
+        (WebInspector.TimelineRecordingContentView.prototype._pathComponentSelected):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineViewSelectionPathComponentsDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._showTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype._update):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        (WebInspector.TimelineRecordingContentView.prototype._stopUpdatingCurrentTime):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStarted):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStopped):
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerPaused):
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerResumed):
+        Fix a minor regression where we make a useless call to stop updating the time.
+
+        (WebInspector.TimelineRecordingContentView.prototype._recordingTimesUpdated):
+        (WebInspector.TimelineRecordingContentView.prototype._clearTimeline):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineCountChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._recordingReset):
+        (WebInspector.TimelineRecordingContentView.prototype._recordingUnloaded):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing > .content):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        Manage timeline tree elements dynamically. Adjust view heights as necessary. Append 'Element'
+        to some properties holding DOM elements. Keep track of the displayed recording and view explicitly.
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype.shown):
+        (WebInspector.TimelineSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.looselyCompareRepresentedObjects):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineOverview):
+        (WebInspector.TimelineSidebarPanel.prototype.updateFilter):
+        (WebInspector.TimelineSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.TimelineSidebarPanel.prototype.canShowDifferentContentView):
+        (WebInspector.TimelineSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.TimelineSidebarPanel.prototype.get if):
+        (WebInspector.TimelineSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingCountChanged):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingLoaded):
+        (WebInspector.TimelineSidebarPanel.prototype._timelineRemoved):
+        (WebInspector.TimelineSidebarPanel.prototype._timelineCountChanged):
+        (WebInspector.TimelineSidebarPanel.createTimelineTreeElement): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype.restoreStateFromCookie):
+        * UserInterface/Views/TimelineView.css:
+        (.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline):
+        (.panel.navigation.timeline.timeline-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline): Deleted.
+
+2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: Large background image fails to load in inspector
         https://bugs.webkit.org/show_bug.cgi?id=141405
 

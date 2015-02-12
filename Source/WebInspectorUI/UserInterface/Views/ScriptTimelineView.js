@@ -272,7 +272,7 @@ WebInspector.ScriptTimelineView.prototype = {
             console.error("Unknown tree element selected.");
 
         if (!sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Script);
+            WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
             return;
         }
 
@@ -298,6 +298,6 @@ WebInspector.ScriptTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Script);
+        WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(this.representedObject);
     }
 };

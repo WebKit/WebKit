@@ -225,7 +225,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         if (representedObject.saveIdentityToCookie)
             representedObject.saveIdentityToCookie(cookie);
         else
-            console.error("Error: TreeElement.representedObject is missing a saveIdentityToCookie implementation. TreeElement.constructor: %s", selectedTreeElement.constructor);
+            console.error("Error: TreeElement.representedObject is missing a saveIdentityToCookie implementation. TreeElement.constructor: ", selectedTreeElement.constructor);
     },
 
     // This can be supplemented by subclasses that admit a simpler strategy for static tree elements.
@@ -521,7 +521,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         // Filter may have hidden the selected resource in the timeline view, which should now notify its listeners.
         if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden) {
             var currentContentView = WebInspector.contentBrowser.currentContentView;
-            if (currentContentView instanceof WebInspector.TimelineContentView && typeof currentContentView.currentTimelineView.filterUpdated === "function")
+            if (currentContentView instanceof WebInspector.TimelineRecordingContentView && typeof currentContentView.currentTimelineView.filterUpdated === "function")
                 currentContentView.currentTimelineView.filterUpdated();
         }
     },

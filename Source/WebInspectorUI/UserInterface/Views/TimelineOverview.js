@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
+WebInspector.TimelineOverview = function(timelineRecording)
 {
     WebInspector.Object.call(this);
+
+    this._recording = timelineRecording;
+    this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
+    this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
 
     this._element = document.createElement("div");
     this._element.className = WebInspector.TimelineOverview.StyleClassName;
     this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
 
-    this._graphsContainer = document.createElement("div");
-    this._graphsContainer.className = WebInspector.TimelineOverview.GraphsContainerStyleClassName;
-    this._element.appendChild(this._graphsContainer);
+    this._graphsContainerElement = document.createElement("div");
+    this._graphsContainerElement.className = WebInspector.TimelineOverview.GraphsContainerStyleClassName;
+    this._element.appendChild(this._graphsContainerElement);
 
-    this._timelineOverviewGraphsMap = timelineOverviewGraphsMap;
-
-    for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values()) {
-        timelineOverviewGraph.timelineOverview = this;
-        this._graphsContainer.appendChild(timelineOverviewGraph.element);
-    }
+    this._timelineOverviewGraphsMap = new Map;
 
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
@@ -51,14 +50,14 @@ WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
     this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
     this._timelineRuler.addMarker(this._currentTimeMarker);
 
-    this._scrollContainer = document.createElement("div");
-    this._scrollContainer.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
-    this._scrollContainer.addEventListener("scroll", this._handleScrollEvent.bind(this));
-    this._element.appendChild(this._scrollContainer);
+    this._scrollContainerElement = document.createElement("div");
+    this._scrollContainerElement.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
+    this._scrollContainerElement.addEventListener("scroll", this._handleScrollEvent.bind(this));
+    this._element.appendChild(this._scrollContainerElement);
 
     this._scrollWidthSizer = document.createElement("div");
     this._scrollWidthSizer.className = WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName;
-    this._scrollContainer.appendChild(this._scrollWidthSizer);
+    this._scrollContainerElement.appendChild(this._scrollWidthSizer);
 
     this._secondsPerPixelSetting = new WebInspector.Setting("timeline-overview-seconds-per-pixel", 0.01);
     this._selectionStartTimeSetting = new WebInspector.Setting("timeline-overview-selection-start-time", 0);
@@ -73,6 +72,9 @@ WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
 
     this.selectionStartTime = this._selectionStartTimeSetting.value;
     this.selectionDuration = this._selectionDurationSetting.value;
+
+    for (var timeline of this._recording.timelines.values())
+        this._timelineAdded(timeline);
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
@@ -179,7 +181,7 @@ WebInspector.TimelineOverview.prototype = {
     get visibleDuration()
     {
         if (isNaN(this._cachedScrollContainerWidth)) {
-            this._cachedScrollContainerWidth = this._scrollContainer.offsetWidth;
+            this._cachedScrollContainerWidth = this._scrollContainerElement.offsetWidth;
             console.assert(this._cachedScrollContainerWidth > 0);
         }
 
@@ -234,6 +236,12 @@ WebInspector.TimelineOverview.prototype = {
             timelineOverviewGraph.hidden();
     },
 
+    reset: function()
+    {
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+            timelineOverviewGraph.reset();
+    },
+
     addMarker: function(marker)
     {
         this._timelineRuler.addMarker(marker);
@@ -283,7 +291,7 @@ WebInspector.TimelineOverview.prototype = {
 
         if (!this._dontUpdateScrollLeft) {
             this._ignoreNextScrollEvent = true;
-            this._scrollContainer.scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._secondsPerPixel);
+            this._scrollContainerElement.scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._secondsPerPixel);
         }
 
         this._timelineRuler.updateLayout();
@@ -339,7 +347,7 @@ WebInspector.TimelineOverview.prototype = {
 
         this._dontUpdateScrollLeft = true;
 
-        var scrollOffset = this._scrollContainer.scrollLeft;
+        var scrollOffset = this._scrollContainerElement.scrollLeft;
         this.scrollStartTime = this._startTime + (scrollOffset * this._secondsPerPixel);
 
         // Force layout so we can update with the scroll position synchronously.
@@ -361,7 +369,7 @@ WebInspector.TimelineOverview.prototype = {
             var newWheelEvent = new event.constructor(event.type, event);
             newWheelEvent.__cloned = true;
 
-            this._scrollContainer.dispatchEvent(newWheelEvent);
+            this._scrollContainerElement.dispatchEvent(newWheelEvent);
             return;
         }
 
@@ -377,6 +385,32 @@ WebInspector.TimelineOverview.prototype = {
 
         event.preventDefault();
         event.stopPropagation();
+    },
+
+    _timelineAdded: function(timelineOrEvent)
+    {
+        var timeline = timelineOrEvent;
+        if (!(timeline instanceof WebInspector.Timeline))
+            timeline = timelineOrEvent.data.timeline;
+
+        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        console.assert(!this._timelineOverviewGraphsMap.has(timeline), timeline);
+
+        var overviewGraph = new WebInspector.TimelineOverviewGraph(timeline);
+        overviewGraph.timelineOverview = this;
+        this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
+        this._graphsContainerElement.appendChild(overviewGraph.element);
+    },
+
+    _timelineRemoved: function(event)
+    {
+        var timeline = event.data.timeline;
+        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        console.assert(this._timelineOverviewGraphsMap.has(timeline), timeline);
+
+        var overviewGraph = this._timelineOverviewGraphsMap.take(timeline);
+        overviewGraph.timelineOverview = null;
+        this._graphsContainerElement.removeChild(overviewGraph.element);
     },
 
     _timeRangeSelectionChanged: function(event)

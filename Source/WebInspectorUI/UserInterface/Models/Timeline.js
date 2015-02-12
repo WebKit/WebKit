@@ -44,6 +44,8 @@ WebInspector.Timeline.Event = {
     TimesUpdated: "timeline-times-updated"
 };
 
+WebInspector.Timeline.TimelineTypeCookieKey = "timeline-type";
+
 WebInspector.Timeline.prototype = {
     constructor: WebInspector.Timeline,
     __proto__: WebInspector.Object.prototype,
@@ -70,6 +72,30 @@ WebInspector.Timeline.prototype = {
         return this._type;
     },
 
+    get displayName()
+    {
+        if (this._type === WebInspector.TimelineRecord.Type.Network)
+            return WebInspector.UIString("Network Requests");
+        if (this._type === WebInspector.TimelineRecord.Type.Layout)
+            return WebInspector.UIString("Layout & Rendering");
+        if (this._type === WebInspector.TimelineRecord.Type.Script)
+            return WebInspector.UIString("JavaScript & Events");
+
+        console.error("Timeline has unknown type:", this._type, this);
+    },
+
+    get iconClassName()
+    {
+        if (this._type === WebInspector.TimelineRecord.Type.Network)
+            return WebInspector.TimelineSidebarPanel.NetworkIconStyleClass;
+        if (this._type === WebInspector.TimelineRecord.Type.Layout)
+            return WebInspector.TimelineSidebarPanel.ColorsIconStyleClass;
+        if (this._type === WebInspector.TimelineRecord.Type.Script)
+            return WebInspector.TimelineSidebarPanel.ScriptIconStyleClass;
+
+        console.error("Timeline has unknown type:", this._type, this);
+    },
+
     reset: function(suppressEvents)
     {
         this._records = [];
@@ -92,6 +118,11 @@ WebInspector.Timeline.prototype = {
         this._updateTimesIfNeeded(record);
 
         this.dispatchEventToListeners(WebInspector.Timeline.Event.RecordAdded, {record: record});
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.Timeline.TimelineTypeCookieKey] = this._type;
     },
 
     // Private

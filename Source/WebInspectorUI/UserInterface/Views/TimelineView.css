@@ -36,7 +36,7 @@
     background-image: none;
 }
 
-.panel.navigation.timeline.timeline-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
+.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
     background-image: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03));
     background-size: 100% 40px;
 }

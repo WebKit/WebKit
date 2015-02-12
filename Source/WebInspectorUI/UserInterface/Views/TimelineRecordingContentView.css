@@ -23,29 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.timeline > .timeline-overview {
+.content-view.timeline-recording > .timeline-overview {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 130px;
 }
 
-.content-view.timeline > .view-container {
+.content-view.timeline-recording > .view-container {
     position: absolute;
-    top: 130px;
     left: 0;
     right: 0;
     bottom: 0;
     overflow: hidden;
 }
 
-.content-view.timeline > .view-container > .timeline-view > .data-grid td {
+.content-view.timeline-recording > .view-container > .timeline-view > .data-grid td {
     height: 16px;
     line-height: 16px;
 }
 
-.content-view.timeline > .view-container > .timeline-view > .data-grid table.data {
+.content-view.timeline-recording > .view-container > .timeline-view > .data-grid table.data {
     background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
     background-size: 100% 40px;
 }

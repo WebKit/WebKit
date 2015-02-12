@@ -35,13 +35,6 @@ WebInspector.TimelineRecording = function(identifier, displayName)
     // For legacy backends, we compute the elapsed time of records relative to this timestamp.
     this._legacyFirstRecordedTimestamp = NaN;
 
-    for (var key of Object.keys(WebInspector.TimelineRecord.Type)) {
-        var type = WebInspector.TimelineRecord.Type[key];
-        var timeline = new WebInspector.Timeline(type);
-        this._timelines.set(type, timeline);
-        timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
-    }
-
     this.reset(true);
 };
 
@@ -49,6 +42,8 @@ WebInspector.TimelineRecording.Event = {
     Reset: "timeline-recording-reset",
     Unloaded: "timeline-recording-unloaded",
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
+    TimelineAdded: "timeline-recording-timeline-added",
+    TimelineRemoved: "timeline-recording-timeline-removed",
     TimesUpdated: "timeline-recording-times-updated"
 };
 
@@ -141,6 +136,29 @@ WebInspector.TimelineRecording.prototype = {
         return [...timelines.values()];
     },
 
+    addTimeline: function(timeline)
+    {
+        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        console.assert(!this._timelines.has(timeline), this._timelines, timeline);
+
+        this._timelines.set(timeline.type, timeline);
+
+        timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineAdded, {timeline: timeline});
+    },
+
+    removeTimeline: function(timeline)
+    {
+        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        console.assert(this._timelines.has(timeline.type), this._timelines, timeline);
+        console.assert(this._timelines.get(timeline.type) === timeline, this._timelines, timeline);
+
+        this._timelines.delete(timeline.type);
+
+        timeline.removeEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineRemoved, {timeline: timeline});
+    },
+
     addEventMarker: function(eventMarker)
     {
         this._eventMarkers.push(eventMarker);
@@ -148,6 +166,11 @@ WebInspector.TimelineRecording.prototype = {
 
     addRecord: function(record)
     {
+        var hasCorrespondingTimeline = this._timelines.has(record.type);
+        console.assert(hasCorrespondingTimeline, record, this._timelines);
+        if (!hasCorrespondingTimeline)
+            return;
+
         // Add the record to the global timeline by type.
         this._timelines.get(record.type).addRecord(record);
 
