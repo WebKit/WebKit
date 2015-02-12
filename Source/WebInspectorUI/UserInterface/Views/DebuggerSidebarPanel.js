@@ -40,6 +40,7 @@ WebInspector.DebuggerSidebarPanel = function()
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
 
+    this._toggleBreakpointsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "Y", this._breakpointsToggleButtonClicked.bind(this));
     this.pauseOrResumeKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "Y", this._debuggerPauseResumeButtonClicked.bind(this));
     this._stepOverKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.F6, this._debuggerStepOverButtonClicked.bind(this));
     this._stepIntoKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.F7, this._debuggerStepIntoButtonClicked.bind(this));
@@ -70,8 +71,8 @@ WebInspector.DebuggerSidebarPanel = function()
         stepOutImage = {src: "Images/StepOut.svg", width: 15, height: 15};
     }
 
-    var toolTip = WebInspector.UIString("Enable all breakpoints");
-    var altToolTip = WebInspector.UIString("Disable all breakpoints");
+    var toolTip = WebInspector.UIString("Enable all breakpoints (%s)").format(this._toggleBreakpointsKeyboardShortcut.displayName);
+    var altToolTip = WebInspector.UIString("Disable all breakpoints (%s)").format(this._toggleBreakpointsKeyboardShortcut.displayName);
 
     this._debuggerBreakpointsButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-breakpoints", toolTip, altToolTip, breakpointsImage.src, breakpointsImage.width, breakpointsImage.height);
     this._debuggerBreakpointsButtonItem.activated = WebInspector.debuggerManager.breakpointsEnabled;

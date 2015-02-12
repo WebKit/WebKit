@@ -1,5 +1,16 @@
 2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: add keyboard shortcut to enable/disable all breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=141527
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel): Bind Command/Control + Y to toggle breakpoints button.
+
+2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: support adding and removing timelines to the timeline sidebar panel and overview
         https://bugs.webkit.org/show_bug.cgi?id=138434
 
