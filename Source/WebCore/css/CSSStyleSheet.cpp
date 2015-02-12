@@ -95,6 +95,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
     : m_contents(WTF::move(contents))
     , m_isInlineStylesheet(false)
     , m_isDisabled(false)
+    , m_mutatedRules(false)
     , m_ownerNode(0)
     , m_ownerRule(ownerRule)
 {
@@ -105,6 +106,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node* ownerNode
     : m_contents(WTF::move(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isDisabled(false)
+    , m_mutatedRules(false)
     , m_ownerNode(ownerNode)
     , m_ownerRule(0)
 {
@@ -177,6 +179,8 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     }
 
     owner->styleResolverChanged(DeferRecalcStyle);
+
+    m_mutatedRules = true;
 }
 
 void CSSStyleSheet::didMutate()

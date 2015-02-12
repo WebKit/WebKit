@@ -88,6 +88,9 @@ public:
     void setMediaQueries(PassRefPtr<MediaQuerySet>);
     void setTitle(const String& title) { m_title = title; }
 
+    bool hadRulesMutation() const { return m_mutatedRules; }
+    void clearHadRulesMutation() { m_mutatedRules = false; }
+
     enum RuleMutationType { OtherMutation, RuleInsertion };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
 
@@ -129,6 +132,7 @@ private:
     Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet;
     bool m_isDisabled;
+    bool m_mutatedRules;
     String m_title;
     RefPtr<MediaQuerySet> m_mediaQueries;
 

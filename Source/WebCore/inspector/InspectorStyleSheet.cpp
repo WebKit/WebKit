@@ -609,6 +609,9 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
         m_pageStyleSheet->clearChildRuleCSSOMWrappers();
         fireStyleSheetChanged();
     }
+
+    // We just wiped the entire contents of the stylesheet. Clear the mutation flag.
+    m_pageStyleSheet->clearHadRulesMutation();
 }
 
 bool InspectorStyleSheet::setText(const String& text, ExceptionCode& ec)
@@ -860,6 +863,12 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> se
     const SelectorRangeList& ranges = sourceData->selectorRanges;
     const CSSSelector* selector = selectorList.first();
     for (size_t i = 0, size = ranges.size(); i < size; ++i) {
+        // If we don't have a selector, that means the SourceData for this CSSStyleSheet
+        // no longer matches up with the actual rules in the CSSStyleSheet.
+        ASSERT(selector);
+        if (!selector)
+            break;
+
         const SourceRange& range = ranges.at(i);
         String selectorText = sheetText.substring(range.start, range.length());
 
@@ -1061,9 +1070,14 @@ bool InspectorStyleSheet::checkPageStyleSheet(ExceptionCode& ec) const
     return true;
 }
 
+bool InspectorStyleSheet::styleSheetMutated() const
+{
+    return m_pageStyleSheet && m_pageStyleSheet->hadRulesMutation();
+}
+
 bool InspectorStyleSheet::ensureParsedDataReady()
 {
-    return ensureText() && ensureSourceData();
+    return !styleSheetMutated() && ensureText() && ensureSourceData();
 }
 
 bool InspectorStyleSheet::ensureText() const

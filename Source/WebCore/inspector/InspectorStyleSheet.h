@@ -215,6 +215,7 @@ private:
 
     static void collectFlatRules(RefPtr<CSSRuleList>&&, CSSStyleRuleVector* result);
     bool checkPageStyleSheet(ExceptionCode&) const;
+    bool styleSheetMutated() const;
     bool ensureText() const;
     bool ensureSourceData();
     void ensureFlatRules() const;

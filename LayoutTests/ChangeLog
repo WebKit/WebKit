@@ -1,3 +1,15 @@
+2015-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash inspecting styles of element with mutated stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=141451
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/css/stylesheet-with-mutations-expected.txt: Added.
+        * inspector/css/stylesheet-with-mutations.html: Added.
+        Previously this test would crash, or in debug builds show one
+        of the two selectors in the rule.
+
 2015-02-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179987.
