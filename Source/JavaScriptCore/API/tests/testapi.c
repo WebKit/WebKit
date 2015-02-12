@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1173,6 +1173,15 @@ static bool extendTerminateCallback(JSContextRef ctx, void* context)
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
+#if defined(_M_X64) || defined(__x86_64__)
+    // The VS2013 runtime has a bug where it mis-detects AVX-capable processors
+    // if the feature has been disabled in firmware. This causes us to crash
+    // in some of the math functions. For now, we disable those optimizations
+    // because Microsoft is not going to fix the problem in VS2013.
+    // FIXME: http://webkit.org/b/141449: Remove this workaround when we switch to VS2015+.
+    _set_FMA3_enable(0);
+#endif
+
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.

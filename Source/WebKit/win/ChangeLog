@@ -1,3 +1,21 @@
+2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r179993. <rdar://problem/19813975>
+
+    2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] [64-bit] Work around MSVC2013 Runtime Bug
+            https://bugs.webkit.org/show_bug.cgi?id=141498
+            <rdar://problem/19803642>
+
+            Reviewed by Anders Carlsson.
+
+            Disable FMA3 instruction use in the MSVC math library to
+            work around a VS2013 runtime crash. We can remove this
+            workaround when we switch to VS2015.
+
+            * WebKitDLL.cpp: Call _set_FMA3_enable(0) to disable FMA3 support.
+
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179841

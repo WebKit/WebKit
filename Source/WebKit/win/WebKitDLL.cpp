@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,14 @@ STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRe
 {
     switch (ul_reason_for_call) {
         case DLL_PROCESS_ATTACH:
+#if defined(_M_X64) || defined(__x86_64__)
+            // The VS2013 runtime has a bug where it mis-detects AVX-capable processors
+            // if the feature has been disabled in firmware. This causes us to crash
+            // in some of the math functions. For now, we disable those optimizations
+            // because Microsoft is not going to fix the problem in VS2013.
+            // FIXME: http://webkit.org/b/141449: Remove this workaround when we switch to VS2015+.
+            _set_FMA3_enable(0);
+#endif
             gLockCount = gClassCount = 0;
             gInstance = hModule;
             WebCore::setInstanceHandle(hModule);

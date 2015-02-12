@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -137,8 +137,17 @@ static void computeFullDesktopFrame()
 
 BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
 {
-    if (reason == DLL_PROCESS_ATTACH)
+    if (reason == DLL_PROCESS_ATTACH) {
+#if defined(_M_X64) || defined(__x86_64__)
+        // The VS2013 runtime has a bug where it mis-detects AVX-capable processors
+        // if the feature has been disabled in firmware. This causes us to crash
+        // in some of the math functions. For now, we disable those optimizations
+        // because Microsoft is not going to fix the problem in VS2013.
+        // FIXME: http://webkit.org/b/141449: Remove this workaround when we switch to VS2015+.
+        _set_FMA3_enable(0);
+#endif
         hInst = dllInstance;
+    }
 
     return TRUE;
 }
