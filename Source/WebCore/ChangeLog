@@ -1,3 +1,66 @@
+2015-01-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Invalid initialization of track sizes with non spanning grid items
+        https://bugs.webkit.org/show_bug.cgi?id=140763
+
+        Reviewed by Antti Koivisto.
+
+        Content sized tracks with non-spanning grid items were not
+        properly sized because the growth limit was sometimes infinity
+        (-1) after calling resolveContentBasedTrackSizingFunctions() when
+        it should not. This patch adds an special initialization phase for
+        non-spanning grid items as the new track sizing algorithm
+        describes.
+
+        Granted, that was handled in the old algorithm in
+        distributeSpaceToTracks() as a special case. The problem is that
+        it regressed after the optimization added in r173868 because that
+        method is no longer called when the space to distribute is 0.
+
+        That's why we could fix this by allowing calls to
+        distributeSpaceToTracks() with spaceToDistribute>=0 but by fixing
+        it with an explicit initialization our implementation becomes
+        closer to the new algorithm and the initialization is now explicit
+        in the code instead of a side effect of calling
+        distributeSpaceToTracks() with no space to be distributed. It also
+        brings a slight performance improvement as we save sorts and hash
+        lookups.
+
+        I also took the change to add caching to several GridTrackSize
+        methods that were hot on the profiler (each one accounted for ~1%
+        of the total time, now they account for ~0.3% each).
+
+        Test: fast/css-grid-layout/grid-initialize-span-one-items.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridItemWithSpan::span): New helper method for ASSERTs.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        Exclude non spanning grid items from the calls to
+        resolveContentBasedTrackSizingFunctionsForItems().
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        New method to resolve track sizes only using non-spanning grid
+        items.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        Ensure that it isn't called for non-spanning grid items.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::GridTrackSize): Cache return values.
+        (WebCore::GridTrackSize::setLength): Ditto.
+        (WebCore::GridTrackSize::setMinMax): Ditto.
+        (WebCore::GridTrackSize::cacheMinMaxTrackBreadthTypes): New method
+        that caches the return values for hasXXXTrackBreadth() methods.
+        (WebCore::GridTrackSize::hasMinOrMaxContentMinTrackBreadth): Use
+        the cached return value.
+        (WebCore::GridTrackSize::hasMaxContentMaxTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::hasMinContentMaxTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::hasMinOrMaxContentMaxTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::hasMaxContentMinTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::hasMinContentMinTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::hasMinContentMinTrackBreadthAndMinOrMaxContentMaxTrackBreadth):
+        Ditto.
+        (WebCore::GridTrackSize::hasMaxContentMinTrackBreadthAndMaxContentMaxTrackBreadth):
+        Ditto.
+
 2015-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the USE(ACCELERATED_COMPOSITING) guard from the
