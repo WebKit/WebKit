@@ -2341,6 +2341,18 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _traits.get();
 }
 
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 80300)
+- (UITextInputAssistantItem *)inputAssistantItem
+{
+    return nil;
+}
+
+- (UITextInputAssistantItem *)_inputAssistantItem
+{
+    return nil;
+}
+#endif
+
 - (UITextInteractionAssistant *)interactionAssistant
 {
     return _textSelectionAssistant.get();

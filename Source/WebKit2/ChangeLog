@@ -1,3 +1,13 @@
+2015-02-11  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix.
+
+        Unreviewed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputAssistantItem]):
+        (-[WKContentView _inputAssistantItem]):
+
 2015-02-11  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add logging to validate the network cache efficacy (Part 2)
