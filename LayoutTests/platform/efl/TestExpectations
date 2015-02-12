@@ -2056,5 +2056,16 @@ webkit.org/b/141496 fast/multicol/newmulticol/client-rects.html [ Failure ]
 webkit.org/b/141496 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
 webkit.org/b/141496 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failure ]
 
+# Started failing since r179055
+webkit.org/b/141497 fast/media/mq-any-hover-matchMedia.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-any-hover-styling.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-any-pointer-matchMedia.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-any-pointer-styling.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-hover-matchMedia.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-hover-styling.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-pointer-matchMedia.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-pointer-styling.html [ Failure ]
+webkit.org/b/141497 fast/media/mq-pointer.html [ Failure ]
+
 # This test need a rebaseline.
 webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]
