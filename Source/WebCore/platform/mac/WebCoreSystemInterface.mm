@@ -39,8 +39,6 @@ CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTrans
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
-NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
-NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);

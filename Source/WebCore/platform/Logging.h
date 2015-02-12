@@ -82,6 +82,8 @@ WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
 
+    WEBCORE_EXPORT extern WTFLogChannel LogNotYetImplemented;
+
     String logLevelString();
     bool isLogChannelEnabled(const String& name);
     WEBCORE_EXPORT void initializeLoggingChannelsIfNecessary();
