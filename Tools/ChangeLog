@@ -1,3 +1,14 @@
+2015-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        run-jsc-stress-tests should accept remote host config from JSON file
+        https://bugs.webkit.org/show_bug.cgi?id=141509
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to allow overriding the default color chooser implementation

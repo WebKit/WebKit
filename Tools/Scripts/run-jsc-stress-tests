@@ -127,7 +127,8 @@ def usage
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
     puts "--make-runner               Uses the faster make-based runner."
-    puts "--remote                    Specify a remote host on which to run tests."
+    puts "--remote                    Specify a remote host on which to run tests from command line argument."
+    puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
     puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--help               (-h)   Print this message."
     exit 1
@@ -149,6 +150,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
+               ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
@@ -185,6 +187,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $remote = true
         uri = URI("ssh://" + arg)
         $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
+    when '--remote-config-file'
+        $remoteConfigFile = arg
     when '--child-processes'
         $numChildProcesses = arg.to_i
     when '--arch'
@@ -193,6 +197,23 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $hostOS = arg
     end
 }
+
+if $remoteConfigFile
+    file = File.read($remoteConfigFile)
+    config = JSON.parse(file)
+
+    if !$remote and config['remote']
+        $copyVM = true
+        $tarball = true
+        $remote = true
+        uri = URI("ssh://" + config['remote'])
+        $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
+    end
+
+    if config['remoteDirectory']
+        $remoteDirectory = config['remoteDirectory']
+    end
+end
 
 unless jscArg
     $stderr.puts "Error: must specify -jsc <path>"
@@ -1378,7 +1399,9 @@ def runTestRunner
     end
 
     if $remote
-        $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
+        if !$remoteDirectory
+            $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
+        end
         mysys("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", "mkdir -p #{$remoteDirectory}")
         mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
         remoteScript = "\""

@@ -60,6 +60,7 @@ my $runJSCStress = 1;
 my $enableFTL = isAppleMacWebKit();
 my $createTarball = 0;
 my $remoteHost = 0;
+my $remoteConfigFile;
 
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
@@ -82,6 +83,7 @@ Usage: $programName [options] [options to pass to build system]
   ----------------------------------------------
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
+  --remote-config-file=         Same as remote, but read config from JSON file.
   --extra-tests=                Path to a file containing extra tests
   --child-processes=            Specify the number of child processes.
   --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
@@ -100,6 +102,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
+    'remote-config-file=s' => \$remoteConfigFile,
     'child-processes=s' => \$childProcesses,
     'shell-runner' => \$shellRunner,
     'make-runner' => \$makeRunner,
@@ -283,9 +286,15 @@ sub runJSCStressTests
     if ($createTarball) {
         push(@jscStressDriverCmd, "--tarball");
     }
+
     if ($remoteHost) {
         push(@jscStressDriverCmd, "--remote");
         push(@jscStressDriverCmd, $remoteHost);
+    }
+
+    if ($remoteConfigFile) {
+        push(@jscStressDriverCmd, "--remote-config-file");
+        push(@jscStressDriverCmd, $remoteConfigFile);
     }
 
     if ($childProcesses) {
