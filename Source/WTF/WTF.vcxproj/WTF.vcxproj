@@ -148,6 +148,7 @@
     <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
     <ClCompile Include="..\wtf\win\RunLoopWin.cpp" />
+    <ClCompile Include="..\wtf\win\WTFDLL.cpp" />
     <ClCompile Include="..\wtf\WTFThreadData.cpp" />
     <ClCompile Include="..\wtf\SchedulePairCF.cpp" />
   </ItemGroup>

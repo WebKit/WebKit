@@ -244,6 +244,9 @@
     <ClCompile Include="..\wtf\gobject\GMainLoopSource.cpp">
       <Filter>wtf\gobject</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\win\WTFDLL.cpp">
+      <Filter>win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">
