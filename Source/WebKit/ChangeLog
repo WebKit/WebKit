@@ -1,3 +1,10 @@
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed branch build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Fix
+        symbol export definition.
+
 2015-02-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178470. rdar://problem/19739095
