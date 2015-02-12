@@ -1,3 +1,10 @@
+2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Mark multi-column failing tests to Failure.
+        Those tests have been failing since r167808.
+
+        * platform/efl/TestExpectations:
+
 2015-02-11  Dhi Aurrahman  <diorahman@rockybars.com>
 
         CSS selector JIT compilation support for :lang()
