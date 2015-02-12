@@ -1348,7 +1348,7 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
 JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
-void AccessibilityUIElement::setValue(JSStringRef);
+void AccessibilityUIElement::setValue(JSStringRef) { }
 #endif
 
 #if !PLATFORM(COCOA)
