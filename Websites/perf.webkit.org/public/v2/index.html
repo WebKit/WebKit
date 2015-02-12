@@ -580,9 +580,9 @@
                             {{#each buildRequests}}
                                 <tr>
                                     <td>{{orderLabel}}</td>
-                                    <td>{{config}}</td>
-                                    <td>{{#if url}}{{#link-to url}}{{statusLabel}}{{/link-to}}{{else}}{{statusLabel}}{{/if}}</td>
-                                    <td>{{build}}</td>
+                                    <td>{{configLetter}}</td>
+                                    <td><a {{bind-attr href=url}}>{{statusLabel}}</a></td>
+                                    <td>{{buildNumber}}</td>
                                     <td>{{mean}}</td>
                                 </tr>
                             {{/each}}

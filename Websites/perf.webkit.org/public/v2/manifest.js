@@ -279,10 +279,10 @@ App.Manifest = Ember.Controller.extend({
         dashboards.forEach(function (dashboard) { self._dashboardByName[dashboard.get('name')] = dashboard; });
         this._defaultDashboardName = dashboards.length ? dashboards[0].get('name') : null;
     },
-    fetchRunsWithPlatformAndMetric: function (store, platformId, metricId)
+    fetchRunsWithPlatformAndMetric: function (store, platformId, metricId, testGroupId)
     {
         return Ember.RSVP.all([
-            RunsData.fetchRuns(platformId, metricId),
+            RunsData.fetchRuns(platformId, metricId, testGroupId),
             this.fetch(store),
         ]).then(function (values) {
             var runs = values[0];
@@ -301,7 +301,20 @@ App.Manifest = Ember.Controller.extend({
             }[suffix];
             var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
 
-            return {platform: platform, metric: metric, runs: runs, unit: unit, useSI: unit == 'bytes', smallerIsBetter: smallerIsBetter};
+            var useSI = unit == 'bytes';
+            return {
+                platform: platform,
+                metric: metric,
+                data: {
+                    current: runs.current.timeSeriesByCommitTime(),
+                    baseline: runs.baseline ? runs.baseline.timeSeriesByCommitTime() : null,
+                    target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
+                    unit: unit,
+                    formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
+                    deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
+                    smallerIsBetter: smallerIsBetter,
+                }
+            };
         });
     },
 }).create();

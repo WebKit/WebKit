@@ -352,8 +352,8 @@ App.Pane = Ember.Object.extend({
             App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(function (result) {
                 self.set('platform', result.platform);
                 self.set('metric', result.metric);
-                self.set('fetchedData', result);
-                self._computeChartData();
+                self.set('chartData', result.data);
+                self._updateMovingAverageAndEnvelope();
             }, function (result) {
                 if (!result || typeof(result) === "string")
                     self.set('failure', 'Failed to fetch the JSON with an error: ' + result);
@@ -471,12 +471,11 @@ App.Pane = Ember.Object.extend({
 
         return chosenStrategy;
     },
-    _computeChartData: function ()
+    _updateMovingAverageAndEnvelope: function ()
     {
-        if (!this.get('fetchedData'))
+        var chartData = this.get('chartData');
+        if (!chartData)
             return;
-
-        var chartData = App.createChartData(this.get('fetchedData'));
 
         var movingAverageStrategy = this.get('chosenMovingAverageStrategy');
         this._updateStrategyConfigIfNeeded(movingAverageStrategy, 'movingAverageConfig');
@@ -485,8 +484,6 @@ App.Pane = Ember.Object.extend({
         this._updateStrategyConfigIfNeeded(envelopingStrategy, 'envelopingConfig');
 
         chartData.movingAverage = this._computeMovingAverageAndOutliers(chartData, movingAverageStrategy, envelopingStrategy);
-
-        this.set('chartData', chartData);
     }.observes('chosenMovingAverageStrategy', 'chosenMovingAverageStrategy.parameterList.@each.value',
         'chosenEnvelopingStrategy', 'chosenEnvelopingStrategy.parameterList.@each.value'),
     _computeMovingAverageAndOutliers: function (chartData, movingAverageStrategy, envelopingStrategy)
@@ -542,20 +539,6 @@ App.Pane = Ember.Object.extend({
             this.set(configName, config);
     },
 });
-
-App.createChartData = function (data)
-{
-    var runs = data.runs;
-    return {
-        current: runs.current.timeSeriesByCommitTime(),
-        baseline: runs.baseline ? runs.baseline.timeSeriesByCommitTime() : null,
-        target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
-        unit: data.unit,
-        formatter: data.useSI ? d3.format('.4s') : d3.format('.4g'),
-        deltaFormatter: data.useSI ? d3.format('+.2s') : d3.format('+.2g'),
-        smallerIsBetter: data.smallerIsBetter,
-    };
-}
 
 App.encodePrettifiedJSON = function (plain)
 {
@@ -1027,11 +1010,10 @@ App.AnalysisTaskController = Ember.Controller.extend({
             });
         }));
     },
-    _fetchedRuns: function (data)
+    _fetchedRuns: function (result)
     {
-        var runs = data.runs;
-
-        var currentTimeSeries = runs.current.timeSeriesByCommitTime();
+        var chartData = result.data;
+        var currentTimeSeries = chartData.current;
         if (!currentTimeSeries)
             return; // FIXME: Report an error.
 
@@ -1044,13 +1026,12 @@ App.AnalysisTaskController = Ember.Controller.extend({
         highlightedItems[start.measurement.id()] = true;
         highlightedItems[end.measurement.id()] = true;
 
-        var chartData = App.createChartData(data);
         var formatedPoints = currentTimeSeries.seriesBetweenPoints(start, end).map(function (point, index) {
             return {
                 id: point.measurement.id(),
                 measurement: point.measurement,
                 label: 'Point ' + (index + 1),
-                value: chartData.formatter(point.value) + (data.unit ? ' ' + data.unit : ''),
+                value: chartData.formatter(point.value) + (chartData.unit ? ' ' + chartData.unit : ''),
             };
         });
 

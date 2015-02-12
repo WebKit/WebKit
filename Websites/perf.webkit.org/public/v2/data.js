@@ -242,6 +242,11 @@ Measurement.prototype.latestCommitTime = function()
     return this._latestCommitTime || this._buildTime;
 }
 
+Measurement.prototype.buildId = function()
+{
+    return this._raw['build'];
+}
+
 Measurement.prototype.buildNumber = function ()
 {
     return this._raw['buildNumber'];
@@ -315,9 +320,12 @@ RunsData.prototype.timeSeriesByBuildTime = function ()
 
 // FIXME: We need to devise a way to fetch runs in multiple chunks so that
 // we don't have to fetch the entire time series to just show the last 3 days.
-RunsData.fetchRuns = function (platformId, metricId)
+RunsData.fetchRuns = function (platformId, metricId, testGroupId)
 {
     var filename = platformId + '-' + metricId + '.json';
+
+    if (testGroupId)
+        filename += '?testGroup=' + testGroupId;
 
     return new Ember.RSVP.Promise(function (resolve, reject) {
         $.getJSON('../api/runs/' + filename, function (data) {
@@ -353,6 +361,11 @@ function TimeSeries(series)
     });
     this._min = min;
     this._max = max;
+}
+
+TimeSeries.prototype.findPointByBuild = function (buildId)
+{
+    return this._series.find(function (point) { return point.measurement.buildId() == buildId; })
 }
 
 TimeSeries.prototype.findPointByMeasurementId = function (measurementId)

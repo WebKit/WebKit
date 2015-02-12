@@ -1,5 +1,56 @@
 2015-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should show the results of A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=141500
+
+        Reviewed by Chris Dumez.
+
+        Added the support for fetching test_runs for a specific test group in /api/runs/, and used it in the
+        analysis task page to fetch results for each test group.
+
+        Merged App.createChartData into App.Manifest.fetchRunsWithPlatformAndMetric so that App.BuildRequest
+        can use the formatter.
+
+        * public/api/runs.php:
+        (fetch_runs_for_config_and_test_group): Added.
+        (fetch_runs_for_config): Just return the fetched rows since main will format them with RunsGenerator.
+        (main): Use fetch_runs_for_config_and_test_group to fetch rows when a test group id is specified. Also
+        use RunsGenerator to format results.
+        (RunsGenerator): Added.
+        (RunsGenerator::__construct): Added.
+        (RunsGenerator::add_runs): Added.
+        (RunsGenerator::format_run): Moved.
+        (RunsGenerator::parse_revisions_array): Moved.
+
+        * public/v2/analysis.js:
+        (App.TestGroup): Fixed a typo. The property on a test group that refers to an analysis task is "task".
+        (App.TestGroup._fetchChartData): Added. Fetches all A/B testing results for this group.
+        (App.BuildRequest.configLetter): Renamed from config since this returns a letter that identifies the
+        configuration associated with this build request such as "A" and "B".
+        (App.BuildRequest.statusLabel): Added the missing label for failed build requests.
+        (App.BuildRequest.url): Added. Returns the URL associated with this build request.
+        (App.BuildRequest._meanFetched): Added. Retrieve the mean and the build number for this request via
+        _fetchChartData.
+
+        * public/v2/app.js:
+        (App.Pane._fetch): Set chartData directly here.
+        (App.Pane._updateMovingAverageAndEnvelope): Renamed from _computeChartData. No longer sets chartData
+        now that it's done in App.Pane._fetch.
+        (App.AnalysisTaskController._fetchedRuns): Updated per createChartData merge.
+
+        * public/v2/data.js:
+        (Measurement.prototype.buildId): Added.
+        (TimeSeries.prototype.findPointByBuild): Added.
+
+        * public/v2/index.html: Fixed a bug that build status URL was broken. We can't use link-to helper since
+        url is not an Ember routed path.
+
+        * public/v2/manifest.js:
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Takes testGroupId as the third argument. Merged
+        App.createChartData here so that App.BuildRequest can use the formatter
+
+2015-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         v2 UI should adjust the number of ticks on dashboards based on screen size
         https://bugs.webkit.org/show_bug.cgi?id=141502
 

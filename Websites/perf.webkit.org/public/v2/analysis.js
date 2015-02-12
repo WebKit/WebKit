@@ -66,7 +66,7 @@ App.BugAdapter = DS.RESTAdapter.extend({
 });
 
 App.TestGroup = App.NameLabelModel.extend({
-    analysisTask: DS.belongsTo('analysisTask'),
+    task: DS.belongsTo('analysisTask'),
     author: DS.attr('string'),
     createdAt: DS.attr('date'),
     buildRequests: DS.hasMany('buildRequests'),
@@ -80,6 +80,21 @@ App.TestGroup = App.NameLabelModel.extend({
         });
         return rootSetIds;
     }.property('buildRequests'),
+    _fetchChartData: function ()
+    {
+        var task = this.get('task');
+        if (!task)
+            return null;
+        var self = this;
+        return App.Manifest.fetchRunsWithPlatformAndMetric(this.store,
+            task.get('platform').get('id'), task.get('metric').get('id'), this.get('id')).then(
+            function (result) { self.set('chartData', result.data); },
+            function (error) {
+                // FIXME: Somehow this never gets called.
+                alert('Failed to fetch the results:' + error);
+                return null;
+            });
+    }.observes('task', 'task.platform', 'task.metric').on('init'),
 });
 
 App.TestGroup.create = function (analysisTask, name, rootSets, repetitionCount)
@@ -130,7 +145,7 @@ App.BuildRequest = App.Model.extend({
         return this.get('order') + 1;
     }.property('order'),
     rootSet: DS.attr('number'),
-    config: function ()
+    configLetter: function ()
     {
         var rootSets = this.get('testGroup').get('rootSets');
         var index = rootSets.indexOf(this.get('rootSet'));
@@ -146,9 +161,27 @@ App.BuildRequest = App.Model.extend({
             return 'Scheduled';
         case 'running':
             return 'Running';
+        case 'failed':
+            return 'Failed';
         case 'completed':
             return 'Finished';
         }
     }.property('status'),
+    url: DS.attr('string'),
     build: DS.attr('number'),
+    _fetchMean: function ()
+    {
+        var testGroup = this.get('testGroup');
+        if (!testGroup)
+            return;
+        var chartData = testGroup.get('chartData');
+        if (!chartData)
+            return;
+
+        var point = chartData.current.findPointByBuild(this.get('build'));
+        if (!point)
+            return;
+        this.set('mean', chartData.formatter(point.value) + (chartData.unit ? ' ' + chartData.unit : ''));
+        this.set('buildNumber', point.measurement.buildNumber());
+    }.observes('build', 'testGroup', 'testGroup.chartData').on('init'),
 });
