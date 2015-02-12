@@ -1,3 +1,13 @@
+2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
+
+        REGRESSION(r178060): empty arguments are passed when logging to system console
+        https://bugs.webkit.org/show_bug.cgi?id=141511
+
+        Reviewed by Timothy Hatcher.
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::messageWithTypeAndLevel): Change premature move to copyRef.
+
 2015-02-12  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed debug build fix after r179980.

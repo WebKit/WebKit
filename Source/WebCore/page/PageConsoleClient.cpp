@@ -157,7 +157,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     String messageText;
     bool gotMessage = arguments->getFirstArgumentAsString(messageText);
 
-    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTF::move(arguments), exec);
+    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
 
     String url = message->url();
     unsigned lineNumber = message->line();
@@ -171,7 +171,6 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     if (gotMessage)
         m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, messageText, lineNumber, columnNumber, url);
 
-    // FIXME: This doesn't work, we already moved out of arguments variable (regressed in <http://trac.webkit.org/changeset/178060>).
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
         ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTF::move(arguments));
 }
