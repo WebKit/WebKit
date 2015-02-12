@@ -27,7 +27,6 @@
 #include "Executable.h"
 
 #include "BatchedTransitionOptimizer.h"
-#include "BytecodeGenerator.h"
 #include "CodeBlock.h"
 #include "DFGDriver.h"
 #include "JIT.h"

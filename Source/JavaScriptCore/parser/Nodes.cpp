@@ -27,7 +27,6 @@
 #include "Nodes.h"
 #include "NodeConstructors.h"
 
-#include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "Debugger.h"
 #include "JIT.h"

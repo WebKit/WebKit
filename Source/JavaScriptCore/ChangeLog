@@ -1,5 +1,25 @@
 2015-02-12  Benjamin Poulain  <benjamin@webkit.org>
 
+        Simplify the initialization of BytecodeGenerator a bit
+        https://bugs.webkit.org/show_bug.cgi?id=141505
+
+        Reviewed by Anders Carlsson.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        Setup the default initialization at the declaration level
+        instead of the constructor.
+
+        Also made m_scopeNode and m_codeType const to make it explicit
+        that they are invariant after construction.
+
+        * parser/Nodes.cpp:
+        * runtime/Executable.cpp:
+        Remove 2 useless #includes.
+
+2015-02-12  Benjamin Poulain  <benjamin@webkit.org>
+
         Move the generators for GetScope and SkipScope to the common core in DFGSpeculativeJIT
         https://bugs.webkit.org/show_bug.cgi?id=141506
 
