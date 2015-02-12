@@ -75,6 +75,11 @@ WebInspector.CSSStyleSheet.prototype = {
         return this._urlComponents;
     },
 
+    get mimeType()
+    {
+        return "text/css";
+    },
+
     get displayName()
     {
         if (this._url)

@@ -94,8 +94,10 @@ WebInspector.FontResourceContentView.prototype = {
         if (this._styleElement && this._styleElement.parentNode)
             this._styleElement.parentNode.removeChild(this._styleElement);
 
+        this._fontObjectURL = this.resource.createObjectURL();
+
         this._styleElement = document.createElement("style");
-        this._styleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this.resource.contentURL + ")" + format + "; }";
+        this._styleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this._fontObjectURL + ")" + format + "; }";
 
         // The style element will be added when shown later if we are not visible now.
         if (this.visible)
@@ -153,6 +155,16 @@ WebInspector.FontResourceContentView.prototype = {
         // Remove the style element so it will not stick around when this content view is destroyed.
         if (this._styleElement && this._styleElement.parentNode)
             this._styleElement.parentNode.removeChild(this._styleElement);
+    },
+
+    closed: function()
+    {
+        // This is a workaround for the fact that the browser does not send any events
+        // when a @font-face resource is loaded. So, we assume it could be needed until
+        // the content view is destroyed, as re-attaching the style element would cause
+        // the object URL to be resolved again.
+        if (this._fontObjectURL)
+            URL.revokeObjectURL(this._fontObjectURL);
     }
 };
 

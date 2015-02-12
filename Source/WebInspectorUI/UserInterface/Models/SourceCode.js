@@ -88,11 +88,6 @@ WebInspector.SourceCode.prototype = {
         return this._currentRevision.content;
     },
 
-    get contentIsBase64Encoded()
-    {
-        return this._currentRevision.contentIsBase64Encoded;
-    },
-
     get sourceMaps()
     {
         return this._sourceMaps || [];
@@ -186,6 +181,12 @@ WebInspector.SourceCode.prototype = {
         return Promise.reject(new Error("Needs to be implemented by a subclass."));
     },
 
+    get mimeType()
+    {
+        // Implemented by subclasses.
+        console.error("Needs to be implemented by a subclass.");
+    },
+
     // Private
 
     _processContent: function(parameters)
@@ -193,20 +194,19 @@ WebInspector.SourceCode.prototype = {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
         var content = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
         var error = parameters.error;
-        var base64Encoded = parameters.base64Encoded;
+        if (parameters.base64Encoded)
+            content = decodeBase64ToBlob(content, this.mimeType);
 
         var revision = this.revisionForRequestedContent;
 
         this._ignoreRevisionContentDidChangeEvent = true;
         revision.content = content || null;
-        revision.contentIsBase64Encoded = base64Encoded || false;
         delete this._ignoreRevisionContentDidChangeEvent;
 
         return Promise.resolve({
             error: error,
             sourceCode: this,
             content: content,
-            base64Encoded: base64Encoded
         });
     }
 };

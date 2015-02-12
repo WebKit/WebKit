@@ -254,16 +254,17 @@ WebInspector.Resource.prototype = {
         return this._mimeType;
     },
 
-    get contentURL()
+    createObjectURL: function()
     {
-        const maximumDataURLSize = 1024 * 1024; // 1 MiB
-
-        // If content is not available or won't fit a data URL, fallback to using original URL.
-        var content = this.content;
-        if (content === null || content.length > maximumDataURLSize)
+        // If content is not available, fallback to using original URL.
+        // The client may try to revoke it, but nothing will happen.
+        if (!this.content)
             return this._url;
 
-        return "data:" + this.mimeTypeComponents.type + (this.contentIsBase64Encoded ? ";base64," + content : "," + encodeURIComponent(content));
+        var content = this.content;
+        console.assert(content instanceof Blob, content);
+
+        return URL.createObjectURL(content);
     },
 
     isMainResource: function()
@@ -651,9 +652,13 @@ WebInspector.Resource.prototype = {
             return;
         }
 
+        var objectURL = null;
+
         // Event handler for the image "load" event.
         function imageDidLoad()
         {
+            URL.revokeObjectURL(objectURL);
+
             // Cache the image metrics.
             this._imageSize = {
                 width: image.width,
@@ -668,9 +673,9 @@ WebInspector.Resource.prototype = {
         var image = new Image;
         image.addEventListener("load", imageDidLoad.bind(this), false);
 
-        // Set the image source once we've obtained the base64-encoded URL for it.
+        // Set the image source using an object URL once we've obtained its data.
         this.requestContent().then(function(content) {
-            image.src = content.sourceCode.contentURL;
+            objectURL = image.src = content.sourceCode.createObjectURL();
         });
     },
 

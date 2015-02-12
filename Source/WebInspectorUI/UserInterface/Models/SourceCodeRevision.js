@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeRevision = function(sourceCode, content, contentIsBase64Encoded)
+WebInspector.SourceCodeRevision = function(sourceCode, content)
 {
     WebInspector.Revision.call(this);
 
@@ -31,7 +31,6 @@ WebInspector.SourceCodeRevision = function(sourceCode, content, contentIsBase64E
 
     this._sourceCode = sourceCode;
     this._content = content || "";
-    this._contentIsBase64Encoded = contentIsBase64Encoded || false;
 };
 
 WebInspector.SourceCodeRevision.prototype = {
@@ -61,16 +60,6 @@ WebInspector.SourceCodeRevision.prototype = {
         this._sourceCode.revisionContentDidChange(this);
     },
 
-    get contentIsBase64Encoded()
-    {
-        return this._contentIsBase64Encoded;
-    },
-
-    set contentIsBase64Encoded(encoded)
-    {
-        this._contentIsBase64Encoded = encoded || false;
-    },
-
     apply: function()
     {
         this._sourceCode.currentRevision = this;
@@ -83,7 +72,7 @@ WebInspector.SourceCodeRevision.prototype = {
 
     copy: function()
     {
-        return new WebInspector.SourceCodeRevision(this._sourceCode, this._content, this._contentIsBase64Encoded);
+        return new WebInspector.SourceCodeRevision(this._sourceCode, this._content);
     }
 };
 

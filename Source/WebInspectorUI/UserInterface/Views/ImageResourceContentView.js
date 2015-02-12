@@ -46,8 +46,10 @@ WebInspector.ImageResourceContentView.prototype = {
     {
         this.element.removeChildren();
 
+        var objectURL = this.resource.createObjectURL();
         this._imageElement = document.createElement("img");
-        this._imageElement.src = this.resource.contentURL;
+        this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
+        this._imageElement.src = objectURL;
 
         this.element.appendChild(this._imageElement);
     }

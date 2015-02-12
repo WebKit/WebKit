@@ -1,3 +1,45 @@
+2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Large background image fails to load in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=141405
+
+        Reviewed by Timothy Hatcher.
+
+        Convert base64-encoded resource data to binary data using Uint8Array and Blobs.
+        Use object URLs for blobs instead of data URLs when setting image 'src' attribute
+        and in @font-face urls. This conversion happens when the backend indicates that
+        resource content is base64-encoded.
+
+        Update image and font clients of resource-fetching functionality so that they use
+        object URLs correctly. Add some plumbing so that Blobs can be constructed with
+        the correct mime-type.
+
+        * UserInterface/Base/Utilities.js:
+        (decodeBase64ToBlob): Added.
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WebInspector.CSSStyleSheet.prototype.get mimeType): Added.
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.createObjectURL): Added.
+        (WebInspector.Resource.prototype.getImageSize.imageDidLoad):
+        (WebInspector.Resource.prototype.getImageSize):
+        (WebInspector.Resource.prototype.get contentURL): Deleted.
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.get mimeType): Added.
+        * UserInterface/Models/SourceCode.js:
+        (WebInspector.SourceCode.prototype.get mimeType): Added.
+        (WebInspector.SourceCode.prototype._processContent):
+        (WebInspector.SourceCode.prototype.get contentIsBase64Encoded): Deleted.
+        * UserInterface/Models/SourceCodeRevision.js:
+        (WebInspector.SourceCodeRevision):
+        (WebInspector.SourceCodeRevision.prototype.copy):
+        (WebInspector.SourceCodeRevision.prototype.get contentIsBase64Encoded): Deleted.
+        (WebInspector.SourceCodeRevision.prototype.set contentIsBase64Encoded): Deleted.
+        * UserInterface/Views/FontResourceContentView.js:
+        (WebInspector.FontResourceContentView.prototype.hidden):
+        (WebInspector.FontResourceContentView.prototype.closed):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WebInspector.ImageResourceContentView.prototype.contentAvailable):
+
 2015-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION: Clicking selected item in the sidebar second time should scroll to the corresponding line

@@ -84,6 +84,11 @@ WebInspector.Script.prototype = {
         return this._urlComponents;
     },
 
+    get mimeType()
+    {
+        return this._resource.mimeType;
+    },
+
     get displayName()
     {
         if (this._url)
