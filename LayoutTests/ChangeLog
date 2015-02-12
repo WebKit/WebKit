@@ -1,3 +1,9 @@
+2015-02-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/TestExpectations: Mark two tests failing since r177664.
+
 2015-01-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Invalid initialization of track sizes with non spanning grid items
