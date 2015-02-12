@@ -1,3 +1,42 @@
+2015-02-12  Antti Koivisto  <antti@apple.com>
+
+        WebKit persistent cache uses a lot of threads
+        https://bugs.webkit.org/show_bug.cgi?id=141520
+
+        Reviewed by Andreas Kling.
+
+        Parallel retrieves are limited but stores are not. We may end up with lots of backround io
+        dispatch queue threads if they don't complete fast enough.
+
+        This patch adds pending state for write operations similar to what retrieves already have
+        and limits to number of active operations.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            Combine StoreOperation and UpdateOperation and rename to WriteOperation.
+            Rename RetrieveOperation to ReadOperation.
+            The idea is to emphasize that these are disk operations.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::dispatchReadOperation):
+        (WebKit::NetworkCacheStorage::dispatchPendingReadOperations):
+        (WebKit::retrieveFromMemory):
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+        (WebKit::NetworkCacheStorage::dispatchPendingWriteOperations):
+
+            Only allow 3 parallel writes.
+
+        (WebKit::NetworkCacheStorage::dispatchFullWriteOperation):
+        (WebKit::NetworkCacheStorage::dispatchHeaderWriteOperation):
+
+            More informative names.
+
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation): Deleted.
+        (WebKit::NetworkCacheStorage::dispatchPendingRetrieveOperations): Deleted.
+        (WebKit::retrieveActive): Deleted.
+
 2015-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to allow overriding the default color chooser implementation

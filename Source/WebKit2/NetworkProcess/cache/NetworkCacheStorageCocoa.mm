@@ -338,66 +338,67 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
     });
 }
 
-void NetworkCacheStorage::dispatchRetrieveOperation(std::unique_ptr<const RetrieveOperation> retrieveOperation)
+void NetworkCacheStorage::dispatchReadOperation(const ReadOperation& read)
 {
     ASSERT(RunLoop::isMain());
-
-    auto& retrieve = *retrieveOperation;
-    m_activeRetrieveOperations.add(WTF::move(retrieveOperation));
+    ASSERT(m_activeReadOperations.contains(&read));
 
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_ioQueue.get(), [this, &retrieve, cachePathCapture] {
+    dispatch_async(m_ioQueue.get(), [this, &read, cachePathCapture] {
         int fd;
-        auto channel = openFileForKey(retrieve.key, FileOpenType::Read, cachePathCapture.string(), fd);
+        auto channel = openFileForKey(read.key, FileOpenType::Read, cachePathCapture.string(), fd);
 
         bool didCallCompletionHandler = false;
-        dispatch_io_read(channel.get(), 0, std::numeric_limits<size_t>::max(), dispatch_get_main_queue(), [this, fd, &retrieve, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+        dispatch_io_read(channel.get(), 0, std::numeric_limits<size_t>::max(), dispatch_get_main_queue(), [this, fd, &read, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
             if (done) {
                 if (error)
-                    removeEntry(retrieve.key);
+                    removeEntry(read.key);
 
                 if (!didCallCompletionHandler)
-                    retrieve.completionHandler(nullptr);
+                    read.completionHandler(nullptr);
 
-                ASSERT(m_activeRetrieveOperations.contains(&retrieve));
-                m_activeRetrieveOperations.remove(&retrieve);
-                dispatchPendingRetrieveOperations();
+                ASSERT(m_activeReadOperations.contains(&read));
+                m_activeReadOperations.remove(&read);
+                dispatchPendingReadOperations();
                 return;
             }
             ASSERT(!didCallCompletionHandler); // We are requesting maximum sized chunk so we should never get called more than once with data.
 
-            auto entry = decodeEntry(fileData, fd, retrieve.key);
-            bool success = retrieve.completionHandler(WTF::move(entry));
+            auto entry = decodeEntry(fileData, fd, read.key);
+            bool success = read.completionHandler(WTF::move(entry));
             didCallCompletionHandler = true;
             if (!success)
-                removeEntry(retrieve.key);
+                removeEntry(read.key);
         });
     });
 }
 
-void NetworkCacheStorage::dispatchPendingRetrieveOperations()
+void NetworkCacheStorage::dispatchPendingReadOperations()
 {
     ASSERT(RunLoop::isMain());
 
-    const int maximumActiveRetrieveOperationCount = 5;
+    const int maximumActiveReadOperationCount = 5;
 
     for (int priority = maximumRetrievePriority; priority >= 0; --priority) {
-        if (m_activeRetrieveOperations.size() > maximumActiveRetrieveOperationCount) {
+        if (m_activeReadOperations.size() > maximumActiveReadOperationCount) {
             LOG(NetworkCacheStorage, "(NetworkProcess) limiting parallel retrieves");
             return;
         }
-        auto& pendingRetrieveQueue = m_pendingRetrieveOperationsByPriority[priority];
+        auto& pendingRetrieveQueue = m_pendingReadOperationsByPriority[priority];
         if (pendingRetrieveQueue.isEmpty())
             continue;
-        dispatchRetrieveOperation(pendingRetrieveQueue.takeFirst());
+        auto readOperation = pendingRetrieveQueue.takeFirst();
+        auto& read = *readOperation;
+        m_activeReadOperations.add(WTF::move(readOperation));
+        dispatchReadOperation(read);
     }
 }
 
-template <class T> bool retrieveActive(const T& operations, const NetworkCacheKey& key, NetworkCacheStorage::RetrieveCompletionHandler& completionHandler)
+template <class T> bool retrieveFromMemory(const T& operations, const NetworkCacheKey& key, NetworkCacheStorage::RetrieveCompletionHandler& completionHandler)
 {
     for (auto& operation : operations) {
         if (operation->key == key) {
-            LOG(NetworkCacheStorage, "(NetworkProcess) found store operation in progress");
+            LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
             auto entry = operation->entry;
             dispatch_async(dispatch_get_main_queue(), [entry, completionHandler] {
                 completionHandler(std::make_unique<NetworkCacheStorage::Entry>(entry));
@@ -417,44 +418,87 @@ void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority
         completionHandler(nullptr);
         return;
     }
-    // See if we have the resource in memory.
-    if (retrieveActive(m_activeStoreOperations, key, completionHandler))
+
+    if (retrieveFromMemory(m_pendingWriteOperations, key, completionHandler))
         return;
-    if (retrieveActive(m_activeUpdateOperations, key, completionHandler))
+    if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    // Fetch from disk.
-    m_pendingRetrieveOperationsByPriority[priority].append(std::make_unique<RetrieveOperation>(RetrieveOperation { key, WTF::move(completionHandler) }));
-    dispatchPendingRetrieveOperations();
+    m_pendingReadOperationsByPriority[priority].append(std::make_unique<ReadOperation>(ReadOperation { key, WTF::move(completionHandler) }));
+    dispatchPendingReadOperations();
 }
 
 void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, StoreCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
+    auto writeOperation = std::make_unique<WriteOperation>(WriteOperation { key, entry, { }, WTF::move(completionHandler) });
+    m_pendingWriteOperations.append(WTF::move(writeOperation));
+
+    // Add key to the filter already here as we do lookups from the pending operations too.
     m_contentsFilter.add(key.shortHash());
 
-    auto storeOperation = std::make_unique<StoreOperation>(StoreOperation { key, entry, WTF::move(completionHandler) });
-    auto& store = *storeOperation;
-    m_activeStoreOperations.add(WTF::move(storeOperation));
+    dispatchPendingWriteOperations();
+}
+
+void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto writeOperation = std::make_unique<WriteOperation>(WriteOperation { key, updateEntry, existingEntry, WTF::move(completionHandler) });
+    m_pendingWriteOperations.append(WTF::move(writeOperation));
+
+    dispatchPendingWriteOperations();
+}
+
+void NetworkCacheStorage::dispatchPendingWriteOperations()
+{
+    ASSERT(RunLoop::isMain());
+
+    const int maximumActiveWriteOperationCount { 3 };
+
+    while (!m_pendingWriteOperations.isEmpty()) {
+        if (m_activeWriteOperations.size() >= maximumActiveWriteOperationCount) {
+            LOG(NetworkCacheStorage, "(NetworkProcess) limiting parallel writes");
+            return;
+        }
+        auto writeOperation = m_pendingWriteOperations.takeFirst();
+        auto& write = *writeOperation;
+        m_activeWriteOperations.add(WTF::move(writeOperation));
+
+        if (write.existingEntry && m_contentsFilter.mayContain(write.key.shortHash())) {
+            dispatchHeaderWriteOperation(write);
+            continue;
+        }
+        dispatchFullWriteOperation(write);
+    }
+}
+
+void NetworkCacheStorage::dispatchFullWriteOperation(const WriteOperation& write)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(m_activeWriteOperations.contains(&write));
+
+    if (!m_contentsFilter.mayContain(write.key.shortHash()))
+        m_contentsFilter.add(write.key.shortHash());
 
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [this, &store, cachePathCapture] {
-        auto encodedHeader = encodeEntryHeader(store.key, store.entry);
-        auto writeData = adoptDispatch(dispatch_data_create_concat(encodedHeader.get(), store.entry.body.dispatchData()));
+    dispatch_async(m_backgroundIOQueue.get(), [this, &write, cachePathCapture] {
+        auto encodedHeader = encodeEntryHeader(write.key, write.entry);
+        auto writeData = adoptDispatch(dispatch_data_create_concat(encodedHeader.get(), write.entry.body.dispatchData()));
 
         size_t bodyOffset = dispatch_data_get_size(encodedHeader.get());
 
         int fd;
-        auto channel = openFileForKey(store.key, FileOpenType::Create, cachePathCapture.string(), fd);
-        dispatch_io_write(channel.get(), 0, writeData.get(), dispatch_get_main_queue(), [this, &store, fd, bodyOffset](bool done, dispatch_data_t, int error) {
+        auto channel = openFileForKey(write.key, FileOpenType::Create, cachePathCapture.string(), fd);
+        dispatch_io_write(channel.get(), 0, writeData.get(), dispatch_get_main_queue(), [this, &write, fd, bodyOffset](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
             if (error) {
-                if (m_contentsFilter.mayContain(store.key.shortHash()))
-                    m_contentsFilter.remove(store.key.shortHash());
+                if (m_contentsFilter.mayContain(write.key.shortHash()))
+                    m_contentsFilter.remove(write.key.shortHash());
             }
-            size_t bodySize = store.entry.body.size();
+            size_t bodySize = write.entry.body.size();
             size_t totalSize = bodyOffset + bodySize;
 
             m_approximateSize += totalSize;
@@ -463,60 +507,53 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
             auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : nullptr;
 
             Data bodyData(bodyMap, Data::Backing::Map);
-            store.completionHandler(!error, bodyData);
+            write.completionHandler(!error, bodyData);
 
-            m_activeStoreOperations.remove(&store);
+            ASSERT(m_activeWriteOperations.contains(&write));
+            m_activeWriteOperations.remove(&write);
+            dispatchPendingWriteOperations();
         });
     });
 
     shrinkIfNeeded();
 }
 
-void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&& completionHandler)
+void NetworkCacheStorage::dispatchHeaderWriteOperation(const WriteOperation& write)
 {
     ASSERT(RunLoop::isMain());
-
-    if (!m_contentsFilter.mayContain(key.shortHash())) {
-        LOG(NetworkCacheStorage, "(NetworkProcess) existing entry not found, storing full entry");
-        store(key, updateEntry, WTF::move(completionHandler));
-        return;
-    }
-
-    auto updateOperation = std::make_unique<UpdateOperation>(UpdateOperation { key, updateEntry, existingEntry, WTF::move(completionHandler) });
-    auto& update = *updateOperation;
-    m_activeUpdateOperations.add(WTF::move(updateOperation));
+    ASSERT(write.existingEntry);
+    ASSERT(m_activeWriteOperations.contains(&write));
+    ASSERT(m_contentsFilter.mayContain(write.key.shortHash()));
 
     // Try to update the header of an existing entry.
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [this, &update, cachePathCapture] {
-        auto headerData = encodeEntryHeader(update.key, update.entry);
-        auto existingHeaderData = encodeEntryHeader(update.key, update.existingEntry);
+    dispatch_async(m_backgroundIOQueue.get(), [this, &write, cachePathCapture] {
+        auto headerData = encodeEntryHeader(write.key, write.entry);
+        auto existingHeaderData = encodeEntryHeader(write.key, write.existingEntry.value());
 
         bool pageRoundedHeaderSizeChanged = dispatch_data_get_size(headerData.get()) != dispatch_data_get_size(existingHeaderData.get());
         if (pageRoundedHeaderSizeChanged) {
             LOG(NetworkCacheStorage, "(NetworkProcess) page-rounded header size changed, storing full entry");
-            dispatch_async(dispatch_get_main_queue(), [this, &update] {
-                store(update.key, update.entry, WTF::move(update.completionHandler));
-
-                ASSERT(m_activeUpdateOperations.contains(&update));
-                m_activeUpdateOperations.remove(&update);
+            dispatch_async(dispatch_get_main_queue(), [this, &write] {
+                dispatchFullWriteOperation(write);
             });
             return;
         }
 
         int fd;
-        auto channel = openFileForKey(update.key, FileOpenType::Write, cachePathCapture.string(), fd);
-        dispatch_io_write(channel.get(), 0, headerData.get(), dispatch_get_main_queue(), [this, &update](bool done, dispatch_data_t, int error) {
+        auto channel = openFileForKey(write.key, FileOpenType::Write, cachePathCapture.string(), fd);
+        dispatch_io_write(channel.get(), 0, headerData.get(), dispatch_get_main_queue(), [this, &write](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) update complete error=%d", error);
 
             if (error)
-                removeEntry(update.key);
+                removeEntry(write.key);
 
-            update.completionHandler(!error, Data());
+            write.completionHandler(!error, Data());
 
-            ASSERT(m_activeUpdateOperations.contains(&update));
-            m_activeUpdateOperations.remove(&update);
+            ASSERT(m_activeWriteOperations.contains(&write));
+            m_activeWriteOperations.remove(&write);
+            dispatchPendingWriteOperations();
         });
     });
 }

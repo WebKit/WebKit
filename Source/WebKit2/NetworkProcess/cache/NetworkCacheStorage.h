@@ -32,6 +32,7 @@
 #include <wtf/BloomFilter.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -163,25 +164,22 @@ private:
 
     void removeEntry(const NetworkCacheKey&);
 
-    struct RetrieveOperation {
+    struct ReadOperation {
         NetworkCacheKey key;
         RetrieveCompletionHandler completionHandler;
     };
-    void dispatchRetrieveOperation(std::unique_ptr<const RetrieveOperation>);
-    void dispatchPendingRetrieveOperations();
+    void dispatchReadOperation(const ReadOperation&);
+    void dispatchPendingReadOperations();
 
-    struct StoreOperation {
+    struct WriteOperation {
         NetworkCacheKey key;
         Entry entry;
+        Optional<Entry> existingEntry;
         StoreCompletionHandler completionHandler;
     };
-
-    struct UpdateOperation {
-        NetworkCacheKey key;
-        Entry entry;
-        Entry existingEntry;
-        StoreCompletionHandler completionHandler;
-    };
+    void dispatchFullWriteOperation(const WriteOperation&);
+    void dispatchHeaderWriteOperation(const WriteOperation&);
+    void dispatchPendingWriteOperations();
 
     const String m_baseDirectoryPath;
     const String m_directoryPath;
@@ -193,11 +191,11 @@ private:
     std::atomic<bool> m_shrinkInProgress { false };
 
     static const int maximumRetrievePriority = 4;
-    Deque<std::unique_ptr<const RetrieveOperation>> m_pendingRetrieveOperationsByPriority[maximumRetrievePriority + 1];
+    Deque<std::unique_ptr<const ReadOperation>> m_pendingReadOperationsByPriority[maximumRetrievePriority + 1];
+    HashSet<std::unique_ptr<const ReadOperation>> m_activeReadOperations;
 
-    HashSet<std::unique_ptr<const RetrieveOperation>> m_activeRetrieveOperations;
-    HashSet<std::unique_ptr<const StoreOperation>> m_activeStoreOperations;
-    HashSet<std::unique_ptr<const UpdateOperation>> m_activeUpdateOperations;
+    Deque<std::unique_ptr<const WriteOperation>> m_pendingWriteOperations;
+    HashSet<std::unique_ptr<const WriteOperation>> m_activeWriteOperations;
 
 #if PLATFORM(COCOA)
     mutable DispatchPtr<dispatch_queue_t> m_ioQueue;
