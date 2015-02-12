@@ -527,7 +527,7 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
 FloatSize SVGSVGElement::currentViewportSize() const
 {
     if (hasIntrinsicWidth() && hasIntrinsicHeight())
-        return { floatValueForLength(intrinsicWidth(), 0), floatValueForLength(intrinsicHeight(), 0) };
+        return FloatSize(floatValueForLength(intrinsicWidth(), 0), floatValueForLength(intrinsicHeight(), 0));
 
     if (!renderer())
         return { };

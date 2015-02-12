@@ -1,3 +1,11 @@
+2015-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed debug build fix after r179980.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentViewportSize):
+        Explicitly call constructor.
+
 2015-01-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Invalid initialization of track sizes with non spanning grid items
