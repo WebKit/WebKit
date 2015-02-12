@@ -1,5 +1,21 @@
 2015-02-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177377
+
+    2014-12-16  Myles C. Maxfield  <litherum@gmail.com>
+
+            Ruby does not preserve expansion opportunities from enclosing context
+            https://bugs.webkit.org/show_bug.cgi?id=139618
+
+            Updating test for new expansion logic.
+
+            Reviewed by David Hyatt.
+
+            * fast/ruby/ruby-justification-expected.html:
+            * fast/ruby/ruby-justification.html:
+
+2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179706
 
     2015-02-05  Maciej Stachowiak  <mjs@apple.com>
