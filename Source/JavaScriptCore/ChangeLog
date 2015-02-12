@@ -1,3 +1,10 @@
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct merge error from r180011.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreDLL.cpp: Added.
+        (DllMain):
+
 2015-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r179993. <rdar://problem/19813975>
