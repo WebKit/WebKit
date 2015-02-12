@@ -1,3 +1,104 @@
+2015-02-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Undeprecate ios-simulator accessibility tests
+        https://bugs.webkit.org/show_bug.cgi?id=141407
+
+        Reviewed by Daniel Bates.
+
+        Undeprecate ios accessibility tests.
+        Modified one failing test (svg-group-element-with-title.html) slightly to get it to pass.
+
+        * platform/ios-sim-deprecated/accessibility: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-aria-table-children-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-aria-table-children.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-crash-in-axcontainer-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-crash-in-axcontainer.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-hint-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/accessibility-hint.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/aria-label-with-internal-text-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/aria-label-with-internal-text.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/aria-pressed-state-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/aria-pressed-state.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/centerpoint-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/centerpoint.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/disabled-states-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/disabled-states.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/dom-focus-fires-on-correct-element-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/dom-focus-fires-on-correct-element.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/element-paths-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/element-paths.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/file-upload-button-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/file-upload-button.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/focus-change-notifications-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/focus-change-notifications.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/header-elements-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/header-elements.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/identifier-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/identifier.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/internal-link-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/internal-link.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/landmark-type-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/landmark-type.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/link-with-images-text-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/link-with-images-text.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/link-with-only-image-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/link-with-only-image.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/math-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/math.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/mixed-checkboxes-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/mixed-checkboxes.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/no-child-link-header-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/no-child-link-header.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/non-contiguous-link-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/non-contiguous-link.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/out-of-bounds-child-access-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/out-of-bounds-child-access.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/password-value-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/password-value.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/placeholder-value-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/placeholder-value.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/popup-button-value-label-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/popup-button-value-label.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/progressbar-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/progressbar.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/radio-button-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/radio-button.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/secure-text-field-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/secure-text-field.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/selected-buttons-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/selected-buttons.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/selected-text-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/selected-text.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/svg-group-element-with-title-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/svg-group-element-with-title.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/svg-path-crash-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/svg-path-crash.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/tab-role-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/tab-role.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/table-cell-for-row-col-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/table-cell-for-row-col.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/table-cell-ranges-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/table-cell-ranges.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/table-with-mismatch-column-count-in-initial-section-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/tables-lists-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/tables-lists.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-line-no-ignored-elements-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-line-no-ignored-elements.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-marker-list-item-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-marker-list-item.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-marker-validation-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-marker-validation.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-role-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/text-role.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/textfield-in-axvalue-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/textfield-in-axvalue.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/toggle-button-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/toggle-button.html: Removed.
+        * platform/ios-sim-deprecated/accessibility/url-test-expected.txt: Removed.
+        * platform/ios-sim-deprecated/accessibility/url-test.html: Removed.
+        * platform/ios-simulator/accessibility: Copied from LayoutTests/platform/ios-sim-deprecated/accessibility.
+        * platform/ios-simulator/accessibility/svg-group-element-with-title.html:
+
 2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardenging. Need to mark pointer/hover media query tests as failure.
