@@ -369,6 +369,7 @@ private:
 
     // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
+    unsigned m_liveObjectMarker;
 };
 
 #define CACHED_RESOURCE_TYPE_CASTS(ToClassName, FromClassName, CachedResourceType) \
