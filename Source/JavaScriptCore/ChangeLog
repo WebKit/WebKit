@@ -1,3 +1,29 @@
+2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r179993. <rdar://problem/19803642>
+
+    2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] [64-bit] Work around MSVC2013 Runtime Bug
+            https://bugs.webkit.org/show_bug.cgi?id=141498
+            <rdar://problem/19803642>
+
+            Reviewed by Anders Carlsson.
+
+            Disable FMA3 instruction use in the MSVC math library to
+            work around a VS2013 runtime crash. We can remove this
+            workaround when we switch to VS2015.
+
+            * API/tests/testapi.c: Call _set_FMA3_enable(0) to disable
+            FMA3 support.
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add new files.
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+            * JavaScriptCore.vcxproj/JavaScriptCoreDLL.cpp: Added.
+            * JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp: Call _set_FMA3_enable(0)
+            to disable FMA3 support.
+            * jsc.cpp: Ditto.
+            * testRegExp.cpp: Ditto.
+
 2015-01-13  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r178364. rdar://problem/19450807

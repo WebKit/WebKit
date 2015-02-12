@@ -1,3 +1,23 @@
+2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r179993. <rdar://problem/19803642>
+
+    2015-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] [64-bit] Work around MSVC2013 Runtime Bug
+            https://bugs.webkit.org/show_bug.cgi?id=141498
+            <rdar://problem/19803642>
+
+            Reviewed by Anders Carlsson.
+
+            Disable FMA3 instruction use in the MSVC math library to
+            work around a VS2013 runtime crash. We can remove this
+            workaround when we switch to VS2015.
+
+            * WTF.vcxproj/WTF.vcxproj: Add new files.
+            * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+            * wtf/win/WTFDLL.cpp: Added.
+
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177448. rdar://problem/19281928

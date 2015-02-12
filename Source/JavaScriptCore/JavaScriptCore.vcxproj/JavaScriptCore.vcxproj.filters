@@ -1608,6 +1608,9 @@
     <ClCompile Include="..\runtime\MemoryStatistics.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="JavaScriptCoreDLL.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
