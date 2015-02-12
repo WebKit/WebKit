@@ -1,3 +1,24 @@
+2015-02-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Move the generators for GetScope and SkipScope to the common core in DFGSpeculativeJIT
+        https://bugs.webkit.org/show_bug.cgi?id=141506
+
+        Reviewed by Michael Saboff.
+
+        The generators for the nodes GetScope and SkipScope were
+        completely identical between 32 and 64bits.
+
+        This patch moves the duplicated code to DFGSpeculativeJIT.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetScope):
+        (JSC::DFG::SpeculativeJIT::compileSkipScope):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2015-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] [64-bit] Work around MSVC2013 Runtime Bug

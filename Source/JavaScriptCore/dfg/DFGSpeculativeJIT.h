@@ -2116,7 +2116,9 @@ public:
 
     void compileGetByValOnArguments(Node*);
     void compileGetArgumentsLength(Node*);
-    
+    void compileGetScope(Node*);
+    void compileSkipScope(Node*);
+
     void compileGetArrayLength(Node*);
     
     void compileValueRep(Node*);

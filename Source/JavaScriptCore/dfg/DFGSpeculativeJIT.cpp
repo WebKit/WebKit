@@ -4102,6 +4102,22 @@ void SpeculativeJIT::compileGetArgumentsLength(Node* node)
     int32Result(resultReg, node);
 }
 
+void SpeculativeJIT::compileGetScope(Node* node)
+{
+    SpeculateCellOperand function(this, node->child1());
+    GPRTemporary result(this, Reuse, function);
+    m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSFunction::offsetOfScopeChain()), result.gpr());
+    cellResult(result.gpr(), node);
+}
+
+void SpeculativeJIT::compileSkipScope(Node* node)
+{
+    SpeculateCellOperand scope(this, node->child1());
+    GPRTemporary result(this, Reuse, scope);
+    m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSScope::offsetOfNext()), result.gpr());
+    cellResult(result.gpr(), node);
+}
+
 void SpeculativeJIT::compileGetArrayLength(Node* node)
 {
     switch (node->arrayMode().type()) {

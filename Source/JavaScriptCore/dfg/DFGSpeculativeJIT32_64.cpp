@@ -3510,21 +3510,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case GetScope: {
-        SpeculateCellOperand function(this, node->child1());
-        GPRTemporary result(this, Reuse, function);
-        m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSFunction::offsetOfScopeChain()), result.gpr());
-        cellResult(result.gpr(), node);
+    case GetScope:
+        compileGetScope(node);
         break;
-    }
         
-    case SkipScope: {
-        SpeculateCellOperand scope(this, node->child1());
-        GPRTemporary result(this, Reuse, scope);
-        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSScope::offsetOfNext()), result.gpr());
-        cellResult(result.gpr(), node);
+    case SkipScope:
+        compileSkipScope(node);
         break;
-    }
         
     case GetClosureRegisters: {
         if (WriteBarrierBase<Unknown>* registers = m_jit.graph().tryGetRegisters(node->child1().node())) {
