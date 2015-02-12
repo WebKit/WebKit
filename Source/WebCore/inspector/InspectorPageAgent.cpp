@@ -155,7 +155,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     if (cachedResource) {
         switch (cachedResource->type()) {
         case CachedResource::CSSStyleSheet:
-            *result = downcast<CachedCSSStyleSheet>(*cachedResource).sheetText(false);
+            *result = downcast<CachedCSSStyleSheet>(*cachedResource).sheetText();
             return true;
         case CachedResource::Script:
             *result = downcast<CachedScript>(*cachedResource).script();

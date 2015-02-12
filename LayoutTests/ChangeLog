@@ -1,3 +1,18 @@
+2015-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop the quirks-mode exception for CSS MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=141501
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update a couple of layout tests now that we dropped the quirks-mode
+        exception for CSS MIME types.
+
+        * http/tests/misc/css-accept-any-type-expected.txt:
+        * http/tests/misc/css-accept-any-type.html:
+        * http/tests/security/cross-origin-css-expected.txt:
+        * http/tests/security/cross-origin-css.html:
+
 2015-02-12  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Should not send wheel events with a delta of 0

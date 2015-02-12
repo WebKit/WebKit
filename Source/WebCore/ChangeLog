@@ -1,3 +1,31 @@
+2015-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop the quirks-mode exception for CSS MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=141501
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop the quirks-mode exception for CSS MIME types.
+        This matches Firefox's behavior.
+
+        This patch is based on the following Blink revision:
+        http://src.chromium.org/viewvc/blink?view=revision&revision=189669
+
+        Tests:
+        - http/tests/misc/css-accept-any-type.html
+        - http/tests/security/cross-origin-css.html
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+
 2015-02-12  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Should not send wheel events with a delta of 0
