@@ -54,7 +54,7 @@ public:
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
 
-    WEBCORE_EXPORT bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
+    bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
 

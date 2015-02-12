@@ -58,10 +58,10 @@ public:
 
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
 
-    WEBCORE_EXPORT Node* startContainer() const { return m_start.container(); }
-    WEBCORE_EXPORT int startOffset() const { return m_start.offset(); }
-    WEBCORE_EXPORT Node* endContainer() const { return m_end.container(); }
-    WEBCORE_EXPORT int endOffset() const { return m_end.offset(); }
+    Node* startContainer() const { return m_start.container(); }
+    int startOffset() const { return m_start.offset(); }
+    Node* endContainer() const { return m_end.container(); }
+    int endOffset() const { return m_end.offset(); }
 
     WEBCORE_EXPORT Node* startContainer(ExceptionCode&) const;
     WEBCORE_EXPORT int startOffset(ExceptionCode&) const;

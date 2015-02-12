@@ -1,3 +1,24 @@
+2015-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Do not export functions defined in headers.
+        This prevents weak external symbol errors in some configurations.
+
+        * dom/Range.h:
+        (WebCore::Range::startContainer):
+        (WebCore::Range::startOffset):
+        (WebCore::Range::endContainer):
+        (WebCore::Range::endOffset):
+        * inspector/InspectorController.h:
+        * page/Settings.h:
+        (WebCore::Settings::setMediaKeysStorageDirectory):
+        * page/make_settings.pl:
+        (printGetterAndSetter):
+        * platform/network/cocoa/ProtectionSpaceCocoa.h:
+        (WebCore::ProtectionSpace::encodingRequiresPlatformData):
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::decode):
+        Removed WEBCORE_EXPORT macros.
+
 2015-02-11  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add logging to validate the network cache efficacy (Part 2)

@@ -240,10 +240,10 @@ sub printGetterAndSetter($$$$)
     my ($file, $settingName, $type, $setNeedsStyleRecalcInAllFrames) = @_;
     my $setterFunctionName = setterFunctionName($settingName);
     if (lc(substr($type, 0, 1)) eq substr($type, 0, 1)) {
-        print $file "    WEBCORE_EXPORT $type $settingName() const { return m_$settingName; } \\\n";
+        print $file "    $type $settingName() const { return m_$settingName; } \\\n";
         print $file "    WEBCORE_EXPORT void $setterFunctionName($type $settingName)";
     } else {
-        print $file "    WEBCORE_EXPORT const $type& $settingName() { return m_$settingName; } \\\n";
+        print $file "    const $type& $settingName() { return m_$settingName; } \\\n";
         print $file "    WEBCORE_EXPORT void $setterFunctionName(const $type& $settingName)";
     }
     if ($setNeedsStyleRecalcInAllFrames) {

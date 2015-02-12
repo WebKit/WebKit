@@ -272,7 +272,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
+    void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
     const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
 #endif
 

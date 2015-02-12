@@ -63,7 +63,7 @@ namespace WebCore {
         const TextEncoding& closestByteBasedEquivalent() const;
         const TextEncoding& encodingForFormSubmission() const;
 
-        WEBCORE_EXPORT String decode(const char* str, size_t length) const
+        String decode(const char* str, size_t length) const
         {
             bool ignored;
             return decode(str, length, false, ignored);

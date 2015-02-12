@@ -126,7 +126,7 @@ public:
     void resume();
 
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
-    WEBCORE_EXPORT InspectorPageAgent* pageAgent() const { return m_pageAgent; }
+    InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
     virtual bool developerExtrasEnabled() const override;
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override;
