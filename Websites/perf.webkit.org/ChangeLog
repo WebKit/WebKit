@@ -1,3 +1,14 @@
+2015-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v2 UI should adjust the number of ticks on dashboards based on screen size
+        https://bugs.webkit.org/show_bug.cgi?id=141502
+
+        Reviewed by Chris Dumez.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._updateDimensionsIfNeeded): Compute the number of ticks based on the
+        content size.
+
 2015-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         New perf dashboard shows too much space around interesting data points

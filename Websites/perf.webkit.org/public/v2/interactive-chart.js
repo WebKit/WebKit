@@ -249,12 +249,15 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._y.range([this._contentHeight, 0]);
 
         if (this._xAxis) {
+            this._xAxis.ticks(Math.round(this._contentWidth / 4 / rem));
             this._xAxis.tickSize(-this._contentHeight);
             this._xAxisLabels.attr("transform", "translate(0," + this._contentHeight + ")");
         }
 
-        if (this._yAxis)
+        if (this._yAxis) {
+            this._yAxis.ticks(Math.round(this._contentHeight / 2 / rem));
             this._yAxis.tickSize(-this._contentWidth);
+        }
 
         if (this._currentItemLine) {
             this._currentItemLine
