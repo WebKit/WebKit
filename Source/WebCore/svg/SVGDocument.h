@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,35 +23,33 @@
 #define SVGDocument_h
 
 #include "Document.h"
-#include "FloatPoint.h"
 
 namespace WebCore {
 
-class DOMImplementation;
-class SVGElement;
 class SVGSVGElement;
 
 class SVGDocument final : public Document {
 public:
-    static Ref<SVGDocument> create(Frame* frame, const URL& url)
-    {
-        return adoptRef(*new SVGDocument(frame, url));
-    }
+    static Ref<SVGDocument> create(Frame*, const URL&);
 
     SVGSVGElement* rootElement() const;
 
     bool zoomAndPanEnabled() const;
-
     void startPan(const FloatPoint& start);
-    void updatePan(const FloatPoint& pos) const;
+    void updatePan(const FloatPoint& position) const;
 
 private:
     SVGDocument(Frame*, const URL&);
 
     virtual Ref<Document> cloneDocumentWithoutChildren() const override;
 
-    FloatPoint m_translate;
+    FloatSize m_panningOffset;
 };
+
+inline Ref<SVGDocument> SVGDocument::create(Frame* frame, const URL& url)
+{
+    return adoptRef(*new SVGDocument(frame, url));
+}
 
 } // namespace WebCore
 

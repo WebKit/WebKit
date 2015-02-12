@@ -25,25 +25,14 @@
 
 namespace WebCore {
 
-bool SVGZoomAndPan::isKnownAttribute(const QualifiedName& attrName)
+bool SVGZoomAndPan::parse(const UChar*& start, const UChar* end, SVGZoomAndPanType& zoomAndPan)
 {
-    return attrName == SVGNames::zoomAndPanAttr;
-}
-
-void SVGZoomAndPan::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
-{
-    supportedAttributes.add(SVGNames::zoomAndPanAttr);
-}
-
-static const UChar disable[] =  {'d', 'i', 's', 'a', 'b', 'l', 'e'};
-static const UChar magnify[] =  {'m', 'a', 'g', 'n', 'i', 'f', 'y'};
-
-bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end, SVGZoomAndPanType& zoomAndPan)
-{
+    static const UChar disable[] = { 'd', 'i', 's', 'a', 'b', 'l', 'e' };
     if (skipString(start, end, disable, WTF_ARRAY_LENGTH(disable))) {
         zoomAndPan = SVGZoomAndPanDisable;
         return true;
     }
+    static const UChar magnify[] = { 'm', 'a', 'g', 'n', 'i', 'f', 'y' };
     if (skipString(start, end, magnify, WTF_ARRAY_LENGTH(magnify))) {
         zoomAndPan = SVGZoomAndPanMagnify;
         return true;
@@ -51,19 +40,13 @@ bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end, SVGZo
     return false;
 }
 
-NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::ref()
+SVGZoomAndPanType SVGZoomAndPan::parseAttributeValue(const AtomicString& value)
 {
-    ASSERT_NOT_REACHED();
-}
-
-NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::deref()
-{
-    ASSERT_NOT_REACHED();
-}
-
-NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::setZoomAndPan(unsigned short)
-{
-    ASSERT_NOT_REACHED();
+    if (value == "disable")
+        return SVGZoomAndPanDisable;
+    if (value == "magnify")
+        return SVGZoomAndPanMagnify;
+    return SVGZoomAndPanUnknown;
 }
 
 }

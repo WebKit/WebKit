@@ -25,7 +25,6 @@
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGSVGElement.h"
 #include "SVGTransformable.h"
 
 namespace WebCore {
@@ -252,7 +251,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
             if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
-            if (!parseZoomAndPan(currViewSpec, end, m_zoomAndPan))
+            if (!parse(currViewSpec, end, m_zoomAndPan))
                 return false;
             if (currViewSpec >= end || *currViewSpec != ')')
                 return false;

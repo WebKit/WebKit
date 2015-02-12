@@ -23,16 +23,10 @@
 
 #include "QualifiedName.h"
 #include "SVGNames.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-enum SVGZoomAndPanType {
-    SVGZoomAndPanUnknown = 0,
-    SVGZoomAndPanDisable,
-    SVGZoomAndPanMagnify
-};
+enum SVGZoomAndPanType { SVGZoomAndPanUnknown, SVGZoomAndPanDisable, SVGZoomAndPanMagnify };
 
 class SVGZoomAndPan {
 public:
@@ -44,42 +38,33 @@ public:
     };
 
     static bool isKnownAttribute(const QualifiedName&);
-    static void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    static SVGZoomAndPanType parseFromNumber(unsigned short number)
-    {
-        if (!number || number > SVGZoomAndPanMagnify)
-            return SVGZoomAndPanUnknown;
-        return static_cast<SVGZoomAndPanType>(number);
-    }
+    static SVGZoomAndPanType parseFromNumber(unsigned short);
 
-    static bool parseZoomAndPan(const UChar*& start, const UChar* end, SVGZoomAndPanType&);
+    static bool parse(const UChar*& start, const UChar* end, SVGZoomAndPanType&);
+    template<class DerivedClass> static void parseAttribute(DerivedClass&, const QualifiedName&, const AtomicString& value);
 
-    template<class SVGElementTarget>
-    static bool parseAttribute(SVGElementTarget* target, const QualifiedName& name, const AtomicString& value)
-    {
-        ASSERT(target);
-        if (name == SVGNames::zoomAndPanAttr) {
-            auto upconvertedCharacters = StringView(value.string()).upconvertedCharacters();
-            const UChar* start = upconvertedCharacters;
-            const UChar* end = start + value.length();
-            SVGZoomAndPanType zoomAndPan = SVGZoomAndPanUnknown;
-            parseZoomAndPan(start, end, zoomAndPan);
-            target->setZoomAndPan(zoomAndPan);
-            return true;
-        }
-
-        return false;
-    }
-
-    SVGZoomAndPanType zoomAndPan() const { return SVGZoomAndPanUnknown; }
-
-    // These methods only exist to allow us to compile JSSVGZoomAndPan.*.
-    // These are never called, and thus ASSERT_NOT_REACHED.
-    NO_RETURN_DUE_TO_ASSERT void ref();
-    NO_RETURN_DUE_TO_ASSERT void deref();
-    NO_RETURN_DUE_TO_ASSERT void setZoomAndPan(unsigned short);
+private:
+    static SVGZoomAndPanType parseAttributeValue(const AtomicString&);
 };
+
+inline bool SVGZoomAndPan::isKnownAttribute(const QualifiedName& name)
+{
+    return name == SVGNames::zoomAndPanAttr;
+}
+
+inline SVGZoomAndPanType SVGZoomAndPan::parseFromNumber(unsigned short number)
+{
+    if (number > SVGZoomAndPanMagnify)
+        return SVGZoomAndPanUnknown;
+    return static_cast<SVGZoomAndPanType>(number);
+}
+
+template<class DerivedClass> void SVGZoomAndPan::parseAttribute(DerivedClass& element, const QualifiedName& name, const AtomicString& value)
+{
+    if (name == SVGNames::zoomAndPanAttr)
+        element.setZoomAndPan(parseAttributeValue(value));
+}
 
 } // namespace WebCore
 

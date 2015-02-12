@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2015 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,16 +22,8 @@
 #include "config.h"
 #include "SVGDocument.h"
 
-#include "EventNames.h"
-#include "ExceptionCode.h"
-#include "FrameView.h"
-#include "RenderView.h"
-#include "SVGElement.h"
-#include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGViewSpec.h"
-#include "SVGZoomAndPan.h"
-#include "SVGZoomEvent.h"
 
 namespace WebCore {
 
@@ -42,38 +35,33 @@ SVGDocument::SVGDocument(Frame* frame, const URL& url)
 SVGSVGElement* SVGDocument::rootElement() const
 {
     Element* element = documentElement();
-    if (is<SVGSVGElement>(element))
-        return downcast<SVGSVGElement>(element);
-
-    return nullptr;
+    if (!is<SVGSVGElement>(element))
+        return nullptr;
+    return downcast<SVGSVGElement>(element);
 }
 
 bool SVGDocument::zoomAndPanEnabled() const
 {
-    if (rootElement()) {
-        if (rootElement()->useCurrentView()) {
-            if (rootElement()->currentView())
-                return rootElement()->currentView()->zoomAndPan() == SVGZoomAndPanMagnify;
-        } else
-            return rootElement()->zoomAndPan() == SVGZoomAndPanMagnify;
-    }
-
-    return false;
+    auto* element = rootElement();
+    if (!element)
+        return false;
+    return (element->useCurrentView() ? element->currentView().zoomAndPan() : element->zoomAndPan()) == SVGZoomAndPanMagnify;
 }
 
 void SVGDocument::startPan(const FloatPoint& start)
 {
-    if (rootElement())
-        m_translate = FloatPoint(start.x() - rootElement()->currentTranslate().x(), start.y() - rootElement()->currentTranslate().y());
+    auto* element = rootElement();
+    if (!element)
+        return;
+    m_panningOffset = start - element->currentTranslate();
 }
 
-void SVGDocument::updatePan(const FloatPoint& pos) const
+void SVGDocument::updatePan(const FloatPoint& position) const
 {
-    if (rootElement()) {
-        rootElement()->setCurrentTranslate(FloatPoint(pos.x() - m_translate.x(), pos.y() - m_translate.y()));
-        if (renderView())
-            renderView()->repaint();
-    }
+    auto* element = rootElement();
+    if (!element)
+        return;
+    element->setCurrentTranslate(position - m_panningOffset);
 }
 
 Ref<Document> SVGDocument::cloneDocumentWithoutChildren() const

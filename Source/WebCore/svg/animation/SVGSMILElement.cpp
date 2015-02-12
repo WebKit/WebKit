@@ -248,8 +248,7 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& r
     if (!owner)
         return InsertionDone;
 
-    m_timeContainer = owner->timeContainer();
-    ASSERT(m_timeContainer);
+    m_timeContainer = &owner->timeContainer();
     m_timeContainer->setDocumentOrderIndexesDirty();
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."

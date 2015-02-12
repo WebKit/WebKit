@@ -49,7 +49,6 @@
 #include "SVGPathSegMovetoAbs.h"
 #include "SVGPathSegMovetoRel.h"
 #include "SVGPathUtilities.h"
-#include "SVGSVGElement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

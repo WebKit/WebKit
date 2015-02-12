@@ -1,5 +1,144 @@
 2015-02-11  Darin Adler  <darin@apple.com>
 
+        Streamline and simplify SVGSVGElement and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=141463
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Document.cpp: Removed unneeded include of SVGSVGElement.h.
+        * loader/FrameLoader.cpp: Ditto.
+        * rendering/RenderBoxModelObject.cpp: Ditto.
+        * rendering/svg/RenderSVGForeignObject.cpp: Ditto.
+        * svg/SVGImageElement.cpp: Ditto.
+        * svg/SVGMarkerElement.cpp: Ditto.
+        * svg/SVGPathElement.cpp: Ditto.
+        * svg/SVGPatternElement.cpp: Ditto.
+        * svg/SVGTransform.cpp: Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor): Updated to call the SVGSVGElement function
+        named scrollToAnchor (was setupInitialView). Also refactored to avoid repeating
+        the expression frame().document() so often.
+
+        * platform/graphics/FloatSize.h: Added operator/.
+
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::rootElement): Rearranged to use early return.
+        (WebCore::SVGDocument::zoomAndPanEnabled): Ditto.
+        (WebCore::SVGDocument::startPan): Ditto. Also used FloatPoint math instead
+        of breaking things apart into x and y.
+        (WebCore::SVGDocument::updatePan): Ditto.
+
+        * svg/SVGDocument.h: Removed some unneeded includes and forward declarations.
+        Moved function bodies out of the class to make it more readable. Renamed
+        m_translate to m_panningOffset and made it a FloatSize instead of FloatPoint.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations): Use a modern for loop
+        and update since timeContainer() now returns a reference.
+
+        * svg/SVGSVGElement.cpp: Removed many unneeded includes.
+        (WebCore::SVGSVGElement::SVGSVGElement): Moved initialization of scalars to
+        the class definition. Updated since m_timerContainer is a Ref (later should
+        change it to be a std::unique_ptr or just directly contained in SVGSVGElement).
+        (WebCore::SVGSVGElement::~SVGSVGElement): Removed comment that doesn't say much,
+        but is worded in a confusing way.
+        (WebCore::SVGSVGElement::contentScriptType): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+        (WebCore::SVGSVGElement::contentStyleType): Ditto.
+        (WebCore::SVGSVGElement::viewport): Streamlined a bit.
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterX): Ditto.
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterY): Ditto.
+        (WebCore::SVGSVGElement::currentView): Changed to return a reference.
+        (WebCore::SVGSVGElement::frameForCurrentScale): Added. Helper for the two
+        functions below.
+        (WebCore::SVGSVGElement::currentScale): Updated to use frameForCurrentScale.
+        (WebCore::SVGSVGElement::setCurrentScale): Ditto.
+        (WebCore::SVGSVGElement::setCurrentTranslate): Optimized the case where there
+        is no change to the translation. Also changed the data member's name to
+        m_currentTranslate to more directly match the DOM API naming.
+        (WebCore::SVGSVGElement::parseAttribute): Simplified the parsing a bit, and
+        changed to pass a reference to SVGZoomAndPan::parseAttribute.
+        (WebCore::SVGSVGElement::svgAttributeChanged): Tweaked formatting and removed
+        code that converts the renderer pointer to a RenderObject* unnecessarily.
+        (WebCore::SVGSVGElement::suspendRedraw): Removed FIXME about implementing this,
+        since we don't really plan to do that.
+        (WebCore::SVGSVGElement::unsuspendRedraw): Ditto.
+        (WebCore::SVGSVGElement::unsuspendRedrawAll): Ditto.
+        (WebCore::SVGSVGElement::forceRedraw): Ditto.
+        (WebCore::SVGSVGElement::collectIntersectionOrEnclosureList): Changed return
+        type to Ref, and pass in a function instead of an enumeration value.
+        (WebCore::SVGSVGElement::getIntersectionList): Updated for above.
+        (WebCore::SVGSVGElement::getEnclosureList): Ditto.
+        (WebCore::SVGSVGElement::checkIntersection): Use && instead of early return
+        for the null check.
+        (WebCore::SVGSVGElement::checkEnclosure): Ditto.
+        (WebCore::SVGSVGElement::createSVGLength): Use initialization list syntax
+        for greater brevity.
+        (WebCore::SVGSVGElement::createSVGAngle): Ditto.
+        (WebCore::SVGSVGElement::createSVGPoint): Ditto.
+        (WebCore::SVGSVGElement::createSVGMatrix): Ditto.
+        (WebCore::SVGSVGElement::createSVGRect): Ditto.
+        (WebCore::SVGSVGElement::createSVGTransform): Removed unneeded explicit
+        constructor invocation.
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix): Removed unneeded cast.
+        (WebCore::SVGSVGElement::insertedInto): Updated since timeContainer() now
+        returns a reference.
+        (WebCore::SVGSVGElement::setCurrentTime): Use isfinite instead of isnan, so
+        we won't store infinity as the current time.
+        (WebCore::SVGSVGElement::currentViewBoxRect): Renamed locals and changed
+        to use initializer lists for brevity.
+        (WebCore::SVGSVGElement::currentViewportSize): Streamlined code by using
+        initializer lists, using local variables only for things used more than once,
+        and using the / operator defined above.
+        (WebCore::SVGSVGElement::viewBoxToViewTransform): Use the concatenate function
+        in a way that is more straightforward, rather than doing it with a temporary.
+        (WebCore::SVGSVGElement::scrollToAnchor): Renamed this from
+        setupInitialView.
+        (WebCore::SVGSVGElement::inheritViewAttributes): Changed this to work with
+        references rather than pointers.
+        (WebCore::SVGSVGElement::getElementById): Use getAllElementsById as the
+        FIXME comment suggested for better efficiency when there are a lot of descendants
+        of the <svg> element at the cost of making it less efficient if there are
+        a lot of elements all with the desired ID, but not inside the <svg> element.
+        (WebCore::SVGSVGElement::isValid): Moved here from the header.
+
+        * svg/SVGSVGElement.h: Removed unneeded forward declarations. Moved the
+        animated properties to the top of the file, then other DOM, the other
+        public members. Changed return types to references and Ref. Moved
+        function bodies out of the class definition. Made createSVGNumber inline.
+
+        * svg/SVGViewElement.cpp: Removed unneeded includes.
+        (WebCore::SVGViewElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGViewElement::parseAttribute): Changed to not rely on
+        isSupportedAttribute. Eventually I will do this in all the SVG classes.
+
+        * svg/SVGViewSpec.cpp: Removed unneeded include of SVGSVGElement.h.
+        (WebCore::SVGViewSpec::parseViewSpec): Updated for change in the name
+        of the parse function in the SVGZoomAndPan class.
+
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::isKnownAttribute): Deleted.
+        (WebCore::SVGZoomAndPan::addSupportedAttributes): Deleted.
+        (WebCore::SVGZoomAndPan::parse): Renamed from parseZoomAndPan since
+        this is a member of the SVGZoomAndPan class and also has an argument
+        of SVGZoomAndPanType.
+        (WebCore::SVGZoomAndPan::parseAttributeValue): Added. Helper so the
+        template function is not so big. Also write it in a simpler way.
+        (WebCore::SVGZoomAndPan::ref): Deleted.
+        (WebCore::SVGZoomAndPan::deref): Deleted.
+        (WebCore::SVGZoomAndPan::setZoomAndPan): Deleted.
+
+        * svg/SVGZoomAndPan.h: Removed unneeded includes. Reformatted the enum.
+        Moved function bodies out of the class definition. Removed many unneeded
+        functions.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedInto): Updated since timeContainer
+        now returns a reference rather than a pointer.
+
+2015-02-11  Darin Adler  <darin@apple.com>
+
         SVGUseElement follow-up improvements
         https://bugs.webkit.org/show_bug.cgi?id=141382
 

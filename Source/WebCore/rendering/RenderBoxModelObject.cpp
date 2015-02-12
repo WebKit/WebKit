@@ -56,7 +56,6 @@
 #include "RenderTextFragment.h"
 #include "RenderView.h"
 #include "SVGImageForContainer.h"
-#include "SVGSVGElement.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"

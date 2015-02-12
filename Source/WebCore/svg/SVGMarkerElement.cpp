@@ -26,7 +26,6 @@
 #include "RenderSVGResourceMarker.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
-#include "SVGSVGElement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

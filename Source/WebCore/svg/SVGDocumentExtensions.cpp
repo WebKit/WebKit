@@ -95,9 +95,8 @@ void SVGDocumentExtensions::startAnimations()
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
-    auto end = timeContainers.end();
-    for (auto it = timeContainers.begin(); it != end; ++it)
-        (*it)->timeContainer()->begin();
+    for (auto& element : timeContainers)
+        element->timeContainer().begin();
 }
 
 void SVGDocumentExtensions::pauseAnimations()

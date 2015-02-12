@@ -153,14 +153,24 @@ inline FloatSize operator-(const FloatSize& size)
     return FloatSize(-size.width(), -size.height());
 }
 
-inline FloatSize operator*(const FloatSize& a, const float b)
+inline FloatSize operator*(const FloatSize& a, float b)
 {
     return FloatSize(a.width() * b, a.height() * b);
 }
 
-inline FloatSize operator*(const float a, const FloatSize& b)
+inline FloatSize operator*(float a, const FloatSize& b)
 {
     return FloatSize(a * b.width(), a * b.height());
+}
+
+inline FloatSize operator/(const FloatSize& a, float b)
+{
+    return FloatSize(a.width() / b, a.height() / b);
+}
+
+inline FloatSize operator/(float a, const FloatSize& b)
+{
+    return FloatSize(a / b.width(), a / b.height());
 }
 
 inline bool operator==(const FloatSize& a, const FloatSize& b)

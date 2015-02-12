@@ -21,12 +21,7 @@
 #include "config.h"
 #include "SVGViewElement.h"
 
-#include "Attribute.h"
-#include "SVGFitToViewBox.h"
 #include "SVGNames.h"
-#include "SVGStringList.h"
-#include "SVGZoomAndPan.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -56,38 +51,15 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
-bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-        SVGZoomAndPan::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::viewTargetAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
-    if (name == SVGNames::viewTargetAttr) {
+    if (name == SVGNames::viewTargetAttr)
         viewTarget().reset(value);
-        return;
-    }
 
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-    if (SVGFitToViewBox::parseAttribute(this, name, value))
-        return;
-    if (SVGZoomAndPan::parseAttribute(this, name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGFitToViewBox::parseAttribute(this, name, value);
+    SVGZoomAndPan::parseAttribute(*this, name, value);
+    SVGElement::parseAttribute(name, value);
 }
 
 }
