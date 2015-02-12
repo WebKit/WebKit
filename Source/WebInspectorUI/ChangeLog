@@ -1,3 +1,15 @@
+2015-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION: Clicking selected item in the sidebar second time should scroll to the corresponding line
+        https://bugs.webkit.org/show_bug.cgi?id=140280
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        Perform scolling regardless of the navigation history. Since scrolling source code doesn't introduce a BackForwardEntry,
+        it's possible that the actual content view has a different scroll position.
+
 2015-02-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better handle unknown release versions

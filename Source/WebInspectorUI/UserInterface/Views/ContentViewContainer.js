@@ -148,8 +148,11 @@ WebInspector.ContentViewContainer.prototype = {
         var currentEntry = this.currentBackForwardEntry;
         var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
         // Don't do anything if we would have added an identical back/forward list entry.
-        if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie))
+        if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie)) {
+            const shouldCallShown = false;
+            currentEntry.prepareToShow(shouldCallShown);
             return currentEntry.contentView;
+        }
 
         // Showing a content view will truncate the back/forward list after the current index and insert the content view
         // at the end of the list. Finally, the current index will be updated to point to the end of the back/forward list.
