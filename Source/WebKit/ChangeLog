@@ -1,3 +1,14 @@
+2015-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r178470. rdar://problem/19739095
+
+    2015-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix after r178459 and r178462.
+
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add some
+            missing exports needed by the test infrastructure.
+
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172509. rdar://problem/19451367
