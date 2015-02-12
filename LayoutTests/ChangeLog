@@ -1,5 +1,11 @@
 2015-02-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Two tests have been failing since r148090.
+
+        * platform/efl/TestExpectations: Skip 2 failure tests.
+
+2015-02-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening.
 
         * platform/efl/TestExpectations: Mark two tests failing since r177664.

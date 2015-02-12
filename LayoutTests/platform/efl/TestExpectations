@@ -2071,5 +2071,9 @@ webkit.org/b/141497 fast/media/mq-pointer.html [ Failure ]
 webkit.org/b/141512 fast/css/pseudo-invalid-form-invalidation-optimization.html [ Failure ]
 webkit.org/b/141512 fast/css/pseudo-valid-form-invalidation-optimization.html [ Failure ]
 
+# Started failing since r148090
+webkit.org/b/114340 compositing/overlap-blending/nested-non-overlap-clipping.html [ ImageOnlyFailure ]
+webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
+
 # This test need a rebaseline.
 webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]
