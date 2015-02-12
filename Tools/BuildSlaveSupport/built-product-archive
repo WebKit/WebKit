@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (C) 2009 Apple Inc.  All rights reserved.
+# Copyright (C) 2009, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
 
 
 def archiveBuiltProduct(configuration, platform, fullPlatform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
+    assert platform in ('mac', 'win', 'gtk', 'efl')
 
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
@@ -131,7 +131,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
 
         shutil.rmtree(thinDirectory)
 
-    elif platform == 'qt' or platform == 'gtk' or platform == 'efl':
+    elif platform == 'gtk' or platform == 'efl':
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         removeDirectoryIfExists(thinDirectory)
@@ -181,7 +181,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'qt', 'gtk', 'efl')
+    assert platform in ('mac', 'win', 'gtk', 'efl')
 
     archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
@@ -191,18 +191,7 @@ def extractBuiltProduct(configuration, platform):
 
     if platform == 'mac':
         return unzipArchive(_buildDirectory, configuration)
-    elif platform == 'win':
-        binDirectory = os.path.join(configurationBuildDirectory, "bin32")
-        os.makedirs(binDirectory)
-
-        safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
-                                      shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
-
-        if subprocess.call('cp -R "%s"/*.dll "%s"/*.resources %s' % (safariPath, safariPath, binDirectory), shell=True):
-            return 1
-
-        return unzipArchive(configurationBuildDirectory, configuration)
-    elif platform == 'qt' or platform == 'gtk' or platform == 'efl':
+    elif platform == 'win' or platform == 'gtk' or platform == 'efl':
         print "Extracting", configurationBuildDirectory
         return unzipArchive(configurationBuildDirectory, configuration)
 
