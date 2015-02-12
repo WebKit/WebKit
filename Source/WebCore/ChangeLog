@@ -1,3 +1,33 @@
+2015-02-12  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Implement 3-style media timeline (buffered, played, unavailable)
+        https://bugs.webkit.org/show_bug.cgi?id=141526
+        <rdar://problem/19603337>
+
+        Reviewed by Eric Carlson and Antoine Quint.
+
+        Implement a 3-style media scrubber for iOS. This draws white for
+        the region that has been played (before the playhead), black
+        for the region that is buffered, and is hollow for the rest.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateProgress): Update progress is now completely
+        shared between OS X and iOS. This calls the implementation specific
+        drawTimelineBackground.
+        (Controller.prototype.drawTimelineBackground): Move the OS X code to here.
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-timeline): New styles for the timeline. Updated thumb image, etc.
+        (video::-webkit-media-controls-timeline::-webkit-slider-runnable-track):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb:active):
+        (video::-webkit-media-controls-time-remaining-display):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS): Create a globally unique canvas context name in the constructor.
+        (ControllerIOS.prototype.createControls): Set the background of the timeline to a canvas.
+        (ControllerIOS.prototype.addRoundedRect): Helper function.
+        (ControllerIOS.prototype.drawTimelineBackground): Draw the 3-style content.
+        (ControllerIOS.prototype.updateProgress): Deleted.
+
 2015-02-12  Daniel Bates  <dabates@apple.com>
 
         Fix some Mac linker warnings

@@ -22,6 +22,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+/* You'll see a lot of !important rules in this file. This is because
+   the inheritance and specificity of Shadow DOM trees is slightly
+   tricky. The page might have accidentally set a style and we have
+   to make sure it is reset. */
+
 audio {
     min-width: 260px;
     height: 39px;
@@ -267,7 +272,6 @@ video::-webkit-media-controls-fullscreen-button:active {
 
 audio::-webkit-media-controls-wireless-playback-picker-button,
 video::-webkit-media-controls-wireless-playback-picker-button {
-    margin-left: 4px;
     background-size: 21px 18px;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAkCAYAAAAQC8MVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA2NTYwQzlBNUFGMTFFNDhCNDZEQ0MzRUNBRkEzRTciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA2NTYwQ0FBNUFGMTFFNDhCNDZEQ0MzRUNBRkEzRTciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3QTlEQUNEMEE1QUMxMUU0OEI0NkRDQzNFQ0FGQTNFNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDY1NjBDOEE1QUYxMUU0OEI0NkRDQzNFQ0FGQTNFNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsGo4wwAAAE9SURBVHja7JYxbsIwFIZtIjFkyYTEwMhUiZmdA/QCOQE3YGPkBh2ZOiNxAAY2ZlaGDt06McCAhHj8T7WrCKXIcewoSO9J35DIfv5kJ7+slVKkXqT0S8oSkW6tpNYksiIrsiIrsiIrsiIrsiJbItuJ0DgDK9CLIU6/G0uqLqgu2JieO5AG6kt/X0AIWfNJfRYak3nWbZSdP4haFq2SReXg9o8sM22FLGoCLk9EmSt4DybryB5khSYjcHSce+Lxhbmp+QmrrO888BsMCov1zTuq0YPj7ct5vuex+OxK6elUWtdDNAFrT1ELZ3G3CdmPmqKWZVRZ1CyQqGUWRZajx0RQSFnO5jyoLGoMzoFFLZzRkyCyqCH4iSRq4ax+qyVrcvAQWdTC6/S8ZM11b9uQKLlcK6tc95qCMzwp87oLMABmUMEzVAChcAAAAABJRU5ErkJggg==');
     -webkit-order: 3;
@@ -301,30 +305,35 @@ video::-webkit-media-controls-optimized-fullscreen-button {
 
 video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
-    -webkit-appearance: none;
+    -webkit-appearance: none !important;
     -webkit-flex: 1 1 0;
-    height: 3px;
+    height: 8px;
     margin: 0;
+    background-color: transparent !important;
+    background-size: 100% 100%;
+    border: none !important;
+    border-radius: 0 !important;
+    box-sizing: content-box !important;
 }
 
+audio::-webkit-media-controls-timeline::-webkit-slider-runnable-track,
 video::-webkit-media-controls-timeline::-webkit-slider-runnable-track {
-  height: 3px !important;
-  border-radius: 1.5px !important;
-  background-color: white !important;
+    -webkit-appearance: none !important;
+    background: none !important;
+    border: none !important;
 }
 
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    position: relative;
-    top: -6px;
-    width: 16px;
-    height: 16px;
-    border-width: 0px !important;
-    border-radius: 8px;
-    background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><circle r="7.75" cy="8" cx="8" fill="white" stroke="rgba(0, 0, 0, .25)" stroke-width=".5"/></svg>') !important;
+    -webkit-appearance: none !important;
+    width: 15px;
+    height: 50px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAiCAYAAABIiGl0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iUGl4ZWxtYXRvciAyLjIiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NTkwQ0UwODdBQTcxMTFFNEE5QTZGQTVGMjFBNkUxN0UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NTkwQ0UwODhBQTcxMTFFNEE5QTZGQTVGMjFBNkUxN0UiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1OTBDRTA4NUFBNzExMUU0QTlBNkZBNUYyMUE2RTE3RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1OTBDRTA4NkFBNzExMUU0QTlBNkZBNUYyMUE2RTE3RSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pofoz4wAAAJGSURBVHjaxJfNTsJAEMfbLmoNaKIhIE18A+LReOXmi/gQnnwSLz6Fnjh4Id4kHElI5EDwpIkgImWdf/Nfs5ISCrR1kkmg7c5vZz/mw3WSy66oL7ojqqiQkPotOhGdaq1XGnMTvC+KlprN5kW9Xr8sFotnhUKhCsUHs9lsCB2NRu1Op3PfaDRa8vhDdCSqnQ0E3lX7/f6NGH7RCQXfYgzG0sZacthut6/G4/Gj3lAwFjZgKyn0qNfrXYdh+Ka3FNiALdhc6Sk+1CkL4Us997E0aXga5zmX3Y87vdVt9jTJnvPA/blJJZxEnbHwtJds8Mk6V2ZTAQMsAD1EJAQHpdSpk7GAARaYAPuISE5OQpYfeYwwmBeYrMhjZeJuHkKWAtj7B7DnJchQaQsylgvwHGktL6qwXsH0TE7NETw091gjiecFFtYzmNFSo3LICyysBzBxsI5xoWUJWllHL8lSfTnViFyTyGO4PhgMbrP2lgxNpnPAdBXkkBYDsg48lqbRDLrd7t18Pn9P21PYhG3zl8yoXsY+1zCjDEufgIxjMqPCHMm5wpdBBsVeQK2QpUzZs8dKsGY+SrG8DSxvj8j6DdOKHUPZhkO3KOiDBWiZDGW3MC4f7FPVYvKQyuE8YQvzFJMUcJg+qfit3YVKc4clqB8H3zAThWzmJmzstGN1fI511LVJXYzl7hZQ00F+2dA4sH3P7Am4a0zAeDklEODZYueoVgz+DS4rWk5tTdj2cmqt4tr9sccJFqyG3N4CGxrSu3AZ0MiPAAMAZrLkuVVmRJsAAAAASUVORK5CYII=');
+    background-repeat: no-repeat;
+    background-size: 15px 17px;
+    background-position: 0px 18px;
     background-color: transparent !important;
-    box-shadow: 0 3px 1px -1px rgba(0, 0, 0, .15);
+    border: none !important;
 
     /* rotateZ() forces the layer into compositing mode. Slider
        thumbs are small, so forcing a compositing layer is inexpensive,
@@ -332,8 +341,14 @@ audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     -webkit-transform: rotateZ(0deg);
 }
 
+video::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
+audio::-webkit-media-controls-timeline::-webkit-slider-thumb:active {
+    background-color: transparent !important;
+}
+
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
-    top: -1px;
+    height: 39px;
+    background-position: 0px 12px;
 }
 
 video::-webkit-media-controls-current-time-display,
@@ -371,6 +386,7 @@ video::-webkit-media-controls-time-remaining-display {
     min-width: 38px;
     -webkit-justify-content: right;
     padding-left: 6px;
+    margin-right: 6px;
 }
 
 video::-webkit-media-controls-timeline-container,

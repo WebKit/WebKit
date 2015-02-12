@@ -975,7 +975,10 @@ Controller.prototype = {
             return;
 
         this.updateTimelineMetricsIfNeeded();
+        this.drawTimelineBackground();
+    },
 
+    drawTimelineBackground: function() {
         var background = 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(2, 2, 2)"/><stop offset="1" stop-color="rgb(23, 23, 23)"/></linearGradient><g style="fill:url(#gradient)">'
 
         var duration = this.video.duration;

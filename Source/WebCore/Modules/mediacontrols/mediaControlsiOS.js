@@ -9,6 +9,9 @@ function ControllerIOS(root, video, host)
     this.hasWirelessPlaybackTargets = false;
     this._pageScaleFactor = 1;
     this.isListeningForPlaybackTargetAvailabilityEvent = false;
+
+    this.timelineContextName = "_webkit-media-controls-timeline-" + ControllerIOS.gLastTimelineId++;
+
     Controller.call(this, root, video, host);
 
     this.updateWirelessTargetAvailable();
@@ -26,6 +29,7 @@ ControllerIOS.StartPlaybackControls = 2;
 ControllerIOS.gWirelessImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 245"><g fill="#1060FE"><path d="M193.6,6.3v121.6H6.4V6.3H193.6 M199.1,0.7H0.9v132.7h198.2V0.7L199.1,0.7z"/><path d="M43.5,139.3c15.8,8,35.3,12.7,56.5,12.7s40.7-4.7,56.5-12.7H43.5z"/></g><g text-anchor="middle" font-family="Helvetica Neue"><text x="100" y="204" fill="white" font-size="24">##DEVICE_TYPE##</text><text x="100" y="234" fill="#5C5C5C" font-size="21">##DEVICE_NAME##</text></g></svg>';
 ControllerIOS.gSimulateWirelessPlaybackTarget = false; // Used for testing when there are no wireless targets.
 ControllerIOS.gSimulateOptimizedFullscreenAvailable = false; // Used for testing when optimized fullscreen is not available.
+ControllerIOS.gLastTimelineId = 0;
 
 ControllerIOS.prototype = {
     addVideoListeners: function() {
@@ -180,6 +184,8 @@ ControllerIOS.prototype = {
         this.listenFor(this.controls.optimizedFullscreenButton, 'touchend', this.handleOptimizedFullscreenTouchEnd);
         this.listenFor(this.controls.optimizedFullscreenButton, 'touchcancel', this.handleOptimizedFullscreenTouchCancel);
         this.stopListeningFor(this.controls.playButton, 'click', this.handlePlayButtonClicked);
+
+        this.controls.timeline.style.backgroundImage = '-webkit-canvas(' + this.timelineContextName + ')';
     },
 
     setControlsType: function(type) {
@@ -270,24 +276,63 @@ ControllerIOS.prototype = {
         return 'rgba(0, 0, 0, 0.5)';
     },
 
-    updateProgress: function(forceUpdate) {
-        Controller.prototype.updateProgress.call(this, forceUpdate);
+    addRoundedRect: function(ctx, x, y, width, height, radius) {
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + radius, radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+        ctx.lineTo(x + radius, y + height);
+        ctx.arcTo(x, y + height, x, y + height - radius, radius);
+        ctx.lineTo(x, y + radius);
+        ctx.arcTo(x, y, x + radius, y, radius);
+    },
 
-        if (!forceUpdate && this.controlsAreHidden())
+    drawTimelineBackground: function() {
+        var width = this.timelineWidth * window.devicePixelRatio;
+        var height = this.timelineHeight * window.devicePixelRatio;
+
+        if (!width || !height)
             return;
 
-        var width = this.timelineWidth;
-        var height = this.timelineHeight;
+        var played = this.video.currentTime / this.video.duration;
+        var buffered = 0;
+        for (var i = 0, end = this.video.buffered.length; i < end; ++i)
+            buffered = Math.max(this.video.buffered.end(i), buffered);
 
-        // Magic number, matching the value for ::-webkit-media-controls-timeline::-webkit-slider-thumb
-        // in mediaControlsiOS.css. Since we cannot ask the thumb for its offsetWidth as it's in its own
-        // shadow dom, just hard-code the value.
-        var thumbWidth = 16;
-        var endX = thumbWidth / 2 + (width - thumbWidth) * this.video.currentTime / this.video.duration;
+        buffered /= this.video.duration;
 
-        var context = document.getCSSCanvasContext('2d', 'timeline-' + this.timelineID, width, height);
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, endX, height);
+        var ctx = document.getCSSCanvasContext('2d', this.timelineContextName, width, height);
+
+        ctx.clearRect(0, 0, width, height);
+
+        var midY = height / 2;
+
+        // 1. Draw the outline with a clip path that subtracts the
+        // middle of a lozenge. This produces a better result than
+        // stroking when we come to filling the parts below.
+        ctx.save();
+        ctx.beginPath();
+        this.addRoundedRect(ctx, 1, midY - 3, width - 2, 6, 3);
+        this.addRoundedRect(ctx, 2, midY - 2, width - 4, 4, 2);
+        ctx.closePath();
+        ctx.clip("evenodd");
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+
+        // 2. Draw the buffered part and played parts, using
+        // solid rectangles that are clipped to the outside of
+        // the lozenge.
+        ctx.save();
+        ctx.beginPath();
+        this.addRoundedRect(ctx, 1, midY - 3, width - 2, 6, 3);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, Math.round(width * buffered) + 2, height);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, Math.round(width * played) + 2, height);
+        ctx.restore();
     },
 
     formatTime: function(time) {
