@@ -1,3 +1,20 @@
+2015-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the USE(ACCELERATED_COMPOSITING) guard from the
+        MediaPlayerPrivateGStreamerBase destructor.
+
+        The guard was removed in r163079. It was still defined through CMake
+        for the EFL and GTK ports when the guarded code was introduced in
+        r172828. In r171741 the macro was finally removed for the GTK and EFL
+        ports as well, but the guards for the affected code weren't updated
+        so TextureMapperPlatformLayer::Client::platformLayerWillBeDestroyed()
+        wasn't being called anymore.
+
+        Rubber-stamped by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+
 2015-02-11  Darin Adler  <darin@apple.com>
 
         Streamline and simplify SVGSVGElement and related classes
