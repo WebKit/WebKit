@@ -113,7 +113,10 @@ EXPORTS
         symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@AEAVDocument@1@AEBVURL@1@AEBVString@WTF@@@Z)
         symbolWithPointer(??0Mutex@WTF@@QAE@XZ, ??0Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??0ThreadCondition@WTF@@QAE@XZ, ??0ThreadCondition@WTF@@QEAA@XZ)
+        symbolWithPointer(??0HitTestResult@WebCore@@QAE@XZ, ??0HitTestResult@WebCore@@QEAA@XZ)
         symbolWithPointer(??1HitTestResult@WebCore@@QAE@XZ, ??1HitTestResult@WebCore@@QEAA@XZ)
+        symbolWithPointer(?setInnerNode@HitTestResult@WebCore@@QAEXPAVNode@2@@Z, ?setInnerNode@HitTestResult@WebCore@@QEAAXPEAVNode@2@@Z)
+        symbolWithPointer(?title@HitTestResult@WebCore@@QBE?AVString@WTF@@AAW4TextDirection@2@@Z, ?title@HitTestResult@WebCore@@QEBA?AVString@WTF@@AEAW4TextDirection@2@@Z)
         symbolWithPointer(??1Mutex@WTF@@QAE@XZ, ??1Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??1ThreadCondition@WTF@@QAE@XZ, ??1ThreadCondition@WTF@@QEAA@XZ)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
@@ -202,6 +205,7 @@ EXPORTS
         symbolWithPointer(?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z, ?getCachedDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEBUClassInfo@3@@Z)
         symbolWithPointer(?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVString@WTF@@@Z, ?getElementById@TreeScope@WebCore@@QEBAPEAVElement@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVNode@2@PBVRange@2@AAI2@Z, ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPEAVNode@2@PEBVRange@2@AEA_K2@Z)
+        symbolWithPointer(?subrange@TextIterator@WebCore@@SA?AV?$Ref@VRange@WebCore@@@WTF@@PAVRange@2@HH@Z, ?subrange@TextIterator@WebCore@@SA?AV?$Ref@VRange@WebCore@@@WTF@@PEAVRange@2@HH@Z)
 		symbolWithPointer(?getOutOfLineCachedWrapper@WebCore@@YAPAVJSObject@JSC@@PAVJSDOMGlobalObject@1@PAVNode@1@@Z, ?getOutOfLineCachedWrapper@WebCore@@YAPEAVJSObject@JSC@@PEAVJSDOMGlobalObject@1@PEAVNode@1@@Z)
         symbolWithPointer(?hitTest@RenderView@WebCore@@QAE_NABVHitTestRequest@2@AAVHitTestResult@2@@Z, ?hitTest@RenderView@WebCore@@QEAA_NAEBVHitTestRequest@2@AEAVHitTestResult@2@@Z)
         ?inputTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
