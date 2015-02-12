@@ -399,7 +399,6 @@ webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-02.svg [ ImageOnlyFail
 webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-03.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-pattern-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-01.svg [ ImageOnlyFailure ]
-webkit.org/b/139155 imported/mozilla/svg/dynamic-use-02.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-03.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-07.svg [ ImageOnlyFailure ]
 webkit.org/b/139183 imported/mozilla/svg/text/pseudo-first-letter.svg [ ImageOnlyFailure ]

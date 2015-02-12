@@ -31,6 +31,7 @@ class SVGGElement final : public SVGGraphicsElement,
                           public SVGExternalResourcesRequired {
 public:
     static Ref<SVGGElement> create(const QualifiedName&, Document&);
+    static Ref<SVGGElement> create(Document&);
 
 private:
     SVGGElement(const QualifiedName&, Document&);

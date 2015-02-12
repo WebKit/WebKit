@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class CachedSVGDocument;
-
 class CachedSVGDocumentClient : public CachedResourceClient {
 public:
     virtual ~CachedSVGDocumentClient() { }

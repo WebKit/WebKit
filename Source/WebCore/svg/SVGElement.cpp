@@ -482,7 +482,6 @@ void SVGElement::cursorImageValueRemoved()
 
 SVGElement* SVGElement::correspondingElement() const
 {
-    ASSERT(!m_svgRareData || !m_svgRareData->correspondingElement() || correspondingUseElement());
     return m_svgRareData ? m_svgRareData->correspondingElement() : nullptr;
 }
 
@@ -966,26 +965,6 @@ String SVGElement::title() const
     // the document, not a tooltip) so we instantly return.
     if (isOutermostSVGSVGElement() && document().topDocument().isSVGDocument())
         return String();
-
-    // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
-    if (isInShadowTree()) {
-        Element* shadowHostElement = downcast<ShadowRoot>(treeScope().rootNode()).hostElement();
-        // At this time, SVG nodes are not allowed in non-<use> shadow trees, so any shadow root we do
-        // have should be a use. The assert and following test is here to catch future shadow DOM changes
-        // that do enable SVG in a shadow tree.
-        ASSERT(!shadowHostElement || shadowHostElement->hasTagName(SVGNames::useTag));
-        if (shadowHostElement && shadowHostElement->hasTagName(SVGNames::useTag)) {
-            SVGUseElement& useElement = downcast<SVGUseElement>(*shadowHostElement);
-
-            // If the <use> title is not empty we found the title to use.
-            String useTitle(useElement.title());
-            if (!useTitle.isEmpty())
-                return useTitle;
-        }
-    }
-
-    // If we aren't an instance in a <use> or the <use> title was not found, then find the first
-    // <title> child of this element.
     auto firstTitle = childrenOfType<SVGTitleElement>(*this).first();
     return firstTitle ? const_cast<SVGTitleElement*>(firstTitle)->innerText() : String();
 }

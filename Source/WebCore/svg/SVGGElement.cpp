@@ -49,6 +49,11 @@ Ref<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new SVGGElement(tagName, document));
 }
 
+Ref<SVGGElement> SVGGElement::create(Document& document)
+{
+    return create(SVGNames::gTag, document);
+}
+
 bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;

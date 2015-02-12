@@ -99,6 +99,11 @@ Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document&
     return adoptRef(*new SVGSVGElement(tagName, document));
 }
 
+Ref<SVGSVGElement> SVGSVGElement::create(Document& document)
+{
+    return create(SVGNames::svgTag, document);
+}
+
 SVGSVGElement::~SVGSVGElement()
 {
     if (m_viewSpec)

@@ -1,3 +1,154 @@
+2015-02-11  Darin Adler  <darin@apple.com>
+
+        SVGUseElement follow-up improvements
+        https://bugs.webkit.org/show_bug.cgi?id=141382
+
+        Reviewed by Antti Koivisto.
+
+        * loader/cache/CachedSVGDocumentClient.h: Removed unneeded forward declaration.
+
+        * page/EventHandler.cpp: Removed unneeded include of SVGUseElement.h.
+        * rendering/svg/RenderSVGViewportContainer.cpp: Ditto.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::clearTargetDependencies): Removed too-specific
+        check that assumed that SVG elements in shadow trees are always for <use> elements.
+        This amounted to an unneeded optimization that could be removed with no bad effect.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::correspondingElement): Removed the assertions so this could
+        be used more freely outside of cases where the shadow tree state is fully consistent.
+        It's fine to have this just be a mechanical getter; there's nothing super-tricky
+        here that needs to be caught by the assertion.
+        (WebCore::SVGElement::title): Removed unneeded special handling for titles inside
+        the shadow tree.
+
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::create): Added an overload that doesn't require explicitly
+        passing in the tag name.
+        * svg/SVGGElement.h: Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::create): Ditto.
+        * svg/SVGSVGElement.h: Ditto.
+
+        * svg/SVGUseElement.cpp: Removed a lot of unneeded includes.
+        (WebCore::SVGUseElement::SVGUseElement): Removed code to initialize some booleans.
+        We do that in the class definition now.
+        (WebCore::SVGUseElement::create): Removed the code that calls the
+        ensureUserAgentShadowRoot function unconditionally. That's properly done when
+        needed; no need to do it here.
+        (WebCore::SVGUseElement::~SVGUseElement): Removed unneeded code to destroy the
+        shadow tree (that happens automatically) and simplified the code to stop loading
+        the external document.
+        (WebCore::SVGUseElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGUseElement::parseAttribute): Simplified this. Removed assumptions
+        about the intersection of various sets of attributes, and also removed the
+        isSupportedAttribute function. This seems to serve no purpose here, or in any
+        other SVG element class. I plan to remove it everywhere over time.
+        (WebCore::isWellFormedDocument): Deleted.
+        (WebCore::SVGUseElement::insertedInto): Simplified code by removing all the
+        special cases during initial parsing, and did the invalidation here rather than
+        deferring it to didNotifySubtreeInsertions. Added a call to the new function,
+        updateExternalDocument, since that won't do anything when the element is not
+        in a document.
+        (WebCore::SVGUseElement::didNotifySubtreeInsertions): Deleted.
+        (WebCore::SVGUseElement::removedFrom): Added code to call clearShadowTree and
+        updateExternalDocument. Both are efficient when doing nothing, and both are
+        appropriate since the element is no longer in a document.
+        (WebCore::SVGUseElement::referencedDocument): Deleted. No longer needed.
+        (WebCore::SVGUseElement::externalDocument): Streamlined the logic here, removing
+        multiple unneeded checks.
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone): Renamed since
+        "target clone" is clear enough within this class, without explicitly stating
+        "shadow tree". All the clones are in the shadow tree.
+        (WebCore::SVGUseElement::svgAttributeChanged): Removed unneeded code calling
+        isSupportedAttribute. Changed the code that detects changes in href to just
+        call updateExternalDocument (for the document URL) and invalidateShadowTree
+        (for the fragment). Also updated the transferSizeAttributesToTargetClone logic
+        to only trigger on width and height and updated names.
+        (WebCore::SVGUseElement::willAttachRenderers): Updated for the new name of
+        m_shouldRebuildShadowTree and added a call through to the base class.
+        (WebCore::createAllowedElementSet): Added. A more efficient way to implement
+        the initialization of the set for isDisallowedElement.
+        (WebCore::isDisallowedElement): Simplified this by using the function above,
+        and also overloaded for both SVGElement and Element for a tiny efficiency boost.
+        (WebCore::SVGUseElement::clearShadowTree): Renamed form clearResourceReferences.
+        This is a much more straightforward name. Also deleted the code that sets the
+        m_needsShadowTreeRecreation flag to false. That should be done by the build
+        function, not here.
+        (WebCore::SVGUseElement::buildPendingResource): Made this just invalidate the
+        shadow tree now instead of explicitly building it.
+        (WebCore::SVGUseElement::updateShadowTree): Moved the code to create a shadow
+        tree here from buildPendingResource. ALso changed the logic so that we
+        always blow away the old shadow tree. Moved the comment about rebuilding things
+        every time here. Updated the code to use the findTarget and cloneTarget functions,
+        eliminating the buildShadowTree function entirely. Moved the call to
+        transferSizeAttributesToShadowTreeTargetClone inside cloneTarget. Also updated
+        for the name change for m_shouldRebuildShadowTree.
+        (WebCore::SVGUseElement::targetClone): Renamed from shadowTreeTargetClone.
+        No need to emphasize "shadow tree" since that's where all clones are.
+        (WebCore::isDirectReference): Streamlined a bit using "using namespace".
+        (WebCore::SVGUseElement::toClipPath): Rewrote to use early return and updated
+        for name changes. Also used ASCIILiteral.
+        (WebCore::SVGUseElement::rendererClipChild): Changed local variable names.
+        (WebCore::removeDisallowedElementsFromSubtree): Wrote the iteration in a
+        slightly more idiomatic style.
+        (WebCore::SVGUseElement::findTarget): Added. This new function implements
+        the rule for finding a valid target for a use element. This replaces logic
+        that was duplicated in two different places and it also includes all the
+        rules that were formerly in the isValidTarget function. Also, this implements
+        a correct check for a cycle that handles cases the code in isValidTarget did not.
+        (WebCore::SVGUseElement::isValidTarget): Deleted.
+        (WebCore::SVGUseElement::cloneTarget): Added. Helper function used both when
+        cloning the target of the top level <use> elements and for other <use> elements
+        inside the shadow tree.
+        (WebCore::cloneDataAndChildren): Added. Helper function that allows both the
+        <use> and <symbol> element expanding functions to be shorter and share more code.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Removed unneeded checks
+        of cachedDocumentIsStillLoading. Used the new findTarget function, which handles
+        finding the target cross-document correctly. Removed the incorrect use of
+        referencedDocument when creating new elements and finding targets. Refactored
+        to use the new cloneDataAndChildren function and also moved the code that removes
+        the special attributes here, replacing the transferAttributesToShadowTreeReplacement
+        function. Made a few other simplifications.
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Ditto, just like the
+        <use> changes only simpler.
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree): Made this const.
+        Removed unneeded assertions.
+        (WebCore::SVGUseElement::invalidateShadowTree): Updated for name change.
+        (WebCore::SVGUseElement::invalidateDependentShadowTrees): Removed assertion.
+        (WebCore::SVGUseElement::transferAttributesToShadowTreeReplacement): Deleted.
+        (WebCore::SVGUseElement::selfHasRelativeLengths): Tweaked names.
+        (WebCore::SVGUseElement::notifyFinished): Removed the inDocument check, since
+        this function will only be called for elements that are in a document.
+        (WebCore::SVGUseElement::cachedDocumentIsStillLoading): Deleted.
+        (WebCore::SVGUseElement::finishParsingChildren): Removed the code that calls
+        buildPendingResource here. Shadow tree updating is driven solely by renderer
+        generation now.
+        (WebCore::SVGUseElement::updateExternalDocument): Replaced setCachedDocument
+        with this. This function knows how to load a different document if the URL
+        has changed, or leave it alone if not, and also stop the load if it should.
+        (WebCore::SVGUseElement::isValid): Moved this here from the header, since it's
+        always being called virtually.
+        (WebCore::SVGUseElement::haveLoadedRequiredResources): Ditto.
+        (WebCore::SVGUseElement::setHaveFiredLoadEvent): Ditto.
+        (WebCore::SVGUseElement::haveFiredLoadEvent): Ditto.
+        (WebCore::SVGUseElement::svgLoadEventTimer): Ditto.
+
+        * svg/SVGUseElement.h: Removed unneeded include. Moved the animated properties
+        to the top of the class because they are public DOM API and so are logical to
+        list first. I'd like to do that for other classes too over time. Changed to
+        derive privately from CachedSVGDocumentClient. Made the function
+        invalidateDependentShadowTrees private. Removed didNotifySubtreeInsertions,
+        isSupportedAttribute, clearResourceReferences, buildShadowTree,
+        transferAttributesToShadowTreeReplacement, isParserInserted, and
+        m_wasInsertedByParser. Added updateExternalDocument, cloneTarget, targetClone,
+        updateShadowTree, and clearShadowTree. Also did a couple other renames,
+        including renaming m_cachedDocument to m_externalDocument.
+
+        * svg/svgtags.in: Removed constructorNeedsCreatedByParser from the <use>
+        element since we don't have to handle constructing by the parser specially.
+
 2015-02-11  Dhi Aurrahman  <diorahman@rockybars.com>
 
         CSS selector JIT compilation support for :lang()

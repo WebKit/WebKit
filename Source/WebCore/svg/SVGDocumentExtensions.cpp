@@ -341,13 +341,6 @@ void SVGDocumentExtensions::rebuildElements()
 
 void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
 {
-    if (referencedElement.isInShadowTree()) {
-        // The host element (e.g. <use>) of the shadow root will rebuild the shadow tree
-        // and all its references.
-        ASSERT(referencedElement.shadowRoot());
-        ASSERT(m_rebuildElements.contains(referencedElement.shadowRoot()->hostElement()));
-        return;
-    }
     auto it = m_elementDependencies.find(&referencedElement);
     if (it == m_elementDependencies.end())
         return;

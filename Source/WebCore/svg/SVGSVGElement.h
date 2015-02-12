@@ -45,6 +45,7 @@ class SVGSVGElement final : public SVGGraphicsElement,
                             public SVGZoomAndPan {
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
+    static Ref<SVGSVGElement> create(Document&);
 
     using SVGGraphicsElement::ref;
     using SVGGraphicsElement::deref;

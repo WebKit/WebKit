@@ -1,3 +1,37 @@
+2015-02-11  Darin Adler  <darin@apple.com>
+
+        SVGUseElement follow-up improvements
+        https://bugs.webkit.org/show_bug.cgi?id=141382
+
+        Reviewed by Antti Koivisto.
+
+        Modified some tests to be reference tests since the change in implementation slightly changed
+        the behavior, but not in a way that matters. Other similar updates.
+
+        * TestExpectations: Expect a progression in imported/mozilla/svg/dynamic-use-02.svg.
+
+        * platform/gtk/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png: Removed.
+        * platform/gtk/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-property-synchronization-crash-expected.png: Removed.
+        * platform/ios-sim-deprecated/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Removed.
+        * platform/mac-mountainlion/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Removed.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png: Removed.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Removed.
+        * platform/mac/svg/custom/use-property-synchronization-crash-expected.png: Removed.
+
+        * svg/animations/use-animate-width-and-height-expected.txt: Updated to expect the new expression
+        name from the modified test.
+        * svg/animations/use-animate-width-and-height.html: THe state of the shadow root now depends on
+        layout, so force layout before inspecting it.
+
+        * svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.xhtml: Added.
+        * svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml: Made this no longer be a
+        repaint test. Not sure why we are using those in so many cases. Also made it be a reference test.
+
+        * svg/custom/use-property-synchronization-crash-expected.svg: Added.
+        * svg/custom/use-property-synchronization-crash-expected.txt: Removed.
+
 2015-02-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark multi-column failing tests to Failure.

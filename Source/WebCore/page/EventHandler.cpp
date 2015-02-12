@@ -81,7 +81,6 @@
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
-#include "SVGUseElement.h"
 #include "ScrollAnimator.h"
 #include "ScrollLatchingState.h"
 #include "Scrollbar.h"
