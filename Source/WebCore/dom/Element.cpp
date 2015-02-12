@@ -279,6 +279,9 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
+    if (!event.deltaX() && !event.deltaY())
+        return false;
+
     RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
     return EventDispatcher::dispatchEvent(this, wheelEvent) && !wheelEvent->defaultHandled();
 }

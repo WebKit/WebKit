@@ -1,3 +1,15 @@
+2015-02-12  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Should not send wheel events with a delta of 0
+        https://bugs.webkit.org/show_bug.cgi?id=141537
+        -and corresponding-
+        rdar://problem/18903118
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/wheel-events-with-no-delta-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/wheel-events-with-no-delta.html: Added.
+
 2015-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash inspecting styles of element with mutated stylesheet

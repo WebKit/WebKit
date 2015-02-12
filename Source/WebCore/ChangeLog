@@ -1,3 +1,18 @@
+2015-02-12  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Should not send wheel events with a delta of 0
+        https://bugs.webkit.org/show_bug.cgi?id=141537
+        -and corresponding-
+        rdar://problem/18903118
+
+        Reviewed by Simon Fraser.
+
+        This code should not have been removed entirely to accommodate rubber-banding, it 
+        just needs to return false instead of true in order to allow the MayBegin and 
+        Ended phases to be handled by the ElasticityController.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+
 2015-02-12  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Implement 3-style media timeline (buffered, played, unavailable)
