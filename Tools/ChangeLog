@@ -1,3 +1,12 @@
+2015-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        run-jsc-stress-tests --remote should be able add the necessary libraries to the bundle on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=141202
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Test bot infrastructure should not try to find/use old Safari DLLs

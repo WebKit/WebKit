@@ -1121,6 +1121,18 @@ def prepareBundle
                     FileUtils.cp_r source, destination
                 end
             end
+
+            if $remote and $hostOS == "linux"
+                begin
+                    dependencies = `ldd #{source}`
+                    dependencies.split(/\n/).each {
+                        | dependency |
+                        FileUtils.cp_r $&, $jscPath.dirname if dependency =~ /#{WEBKIT_PATH}[^ ]*/
+                    }
+                rescue
+                    $stderr.puts "Warning: unable to determine or copy library dependnecies of JSC."
+                end
+            end
         }
     end
     
@@ -1410,6 +1422,7 @@ def runTestRunner
         remoteScript += "tar xzf #{$tarFileName} && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
+        remoteScript += "export LD_LIBRARY_PATH=#{$remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
         remoteScript += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])} && "
         remoteScript += "#{testRunnerCommand}\""
         runAndMonitorTestRunnerCommand("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
