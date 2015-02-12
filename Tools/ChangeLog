@@ -1,5 +1,24 @@
 2015-02-12  Brent Fulgham  <bfulgham@apple.com>
 
+        Merge r179996 to correct test system failures.
+
+    2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Test bot infrastructure should not try to find/use old Safari DLLs
+            https://bugs.webkit.org/show_bug.cgi?id=141517
+
+            Reviewed by Anders Carlsson.
+
+            We do not need to locate or use the DLL's that came with Safari, so stop
+            failing when we cannot find them. Also remove some old Qt cruft from this
+            script.
+
+            * BuildSlaveSupport/built-product-archive:
+            (archiveBuiltProduct): 
+            (extractBuiltProduct):
+
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed branch build fix.
 
         * DumpRenderTree/AccessibilityUIElement.cpp:
