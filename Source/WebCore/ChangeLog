@@ -1,3 +1,21 @@
+2015-02-11  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        CSS selector JIT compilation support for :lang()
+        https://bugs.webkit.org/show_bug.cgi?id=140818
+
+        Reviewed by Benjamin Poulain.
+
+        Add the JIT support for :lang(), to ensure :lang() no longer force the engine to
+        the slow path.
+
+        Test: fast/selectors/lang-chained-multiple.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        Get rid of the FunctionType::CannotCompile
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+
 2015-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix more weak external symbol errors.

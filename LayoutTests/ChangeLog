@@ -1,3 +1,13 @@
+2015-02-11  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        CSS selector JIT compilation support for :lang()
+        https://bugs.webkit.org/show_bug.cgi?id=140818
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/selectors/lang-chained-multiple-expected.txt: Added.
+        * fast/selectors/lang-chained-multiple.html: Added.
+
 2015-02-11  Sam Weinig  <sam@webkit.org>
 
         REGRESSION(r179166): Crash when accessing document.dir on a document with no elements
