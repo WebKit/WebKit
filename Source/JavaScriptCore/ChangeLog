@@ -1,3 +1,17 @@
+2015-02-13  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r180060) New js/regress-141098 test crashes when LLInt is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=141577
+
+        Reviewed by Benjamin Poulain.
+
+        Changed the prologue of the baseline JIT to check for stack space for all
+        types of code blocks.  Previously, it was only checking Function.  Now
+        it checks Program and Eval as well.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Generate incq instead of addq when the immediate value is one

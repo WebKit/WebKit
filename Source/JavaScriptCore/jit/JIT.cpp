@@ -523,7 +523,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     sampleInstruction(m_codeBlock->instructions().begin());
 #endif
 
-    Jump stackOverflow;
     if (m_codeBlock->codeType() == FunctionCode) {
         ASSERT(m_bytecodeOffset == (unsigned)-1);
         if (shouldEmitProfiling()) {
@@ -542,12 +541,12 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
                 emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument));
             }
         }
-
-        addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT1);
-        stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), regT1);
     }
 
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT1);
+    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), regT1);
+
+    move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
 
     privateCompileMainPass();
@@ -557,14 +556,14 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_disassembler)
         m_disassembler->setEndOfSlowPath(label());
 
+    stackOverflow.link(this);
+    m_bytecodeOffset = 0;
+    if (maxFrameExtentForSlowPathCall)
+        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+    callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
+
     Label arityCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-        stackOverflow.link(this);
-        m_bytecodeOffset = 0;
-        if (maxFrameExtentForSlowPathCall)
-            addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
-        callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
-
         arityCheck = label();
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
