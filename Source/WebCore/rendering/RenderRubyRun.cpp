@@ -32,6 +32,7 @@
 
 #include "RenderRubyRun.h"
 
+#include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"
 #include "RenderText.h"
@@ -130,7 +131,7 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             // the old text goes into a new run that is inserted as next sibling.
             ASSERT(beforeChild->parent() == this);
             RenderElement* ruby = parent();
-            ASSERT(ruby->isRuby());
+            ASSERT(isRuby(ruby));
             RenderBlock* newRun = staticCreateRubyRun(ruby);
             ruby->addChild(newRun, nextSibling());
             // Add the new ruby text and move the old one to the new run
@@ -211,7 +212,7 @@ RenderRubyBase* RenderRubyRun::createRubyBase() const
 
 RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby)
 {
-    ASSERT(parentRuby && parentRuby->isRuby());
+    ASSERT(isRuby(parentRuby));
     auto renderer = new RenderRubyRun(parentRuby->document(), RenderStyle::createAnonymousStyleWithDisplay(&parentRuby->style(), INLINE_BLOCK));
     renderer->initializeStyle();
     return renderer;

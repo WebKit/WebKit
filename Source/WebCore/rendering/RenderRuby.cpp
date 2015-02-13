@@ -45,13 +45,13 @@ namespace WebCore {
 static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
 {
     ASSERT(!object
-        || !object->parent()->isRuby()
+        || !isRuby(object->parent())
         || is<RenderRubyRun>(*object)
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
         || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == INLINE_BLOCK));
 
     return object
-        && object->parent()->isRuby()
+        && isRuby(object->parent())
         && is<RenderBlock>(*object)
         && !is<RenderRubyRun>(*object);
 }

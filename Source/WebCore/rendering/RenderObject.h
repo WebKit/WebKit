@@ -323,7 +323,8 @@ public:
     virtual bool isRenderNamedFlowFragment() const { return false; }
     virtual bool isReplica() const { return false; }
 
-    virtual bool isRuby() const { return false; }
+    virtual bool isRubyInline() const { return false; }
+    virtual bool isRubyBlock() const { return false; }
     virtual bool isRubyBase() const { return false; }
     virtual bool isRubyRun() const { return false; }
     virtual bool isRubyText() const { return false; }

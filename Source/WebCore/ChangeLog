@@ -1,3 +1,31 @@
+2015-02-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r176262): Invalid cast in WebCore`WebCore::RootInlineBox::selectionTop
+        https://bugs.webkit.org/show_bug.cgi?id=138992
+
+        Reviewed by Dave Hyatt.
+
+        RenderRubyText requires the ancestor chain to be (RenderRubyAsInline | RenderRubyAsBlock) -> RenderRubyRun -> RenderRubyText.
+        This patch ensures that we create RenderRubyText for an <rt> element only when
+        the expected ancestor chain is guaranteed.
+
+        Test: fast/ruby/crash-when-ruby-is-set-to-inline-block.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor): treat inline-block <ruby> as block.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRubyInline):
+        (WebCore::RenderObject::isRubyBlock):
+        (WebCore::RenderObject::isRuby): Deleted.
+        * rendering/RenderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        * rendering/RenderRuby.h: add support for is<RenderRubyAsBlock>(renderer) and for is<RenderRubyAsInline>(renderer)
+        The isRuby() method does not follow the is*() -> maps to one class pattern.
+        (WebCore::isRuby):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+
 2015-02-13  Csaba Osztrogonac  <ossy@webkit.org>
 
         Fix the gperf related build issue on the WinCairo bot

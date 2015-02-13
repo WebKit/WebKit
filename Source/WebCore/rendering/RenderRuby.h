@@ -63,7 +63,7 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRuby() const override { return true; }
+    virtual bool isRubyInline() const override final { return true; }
     virtual const char* renderName() const override { return "RenderRuby (inline)"; }
     virtual bool createsAnonymousWrapper() const override { return true; }
 };
@@ -83,12 +83,18 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRuby() const override { return true; }
+    virtual bool isRubyBlock() const override final { return true; }
     virtual const char* renderName() const override { return "RenderRuby (block)"; }
     virtual bool createsAnonymousWrapper() const override { return true; }
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { ASSERT_NOT_REACHED(); }
 };
 
+
+inline bool isRuby(const RenderObject* renderer) { return (renderer && (is<RenderRubyAsInline>(renderer) || is<RenderRubyAsBlock>(renderer))); }
+
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsInline, isRubyInline())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyAsBlock, isRubyBlock())
 
 #endif // RenderRuby_h
