@@ -32,7 +32,7 @@
 
 static const size_t kVisualStudioThreadNameLimit = 31;
 
-void WorkQueue::platformInitialize(const char* name, QOS)
+void WorkQueue::platformInitialize(const char* name, Type, QOS)
 {
     m_eventContext = adoptGRef(g_main_context_new());
     ASSERT(m_eventContext);

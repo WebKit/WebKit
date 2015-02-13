@@ -1,3 +1,48 @@
+2015-02-13  Antti Koivisto  <antti@apple.com>
+
+        WorkQueue should support concurrent queues
+        https://bugs.webkit.org/show_bug.cgi?id=141559
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::DatabaseProcess):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open):
+        * Platform/WorkQueue.cpp:
+        (WorkQueue::create):
+
+            Also make create return a Ref.
+
+        (WorkQueue::WorkQueue):
+        * Platform/WorkQueue.h:
+
+            Add queue type enum.
+
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::platformInitialize):
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::platformInitialize):
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::platformInitialize):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::initializeConnection):
+        * Shared/mac/SecItemShim.h:
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::processLauncherWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::initializeConnection):
+        * UIProcess/mac/SecItemShimProxy.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::initializeConnection):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+        (WebKit::EventDispatcher::initializeConnection):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
 2015-02-12  Anders Carlsson  <andersca@apple.com>
 
         Clean up the framework postprocessing phase

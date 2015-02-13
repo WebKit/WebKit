@@ -27,13 +27,14 @@
 #include "ProcessLauncher.h"
 
 #include "WorkQueue.h"
-#include <wtf/StdLibExtras.h>
+#include <wtf/StdLibExtras.h> 
 
 namespace WebKit {
 
 static WorkQueue& processLauncherWorkQueue()
 {
-    static WorkQueue& processLauncherWorkQueue = *WorkQueue::create("com.apple.WebKit.ProcessLauncher").leakRef();
+
+    static WorkQueue& processLauncherWorkQueue = WorkQueue::create("com.apple.WebKit.ProcessLauncher").leakRef();
     return processLauncherWorkQueue;
 }
 

@@ -54,7 +54,7 @@ DatabaseProcess& DatabaseProcess::singleton()
 }
 
 DatabaseProcess::DatabaseProcess()
-    : m_queue(adoptRef(*WorkQueue::create("com.apple.WebKit.DatabaseProcess").leakRef()))
+    : m_queue(WorkQueue::create("com.apple.WebKit.DatabaseProcess"))
     , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(*this, *this))
 {
     // Make sure the UTF8Encoding encoding and the text encoding maps have been built on the main thread before a background thread needs it.

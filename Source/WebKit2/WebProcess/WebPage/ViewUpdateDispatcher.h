@@ -56,7 +56,7 @@ private:
         double oldestTimestamp;
     };
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
     SpinLock m_dataMutex;
     HashMap<uint64_t, UpdateData> m_latestUpdate;
 };

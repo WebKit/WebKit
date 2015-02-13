@@ -178,7 +178,7 @@ void SecItemShim::initialize(ChildProcess* process)
 
 void SecItemShim::initializeConnection(IPC::Connection* connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::SecItemShim::messageReceiverName(), m_queue.get(), this);
+    connection->addWorkQueueMessageReceiver(Messages::SecItemShim::messageReceiverName(), &m_queue.get(), this);
 }
 
 } // namespace WebKit

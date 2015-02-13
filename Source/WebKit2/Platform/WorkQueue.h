@@ -54,6 +54,10 @@
 
 class WorkQueue final : public FunctionDispatcher {
 public:
+    enum class Type {
+        Serial,
+        Concurrent
+    };
     enum class QOS {
         UserInteractive,
         UserInitiated,
@@ -62,7 +66,7 @@ public:
         Background
     };
     
-    static PassRefPtr<WorkQueue> create(const char* name, QOS = QOS::Default);
+    static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     virtual ~WorkQueue();
 
     virtual void dispatch(std::function<void ()>) override;
@@ -79,9 +83,9 @@ public:
 #endif
 
 private:
-    explicit WorkQueue(const char* name, QOS);
+    explicit WorkQueue(const char* name, Type, QOS);
 
-    void platformInitialize(const char* name, QOS);
+    void platformInitialize(const char* name, Type, QOS);
     void platformInvalidate();
 
 #if OS(DARWIN)

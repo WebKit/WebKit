@@ -51,7 +51,7 @@ private:
 
     void secItemResponse(uint64_t requestID, const SecItemResponseData&);
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

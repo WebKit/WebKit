@@ -49,7 +49,7 @@ private:
 
     void secItemRequest(IPC::Connection&, uint64_t requestID, const SecItemRequestData&);
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

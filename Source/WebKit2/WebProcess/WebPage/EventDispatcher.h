@@ -89,7 +89,7 @@ private:
     void sendDidReceiveEvent(uint64_t pageID, const WebEvent&, bool didHandleEvent);
 #endif
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
 
 #if ENABLE(ASYNC_SCROLLING)
     Mutex m_scrollingTreesMutex;

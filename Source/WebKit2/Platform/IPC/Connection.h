@@ -243,7 +243,7 @@ private:
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
 
     bool m_isConnected;
-    RefPtr<WorkQueue> m_connectionQueue;
+    Ref<WorkQueue> m_connectionQueue;
     WTF::RunLoop& m_clientRunLoop;
 
     HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;

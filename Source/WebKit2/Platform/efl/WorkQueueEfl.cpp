@@ -23,7 +23,7 @@
 #include <DispatchQueueEfl.h>
 #include <DispatchQueueWorkItemEfl.h>
 
-void WorkQueue::platformInitialize(const char* name, QOS)
+void WorkQueue::platformInitialize(const char* name, Type, QOS)
 {
     m_dispatchQueue = DispatchQueue::create(name);
 }
