@@ -1,3 +1,23 @@
+2015-02-12  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Audio should hide timeline scrubber until playback starts
+        https://bugs.webkit.org/show_bug.cgi?id=141542
+        <rdar://problem/19820685>
+
+        Reviewed by Eric Carlson.
+
+        We regressed from the system behaviour in iOS 7, where the timeline
+        scrubber for an audio element is not shown until the user starts
+        playback.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (video::-webkit-media-controls-panel): Fix the alignment of the flexbox.
+        (audio::-webkit-media-controls-status-display): Add the style for the status display.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.configureInlineControls): Start hidden if we are an <audio>.
+        (ControllerIOS.prototype.configureFullScreenControls): Drive by comment change.
+        (ControllerIOS.prototype.setPlaying): Unhide the timeline.
+
 2015-02-12  Chris Dumez  <cdumez@apple.com>
 
         Drop the quirks-mode exception for CSS MIME types

@@ -111,7 +111,7 @@ video::-webkit-media-controls-panel {
     display: -webkit-flex;
     -webkit-flex-direction: row;
     -webkit-flex-wrap: nowrap;
-    -webkit-justify-content: space-between;
+    -webkit-justify-content: flex-start;
     -webkit-align-items: center;
 
     transition: opacity 0.25s linear;
@@ -409,6 +409,27 @@ video::-webkit-media-controls-timeline-container .hour-long-time,
 audio::-webkit-media-controls-timeline-container .hour-long-time {
     min-width: 67px;
 }
+
+/* ================== STATUS DISPLAY ====================== */
+
+video::-webkit-media-controls-status-display,
+audio::-webkit-media-controls-status-display {
+
+    overflow: hidden;
+    font-family: -apple-system-font;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-decoration: none;
+    color: black;
+    mix-blend-mode: plus-darker;
+    opacity: 0.55;
+    -webkit-order: 2;
+}
+
+/* ================== CAPTIONS ====================== */
 
 video::-webkit-media-text-track-container {
     position: relative;

@@ -228,7 +228,10 @@ ControllerIOS.prototype = {
             this.controls.timelineBox.appendChild(this.controls.timeline);
             this.controls.timelineBox.appendChild(this.controls.remainingTime);
         }
-        if (!this.isAudio()) {
+        if (this.isAudio()) {
+            // Hide the scrubber on audio until the user starts playing.
+            this.controls.timelineBox.classList.add(this.ClassNames.hidden);
+        } else {
             if (ControllerIOS.gSimulateOptimizedFullscreenAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('optimized')))
                 this.controls.panel.appendChild(this.controls.optimizedFullscreenButton);
             this.controls.panel.appendChild(this.controls.fullscreenButton);
@@ -236,7 +239,7 @@ ControllerIOS.prototype = {
     },
 
     configureFullScreenControls: function() {
-        // Do nothing
+        // Explicitly do nothing to override base-class behavior.
     },
 
     hideControls: function() {
@@ -601,6 +604,8 @@ ControllerIOS.prototype = {
     setPlaying: function(isPlaying)
     {
         Controller.prototype.setPlaying.call(this, isPlaying);
+        if (isPlaying && this.isAudio())
+            this.controls.timelineBox.classList.remove(this.ClassNames.hidden);
         this.updateControls();
     },
 
