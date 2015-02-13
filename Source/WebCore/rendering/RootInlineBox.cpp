@@ -316,11 +316,11 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     return heightOfBlock + maxHeight;
 }
 
-float RootInlineBox::maxLogicalTop() const
+float RootInlineBox::maxLogicalBottom() const
 {
-    float maxLogicalTop = 0;
-    computeMaxLogicalTop(maxLogicalTop);
-    return maxLogicalTop;
+    float maxLogicalBottom = logicalBottom();
+    computeMaxLogicalBottom(maxLogicalBottom);
+    return maxLogicalBottom;
 }
 
 LayoutUnit RootInlineBox::beforeAnnotationsAdjustment() const
