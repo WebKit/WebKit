@@ -1,3 +1,14 @@
+2015-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        TimerBase::m_heapInsertionOrder calculation is racy
+        https://bugs.webkit.org/show_bug.cgi?id=141554
+
+        Reviewed by Anders Carlsson.
+
+        Use an atomic increment.
+
+        * platform/Timer.cpp: (WebCore::TimerBase::setNextFireTime):
+
 2015-02-13  Andreas Kling  <akling@apple.com>
 
         [iOS] Refine GC behavior in response to process suspension and memory pressure.

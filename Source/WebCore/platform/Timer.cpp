@@ -384,7 +384,8 @@ void TimerBase::setNextFireTime(double newUnalignedTime)
     double newTime = alignedFireTime(newUnalignedTime);
     if (oldTime != newTime) {
         m_nextFireTime = newTime;
-        static unsigned currentHeapInsertionOrder;
+        // FIXME: This should be part of ThreadTimers, or another per-thread structure.
+        static std::atomic<unsigned> currentHeapInsertionOrder;
         m_heapInsertionOrder = currentHeapInsertionOrder++;
 
         bool wasFirstTimerInHeap = m_heapIndex == 0;
