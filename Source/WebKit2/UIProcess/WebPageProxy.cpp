@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4814,6 +4814,12 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.availableScreenSize = availableScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = m_pageClient.mimeTypesWithCustomContentProviders();
+#endif
+
+#if PLATFORM(COCOA)
+    parameters.appleMailPaginationQuirkEnabled = appleMailPaginationQuirkEnabled();
+#else
+    parameters.appleMailPaginationQuirkEnabled = false;
 #endif
 
     return parameters;
