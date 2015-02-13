@@ -61,7 +61,11 @@ void MemoryPressureHandler::platformReleaseMemory(bool)
 #endif
 
 #if PLATFORM(IOS)
-    {
+    if (memoryPressureHandler().isUnderMemoryPressure()) {
+        gcController().garbageCollectSoon();
+    } else {
+        // If we're not under memory pressure, that means we're here due to impending process suspension.
+        // Do a full GC since this is our last chance to run any code.
         ReliefLogger log("Collecting JavaScript garbage");
         gcController().garbageCollectNow();
     }
