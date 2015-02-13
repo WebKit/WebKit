@@ -2029,24 +2029,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
-# Need to have new baseline since r172874
-webkit.org/b/141462 fast/ruby/bopomofo-letter-spacing.html [ Failure ]
-webkit.org/b/141462 fast/ruby/bopomofo-rl.html [ Failure ]
-webkit.org/b/141462 fast/ruby/bopomofo.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-beforeafter.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-length.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-run-break.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-runs-spans.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-runs.html [ Failure ]
-webkit.org/b/141462 fast/ruby/ruby-trailing.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-insert-rt.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-insert-text1.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-insert-text2.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-insert-text3.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-remove-rt1.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-remove-rt2.html [ Failure ]
-webkit.org/b/141462 fast/ruby/rubyDOM-remove-text1.html [ Failure ]
-
 # Started failing since r167808
 webkit.org/b/141496 fast/multicol/client-rects-spanners-complex.html [ Failure ]
 webkit.org/b/141496 fast/multicol/client-rects-spanners.html [ Failure ]

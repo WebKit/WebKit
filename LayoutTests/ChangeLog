@@ -1,3 +1,44 @@
+2015-02-12  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Need to have new baseline for some tests of fast/ruby since r172874
+        https://bugs.webkit.org/show_bug.cgi?id=141462
+
+        Unreviewed, EFL gardening. Rebaseline after r172874
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/ruby/bopomofo-expected.png: Added.
+        * platform/efl/fast/ruby/bopomofo-expected.txt:
+        * platform/efl/fast/ruby/bopomofo-letter-spacing-expected.png: Added.
+        * platform/efl/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/efl/fast/ruby/bopomofo-rl-expected.png: Added.
+        * platform/efl/fast/ruby/bopomofo-rl-expected.txt:
+        * platform/efl/fast/ruby/ruby-beforeafter-expected.png:
+        * platform/efl/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/efl/fast/ruby/ruby-length-expected.png:
+        * platform/efl/fast/ruby/ruby-length-expected.txt:
+        * platform/efl/fast/ruby/ruby-run-break-expected.png:
+        * platform/efl/fast/ruby/ruby-run-break-expected.txt:
+        * platform/efl/fast/ruby/ruby-runs-expected.png:
+        * platform/efl/fast/ruby/ruby-runs-expected.txt:
+        * platform/efl/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/efl/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/efl/fast/ruby/ruby-trailing-expected.png:
+        * platform/efl/fast/ruby/ruby-trailing-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/efl/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/efl/fast/ruby/rubyDOM-remove-text1-expected.txt:
+
 2015-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed updates to test expectations to reduce failures on Windows bots.
