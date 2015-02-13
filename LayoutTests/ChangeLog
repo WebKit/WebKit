@@ -1,3 +1,15 @@
+2015-02-13  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Div having contentEditable and display:grid cannot be edited if it is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=141465
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests if an editable grid box can be reedited after erasing all texts in it.
+
+        * fast/events/key-events-in-editable-gridbox-expected.txt: Added.
+        * fast/events/key-events-in-editable-gridbox.html: Added.
+
 2015-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip accessibility tests failing due to debug assertions.

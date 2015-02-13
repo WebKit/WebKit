@@ -1,3 +1,23 @@
+2015-02-13  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Div having contentEditable and display:grid cannot be edited if it is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=141465
+
+        Reviewed by Ryosuke Niwa.
+
+        This bug is quite similar to webkit.org/b/141218. RenderGrid should be also treated as a candidate
+        for visible position as like RenderFlexibleBox. The only different situation between them is
+        that RenderGrid has a bug setting "0px" for logicalHeight when it is empty. RenderGrid should also have
+        a minimum height of a single line if it is editable as well as RenderFlexibleBox does.
+
+        Test: fast/events/key-events-in-editable-gridbox.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::isRenderedCharacter):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+
 2015-02-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r176262): Invalid cast in WebCore`WebCore::RootInlineBox::selectionTop
