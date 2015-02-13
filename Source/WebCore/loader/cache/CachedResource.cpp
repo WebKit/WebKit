@@ -384,7 +384,8 @@ void CachedResource::responseReceived(const ResourceResponse& response)
 void CachedResource::clearLoader()
 {
     ASSERT(m_loader);
-    m_loader = 0;
+    m_loader = nullptr;
+    deleteIfPossible();
 }
 
 void CachedResource::addClient(CachedResourceClient* client)

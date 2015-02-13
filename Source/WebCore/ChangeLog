@@ -1,3 +1,23 @@
+2015-02-13  Andreas Kling  <akling@apple.com>
+
+        CachedResource::clearLoader() should self-destruct if nothing else retains the CachedResource.
+        <https://webkit.org/b/141568>
+        <rdar://problem/19800310>
+
+        Reviewed by Antti Koivisto.
+
+        Anything that may cause CachedResource::canDelete() to return true must also make sure
+        to call CachedResource::deleteIfPossible(), or we risk leaking the CachedResource.
+        This is because CachedResource employs an extremely convoluted lifetime mechanism that
+        depends on its presence in a number of collections, as well as internal counters and
+        state.
+
+        This is a speculative fix for a potential CachedResource leak that I'm not sure exists
+        in practice, but let's be good citizens here.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::clearLoader):
+
 2015-02-13  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Crash at WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset + 2357
