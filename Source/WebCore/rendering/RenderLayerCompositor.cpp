@@ -67,8 +67,6 @@
 
 #if PLATFORM(IOS)
 #include "LegacyTileCache.h"
-#include "MainFrame.h"
-#include "Region.h"
 #include "RenderScrollbar.h"
 #endif
 
@@ -101,13 +99,13 @@ using namespace HTMLNames;
 
 class OverlapMapContainer {
 public:
-    void add(const IntRect& bounds)
+    void add(const LayoutRect& bounds)
     {
         m_layerRects.append(bounds);
         m_boundingBox.unite(bounds);
     }
 
-    bool overlapsLayers(const IntRect& bounds) const
+    bool overlapsLayers(const LayoutRect& bounds) const
     {
         // Checking with the bounding box will quickly reject cases when
         // layers are created for lists of items going in one direction and
@@ -127,8 +125,8 @@ public:
         m_boundingBox.unite(otherContainer.m_boundingBox);
     }
 private:
-    Vector<IntRect> m_layerRects;
-    IntRect m_boundingBox;
+    Vector<LayoutRect> m_layerRects;
+    LayoutRect m_boundingBox;
 };
 
 class RenderLayerCompositor::OverlapMap {
@@ -143,7 +141,7 @@ public:
         pushCompositingContainer();
     }
 
-    void add(const RenderLayer* layer, const IntRect& bounds)
+    void add(const RenderLayer* layer, const LayoutRect& bounds)
     {
         // Layers do not contribute to overlap immediately--instead, they will
         // contribute to overlap as soon as their composited ancestor has been
@@ -158,7 +156,7 @@ public:
         return m_layers.contains(layer);
     }
 
-    bool overlapsLayers(const IntRect& bounds) const
+    bool overlapsLayers(const LayoutRect& bounds) const
     {
         return m_overlapStack.last().overlapsLayers(bounds);
     }
@@ -183,10 +181,10 @@ public:
 
 private:
     struct RectList {
-        Vector<IntRect> rects;
-        IntRect boundingRect;
+        Vector<LayoutRect> rects;
+        LayoutRect boundingRect;
         
-        void append(const IntRect& rect)
+        void append(const LayoutRect& rect)
         {
             rects.append(rect);
             boundingRect.unite(rect);
@@ -198,7 +196,7 @@ private:
             boundingRect.unite(rectList.boundingRect);
         }
         
-        bool intersects(const IntRect& rect) const
+        bool intersects(const LayoutRect& rect) const
         {
             if (!rects.size() || !boundingRect.intersects(rect))
                 return false;
@@ -814,9 +812,12 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
         m_secondaryBackingStoreBytes += backing->backingStoreMemoryEstimate();
     }
 
+    LayoutRect absoluteBounds = backing->compositedBounds();
+    absoluteBounds.move(layer.offsetFromAncestor(m_renderView.layer()));
+    
     StringBuilder logString;
-    logString.append(String::format("%*p %dx%d %.2fKB", 12 + depth * 2, &layer,
-        backing->compositedBounds().width().round(), backing->compositedBounds().height().round(),
+    logString.append(String::format("%*p (%.6f,%.6f-%.6f,%.6f) %.2fKB", 12 + depth * 2, &layer,
+        absoluteBounds.x().toFloat(), absoluteBounds.y().toFloat(), absoluteBounds.maxX().toFloat(), absoluteBounds.maxY().toFloat(),
         backing->backingStoreMemoryEstimate() / 1024));
     
     logString.append(" (");
@@ -1083,7 +1084,7 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
-void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer& layer, IntRect& layerBounds, bool& boundsComputed)
+void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer& layer, LayoutRect& layerBounds, bool& boundsComputed)
 {
     if (layer.isRootLayer())
         return;
@@ -1091,14 +1092,14 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
     if (!boundsComputed) {
         // FIXME: If this layer's overlap bounds include its children, we don't need to add its
         // children's bounds to the overlap map.
-        layerBounds = enclosingIntRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
+        layerBounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
         // Empty rects never intersect, but we need them to for the purposes of overlap testing.
         if (layerBounds.isEmpty())
-            layerBounds.setSize(IntSize(1, 1));
+            layerBounds.setSize(LayoutSize(1, 1));
         boundsComputed = true;
     }
 
-    IntRect clipRect = pixelSnappedIntRect(layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
+    LayoutRect clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
 
     // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
     // FIXME: Set Settings::delegatesPageScaling to true for iOS.
@@ -1120,7 +1121,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     if (ancestorLayer)
         overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer);
     
-    IntRect bounds;
+    LayoutRect bounds;
     bool haveComputedBounds = false;
     addToOverlapMap(overlapMap, layer, bounds, haveComputedBounds);
 
@@ -1208,16 +1209,16 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     RenderLayer::IndirectCompositingReason compositingReason = compositingState.m_subtreeIsCompositing ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None;
     bool haveComputedBounds = false;
-    IntRect absBounds;
+    LayoutRect absBounds;
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && overlapMap && !overlapMap->isEmpty() && compositingState.m_testingOverlap) {
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
-        absBounds = enclosingIntRect(overlapMap->geometryMap().absoluteRect(layer.overlapBounds()));
+        absBounds = enclosingLayoutRect(overlapMap->geometryMap().absoluteRect(layer.overlapBounds()));
 
         // Empty rects never intersect, but we need them to for the purposes of overlap testing.
         if (absBounds.isEmpty())
-            absBounds.setSize(IntSize(1, 1));
+            absBounds.setSize(LayoutSize(1, 1));
         haveComputedBounds = true;
         compositingReason = overlapMap->overlapsLayers(absBounds) ? RenderLayer::IndirectCompositingReason::Overlap : RenderLayer::IndirectCompositingReason::None;
     }

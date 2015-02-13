@@ -332,7 +332,7 @@ private:
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
 
-    void addToOverlapMap(OverlapMap&, RenderLayer&, IntRect& layerBounds, bool& boundsComputed);
+    void addToOverlapMap(OverlapMap&, RenderLayer&, LayoutRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
 
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>&);
