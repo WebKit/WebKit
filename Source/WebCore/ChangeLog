@@ -1,3 +1,15 @@
+2015-02-12  Timothy Horton  <timothy_horton@apple.com>
+
+        Crashes under detectItemAroundHitTestResult when DataDetectors is not available
+        https://bugs.webkit.org/show_bug.cgi?id=141549
+        <rdar://problem/19180955>
+
+        Reviewed by Dan Bernstein.
+
+        * editing/mac/DataDetection.mm:
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        Bail out from data detection if either of the relevant frameworks aren't loaded.
+
 2015-02-12  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Audio should hide timeline scrubber until playback starts
