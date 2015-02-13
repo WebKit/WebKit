@@ -1,3 +1,16 @@
+2015-02-13  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r174761): Invalid cast in WebCore::lastRubyRun / WebCore::RenderRubyAsBlock::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=137929
+        rdar://problem/18723492
+
+        Reviewed by Chris Dumez.
+
+        Ensure that the child renderer is a RenderRubyRun.
+
+        * fast/ruby/crash-with-before-after-on-ruby-expected.txt: Added.
+        * fast/ruby/crash-with-before-after-on-ruby.html: Added.
+
 2015-02-13  Michael Saboff  <msaboff@apple.com>
 
         Google doc spreadsheet reproducibly crashes when sorting
