@@ -4816,7 +4816,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.mimeTypesWithCustomContentProviders = m_pageClient.mimeTypesWithCustomContentProviders();
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     parameters.appleMailPaginationQuirkEnabled = appleMailPaginationQuirkEnabled();
 #else
     parameters.appleMailPaginationQuirkEnabled = false;

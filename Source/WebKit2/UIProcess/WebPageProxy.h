@@ -1224,7 +1224,9 @@ private:
 
     // Dictionary.
     void didPerformDictionaryLookup(const DictionaryPopupInfo&);
+#endif
 
+#if PLATFORM(MAC)
     bool appleMailPaginationQuirkEnabled();
 #endif
 
