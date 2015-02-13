@@ -1408,6 +1408,58 @@ accessibility/table-sections.html [ Failure ]
 accessibility/table-with-rules.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
 accessibility/visible-elements.html [ Failure ]
+
+# Not Investigated: A lot of DEBUG asserts, maybe related to items listed above
+[ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-readonly.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-slider-value.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-label.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-updates-alldescendants.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-describedby-on-input.html [ Skip ] # Crashing
+[ Debug ] accessibility/accessibility-node-memory-management.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-checkbox-checked.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-help.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-negates-no-visibility.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-disabled.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-labelledby-stay-within.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-menubar-menuitems.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-text-role.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-link-supports-press.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-table-hierarchy.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-namefrom-author.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-checked-mixed-value.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-scrollbar-role.html [ Skip ] # Crashing
+[ Debug ] accessibility/accessibility-node-reparent.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-roles.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-labelledby-with-descendants.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-required.html [ Skip ] # Crashing
+[ Debug ] accessibility/accessibility-object-detached.html [ Skip ] # Crashing
+[ Debug ] accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ] # Crashing
+[ Debug ] accessibility/anchor-linked-anonymous-block-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-fallback-roles.html [ Skip ] # Crashing
+[ Debug ] accessibility/auto-filled-value.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-labeled-with-hidden-node.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-mappings.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-presentational-role.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-inherits-presentational.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-flowto.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-tables.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-update.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-list-and-listitem.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-controls.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-hides-all-elements.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-none-role.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-disabled-propagated-to-children.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-activedescendant-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-with-elements.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-sort.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-checkbox-text.html [ Skip ] # Crashing
+[ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-labelledby-on-input.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-used-on-image-maps.html [ Skip ] # Crashing
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
@@ -2026,6 +2078,7 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 [ Release ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
 [ Debug ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ]
 [ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
+inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################

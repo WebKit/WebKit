@@ -1,5 +1,12 @@
 2015-02-12  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Mark some debug assertions.
+
+        * platform/win/TestExpectations: Mark several debug assertions so
+        we don't end testing early.
+
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] More media rebaselining.
 
         * platform/win/TestExpectations:
