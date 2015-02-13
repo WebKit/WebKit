@@ -24,16 +24,6 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
-EXPORTED_SYMBOLS_FILE_ = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.exp;
-EXPORTED_SYMBOLS_FILE_armv7 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.armv7.exp;
-EXPORTED_SYMBOLS_FILE_armv7k = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.armv7k.exp;
-EXPORTED_SYMBOLS_FILE_armv7s = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.armv7s.exp;
-EXPORTED_SYMBOLS_FILE_arm64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.arm64.exp;
-EXPORTED_SYMBOLS_FILE_i386[sdk=iphonesimulator*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.i386.exp;
-EXPORTED_SYMBOLS_FILE_i386[sdk=macosx*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.exp;
-EXPORTED_SYMBOLS_FILE_x86_64[sdk=iphonesimulator*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.x86_64.exp;
-EXPORTED_SYMBOLS_FILE_x86_64[sdk=macosx*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp;
 GCC_PREFIX_HEADER = WebCorePrefix.h;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST $(GCC_PREPROCESSOR_DEFINITIONS);
 FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATION));
@@ -61,6 +51,8 @@ DYLIB_INSTALL_NAME_BASE_PLATFORM[sdk=macosx*] = $(NORMAL_WEBCORE_FRAMEWORKS_DIR)
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
+UNEXPORTED_SYMBOLS_FILE_xcode_0500 = Configurations/WebCore.unexp;
+UNEXPORTED_SYMBOLS_FILE = $(UNEXPORTED_SYMBOLS_FILE_xcode_$(XCODE_VERSION_MINOR));
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;
 OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
