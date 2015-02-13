@@ -1,5 +1,31 @@
 2015-02-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r180053
+
+    2015-02-13  Andreas Kling  <akling@apple.com>
+
+            [iOS] Refine GC behavior in response to process suspension and memory pressure.
+            <https://webkit.org/b/141543>
+            <rdar://problem/19738024>
+
+            Reviewed by Geoffrey Garen.
+
+            Do an immediate full garbage collection when the web process is about to
+            be suspended (when another tab is moving to the foreground on iOS.)
+            This ensures that we make a best effort to reduce the process footprint
+            before we lose the ability to execute code.
+
+            When receiving a memory pressure warning, tell the garbage collector to
+            accelerate its next collection (by calling garbageCollectSoon().)
+            This gives us some confidence that a collection will happen within a
+            reasonable timeframe, but doesn't risk dooming us to a loop of endless
+            garbage collections.
+
+            * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+            (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
+2015-02-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179737
 
     2015-02-05  Andreas Kling  <akling@apple.com>
