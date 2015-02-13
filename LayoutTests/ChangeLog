@@ -1,3 +1,11 @@
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More media rebaselining.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/css/focus-ring-exists-for-search-field-expected.png: Added.
+        * platform/win/fast/css/focus-ring-exists-for-search-field-expected.txt: Added.
+
 2015-02-12  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Need to have new baseline for some tests of fast/ruby since r172874
