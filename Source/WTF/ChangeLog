@@ -1,5 +1,16 @@
 2015-02-13  Anders Carlsson  <andersca@apple.com>
 
+        Add a move constructor and move assignment operator to Deque
+        https://bugs.webkit.org/show_bug.cgi?id=141571
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::Deque):
+        (WTF::=): Deleted.
+
+2015-02-13  Anders Carlsson  <andersca@apple.com>
+
         Add an initializer list constructor to Deque
         https://bugs.webkit.org/show_bug.cgi?id=141565
 

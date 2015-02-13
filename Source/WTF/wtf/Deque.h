@@ -53,11 +53,14 @@ public:
 
     Deque();
     Deque(std::initializer_list<T>);
-    Deque(const Deque<T, inlineCapacity>&);
-    Deque& operator=(const Deque<T, inlineCapacity>&);
+    Deque(const Deque&);
+    Deque(Deque&&);
     ~Deque();
 
-    void swap(Deque<T, inlineCapacity>&);
+    Deque& operator=(const Deque&);
+    Deque& operator=(Deque&&);
+
+    void swap(Deque&);
 
     size_t size() const { return m_start <= m_end ? m_end - m_start : m_end + m_buffer.capacity() - m_start; }
     bool isEmpty() const { return m_start == m_end; }
@@ -282,7 +285,7 @@ inline Deque<T, inlineCapacity>::Deque(std::initializer_list<T> initializerList)
 }
 
 template<typename T, size_t inlineCapacity>
-inline Deque<T, inlineCapacity>::Deque(const Deque<T, inlineCapacity>& other)
+inline Deque<T, inlineCapacity>::Deque(const Deque& other)
     : m_start(other.m_start)
     , m_end(other.m_end)
     , m_buffer(other.m_buffer.capacity())
@@ -300,12 +303,26 @@ inline Deque<T, inlineCapacity>::Deque(const Deque<T, inlineCapacity>& other)
 }
 
 template<typename T, size_t inlineCapacity>
-inline Deque<T, inlineCapacity>& Deque<T, inlineCapacity>::operator=(const Deque<T, inlineCapacity>& other)
+inline Deque<T, inlineCapacity>::Deque(Deque&& other)
+    : Deque()
+{
+    swap(other);
+}
+
+template<typename T, size_t inlineCapacity>
+inline auto Deque<T, inlineCapacity>::operator=(const Deque& other) -> Deque&
 {
     // FIXME: This is inefficient if we're using an inline buffer and T is
     // expensive to copy since it will copy the buffer twice instead of once.
     Deque<T, inlineCapacity> copy(other);
     swap(copy);
+    return *this;
+}
+
+template<typename T, size_t inlineCapacity>
+inline auto Deque<T, inlineCapacity>::operator=(Deque&& other) -> Deque&
+{
+    swap(other);
     return *this;
 }
 
