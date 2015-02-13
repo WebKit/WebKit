@@ -5867,18 +5867,21 @@ static BOOL writingDirectionKeyBindingsEnabled()
                 NSString *s = [event characters];
                 if ([s length] == 0)
                     break;
+                WebView* webView = [self _webView];
                 switch ([s characterAtIndex:0]) {
                     case kWebBackspaceKey:
                     case kWebDeleteKey:
-                        [[[self _webView] _UIKitDelegateForwarder] deleteFromInput];
+                        // FIXME: remove the call to deleteFromInput when UIKit implements deleteFromInputWithFlags.
+                        if ([webView respondsToSelector:@selector(deleteFromInputWithFlags:)])
+                            [[webView _UIKitDelegateForwarder] deleteFromInputWithFlags:event.keyboardFlags];
+                        else
+                            [[webView _UIKitDelegateForwarder] deleteFromInput];
                         return YES;
-                    case kWebEnterKey:                        
+                    case kWebEnterKey:
                     case kWebReturnKey:
                         if (platformEvent->type() == PlatformKeyboardEvent::Char) {
                             // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
-                            // FIXME: remove the first call when UIKit implements the new method.
-                            [[[self _webView] _UIKitDelegateForwarder] addInputString:@"\n" fromVariantKey:NO];
-                            [[[self _webView] _UIKitDelegateForwarder] addInputString:@"\n" withFlags:0];
+                            [[webView _UIKitDelegateForwarder] addInputString:@"\n" withFlags:0];
                             return YES;
                         }
                         return NO;
@@ -5887,10 +5890,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
                         return YES;
                     default: {                    
                         if (platformEvent->type() == PlatformKeyboardEvent::Char) {
-                            //NSString *string = event.characters;
-                            // FIXME: remove the first call when UIKit implements the new method.
-                            [[[self _webView] _UIKitDelegateForwarder] addInputString:event.characters fromVariantKey:event.popupVariant];
-                            [[[self _webView] _UIKitDelegateForwarder] addInputString:event.characters withFlags:event.keyboardFlags];
+                            [[webView _UIKitDelegateForwarder] addInputString:event.characters withFlags:event.keyboardFlags];
                             return YES;
                         }
                         return NO;

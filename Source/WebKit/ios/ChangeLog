@@ -1,5 +1,27 @@
 2015-02-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r179580. rdar://problem/19709200
+
+    2015-02-03  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] Add support for deleteFromInputWithFlags.
+            https://bugs.webkit.org/show_bug.cgi?id=141216
+            rdar://problem/19130081
+
+            Reviewed by Benjamin Poulain.
+
+            Adopts the new method as soon as it is available.
+            The patch also removes some obsolete code used for staging.
+
+            * DefaultDelegates/WebDefaultUIKitDelegate.m:
+            (-[WebDefaultUIKitDelegate addInputString:withFlags:]):
+            (-[WebDefaultUIKitDelegate deleteFromInput]):
+            (-[WebDefaultUIKitDelegate deleteFromInputwithFlags:]):
+            (-[WebDefaultUIKitDelegate addInputString:fromVariantKey:]): Deleted.
+            * WebView/WebUIKitDelegate.h:
+
+2015-02-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174284. rdar://problem/19812620
 
     2014-10-03  Tim Horton  <timothy_horton@apple.com>

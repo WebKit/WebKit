@@ -77,10 +77,10 @@
 - (void)webView:(WebView *)webView willShowFullScreenForPlugInView:(id)plugInView;
 - (void)webView:(WebView *)webView didHideFullScreenForPlugInView:(id)plugInView;
 - (void)webView:(WebView *)aWebView didReceiveMessage:(NSDictionary *)aMessage;
-// FIXME: to be removed when UIKit implements the new one.
-- (void)addInputString:(NSString *)str fromVariantKey:(BOOL)isPopupVariant;
 - (void)addInputString:(NSString *)str withFlags:(NSUInteger)flags;
+// FIXME: remove deleteFromInput when UIKit implements deleteFromInputWithFlags.
 - (void)deleteFromInput;
+- (void)deleteFromInputWithFlags:(NSUInteger)flags;
 
 // Accelerated compositing
 - (void)_webthread_webView:(WebView*)webView attachRootLayer:(id)rootLayer;

@@ -204,6 +204,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @interface UIKeyboardImpl (StagingToRemove)
 - (void)didHandleWebKeyEvent;
+- (void)deleteFromInputWithFlags:(NSUInteger)flags;
 @end
 
 @interface UIView (UIViewInternalHack)
@@ -2368,17 +2369,22 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         NSString *characters = [event characters];
         if ([characters length] == 0)
             break;
+        UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
         switch ([characters characterAtIndex:0]) {
         case kWebBackspaceKey:
         case kWebDeleteKey:
-            [[UIKeyboardImpl sharedInstance] deleteFromInput];
+            // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
+            if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
+                [keyboard deleteFromInputWithFlags:event.keyboardFlags];
+            else
+                [keyboard deleteFromInput];
             return YES;
 
         case kWebEnterKey:
         case kWebReturnKey:
             if (isCharEvent) {
                 // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
-                [[UIKeyboardImpl sharedInstance] addInputString:@"\n" withFlags:0];
+                [keyboard addInputString:@"\n" withFlags:0];
                 return YES;
             }
             return NO;
@@ -2389,7 +2395,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
         default: {
             if (isCharEvent) {
-                [[UIKeyboardImpl sharedInstance] addInputString:event.characters withFlags:event.keyboardFlags];
+                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
                 return YES;
             }
             return NO;

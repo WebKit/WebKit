@@ -161,16 +161,16 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 {
 }
 
-// FIXME: to be removed when UIKit implements the new one below.
-- (void)addInputString:(NSString *)str fromVariantKey:(BOOL)isPopupVariant
-{
-}
-
 - (void)addInputString:(NSString *)str withFlags:(NSUInteger)flags
 {
 }
 
+// FIXME: to be removed when UIKit implements the new one below.
 - (void)deleteFromInput
+{
+}
+
+- (void)deleteFromInputwithFlags:(NSUInteger)flags
 {
 }
 
