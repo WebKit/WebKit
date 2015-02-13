@@ -1,3 +1,21 @@
+2015-02-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DumpRenderTree.app fails to link due to undefined classes
+        <rdar://problem/19831228>
+
+        Following r179945, DumpRenderTree.app fails to link due to undefined symbols:
+
+        Undefined symbols for architecture x86_64:
+          "_OBJC_CLASS_$_WebEvent", referenced from:
+              objc-class-ref in libDumpRenderTree.a(EventSendingController.o)
+          "_OBJC_CLASS_$_WebUndefined", referenced from:
+              objc-class-ref in libDumpRenderTree.a(ObjCController.o)
+
+        We need to export the classes WebScriptObject and WebEvent.
+
+        * bindings/objc/WebScriptObject.h:
+        * platform/ios/WebEvent.h:
+
 2015-02-13  Andreas Kling  <akling@apple.com>
 
         CachedResource::clearLoader() should self-destruct if nothing else retains the CachedResource.

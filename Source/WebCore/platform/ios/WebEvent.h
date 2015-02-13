@@ -75,7 +75,7 @@ typedef enum {
     WebEventCharacterSetFunctionKeys    = 254,
 } WebEventCharacterSet;
 
-@interface WebEvent : NSObject {
+WEBCORE_EXPORT @interface WebEvent : NSObject {
 @private
     WebEventType _type;
     CFTimeInterval _timestamp;

@@ -320,7 +320,7 @@ WEBCORE_EXPORT @interface WebScriptObject : NSObject
     @class WebUndefined
 */
 WEBKIT_CLASS_AVAILABLE_MAC(10_4)
-@interface WebUndefined : NSObject <NSCoding, NSCopying>
+WEBCORE_EXPORT @interface WebUndefined : NSObject <NSCoding, NSCopying>
 
 /*!
     @method undefined
