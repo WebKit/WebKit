@@ -1,3 +1,17 @@
+2015-02-13  Zalan Bujtas  <zalan@apple.com>
+
+        Simplify ASSERT in lastRubyRun().
+        https://bugs.webkit.org/show_bug.cgi?id=141574
+
+        Reviewed by Daniel Bates.
+
+        r180064 made some of the conditions in the ASSERT redundant.
+
+        Covered by existing tests.
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::lastRubyRun):
+
 2015-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac, iOS] Adjust pagination behavior for Mail.app printing use

@@ -108,9 +108,10 @@ static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
     RenderObject* child = ruby->lastChild();
     if (child && !is<RenderRubyRun>(*child))
         child = child->previousSibling();
-    ASSERT(!child || is<RenderRubyRun>(*child) || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
-    if (!is<RenderRubyRun>(child))
+    if (!is<RenderRubyRun>(child)) {
+        ASSERT(!child || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
         return nullptr;
+    }
     return downcast<RenderRubyRun>(child);
 }
 
