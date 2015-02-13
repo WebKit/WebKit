@@ -694,6 +694,7 @@ static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
 
 static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assistedNode)
 {
+    ASSERT(!assistedNode || &assistedNode->document() == frame->document());
     const int DEFAULT_CONSTRAIN_INSET = 2;
     IntRect innerFrame = innerFrameQuad(frame, assistedNode).enclosingBoundingBox();
     IntPoint constrainedPoint = point;
@@ -2154,6 +2155,16 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.isAutocorrect = true;   // FIXME: Should we look at the attribute?
         information.autocapitalizeType = WebAutocapitalizeTypeSentences; // FIXME: Should we look at the attribute?
         information.isReadOnly = false;
+    }
+}
+
+void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
+{
+    if (!m_assistedNode)
+        return;
+    if (m_assistedNode->document().frame() == frame->coreFrame()) {
+        send(Messages::WebPageProxy::StopAssistingNode());
+        m_assistedNode = nullptr;
     }
 }
 

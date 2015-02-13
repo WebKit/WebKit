@@ -143,6 +143,9 @@ void WebFrameLoaderClient::detachedFromParent2()
     if (!webPage)
         return;
 
+#if PLATFORM(IOS)
+    webPage->resetAssistedNodeForFrame(m_frame);
+#endif
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
