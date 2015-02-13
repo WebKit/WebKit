@@ -2134,6 +2134,7 @@ public:
     void compileArithMul(Node*);
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
+    void compileArithSqrt(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);

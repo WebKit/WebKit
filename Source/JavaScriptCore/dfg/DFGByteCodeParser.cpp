@@ -1668,9 +1668,6 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         
         switch (intrinsic) {
         case SqrtIntrinsic:
-            if (!MacroAssembler::supportsFloatingPointSqrt())
-                return false;
-            
             set(VirtualRegister(resultOperand), addToGraph(ArithSqrt, get(virtualRegisterForArgument(1, registerOffset))));
             return true;
             

@@ -3543,6 +3543,23 @@ void SpeculativeJIT::compileArithMod(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithSqrt(Node* node)
+{
+    SpeculateDoubleOperand op1(this, node->child1());
+    FPRReg op1FPR = op1.fpr();
+
+    if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::enableArchitectureSpecificOptimizations()) {
+        flushRegisters();
+        FPRResult result(this);
+        callOperation(sqrt, result.fpr(), op1FPR);
+        doubleResult(result.fpr(), node);
+    } else {
+        FPRTemporary result(this, op1);
+        m_jit.sqrtDouble(op1.fpr(), result.fpr());
+        doubleResult(result.fpr(), node);
+    }
+}
+
 // Returns true if the compare is fused with a subsequent branch.
 bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_JITOperation_EJJ operation)
 {

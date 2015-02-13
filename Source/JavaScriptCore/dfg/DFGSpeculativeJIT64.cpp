@@ -2240,17 +2240,11 @@ void SpeculativeJIT::compile(Node* node)
         }
         break;
     }
-        
-    case ArithSqrt: {
-        SpeculateDoubleOperand op1(this, node->child1());
-        FPRTemporary result(this, op1);
-        
-        m_jit.sqrtDouble(op1.fpr(), result.fpr());
-        
-        doubleResult(result.fpr(), node);
+
+    case ArithSqrt:
+        compileArithSqrt(node);
         break;
-    }
-        
+
     case ArithFRound: {
         SpeculateDoubleOperand op1(this, node->child1());
         FPRTemporary result(this, op1);
