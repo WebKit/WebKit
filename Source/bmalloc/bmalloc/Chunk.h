@@ -63,6 +63,8 @@ private:
 
     // Align to vmPageSize to avoid sharing physical pages with metadata.
     // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
+    // FIXME: Below #ifdef workaround fix should be removed after all linux based ports bump
+    // own gcc version. See https://bugs.webkit.org/show_bug.cgi?id=140162#c87
 #if BPLATFORM(IOS)
     char m_memory[] __attribute__((aligned(16384)));
     static_assert(vmPageSize == 16384, "vmPageSize and alignment must be same");

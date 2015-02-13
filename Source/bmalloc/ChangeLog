@@ -1,3 +1,13 @@
+2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [BMalloc] Add a FIXME comment for memory alignas
+        https://bugs.webkit.org/show_bug.cgi?id=141556
+
+        Reviewed by Csaba Osztrogonác.
+
+        * bmalloc/Chunk.h: Add a FIXME comment.
+        * bmalloc/LargeChunk.h: ditto.
+
 2015-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         bmalloc buildfix on 32 bit Linux (x86/ARM)
