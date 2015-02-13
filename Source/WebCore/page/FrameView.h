@@ -122,6 +122,8 @@ public:
     WEBCORE_EXPORT void setNeedsLayout();
     void setViewportConstrainedObjectsNeedLayout();
 
+    bool needsStyleRecalcOrLayout(bool includeSubframes = true) const;
+
     bool needsFullRepaint() const { return m_needsFullRepaint; }
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);

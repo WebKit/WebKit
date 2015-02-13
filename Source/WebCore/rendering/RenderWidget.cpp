@@ -99,7 +99,7 @@ void RenderWidget::willBeDestroyed()
         cache->remove(this);
     }
 
-    setWidget(0);
+    setWidget(nullptr);
 
     RenderReplaced::willBeDestroyed();
 }
