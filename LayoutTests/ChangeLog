@@ -1,3 +1,9 @@
+2015-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed updates to test expectations to reduce failures on Windows bots.
+
+        * platform/win/TestExpectations: Mark a number of time-outs for Media tests.
+
 2015-02-12  Beth Dakin  <bdakin@apple.com>
 
         Re-baselines after http://trac.webkit.org/changeset/180018

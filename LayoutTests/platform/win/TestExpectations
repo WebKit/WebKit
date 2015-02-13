@@ -754,6 +754,7 @@ webkit.org/b/38376 media/media-document-audio-size.html [ Skip ]
 # Media Stream API is not yet enabled.
 fast/mediastream [ Skip ]
 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
+http/tests/media/media-stream [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/45021 media/context-menu-actions.html
@@ -960,6 +961,8 @@ media/audio-constructor-preload.html [ Skip ] # Timeout
 media/audio-data-url.html [ Skip ] # Timeout
 media/audio-only-video-intrinsic-size.html [ Skip ] # Timeout
 media/audio-play-event.html [ Skip ] # Timeout
+media/controls-drag-timebar.html [ Skip ] # Timeout
+media/event-attributes.html [ Skip ] # Timeout
 media/media-blocked-by-beforeload.html [ Skip ] # Timeout
 media/media-captions.html [ Skip ] # Timeout
 media/media-continues-playing-after-replace-source.html [ Skip ] # Timeout
@@ -967,21 +970,66 @@ media/media-controls-cancel-events.html [ Skip ] # Timeout
 media/media-document-audio-controls-visible.html [ Skip ] # Timeout
 media/media-document-audio-repaint.html [ Skip ] # Timeout
 media/media-volume-slider-rendered-below.html [ Skip ] # Timeout
+media/track/track-css-all-cues.html [ Skip ] # Timeout
+media/track/track-css-cue-lifetime.html [ Skip ] # Timeout
+media/track/track-css-matching-default.html [ Skip ] # Timeout
+media/track/track-css-matching.html [ Skip ] # Timeout
+media/track/track-css-matching-lang.html [ Skip ] # Timeout
+media/track/track-css-matching-timestamps.html [ Skip ] # Timeout
+media/track/track-css-property-whitelist.html [ Skip ] # Timeout
+media/track/track-css-user-override.html [ Skip ] # Timeout
+media/track/track-cue-nothing-to-render.html [ Skip ] # Timeout
+media/track/track-cue-rendering.html [ Skip ] # Timeout
+media/track/track-cue-rendering-horizontal.html [ Skip ] # Timeout
+media/track/track-cue-rendering-on-resize.html [ Skip ] # Timeout
+media/track/track-cue-rendering-rtl.html [ Skip ] # Timeout
+media/track/track-cue-rendering-snap-to-lines-not-set.html [ Skip ] # Timeout
+media/track/track-cue-rendering-with-padding.html [ Skip ] # Timeout
+media/track/track-cue-overlap-snap-to-lines-not-set.html [ Skip ] # Timeout
 media/track/track-cues-cuechange.html [ Skip ] # Timeout
 media/track/track-cues-enter-exit.html [ Skip ] # Timeout
 media/track/track-cues-missed.html [ Skip ] # Timeout
 media/track/track-cues-pause-on-exit.html [ Skip ] # Timeout
+media/track/track-cues-seeking.html [ Skip ] # Timeout
 media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Timeout
 media/track/track-datacue.html [ Skip ] # Timeout
+media/track/track-forced-subtitles-in-band.html [ Skip ] # Timeout
+media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
+media/track/track-in-band-style.html [ Skip ] # Timeout
+media/track/track-in-band-subtitles-too-large.html [ Skip ] # Timeout
 media/track/track-language-preference.html [ Skip ] # Timeout
+media/track/track-legacyapi-with-automatic-mode.html [ Skip ] # Timeout
+media/track/track-load-error-readyState.html [ Skip ] # Timeout
 media/track/track-long-captions-file.html [ Skip ] # Timeout
+media/track/track-long-word-container-sizing.html [ Skip ] # Timeout
 media/track/track-mode.html	[ Skip ] # Timeout
 media/track/w3c/track/webvtt/basic.html	[ Skip ] # Timeout
+media/video-canvas-drawing.html [ Skip ] # Timeout
+media/video-currentTime-delay.html [ Skip ] # Timeout
+media/video-currentTime-set.html [ Skip ] # Timeout
 media/video-defaultmuted.html [ Skip ] # Timeout
 media/video-does-not-loop.html [ Skip ] # Timeout
+media/video-fast-seek.html [ Skip ] # Timeout
+media/video-loop.html [ Skip ] # Timeout
+media/video-played-collapse.html [ Skip ] # Timeout
+media/video-poster-background.html [ Skip ] # Timeout
+media/video-remote-control-playpause.html [ Skip ] # Timeout
+media/video-replaces-poster.html [ Skip ] # Timeout
+media/video-reverse-play-duration.html [ Skip ] # Timeout
 media/video-rtl.html [ Skip ] # Timeout
+media/video-seek-by-small-increment.html [ Skip ] # Timeout
+media/video-seek-double.html [ Skip ] # Timeout
+media/video-seek-multiple.html [ Skip ] # Timeout
+media/video-seek-past-end-paused.html [ Skip ] # Timeout
 media/video-seek-with-negative-playback.html [ Skip ] # Timeout
+media/video-seeking.html [ Skip ] # Timeout
 media/video-size-intrinsic-scale.html [ Skip ] # Timeout
+media/video-timeupdate-reverse-play.html [ Skip ] # Timeout
+
+# HTTP Timeouts
+http/tests/media/hls/video-cookie.html [ Skip ] # Timeout
+http/tests/media/video-buffered-range-contains-currentTime.html [ Skip ] # Timeout
+http/tests/media/video-play-waiting.html [ Skip ] # Timeout
 
 # Extra whitespace in the output
 media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
@@ -2674,6 +2722,9 @@ webkit.org/b/97026 scrollbars/custom-scrollbar-with-incomplete-style.html [ Fail
 security/autocomplete-cleared-on-back.html [ Skip ]  # Timeout
 
 transitions/move-after-transition.html [ Failure Timeout ]
+
+fast/workers/worker-lifecycle.html [ Skip ] # Timeout
+inspector/css/stylesheet-with-mutations.html [ Skip ] # Timeout
 
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
