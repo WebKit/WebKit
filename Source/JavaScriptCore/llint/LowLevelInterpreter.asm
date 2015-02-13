@@ -445,21 +445,21 @@ macro vmEntryRecord(entryFramePointer, resultReg)
     subp entryFramePointer, VMEntryTotalFrameSize, resultReg
 end
 
-macro moveStackPointerForCodeBlock(codeBlock, scratch)
-    loadi CodeBlock::m_numCalleeRegisters[codeBlock], scratch
-    lshiftp 3, scratch
-    addp maxFrameExtentForSlowPathCall, scratch
-    if ARMv7
-        subp cfr, scratch, scratch
-        move scratch, sp
-    else
-        subp cfr, scratch, sp
-    end
+macro getFrameRegisterSizeForCodeBlock(codeBlock, size)
+    loadi CodeBlock::m_numCalleeRegisters[codeBlock], size
+    lshiftp 3, size
+    addp maxFrameExtentForSlowPathCall, size
 end
 
 macro restoreStackPointerAfterCall()
     loadp CodeBlock[cfr], t2
-    moveStackPointerForCodeBlock(t2, t4)
+    getFrameRegisterSizeForCodeBlock(t2, t4)
+    if ARMv7
+        subp cfr, t4, t4
+        move t4, sp
+    else
+        subp cfr, t4, sp
+    end
 end
 
 macro traceExecution()
@@ -606,8 +606,6 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     end
 
     codeBlockSetter(t1)
-    
-    moveStackPointerForCodeBlock(t1, t2)
 
     # Set up the PC.
     if JSVALUE64
@@ -616,6 +614,29 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     else
         loadp CodeBlock::m_instructions[t1], PC
     end
+
+    # Get new sp in t0 and check stack height.
+    getFrameRegisterSizeForCodeBlock(t1, t0)
+    subp cfr, t0, t0
+    loadp CodeBlock::m_vm[t1], t2
+    bpbeq VM::m_jsStackLimit[t2], t0, .stackHeightOK
+
+    # Stack height check failed - need to call a slow_path.
+    subp maxFrameExtentForSlowPathCall, sp # Set up temporary stack pointer for call
+    callSlowPath(_llint_stack_check)
+    bpeq t1, 0, .stackHeightOKGetCodeBlock
+    move t1, cfr
+    dispatch(0) # Go to exception handler in PC
+
+.stackHeightOKGetCodeBlock:
+    # Stack check slow path returned that the stack was ok.
+    # Since they were clobbered, need to get CodeBlock and new sp
+    codeBlockSetter(t1)
+    getFrameRegisterSizeForCodeBlock(t1, t0)
+    subp cfr, t0, t0
+
+.stackHeightOK:
+    move t0, sp
 end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
@@ -650,20 +671,6 @@ macro functionInitialization(profileArgSkip)
     end
     baddpnz -8, t0, .argumentProfileLoop
 .argumentProfileDone:
-        
-    # Check stack height.
-    loadi CodeBlock::m_numCalleeRegisters[t1], t0
-    loadp CodeBlock::m_vm[t1], t2
-    lshiftp 3, t0
-    addi maxFrameExtentForSlowPathCall, t0
-    subp cfr, t0, t0
-    bpbeq VM::m_jsStackLimit[t2], t0, .stackHeightOK
-
-    # Stack height check failed - need to call a slow_path.
-    callSlowPath(_llint_stack_check)
-    bpeq t1, 0, .stackHeightOK
-    move t1, cfr
-.stackHeightOK:
 end
 
 macro allocateJSObject(allocator, structure, result, scratch1, slowCase)

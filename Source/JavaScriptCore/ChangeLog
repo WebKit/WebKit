@@ -1,3 +1,30 @@
+2015-02-13  Michael Saboff  <msaboff@apple.com>
+
+        Google doc spreadsheet reproducibly crashes when sorting
+        https://bugs.webkit.org/show_bug.cgi?id=141098
+
+        Reviewed by Oliver Hunt.
+
+        Moved the stack check to before the callee registers are allocated in the
+        prologue() by movving it from the functionInitialization() macro.  This
+        way we can check the stack before moving the stack pointer, avoiding a
+        crash during a "call" instruction.  Before this change, we weren't even
+        checking the stack for program and eval execution.
+
+        Made a couple of supporting changes.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_stack_check): We can't just go up one frame as we
+        may be processing an exception to an entry frame.
+
+        * llint/LowLevelInterpreter.asm:
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        (llint_throw_from_slow_path_trampoline): Changed method to get the vm
+        from the code block to not use the codeBlock, since we may need to
+        continue from an exception in a native function.
+
 2015-02-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify the initialization of BytecodeGenerator a bit
