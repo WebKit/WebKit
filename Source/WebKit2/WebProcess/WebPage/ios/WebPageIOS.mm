@@ -1276,8 +1276,10 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
 
         IntRect copyRect = selectionBoxForRange(newRange.get());
         if (copyRect.isEmpty()) {
-            bestRange = rangeForBlockAtPoint(testPoint);
-            break;
+            // If the new range is an empty rectangle, we try the block at the current point
+            // and see if that has a rectangle that is a better choice.
+            newRange = rangeForBlockAtPoint(testPoint);
+            copyRect = selectionBoxForRange(newRange.get());
         }
         bool isBetterChoice;
         switch (handlePosition) {

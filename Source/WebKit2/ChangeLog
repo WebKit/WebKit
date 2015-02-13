@@ -1,3 +1,25 @@
+2015-02-13  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r179847. rdar://problem/19711485
+
+    2015-02-09  Enrica Casucci  <enrica@apple.com>
+
+            Selection flickers when trying to change size of selection.
+            https://bugs.webkit.org/show_bug.cgi?id=141404
+            rdar://problem/18824863
+
+            Reviewed by Benjamin Poulain.
+
+            When looking for the contracted range from the current range,
+            we were incorrectly choosing a selection whose rectangle is empty
+            as a best match candidate. This was throwing off all the logic
+            and producing a contracted range whose rectangle was bigger than the
+            expanded range, therefore producing a shrink threshold larger than the
+            growth one.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::contractedRangeFromHandle):
+
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r179578.
