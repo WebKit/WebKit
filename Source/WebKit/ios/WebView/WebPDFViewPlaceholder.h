@@ -163,8 +163,6 @@
  */
 - (CGPDFDocumentRef)cgPDFDocument;
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor;
-
 @end
 
 #endif /* TARGET_OS_IPHONE */
