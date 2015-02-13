@@ -525,6 +525,9 @@ private:
 
     State m_state;
 
+    // Try to catch a crash. https://bugs.webkit.org/show_bug.cgi?id=141561.
+    bool m_inLoadPendingImages { false };
+
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);
     friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
     friend bool operator==(const MatchRanges&, const MatchRanges&);

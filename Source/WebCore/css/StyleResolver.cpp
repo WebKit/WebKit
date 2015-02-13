@@ -140,6 +140,7 @@
 #include "XMLNames.h"
 #include <bitset>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -344,6 +345,8 @@ void StyleResolver::addKeyframeStyle(PassRefPtr<StyleRuleKeyframes> rule)
 
 StyleResolver::~StyleResolver()
 {
+    RELEASE_ASSERT(!m_inLoadPendingImages);
+
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     m_viewportStyleResolver->clearDocument();
 #endif
@@ -740,6 +743,8 @@ static inline bool isAtShadowBoundary(const Element* element)
 Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
     StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling)
 {
+    RELEASE_ASSERT(!m_inLoadPendingImages);
+
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
     if (sharingBehavior == AllowStyleSharing && !element->document().haveStylesheetsLoaded() && !element->renderer()) {
@@ -811,6 +816,8 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
 
 Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
+    RELEASE_ASSERT(!m_inLoadPendingImages);
+
     MatchResult result;
     result.addMatchedProperties(keyframe->properties());
 
@@ -978,6 +985,8 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
 
 Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
+    RELEASE_ASSERT(!m_inLoadPendingImages);
+
     m_state.initForStyleResolve(m_document, m_document.documentElement(), m_document.renderStyle());
 
     m_state.setStyle(RenderStyle::create());
@@ -2428,6 +2437,9 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
 
 void StyleResolver::loadPendingImages()
 {
+    RELEASE_ASSERT(!m_inLoadPendingImages);
+    TemporaryChange<bool> { m_inLoadPendingImages, true };
+
     if (m_state.pendingImageProperties().isEmpty())
         return;
 
