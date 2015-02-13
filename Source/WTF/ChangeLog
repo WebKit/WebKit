@@ -1,3 +1,11 @@
+2015-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Re-indent Deque.h
+
+        Rubber-stamped by Antti Koivisto.
+
+        * wtf/Deque.h:
+
 2015-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] [64-bit] Work around MSVC2013 Runtime Bug
