@@ -1440,7 +1440,7 @@ static inline bool isRegionalIndicator(UChar32 character)
 
 static inline bool isEmojiGroupCandidate(UChar32 character)
 {
-    return character >= 0x1F466 && character <= 0x1F469;
+    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B;
 }
 
 static inline bool isEmojiModifier(UChar32 character)
