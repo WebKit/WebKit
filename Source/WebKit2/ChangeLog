@@ -1,3 +1,16 @@
+2015-02-12  Tim Horton  <timothy_horton@apple.com>
+
+        Crash under RemoteLayerTreeDrawingArea::flushLayers() when closing a tab
+        https://bugs.webkit.org/show_bug.cgi?id=141541
+
+        Reviewed by Benjamin Poulain.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        The WebPage pointer can become stale between when it is retrieved
+        and dereferenced. Retrieve it by ID inside the dispatch_async block
+        instead of outside of it.
+
 2015-02-12  Antti Koivisto  <antti@apple.com>
 
         WebKit persistent cache uses a lot of threads

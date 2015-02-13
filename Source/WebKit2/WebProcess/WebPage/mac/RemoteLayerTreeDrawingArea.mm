@@ -400,12 +400,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     dispatch_async(m_commitQueue, [backingStoreFlusher, pageID] {
         backingStoreFlusher->flush();
 
-        if (WebPage *webPage = WebProcess::singleton().webPage(pageID)) {
-            std::chrono::milliseconds timestamp = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(monotonicallyIncreasingTime() * 1000));
-            dispatch_async(dispatch_get_main_queue(), ^{
+        std::chrono::milliseconds timestamp = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(monotonicallyIncreasingTime() * 1000));
+        dispatch_async(dispatch_get_main_queue(), [pageID, timestamp] {
+            if (WebPage* webPage = WebProcess::singleton().webPage(pageID))
                 webPage->didFlushLayerTreeAtTime(timestamp);
-            });
-        }
+        });
     });
 }
 
