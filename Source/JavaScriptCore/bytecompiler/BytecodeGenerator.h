@@ -55,7 +55,6 @@
 namespace JSC {
 
     class Identifier;
-    class Label;
 
     enum ExpectedFunction {
         NoExpectedFunction,
@@ -581,8 +580,6 @@ namespace JSC {
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
 
     private:
-        friend class Label;
-        
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();
         UnlinkedObjectAllocationProfile newObjectAllocationProfile();

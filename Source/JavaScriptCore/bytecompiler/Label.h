@@ -41,7 +41,7 @@ namespace JSC {
 
     class Label {
     public:
-        explicit Label(BytecodeGenerator* generator)
+        explicit Label(BytecodeGenerator& generator)
             : m_refCount(0)
             , m_location(invalidLocation)
             , m_generator(generator)
@@ -82,7 +82,7 @@ namespace JSC {
 
         int m_refCount;
         unsigned m_location;
-        BytecodeGenerator* m_generator;
+        BytecodeGenerator& m_generator;
         mutable JumpVector m_unresolvedJumps;
     };
 

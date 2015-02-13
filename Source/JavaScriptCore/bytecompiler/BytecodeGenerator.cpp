@@ -55,7 +55,7 @@ void Label::setLocation(unsigned location)
     
     unsigned size = m_unresolvedJumps.size();
     for (unsigned i = 0; i < size; ++i)
-        m_generator->m_instructions[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
+        m_generator.instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
 }
 
 ParserError BytecodeGenerator::generate()
@@ -581,7 +581,7 @@ PassRefPtr<Label> BytecodeGenerator::newLabel()
         m_labels.removeLast();
 
     // Allocate new label ID.
-    m_labels.append(this);
+    m_labels.append(*this);
     return &m_labels.last();
 }
 
