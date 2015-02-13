@@ -1,3 +1,13 @@
+2015-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Add an initializer list constructor to Deque
+        https://bugs.webkit.org/show_bug.cgi?id=141565
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WTF/Deque.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [buildbot] Remove buildJSCTool cruft from master.cfg

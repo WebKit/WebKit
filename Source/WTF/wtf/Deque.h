@@ -52,6 +52,7 @@ public:
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
     Deque();
+    Deque(std::initializer_list<T>);
     Deque(const Deque<T, inlineCapacity>&);
     Deque& operator=(const Deque<T, inlineCapacity>&);
     ~Deque();
@@ -270,6 +271,14 @@ inline Deque<T, inlineCapacity>::Deque()
 #endif
 {
     checkValidity();
+}
+
+template<typename T, size_t inlineCapacity>
+inline Deque<T, inlineCapacity>::Deque(std::initializer_list<T> initializerList)
+    : Deque()
+{
+    for (auto& element : initializerList)
+        append(element);
 }
 
 template<typename T, size_t inlineCapacity>

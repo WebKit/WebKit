@@ -54,6 +54,28 @@ TEST(WTF_Deque, Iterator)
     EXPECT_TRUE(end == it);
 }
 
+TEST(WTF_Deque, InitializerList)
+{
+    Deque<int> deque = { 1, 2, 3, 4 };
+
+    EXPECT_EQ(4u, deque.size());
+
+    auto it = deque.begin();
+    auto end = deque.end();
+    EXPECT_TRUE(end != it);
+
+    EXPECT_EQ(1, *it);
+    ++it;
+    EXPECT_EQ(2, *it);
+    ++it;
+    EXPECT_EQ(3, *it);
+    ++it;
+    EXPECT_EQ(4, *it);
+    ++it;
+
+    EXPECT_TRUE(end == it);
+}
+
 TEST(WTF, DequeReverseIterator)
 {
     Deque<int> deque;
