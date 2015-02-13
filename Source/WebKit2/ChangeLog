@@ -1,3 +1,17 @@
+2015-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        determinePrimarySnapshottedPlugIn() should only traverse visible Frames
+        https://bugs.webkit.org/show_bug.cgi?id=141547
+        Part of rdar://problem/18445733.
+
+        Reviewed by Anders Carlsson.
+        
+        Use FrameTree::traverseNextRendered() to avoid doing things in unrendered frames
+        which are not guaranteed to have been laid out.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
 2015-02-13  Antti Koivisto  <antti@apple.com>
 
         WorkQueue should support concurrent queues

@@ -56,7 +56,10 @@ namespace WebCore {
         Frame* lastChild() const { return m_lastChild; }
 
         WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
-        WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = 0) const;
+        
+        WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = nullptr) const;
+        // Rendered means being the main frame or having an ownerRenderer. It may not have been parented in the Widget tree yet (see WidgetHierarchyUpdatesSuspensionScope).
+        WEBCORE_EXPORT Frame* traverseNextRendered(const Frame* stayWithin = nullptr) const;
         WEBCORE_EXPORT Frame* traverseNextWithWrap(bool) const;
         WEBCORE_EXPORT Frame* traversePreviousWithWrap(bool) const;
         
@@ -87,6 +90,9 @@ namespace WebCore {
         Frame* scopedChild(const AtomicString& name, TreeScope*) const;
         unsigned scopedChildCount(TreeScope*) const;
 
+        Frame* firstRenderedChild() const;
+        Frame* nextRenderedSibling() const;
+
         Frame& m_thisFrame;
 
         Frame* m_parent;
@@ -104,7 +110,7 @@ namespace WebCore {
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showFrameTree(const WebCore::Frame*);
+WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
 #endif
 
 #endif // FrameTree_h
