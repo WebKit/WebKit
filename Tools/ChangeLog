@@ -1,5 +1,19 @@
 2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed, remove empty directories.
+
+        * DumpRenderTree/gtk: Removed.
+        * DumpRenderTree/gtk/fonts: Removed.
+        * DumpRenderTree/unix: Removed.
+        * DumpRenderTree/unix/TestNetscapePlugin: Removed.
+        * GtkLauncher: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources: Removed.
+        * WebKitTestRunner/WebKitTestRunnerAppTests: Removed.
+        * WebKitTestRunner/WebKitTestRunnerAppTests/en.lproj: Removed.
+
+2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         Remove Windows cruft from Tools/Scripts/build-webkittestrunner
         https://bugs.webkit.org/show_bug.cgi?id=141519
 

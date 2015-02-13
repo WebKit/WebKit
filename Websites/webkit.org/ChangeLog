@@ -1,3 +1,9 @@
+2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, remove empty directories.
+
+        * blog/wp-includes/js/codepress: Removed.
+
 2015-02-03  Byungseon Shin  <sun.shin@webkit.org>
 
         Add LG Electronics to team.html

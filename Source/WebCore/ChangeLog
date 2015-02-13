@@ -1,3 +1,11 @@
+2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, remove empty directories.
+
+        * loader/icon/wince: Removed.
+        * platform/graphics/wince: Removed.
+        * storage/wince: Removed.
+
 2015-02-12  Timothy Horton  <timothy_horton@apple.com>
 
         Crashes under detectItemAroundHitTestResult when DataDetectors is not available

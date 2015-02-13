@@ -1,3 +1,9 @@
+2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, remove empty directories.
+
+        * public/data: Removed.
+
 2015-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should show the results of A/B testing

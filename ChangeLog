@@ -1,3 +1,9 @@
+2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, remove empty directories.
+
+        * ManualTests/qt: Removed.
+
 2015-02-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Don't set flag fuse-ld on the C/C++ compiler flags, but on the linker flags.
