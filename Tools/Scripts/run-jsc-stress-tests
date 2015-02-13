@@ -725,6 +725,11 @@ def defaultNoEagerRun
 end
 
 def runProfiler
+    if $remote
+        skip
+        return
+    end
+
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput
         addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
