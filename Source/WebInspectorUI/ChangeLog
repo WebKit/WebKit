@@ -1,3 +1,12 @@
+2015-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: support better git diff of localizedStrings.js
+        https://bugs.webkit.org/show_bug.cgi?id=137237
+
+        Reviewed by Joseph Pecoraro.
+
+        * .gitattributes: Added.
+
 2015-02-12  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: add keyboard shortcut to enable/disable all breakpoints
