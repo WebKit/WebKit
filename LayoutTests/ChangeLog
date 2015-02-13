@@ -1,3 +1,9 @@
+2015-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+       [Win] Document some debug asserts in Accessibility (Windows) tests.
+
+        * platform/win/TestExpectations:
+
 2015-02-13  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r174761): Invalid cast in WebCore::lastRubyRun / WebCore::RenderRubyAsBlock::addChild

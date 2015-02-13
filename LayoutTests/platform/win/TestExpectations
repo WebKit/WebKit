@@ -1280,20 +1280,34 @@ webkit.org/b/140798 [ Release ] accessibility/fieldset-element.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/fieldset-element.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 [ Release ] accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/global-aria-attributes-invalidate-presentational.html [ Skip ] # Crash (Debug Assertion)
-webkit.org/b/140798 accessibility/heading-crash-after-hidden.html [ Failure ]
-webkit.org/b/140798 accessibility/html-html-element-is-ignored.html [ Failure ]
-webkit.org/b/140798 accessibility/inline-block-assertion.html [ Failure ]
-webkit.org/b/140798 accessibility/input-type-hidden-in-aria-hidden-false.html [ Failure ]
-webkit.org/b/140798 accessibility/legend-children-are-visible.html [ Failure ]
-webkit.org/b/140798 accessibility/link-inside-button-accessible-text.html [ Failure ]
-webkit.org/b/140798 accessibility/list-detection.html [ Failure ]
-webkit.org/b/140798 accessibility/listitem-title.html [ Failure ]
-webkit.org/b/140798 accessibility/math-multiscript-attributes.html [ Failure ]
-webkit.org/b/140798 accessibility/math-text.html [ Failure ]
-webkit.org/b/140798 accessibility/negative-tabindex-does-not-expose-label.html [ Failure ]
-webkit.org/b/140798 accessibility/non-data-table-cell-title-ui-element.html [ Failure ]
-webkit.org/b/140798 accessibility/noscript-ignored.html [ Failure ]
-webkit.org/b/140798 accessibility/password-field-value.html [ Failure ]
+webkit.org/b/140798 [ Release ] accessibility/heading-crash-after-hidden.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/heading-crash-after-hidden.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/html-html-element-is-ignored.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/html-html-element-is-ignored.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/inline-block-assertion.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/inline-block-assertion.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/legend-children-are-visible.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/legend-children-are-visible.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/link-inside-button-accessible-text.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/link-inside-button-accessible-text.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/list-detection.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/list-detection.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/listitem-title.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/listitem-title.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/math-multiscript-attributes.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/math-multiscript-attributes.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/math-text.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/math-text.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/negative-tabindex-does-not-expose-label.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/negative-tabindex-does-not-expose-label.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/non-data-table-cell-title-ui-element.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/non-data-table-cell-title-ui-element.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/noscript-ignored.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/noscript-ignored.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/password-field-value.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/password-field-value.html [ Skip ] # Debug assertion
 webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
@@ -1335,12 +1349,14 @@ webkit.org/b/140832 [ Release ] accessibility/aria-slider-value-change.html [ Fa
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/aria-slider-value.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value.html [ Skip ] # Debug assertion
-webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/meter-element.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/meter-element.html [ Skip ] # Debug assertion
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
 webkit.org/b/140832 [ Release ] accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-scrollbar-role.html [ Skip ] # Debug assertion
-webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/notification-listeners.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
@@ -1349,7 +1365,8 @@ webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
 # TODO Need to implement global addNotificationListener in Windows DRT
 accessibility/content-editable-as-textarea.html [ Skip ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
-accessibility/loading-iframe-sends-notification.html [ Failure ]
+[ Release ] accessibility/loading-iframe-sends-notification.html [ Failure ]
+[ Debug ] accessibility/loading-iframe-sends-notification.html [ Skip ] # Debug assertion
 platform/win/accessibility/single-select-children-changed.html	[ Skip ]
 
 webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
@@ -1434,16 +1451,26 @@ webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html 
 webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 
 # The following failures have not been investigated.
-accessibility/heading-level.html [ Failure ]
-accessibility/help-text.html [ Failure ]
-accessibility/html5-required-attribute.html [ Failure ]
-accessibility/image-link.html [ Failure ]
-accessibility/image-map2.html [ Failure ]
-accessibility/internal-link-anchors2.html [ Failure ]
-accessibility/language-attribute.html [ Pass Failure ]
-accessibility/lists.html [ Failure ]
-accessibility/onclick-handlers.html [ Failure ]
-accessibility/parent-delete.html [ Failure ]
+[ Release ] accessibility/heading-level.html [ Failure ]
+[ Debug ] accessibility/heading-level.html [ Skip ] # Debug assertion
+[ Release ] accessibility/help-text.html [ Failure ]
+[ Debug ] accessibility/help-text.html [ Skip ] # Debug assertion
+[ Release ] accessibility/html5-required-attribute.html [ Failure ]
+[ Debug ] accessibility/html5-required-attribute.html [ Skip ] # Debug assertion
+[ Release ] accessibility/image-link.html [ Failure ]
+[ Debug ] accessibility/image-link.html [ Skip ] # Debug assertion
+[ Release ] accessibility/image-map2.html [ Failure ]
+[ Debug ] accessibility/image-map2.html [ Skip ] # Debug assertion
+[ Release ] accessibility/internal-link-anchors2.html [ Failure ]
+[ Debug ] accessibility/internal-link-anchors2.html [ Skip ] # Debug assertion
+[ Release ] accessibility/language-attribute.html [ Pass Failure ]
+[ Debug ] accessibility/language-attribute.html [ Skip ] # Debug assertion
+[ Release ] accessibility/lists.html [ Failure ]
+[ Debug ] accessibility/lists.html [ Skip ] # Debug assertion
+[ Release ] accessibility/onclick-handlers.html [ Failure ]
+[ Debug ] accessibility/onclick-handlers.html [ Skip ] # Debug assertion
+[ Release ] accessibility/parent-delete.html [ Failure ]
+[ Debug ] accessibility/parent-delete.html [ Skip ] # Debug assertion
 accessibility/placeholder.html [ Failure ]
 accessibility/plugin.html [ Failure ]
 accessibility/press-target-uses-text-descendant-node.html [ Failure ]
@@ -1489,6 +1516,30 @@ accessibility/visible-elements.html [ Failure ]
 [ Debug ] accessibility/aria-checkbox-text.html [ Skip ] # Crashing
 [ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-on-input.html [ Skip ] # Crashing
+
+[ Debug ] accessibility/paragraph-with-linebreaks.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/ignore-spacer-elements.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/nested-layout-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map1.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/nochildren-elements.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/inline-continuations.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/insert-selected-option-into-select-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/label-element-press.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map-update-parent-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map-with-indirect-area-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/input-image-alt.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/iframe-bastardization.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-link-inline-cont.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/img-fallsback-to-title.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/media-controls.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/listbox-enabled-states.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/non-native-image-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/input-file-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/img-alt-tag-only-whitespace.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-with-alt-and-map.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/menu-item-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/img-aria-button-alt-tag.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map-title-causes-crash.html [ Skip ] # Debug assertion
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
