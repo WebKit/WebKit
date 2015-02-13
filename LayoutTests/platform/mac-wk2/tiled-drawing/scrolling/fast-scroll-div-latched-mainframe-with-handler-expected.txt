@@ -56,7 +56,7 @@ Mouse moved to (28, 125)
 Page before: 0, div before: 0
 Page after:  70, div after: 0
 PASS Scrollable div did not receive wheel events.
-Document was initial target for 10 of the wheel events.
+Document was initial target for 8 of the wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 2008.00 2326.00)

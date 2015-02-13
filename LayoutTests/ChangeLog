@@ -1,3 +1,13 @@
+2015-02-12  Beth Dakin  <bdakin@apple.com>
+
+        Re-baselines after http://trac.webkit.org/changeset/180018
+
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+
 2015-02-12  Chris Dumez  <cdumez@apple.com>
 
         Drop the quirks-mode exception for CSS MIME types

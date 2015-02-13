@@ -57,7 +57,7 @@ Mouse moved to (28, 475)
 Page before: 0, div before: 586
 Page after:  0, div after: 656
 PASS Page did not receive wheel events.
-Document was initial target for 10 of the wheel events.
+Document was initial target for 8 of the wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 2008.00 2341.00)

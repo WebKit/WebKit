@@ -12,7 +12,7 @@ Mouse moved to (28, 66)
 Page before: 0, IFrame before: 0
 Page after:  70, IFrame after: 0
 PASS IFrame did not receive wheel events.
-Document was initial target for 10 of the wheel events.
+Document was initial target for 8 of the wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 785.00 2326.00)

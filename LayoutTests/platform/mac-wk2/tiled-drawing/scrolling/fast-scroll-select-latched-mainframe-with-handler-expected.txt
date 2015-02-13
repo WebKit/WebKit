@@ -14,7 +14,7 @@ Mouse moved to (30, 127)
 Page before: 0, select before: 0
 Page after:  70, select after: 0
 PASS Select did not receive wheel events.
-Document was initial target for 10 of the wheel events.
+Document was initial target for 8 of the wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 2008.00 2326.00)
