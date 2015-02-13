@@ -291,7 +291,10 @@ public:
 
     void add64(TrustedImm32 imm, Address address)
     {
-        m_assembler.addq_im(imm.m_value, address.offset, address.base);
+        if (imm.m_value == 1)
+            m_assembler.incq_m(address.offset, address.base);
+        else
+            m_assembler.addq_im(imm.m_value, address.offset, address.base);
     }
 
     void add64(TrustedImm32 imm, AbsoluteAddress address)

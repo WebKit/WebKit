@@ -560,6 +560,11 @@ public:
     {
         m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_ADD, dst);
     }
+
+    void incq_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_ADD, base, offset);
+    }
 #endif // CPU(X86_64)
 
     void negl_r(RegisterID dst)

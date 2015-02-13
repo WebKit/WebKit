@@ -1,3 +1,24 @@
+2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generate incq instead of addq when the immediate value is one
+        https://bugs.webkit.org/show_bug.cgi?id=141548
+
+        Reviewed by Gavin Barraclough.
+
+        JSC emits "addq #1 (rXX)" *a lot*.
+        This patch replace that by incq, which is one byte shorter
+        and is the adviced form.
+
+        Sunspider: +0.47%
+        Octane: +0.28%
+        Kraken: +0.44%
+        AsmBench, CompressionBench: neutral.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::incq_m):
+
 2015-02-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Little clean up of Bytecode Generator's Label
