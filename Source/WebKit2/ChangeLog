@@ -1,3 +1,19 @@
+2015-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Clean up the framework postprocessing phase
+        https://bugs.webkit.org/show_bug.cgi?id=141544
+
+        Reviewed by Dan Bernstein.
+
+        Rename WK_API_AVAILABILITY_ENABLED to WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED to better match what
+        it is we're doing. Also, rename the associated script. Remove a couple of now unnecessary #defines, and
+        change everything we can to be feature-based instead of OS based.
+
+        * Configurations/WebKit.xcconfig:
+        * Shared/API/Cocoa/WKFoundation.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/postprocess-framework-headers.sh: Renamed from Source/WebKit2/mac/rewrite-availability-macros.sh.
+
 2015-02-12  Tim Horton  <timothy_horton@apple.com>
 
         Crash removing RemoteLayerTreeDisplayRefreshMonitor from the drawing area's map

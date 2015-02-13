@@ -2231,7 +2231,7 @@
 		1A1B0EB318A424950038481A /* WKNavigationResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationResponse.mm; sourceTree = "<group>"; };
 		1A1B0EB418A424950038481A /* WKNavigationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponse.h; sourceTree = "<group>"; };
 		1A1B0EB718A424CD0038481A /* WKNavigationResponseInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponseInternal.h; sourceTree = "<group>"; };
-		1A1D2116191D995C0001619F /* rewrite-availability-macros.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "rewrite-availability-macros.sh"; path = "mac/rewrite-availability-macros.sh"; sourceTree = "<group>"; };
+		1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "postprocess-framework-headers.sh"; path = "mac/postprocess-framework-headers.sh"; sourceTree = "<group>"; };
 		1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */ = {isa = PBXFileReference; lastKnownFileType = text; name = MigrateHeadersFromWebKitLegacy.make; path = mac/MigrateHeadersFromWebKitLegacy.make; sourceTree = "<group>"; };
 		1A1D8B9F1731A36300141DA4 /* LocalStorageDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageDatabase.cpp; sourceTree = "<group>"; };
 		1A1D8BA01731A36300141DA4 /* LocalStorageDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabase.h; sourceTree = "<group>"; };
@@ -4195,7 +4195,7 @@
 				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */,
-				1A1D2116191D995C0001619F /* rewrite-availability-macros.sh */,
+				1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
 				BC032DC310F438260058C15A /* UIProcess */,
@@ -8470,7 +8470,7 @@
 				1A6280C81919956B006AD9F9 /* Migrate WebKitLegacy Headers */,
 				375A248817E5048E00C9A086 /* Postprocess WKBase.h */,
 				1AD98ECF191D867300CAA6DF /* Postprocess WKFoundation.h */,
-				1A1D2115191D96380001619F /* Rewrite Availability Macros in Framework Headers */,
+				1A1D2115191D96380001619F /* Postprocess Framework Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
@@ -8881,19 +8881,19 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\nif [[ ! -d \"${INSTALL_DIR}/../PrivateFrameworks\" ]]; then\nmkdir -p \"${INSTALL_DIR}/../PrivateFrameworks\"\nfi\nif [[ -d \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" && ! -L \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" ]]; then\necho \"ERROR: Cannot create symlink. ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework already exists and is a directory.\"\nexit 1\nfi\n# If the symlink already exists, remove it and create the new one in its place.\nln -s -h -f ../Frameworks/WebKit.framework ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\nfi";
 		};
-		1A1D2115191D96380001619F /* Rewrite Availability Macros in Framework Headers */ = {
+		1A1D2115191D96380001619F /* Postprocess Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Rewrite Availability Macros in Framework Headers";
+			name = "Postprocess Framework Headers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    exec ${SRCROOT}/mac/rewrite-availability-macros.sh\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    exec ${SRCROOT}/mac/postprocess-framework-headers.sh\nfi";
 		};
 		1A6280C81919956B006AD9F9 /* Migrate WebKitLegacy Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8922,7 +8922,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "WKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ ${WK_API_AVAILABILITY_ENABLED} == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-DWK_API_AVAILABILITY_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-UWK_API_AVAILABILITY_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o ${WKFOUNDATION_H}.unifdef ${WKFOUNDATION_H}\n\ncase $? in\n0)\n    rm ${WKFOUNDATION_H}.unifdef\n    ;;\n1)\n    mv ${WKFOUNDATION_H}{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "WKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ ${WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED} == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o ${WKFOUNDATION_H}.unifdef ${WKFOUNDATION_H}\n\ncase $? in\n0)\n    rm ${WKFOUNDATION_H}.unifdef\n    ;;\n1)\n    mv ${WKFOUNDATION_H}{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		1ADAE12C1919A43F00F48E21 /* Migrate Headers to WebKit2 */ = {
 			isa = PBXShellScriptBuildPhase;
