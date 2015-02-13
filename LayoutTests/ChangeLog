@@ -1,3 +1,9 @@
+2015-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip accessibility tests failing due to debug assertions.
+
+        * platform/win/TestExpectations:
+
 2015-02-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r176262): Invalid cast in WebCore`WebCore::RootInlineBox::selectionTop

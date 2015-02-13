@@ -994,9 +994,7 @@ media/track/track-cues-seeking.html [ Skip ] # Timeout
 media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Timeout
 media/track/track-datacue.html [ Skip ] # Timeout
 media/track/track-forced-subtitles-in-band.html [ Skip ] # Timeout
-media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 media/track/track-in-band-style.html [ Skip ] # Timeout
-media/track/track-in-band-subtitles-too-large.html [ Skip ] # Timeout
 media/track/track-language-preference.html [ Skip ] # Timeout
 media/track/track-legacyapi-with-automatic-mode.html [ Skip ] # Timeout
 media/track/track-load-error-readyState.html [ Skip ] # Timeout
@@ -1028,6 +1026,9 @@ media/video-seeking.html [ Skip ] # Timeout
 media/video-size-intrinsic-scale.html [ Skip ] # Timeout
 media/video-timeupdate-reverse-play.html [ Skip ] # Timeout
 
+# Tracks don't seem to be appearing at all:
+media/track/track-in-band-subtitles-too-large.html [ Skip ] # Timeout
+
 # HTTP Timeouts
 http/tests/media/hls/video-cookie.html [ Skip ] # Timeout
 http/tests/media/video-buffered-range-contains-currentTime.html [ Skip ] # Timeout
@@ -1047,10 +1048,7 @@ media/W3C/video/canPlayType/canPlayType_codecs_order_3.html [ Failure ]
 media/audio-mpeg-supported.html [ Failure ]
 
 # Received an extra RUN(video.play()) event. Normal for Windows?
-media/track/track-in-band-cues-added-once.html [ Failure ]
-
-# Tracks don't seem to be appearing at all:
-media/track/track-in-band-subtitles-too-large.html [ Failure ]
+media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 
 # DOM security problem
 media/video-canvas-source.html [ Failure ]
@@ -1065,7 +1063,8 @@ media/video-source-type-params.html [ Failure ]
 http/tests/media/media-document-referer.html [ Failure ]
 http/tests/media/video-accept-encoding.html [ Failure ]
 http/tests/media/video-auth.html [ Failure ]
-http/tests/media/video-throttled-load-metadata.html [ Failure ]
+[ Release ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
+[ Debug ] http/tests/media/video-throttled-load-metadata.html [ Skip ] # Debug assertion
 
 # Screen obscured by opaque layer:
 media/video-frame-accurate-seek.html [ Failure ]
@@ -1242,26 +1241,45 @@ webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
 # The Windows Accessibility implementation is unable to recurse through the document to
 # find elements (in some cases). The following failures are due to this. The maddening
 # thing is that these do not consistently fail:
-webkit.org/b/140798 accessibility/aria-checked-mixed-value.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-controls.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-disabled-propagated-to-children.html [ Pass Failure ]
-webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-hidden-with-elements.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-labeled-with-hidden-node.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-labelledby-overrides-aria-labeledby.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-labelledby-with-descendants.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-namefrom-author.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-sort.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-tables.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-text-role.html [ Failure ]
-webkit.org/b/140798 accessibility/aria-used-on-image-maps.html [ Failure ]
-webkit.org/b/140798 accessibility/auto-filled-value.html [ Failure ]
-webkit.org/b/140798 accessibility/box-styled-lists.html [ Failure ]
+webkit.org/b/140798 [ Release ] accessibility/aria-checked-mixed-value.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-checked-mixed-value.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-controls.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-controls.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-disabled-propagated-to-children.html [ Pass Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-disabled-propagated-to-children.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-flowto.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-flowto.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-negates-no-visibility.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-hidden-with-elements.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-with-elements.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-labeled-with-hidden-node.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-labeled-with-hidden-node.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-labelledby-with-descendants.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-labelledby-with-descendants.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-namefrom-author.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-namefrom-author.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-sort.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-sort.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-tables.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-text-role.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/aria-used-on-image-maps.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/aria-used-on-image-maps.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/auto-filled-value.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/auto-filled-value.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/box-styled-lists.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/box-styled-lists.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
-webkit.org/b/140798 accessibility/empty-image-with-title.html [ Failure ]
-webkit.org/b/140798 accessibility/fieldset-element.html [ Failure ]
-webkit.org/b/140798 accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
+webkit.org/b/140798 [ Release ] accessibility/empty-image-with-title.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/empty-image-with-title.html [ Skip ] # Crash (Debug Assertion)
+webkit.org/b/140798 [ Release ] accessibility/fieldset-element.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/fieldset-element.html [ Skip ] # Crash (Debug Assertion)
+webkit.org/b/140798 [ Release ] accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/global-aria-attributes-invalidate-presentational.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140798 accessibility/heading-crash-after-hidden.html [ Failure ]
 webkit.org/b/140798 accessibility/html-html-element-is-ignored.html [ Failure ]
 webkit.org/b/140798 accessibility/inline-block-assertion.html [ Failure ]
@@ -1313,12 +1331,15 @@ webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Skip ]
 
 # The following fail because of missing numerical output support.
-webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
-webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/aria-slider-value-change.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Debug assertion
+webkit.org/b/140832 [ Release ] accessibility/aria-slider-value.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value.html [ Skip ] # Debug assertion
 webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
-webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/aria-scrollbar-role.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/aria-scrollbar-role.html [ Skip ] # Debug assertion
 webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/140832 [ Release ] accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
@@ -1339,7 +1360,8 @@ accessibility/file-upload-button-stringvalue.html
 webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #  [ Timeout ]
 
 # Wants 'webkitCreateShadowRoot()' access:
-webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html [ Failure ]
+webkit.org/b/108249 [ Release ] accessibility/corresponding-control-deleted-crash.html [ Failure ]
+webkit.org/b/108249 [ Debug ] accessibility/corresponding-control-deleted-crash.html [ Skip ] # Crash (Debug Assertion)
 
 # Color Well is not implemented:
 accessibility/color-well.html
@@ -1357,16 +1379,50 @@ accessibility/media-element.html [ Skip ]
 # Timeouts -- not investigated
 accessibility/aria-invalid.html [ Skip ]
 
-# The following fail in debug mode because an assertion is fired:
+# The following have not been investigated:
 webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-aria-label.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-label.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-option-role.html [ Skip ]
+[ Release ] accessibility/aria-readonly.html [ Failure ]
+[ Debug ] accessibility/aria-readonly.html [ Skip ] # Crash (Debug Assertion)
+[ Release ] accessibility/aria-required.html [ Failure ]
+[ Debug ] accessibility/aria-required.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-role-on-buttons.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-roles.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-toggle-button-with-title.html [ Skip ]
+[ Debug ] accessibility/button-press-action.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/button-title-uses-inner-img-alt.html [ Skip ]
+[ Debug ] accessibility/canvas-description-and-role.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Skip ]
+[ Debug ] accessibility/container-node-delete-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/content-changed-notification-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Release ] accessibility/content-editable.html [ Failure ]
+[ Debug ] accessibility/content-editable.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/contenteditable-hidden-div.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/contenteditable-table-check-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/crash-adopt-node-from-new-document.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/crash-determining-aria-role-when-label-present.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/crash-with-noelement-selectbox.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/crashing-a-tag-in-map.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/css-content-attribute.html [ Skip ] # Crash (Debug Assertion)
+[ Release ] accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
+[ Debug ] accessibility/deleting-iframe-destroys-axcache.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/dimensions-include-descendants.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/disabled-controls-not-focusable.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/display-table-cell-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/div-within-anchors-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Release ] accessibility/document-attributes.html [ Failure ]
+[ Debug ] accessibility/document-attributes.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/duplicate-axrenderobject-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/duplicate-child-nodes.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/ellipsis-text.html [ Skip ] # Crash (Debug Assertion)
+[ Release ] accessibility/element-haspopup.html [ Failure ]
+[ Debug ] accessibility/element-haspopup.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/first-letter-text-transform-causes-crash.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
+[ Release ] accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+[ Debug ] accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] accessibility/hang-in-isignored.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/heading-title-includes-links.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/spinbutton-value.html [ Skip ]
 
@@ -1378,13 +1434,6 @@ webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html 
 webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 
 # The following failures have not been investigated.
-accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
-accessibility/aria-readonly.html [ Failure ]
-accessibility/aria-required.html [ Failure ]
-accessibility/content-editable.html [ Failure ]
-accessibility/document-attributes.html [ Failure ]
-accessibility/element-haspopup.html [ Failure ]
-accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 accessibility/heading-level.html [ Failure ]
 accessibility/help-text.html [ Failure ]
 accessibility/html5-required-attribute.html [ Failure ]
@@ -1410,56 +1459,36 @@ accessibility/transformed-element.html [ Failure ]
 accessibility/visible-elements.html [ Failure ]
 
 # Not Investigated: A lot of DEBUG asserts, maybe related to items listed above
-[ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-readonly.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-slider-value.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-label.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-updates-alldescendants.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-describedby-on-input.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-node-memory-management.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-checkbox-checked.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-help.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-hidden-negates-no-visibility.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-disabled.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-stay-within.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-menubar-menuitems.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-text-role.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-link-supports-press.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-table-hierarchy.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-namefrom-author.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-checked-mixed-value.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-scrollbar-role.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-node-reparent.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-roles.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-labelledby-with-descendants.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-required.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-object-detached.html [ Skip ] # Crashing
 [ Debug ] accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ] # Crashing
 [ Debug ] accessibility/anchor-linked-anonymous-block-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-fallback-roles.html [ Skip ] # Crashing
-[ Debug ] accessibility/auto-filled-value.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-labeled-with-hidden-node.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-mappings.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-presentational-role.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-inherits-presentational.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-flowto.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-tables.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-update.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-list-and-listitem.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-crash.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-controls.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-hides-all-elements.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-none-role.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-disabled-propagated-to-children.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-activedescendant-crash.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-labelledby-overrides-aria-labeledby.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-hidden-with-elements.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-sort.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-checkbox-text.html [ Skip ] # Crashing
 [ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-on-input.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-used-on-image-maps.html [ Skip ] # Crashing
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
@@ -1831,7 +1860,8 @@ webkit.org/b/140703 http/tests/loading/307-after-303-after-post.html [ Failure ]
 webkit.org/b/140703 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 webkit.org/b/140703 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
 webkit.org/b/140703 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
-webkit.org/b/140703 http/tests/loading/redirect-methods.html [ Failure ]
+webkit.org/b/140703 [ Release ] http/tests/loading/redirect-methods.html [ Failure ]
+webkit.org/b/140703 [ Debug ] http/tests/loading/redirect-methods.html [ Skip ] # Debug assertion
 webkit.org/b/140703 http/tests/misc/401-alternative-content.php [ Failure ]
 webkit.org/b/140703 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
@@ -2206,7 +2236,8 @@ webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back-wi
 webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back.html [ Failure ]
 webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failure ]
 
-platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
+[ Release ] platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
+[ Debug ] platform/win/fast/text/uniscribe-missing-glyph.html [ Skip ] # Debug assertion
 
 webkit.org/b/138676 imported/w3c/canvas/2d.line.join.parallel.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
@@ -2351,10 +2382,8 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Skip ] # Crashing
 [ Debug ] http/tests/loading/preload-css-test.html [ Skip ]
 [ Debug ] http/tests/loading/preload-slow-loading.php [ Skip ] # Crashing
-[ Debug ] http/tests/loading/redirect-methods.html [ Skip ] # Crashing
 [ Debug ] http/tests/local/link-stylesheet-preferred.html [ Skip ] # Crashing
 [ Debug ] http/tests/local/style-access-before-stylesheet-loaded.html [ Skip ] # Crashing
-[ Debug ] http/tests/media/video-throttled-load-metadata.html [ Skip ] # Crashing
 [ Debug ] http/tests/misc/javascript-url-stop-loaders.html [ Skip ]
 [ Debug ] http/tests/misc/last-modified-parsing.html [ Skip ] # Crashing
 [ Debug ] http/tests/misc/location-origin.html [ Skip ] # Crashing
@@ -2376,7 +2405,6 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] platform/win/fast/events/panScroll-preventDefault.html [ Skip ]
 [ Debug ] platform/win/fast/forms/file/drag-and-drop-files.html [ Skip ] # Crashing
 [ Debug ] platform/win/fast/text/uniscribe-item-boundary-crash.html [ Skip ] # Crashing
-[ Debug ] platform/win/fast/text/uniscribe-missing-glyph.html [ Skip ] # Crashing
 [ Debug ] transforms/3d/general/perspective-non-layer.html [ Skip ]
 
 webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
