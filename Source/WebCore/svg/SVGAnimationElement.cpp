@@ -682,12 +682,6 @@ void SVGAnimationElement::setTargetElement(SVGElement* target)
     checkInvalidCSSAttributeType(target);
 }
 
-void SVGAnimationElement::setAttributeName(const QualifiedName& attributeName)
-{
-    SVGSMILElement::setAttributeName(attributeName);
-    checkInvalidCSSAttributeType(targetElement());
-}
-
 void SVGAnimationElement::checkInvalidCSSAttributeType(SVGElement* target)
 {
     m_hasInvalidCSSAttributeType = target && hasValidAttributeName() && attributeType() == AttributeTypeCSS && !isTargetAttributeCSSProperty(target, attributeName());
