@@ -1,3 +1,23 @@
+2015-02-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r179737
+
+    2015-02-05  Andreas Kling  <akling@apple.com>
+
+            [iOS] Run a full garbage collection on memory warning.
+            <https://webkit.org/b/141313>
+            <rdar://problem/19738024>
+
+            Reviewed by Chris Dumez.
+
+            Make sure that we run a full GC when trying to free up memory, as this might
+            be our last chance to execute before the kernel suspends this process.
+
+            This aligns WebKit2 with the old WebKit1 behavior.
+
+            * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+            (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
 2015-02-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179771. rdar://problem/19395131
