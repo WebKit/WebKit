@@ -30,21 +30,19 @@ function test()
         testRunner.waitUntilDone();
     }
 
-    // Force layout now, as otherwise it will occur before our garbage collection timer,
-    // possibly delaying it until after XMLHttpRequest finishes.
-    document.body.offsetTop;
-
     var request = new XMLHttpRequest();
     request.onreadystatechange = processStateChange;
     request.open("GET", "resources/print-headers.cgi", true);
     request.send(null);
-
-    setTimeout('collect();', 0);
+    request = null;
 }
+
+window.addEventListener("load", test);
+window.addEventListener("load", collect);
 </script>
 </head>
 
-<body onload="test();">
+<body>
 <p>This test checks whether event handlers for outstanding XMLHttpRequests survive garbage collection.</p>
 <p>See https://bugs.webkit.org/show_bug.cgi?id=9113 REGRESSION (14581): 
 XMLHttpRequest never calls onreadystatechange with a readystate == 4</p>
