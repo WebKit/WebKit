@@ -6520,7 +6520,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     else if (isComposited()) {
         // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
         backing()->updateGeometry();
-        backing()->updateAfterDescendents();
+        backing()->updateAfterDescendants();
     }
 
     if (oldStyle) {
