@@ -100,7 +100,6 @@ set(WTF_HEADERS
     TCPackedCache.h
     TCPageMap.h
     TCSpinLock.h
-    TCSystemAlloc.h
     ThreadIdentifierDataPthreads.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
@@ -183,7 +182,6 @@ set(WTF_SOURCES
     StackStats.cpp
     StackBounds.cpp
     StringPrintStream.cpp
-    TCSystemAlloc.cpp
     Threading.cpp
     WTFThreadData.cpp
     dtoa.cpp

@@ -1,3 +1,13 @@
+2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Enable bmalloc for EFL port 
+        https://bugs.webkit.org/show_bug.cgi?id=141459
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/CMakeLists.txt: Remove TCSystemAlloc.cpp/h.
+        * wtf/FastMalloc.cpp: Enable BMALLOC for EFL port.
+
 2015-02-13  Anders Carlsson  <andersca@apple.com>
 
         Add a move constructor and move assignment operator to Deque
