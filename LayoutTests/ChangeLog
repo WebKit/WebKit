@@ -1,5 +1,13 @@
 2015-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Re-ordering expectations.
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2015-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Mac] Cleanup after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141590
 
