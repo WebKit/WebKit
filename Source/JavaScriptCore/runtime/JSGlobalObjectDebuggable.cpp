@@ -49,7 +49,7 @@ String JSGlobalObjectDebuggable::name() const
     return name.isEmpty() ? ASCIILiteral("JSContext") : name;
 }
 
-void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel* frontendChannel, bool automaticInspection)
+void JSGlobalObjectDebuggable::connect(FrontendChannel* frontendChannel, bool automaticInspection)
 {
     JSLockHolder locker(&m_globalObject.vm());
 
@@ -60,7 +60,7 @@ void JSGlobalObjectDebuggable::disconnect()
 {
     JSLockHolder locker(&m_globalObject.vm());
 
-    m_globalObject.inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
+    m_globalObject.inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 }
 
 void JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend(const String& message)

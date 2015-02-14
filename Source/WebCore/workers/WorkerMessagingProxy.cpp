@@ -228,7 +228,7 @@ void WorkerMessagingProxy::disconnectFromInspector()
     if (m_askedToTerminate)
         return;
     m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+        downcast<WorkerGlobalScope>(context).workerInspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
     }, WorkerDebuggerAgent::debuggerTaskMode);
 }
 

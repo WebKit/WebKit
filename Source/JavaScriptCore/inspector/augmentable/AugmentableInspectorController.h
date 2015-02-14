@@ -42,7 +42,7 @@ public:
     virtual AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const = 0;
     virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient*) = 0;
 
-    virtual InspectorFrontendChannel* frontendChannel() const = 0;
+    virtual FrontendChannel* frontendChannel() const = 0;
     virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) = 0;
 
     bool connected() const { return !!frontendChannel(); }

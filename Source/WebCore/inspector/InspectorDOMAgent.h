@@ -91,7 +91,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::InspectorDOMBackendDispatcherHandler {
+class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -109,8 +109,8 @@ public:
 
     static String toErrorString(const ExceptionCode&);
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     Vector<Document*> documents();
     void reset();
@@ -246,8 +246,8 @@ private:
     InspectorPageAgent* m_pageAgent;
     Inspector::InjectedScriptManager* m_injectedScriptManager;
     InspectorOverlay* m_overlay;
-    std::unique_ptr<Inspector::InspectorDOMFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorDOMBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;

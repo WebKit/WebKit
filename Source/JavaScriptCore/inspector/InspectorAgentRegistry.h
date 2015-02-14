@@ -32,19 +32,20 @@
 
 namespace Inspector {
 
+class BackendDispatcher;
+class FrontendChannel;
 class InspectorAgentBase;
-class InspectorBackendDispatcher;
-class InspectorFrontendChannel;
-enum class InspectorDisconnectReason;
 
-class JS_EXPORT_PRIVATE InspectorAgentRegistry {
+enum class DisconnectReason;
+
+class JS_EXPORT_PRIVATE AgentRegistry {
 public:
-    InspectorAgentRegistry();
+    AgentRegistry();
 
     void append(std::unique_ptr<InspectorAgentBase>);
 
-    void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
-    void willDestroyFrontendAndBackend(InspectorDisconnectReason reason);
+    void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*);
+    void willDestroyFrontendAndBackend(DisconnectReason);
     void discardAgents();
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -55,8 +56,8 @@ public:
 private:
     // These are declared here to avoid MSVC from trying to create default iplementations which would
     // involve generating a copy constructor and copy assignment operator for the Vector of std::unique_ptrs.
-    InspectorAgentRegistry(const InspectorAgentRegistry&) = delete;
-    InspectorAgentRegistry& operator=(const InspectorAgentRegistry&) = delete;
+    AgentRegistry(const AgentRegistry&) = delete;
+    AgentRegistry& operator=(const AgentRegistry&) = delete;
 
     Vector<std::unique_ptr<InspectorAgentBase>> m_agents;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

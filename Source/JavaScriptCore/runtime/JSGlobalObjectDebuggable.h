@@ -33,7 +33,8 @@
 #include <wtf/Noncopyable.h>
 
 namespace Inspector {
-enum class InspectorDisconnectReason;
+class FrontendChannel;
+enum class DisconnectReason;
 }
 
 namespace JSC {
@@ -51,7 +52,7 @@ public:
     virtual String name() const override;
     virtual bool hasLocalDebugger() const override { return false; }
 
-    virtual void connect(Inspector::InspectorFrontendChannel*, bool automaticInspection) override;
+    virtual void connect(Inspector::FrontendChannel*, bool automaticInspection) override;
     virtual void disconnect() override;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
 

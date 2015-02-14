@@ -66,13 +66,13 @@ InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
     m_instrumentingAgents = nullptr;
 }
 
-void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorDOMStorageFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorDOMStorageBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::DOMStorageFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::DOMStorageBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

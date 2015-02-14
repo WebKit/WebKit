@@ -78,7 +78,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         destructor_args = {
             'domainName': domain.domain_name
         }
-        destructor = 'Inspector%(domainName)sBackendDispatcherHandler::~Inspector%(domainName)sBackendDispatcherHandler() { }' % destructor_args
+        destructor = '%(domainName)sBackendDispatcherHandler::~%(domainName)sBackendDispatcherHandler() { }' % destructor_args
         return self.wrap_with_guard_for_domain(domain, destructor)
 
     def _generate_dispatcher_implementations_for_domain(self, domain):
@@ -123,7 +123,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
                 'domainName': domain.domain_name,
                 'commandName': command.command_name
             }
-            cases.append('            { "%(commandName)s", &Inspector%(domainName)sBackendDispatcher::%(commandName)s },' % args)
+            cases.append('            { "%(commandName)s", &%(domainName)sBackendDispatcher::%(commandName)s },' % args)
 
         switch_args = {
             'domainName': domain.domain_name,
@@ -192,7 +192,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
                 'successOutParam': out_success_argument
             }
 
-            in_parameter_declarations.append('    %(parameterType)s in_%(parameterName)s = InspectorBackendDispatcher::%(keyedGetMethod)s(paramsContainer.get(), ASCIILiteral("%(parameterName)s"), %(successOutParam)s, protocolErrors.get());' % param_args)
+            in_parameter_declarations.append('    %(parameterType)s in_%(parameterName)s = BackendDispatcher::%(keyedGetMethod)s(paramsContainer.get(), ASCIILiteral("%(parameterName)s"), %(successOutParam)s, protocolErrors.get());' % param_args)
 
             if parameter.is_optional:
                 optional_in_parameter_string = '%(parameterName)s_valueFound ? %(parameterExpression)s : nullptr' % param_args
@@ -209,7 +209,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             }
 
             out_parameter_assignments.append('        callback->disable();')
-            out_parameter_assignments.append('        m_backendDispatcher->reportProtocolError(&callId, Inspector::InspectorBackendDispatcher::ServerError, error);')
+            out_parameter_assignments.append('        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::ServerError, error);')
             out_parameter_assignments.append('        return;')
             method_parameters.append('callback.copyRef()')
 
@@ -251,9 +251,9 @@ class CppBackendDispatcherImplementationGenerator(Generator):
 
         lines = []
         if len(command.call_parameters) == 0:
-            lines.append('void Inspector%(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject&)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject&)' % command_args)
         else:
-            lines.append('void Inspector%(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject& message)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject& message)' % command_args)
         lines.append('{')
 
         if len(command.call_parameters) > 0:
@@ -270,7 +270,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         lines.append('    ErrorString error;')
         lines.append('    Ref<InspectorObject> result = InspectorObject::create();')
         if command.is_async:
-            lines.append('    Ref<Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), callId));' % command_args)
+            lines.append('    Ref<%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new %(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), callId));' % command_args)
         if len(command.return_parameters) > 0:
             lines.extend(out_parameter_declarations)
         lines.append('    m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)

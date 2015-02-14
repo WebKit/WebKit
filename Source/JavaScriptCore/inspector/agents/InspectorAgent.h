@@ -38,22 +38,21 @@
 
 namespace Inspector {
 
+class BackendDispatcher;
 class InspectorEnvironment;
-class InspectorInspectorBackendDispatcher;
-class InspectorInspectorFrontendDispatchers;
 class InspectorObject;
 
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorAgent(InspectorEnvironment&);
     virtual ~InspectorAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason reason) override;
+    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
@@ -69,8 +68,8 @@ public:
 
 private:
     InspectorEnvironment& m_environment;
-    std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<InspectorFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
     Vector<String> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

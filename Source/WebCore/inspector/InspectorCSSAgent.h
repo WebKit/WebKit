@@ -39,7 +39,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-class InspectorCSSFrontendDispatcher;
+class CSSFrontendDispatcher;
 }
 
 namespace WebCore {
@@ -64,7 +64,7 @@ class ChangeRegionOversetTask;
 class InspectorCSSAgent final
     : public InspectorAgentBase
     , public InspectorDOMAgent::DOMListener
-    , public Inspector::InspectorCSSBackendDispatcherHandler
+    , public Inspector::CSSBackendDispatcherHandler
     , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -91,8 +91,8 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     virtual void discardAgent() override;
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
@@ -163,8 +163,8 @@ private:
 
     void resetPseudoStates();
 
-    std::unique_ptr<Inspector::InspectorCSSFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorCSSBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::CSSBackendDispatcher> m_backendDispatcher;
     InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

@@ -177,7 +177,7 @@ static Inspector::Protocol::Console::ConsoleMessage::Level messageLevelValue(Mes
     return Inspector::Protocol::Console::ConsoleMessage::Level::Log;
 }
 
-void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFrontendDispatcher, Inspector::InjectedScriptManager* injectedScriptManager, bool generatePreview)
+void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher* consoleFrontendDispatcher, InjectedScriptManager* injectedScriptManager, bool generatePreview)
 {
     Ref<Inspector::Protocol::Console::ConsoleMessage> jsonObj = Inspector::Protocol::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
@@ -230,7 +230,7 @@ void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFr
     consoleFrontendDispatcher->messageAdded(WTF::move(jsonObj));
 }
 
-void ConsoleMessage::updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher* consoleFrontendDispatcher)
+void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher* consoleFrontendDispatcher)
 {
     consoleFrontendDispatcher->messageRepeatCountUpdated(m_repeatCount);
 }

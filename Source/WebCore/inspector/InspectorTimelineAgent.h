@@ -107,7 +107,7 @@ enum class TimelineRecordType {
 
 class InspectorTimelineAgent final
     : public InspectorAgentBase
-    , public Inspector::InspectorTimelineBackendDispatcherHandler
+    , public Inspector::TimelineBackendDispatcherHandler
     , public Inspector::ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -117,8 +117,8 @@ public:
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorType, InspectorClient*);
     virtual ~InspectorTimelineAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     virtual void start(ErrorString&, const int* maxCallStackDepth = nullptr) override;
     virtual void stop(ErrorString&) override;
@@ -229,8 +229,8 @@ private:
     InspectorPageAgent* m_pageAgent;
     PageScriptDebugServer* m_scriptDebugServer;
 
-    std::unique_ptr<Inspector::InspectorTimelineFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorTimelineBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
 
     Vector<TimelineRecordEntry> m_recordStack;
 

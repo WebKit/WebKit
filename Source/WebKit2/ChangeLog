@@ -1,3 +1,13 @@
+2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace
+        https://bugs.webkit.org/show_bug.cgi?id=141372
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::remoteFrontendDisconnected):
+
 2015-02-14  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Page opens with enlarged font after visiting PDF, navigating back, 

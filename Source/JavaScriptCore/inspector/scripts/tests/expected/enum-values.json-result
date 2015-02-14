@@ -39,18 +39,18 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
-class AlternateInspectorCommandDomainBackendDispatcher : public AlternateInspectorBackendDispatcher {
+class AlternateCommandDomainBackendDispatcher : public AlternateBackendDispatcher {
 public:
-    virtual ~AlternateInspectorCommandDomainBackendDispatcher() { }
+    virtual ~AlternateCommandDomainBackendDispatcher() { }
     virtual void commandWithEnumReturnValue(long callId) = 0;
 };
 
@@ -149,10 +149,10 @@ namespace Inspector {
 typedef String ErrorString;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-class AlternateInspectorCommandDomainBackendDispatcher;
+class AlternateCommandDomainBackendDispatcher;
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-class InspectorCommandDomainBackendDispatcherHandler {
+class CommandDomainBackendDispatcherHandler {
 public:
     // Named after parameter 'returnValue' while generating command/event commandWithEnumReturnValue.
     enum class ReturnValue {
@@ -161,25 +161,25 @@ public:
         Magenta = 7,
         Yellow = 8,
     }; // enum class ReturnValue
-    virtual void commandWithEnumReturnValue(ErrorString&, InspectorCommandDomainBackendDispatcherHandler::ReturnValue* out_returnValue) = 0;
+    virtual void commandWithEnumReturnValue(ErrorString&, CommandDomainBackendDispatcherHandler::ReturnValue* out_returnValue) = 0;
 protected:
-    virtual ~InspectorCommandDomainBackendDispatcherHandler();
+    virtual ~CommandDomainBackendDispatcherHandler();
 };
 
-class InspectorCommandDomainBackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
+class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<InspectorCommandDomainBackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorCommandDomainBackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
+    static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher*, CommandDomainBackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void commandWithEnumReturnValue(long callId, const Inspector::InspectorObject& message);
+    void commandWithEnumReturnValue(long callId, const InspectorObject& message);
 private:
-    InspectorCommandDomainBackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorCommandDomainBackendDispatcherHandler*);
-    InspectorCommandDomainBackendDispatcherHandler* m_agent;
+    CommandDomainBackendDispatcher(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
+    CommandDomainBackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
-    void setAlternateDispatcher(AlternateInspectorCommandDomainBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
+    void setAlternateDispatcher(AlternateCommandDomainBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateInspectorCommandDomainBackendDispatcher* m_alternateDispatcher;
+    AlternateCommandDomainBackendDispatcher* m_alternateDispatcher;
 #endif
 };
 
@@ -232,15 +232,15 @@ private:
 
 namespace Inspector {
 
-InspectorCommandDomainBackendDispatcherHandler::~InspectorCommandDomainBackendDispatcherHandler() { }
+CommandDomainBackendDispatcherHandler::~CommandDomainBackendDispatcherHandler() { }
 
-Ref<InspectorCommandDomainBackendDispatcher> InspectorCommandDomainBackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
+Ref<CommandDomainBackendDispatcher> CommandDomainBackendDispatcher::create(BackendDispatcher* backendDispatcher, CommandDomainBackendDispatcherHandler* agent)
 {
-    return adoptRef(*new InspectorCommandDomainBackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new CommandDomainBackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorCommandDomainBackendDispatcher::InspectorCommandDomainBackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
-    : InspectorSupplementalBackendDispatcher(backendDispatcher)
+CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher& backendDispatcher, CommandDomainBackendDispatcherHandler* agent)
+    : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     , m_alternateDispatcher(nullptr)
@@ -249,17 +249,17 @@ InspectorCommandDomainBackendDispatcher::InspectorCommandDomainBackendDispatcher
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
 }
 
-void InspectorCommandDomainBackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void CommandDomainBackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
-    Ref<InspectorCommandDomainBackendDispatcher> protect(*this);
+    Ref<CommandDomainBackendDispatcher> protect(*this);
 
     if (method == "commandWithEnumReturnValue")
         commandWithEnumReturnValue(callId, message);
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
 }
 
-void InspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long callId, const InspectorObject&)
+void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -270,7 +270,7 @@ void InspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long ca
 
     ErrorString error;
     Ref<InspectorObject> result = InspectorObject::create();
-    InspectorCommandDomainBackendDispatcherHandler::ReturnValue out_returnValue;
+    CommandDomainBackendDispatcherHandler::ReturnValue out_returnValue;
     m_agent->commandWithEnumReturnValue(error, &out_returnValue);
 
     if (!error.length())
@@ -326,9 +326,9 @@ namespace Inspector {
 
 
 
-class InspectorEventDomainFrontendDispatcher {
+class EventDomainFrontendDispatcher {
 public:
-    InspectorEventDomainFrontendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+    EventDomainFrontendDispatcher(FrontendChannel* frontendChannel) : m_frontendChannel(frontendChannel) { }
         // Named after parameter 'parameter' while generating command/event eventWithEnumParameter.
         enum class Parameter {
             Shared = 0,
@@ -337,7 +337,7 @@ public:
         }; // enum class Parameter
     void eventWithEnumParameter(Parameter parameter);
 private:
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
+    FrontendChannel* m_frontendChannel;
 };
 
 } // namespace Inspector
@@ -383,7 +383,7 @@ private:
 
 namespace Inspector {
 
-void InspectorEventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
+void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
@@ -391,7 +391,7 @@ void InspectorEventDomainFrontendDispatcher::eventWithEnumParameter(Parameter pa
     paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::getEnumConstantValue(parameter));
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
-    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
 } // namespace Inspector
@@ -581,7 +581,7 @@ namespace Inspector {
 
 
 
-class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateInspectorCommandDomainBackendDispatcher {
+class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<RWIProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
     virtual void commandWithEnumReturnValue(long callId) override;
@@ -671,7 +671,7 @@ using namespace Inspector;
     _commandDomainHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorCommandDomainBackendDispatcher, AlternateInspectorCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
@@ -988,7 +988,7 @@ using namespace Inspector;
 
 - (void)eventWithEnumParameterWithParameter:(RWIProtocolEventDomainEventWithEnumParameterParameter)parameter
 {
-    InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
+    FrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
         return;
 

@@ -77,11 +77,11 @@ using Inspector::Protocol::IndexedDB::KeyRange;
 using Inspector::Protocol::IndexedDB::ObjectStore;
 using Inspector::Protocol::IndexedDB::ObjectStoreIndex;
 
-typedef Inspector::InspectorBackendDispatcher::CallbackBase RequestCallback;
-typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
-typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
-typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
-typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
+typedef Inspector::BackendDispatcher::CallbackBase RequestCallback;
+typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
+typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
+typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
+typedef Inspector::IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
 
 using namespace Inspector;
 
@@ -575,12 +575,12 @@ InspectorIndexedDBAgent::~InspectorIndexedDBAgent()
 {
 }
 
-void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_backendDispatcher = InspectorIndexedDBBackendDispatcher::create(backendDispatcher, this);
+    m_backendDispatcher = Inspector::IndexedDBBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_backendDispatcher.clear();
 

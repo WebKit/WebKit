@@ -60,7 +60,7 @@ namespace Inspector {
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
     , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
-    , m_inspectorFrontendChannel(nullptr)
+    , m_frontendChannel(nullptr)
     , m_executionStopwatch(Stopwatch::create())
     , m_includeNativeCallStackWithExceptions(true)
     , m_isAutomaticInspection(false)
@@ -95,22 +95,22 @@ JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController()
 
 void JSGlobalObjectInspectorController::globalObjectDestroyed()
 {
-    disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
+    disconnectFrontend(DisconnectReason::InspectedTargetDestroyed);
 
     m_injectedScriptManager->disconnect();
 }
 
-void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel, bool isAutomaticInspection)
+void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel* frontendChannel, bool isAutomaticInspection)
 {
-    ASSERT(!m_inspectorFrontendChannel);
-    ASSERT(!m_inspectorBackendDispatcher);
+    ASSERT(!m_frontendChannel);
+    ASSERT(!m_backendDispatcher);
 
     m_isAutomaticInspection = isAutomaticInspection;
 
-    m_inspectorFrontendChannel = frontendChannel;
-    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
+    m_frontendChannel = frontendChannel;
+    m_backendDispatcher = BackendDispatcher::create(frontendChannel);
 
-    m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend(frontendChannel, m_backendDispatcher.get());
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     m_inspectorAgent->activateExtraDomains(m_agents.extraDomains());
@@ -120,16 +120,16 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
 #endif
 }
 
-void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
+void JSGlobalObjectInspectorController::disconnectFrontend(DisconnectReason reason)
 {
-    if (!m_inspectorFrontendChannel)
+    if (!m_frontendChannel)
         return;
 
     m_agents.willDestroyFrontendAndBackend(reason);
 
-    m_inspectorBackendDispatcher->clearFrontend();
-    m_inspectorBackendDispatcher.clear();
-    m_inspectorFrontendChannel = nullptr;
+    m_backendDispatcher->clearFrontend();
+    m_backendDispatcher.clear();
+    m_frontendChannel = nullptr;
 
     m_isAutomaticInspection = false;
 
@@ -141,8 +141,8 @@ void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectRe
 
 void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String& message)
 {
-    if (m_inspectorBackendDispatcher)
-        m_inspectorBackendDispatcher->dispatch(message);
+    if (m_backendDispatcher)
+        m_backendDispatcher->dispatch(message);
 }
 
 void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* callStack)
@@ -245,12 +245,12 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 {
     String domainName = agent->domainName();
 
-    if (m_inspectorFrontendChannel)
-        agent->didCreateFrontendAndBackend(m_inspectorFrontendChannel, m_inspectorBackendDispatcher.get());
+    if (m_frontendChannel)
+        agent->didCreateFrontendAndBackend(m_frontendChannel, m_backendDispatcher.get());
 
     m_agents.appendExtraAgent(WTF::move(agent));
 
-    if (m_inspectorFrontendChannel)
+    if (m_frontendChannel)
         m_inspectorAgent->activateExtraDomain(domainName);
 }
 #endif

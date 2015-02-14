@@ -43,8 +43,8 @@ public:
     WorkerRuntimeAgent(Inspector::InjectedScriptManager*, WorkerGlobalScope*);
     virtual ~WorkerRuntimeAgent() { }
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     virtual void run(ErrorString&) override;
 
@@ -56,7 +56,7 @@ private:
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
     WorkerGlobalScope* m_workerGlobalScope;
-    RefPtr<Inspector::InspectorRuntimeBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     bool m_paused;
 };
 

@@ -64,7 +64,7 @@ class TextResourceDecoder;
 
 typedef String ErrorString;
 
-class InspectorPageAgent final : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
+class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -107,7 +107,7 @@ public:
     virtual void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>&) override;
     virtual void setDocumentContent(ErrorString&, const String& frameId, const String& html) override;
     virtual void setShowPaintRects(ErrorString&, bool show) override;
-    virtual void getScriptExecutionStatus(ErrorString&, Inspector::InspectorPageBackendDispatcherHandler::Result*) override;
+    virtual void getScriptExecutionStatus(ErrorString&, Inspector::PageBackendDispatcherHandler::Result*) override;
     virtual void setScriptExecutionDisabled(ErrorString&, bool) override;
     virtual void setTouchEmulationEnabled(ErrorString&, bool) override;
     virtual void setEmulatedMedia(ErrorString&, const String&) override;
@@ -139,8 +139,8 @@ public:
     void scriptsEnabled(bool isEnabled);
 
     // Inspector Controller API
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // Cross-agents API
     Page* page() { return m_page; }
@@ -168,8 +168,8 @@ private:
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InspectorClient* m_client;
-    std::unique_ptr<Inspector::InspectorPageFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorPageBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
     InspectorOverlay* m_overlay;
     long m_lastScriptIdentifier;
     String m_pendingScriptToEvaluateOnLoadOnce;

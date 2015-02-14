@@ -68,18 +68,18 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
 }
 
-void InspectorDebuggerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorDebuggerFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorDebuggerBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<DebuggerFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = DebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorDebuggerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void InspectorDebuggerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    bool skipRecompile = reason == InspectorDisconnectReason::InspectedTargetDestroyed;
+    bool skipRecompile = reason == DisconnectReason::InspectedTargetDestroyed;
     disable(skipRecompile);
 }
 
@@ -181,7 +181,7 @@ RefPtr<InspectorObject> InspectorDebuggerAgent::buildExceptionPauseReason(const 
 void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
-        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
+        breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
 }
 
 static Ref<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<InspectorArray>& actions, bool isRegex, bool autoContinue)
@@ -471,7 +471,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const 
     injectedScript.getFunctionDetails(errorString, functionId, &details);
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
+void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
 {
     if (m_javaScriptPauseScheduled)
         return;
@@ -492,7 +492,7 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
 
 void InspectorDebuggerAgent::pause(ErrorString&)
 {
-    schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::PauseOnNextStatement, nullptr);
+    schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason::PauseOnNextStatement, nullptr);
 
     m_javaScriptPauseScheduled = true;
 }
@@ -582,7 +582,7 @@ void InspectorDebuggerAgent::setOverlayMessage(ErrorString&, const String*)
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
-        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::CSPViolation, buildCSPViolationPauseReason(directiveText));
+        breakProgram(DebuggerFrontendDispatcher::Reason::CSPViolation, buildCSPViolationPauseReason(directiveText));
 }
 
 Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> InspectorDebuggerAgent::currentCallFrames(InjectedScript injectedScript)
@@ -664,22 +664,22 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
-    if (m_breakReason == InspectorDebuggerFrontendDispatcher::Reason::Other) {
+    if (m_breakReason == DebuggerFrontendDispatcher::Reason::Other) {
         switch (scriptDebugServer().reasonForPause()) {
         case JSC::Debugger::PausedForBreakpoint: {
             JSC::BreakpointID debuggerBreakpointId = scriptDebugServer().pausingBreakpointID();
             if (debuggerBreakpointId != m_continueToLocationBreakpointID) {
-                m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Breakpoint;
+                m_breakReason = DebuggerFrontendDispatcher::Reason::Breakpoint;
                 m_breakAuxData = buildBreakpointPauseReason(debuggerBreakpointId);
             }
             break;
         }
         case JSC::Debugger::PausedForDebuggerStatement:
-            m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::DebuggerStatement;
+            m_breakReason = DebuggerFrontendDispatcher::Reason::DebuggerStatement;
             m_breakAuxData = nullptr;
             break;
         case JSC::Debugger::PausedForException:
-            m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Exception;
+            m_breakReason = DebuggerFrontendDispatcher::Reason::Exception;
             m_breakAuxData = buildExceptionPauseReason(exceptionOrCaughtValue, injectedScript);
             break;
         case JSC::Debugger::PausedAtStatement:
@@ -755,7 +755,7 @@ void InspectorDebuggerAgent::didContinue()
     m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
+void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
 {
     m_breakReason = breakReason;
     m_breakAuxData = WTF::move(data);
@@ -814,7 +814,7 @@ bool InspectorDebuggerAgent::assertPaused(ErrorString& errorString)
 
 void InspectorDebuggerAgent::clearBreakDetails()
 {
-    m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Other;
+    m_breakReason = DebuggerFrontendDispatcher::Reason::Other;
     m_breakAuxData = nullptr;
 }
 

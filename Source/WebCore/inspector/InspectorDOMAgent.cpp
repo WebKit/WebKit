@@ -221,10 +221,10 @@ InspectorDOMAgent::~InspectorDOMAgent()
     ASSERT(!m_searchingForNode);
 }
 
-void InspectorDOMAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorDOMFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorDOMBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::DOMFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::DOMBackendDispatcher::create(backendDispatcher, this);
 
     m_history = std::make_unique<InspectorHistory>();
     m_domEditor = std::make_unique<DOMEditor>(m_history.get());
@@ -236,7 +236,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* fr
         focusNode();
 }
 
-void InspectorDOMAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

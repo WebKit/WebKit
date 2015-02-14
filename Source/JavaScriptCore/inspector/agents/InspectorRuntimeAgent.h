@@ -50,12 +50,12 @@ class InspectorArray;
 class ScriptDebugServer;
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, public InspectorRuntimeBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, public RuntimeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();
 
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual void enable(ErrorString&) override { m_enabled = true; }
     virtual void disable(ErrorString&) override { m_enabled = false; }

@@ -51,7 +51,7 @@ class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspector::InspectorDebuggerAgent::Listener, public Inspector::InspectorDOMDebuggerBackendDispatcherHandler {
+class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspector::InspectorDebuggerAgent::Listener, public Inspector::DOMDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -78,8 +78,8 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     virtual void discardAgent() override;
 
 private:
@@ -101,7 +101,7 @@ private:
 
     InspectorDOMAgent* m_domAgent;
     Inspector::InspectorDebuggerAgent* m_debuggerAgent;
-    RefPtr<Inspector::InspectorDOMDebuggerBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_xhrBreakpoints;

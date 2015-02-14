@@ -399,7 +399,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
 
         // Visual Studio disagrees with other compilers as to whether 'class' is needed here.
 #if COMPILER(MSVC)
-        enum class Inspector::Protocol::CSS::CSSPropertyStatus status;
+        enum class Protocol::CSS::CSSPropertyStatus status;
 #else
         enum Inspector::Protocol::CSS::CSSPropertyStatus status;
 #endif

@@ -57,7 +57,7 @@ class InspectorValue;
 class ScriptDebugServer;
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public InspectorDebuggerBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public DebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -65,8 +65,8 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
@@ -91,9 +91,9 @@ public:
     
     void handleConsoleAssert(const String& message);
 
-    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
+    void schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
     void cancelPauseOnNextStatement();
-    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
+    void breakProgram(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
     void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class JS_EXPORT_PRIVATE Listener {
@@ -155,8 +155,8 @@ private:
     typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
 
     InjectedScriptManager* m_injectedScriptManager;
-    std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorDebuggerBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
     Listener* m_listener {nullptr};
     JSC::ExecState* m_pausedScriptState {nullptr};
     Deprecated::ScriptValue m_currentCallStack;
@@ -165,7 +165,7 @@ private:
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
     DebugServerBreakpointIDToBreakpointIdentifier m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier;
     JSC::BreakpointID m_continueToLocationBreakpointID;
-    InspectorDebuggerFrontendDispatcher::Reason m_breakReason;
+    DebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
     bool m_enabled {false};
     bool m_javaScriptPauseScheduled {false};

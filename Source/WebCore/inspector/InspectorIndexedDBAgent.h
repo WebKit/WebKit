@@ -47,13 +47,13 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::InspectorIndexedDBBackendDispatcherHandler {
+class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
 public:
     InspectorIndexedDBAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, InspectorPageAgent*);
     virtual ~InspectorIndexedDBAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // Called from the front-end.
     virtual void enable(ErrorString&) override;
@@ -66,7 +66,7 @@ public:
 private:
     Inspector::InjectedScriptManager* m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
-    RefPtr<Inspector::InspectorIndexedDBBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

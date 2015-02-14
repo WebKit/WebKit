@@ -56,13 +56,13 @@ InspectorLayerTreeAgent::~InspectorLayerTreeAgent()
     reset();
 }
 
-void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorLayerTreeFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorLayerTreeBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::LayerTreeFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::LayerTreeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorLayerTreeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorLayerTreeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

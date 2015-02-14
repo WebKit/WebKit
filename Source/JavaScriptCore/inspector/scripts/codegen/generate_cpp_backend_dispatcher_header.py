@@ -82,7 +82,7 @@ class CppBackendDispatcherHeaderGenerator(Generator):
         lines = []
         lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         for domain in domains:
-            lines.append(self.wrap_with_guard_for_domain(domain, 'class AlternateInspector%sBackendDispatcher;' % domain.domain_name))
+            lines.append(self.wrap_with_guard_for_domain(domain, 'class Alternate%sBackendDispatcher;' % domain.domain_name))
         lines.append('#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         return '\n'.join(lines)
 
@@ -197,4 +197,4 @@ class CppBackendDispatcherHeaderGenerator(Generator):
         return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
-        return "    void %s(long callId, const Inspector::InspectorObject& message);" % command.command_name
+        return "    void %s(long callId, const InspectorObject& message);" % command.command_name

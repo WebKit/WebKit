@@ -46,7 +46,7 @@ namespace WebCore {
 class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerGlobalScopeProxy::PageInspector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerFrontendChannel(InspectorWorkerFrontendDispatcher* frontendDispatcher, WorkerGlobalScopeProxy* proxy)
+    explicit WorkerFrontendChannel(Inspector::WorkerFrontendDispatcher* frontendDispatcher, WorkerGlobalScopeProxy* proxy)
         : m_frontendDispatcher(frontendDispatcher)
         , m_proxy(proxy)
         , m_id(s_nextId++)
@@ -92,7 +92,7 @@ private:
         m_frontendDispatcher->dispatchMessageFromWorker(m_id, messageObject);
     }
 
-    InspectorWorkerFrontendDispatcher* m_frontendDispatcher;
+    Inspector::WorkerFrontendDispatcher* m_frontendDispatcher;
     WorkerGlobalScopeProxy* m_proxy;
     int m_id;
     bool m_connected;
@@ -114,13 +114,13 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
     m_instrumentingAgents->setInspectorWorkerAgent(nullptr);
 }
 
-void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorWorkerFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorWorkerBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::WorkerFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::WorkerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorWorkerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorWorkerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_shouldPauseDedicatedWorkerOnStart = false;
     ErrorString unused;

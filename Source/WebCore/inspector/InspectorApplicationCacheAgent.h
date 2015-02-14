@@ -32,7 +32,7 @@
 #include <wtf/Noncopyable.h>
 
 namespace Inspector {
-class InspectorApplicationCacheFrontendDispatcher;
+class ApplicationCacheFrontendDispatcher;
 class InspectorObject;
 class InspectorValue;
 }
@@ -47,14 +47,14 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::InspectorApplicationCacheBackendDispatcherHandler {
+class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
     virtual ~InspectorApplicationCacheAgent() { }
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();
@@ -72,8 +72,8 @@ private:
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString&, String frameId);
 
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<Inspector::InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorApplicationCacheBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::ApplicationCacheFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::ApplicationCacheBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

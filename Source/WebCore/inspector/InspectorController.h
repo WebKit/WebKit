@@ -42,9 +42,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+class BackendDispatcher;
+class FrontendChannel;
 class InspectorAgent;
-class InspectorBackendDispatcher;
-class InspectorFrontendChannel;
 class InspectorObject;
 
 namespace Protocol {
@@ -94,12 +94,12 @@ public:
 
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
-    bool hasFrontend() const { return !!m_inspectorFrontendChannel; }
+    bool hasFrontend() const { return !!m_frontendChannel; }
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
-    WEBCORE_EXPORT void connectFrontend(Inspector::InspectorFrontendChannel*, bool isAutomaticInspection);
-    WEBCORE_EXPORT void disconnectFrontend(Inspector::InspectorDisconnectReason);
+    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection);
+    WEBCORE_EXPORT void disconnectFrontend(Inspector::DisconnectReason);
     void setProcessId(long);
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -152,13 +152,13 @@ private:
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorTimelineAgent* m_timelineAgent;
 
-    RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
-    Inspector::InspectorFrontendChannel* m_inspectorFrontendChannel;
+    RefPtr<Inspector::BackendDispatcher> m_backendDispatcher;
+    Inspector::FrontendChannel* m_frontendChannel;
     Ref<WTF::Stopwatch> m_executionStopwatch;
     Page& m_page;
     InspectorClient* m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient;
-    Inspector::InspectorAgentRegistry m_agents;
+    Inspector::AgentRegistry m_agents;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
     bool m_isUnderTest;
     bool m_isAutomaticInspection;

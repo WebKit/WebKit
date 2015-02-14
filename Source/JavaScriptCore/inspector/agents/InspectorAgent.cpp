@@ -48,13 +48,13 @@ InspectorAgent::~InspectorAgent()
 {
 }
 
-void InspectorAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorInspectorFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorInspectorBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<InspectorFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = InspectorBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

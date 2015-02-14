@@ -38,8 +38,8 @@ class JSGlobalObjectRuntimeAgent final : public InspectorRuntimeAgent {
 public:
     JSGlobalObjectRuntimeAgent(InjectedScriptManager*, JSC::JSGlobalObject&);
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual JSC::VM& globalVM() override;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
@@ -50,8 +50,8 @@ public:
     virtual void unmuteConsole() override { }
 
 private:
-    std::unique_ptr<InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorRuntimeBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<RuntimeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<RuntimeBackendDispatcher> m_backendDispatcher;
     JSC::JSGlobalObject& m_globalObject;
 };
 

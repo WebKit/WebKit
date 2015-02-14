@@ -39,19 +39,19 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
 #if PLATFORM(WEB_COMMANDS)
-class AlternateInspectorNetwork1BackendDispatcher : public AlternateInspectorBackendDispatcher {
+class AlternateNetwork1BackendDispatcher : public AlternateBackendDispatcher {
 public:
-    virtual ~AlternateInspectorNetwork1BackendDispatcher() { }
+    virtual ~AlternateNetwork1BackendDispatcher() { }
     virtual void loadResource(long callId) = 0;
 };
 #endif // PLATFORM(WEB_COMMANDS)
@@ -148,34 +148,34 @@ typedef String ErrorString;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #if PLATFORM(WEB_COMMANDS)
-class AlternateInspectorNetwork1BackendDispatcher;
+class AlternateNetwork1BackendDispatcher;
 #endif // PLATFORM(WEB_COMMANDS)
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #if PLATFORM(WEB_COMMANDS)
-class InspectorNetwork1BackendDispatcherHandler {
+class Network1BackendDispatcherHandler {
 public:
     virtual void loadResource(ErrorString&) = 0;
 protected:
-    virtual ~InspectorNetwork1BackendDispatcherHandler();
+    virtual ~Network1BackendDispatcherHandler();
 };
 #endif // PLATFORM(WEB_COMMANDS)
 
 #if PLATFORM(WEB_COMMANDS)
-class InspectorNetwork1BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
+class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<InspectorNetwork1BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork1BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
+    static Ref<Network1BackendDispatcher> create(BackendDispatcher*, Network1BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource(long callId, const Inspector::InspectorObject& message);
+    void loadResource(long callId, const InspectorObject& message);
 private:
-    InspectorNetwork1BackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorNetwork1BackendDispatcherHandler*);
-    InspectorNetwork1BackendDispatcherHandler* m_agent;
+    Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
+    Network1BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
-    void setAlternateDispatcher(AlternateInspectorNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
+    void setAlternateDispatcher(AlternateNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateInspectorNetwork1BackendDispatcher* m_alternateDispatcher;
+    AlternateNetwork1BackendDispatcher* m_alternateDispatcher;
 #endif
 };
 #endif // PLATFORM(WEB_COMMANDS)
@@ -230,17 +230,17 @@ private:
 namespace Inspector {
 
 #if PLATFORM(WEB_COMMANDS)
-InspectorNetwork1BackendDispatcherHandler::~InspectorNetwork1BackendDispatcherHandler() { }
+Network1BackendDispatcherHandler::~Network1BackendDispatcherHandler() { }
 #endif // PLATFORM(WEB_COMMANDS)
 
 #if PLATFORM(WEB_COMMANDS)
-Ref<InspectorNetwork1BackendDispatcher> InspectorNetwork1BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
+Ref<Network1BackendDispatcher> Network1BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network1BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new InspectorNetwork1BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new Network1BackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
-    : InspectorSupplementalBackendDispatcher(backendDispatcher)
+Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendDispatcher, Network1BackendDispatcherHandler* agent)
+    : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     , m_alternateDispatcher(nullptr)
@@ -249,17 +249,17 @@ InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(Inspector
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void InspectorNetwork1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
-    Ref<InspectorNetwork1BackendDispatcher> protect(*this);
+    Ref<Network1BackendDispatcher> protect(*this);
 
     if (method == "loadResource")
         loadResource(callId, message);
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void InspectorNetwork1BackendDispatcher::loadResource(long callId, const InspectorObject&)
+void Network1BackendDispatcher::loadResource(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -324,12 +324,12 @@ namespace Inspector {
 
 
 #if PLATFORM(WEB_EVENTS)
-class InspectorNetwork3FrontendDispatcher {
+class Network3FrontendDispatcher {
 public:
-    InspectorNetwork3FrontendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+    Network3FrontendDispatcher(FrontendChannel* frontendChannel) : m_frontendChannel(frontendChannel) { }
     void resourceLoaded();
 private:
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
+    FrontendChannel* m_frontendChannel;
 };
 #endif // PLATFORM(WEB_EVENTS)
 
@@ -377,12 +377,12 @@ private:
 namespace Inspector {
 
 #if PLATFORM(WEB_EVENTS)
-void InspectorNetwork3FrontendDispatcher::resourceLoaded()
+void Network3FrontendDispatcher::resourceLoaded()
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Network3.resourceLoaded"));
 
-    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 #endif // PLATFORM(WEB_EVENTS)
 
@@ -465,14 +465,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*NetworkError*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*NetworkError*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -497,9 +497,9 @@ public:
         Ref<NetworkError> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(NetworkError) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(NetworkError) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<NetworkError>*>(&result));
         }
     };
@@ -513,7 +513,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -624,7 +624,7 @@ namespace Inspector {
 
 
 #if PLATFORM(WEB_COMMANDS)
-class ObjCInspectorNetwork1BackendDispatcher final : public AlternateInspectorNetwork1BackendDispatcher {
+class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<RWIProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
     virtual void loadResource(long callId) override;
@@ -717,7 +717,7 @@ using namespace Inspector;
     _network1Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorNetwork1BackendDispatcher, AlternateInspectorNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
@@ -954,7 +954,7 @@ using namespace Inspector;
 
 - (void)resourceLoaded
 {
-    InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
+    FrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
         return;
 

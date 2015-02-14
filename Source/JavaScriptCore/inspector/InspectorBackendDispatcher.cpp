@@ -34,25 +34,25 @@
 
 namespace Inspector {
 
-InspectorBackendDispatcher::CallbackBase::CallbackBase(Ref<InspectorBackendDispatcher>&& backendDispatcher, int id)
+BackendDispatcher::CallbackBase::CallbackBase(Ref<BackendDispatcher>&& backendDispatcher, int id)
     : m_backendDispatcher(WTF::move(backendDispatcher))
     , m_id(id)
     , m_alreadySent(false)
 {
 }
 
-bool InspectorBackendDispatcher::CallbackBase::isActive() const
+bool BackendDispatcher::CallbackBase::isActive() const
 {
     return !m_alreadySent && m_backendDispatcher->isActive();
 }
 
-void InspectorBackendDispatcher::CallbackBase::sendFailure(const ErrorString& error)
+void BackendDispatcher::CallbackBase::sendFailure(const ErrorString& error)
 {
     ASSERT(error.length());
     sendIfActive(nullptr, error);
 }
 
-void InspectorBackendDispatcher::CallbackBase::sendIfActive(RefPtr<InspectorObject>&& partialMessage, const ErrorString& invocationError)
+void BackendDispatcher::CallbackBase::sendIfActive(RefPtr<InspectorObject>&& partialMessage, const ErrorString& invocationError)
 {
     if (m_alreadySent)
         return;
@@ -61,20 +61,20 @@ void InspectorBackendDispatcher::CallbackBase::sendIfActive(RefPtr<InspectorObje
     m_alreadySent = true;
 }
 
-Ref<InspectorBackendDispatcher> InspectorBackendDispatcher::create(InspectorFrontendChannel* inspectorFrontendChannel)
+Ref<BackendDispatcher> BackendDispatcher::create(FrontendChannel* frontendChannel)
 {
-    return adoptRef(*new InspectorBackendDispatcher(inspectorFrontendChannel));
+    return adoptRef(*new BackendDispatcher(frontendChannel));
 }
 
-void InspectorBackendDispatcher::registerDispatcherForDomain(const String& domain, InspectorSupplementalBackendDispatcher* dispatcher)
+void BackendDispatcher::registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher* dispatcher)
 {
     auto result = m_dispatchers.add(domain, dispatcher);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void InspectorBackendDispatcher::dispatch(const String& message)
+void BackendDispatcher::dispatch(const String& message)
 {
-    Ref<InspectorBackendDispatcher> protect(*this);
+    Ref<BackendDispatcher> protect(*this);
 
     RefPtr<InspectorValue> parsedMessage;
     if (!InspectorValue::parseJSON(message, parsedMessage)) {
@@ -119,7 +119,7 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     }
 
     String domain = method.substring(0, position);
-    InspectorSupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
+    SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
     if (!domainDispatcher) {
         reportProtocolError(&callId, MethodNotFound, "'" + domain + "' domain was not found");
         return;
@@ -129,9 +129,9 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     domainDispatcher->dispatch(callId, domainMethod, messageObject.releaseNonNull());
 }
 
-void InspectorBackendDispatcher::sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError)
+void BackendDispatcher::sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError)
 {
-    if (!m_inspectorFrontendChannel)
+    if (!m_frontendChannel)
         return;
 
     if (invocationError.length()) {
@@ -142,15 +142,15 @@ void InspectorBackendDispatcher::sendResponse(long callId, RefPtr<InspectorObjec
     Ref<InspectorObject> responseMessage = InspectorObject::create();
     responseMessage->setObject(ASCIILiteral("result"), result);
     responseMessage->setInteger(ASCIILiteral("id"), callId);
-    m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
 }
 
-void InspectorBackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode errorCode, const String& errorMessage) const
+void BackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode errorCode, const String& errorMessage) const
 {
     reportProtocolError(callId, errorCode, errorMessage, nullptr);
 }
 
-void InspectorBackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode errorCode, const String& errorMessage, RefPtr<Inspector::Protocol::Array<String>>&& data) const
+void BackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode errorCode, const String& errorMessage, RefPtr<Inspector::Protocol::Array<String>>&& data) const
 {
     static const int errorCodes[] = {
         -32700, // ParseError
@@ -165,7 +165,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
     ASSERT_ARG(errorCode, (unsigned)errorCode < WTF_ARRAY_LENGTH(errorCodes));
     ASSERT_ARG(errorCode, errorCodes[errorCode]);
 
-    if (!m_inspectorFrontendChannel)
+    if (!m_frontendChannel)
         return;
 
     Ref<InspectorObject> error = InspectorObject::create();
@@ -181,7 +181,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
     else
         message->setValue(ASCIILiteral("id"), InspectorValue::null());
 
-    m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 
 template<typename ReturnValueType, typename ValueType, typename DefaultValueType>
@@ -227,37 +227,37 @@ struct AsMethodBridges {
     static bool asValue(InspectorValue& value, RefPtr<InspectorValue>& output) { return value.asValue(output); }
 };
 
-int InspectorBackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+int BackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInteger, "Integer");
 }
 
-double InspectorBackendDispatcher::getDouble(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+double BackendDispatcher::getDouble(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<double, double, double>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asDouble, "Number");
 }
 
-String InspectorBackendDispatcher::getString(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+String BackendDispatcher::getString(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<String, String, String>(object, name, valueFound, protocolErrors, "", AsMethodBridges::asString, "String");
 }
 
-bool InspectorBackendDispatcher::getBoolean(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+bool BackendDispatcher::getBoolean(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<bool, bool, bool>(object, name, valueFound, protocolErrors, false, AsMethodBridges::asBoolean, "Boolean");
 }
 
-RefPtr<InspectorObject> InspectorBackendDispatcher::getObject(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+RefPtr<InspectorObject> BackendDispatcher::getObject(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<RefPtr<InspectorObject>, RefPtr<InspectorObject>, InspectorObject*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asObject, "Object");
 }
 
-RefPtr<InspectorArray> InspectorBackendDispatcher::getArray(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+RefPtr<InspectorArray> BackendDispatcher::getArray(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<RefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asArray, "Array");
 }
 
-RefPtr<InspectorValue> InspectorBackendDispatcher::getValue(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
+RefPtr<InspectorValue> BackendDispatcher::getValue(InspectorObject* object, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors)
 {
     return getPropertyValue<RefPtr<InspectorValue>, RefPtr<InspectorValue>, InspectorValue*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asValue, "Value");
 }

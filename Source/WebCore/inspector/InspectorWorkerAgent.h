@@ -38,7 +38,7 @@
 
 namespace Inspector {
 class InspectorObject;
-class InspectorWorkerFrontendDispatcher;
+class WorkerFrontendDispatcher;
 }
 
 namespace WebCore {
@@ -48,14 +48,14 @@ class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::InspectorWorkerBackendDispatcherHandler {
+class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::WorkerBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorWorkerAgent(InstrumentingAgents*);
     virtual ~InspectorWorkerAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // Called from InspectorInstrumentation
     bool shouldPauseDedicatedWorkerOnStart() const;
@@ -76,8 +76,8 @@ private:
     void createWorkerFrontendChannel(WorkerGlobalScopeProxy*, const String& url);
     void destroyWorkerFrontendChannels();
 
-    std::unique_ptr<Inspector::InspectorWorkerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorWorkerBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     bool m_shouldPauseDedicatedWorkerOnStart;
 

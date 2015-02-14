@@ -39,12 +39,12 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -363,14 +363,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*Error*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*Error*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -395,9 +395,9 @@ public:
         Ref<Error> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(Error) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(Error) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<Error>*>(&result));
         }
     };
@@ -411,7 +411,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -425,14 +425,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*OptionalParameterBundle*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*OptionalParameterBundle*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -443,9 +443,9 @@ public:
         Ref<OptionalParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(OptionalParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(OptionalParameterBundle) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<OptionalParameterBundle>*>(&result));
         }
     };
@@ -457,7 +457,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 
     void setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
@@ -513,14 +513,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*ParameterBundle*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*ParameterBundle*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -580,9 +580,9 @@ public:
         Ref<ParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
         }
     };
@@ -601,7 +601,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -621,14 +621,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*ObjectWithPropertyNameConflicts*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*ObjectWithPropertyNameConflicts*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -674,9 +674,9 @@ public:
         Ref<ObjectWithPropertyNameConflicts> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ObjectWithPropertyNameConflicts) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(ObjectWithPropertyNameConflicts) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<ObjectWithPropertyNameConflicts>*>(&result));
         }
     };
@@ -693,7 +693,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -716,14 +716,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*ParameterBundle*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*ParameterBundle*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -776,9 +776,9 @@ public:
         Ref<ParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
         }
     };
@@ -796,7 +796,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 

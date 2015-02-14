@@ -1,3 +1,109 @@
+2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace
+        https://bugs.webkit.org/show_bug.cgi?id=141372
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.exp.in:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorApplicationCacheAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::dispatchMessageFromFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMStorageAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDatabaseAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorForwarding.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorIndexedDBAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorLayerTreeAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorPageAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorPageAgent::getScriptExecutionStatus):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorReplayAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorResourceAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorWorkerAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::didCreateFrontendAndBackend):
+        (WebCore::PageRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/PageRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::~WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::didCreateFrontendAndBackend):
+        (WebCore::WorkerRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/WorkerRuntimeAgent.h:
+        * loader/EmptyClients.h:
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::connect):
+        (WebCore::PageDebuggable::disconnect):
+        * page/PageDebuggable.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::closeDummyInspectorFrontend):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+
 2015-02-14  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols

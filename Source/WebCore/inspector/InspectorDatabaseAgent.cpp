@@ -47,7 +47,7 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
-typedef Inspector::InspectorDatabaseBackendDispatcherHandler::ExecuteSQLCallback ExecuteSQLCallback;
+typedef Inspector::DatabaseBackendDispatcherHandler::ExecuteSQLCallback ExecuteSQLCallback;
 
 using namespace Inspector;
 
@@ -222,13 +222,13 @@ InspectorDatabaseAgent::~InspectorDatabaseAgent()
     m_instrumentingAgents->setInspectorDatabaseAgent(nullptr);
 }
 
-void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorDatabaseFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorDatabaseBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::DatabaseFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::DatabaseBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorDatabaseAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorDatabaseAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

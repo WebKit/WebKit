@@ -39,12 +39,12 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -356,14 +356,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*KeyPath*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*KeyPath*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -381,9 +381,9 @@ public:
         Ref<KeyPath> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(KeyPath) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(KeyPath) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<KeyPath>*>(&result));
         }
     };
@@ -396,7 +396,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 
     void setString(const String& value)

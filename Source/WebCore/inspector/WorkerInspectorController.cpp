@@ -108,18 +108,18 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
 WorkerInspectorController::~WorkerInspectorController()
 {
     m_instrumentingAgents->reset();
-    disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
+    disconnectFrontend(Inspector::DisconnectReason::InspectedTargetDestroyed);
 }
 
 void WorkerInspectorController::connectFrontend()
 {
     ASSERT(!m_frontendChannel);
     m_frontendChannel = std::make_unique<PageInspectorProxy>(m_workerGlobalScope);
-    m_backendDispatcher = InspectorBackendDispatcher::create(m_frontendChannel.get());
+    m_backendDispatcher = BackendDispatcher::create(m_frontendChannel.get());
     m_agents.didCreateFrontendAndBackend(m_frontendChannel.get(), m_backendDispatcher.get());
 }
 
-void WorkerInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
+void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason reason)
 {
     if (!m_frontendChannel)
         return;

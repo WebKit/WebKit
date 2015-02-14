@@ -33,27 +33,28 @@
 
 namespace Inspector {
 
-class InspectorBackendDispatcher;
-class InspectorFrontendChannel;
+class BackendDispatcher;
+class FrontendChannel;
+
 typedef String ErrorString;
 
-class InspectorSupplementalBackendDispatcher : public RefCounted<InspectorSupplementalBackendDispatcher> {
+class SupplementalBackendDispatcher : public RefCounted<SupplementalBackendDispatcher> {
 public:
-    InspectorSupplementalBackendDispatcher(InspectorBackendDispatcher& backendDispatcher)
+    SupplementalBackendDispatcher(BackendDispatcher& backendDispatcher)
         : m_backendDispatcher(backendDispatcher) { }
-    virtual ~InspectorSupplementalBackendDispatcher() { }
+    virtual ~SupplementalBackendDispatcher() { }
     virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) = 0;
 protected:
-    Ref<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<BackendDispatcher> m_backendDispatcher;
 };
 
-class JS_EXPORT_PRIVATE InspectorBackendDispatcher : public RefCounted<InspectorBackendDispatcher> {
+class JS_EXPORT_PRIVATE BackendDispatcher : public RefCounted<BackendDispatcher> {
 public:
-    static Ref<InspectorBackendDispatcher> create(InspectorFrontendChannel*);
+    static Ref<BackendDispatcher> create(FrontendChannel*);
 
     class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
-        CallbackBase(Ref<InspectorBackendDispatcher>&&, int id);
+        CallbackBase(Ref<BackendDispatcher>&&, int id);
 
         bool isActive() const;
         void sendFailure(const ErrorString&);
@@ -63,13 +64,13 @@ public:
         void sendIfActive(RefPtr<InspectorObject>&& partialMessage, const ErrorString& invocationError);
 
     private:
-        Ref<InspectorBackendDispatcher> m_backendDispatcher;
+        Ref<BackendDispatcher> m_backendDispatcher;
         int m_id;
         bool m_alreadySent;
     };
 
-    void clearFrontend() { m_inspectorFrontendChannel = nullptr; }
-    bool isActive() const { return !!m_inspectorFrontendChannel; }
+    void clearFrontend() { m_frontendChannel = nullptr; }
+    bool isActive() const { return !!m_frontendChannel; }
 
     enum CommonErrorCode {
         ParseError = 0,
@@ -80,7 +81,7 @@ public:
         ServerError
     };
 
-    void registerDispatcherForDomain(const String& domain, InspectorSupplementalBackendDispatcher*);
+    void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
     void dispatch(const String& message);
     void sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError);
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
@@ -95,10 +96,11 @@ public:
     static RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
 
 private:
-    InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+    BackendDispatcher(FrontendChannel* FrontendChannel)
+        : m_frontendChannel(FrontendChannel) { }
 
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
-    HashMap<String, InspectorSupplementalBackendDispatcher*> m_dispatchers;
+    FrontendChannel* m_frontendChannel;
+    HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
 };
 
 } // namespace Inspector

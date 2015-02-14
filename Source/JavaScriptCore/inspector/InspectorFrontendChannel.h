@@ -30,9 +30,9 @@
 
 namespace Inspector {
 
-class InspectorFrontendChannel {
+class FrontendChannel {
 public:
-    virtual ~InspectorFrontendChannel() { }
+    virtual ~FrontendChannel() { }
     virtual bool sendMessageToFrontend(const String& message) = 0;
 };
 

@@ -52,12 +52,12 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(InjectedScriptManager* injectedScriptMana
 {
 }
 
-void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
+    m_backendDispatcher = Inspector::RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void WorkerRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void WorkerRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
     m_backendDispatcher.clear();
 

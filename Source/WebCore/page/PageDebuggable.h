@@ -47,7 +47,7 @@ public:
     virtual String url() const override;
     virtual bool hasLocalDebugger() const override;
 
-    virtual void connect(Inspector::InspectorFrontendChannel*, bool isAutomaticInspection) override;
+    virtual void connect(Inspector::FrontendChannel*, bool isAutomaticInspection) override;
     virtual void disconnect() override;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
     virtual void setIndicating(bool) override;

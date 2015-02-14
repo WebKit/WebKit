@@ -34,7 +34,8 @@
 
 namespace Inspector {
 
-class InspectorFrontendChannel;
+class FrontendChannel;
+
 struct RemoteInspectorDebuggableInfo;
 
 class JS_EXPORT_PRIVATE RemoteInspectorDebuggable {
@@ -62,7 +63,7 @@ public:
     virtual String url() const { return String(); } // Web
     virtual bool hasLocalDebugger() const = 0;
 
-    virtual void connect(InspectorFrontendChannel*, bool isAutomaticInspection) = 0;
+    virtual void connect(FrontendChannel*, bool isAutomaticInspection) = 0;
     virtual void disconnect() = 0;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) = 0;
     virtual void setIndicating(bool) { } // Default is to do nothing.

@@ -55,8 +55,8 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
-    void updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher*);
+    void addToFrontend(ConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
+    void updateRepeatCountInConsole(ConsoleFrontendDispatcher*);
 
     MessageSource source() const { return m_source; }
     const String& message() const { return m_message; }

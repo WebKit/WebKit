@@ -71,7 +71,7 @@
 
 using namespace Inspector;
 
-typedef Inspector::InspectorNetworkBackendDispatcherHandler::LoadResourceCallback LoadResourceCallback;
+typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadResourceCallback;
 
 namespace WebCore {
 
@@ -173,13 +173,13 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
 {
 }
 
-void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorNetworkFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorNetworkBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::NetworkFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::NetworkBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorResourceAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorResourceAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

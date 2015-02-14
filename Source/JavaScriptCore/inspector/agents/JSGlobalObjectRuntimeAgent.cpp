@@ -40,13 +40,13 @@ JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(InjectedScriptManager* in
 {
 }
 
-void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorRuntimeFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<RuntimeFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

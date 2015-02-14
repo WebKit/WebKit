@@ -337,13 +337,13 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 {
 }
 
-void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorPageFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorPageBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::PageFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::PageBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorPageAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
@@ -657,7 +657,7 @@ void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
     m_overlay->setShowingPaintRects(show);
 }
 
-void InspectorPageAgent::getScriptExecutionStatus(ErrorString&, InspectorPageBackendDispatcherHandler::Result* status)
+void InspectorPageAgent::getScriptExecutionStatus(ErrorString&, Inspector::PageBackendDispatcherHandler::Result* status)
 {
     bool disabledByScriptController = false;
     bool disabledInSettings = false;
@@ -668,14 +668,14 @@ void InspectorPageAgent::getScriptExecutionStatus(ErrorString&, InspectorPageBac
     }
 
     if (!disabledByScriptController) {
-        *status = InspectorPageBackendDispatcherHandler::Result::Allowed;
+        *status = Inspector::PageBackendDispatcherHandler::Result::Allowed;
         return;
     }
 
     if (disabledInSettings)
-        *status = InspectorPageBackendDispatcherHandler::Result::Disabled;
+        *status = Inspector::PageBackendDispatcherHandler::Result::Disabled;
     else
-        *status = InspectorPageBackendDispatcherHandler::Result::Forbidden;
+        *status = Inspector::PageBackendDispatcherHandler::Result::Forbidden;
 }
 
 void InspectorPageAgent::setScriptExecutionDisabled(ErrorString&, bool value)

@@ -56,8 +56,8 @@ public:
     PageRuntimeAgent(Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
     virtual ~PageRuntimeAgent() { }
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
 
@@ -74,8 +74,8 @@ private:
 
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<Inspector::InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorRuntimeBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     bool m_mainWorldContextCreated;
 };
 

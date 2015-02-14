@@ -434,7 +434,7 @@ void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorContro
     closeWindowWithoutNotifications();
 
     if (notifyInspectorController) {
-        m_inspectedWebView->page()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+        m_inspectedWebView->page()->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
         m_inspectorClient->updateHighlight();
     }
     ::DestroyWindow(m_frontendHwnd);

@@ -44,7 +44,7 @@ class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
 public:
     static Ref<InspectorDatabaseResource> create(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
-    void bind(Inspector::InspectorDatabaseFrontendDispatcher*);
+    void bind(Inspector::DatabaseFrontendDispatcher*);
     Database* database() { return m_database.get(); }
     void setDatabase(RefPtr<Database>&& database) { m_database = database; }
     String id() const { return m_id; }

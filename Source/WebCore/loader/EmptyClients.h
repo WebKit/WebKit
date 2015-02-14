@@ -594,7 +594,7 @@ public:
 
     virtual void inspectorDestroyed() override { }
     
-    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) override { return 0; }
+    virtual Inspector::FrontendChannel* openInspectorFrontend(InspectorController*) override { return 0; }
     virtual void closeInspectorFrontend() override { }
     virtual void bringFrontendToFront() override { }
 

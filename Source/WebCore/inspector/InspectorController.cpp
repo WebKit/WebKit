@@ -86,7 +86,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_overlay(std::make_unique<InspectorOverlay>(page, inspectorClient))
-    , m_inspectorFrontendChannel(nullptr)
+    , m_frontendChannel(nullptr)
     , m_executionStopwatch(Stopwatch::create())
     , m_page(page)
     , m_inspectorClient(inspectorClient)
@@ -184,7 +184,7 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
+    disconnectFrontend(DisconnectReason::InspectedTargetDestroyed);
     m_injectedScriptManager->disconnect();
     m_inspectorClient->inspectorDestroyed();
     m_inspectorClient = nullptr;
@@ -232,19 +232,19 @@ void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWo
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
-void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel, bool isAutomaticInspection)
+void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendChannel, bool isAutomaticInspection)
 {
     ASSERT(frontendChannel);
     ASSERT(m_inspectorClient);
-    ASSERT(!m_inspectorFrontendChannel);
-    ASSERT(!m_inspectorBackendDispatcher);
+    ASSERT(!m_frontendChannel);
+    ASSERT(!m_backendDispatcher);
 
     m_isAutomaticInspection = isAutomaticInspection;
 
-    m_inspectorFrontendChannel = frontendChannel;
-    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
+    m_frontendChannel = frontendChannel;
+    m_backendDispatcher = BackendDispatcher::create(frontendChannel);
 
-    m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend(frontendChannel, m_backendDispatcher.get());
 
     InspectorInstrumentation::registerInstrumentingAgents(*m_instrumentingAgents);
     InspectorInstrumentation::frontendCreated();
@@ -255,16 +255,16 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
 #endif
 }
 
-void InspectorController::disconnectFrontend(InspectorDisconnectReason reason)
+void InspectorController::disconnectFrontend(DisconnectReason reason)
 {
-    if (!m_inspectorFrontendChannel)
+    if (!m_frontendChannel)
         return;
 
     m_agents.willDestroyFrontendAndBackend(reason);
 
-    m_inspectorBackendDispatcher->clearFrontend();
-    m_inspectorBackendDispatcher.clear();
-    m_inspectorFrontendChannel = nullptr;
+    m_backendDispatcher->clearFrontend();
+    m_backendDispatcher.clear();
+    m_frontendChannel = nullptr;
 
     m_isAutomaticInspection = false;
 
@@ -286,10 +286,10 @@ void InspectorController::show()
     if (!enabled())
         return;
 
-    if (m_inspectorFrontendChannel)
+    if (m_frontendChannel)
         m_inspectorClient->bringFrontendToFront();
     else {
-        if (InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this)) {
+        if (Inspector::FrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this)) {
             bool isAutomaticInspection = false;
             connectFrontend(frontendChannel, isAutomaticInspection);
         }
@@ -298,9 +298,9 @@ void InspectorController::show()
 
 void InspectorController::close()
 {
-    if (!m_inspectorFrontendChannel)
+    if (!m_frontendChannel)
         return;
-    disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
+    disconnectFrontend(DisconnectReason::InspectorDestroyed);
     m_inspectorClient->closeInspectorFrontend();
 }
 
@@ -352,8 +352,8 @@ Page& InspectorController::inspectedPage() const
 
 void InspectorController::dispatchMessageFromFrontend(const String& message)
 {
-    if (m_inspectorBackendDispatcher)
-        m_inspectorBackendDispatcher->dispatch(message);
+    if (m_backendDispatcher)
+        m_backendDispatcher->dispatch(message);
 }
 
 void InspectorController::hideHighlight()

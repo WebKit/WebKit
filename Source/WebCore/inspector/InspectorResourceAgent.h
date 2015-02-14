@@ -73,14 +73,14 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent final : public InspectorAgentBase, public Inspector::InspectorNetworkBackendDispatcherHandler {
+class InspectorResourceAgent final : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*);
     virtual ~InspectorResourceAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // InspectorInstrumentation callbacks.
     void willRecalculateStyle();
@@ -138,8 +138,8 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
-    std::unique_ptr<Inspector::InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorNetworkBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;
     bool m_cacheDisabled;

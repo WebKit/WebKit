@@ -271,7 +271,7 @@ void WebInspector::remoteFrontendDisconnected()
     m_remoteFrontendConnected = false;
 
     if (m_page->corePage())
-        m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+        m_page->corePage()->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
 }
 #endif
 

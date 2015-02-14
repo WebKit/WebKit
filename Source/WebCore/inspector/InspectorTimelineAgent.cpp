@@ -62,10 +62,10 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 {
 }
 
-void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorTimelineFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorTimelineBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::TimelineFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::TimelineBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(this);
 
@@ -73,14 +73,14 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
         m_scriptDebugServer->recompileAllJSFunctions();
 }
 
-void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
 
-    if (reason != InspectorDisconnectReason::InspectedTargetDestroyed) {
+    if (reason != Inspector::DisconnectReason::InspectedTargetDestroyed) {
         if (m_scriptDebugServer)
             m_scriptDebugServer->recompileAllJSFunctions();
     }

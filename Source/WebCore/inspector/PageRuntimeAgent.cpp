@@ -59,13 +59,13 @@ PageRuntimeAgent::PageRuntimeAgent(InjectedScriptManager* injectedScriptManager,
 {
 }
 
-void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorRuntimeFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::RuntimeFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void PageRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

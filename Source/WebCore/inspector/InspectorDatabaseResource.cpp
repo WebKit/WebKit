@@ -54,7 +54,7 @@ InspectorDatabaseResource::InspectorDatabaseResource(RefPtr<Database>&& database
 {
 }
 
-void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databaseFrontendDispatcher)
+void InspectorDatabaseResource::bind(Inspector::DatabaseFrontendDispatcher* databaseFrontendDispatcher)
 {
     auto jsonObject = Inspector::Protocol::Database::Database::create()
         .setId(m_id)

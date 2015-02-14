@@ -35,32 +35,32 @@
 
 namespace Inspector {
 
-template<typename BackendDispatcher, typename AlternateDispatcher>
+template<typename TBackendDispatcher, typename TAlternateDispatcher>
 class AlternateDispatchableAgent final : public InspectorAgentBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AlternateDispatchableAgent(const String& domainName, std::unique_ptr<AlternateDispatcher> alternateDispatcher)
+    AlternateDispatchableAgent(const String& domainName, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
         : InspectorAgentBase(domainName)
         , m_alternateDispatcher(WTF::move(alternateDispatcher))
     {
     }
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher) override
+    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher* backendDispatcher) override
     {
-        m_backendDispatcher = BackendDispatcher::create(backendDispatcher, nullptr);
+        m_backendDispatcher = TBackendDispatcher::create(backendDispatcher, nullptr);
         m_backendDispatcher->setAlternateDispatcher(m_alternateDispatcher.get());
         m_alternateDispatcher->setBackendDispatcher(backendDispatcher);
     }
 
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override
     {
         m_backendDispatcher = nullptr;
         m_alternateDispatcher->setBackendDispatcher(nullptr);
     }
 
 private:
-    std::unique_ptr<AlternateDispatcher> m_alternateDispatcher;
-    RefPtr<BackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<TAlternateDispatcher> m_alternateDispatcher;
+    RefPtr<TBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace Inspector

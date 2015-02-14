@@ -1,3 +1,147 @@
+2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace
+        https://bugs.webkit.org/show_bug.cgi?id=141372
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        (Inspector::ConsoleMessage::updateRepeatCountInConsole):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorAgentBase.h:
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::AgentRegistry::AgentRegistry):
+        (Inspector::AgentRegistry::append):
+        (Inspector::AgentRegistry::appendExtraAgent):
+        (Inspector::AgentRegistry::didCreateFrontendAndBackend):
+        (Inspector::AgentRegistry::willDestroyFrontendAndBackend):
+        (Inspector::AgentRegistry::discardAgents):
+        (Inspector::InspectorAgentRegistry::InspectorAgentRegistry): Deleted.
+        (Inspector::InspectorAgentRegistry::append): Deleted.
+        (Inspector::InspectorAgentRegistry::appendExtraAgent): Deleted.
+        (Inspector::InspectorAgentRegistry::didCreateFrontendAndBackend): Deleted.
+        (Inspector::InspectorAgentRegistry::willDestroyFrontendAndBackend): Deleted.
+        (Inspector::InspectorAgentRegistry::discardAgents): Deleted.
+        * inspector/InspectorAgentRegistry.h:
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::CallbackBase::CallbackBase):
+        (Inspector::BackendDispatcher::CallbackBase::isActive):
+        (Inspector::BackendDispatcher::CallbackBase::sendFailure):
+        (Inspector::BackendDispatcher::CallbackBase::sendIfActive):
+        (Inspector::BackendDispatcher::create):
+        (Inspector::BackendDispatcher::registerDispatcherForDomain):
+        (Inspector::BackendDispatcher::dispatch):
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::BackendDispatcher::reportProtocolError):
+        (Inspector::BackendDispatcher::getInteger):
+        (Inspector::BackendDispatcher::getDouble):
+        (Inspector::BackendDispatcher::getString):
+        (Inspector::BackendDispatcher::getBoolean):
+        (Inspector::BackendDispatcher::getObject):
+        (Inspector::BackendDispatcher::getArray):
+        (Inspector::BackendDispatcher::getValue):
+        (Inspector::InspectorBackendDispatcher::CallbackBase::CallbackBase): Deleted.
+        (Inspector::InspectorBackendDispatcher::CallbackBase::isActive): Deleted.
+        (Inspector::InspectorBackendDispatcher::CallbackBase::sendFailure): Deleted.
+        (Inspector::InspectorBackendDispatcher::CallbackBase::sendIfActive): Deleted.
+        (Inspector::InspectorBackendDispatcher::create): Deleted.
+        (Inspector::InspectorBackendDispatcher::registerDispatcherForDomain): Deleted.
+        (Inspector::InspectorBackendDispatcher::dispatch): Deleted.
+        (Inspector::InspectorBackendDispatcher::sendResponse): Deleted.
+        (Inspector::InspectorBackendDispatcher::reportProtocolError): Deleted.
+        (Inspector::InspectorBackendDispatcher::getInteger): Deleted.
+        (Inspector::InspectorBackendDispatcher::getDouble): Deleted.
+        (Inspector::InspectorBackendDispatcher::getString): Deleted.
+        (Inspector::InspectorBackendDispatcher::getBoolean): Deleted.
+        (Inspector::InspectorBackendDispatcher::getObject): Deleted.
+        (Inspector::InspectorBackendDispatcher::getArray): Deleted.
+        (Inspector::InspectorBackendDispatcher::getValue): Deleted.
+        * inspector/InspectorBackendDispatcher.h:
+        (Inspector::SupplementalBackendDispatcher::SupplementalBackendDispatcher):
+        (Inspector::SupplementalBackendDispatcher::~SupplementalBackendDispatcher):
+        (Inspector::InspectorSupplementalBackendDispatcher::InspectorSupplementalBackendDispatcher): Deleted.
+        (Inspector::InspectorSupplementalBackendDispatcher::~InspectorSupplementalBackendDispatcher): Deleted.
+        * inspector/InspectorFrontendChannel.h:
+        (Inspector::FrontendChannel::~FrontendChannel):
+        (Inspector::InspectorFrontendChannel::~InspectorFrontendChannel): Deleted.
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::globalObjectDestroyed):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::dispatchMessageFromFrontend):
+        (Inspector::JSGlobalObjectInspectorController::appendExtraAgent):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorAgent::willDestroyFrontendAndBackend):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorConsoleAgent::willDestroyFrontendAndBackend):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorDebuggerAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::pause):
+        (Inspector::InspectorDebuggerAgent::scriptExecutionBlockedByCSP):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        (Inspector::InspectorDebuggerAgent::clearBreakDetails):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        (Inspector::JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend):
+        (Inspector::JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/augmentable/AlternateDispatchableAgent.h:
+        * inspector/augmentable/AugmentableInspectorController.h:
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_type_for_formal_out_parameter):
+        (CppGenerator.cpp_type_for_stack_out_parameter):
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        (AlternateBackendDispatcher):
+        (Alternate):
+        (void):
+        (AlternateInspectorBackendDispatcher): Deleted.
+        (AlternateInspector): Deleted.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_alternate_handler_forward_declarations_for_domains.Alternate):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_alternate_handler_forward_declarations_for_domains.AlternateInspector): Deleted.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_handler_class_destructor_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_large_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        * runtime/JSGlobalObjectDebuggable.h:
+
 2015-02-14  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols

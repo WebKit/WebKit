@@ -39,23 +39,23 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
-class AlternateInspectorNetwork1BackendDispatcher : public AlternateInspectorBackendDispatcher {
+class AlternateNetwork1BackendDispatcher : public AlternateBackendDispatcher {
 public:
-    virtual ~AlternateInspectorNetwork1BackendDispatcher() { }
+    virtual ~AlternateNetwork1BackendDispatcher() { }
     virtual void loadResource1(long callId) = 0;
 };
-class AlternateInspectorNetwork3BackendDispatcher : public AlternateInspectorBackendDispatcher {
+class AlternateNetwork3BackendDispatcher : public AlternateBackendDispatcher {
 public:
-    virtual ~AlternateInspectorNetwork3BackendDispatcher() { }
+    virtual ~AlternateNetwork3BackendDispatcher() { }
     virtual void loadResource1(long callId) = 0;
     virtual void loadResource2(long callId) = 0;
     virtual void loadResource3(long callId) = 0;
@@ -161,18 +161,18 @@ namespace Inspector {
 typedef String ErrorString;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-class AlternateInspectorNetwork1BackendDispatcher;
-class AlternateInspectorNetwork3BackendDispatcher;
+class AlternateNetwork1BackendDispatcher;
+class AlternateNetwork3BackendDispatcher;
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-class InspectorNetwork1BackendDispatcherHandler {
+class Network1BackendDispatcherHandler {
 public:
     virtual void loadResource1(ErrorString&) = 0;
 protected:
-    virtual ~InspectorNetwork1BackendDispatcherHandler();
+    virtual ~Network1BackendDispatcherHandler();
 };
 
-class InspectorNetwork3BackendDispatcherHandler {
+class Network3BackendDispatcherHandler {
 public:
     virtual void loadResource1(ErrorString&) = 0;
     virtual void loadResource2(ErrorString&) = 0;
@@ -182,46 +182,46 @@ public:
     virtual void loadResource6(ErrorString&) = 0;
     virtual void loadResource7(ErrorString&) = 0;
 protected:
-    virtual ~InspectorNetwork3BackendDispatcherHandler();
+    virtual ~Network3BackendDispatcherHandler();
 };
 
-class InspectorNetwork1BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
+class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<InspectorNetwork1BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork1BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
+    static Ref<Network1BackendDispatcher> create(BackendDispatcher*, Network1BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource1(long callId, const Inspector::InspectorObject& message);
+    void loadResource1(long callId, const InspectorObject& message);
 private:
-    InspectorNetwork1BackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorNetwork1BackendDispatcherHandler*);
-    InspectorNetwork1BackendDispatcherHandler* m_agent;
+    Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
+    Network1BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
-    void setAlternateDispatcher(AlternateInspectorNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
+    void setAlternateDispatcher(AlternateNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateInspectorNetwork1BackendDispatcher* m_alternateDispatcher;
+    AlternateNetwork1BackendDispatcher* m_alternateDispatcher;
 #endif
 };
 
-class InspectorNetwork3BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
+class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<InspectorNetwork3BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork3BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
+    static Ref<Network3BackendDispatcher> create(BackendDispatcher*, Network3BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource1(long callId, const Inspector::InspectorObject& message);
-    void loadResource2(long callId, const Inspector::InspectorObject& message);
-    void loadResource3(long callId, const Inspector::InspectorObject& message);
-    void loadResource4(long callId, const Inspector::InspectorObject& message);
-    void loadResource5(long callId, const Inspector::InspectorObject& message);
-    void loadResource6(long callId, const Inspector::InspectorObject& message);
-    void loadResource7(long callId, const Inspector::InspectorObject& message);
+    void loadResource1(long callId, const InspectorObject& message);
+    void loadResource2(long callId, const InspectorObject& message);
+    void loadResource3(long callId, const InspectorObject& message);
+    void loadResource4(long callId, const InspectorObject& message);
+    void loadResource5(long callId, const InspectorObject& message);
+    void loadResource6(long callId, const InspectorObject& message);
+    void loadResource7(long callId, const InspectorObject& message);
 private:
-    InspectorNetwork3BackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorNetwork3BackendDispatcherHandler*);
-    InspectorNetwork3BackendDispatcherHandler* m_agent;
+    Network3BackendDispatcher(BackendDispatcher&, Network3BackendDispatcherHandler*);
+    Network3BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
-    void setAlternateDispatcher(AlternateInspectorNetwork3BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
+    void setAlternateDispatcher(AlternateNetwork3BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateInspectorNetwork3BackendDispatcher* m_alternateDispatcher;
+    AlternateNetwork3BackendDispatcher* m_alternateDispatcher;
 #endif
 };
 
@@ -274,16 +274,16 @@ private:
 
 namespace Inspector {
 
-InspectorNetwork1BackendDispatcherHandler::~InspectorNetwork1BackendDispatcherHandler() { }
-InspectorNetwork3BackendDispatcherHandler::~InspectorNetwork3BackendDispatcherHandler() { }
+Network1BackendDispatcherHandler::~Network1BackendDispatcherHandler() { }
+Network3BackendDispatcherHandler::~Network3BackendDispatcherHandler() { }
 
-Ref<InspectorNetwork1BackendDispatcher> InspectorNetwork1BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
+Ref<Network1BackendDispatcher> Network1BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network1BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new InspectorNetwork1BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new Network1BackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
-    : InspectorSupplementalBackendDispatcher(backendDispatcher)
+Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendDispatcher, Network1BackendDispatcherHandler* agent)
+    : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     , m_alternateDispatcher(nullptr)
@@ -292,17 +292,17 @@ InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(Inspector
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void InspectorNetwork1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
-    Ref<InspectorNetwork1BackendDispatcher> protect(*this);
+    Ref<Network1BackendDispatcher> protect(*this);
 
     if (method == "loadResource1")
         loadResource1(callId, message);
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void InspectorNetwork1BackendDispatcher::loadResource1(long callId, const InspectorObject&)
+void Network1BackendDispatcher::loadResource1(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -318,13 +318,13 @@ void InspectorNetwork1BackendDispatcher::loadResource1(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-Ref<InspectorNetwork3BackendDispatcher> InspectorNetwork3BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
+Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network3BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new InspectorNetwork3BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new Network3BackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorNetwork3BackendDispatcher::InspectorNetwork3BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
-    : InspectorSupplementalBackendDispatcher(backendDispatcher)
+Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendDispatcher, Network3BackendDispatcherHandler* agent)
+    : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     , m_alternateDispatcher(nullptr)
@@ -333,11 +333,11 @@ InspectorNetwork3BackendDispatcher::InspectorNetwork3BackendDispatcher(Inspector
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
 }
 
-void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network3BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
-    Ref<InspectorNetwork3BackendDispatcher> protect(*this);
+    Ref<Network3BackendDispatcher> protect(*this);
 
-    typedef void (InspectorNetwork3BackendDispatcher::*CallHandler)(long callId, const Inspector::InspectorObject& message);
+    typedef void (Network3BackendDispatcher::*CallHandler)(long callId, const InspectorObject& message);
     typedef HashMap<String, CallHandler> DispatchMap;
     DEPRECATED_DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
     if (dispatchMap.isEmpty()) {
@@ -345,13 +345,13 @@ void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& met
             const char* name;
             CallHandler handler;
         } commands[] = {
-            { "loadResource1", &InspectorNetwork3BackendDispatcher::loadResource1 },
-            { "loadResource2", &InspectorNetwork3BackendDispatcher::loadResource2 },
-            { "loadResource3", &InspectorNetwork3BackendDispatcher::loadResource3 },
-            { "loadResource4", &InspectorNetwork3BackendDispatcher::loadResource4 },
-            { "loadResource5", &InspectorNetwork3BackendDispatcher::loadResource5 },
-            { "loadResource6", &InspectorNetwork3BackendDispatcher::loadResource6 },
-            { "loadResource7", &InspectorNetwork3BackendDispatcher::loadResource7 },
+            { "loadResource1", &Network3BackendDispatcher::loadResource1 },
+            { "loadResource2", &Network3BackendDispatcher::loadResource2 },
+            { "loadResource3", &Network3BackendDispatcher::loadResource3 },
+            { "loadResource4", &Network3BackendDispatcher::loadResource4 },
+            { "loadResource5", &Network3BackendDispatcher::loadResource5 },
+            { "loadResource6", &Network3BackendDispatcher::loadResource6 },
+            { "loadResource7", &Network3BackendDispatcher::loadResource7 },
         };
         size_t length = WTF_ARRAY_LENGTH(commands);
         for (size_t i = 0; i < length; ++i)
@@ -360,14 +360,14 @@ void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& met
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
     if (it == dispatchMap.end()) {
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Network3", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network3", '.', method, "' was not found"));
         return;
     }
 
     ((*this).*it->value)(callId, message.get());
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource1(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource1(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -383,7 +383,7 @@ void InspectorNetwork3BackendDispatcher::loadResource1(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource2(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource2(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -399,7 +399,7 @@ void InspectorNetwork3BackendDispatcher::loadResource2(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource3(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource3(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -415,7 +415,7 @@ void InspectorNetwork3BackendDispatcher::loadResource3(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource4(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource4(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -431,7 +431,7 @@ void InspectorNetwork3BackendDispatcher::loadResource4(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource5(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource5(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -447,7 +447,7 @@ void InspectorNetwork3BackendDispatcher::loadResource5(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource6(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource6(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -463,7 +463,7 @@ void InspectorNetwork3BackendDispatcher::loadResource6(long callId, const Inspec
     m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-void InspectorNetwork3BackendDispatcher::loadResource7(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource7(long callId, const InspectorObject&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -736,7 +736,7 @@ String getEnumConstantValue(int code) {
 namespace Inspector {
 
 
-class ObjCInspectorNetwork1BackendDispatcher final : public AlternateInspectorNetwork1BackendDispatcher {
+class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<RWIProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
     virtual void loadResource1(long callId) override;
@@ -746,7 +746,7 @@ private:
 
 
 
-class ObjCInspectorNetwork3BackendDispatcher final : public AlternateInspectorNetwork3BackendDispatcher {
+class ObjCInspectorNetwork3BackendDispatcher final : public AlternateNetwork3BackendDispatcher {
 public:
     ObjCInspectorNetwork3BackendDispatcher(id<RWIProtocolNetwork3DomainHandler> handler) { m_delegate = handler; }
     virtual void loadResource1(long callId) override;
@@ -840,7 +840,7 @@ using namespace Inspector;
     _network1Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorNetwork1BackendDispatcher, AlternateInspectorNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
@@ -858,7 +858,7 @@ using namespace Inspector;
     _network3Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork3BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorNetwork3BackendDispatcher, AlternateInspectorNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 

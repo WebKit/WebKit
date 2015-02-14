@@ -93,14 +93,14 @@ using namespace Inspector;""")
     """""")
 
     BackendDispatcherHeaderDomainHandlerInterfaceDeclaration = (
-    """class AlternateInspector${domainName}BackendDispatcher : public AlternateInspectorBackendDispatcher {
+    """class Alternate${domainName}BackendDispatcher : public AlternateBackendDispatcher {
 public:
-    virtual ~AlternateInspector${domainName}BackendDispatcher() { }
+    virtual ~Alternate${domainName}BackendDispatcher() { }
 ${commandDeclarations}
 };""")
 
     BackendDispatcherHeaderDomainHandlerObjCDeclaration = (
-    """class ObjCInspector${domainName}BackendDispatcher final : public AlternateInspector${domainName}BackendDispatcher {
+    """class ObjCInspector${domainName}BackendDispatcher final : public Alternate${domainName}BackendDispatcher {
 public:
     ObjCInspector${domainName}BackendDispatcher(id<${objcPrefix}${domainName}DomainHandler> handler) { m_delegate = handler; }
 ${commandDeclarations}
@@ -137,7 +137,7 @@ ${invocation}
     _${variableNamePrefix}Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspector${domainName}BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Inspector${domainName}BackendDispatcher, AlternateInspector${domainName}BackendDispatcher>>(ASCIILiteral("${domainName}"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>(ASCIILiteral("${domainName}"), WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 

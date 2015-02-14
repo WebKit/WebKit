@@ -36,8 +36,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+class DOMStorageFrontendDispatcher;
 class InspectorArray;
-class InspectorDOMStorageFrontendDispatcher;
 }
 
 namespace WebCore {
@@ -51,14 +51,14 @@ class Storage;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
+class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::DOMStorageBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
     virtual ~InspectorDOMStorageAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // Called from the front-end.
     virtual void enable(ErrorString&) override;
@@ -78,8 +78,8 @@ private:
     RefPtr<StorageArea> findStorageArea(ErrorString&, const RefPtr<Inspector::InspectorObject>&&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<Inspector::InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorDOMStorageBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
 };
 

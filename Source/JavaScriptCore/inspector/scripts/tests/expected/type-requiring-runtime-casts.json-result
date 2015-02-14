@@ -39,12 +39,12 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -367,14 +367,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*TypeNeedingCast*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*TypeNeedingCast*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -420,9 +420,9 @@ public:
         Ref<TypeNeedingCast> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<TypeNeedingCast>*>(&result));
         }
     };
@@ -439,7 +439,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -467,14 +467,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*RecursiveObject1*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*RecursiveObject1*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -485,9 +485,9 @@ public:
         Ref<RecursiveObject1> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<RecursiveObject1>*>(&result));
         }
     };
@@ -499,7 +499,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
@@ -518,14 +518,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*RecursiveObject2*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*RecursiveObject2*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -536,9 +536,9 @@ public:
         Ref<RecursiveObject2> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<RecursiveObject2>*>(&result));
         }
     };
@@ -550,7 +550,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
@@ -696,16 +696,16 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
 }
 #endif // !ASSERT_DISABLED
 
-RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<Inspector::InspectorValue>&& value)
+RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<InspectorValue>&& value)
 {
-    RefPtr<Inspector::InspectorObject> result;
+    RefPtr<InspectorObject> result;
     bool castSucceeded = value->asObject(result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
     BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
 #endif  // !ASSERT_DISABLED
-    COMPILE_ASSERT(sizeof(Inspector::Protocol::Test::TypeNeedingCast) == sizeof(Inspector::InspectorObjectBase), type_cast_problem);
-    return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<Inspector::InspectorObjectBase*>(result.get()));
+    COMPILE_ASSERT(sizeof(Inspector::Protocol::Test::TypeNeedingCast) == sizeof(InspectorObjectBase), type_cast_problem);
+    return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<InspectorObjectBase*>(result.get()));
 }
 
 

@@ -98,7 +98,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
         lines = []
         lines.append(self._generate_event_signature(domain, event))
         lines.append('{')
-        lines.append('    InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();')
+        lines.append('    FrontendChannel* frontendChannel = _controller->frontendChannel();')
         lines.append('    if (!frontendChannel)')
         lines.append('        return;')
         lines.append('')

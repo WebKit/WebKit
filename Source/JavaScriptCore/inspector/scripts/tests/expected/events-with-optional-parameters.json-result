@@ -39,12 +39,12 @@
 
 namespace Inspector {
 
-class AlternateInspectorBackendDispatcher {
+class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<BackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -237,13 +237,13 @@ namespace Inspector {
 
 
 
-class InspectorDatabaseFrontendDispatcher {
+class DatabaseFrontendDispatcher {
 public:
-    InspectorDatabaseFrontendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+    DatabaseFrontendDispatcher(FrontendChannel* frontendChannel) : m_frontendChannel(frontendChannel) { }
     void didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor);
     void didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor);
 private:
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
+    FrontendChannel* m_frontendChannel;
 };
 
 } // namespace Inspector
@@ -289,7 +289,7 @@ private:
 
 namespace Inspector {
 
-void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
+void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
@@ -314,10 +314,10 @@ void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<In
         paramsObject->setString(ASCIILiteral("printColor"), *printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
-    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
-void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
+void DatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
@@ -333,7 +333,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
-    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
+    m_frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
 } // namespace Inspector
@@ -420,14 +420,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<Inspector::InspectorObject> m_result;
+        RefPtr<InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*Error*/Inspector::InspectorObject>&& object)
+        Builder(Ref</*Error*/InspectorObject>&& object)
             : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -452,9 +452,9 @@ public:
         Ref<Error> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(Error) == sizeof(Inspector::InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(Error) == sizeof(InspectorObject), cannot_cast);
 
-            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            Ref<InspectorObject> result = m_result.releaseNonNull();
             return WTF::move(*reinterpret_cast<Ref<Error>*>(&result));
         }
     };
@@ -468,7 +468,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
+        return Builder<NoFieldsSet>(InspectorObject::create());
     }
 };
 
@@ -849,7 +849,7 @@ using namespace Inspector;
 
 - (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor alternateColors:(NSArray/*<NSString>*/ **)alternateColors printColor:(NSString **)printColor
 {
-    InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
+    FrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
         return;
 
@@ -889,7 +889,7 @@ using namespace Inspector;
 
 - (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor alternateColors:(NSArray/*<NSString>*/ *)alternateColors printColor:(NSString *)printColor
 {
-    InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
+    FrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
         return;
 

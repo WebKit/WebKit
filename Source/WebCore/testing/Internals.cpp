@@ -1558,7 +1558,7 @@ void Internals::closeDummyInspectorFrontend()
     ASSERT(page);
     ASSERT(m_frontendWindow);
 
-    page->inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
+    page->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
 
     m_frontendClient = nullptr;
     m_frontendChannel = nullptr;

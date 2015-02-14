@@ -48,15 +48,15 @@ class ScriptArguments;
 class ScriptCallStack;
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, public InspectorConsoleBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, public ConsoleBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorConsoleAgent(InjectedScriptManager*);
     virtual ~InspectorConsoleAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
@@ -81,8 +81,8 @@ protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
 
     InjectedScriptManager* m_injectedScriptManager;
-    std::unique_ptr<InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorConsoleBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<ConsoleFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<ConsoleBackendDispatcher> m_backendDispatcher;
     ConsoleMessage* m_previousMessage;
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;

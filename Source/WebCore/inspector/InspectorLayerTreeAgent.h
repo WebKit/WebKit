@@ -44,14 +44,14 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::InspectorLayerTreeBackendDispatcherHandler {
+class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorLayerTreeAgent(InstrumentingAgents*);
     virtual ~InspectorLayerTreeAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     void reset();
 
     // InspectorInstrumentation callbacks.
@@ -81,8 +81,8 @@ private:
     String bindPseudoElement(PseudoElement*);
     void unbindPseudoElement(PseudoElement*);
 
-    std::unique_ptr<Inspector::InspectorLayerTreeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorLayerTreeBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::LayerTreeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::LayerTreeBackendDispatcher> m_backendDispatcher;
 
     HashMap<const RenderLayer*, String> m_documentLayerToIdMap;
     HashMap<String, const RenderLayer*> m_idToLayer;

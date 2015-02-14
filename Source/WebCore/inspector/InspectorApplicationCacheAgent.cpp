@@ -49,13 +49,13 @@ InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgen
 {
 }
 
-void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorApplicationCacheFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorApplicationCacheBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::ApplicationCacheFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::ApplicationCacheBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

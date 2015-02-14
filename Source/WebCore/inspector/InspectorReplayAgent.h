@@ -58,14 +58,14 @@ typedef int SegmentIdentifier;
 
 class InspectorReplayAgent final
     : public InspectorAgentBase
-    , public Inspector::InspectorReplayBackendDispatcherHandler {
+    , public Inspector::ReplayBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorReplayAgent);
 public:
     InspectorReplayAgent(InstrumentingAgents*, InspectorPageAgent*);
     virtual ~InspectorReplayAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // InspectorInstrumentation callbacks.
     void frameNavigated(DocumentLoader*);
@@ -114,8 +114,8 @@ private:
     RefPtr<ReplaySessionSegment> findSegment(ErrorString&, SegmentIdentifier);
     WebCore::SessionState sessionState() const;
 
-    std::unique_ptr<Inspector::InspectorReplayFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorReplayBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::ReplayFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::ReplayBackendDispatcher> m_backendDispatcher;
     Page& m_page;
 
     HashMap<int, RefPtr<ReplaySession>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_sessionsMap;

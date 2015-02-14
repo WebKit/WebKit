@@ -74,7 +74,7 @@ private:
 
 typedef Vector<RemoteInspectorBlock> RemoteInspectorQueue;
 
-class RemoteInspectorDebuggableConnection final : public ThreadSafeRefCounted<RemoteInspectorDebuggableConnection>, public InspectorFrontendChannel {
+class RemoteInspectorDebuggableConnection final : public ThreadSafeRefCounted<RemoteInspectorDebuggableConnection>, public FrontendChannel {
 public:
     RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable*, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType);
     virtual ~RemoteInspectorDebuggableConnection();

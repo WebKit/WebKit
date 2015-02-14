@@ -195,7 +195,7 @@ class CppGenerator:
                 return '%s*' % cpp_name
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
-                return 'Inspector%sBackendDispatcherHandler::%s*' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
+                return '%sBackendDispatcherHandler::%s*' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
             else:
                 return 'Inspector::Protocol::%s::%s*' % (_type.type_domain().domain_name, _type.raw_name())
 
@@ -270,7 +270,7 @@ class CppGenerator:
                 return cpp_name
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
-                return 'Inspector%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
+                return '%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
             else:
                 return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
 

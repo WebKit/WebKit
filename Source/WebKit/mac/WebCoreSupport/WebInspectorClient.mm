@@ -730,7 +730,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     if (notifyInspectorController) {
         if (Page* inspectedPage = [_inspectedWebView.get() page])
-            inspectedPage->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+            inspectedPage->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
     }
 
     [_webView close];

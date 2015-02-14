@@ -47,14 +47,14 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
+class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::DatabaseBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
     virtual ~InspectorDatabaseAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     void clearResources();
 
@@ -72,8 +72,8 @@ private:
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
-    std::unique_ptr<Inspector::InspectorDatabaseFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorDatabaseBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::DatabaseFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::DatabaseBackendDispatcher> m_backendDispatcher;
     typedef HashMap<String, RefPtr<InspectorDatabaseResource>> DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     bool m_enabled;

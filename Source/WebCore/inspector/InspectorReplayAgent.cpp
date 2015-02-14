@@ -167,10 +167,10 @@ WebCore::SessionState InspectorReplayAgent::sessionState() const
     return m_page.replayController().sessionState();
 }
 
-void InspectorReplayAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorReplayFrontendDispatcher>(frontendChannel);
-    m_backendDispatcher = InspectorReplayBackendDispatcher::create(backendDispatcher, this);
+    m_frontendDispatcher = std::make_unique<Inspector::ReplayFrontendDispatcher>(frontendChannel);
+    m_backendDispatcher = Inspector::ReplayBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents->setInspectorReplayAgent(this);
     ASSERT(sessionState() == WebCore::SessionState::Inactive);
@@ -184,7 +184,7 @@ void InspectorReplayAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*
         m_segmentsMap.add((*it)->identifier(), *it);
 }
 
-void InspectorReplayAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorReplayAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

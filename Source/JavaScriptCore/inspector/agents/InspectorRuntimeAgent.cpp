@@ -296,9 +296,9 @@ static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTyp
     }
 }
 
-void InspectorRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    if (reason != InspectorDisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
+    if (reason != DisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
         setTypeProfilerEnabledState(false);
 }
 
