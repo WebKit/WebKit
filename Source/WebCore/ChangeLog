@@ -1,5 +1,23 @@
 2015-02-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179768
+
+    2015-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [iOS] Implement audio track selection in fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=131236
+            <rdar://problem/16552632>
+
+            Reviewed by Eric Carlson.
+
+            * platform/ios/WebVideoFullscreenModelVideoElement.h:
+            * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+            (WebVideoFullscreenModelVideoElement::selectAudioMediaOption): Provide implementation.
+            (WebVideoFullscreenModelVideoElement::updateLegibleOptions): Add audio track information
+            to menu displayed to user.
+
+2015-02-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174823
 
     2014-10-16  Jer Noble  <jer.noble@apple.com>
