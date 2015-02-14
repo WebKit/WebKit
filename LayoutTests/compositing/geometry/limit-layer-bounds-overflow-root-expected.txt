@@ -21,7 +21,7 @@
         )
         (GraphicsLayer
           (position 0.00 13.00)
-          (bounds 216.00 15.00)
+          (bounds 211.00 15.00)
           (drawsContent 1)
         )
       )

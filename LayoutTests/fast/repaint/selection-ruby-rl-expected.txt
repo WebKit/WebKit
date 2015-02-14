@@ -9,6 +9,6 @@ Testing both hit testing and painting of selection.
 Testing both hit testing and painting of selection.
 Testing both hit testing and painting of selection.
 (repaint rects
-  (rect 774 39 18 83)
+  (rect 774 38 18 79)
 )
 

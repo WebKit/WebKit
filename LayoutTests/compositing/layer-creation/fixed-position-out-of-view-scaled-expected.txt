@@ -47,11 +47,11 @@ Scale=0.5:
 Scale=1.5:
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 1272.00 1524.00)
+  (bounds 1240.00 1524.00)
   (children 1
     (GraphicsLayer
       (anchor 0.00 0.00)
-      (bounds 848.00 1016.00)
+      (bounds 827.00 1016.00)
       (contentsOpaque 1)
       (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 2

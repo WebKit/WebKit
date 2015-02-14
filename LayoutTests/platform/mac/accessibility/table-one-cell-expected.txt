@@ -7,7 +7,7 @@ AXRoleDescription: group
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {132, 90}
+AXSize: NSSize: {136, 90}
 AXTitle: 
 AXDescription: 
 AXValue: 

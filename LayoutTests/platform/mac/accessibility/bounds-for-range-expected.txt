@@ -5,7 +5,7 @@ AXRoleDescription: text
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXStaticText>
-AXSize: NSSize: {777, 36}
+AXSize: NSSize: {731, 36}
 AXTitle: 
 AXDescription: 
 AXValue: Embroiled in a high-profile corruption investigation, Israels prime minister says he will resign as soon as his party chooses a new leader in September elections.
@@ -63,10 +63,10 @@ AXLineTextMarkerRangeForTextMarker
 AXSelectTextWithCriteria
 
 ----------------------
-{{-1.000000, -1.000000}, {59.000000, 18.000000}}
-{{-1.000000, -1.000000}, {215.000000, 18.000000}}
+{{-1.000000, -1.000000}, {60.000000, 18.000000}}
+{{-1.000000, -1.000000}, {220.000000, 18.000000}}
 {{-1.000000, -1.000000}, {11.000000, 18.000000}}
-{{-1.000000, -1.000000}, {766.000000, 36.000000}}
+{{-1.000000, -1.000000}, {731.000000, 36.000000}}
 {{-1.000000, -1.000000}, {1.000000, 18.000000}}
 
 

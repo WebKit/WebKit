@@ -7,12 +7,12 @@ Actual: (289, 266)
 Expected: (289, 266)
 
 vertical left-to-right writing mode target
-Actual: (18, 309)
-Expected: (18, 309)
+Actual: (18, 313)
+Expected: (18, 313)
 
 right-to-left direction target
-Actual: (129, 512)
-Expected: (129, 512)
+Actual: (129, 520)
+Expected: (129, 521)
 
 This tests that press targets the receiving elements center point.
 

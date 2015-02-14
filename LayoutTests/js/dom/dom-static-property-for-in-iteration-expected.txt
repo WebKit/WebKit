@@ -49,7 +49,7 @@ PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
 PASS a["offsetLeft"] is 8
 PASS a["offsetTop"] is 759
-PASS a["offsetWidth"] is 39
+PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0
 PASS a["clientTop"] is 0

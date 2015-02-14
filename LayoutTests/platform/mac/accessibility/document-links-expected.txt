@@ -66,7 +66,7 @@ AXRoleDescription: link
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXLink: 'link 3'>
-AXSize: NSSize: {36, 18}
+AXSize: NSSize: {37, 18}
 AXTitle: link 3
 AXDescription: 
 AXValue: 
@@ -95,7 +95,7 @@ AXRoleDescription: link
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXLink: 'link 4'>
-AXSize: NSSize: {36, 18}
+AXSize: NSSize: {38, 18}
 AXTitle: link 4
 AXDescription: 
 AXValue: 

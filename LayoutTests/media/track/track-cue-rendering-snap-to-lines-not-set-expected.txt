@@ -9,7 +9,7 @@ Active cues: 1
 * Cue 0 *
 EXPECTED (cueDisplayElement.innerText == 'This is a demo track to illustrate positioning features of cues.') OK
 Cue alignment (default or as specified): middle
-Cue left position (percentage): 51
+Cue left position (percentage): 50
 Cue top position (percentage): 100
 
 ** Center **
@@ -19,7 +19,7 @@ Active cues: 1
 * Cue 0 *
 EXPECTED (cueDisplayElement.innerText == 'Using HTML5 captions, you can position the cues anywhere.') OK
 Cue alignment (default or as specified): middle
-Cue left position (percentage): 51
+Cue left position (percentage): 50
 Cue top position (percentage): 50
 
 ** Top left **

@@ -1,3 +1,70 @@
+2015-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Cleanup after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141590
+
+        Reviewed by Zalan Bujtas.
+
+        Test expected results simply need to be updated.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/content-editable-as-textarea-expected.txt:
+        * platform/mac/accessibility/press-targets-center-point-expected.txt: Added.
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cell-spans-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-one-cell-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Added.
+        * platform/mac/compositing/layer-creation/fixed-position-out-of-view-scaled-expected.txt: Added.
+        * platform/mac/compositing/layer-creation/fixed-position-out-of-view-scaled-scroll-expected.txt: Added.
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+        * platform/mac/css1/box_properties/acid_test-expected.txt:
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/mac/editing/selection/5057506-2-expected.txt:
+        * platform/mac/editing/selection/5057506-expected.txt:
+        * platform/mac/editing/selection/5825350-2-expected.txt:
+        * platform/mac/editing/selection/mixed-editability-10-expected.txt:
+        * platform/mac/fast/block/basic/011-expected.txt:
+        * platform/mac/fast/block/basic/minheight-expected.txt:
+        * platform/mac/fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution-expected.txt: Added.
+        * platform/mac/fast/css/002-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/frames/frame-scrolling-attribute-expected.txt:
+        * platform/mac/fast/invalid/008-expected.txt:
+        * platform/mac/fast/overflow/003-expected.txt:
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/mac/fast/repaint/selection-rl-expected.txt:
+        * platform/mac/fast/repaint/selection-ruby-rl-expected.txt: Added.
+        * platform/mac/fast/sub-pixel/inline-block-with-padding-expected.txt: Added.
+        * platform/mac/fast/table/col-and-colgroup-offsets-expected.txt: Added.
+        * platform/mac/fast/text/atsui-pointtooffset-calls-cg-expected.txt:
+        * platform/mac/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/mac/fast/text/international/vertical-text-metrics-test-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/js/dom/dom-static-property-for-in-iteration-expected.txt: Added.
+        * platform/mac/media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt: Added.
+        * platform/mac/platform/mac/accessibility/aria-columnrowheaders-expected.txt: Copied from LayoutTests/platform/mac/accessibility/table-cell-spans-expected.txt.
+        * platform/mac/platform/mac/accessibility/bounds-for-range-expected.txt: Added.
+        * platform/mac/platform/mac/accessibility/document-links-expected.txt: Added.
+        * platform/mac/platform/mac/accessibility/internal-link-anchors-expected.txt: Added.
+        * platform/mac/scrollbars/overflow-scrollbar-combinations-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/text-filter-expected.txt:
+        * platform/mac/svg/filters/feColorMatrix-values-expected.txt: Added.
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/mac/svg/filters/filter-on-tspan-expected.txt:
+        * platform/mac/svg/filters/sourceAlpha-expected.txt:
+        * platform/mac/svg/repaint/text-mask-update-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.txt:
+
 2015-02-13  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/event-listener-gc.html is flaky

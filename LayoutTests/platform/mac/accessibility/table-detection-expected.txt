@@ -7,7 +7,7 @@ AXRoleDescription: table
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {62, 47}
+AXSize: NSSize: {64, 47}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -49,7 +49,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {68, 29}
+AXSize: NSSize: {70, 29}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -90,7 +90,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {28, 21}
+AXSize: NSSize: {29, 21}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -122,7 +122,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {58, 23}
+AXSize: NSSize: {60, 23}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -163,7 +163,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {58, 23}
+AXSize: NSSize: {60, 23}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -204,7 +204,7 @@ AXRoleDescription: table
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {58, 43}
+AXSize: NSSize: {60, 43}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -246,7 +246,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {58, 23}
+AXSize: NSSize: {60, 23}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -287,7 +287,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {26, 19}
+AXSize: NSSize: {27, 19}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -319,7 +319,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {26, 19}
+AXSize: NSSize: {27, 19}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -351,7 +351,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {53, 19}
+AXSize: NSSize: {55, 19}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -462,7 +462,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {64, 27}
+AXSize: NSSize: {66, 27}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -503,7 +503,7 @@ AXRoleDescription: table
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {62, 49}
+AXSize: NSSize: {64, 49}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -545,7 +545,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {28, 21}
+AXSize: NSSize: {29, 21}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -578,7 +578,7 @@ AXRoleDescription: table
 AXChildren: <array of size 6>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {64, 70}
+AXSize: NSSize: {66, 70}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -621,7 +621,7 @@ AXRoleDescription: table
 AXChildren: <array of size 6>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {64, 71}
+AXSize: NSSize: {66, 71}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -664,7 +664,7 @@ AXRoleDescription: table
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {62, 47}
+AXSize: NSSize: {64, 47}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -706,7 +706,7 @@ AXRoleDescription: table
 AXChildren: <array of size 26>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {32, 531}
+AXSize: NSSize: {33, 531}
 AXTitle: 
 AXDescription: 
 AXValue: 

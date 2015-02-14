@@ -1,11 +1,11 @@
-PASS grid-template-columns is 60px 20px after grid row swap.
-PASS grid-template-columns is 76px 50px after grid row swap.
-PASS grid-template-columns is 60px 16px after grid row swap.
-PASS grid-template-columns is 60px 16px after grid row swap.
-PASS grid-template-columns is 76px 0px after grid row swap.
-PASS grid-template-columns is 60px 16px after grid row swap.
-PASS grid-template-columns is 60px 16px after grid row swap.
-PASS grid-template-columns is 60px 16px after grid row swap.
+PASS grid-template-columns is 57.78125px 20px after grid row swap.
+PASS grid-template-columns is 73.328125px 50px after grid row swap.
+PASS grid-template-columns is 57.78125px 15.546875px after grid row swap.
+PASS grid-template-columns is 57.78125px 15.546875px after grid row swap.
+PASS grid-template-columns is 73.328125px 0px after grid row swap.
+PASS grid-template-columns is 57.78125px 15.546875px after grid row swap.
+PASS grid-template-columns is 57.78125px 15.546875px after grid row swap.
+PASS grid-template-columns is 57.78125px 15.546875px after grid row swap.
 PASS successfullyParsed is true
 
 TEST COMPLETE

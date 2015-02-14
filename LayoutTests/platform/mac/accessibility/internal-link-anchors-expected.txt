@@ -6,7 +6,7 @@ AXRoleDescription: text
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXStaticText>
-AXSize: NSSize: {63, 18}
+AXSize: NSSize: {64, 18}
 AXTitle: 
 AXDescription: 
 AXValue: Here I am
