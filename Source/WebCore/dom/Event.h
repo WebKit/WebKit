@@ -87,7 +87,7 @@ public:
     {
         return adoptRef(*new Event);
     }
-    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
+    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
     {
         return adoptRef(*new Event(type, canBubble, cancelable));
     }

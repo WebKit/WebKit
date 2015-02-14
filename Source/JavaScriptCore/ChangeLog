@@ -1,3 +1,18 @@
+2015-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+        <http://webkit.org/b/141607>
+
+        Work towards fixing the Mavericks Debug build.
+
+        * inspector/ScriptDebugServer.h:
+        (Inspector::ScriptDebugServer::Task): Export class.
+        * inspector/agents/InspectorDebuggerAgent.h:
+        (Inspector::InspectorDebuggerAgent::Listener): Export class.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setConsoleClient): Do not mark inline
+        method for export.
+
 2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Symbol RemoteObject should not send sub-type

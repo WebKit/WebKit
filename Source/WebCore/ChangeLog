@@ -1,3 +1,24 @@
+2015-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+        <http://webkit.org/b/141607>
+
+        Work towards fixing the Mavericks Debug build.
+
+        * dom/Document.h:
+        (WebCore::Document::setAnnotatedRegionsDirty):
+        * dom/Event.h:
+        (WebCore::Event::create):
+        * dom/Node.h:
+        (WebCore::Node::hasEditableStyle):
+        * dom/Position.h:
+        (WebCore::Position::Position):
+        * editing/FrameSelection.h:
+        (WebCore::DragCaretController::clear):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::originalRequest):
+        - Do not mark inline methods for export.
+
 2015-02-14  Alexey Proskuryakov  <ap@apple.com>
 
         rel="noreferrer" should make window.opener null

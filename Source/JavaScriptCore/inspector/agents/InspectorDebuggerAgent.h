@@ -96,7 +96,7 @@ public:
     void breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
     void scriptExecutionBlockedByCSP(const String& directiveText);
 
-    class Listener {
+    class JS_EXPORT_PRIVATE Listener {
     public:
         virtual ~Listener() { }
         virtual void debuggerWasEnabled() = 0;

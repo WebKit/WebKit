@@ -102,7 +102,7 @@ public:
     bool hasCaret() const { return m_position.isNotNull(); }
     const VisiblePosition& caretPosition() { return m_position; }
     void setCaretPosition(const VisiblePosition&);
-    WEBCORE_EXPORT void clear() { setCaretPosition(VisiblePosition()); }
+    void clear() { setCaretPosition(VisiblePosition()); }
 
     void nodeWillBeRemoved(Node&);
 

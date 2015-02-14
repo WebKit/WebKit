@@ -61,7 +61,7 @@ public:
         PositionIsAfterChildren,
     };
 
-    WEBCORE_EXPORT Position()
+    Position()
         : m_offset(0)
         , m_anchorType(PositionIsOffsetInAnchor)
         , m_isLegacyEditingPosition(false)
