@@ -1,5 +1,14 @@
 2015-02-13  Timothy Horton  <timothy_horton@apple.com>
 
+        Fix the iOS build.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewGestureController.h:
+        This code is never used on iOS.
+
+2015-02-13  Timothy Horton  <timothy_horton@apple.com>
+
         Make WebCore::IOSurface have single ownership instead of refcounting
         https://bugs.webkit.org/show_bug.cgi?id=141578
 

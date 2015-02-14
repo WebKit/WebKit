@@ -159,11 +159,9 @@ private:
 
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
 
-#if USE(IOSURFACE)
-    RefPtr<ViewSnapshot> m_currentSwipeSnapshot;
-#endif
-
 #if PLATFORM(MAC)
+    RefPtr<ViewSnapshot> m_currentSwipeSnapshot;
+
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer;
     RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 

@@ -344,12 +344,6 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
     
     ++m_gesturePendingSnapshotRemoval;
-
-#if USE(IOSURFACE)
-    if (m_currentSwipeSnapshotSurface)
-        m_currentSwipeSnapshotSurface->setIsVolatile(true);
-    m_currentSwipeSnapshotSurface = nullptr;
-#endif
     
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;
