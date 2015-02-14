@@ -41,25 +41,25 @@ CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 
 using namespace WebCore;
 
-PassRefPtr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
 {
-    if (RefPtr<IOSurface> cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace))
-        return cachedSurface.release();
-    return adoptRef(new IOSurface(size, colorSpace));
+    if (std::unique_ptr<IOSurface> cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace))
+        return cachedSurface;
+    return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace));
 }
 
-PassRefPtr<IOSurface> IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
 {
     RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);
 }
 
-PassRefPtr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, ColorSpace colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, ColorSpace colorSpace)
 {
-    return adoptRef(new IOSurface(surface, colorSpace));
+    return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
 
-PassRefPtr<IOSurface> IOSurface::createFromImage(CGImageRef image)
+std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 {
     if (!image)
         return nullptr;
@@ -67,12 +67,12 @@ PassRefPtr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    std::unique_ptr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
     auto surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
 
-    return surface.release();
+    return surface;
 }
 
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace)

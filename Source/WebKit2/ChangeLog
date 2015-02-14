@@ -1,3 +1,26 @@
+2015-02-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Make WebCore::IOSurface have single ownership instead of refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=141578
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::hasImage):
+        Adjust to the single-ownership model.
+
 2015-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Unreviewed build fix after r180076.

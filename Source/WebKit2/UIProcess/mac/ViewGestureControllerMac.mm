@@ -554,7 +554,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         if (coreColor.isValid())
             backgroundColor = cachedCGColor(coreColor, ColorSpaceDeviceRGB);
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-        m_currentSwipeSnapshotSurface = snapshot->surface();
+        m_currentSwipeSnapshot = snapshot;
 #endif
     }
 
@@ -772,9 +772,9 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    if (m_currentSwipeSnapshotSurface)
-        m_currentSwipeSnapshotSurface->setIsVolatile(true);
-    m_currentSwipeSnapshotSurface = nullptr;
+    if (m_currentSwipeSnapshot)
+        m_currentSwipeSnapshot->surface()->setIsVolatile(true);
+    m_currentSwipeSnapshot = nullptr;
 #endif
 
     for (const auto& layer : m_currentSwipeLiveLayers)

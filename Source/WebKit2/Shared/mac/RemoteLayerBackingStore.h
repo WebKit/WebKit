@@ -110,7 +110,7 @@ private:
     struct Buffer {
         RefPtr<ShareableBitmap> bitmap;
 #if USE(IOSURFACE)
-        RefPtr<WebCore::IOSurface> surface;
+        std::unique_ptr<WebCore::IOSurface> surface;
         bool isVolatile = false;
 #endif
 

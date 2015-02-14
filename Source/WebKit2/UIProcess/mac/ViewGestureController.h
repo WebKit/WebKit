@@ -160,7 +160,7 @@ private:
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
 
 #if USE(IOSURFACE)
-    RefPtr<WebCore::IOSurface> m_currentSwipeSnapshotSurface;
+    RefPtr<ViewSnapshot> m_currentSwipeSnapshot;
 #endif
 
 #if PLATFORM(MAC)

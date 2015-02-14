@@ -134,9 +134,9 @@ void ViewSnapshotStore::discardSnapshotImages()
 
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-PassRefPtr<ViewSnapshot> ViewSnapshot::create(IOSurface* surface, IntSize size, size_t imageSizeInBytes)
+PassRefPtr<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
 {
-    return adoptRef(new ViewSnapshot(surface, size, imageSizeInBytes));
+    return adoptRef(new ViewSnapshot(WTF::move(surface)));
 }
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
 PassRefPtr<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
@@ -146,14 +146,16 @@ PassRefPtr<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, siz
 #endif
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-ViewSnapshot::ViewSnapshot(IOSurface* surface, IntSize size, size_t imageSizeInBytes)
-    : m_surface(surface)
+ViewSnapshot::ViewSnapshot(std::unique_ptr<IOSurface> surface)
+    : m_surface(WTF::move(surface))
+    , m_imageSizeInBytes(m_surface->totalBytes())
+    , m_size(m_surface->size())
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
 ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
     : m_slotID(slotID)
-#endif
     , m_imageSizeInBytes(imageSizeInBytes)
     , m_size(size)
+#endif
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
@@ -167,7 +169,7 @@ ViewSnapshot::~ViewSnapshot()
 bool ViewSnapshot::hasImage() const
 {
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    return m_surface;
+    return !!m_surface;
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
     return m_slotID;
 #endif

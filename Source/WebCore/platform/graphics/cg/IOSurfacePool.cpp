@@ -75,14 +75,14 @@ static bool surfaceMatchesParameters(IOSurface& surface, const IntSize& requeste
     return true;
 }
 
-void IOSurfacePool::willAddSurface(IOSurface* surface, bool inUse)
+void IOSurfacePool::willAddSurface(IOSurface& surface, bool inUse)
 {
-    CachedSurfaceDetails& details = m_surfaceDetails.add(surface, CachedSurfaceDetails()).iterator->value;
+    CachedSurfaceDetails& details = m_surfaceDetails.add(&surface, CachedSurfaceDetails()).iterator->value;
     details.resetLastUseTime();
 
-    surface->releaseGraphicsContext();
+    surface.releaseGraphicsContext();
 
-    size_t surfaceBytes = surface->totalBytes();
+    size_t surfaceBytes = surface.totalBytes();
 
     evict(surfaceBytes);
 
@@ -91,14 +91,14 @@ void IOSurfacePool::willAddSurface(IOSurface* surface, bool inUse)
         m_inUseBytesCached += surfaceBytes;
 }
 
-void IOSurfacePool::didRemoveSurface(IOSurface* surface, bool inUse)
+void IOSurfacePool::didRemoveSurface(IOSurface& surface, bool inUse)
 {
-    size_t surfaceBytes = surface->totalBytes();
+    size_t surfaceBytes = surface.totalBytes();
     m_bytesCached -= surfaceBytes;
     if (inUse)
         m_inUseBytesCached -= surfaceBytes;
 
-    m_surfaceDetails.remove(surface);
+    m_surfaceDetails.remove(&surface);
 }
 
 void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
@@ -107,7 +107,7 @@ void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
     m_sizesInPruneOrder.append(size);
 }
 
-PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorSpace)
+std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorSpace)
 {
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);
 
@@ -119,8 +119,8 @@ PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorS
     for (auto surfaceIter = mapIter->value.begin(); surfaceIter != mapIter->value.end(); ++surfaceIter) {
         if (!surfaceMatchesParameters(*surfaceIter->get(), size, colorSpace))
             continue;
-        
-        RefPtr<IOSurface> surface = surfaceIter->get();
+
+        auto surface = WTF::move(*surfaceIter);
         mapIter->value.remove(surfaceIter);
 
         didUseSurfaceOfSize(size);
@@ -130,12 +130,12 @@ PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorS
             m_sizesInPruneOrder.removeLast();
         }
 
-        didRemoveSurface(surface.get(), false);
+        didRemoveSurface(*surface, false);
 
         surface->setIsVolatile(false);
 
         DUMP_POOL_STATISTICS();
-        return surface.release();
+        return surface;
     }
 
     // Some of the in-use surfaces may no longer actually be in-use, but we haven't moved them over yet.
@@ -145,21 +145,21 @@ PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorS
         if (surfaceIter->get()->isInUse())
             continue;
         
-        RefPtr<IOSurface> surface = surfaceIter->get();
+        auto surface = WTF::move(*surfaceIter);
         m_inUseSurfaces.remove(surfaceIter);
-        didRemoveSurface(surface.get(), true);
+        didRemoveSurface(*surface, true);
 
         surface->setIsVolatile(false);
 
         DUMP_POOL_STATISTICS();
-        return surface.release();
+        return surface;
     }
 
     DUMP_POOL_STATISTICS();
     return nullptr;
 }
 
-void IOSurfacePool::addSurface(IOSurface* surface)
+void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
 {
     if (surface->totalBytes() > m_maximumBytesCached)
         return;
@@ -171,26 +171,27 @@ void IOSurfacePool::addSurface(IOSurface* surface)
 
     bool surfaceIsInUse = surface->isInUse();
 
-    willAddSurface(surface, surfaceIsInUse);
+    willAddSurface(*surface, surfaceIsInUse);
 
     if (surfaceIsInUse) {
-        m_inUseSurfaces.prepend(surface);
+        m_inUseSurfaces.prepend(WTF::move(surface));
         scheduleCollectionTimer();
         DUMP_POOL_STATISTICS();
         return;
     }
 
-    insertSurfaceIntoPool(surface);
+    insertSurfaceIntoPool(WTF::move(surface));
     DUMP_POOL_STATISTICS();
 }
 
-void IOSurfacePool::insertSurfaceIntoPool(IOSurface* surface)
+void IOSurfacePool::insertSurfaceIntoPool(std::unique_ptr<IOSurface> surface)
 {
-    auto insertedTuple = m_cachedSurfaces.add(surface->size(), CachedSurfaceQueue());
-    insertedTuple.iterator->value.prepend(surface);
+    IntSize surfaceSize = surface->size();
+    auto insertedTuple = m_cachedSurfaces.add(surfaceSize, CachedSurfaceQueue());
+    insertedTuple.iterator->value.prepend(WTF::move(surface));
     if (!insertedTuple.isNewEntry)
-        m_sizesInPruneOrder.remove(m_sizesInPruneOrder.reverseFind(surface->size()));
-    m_sizesInPruneOrder.append(surface->size());
+        m_sizesInPruneOrder.remove(m_sizesInPruneOrder.reverseFind(surfaceSize));
+    m_sizesInPruneOrder.append(surfaceSize);
 
     scheduleCollectionTimer();
 }
@@ -206,8 +207,8 @@ void IOSurfacePool::tryEvictInUseSurface()
     if (m_inUseSurfaces.isEmpty())
         return;
 
-    RefPtr<IOSurface> surface = m_inUseSurfaces.takeLast();
-    didRemoveSurface(surface.get(), true);
+    auto surface = m_inUseSurfaces.takeLast();
+    didRemoveSurface(*surface, true);
 }
 
 void IOSurfacePool::tryEvictOldestCachedSurface()
@@ -220,8 +221,8 @@ void IOSurfacePool::tryEvictOldestCachedSurface()
 
     CachedSurfaceMap::iterator surfaceQueueIter = m_cachedSurfaces.find(m_sizesInPruneOrder.first());
     ASSERT(!surfaceQueueIter->value.isEmpty());
-    RefPtr<IOSurface> surface = surfaceQueueIter->value.takeLast();
-    didRemoveSurface(surface.get(), false);
+    auto surface = surfaceQueueIter->value.takeLast();
+    didRemoveSurface(*surface, false);
 
     if (surfaceQueueIter->value.isEmpty()) {
         m_cachedSurfaces.remove(surfaceQueueIter);
@@ -260,15 +261,15 @@ void IOSurfacePool::collectInUseSurfaces()
     for (CachedSurfaceQueue::iterator surfaceIter = m_inUseSurfaces.begin(); surfaceIter != m_inUseSurfaces.end(); ++surfaceIter) {
         IOSurface* surface = surfaceIter->get();
         if (surface->isInUse()) {
-            newInUseSurfaces.append(*surfaceIter);
+            newInUseSurfaces.append(WTF::move(*surfaceIter));
             continue;
         }
 
         m_inUseBytesCached -= surface->totalBytes();
-        insertSurfaceIntoPool(surface);
+        insertSurfaceIntoPool(WTF::move(*surfaceIter));
     }
 
-    m_inUseSurfaces = newInUseSurfaces;
+    m_inUseSurfaces = WTF::move(newInUseSurfaces);
 }
 
 bool IOSurfacePool::markOlderSurfacesPurgeable()

@@ -444,8 +444,7 @@ void RemoteLayerBackingStore::Buffer::discard()
 {
 #if USE(IOSURFACE)
     if (surface)
-        IOSurfacePool::sharedPool().addSurface(surface.get());
-    surface = nullptr;
+        IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
     isVolatile = false;
 #endif
     bitmap = nullptr;

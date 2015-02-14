@@ -1,3 +1,33 @@
+2015-02-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Make WebCore::IOSurface have single ownership instead of refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=141578
+
+        Reviewed by Anders Carlsson.
+
+        In the interests of making it harder to misuse and to make it more like
+        ImageBuffer, our IOSurface wrapper should have single ownership.
+
+        This will also allow future changes which depend on temporarily
+        consuming an IOSurface to more easily enforce correct usage.
+
+        * WebCore.exp.in:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::takeSurface):
+        (WebCore::IOSurfacePool::addSurface):
+        (WebCore::IOSurfacePool::insertSurfaceIntoPool):
+        (WebCore::IOSurfacePool::tryEvictInUseSurface):
+        (WebCore::IOSurfacePool::tryEvictOldestCachedSurface):
+        (WebCore::IOSurfacePool::collectInUseSurfaces):
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::create):
+        (IOSurface::createFromSendRight):
+        (IOSurface::createFromSurface):
+        (IOSurface::createFromImage):
+        Make IOSurface::create()s return a unique_ptr, and adjust everywhere.
+
 2015-02-12  Enrica Casucci  <enrica@apple.com>
 
         Additional emoji group support.

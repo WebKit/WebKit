@@ -3231,7 +3231,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         return nullptr;
     surface->setIsVolatile(true);
 
-    return ViewSnapshot::create(surface.get(), surface->size(), surface->totalBytes());
+    return ViewSnapshot::create(WTF::move(surface));
 }
 
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event
