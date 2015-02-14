@@ -1,3 +1,29 @@
+2015-02-13  Chris Dumez  <cdumez@apple.com>
+
+        RenderListItem resets its marker's style on style change even if the diff is StyleDifferenceEqual
+        https://bugs.webkit.org/show_bug.cgi?id=141572
+        <rdar://problem/19759818>
+
+        Reviewed by Simon Fraser.
+
+        Do not unnecessarily update the marker's style in RenderListItem::styleDidChange()
+        if the RenderStyle diff is StyleDifferenceEqual. Doing so can cause unnecessary
+        layouts.
+
+        This was causing high cpu usage on
+        http://www.nokogiri.org/tutorials/searching_a_xml_html_document.html because there
+        is an animation that changes the style every second (but the diff is equal) and the
+        RenderListItem keeps resetting its marker's margin, which triggers a layout and the
+        RenderListMarker re-computes its margin during layout and updates its style again.
+
+        With this change, CPU usage on the page goes from 150% to 20%. There is only a style
+        recalc happening every second, no more relayouts and repaints.
+
+        Test: fast/repaint/list-item-equal-style-change-no-repaint.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::styleDidChange):
+
 2015-02-13  Timothy Horton  <timothy_horton@apple.com>
 
         Make WebCore::IOSurface have single ownership instead of refcounting

@@ -1,3 +1,17 @@
+2015-02-13  Chris Dumez  <cdumez@apple.com>
+
+        RenderListItem resets its marker's style on style change even if the diff is StyleDifferenceEqual
+        https://bugs.webkit.org/show_bug.cgi?id=141572
+        <rdar://problem/19759818>
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to make sure that an animation causing a style change
+        with StyleDifferenceEqual diff does not cause a repaint.
+
+        * fast/repaint/list-item-equal-style-change-no-repaint-expected.txt: Added.
+        * fast/repaint/list-item-equal-style-change-no-repaint.html: Added.
+
 2015-02-12  Enrica Casucci  <enrica@apple.com>
 
         Additional emoji group support.

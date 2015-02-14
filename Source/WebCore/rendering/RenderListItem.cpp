@@ -82,8 +82,11 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
     if (!m_marker) {
         m_marker = createRenderer<RenderListMarker>(*this, WTF::move(newStyle)).leakPtr();
         m_marker->initializeStyle();
-    } else
-        m_marker->setStyle(WTF::move(newStyle));
+    } else {
+        // Do not alter our marker's style unless our style has actually changed.
+        if (diff != StyleDifferenceEqual)
+            m_marker->setStyle(WTF::move(newStyle));
+    }
 }
 
 void RenderListItem::insertedIntoTree()
