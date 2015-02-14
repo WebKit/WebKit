@@ -1593,7 +1593,7 @@ ALWAYS_INLINE double mathPowInternal(double x, double y)
 
 #endif
 
-double JSC_HOST_CALL operationMathPow(double x, double y)
+double JIT_OPERATION operationMathPow(double x, double y)
 {
     if (std::isnan(y))
         return PNaN;

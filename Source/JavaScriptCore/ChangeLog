@@ -1,3 +1,12 @@
+2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix 32bits build after r180098
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        I copied the attribute from the MathObject version of that function when I moved
+        it over. DFG has no version of a function call taking those attributes.
+
 2015-02-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Do not stash console messages for non-debuggable JSContext
