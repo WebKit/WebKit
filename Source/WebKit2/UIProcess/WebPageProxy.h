@@ -617,13 +617,13 @@ public:
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }
     void setTextZoomFactor(double);
-    double pageZoomFactor() const { return m_pageZoomFactor; }
+    double pageZoomFactor() const;
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, const WebCore::IntPoint& centerInViewCoordinates);
-    double pageScaleFactor() const { return m_pageScaleFactor; }
+    double pageScaleFactor() const;
 
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
@@ -696,7 +696,8 @@ public:
 #endif
 
     void pageScaleFactorDidChange(double);
-    void pageZoomFactorDidChange(double);
+    void pluginScaleFactorDidChange(double);
+    void pluginZoomFactorDidChange(double);
 
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
@@ -1484,6 +1485,8 @@ private:
     double m_textZoomFactor;
     double m_pageZoomFactor;
     double m_pageScaleFactor;
+    double m_pluginZoomFactor;
+    double m_pluginScaleFactor;
     float m_intrinsicDeviceScaleFactor;
     float m_customDeviceScaleFactor;
     float m_topContentInset;
