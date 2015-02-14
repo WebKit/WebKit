@@ -1079,7 +1079,12 @@ String textTrackNoLabelText()
 {
     return WEB_UI_STRING_KEY("Unknown", "Unknown (text track)", "Menu item label for a text track that has no other name");
 }
-    
+
+String audioTrackNoLabelText()
+{
+    return WEB_UI_STRING_KEY("Unknown", "Unknown (audio track)", "Menu item label for an audio track that has no other name");
+}
+
 #if PLATFORM(COCOA) || PLATFORM(WIN)
 String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
 {
