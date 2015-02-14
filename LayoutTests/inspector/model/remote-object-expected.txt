@@ -19,7 +19,6 @@ EXPRESSION: undefined
 EXPRESSION: Symbol()
 {
   "_type": "symbol",
-  "_subtype": "symbol",
   "_objectId": "<filtered>",
   "_description": "Symbol()"
 }
@@ -28,7 +27,6 @@ EXPRESSION: Symbol()
 EXPRESSION: Symbol('test')
 {
   "_type": "symbol",
-  "_subtype": "symbol",
   "_objectId": "<filtered>",
   "_description": "Symbol(test)"
 }

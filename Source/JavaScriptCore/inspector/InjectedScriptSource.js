@@ -654,7 +654,7 @@ InjectedScript.prototype = {
         if (obj === null)
             return "null";
 
-        if (this.isPrimitiveValue(obj))
+        if (this.isPrimitiveValue(obj) || isSymbol(obj))
             return null;
 
         if (this._isHTMLAllCollection(obj))

@@ -1,3 +1,12 @@
+2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Symbol RemoteObject should not send sub-type
+        https://bugs.webkit.org/show_bug.cgi?id=141604
+
+        Reviewed by Brian Burg.
+
+        * inspector/InjectedScriptSource.js:
+
 2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Attempt to fix 32bits build after r180098
