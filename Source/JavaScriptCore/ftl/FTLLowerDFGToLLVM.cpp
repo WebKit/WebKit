@@ -436,6 +436,9 @@ private:
         case ArithCos:
             compileArithCos();
             break;
+        case ArithPow:
+            compileArithPow();
+            break;
         case ArithSqrt:
             compileArithSqrt();
             break;
@@ -1594,6 +1597,64 @@ private:
     void compileArithSin() { setDouble(m_out.doubleSin(lowDouble(m_node->child1()))); }
 
     void compileArithCos() { setDouble(m_out.doubleCos(lowDouble(m_node->child1()))); }
+
+    void compileArithPow()
+    {
+        // FIXME: investigate llvm.powi to better understand its performance characteristics.
+        // It might be better to have the inline loop in DFG too.
+        if (m_node->child2().useKind() == Int32Use)
+            setDouble(m_out.doublePowi(lowDouble(m_node->child1()), lowInt32(m_node->child2())));
+        else {
+            LValue base = lowDouble(m_node->child1());
+            LValue exponent = lowDouble(m_node->child2());
+
+            LBasicBlock integerExponentIsSmallBlock = FTL_NEW_BLOCK(m_out, ("ArithPow test integer exponent is small."));
+            LBasicBlock integerExponentPowBlock = FTL_NEW_BLOCK(m_out, ("ArithPow pow(double, (int)double)."));
+            LBasicBlock doubleExponentPowBlock = FTL_NEW_BLOCK(m_out, ("ArithPow pow(double, double)."));
+            LBasicBlock powBlock = FTL_NEW_BLOCK(m_out, ("ArithPow regular pow"));
+            LBasicBlock nanException = FTL_NEW_BLOCK(m_out, ("ArithPow NaN Exception"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithPow continuation"));
+
+            LValue integerExponent = m_out.fpToInt32(exponent);
+            LValue integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
+            LValue exponentIsInteger = m_out.doubleEqual(exponent, integerExponentConvertedToDouble);
+            m_out.branch(exponentIsInteger, unsure(integerExponentIsSmallBlock), unsure(doubleExponentPowBlock));
+
+            LBasicBlock lastNext = m_out.appendTo(integerExponentIsSmallBlock, integerExponentPowBlock);
+            LValue integerExponentBelow1000 = m_out.below(integerExponent, m_out.constInt32(1000));
+            m_out.branch(integerExponentBelow1000, usually(integerExponentPowBlock), rarely(doubleExponentPowBlock));
+
+            m_out.appendTo(integerExponentPowBlock, doubleExponentPowBlock);
+            ValueFromBlock powDoubleIntResult = m_out.anchor(m_out.doublePowi(base, integerExponent));
+            m_out.jump(continuation);
+
+            m_out.appendTo(doubleExponentPowBlock, powBlock);
+            // If y is NaN, the result is NaN.
+            // FIXME: shouldn't we only check that if the type of child2() might have NaN?
+            LValue exponentIsNaN = m_out.doubleNotEqualOrUnordered(exponent, exponent);
+
+            // If abs(x) is 1 and y is +infinity, the result is NaN.
+            // If abs(x) is 1 and y is -infinity, the result is NaN.
+            LValue absoluteExponent = m_out.doubleAbs(exponent);
+            LValue absoluteExponentIsInfinity = m_out.doubleEqual(absoluteExponent, m_out.constDouble(std::numeric_limits<double>::infinity()));
+            LValue absoluteBase = m_out.doubleAbs(base);
+            LValue absoluteBaseIsOne = m_out.doubleEqual(absoluteBase, m_out.constDouble(1));
+            LValue oneBaseInfiniteExponent = m_out.bitAnd(absoluteExponentIsInfinity, absoluteBaseIsOne);
+
+            m_out.branch(m_out.bitOr(exponentIsNaN, oneBaseInfiniteExponent), rarely(nanException), usually(powBlock));
+
+            m_out.appendTo(powBlock, nanException);
+            ValueFromBlock powResult = m_out.anchor(m_out.doublePow(base, exponent));
+            m_out.jump(continuation);
+
+            m_out.appendTo(nanException, continuation);
+            ValueFromBlock pureNan = m_out.anchor(m_out.constDouble(PNaN));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setDouble(m_out.phi(m_out.doubleType, powDoubleIntResult, powResult, pureNan));
+        }
+    }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }
     

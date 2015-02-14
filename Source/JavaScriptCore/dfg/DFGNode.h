@@ -565,6 +565,13 @@ struct Node {
         ASSERT(m_op == ToPrimitive);
         m_op = ToString;
     }
+
+    void convertToArithSqrt()
+    {
+        ASSERT(m_op == ArithPow);
+        child2() = Edge();
+        m_op = ArithSqrt;
+    }
     
     JSValue asJSValue()
     {
@@ -775,7 +782,7 @@ struct Node {
     NodeFlags arithNodeFlags()
     {
         NodeFlags result = m_flags & NodeArithFlagsMask;
-        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == DoubleAsInt32)
+        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == DoubleAsInt32)
             return result;
         return result & ~NodeBytecodeNeedsNegZero;
     }

@@ -416,6 +416,7 @@ SpeculatedType typeOfDoubleMinMax(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleNegation(SpeculatedType);
 SpeculatedType typeOfDoubleAbs(SpeculatedType);
 SpeculatedType typeOfDoubleFRound(SpeculatedType);
+SpeculatedType typeOfDoublePow(SpeculatedType, SpeculatedType);
 
 // This conservatively models the behavior of arbitrary double operations.
 SpeculatedType typeOfDoubleBinaryOp(SpeculatedType, SpeculatedType);

@@ -1996,6 +1996,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArithPow: {
+        compileArithPow(node);
+        break;
+    }
+
     case ArithAbs: {
         switch (node->child1().useKind()) {
         case Int32Use: {

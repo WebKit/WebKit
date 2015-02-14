@@ -337,6 +337,19 @@ private:
             node->setResult(NodeResultDouble);
             break;
         }
+
+        case ArithPow: {
+            node->setResult(NodeResultDouble);
+            if (node->child2()->shouldSpeculateInt32OrBooleanForArithmetic()) {
+                fixDoubleOrBooleanEdge(node->child1());
+                fixIntOrBooleanEdge(node->child2());
+                break;
+            }
+
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
+            break;
+        }
             
         case ArithSqrt:
         case ArithFRound:

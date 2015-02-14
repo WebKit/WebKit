@@ -1,5 +1,89 @@
 2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        Add a DFG node for the Pow Intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=141540
+
+        Reviewed by Filip Pizlo.
+
+        Add a DFG Node for PowIntrinsic. This patch covers the basic cases
+        need to avoid massive regression. I will iterate over the node to cover
+        the missing types.
+
+        With this patch I get the following progressions on benchmarks:
+        -LongSpider's math-partial-sums: +5%.
+        -Kraken's imaging-darkroom: +17%
+        -AsmBench's cray.c: +6.6%
+        -CompressionBench: +2.2% globally.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        Cover a couple of trivial cases:
+        -If the exponent is zero, the result is always one, regardless of the base.
+        -If both arguments are constants, compute the result at compile time.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        We only support 2 basic cases at this time:
+        -Math.pow(double, int)
+        -Math.pow(double, double).
+
+        I'll cover Math.pow(int, int) in a follow up.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToArithSqrt):
+        (JSC::DFG::Node::arithNodeFlags):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::compileArithPowIntegerFastPath):
+        (JSC::DFG::SpeculativeJIT::compileArithPow):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithPow):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doublePow):
+        (JSC::FTL::Output::doublePowi):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncPow):
+        (JSC::isDenormal): Deleted.
+        (JSC::isEdgeCase): Deleted.
+        (JSC::mathPow): Deleted.
+
+        * tests/stress/math-pow-basics.js: Added.
+        * tests/stress/math-pow-integer-exponent-fastpath.js: Added.
+        * tests/stress/math-pow-nan-behaviors.js: Added.
+        * tests/stress/math-pow-with-constants.js: Added.
+        Start some basic testing of Math.pow().
+        Due to the various transform, the value change when the code tiers up,
+        I covered this by checking for approximate values.
+
+2015-02-13  Benjamin Poulain  <bpoulain@apple.com>
+
         ArithSqrt should not be conditional on supportsFloatingPointSqrt
         https://bugs.webkit.org/show_bug.cgi?id=141546
 

@@ -2241,6 +2241,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArithPow:
+        compileArithPow(node);
+        break;
+
     case ArithSqrt:
         compileArithSqrt(node);
         break;

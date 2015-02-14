@@ -240,6 +240,7 @@ public:
                 case ArithMod:
                 case ArithMin:
                 case ArithMax:
+                case ArithPow:
                 case CompareLess:
                 case CompareLessEq:
                 case CompareGreater:

@@ -177,6 +177,16 @@ public:
         return call(doubleCosIntrinsic(), value);
     }
 
+    LValue doublePow(LValue xOperand, LValue yOperand)
+    {
+        return call(doublePowIntrinsic(), xOperand, yOperand);
+    }
+
+    LValue doublePowi(LValue xOperand, LValue yOperand)
+    {
+        return call(doublePowiIntrinsic(), xOperand, yOperand);
+    }
+
     LValue doubleSqrt(LValue value)
     {
         return call(doubleSqrtIntrinsic(), value);

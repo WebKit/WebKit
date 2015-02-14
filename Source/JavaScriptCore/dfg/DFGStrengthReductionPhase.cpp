@@ -132,7 +132,20 @@ private:
                 }
             }
             break;
-            
+
+        case ArithPow:
+            if (m_node->child2()->isNumberConstant()) {
+                double yOperandValue = m_node->child2()->asNumber();
+                if (yOperandValue == 1) {
+                    convertToIdentityOverChild1();
+                } else if (yOperandValue == 0.5) {
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
+                    m_node->convertToArithSqrt();
+                    m_changed = true;
+                }
+            }
+            break;
+
         case GetArrayLength:
             if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node))
                 foldTypedArrayPropertyToConstant(view, jsNumber(view->length()));

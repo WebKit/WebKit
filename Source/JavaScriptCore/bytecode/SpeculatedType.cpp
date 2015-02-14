@@ -508,6 +508,15 @@ SpeculatedType typeOfDoubleFRound(SpeculatedType value)
     return value;
 }
 
+SpeculatedType typeOfDoublePow(SpeculatedType xValue, SpeculatedType yValue)
+{
+    // Math.pow() always return NaN if the exponent is NaN, unlike std::pow().
+    // We always set a pure NaN in that case.
+    if (yValue & SpecDoubleNaN)
+        xValue |= SpecDoublePureNaN;
+    return polluteDouble(xValue);
+}
+
 SpeculatedType typeOfDoubleBinaryOp(SpeculatedType a, SpeculatedType b)
 {
     return polluteDouble(a | b);

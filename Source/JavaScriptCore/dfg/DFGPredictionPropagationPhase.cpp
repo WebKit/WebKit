@@ -321,7 +321,8 @@ private:
             }
             break;
         }
-            
+
+        case ArithPow:
         case ArithSqrt:
         case ArithFRound:
         case ArithSin:

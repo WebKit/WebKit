@@ -2134,6 +2134,7 @@ public:
     void compileArithMul(Node*);
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
+    void compileArithPow(Node*);
     void compileArithSqrt(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);

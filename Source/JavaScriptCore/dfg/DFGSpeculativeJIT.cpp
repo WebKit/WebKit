@@ -3560,6 +3560,92 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
     }
 }
 
+// For small positive integers , it is worth doing a tiny inline loop to exponentiate the base.
+// Every register is clobbered by this helper.
+static MacroAssembler::Jump compileArithPowIntegerFastPath(JITCompiler& assembler, FPRReg xOperand, GPRReg yOperand, FPRReg result)
+{
+    MacroAssembler::JumpList skipFastPath;
+    skipFastPath.append(assembler.branch32(MacroAssembler::LessThan, yOperand, MacroAssembler::TrustedImm32(0)));
+    skipFastPath.append(assembler.branch32(MacroAssembler::GreaterThan, yOperand, MacroAssembler::TrustedImm32(1000)));
+
+    static const double oneConstant = 1.0;
+    assembler.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), result);
+
+    MacroAssembler::Label startLoop(assembler.label());
+    MacroAssembler::Jump exponentIsEven = assembler.branchTest32(MacroAssembler::Zero, yOperand, MacroAssembler::TrustedImm32(1));
+    assembler.mulDouble(xOperand, result);
+    exponentIsEven.link(&assembler);
+    assembler.mulDouble(xOperand, xOperand);
+    assembler.rshift32(MacroAssembler::TrustedImm32(1), yOperand);
+    assembler.branchTest32(MacroAssembler::NonZero, yOperand).linkTo(startLoop, &assembler);
+
+    MacroAssembler::Jump skipSlowPath = assembler.jump();
+    skipFastPath.link(&assembler);
+
+    return skipSlowPath;
+}
+
+void SpeculativeJIT::compileArithPow(Node* node)
+{
+    if (node->child2().useKind() == Int32Use) {
+        SpeculateDoubleOperand xOperand(this, node->child1());
+        SpeculateInt32Operand yOperand(this, node->child2());
+        FPRReg xOperandfpr = xOperand.fpr();
+        GPRReg yOperandGpr = yOperand.gpr();
+        FPRTemporary yOperandfpr(this);
+
+        flushRegisters();
+
+        FPRResult result(this);
+        FPRReg resultFpr = result.fpr();
+
+        FPRTemporary xOperandCopy(this);
+        FPRReg xOperandCopyFpr = xOperandCopy.fpr();
+        m_jit.moveDouble(xOperandfpr, xOperandCopyFpr);
+
+        GPRTemporary counter(this);
+        GPRReg counterGpr = counter.gpr();
+        m_jit.move(yOperandGpr, counterGpr);
+
+        MacroAssembler::Jump skipFallback = compileArithPowIntegerFastPath(m_jit, xOperandCopyFpr, counterGpr, resultFpr);
+        m_jit.convertInt32ToDouble(yOperandGpr, yOperandfpr.fpr());
+        callOperation(operationMathPow, resultFpr, xOperandfpr, yOperandfpr.fpr());
+
+        skipFallback.link(&m_jit);
+        doubleResult(resultFpr, node);
+        return;
+    }
+
+    SpeculateDoubleOperand xOperand(this, node->child1());
+    SpeculateDoubleOperand yOperand(this, node->child2());
+    FPRReg xOperandfpr = xOperand.fpr();
+    FPRReg yOperandfpr = yOperand.fpr();
+
+    flushRegisters();
+
+    FPRResult result(this);
+    FPRReg resultFpr = result.fpr();
+
+    FPRTemporary xOperandCopy(this);
+    FPRReg xOperandCopyFpr = xOperandCopy.fpr();
+
+    FPRTemporary scratch(this);
+    FPRReg scratchFpr = scratch.fpr();
+
+    GPRTemporary yOperandInteger(this);
+    GPRReg yOperandIntegerGpr = yOperandInteger.gpr();
+    MacroAssembler::JumpList failedExponentConversionToInteger;
+    m_jit.branchConvertDoubleToInt32(yOperandfpr, yOperandIntegerGpr, failedExponentConversionToInteger, scratchFpr, false);
+
+    m_jit.moveDouble(xOperandfpr, xOperandCopyFpr);
+    MacroAssembler::Jump skipFallback = compileArithPowIntegerFastPath(m_jit, xOperandCopyFpr, yOperandInteger.gpr(), resultFpr);
+    failedExponentConversionToInteger.link(&m_jit);
+
+    callOperation(operationMathPow, resultFpr, xOperandfpr, yOperandfpr);
+    skipFallback.link(&m_jit);
+    doubleResult(resultFpr, node);
+}
+
 // Returns true if the compare is fused with a subsequent branch.
 bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_JITOperation_EJJ operation)
 {
