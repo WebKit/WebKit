@@ -13,9 +13,9 @@
     var str = 'a' + iSp + 'b' + iSp + 'c';
     context.font = '12px Arial';
     canvasWidth = context.measureText(str).width;
-  
+
     var span = document.getElementsByTagName('span')[0];
-    spanWidth = span.offsetWidth;
+    spanWidth = span.getBoundingClientRect().width;
     shouldBe("spanWidth", "canvasWidth");
 </script>
 <script src="../../resources/js-test-post.js"></script>

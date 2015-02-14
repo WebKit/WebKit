@@ -1,3 +1,13 @@
+2015-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/canvas/canvas-measureText-ideographicSpace.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141595
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/canvas/canvas-measureText-ideographicSpace.html:
+        * platform/mac/TestExpectations:
+
 2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark font & text tests to failure.
