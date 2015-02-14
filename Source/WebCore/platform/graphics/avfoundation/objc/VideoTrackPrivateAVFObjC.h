@@ -31,11 +31,15 @@
 #include "VideoTrackPrivateAVF.h"
 
 OBJC_CLASS AVAssetTrack;
+OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemTrack;
+OBJC_CLASS AVMediaSelectionGroup;
+OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl;
+class MediaSelectionOptionAVFObjC;
 
 class VideoTrackPrivateAVFObjC final : public VideoTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVFObjC)
@@ -50,6 +54,11 @@ public:
         return adoptRef(new VideoTrackPrivateAVFObjC(track));
     }
 
+    static RefPtr<VideoTrackPrivateAVFObjC> create(MediaSelectionOptionAVFObjC& option)
+    {
+        return adoptRef(new VideoTrackPrivateAVFObjC(option));
+    }
+
     virtual void setSelected(bool) override;
 
     void setPlayerItemTrack(AVPlayerItemTrack*);
@@ -58,9 +67,13 @@ public:
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();
 
+    void setMediaSelectonOption(MediaSelectionOptionAVFObjC&);
+    MediaSelectionOptionAVFObjC* mediaSelectionOption();
+
 private:
     explicit VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
     explicit VideoTrackPrivateAVFObjC(AVAssetTrack*);
+    explicit VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC&);
 
     void resetPropertiesFromTrack();
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
