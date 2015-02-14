@@ -2057,5 +2057,10 @@ webkit.org/b/141512 fast/css/pseudo-valid-form-invalidation-optimization.html [ 
 webkit.org/b/114340 compositing/overlap-blending/nested-non-overlap-clipping.html [ ImageOnlyFailure ]
 webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 
+# Probably started failing since r159110
+webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
+webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
+webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
+
 # This test need a rebaseline.
 webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]

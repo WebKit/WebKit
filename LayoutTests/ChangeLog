@@ -1,3 +1,9 @@
+2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. 3 inspector tests are marked to failure.
+
+        * platform/efl/TestExpectations:
+
 2015-02-13  Chris Dumez  <cdumez@apple.com>
 
         RenderListItem resets its marker's style on style change even if the diff is StyleDifferenceEqual
