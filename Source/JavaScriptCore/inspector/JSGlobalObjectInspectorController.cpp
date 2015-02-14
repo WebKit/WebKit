@@ -50,6 +50,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
+#include "RemoteInspector.h"
 #endif
 
 using namespace JSC;
@@ -201,6 +202,19 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
 ConsoleClient* JSGlobalObjectInspectorController::consoleClient() const
 {
     return m_consoleClient.get();
+}
+
+bool JSGlobalObjectInspectorController::developerExtrasEnabled() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!RemoteInspector::singleton().enabled())
+        return false;
+
+    if (!m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
+        return false;
+#endif
+
+    return true;
 }
 
 InspectorFunctionCallHandler JSGlobalObjectInspectorController::functionCallHandler() const
