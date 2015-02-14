@@ -1331,6 +1331,7 @@ webkit.org/b/139968 css2.1/t1202-counters-04-b.html [ Pass Failure ]
 webkit.org/b/139968 css3/selectors3/html/css3-modsel-161.html [ Pass Failure ]
 webkit.org/b/139968 css3/selectors3/xhtml/css3-modsel-161.xml [ Pass Failure ]
 webkit.org/b/139968 css3/selectors3/xml/css3-modsel-161.xml [ Pass Failure ]
+webkit.org/b/139968 fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]

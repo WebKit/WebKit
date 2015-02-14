@@ -1,5 +1,14 @@
 2015-02-14  Alexey Proskuryakov  <ap@apple.com>
 
+        After updating tests to use kerning, ligatures, and printer fonts, some tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139968
+
+        Re-adding the test to expectations, it fails flakily (perhaps it's order dependent).
+
+        * platform/mac/TestExpectations:
+
+2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
         rel="noreferrer" should make window.opener null
         https://bugs.webkit.org/show_bug.cgi?id=141579
 
