@@ -1,3 +1,10 @@
+2015-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180082): WebCore build on Mountain Lion fails due to weak export for i386
+        <rdar://problem/19838127>
+
+        * Configurations/WebCore.unexp: Add missing symbol.
+
 2015-02-13  Chris Dumez  <cdumez@apple.com>
 
         RenderListItem resets its marker's style on style change even if the diff is StyleDifferenceEqual
