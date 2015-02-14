@@ -1,3 +1,19 @@
+2015-02-14  Brian J. Burg  <burg@cs.washington.edu>
+
+        REGRESSION(r179573): Web Inspector toolbar is completely messed up on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=141555
+
+        Reviewed by Joseph Pecoraro.
+
+        The old WKView-based code called _setDrawsBackground:NO on the WKView for Mavericks.
+        Simulate this old behavior by calling WebPageProxy::setDrawsBackground(false).
+
+        WKWebView's setOpaque:BOOL gives a flat background color instead of the intended
+        gradient, so we can't use that method.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2015-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         Crash closing a tab when a context or popup menu is open

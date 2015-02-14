@@ -494,7 +494,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
     ASSERT(m_inspectorView);
 
-    [m_inspectorView _setDrawsTransparentBackground:YES];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 10900
+    m_inspectorView->_page->setDrawsBackground(false);
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_inspectorView _setAutomaticallyAdjustsContentInsets:NO];
