@@ -496,6 +496,8 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     location = [m_webView.window convertBaseToScreen:location];
 #pragma clang diagnostic pop
 
+    Ref<WebContextMenuProxyMac> protect(*this);
+
     WKPopupContextMenu(menu, location);
 
     hideContextMenu();
@@ -504,6 +506,11 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
 void WebContextMenuProxyMac::hideContextMenu()
 {
     [m_popup dismissPopUp];
+}
+
+void WebContextMenuProxyMac::cancelTracking()
+{
+    [[m_popup menu] cancelTracking];
 }
 
 NSWindow *WebContextMenuProxyMac::window() const

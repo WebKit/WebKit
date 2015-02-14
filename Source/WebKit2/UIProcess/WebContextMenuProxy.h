@@ -45,6 +45,7 @@ public:
 
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&, const ContextMenuContextData&) = 0;
     virtual void hideContextMenu() = 0;
+    virtual void cancelTracking() { }
 
 protected:
     WebContextMenuProxy();
