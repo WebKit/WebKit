@@ -1,5 +1,11 @@
 2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Mark font & text tests to failure.
+
+        * platform/efl/TestExpectations:
+
+2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. 3 inspector tests are marked to failure.
 
         * platform/efl/TestExpectations:

@@ -2062,5 +2062,16 @@ webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.h
 webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
 webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
 
+# Need to rebaseline since r178976
+webkit.org/b/141592 fast/css/font-shorthand-line-height.html [ Failure ]
+
+# Doesn't support inter-ideograph justification
+webkit.org/b/141593 fast/text/justify-ideograph-complex.html [ Failure ]
+webkit.org/b/141593 fast/text/justify-ideograph-simple.html [ Failure ]
+webkit.org/b/141593 fast/text/justify-ideograph-vertical.html [ Failure ]
+
+# Need to have new baseline
+webkit.org/b/141594 fast/text/empty-shadow.html [ ImageOnlyFailure ]
+
 # This test need a rebaseline.
 webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]
