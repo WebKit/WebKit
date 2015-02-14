@@ -1,3 +1,18 @@
+2015-02-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [buildbot] Enable run-api-tests on release Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=141518
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunUnitTests):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (RunUnitTests.start): Deleted.
+        (unitTestsSupported): Deleted.
+
 2015-02-13  Anders Carlsson  <andersca@apple.com>
 
         Add a move constructor and move assignment operator to Deque
