@@ -1,3 +1,18 @@
+2015-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The status of a A/B testing request always eventually becomes "Failed"
+        https://bugs.webkit.org/show_bug.cgi?id=141523
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by /api/build-requests always setting the status of a build request to 'failed' when
+        'failedIfNotCompleted' was sent by the buildbot sync'er.
+
+        Fixed the bug by only setting the status to 'failed' if it wasn't set to 'completed'.
+
+        * public/api/build-requests.php:
+        (main):
+
 2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, remove empty directories.

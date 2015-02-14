@@ -28,7 +28,7 @@ function main($path, $post_data) {
             $url = array_get($info, 'url');
             if ($status == 'failedIfNotCompleted') {
                 $db->query_and_get_affected_rows('UPDATE build_requests SET (request_status, request_url) = ($1, $2)
-                    WHERE request_id = $3 AND request_status != $1', array('failed', $url, $id));
+                    WHERE request_id = $3 AND request_status != $4', array('failed', $url, $id, 'completed'));
             } else {
                 if (!in_array($status, array('pending', 'scheduled', 'running', 'failed', 'completed'))) {
                     $db->rollback_transaction();
