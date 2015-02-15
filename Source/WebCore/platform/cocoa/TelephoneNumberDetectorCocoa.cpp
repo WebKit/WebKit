@@ -30,23 +30,17 @@
 
 #include "SoftLinking.h"
 
-#ifdef __has_include
-#if __has_include(<DataDetectorsCore/DDDFACache.h>)
-#include <DataDetectorsCore/DDDFACache.h>
-#else
-typedef void* DDDFACacheRef;
-#endif
-
 #if __has_include(<DataDetectorsCore/DDDFAScanner.h>)
 #include <DataDetectorsCore/DDDFAScanner.h>
 #else
-typedef void* DDDFAScannerRef;
+typedef struct __DDDFAScanner DDDFAScanner, * DDDFAScannerRef;
+struct __DDDFACache;
 #endif
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
-SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, DDDFACacheRef, (), ())
-SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (DDDFACacheRef cache), (cache))
+SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, struct __DDDFACache*, (), ())
+SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (struct __DDDFACache* cache), (cache))
 SOFT_LINK(DataDetectorsCore, DDDFAScannerFirstResultInUnicharArray, Boolean, (DDDFAScannerRef scanner, const UniChar* str, unsigned length, int* startPos, int* endPos), (scanner, str, length, startPos, endPos))
 
 namespace WebCore {
@@ -57,7 +51,7 @@ static DDDFAScannerRef phoneNumbersScanner()
     if (!DataDetectorsCoreLibrary())
         return nullptr;
 
-    static DDDFACacheRef cache = DDDFACacheCreateFromFramework();
+    static struct __DDDFACache* cache = DDDFACacheCreateFromFramework();
     if (!cache)
         return nullptr;
 

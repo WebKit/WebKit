@@ -1,3 +1,13 @@
+2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        More internal build fixing.
+
+        DDDFACache.h is not an actual private header, so we were using open source
+        redeclaration of DDDFACacheRef with an internal function prototype from DDDFAScanner.h.
+
+        * platform/cocoa/TelephoneNumberDetectorCocoa.cpp:
+        (WebCore::TelephoneNumberDetector::phoneNumbersScanner):
+
 2015-02-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Add the initial matching implementation for attribute selectors with case-insensitive value
