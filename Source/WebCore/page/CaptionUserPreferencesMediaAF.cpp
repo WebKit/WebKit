@@ -74,7 +74,6 @@
 #endif
 
 SOFT_LINK_AVF_FRAMEWORK(MediaAccessibility)
-SOFT_LINK_AVF_FRAMEWORK(CoreText)
 
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceSetDisplayType, void, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))
@@ -92,9 +91,16 @@ SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceAddSelecte
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
+SOFT_LINK_AVF_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
+#define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
 
 #if PLATFORM(WIN)
+// CoreText only needs to be soft-linked on Windows.
+SOFT_LINK_AVF_FRAMEWORK(CoreText)
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
+SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
+#define kCTFontNameAttribute getkCTFontNameAttribute()
+
 // These are needed on Windows due to the way DLLs work. We do not need them on other platforms
 #define MACaptionAppearanceGetDisplayType softLink_MACaptionAppearanceGetDisplayType
 #define MACaptionAppearanceSetDisplayType softLink_MACaptionAppearanceSetDisplayType
@@ -113,12 +119,6 @@ SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeR
 #define MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics softLink_MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics
 #define CTFontDescriptorCopyAttribute softLink_CTFontDescriptorCopyAttribute
 #endif
-
-SOFT_LINK_AVF_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
-#define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
-
-SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
-#define kCTFontNameAttribute getkCTFontNameAttribute()
 #endif
 
 namespace WebCore {

@@ -1,3 +1,14 @@
+2015-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        CoreText only needs to be soft-linked on Windows
+
+        More work towards the Maverick Debug build fix:
+
+        REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+        <http://webkit.org/b/141607>
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+
 2015-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         More build fixing.
