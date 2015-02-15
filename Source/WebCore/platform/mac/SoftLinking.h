@@ -95,6 +95,9 @@
     }
 
 #define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations ; \
+    WTF_EXTERN_C_END \
     static resultType init##functionName parameterDeclarations; \
     static resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
     \
@@ -111,6 +114,9 @@
     }
 
 #define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations ; \
+    WTF_EXTERN_C_END \
     static resultType (*softLink##functionName) parameterDeclarations = 0; \
     \
     static bool init##functionName() \
@@ -134,6 +140,9 @@
 
 /* callingConvention is unused on Mac but is here to keep the macro prototype the same between Mac and Windows. */
 #define SOFT_LINK_OPTIONAL(framework, functionName, resultType, callingConvention, parameterDeclarations) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations ; \
+    WTF_EXTERN_C_END \
     typedef resultType (*functionName##PtrType) parameterDeclarations; \
     \
     static functionName##PtrType functionName##Ptr() \

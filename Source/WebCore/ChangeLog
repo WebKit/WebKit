@@ -1,3 +1,17 @@
+2015-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        Declare soft-linked functions with extern "C" linkage
+
+        More work towards the Maverick Debug build fix:
+
+        REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+        <http://webkit.org/b/141607>
+
+        * platform/mac/SoftLinking.h: Try declaring soft-linked
+        functions with extern "C" linkage to see if they stop appearing
+        as weak externals.  This has the added benefit that if the
+        function signature changes, we'll get a build failure.
+
 2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] RetainPtr member cleanup, possible leaks
