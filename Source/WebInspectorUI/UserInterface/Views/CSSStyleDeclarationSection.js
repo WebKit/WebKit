@@ -180,8 +180,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
             var specificity = selector.specificity;
             if (specificity) {
-                var approximatedSpecificity = (specificity[0] * 100) + (specificity[1] * 10) + specificity[2];
-                var tooltip = WebInspector.UIString("Specificity: (%d, %d, %d) ≈ %d").format(specificity[0], specificity[1], specificity[2], approximatedSpecificity);
+                var tooltip = WebInspector.UIString("Specificity: (%d, %d, %d)").format(specificity[0], specificity[1], specificity[2]);
                 if (selector.dynamic) {
                     tooltip += "\n";
                     if (this._style.inherited)

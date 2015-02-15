@@ -1,3 +1,14 @@
+2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove specificity approximation
+        https://bugs.webkit.org/show_bug.cgi?id=141600
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelector):
+
 2015-02-13  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: support better git diff of localizedStrings.js
