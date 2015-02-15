@@ -90,7 +90,7 @@
     ASSERT(utterance);
     
     if (!m_synthesizer) {
-        m_synthesizer = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
+        m_synthesizer = adoptNS([[NSSpeechSynthesizer alloc] initWithVoice:nil]);
         [m_synthesizer setDelegate:self];
     }
     
