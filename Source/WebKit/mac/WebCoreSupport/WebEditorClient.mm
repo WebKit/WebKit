@@ -191,7 +191,7 @@ void WebEditorClient::pageDestroyed()
 
 WebEditorClient::WebEditorClient(WebView *webView)
     : m_webView(webView)
-    , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
+    , m_undoTarget(adoptNS([[WebEditorUndoTarget alloc] init]))
     , m_haveUndoRedoOperations(false)
 #if PLATFORM(IOS)
     , m_delayingContentChangeNotifications(0)

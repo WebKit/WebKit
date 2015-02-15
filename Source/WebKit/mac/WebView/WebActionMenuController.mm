@@ -277,7 +277,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!node)
         return @[ ];
 
-    RetainPtr<DDActionContext> actionContext = [allocDDActionContextInstance() init];
+    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
 
     // FIXME: Should this show a yellow highlight?
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
