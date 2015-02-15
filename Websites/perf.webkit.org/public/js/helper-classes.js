@@ -77,8 +77,11 @@ function TestBuild(repositories, builders, platform, rawRun) {
     this.builder = function () { return builders[rawRun.builder].name; }
     this.buildNumber = function () { return rawRun.buildNumber; }
     this.buildUrl = function () {
-        var template = builders[rawRun.builder].buildUrl;
-        return template ? template.replace(/\$buildNumber/g, this.buildNumber()) : null;
+        var builder = builders[rawRun.builder];
+        var template = builder.buildUrl;
+        if (!template)
+            return null;
+        return template.replace(/\$buildNumber/g, this.buildNumber()).replace(/\$builderName/g, builder.name);
     }
     this.platform = function () { return platform; }
     this.revision = function(repositoryId) { return revisions[repositoryId][0]; }

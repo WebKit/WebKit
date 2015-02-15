@@ -1,3 +1,19 @@
+2015-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build URL on new perf dashboard doesn't resolve $builderName
+        https://bugs.webkit.org/show_bug.cgi?id=141583
+
+        Reviewed by Darin Adler.
+
+        Support $builderName in the build URL template.
+
+        * public/js/helper-classes.js:
+        (TestBuild.buildUrl): Replaced $builderName with the builder name.
+
+        * public/v2/manifest.js:
+        (App.Metric.fullName): Fixed the typo. We need &ni, not &in.
+        (App.BuilderurlFromBuildNumber): Replaced $builderName with the builder name.
+
 2015-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix after r179591.

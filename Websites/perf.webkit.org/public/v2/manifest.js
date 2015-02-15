@@ -34,7 +34,7 @@ App.Metric = App.NameLabelModel.extend({
     }.property('name', 'test'),
     fullName: function ()
     {
-        return this.get('path').join(' \u2208 ') /* &in; */
+        return this.get('path').join(' \u220b ') /* &ni; */
             + ' : ' + this.get('label');
     }.property('path', 'label'),
 });
@@ -44,7 +44,7 @@ App.Builder = App.NameLabelModel.extend({
     urlFromBuildNumber: function (buildNumber)
     {
         var template = this.get('buildUrl');
-        return template ? template.replace(/\$buildNumber/g, buildNumber) : null;
+        return template ? template.replace(/\$builderName/g, this.get('name')).replace(/\$buildNumber/g, buildNumber) : null;
     }
 });
 
