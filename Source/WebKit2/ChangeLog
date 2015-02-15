@@ -1,3 +1,9 @@
+2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix after <http://trac.webkit.org/changeset/180122>
+
+        * Platform/mac/StringUtilities.mm:
+
 2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Possible DDActionContext leaks, RetainPtr cleanup

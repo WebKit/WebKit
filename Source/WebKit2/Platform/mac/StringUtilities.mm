@@ -47,13 +47,13 @@ typedef struct __CFPhoneNumber* CFPhoneNumberRef;
 
 // These functions are declared with __attribute__((visibility ("default")))
 // We currently don't have a way to soft link such functions, so we forward declare them again here.
-CFPhoneNumberRef CFPhoneNumberCreate(CFAllocatorRef, CFStringRef, CFStringRef);
+extern "C" CFPhoneNumberRef CFPhoneNumberCreate(CFAllocatorRef, CFStringRef, CFStringRef);
 SOFT_LINK(PhoneNumbers, CFPhoneNumberCreate, CFPhoneNumberRef, (CFAllocatorRef allocator, CFStringRef digits, CFStringRef countryCode), (allocator, digits, countryCode));
 
-CFStringRef CFPhoneNumberCopyFormattedRepresentation(CFPhoneNumberRef);
+extern "C" CFStringRef CFPhoneNumberCopyFormattedRepresentation(CFPhoneNumberRef);
 SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyFormattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
 
-CFStringRef CFPhoneNumberCopyUnformattedRepresentation(CFPhoneNumberRef);
+extern "C" CFStringRef CFPhoneNumberCopyUnformattedRepresentation(CFPhoneNumberRef);
 SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
 
 
