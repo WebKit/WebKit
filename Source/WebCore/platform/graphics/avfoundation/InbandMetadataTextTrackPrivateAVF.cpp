@@ -64,18 +64,16 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
     RefPtr<SerializedPlatformRepresentation> cueData = prpCueData;
     m_currentCueStartTime = start;
     if (end.isPositiveInfinite())
-        m_incompleteCues.append(new IncompleteMetaDataCue(start, cueData));
+        m_incompleteCues.append(IncompleteMetaDataCue { cueData.get(), start });
     client()->addDataCue(this, start, end, cueData, type);
 }
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)
 {
     if (time >= m_currentCueStartTime) {
-        for (size_t i = 0; i < m_incompleteCues.size(); i++) {
-            IncompleteMetaDataCue* partialCue = m_incompleteCues[i];
-
-            LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue->startTime()).utf8().data(), toString(time).utf8().data());
-            client()->updateDataCue(this, partialCue->startTime(), time, partialCue->cueData());
+        for (auto& partialCue : m_incompleteCues) {
+            LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
+            client()->updateDataCue(this, partialCue.startTime, time, partialCue.cueData);
         }
     } else
         LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue negative length cue(s) ignored: start=%s, end=%s\n", toString(m_currentCueStartTime).utf8().data(), toString(time).utf8().data());
@@ -91,10 +89,8 @@ void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
         LOG(Media, "InbandMetadataTextTrackPrivateAVF::resetCueValues flushing incomplete data for cues: start=%s\n", toString(m_currentCueStartTime).utf8().data());
 
     if (client()) {
-        for (size_t i = 0; i < m_incompleteCues.size(); i++) {
-            IncompleteMetaDataCue* partialCue = m_incompleteCues[i];
-            client()->removeDataCue(this, partialCue->startTime(), MediaTime::positiveInfiniteTime(), partialCue->cueData());
-        }
+        for (auto& partialCue : m_incompleteCues)
+            client()->removeDataCue(this, partialCue.startTime, MediaTime::positiveInfiniteTime(), partialCue.cueData);
     }
 
     m_incompleteCues.resize(0);

@@ -33,21 +33,9 @@
 namespace WebCore {
 
 #if ENABLE(DATACUE_VALUE)
-class IncompleteMetaDataCue {
-public:
-    IncompleteMetaDataCue(const MediaTime& time, PassRefPtr<SerializedPlatformRepresentation> cueData)
-        : m_cueData(cueData)
-        , m_startTime(time)
-    {
-    }
-    ~IncompleteMetaDataCue() { }
-
-    RefPtr<SerializedPlatformRepresentation> cueData() const { return m_cueData; }
-    MediaTime startTime() const { return m_startTime; }
-
-private:
-    RefPtr<SerializedPlatformRepresentation> m_cueData;
-    MediaTime m_startTime;
+struct IncompleteMetaDataCue {
+    RefPtr<SerializedPlatformRepresentation> cueData;
+    MediaTime startTime;
 };
 #endif
 
@@ -77,7 +65,7 @@ private:
     AtomicString m_inBandMetadataTrackDispatchType;
     MediaTime m_currentCueStartTime;
 #if ENABLE(DATACUE_VALUE)
-    Vector<IncompleteMetaDataCue*> m_incompleteCues;
+    Vector<IncompleteMetaDataCue> m_incompleteCues;
 #endif
 };
 

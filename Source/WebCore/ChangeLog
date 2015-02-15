@@ -1,3 +1,23 @@
+2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        IncompleteMetaDataCue leak seen on leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=141611
+
+        Reviewed by Eric Carlson.        
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h:
+        (WebCore::IncompleteMetaDataCue::IncompleteMetaDataCue): Deleted.
+        (WebCore::IncompleteMetaDataCue::~IncompleteMetaDataCue): Deleted.
+        (WebCore::IncompleteMetaDataCue::cueData): Deleted.
+        (WebCore::IncompleteMetaDataCue::startTime): Deleted.
+        Convert to a struct and hold a list of structs instead of pointers.
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::flushPartialCues):
+        Update use of IncompleteMetaDataCue and modernize related code.
+
 2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace
