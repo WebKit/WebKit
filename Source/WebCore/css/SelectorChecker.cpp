@@ -581,7 +581,11 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             return false;
 
         const QualifiedName& attr = selector->attribute();
-        bool caseSensitive = !(m_documentIsHTML && element->isHTMLElement()) || HTMLDocument::isCaseSensitiveAttribute(attr);
+        bool caseSensitive = true;
+        if (selector->attributeValueMatchingIsCaseInsensitive())
+            caseSensitive = false;
+        else if (m_documentIsHTML && element->isHTMLElement() && !HTMLDocument::isCaseSensitiveAttribute(attr))
+            caseSensitive = false;
 
         return anyAttributeMatches(element, selector, attr, caseSensitive);
     }

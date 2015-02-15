@@ -999,6 +999,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             FALLTHROUGH;
         case CSSSelector::Exact:
         case CSSSelector::Hyphen:
+            if (selector->attributeValueMatchingIsCaseInsensitive())
+                return FunctionType::CannotCompile;
             fragment->onlyMatchesLinksInQuirksMode = false;
             fragment->attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
             break;

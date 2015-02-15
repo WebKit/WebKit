@@ -1,3 +1,36 @@
+2015-02-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the initial matching implementation for attribute selectors with case-insensitive value
+        https://bugs.webkit.org/show_bug.cgi?id=141615
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/css/case-insensitive-attribute-selector-specificity.html
+               fast/css/case-insensitive-attribute-selector-styling-html-1.html
+               fast/css/case-insensitive-attribute-selector-styling-html-2.html
+               fast/css/case-insensitive-attribute-selector-styling-html-3.html
+               fast/css/case-insensitive-attribute-selector-styling-xhtml-1.xhtml
+               fast/css/case-insensitive-attribute-selector-styling-xhtml-2.xhtml
+               fast/css/case-insensitive-attribute-selector-styling-xhtml-3.xhtml
+               fast/selectors/case-insensitive-attribute-bascis.html
+               fast/selectors/case-insensitive-attribute-matching-style-attribute.html
+               fast/selectors/case-insensitive-attribute-style-update.html
+               fast/selectors/case-insensitive-attribute-with-case-sensitive-name.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        We already had case-insensitive value matching due to some legacy HTML
+        behaviors where some attribute values would be matched case-insensitively
+        depending on the attribute name.
+
+        For this patch, I just re-use the same mechanism. I used branches to try
+        to convey the idea that matching is case sensitive by default unless
+        the selector has a flag or we are in the weird HTML exception.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        Disable that case in the CSS JIT for now, I'll implement it later.
+
 2015-02-14  David Kilzer  <ddkilzer@apple.com>
 
         Declare soft-linked functions with extern "C" linkage

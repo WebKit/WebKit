@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            /* Specificity of (0, 1, 1). */
+            p.target {
+                padding: 0;
+            }
+
+            /* Specificity of (0, 1, 0). */
+            .target {
+                background-color: red;
+                color: blue;
+                border: none;
+            }
+
+            /* This should also have a specificity of (0, 1, 0). It should have higher precedence
+               than the previous rule due to the position in the stylesheet. */
+            [data-webkit="rocks" i] {
+                background-color: lime;
+                border: 15px solid red;
+                padding: 25px;
+                font-weight: bold;
+            }
+
+            /* Specificity of (0, 1, 0). */
+            [data-webkit="rocks"] {
+                border: 3px dashed orange;
+            }
+
+            /* Specificity of (0, 0, 1). */
+            p {
+                margin: 2px; /* Ref-test must fix into 800*600, keep the margins small. */
+                font-weight: normal;
+            }
+
+            /* Specificity of (0, 0, 0). */
+            * {
+                background-color: white;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test the specificity of the case-insensitive attribute selector. If the test pass, each line should be styled as described by its text.</p>
+        <p data-webkit>Black text, white background, no border.</p>
+        <p class="target" data-webkit="ROCKS">Green background, bold blue text, solid red border.</p>
+        <p class="target" data-webkit="rocks">Green background, bold blue text, dashed orange border.</p>
+        <p class="target" data-webkit="Rocks">Green background, bold blue text, solid red border.</p>
+    </body>
+</html>
