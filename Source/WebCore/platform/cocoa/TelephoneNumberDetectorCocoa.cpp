@@ -36,7 +36,6 @@
 typedef struct __DDDFAScanner DDDFAScanner, * DDDFAScannerRef;
 struct __DDDFACache;
 #endif
-#endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
 SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, struct __DDDFACache*, (), ())
