@@ -138,19 +138,19 @@
     shouldBe("rects[0].height", "160");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "19");
-    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].width", "387");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
     shouldBe("rects[2].top", "59");
-    shouldBe("rects[2].width", "398");
+    shouldBe("rects[2].width", "360");
     shouldBe("rects[2].height", "18");
     shouldBe("rects[3].left", "8");
     shouldBe("rects[3].top", "99");
-    shouldBe("rects[3].width", "360");
+    shouldBe("rects[3].width", "382");
     shouldBe("rects[3].height", "18");
     shouldBe("rects[4].left", "8");
     shouldBe("rects[4].top", "139");
-    shouldBe("rects[4].width", "306");
+    shouldBe("rects[4].width", "369");
     shouldBe("rects[4].height", "18");
 
     // Test 2
@@ -162,19 +162,19 @@
     shouldBe("rects.length", "4");
     shouldBe("rects[0].left", "8");
     shouldBe("rects[0].top", "215");
-    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].width", "387");
     shouldBe("rects[0].height", "18");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "255");
-    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].width", "360");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
     shouldBe("rects[2].top", "295");
-    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].width", "382");
     shouldBe("rects[2].height", "18");
     shouldBe("rects[3].left", "8");
     shouldBe("rects[3].top", "335");
-    shouldBe("rects[3].width", "306");
+    shouldBe("rects[3].width", "369");
     shouldBe("rects[3].height", "18");
 
     // Test 3
@@ -185,21 +185,21 @@
     show(range3);
     rects = range3.getClientRects();
     shouldBe("rects.length", "4");
-    shouldBe("rects[0].left", "80");
+    shouldBe("rects[0].left", "81");
     shouldBe("rects[0].top", "411");
-    shouldBe("rects[0].width", "324");
+    shouldBe("rects[0].width", "314");
     shouldBe("rects[0].height", "18");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "451");
-    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].width", "360");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
     shouldBe("rects[2].top", "491");
-    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].width", "382");
     shouldBe("rects[2].height", "18");
     shouldBe("rects[3].left", "8");
     shouldBe("rects[3].top", "531");
-    shouldBe("rects[3].width", "88");
+    shouldBe("rects[3].width", "147");
     shouldBe("rects[3].height", "18");
 
     // Test 4 - Should not include rect of the img.
@@ -215,27 +215,27 @@
     shouldBe("rects[0].height", "278");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "607");
-    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].width", "387");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
     shouldBe("rects[2].top", "725");
-    shouldBe("rects[2].width", "242");
+    shouldBe("rects[2].width", "269");
     shouldBe("rects[2].height", "18");
-    shouldBe("rects[3].left", "326");
+    shouldBe("rects[3].left", "352");
     shouldBe("rects[3].top", "725");
-    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].width", "46");
     shouldBe("rects[3].height", "18");
     shouldBe("rects[4].left", "8");
     shouldBe("rects[4].top", "765");
-    shouldBe("rects[4].width", "341");
+    shouldBe("rects[4].width", "349");
     shouldBe("rects[4].height", "18");
     shouldBe("rects[5].left", "8");
     shouldBe("rects[5].top", "805");
-    shouldBe("rects[5].width", "366");
+    shouldBe("rects[5].width", "376");
     shouldBe("rects[5].height", "18");
     shouldBe("rects[6].left", "8");
     shouldBe("rects[6].top", "845");
-    shouldBe("rects[6].width", "67");
+    shouldBe("rects[6].width", "68");
     shouldBe("rects[6].height", "18");
     
     // Test 5 - Should include rect of the img.
@@ -246,25 +246,25 @@
     show(range5);
     rects = range5.getClientRects();
     shouldBe("rects.length", "5");
-    shouldBe("rects[0].left", "80");
+    shouldBe("rects[0].left", "81");
     shouldBe("rects[0].top", "921");
-    shouldBe("rects[0].width", "324");
+    shouldBe("rects[0].width", "314");
     shouldBe("rects[0].height", "18");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "1039");
-    shouldBe("rects[1].width", "242");
+    shouldBe("rects[1].width", "269");
     shouldBe("rects[1].height", "18");
-    shouldBe("rects[2].left", "250");
+    shouldBe("rects[2].left", "276");
     shouldBe("rects[2].top", "950");
-    shouldBe("rects[2].width", "76");
+    shouldBe("rects[2].width", "77");
     shouldBe("rects[2].height", "103");
-    shouldBe("rects[3].left", "326");
+    shouldBe("rects[3].left", "352");
     shouldBe("rects[3].top", "1039");
-    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].width", "46");
     shouldBe("rects[3].height", "18");
     shouldBe("rects[4].left", "8");
     shouldBe("rects[4].top", "1079");
-    shouldBe("rects[4].width", "284");
+    shouldBe("rects[4].width", "291");
     shouldBe("rects[4].height", "18");
 
     // Test 6 - Should not include green or blue boxes
@@ -273,26 +273,26 @@
     range6.selectNode(document.getElementById('test6'));
     show(range6);
     rects = range6.getClientRects();
-    shouldBe("rects.length", "7");
+    shouldBe("rects.length", "8");
     shouldBe("rects[0].left", "8");
     shouldBe("rects[0].top", "1224");
     shouldBe("rects[0].width", "400");
-    shouldBe("rects[0].height", "200");
+    shouldBe("rects[0].height", "240");
     shouldBe("rects[1].left", "8");
     shouldBe("rects[1].top", "1235");
-    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].width", "387");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
     shouldBe("rects[2].top", "1275");
-    shouldBe("rects[2].width", "57");
+    shouldBe("rects[2].width", "16");
     shouldBe("rects[2].height", "18");
-    shouldBe("rects[3].left", "105");
-    shouldBe("rects[3].top", "1275");
-    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "1315");
+    shouldBe("rects[3].width", "59");
     shouldBe("rects[3].height", "18");
-    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].left", "106");
     shouldBe("rects[4].top", "1315");
-    shouldBe("rects[4].width", "387");
+    shouldBe("rects[4].width", "46");
     shouldBe("rects[4].height", "18");
     shouldBe("rects[5].left", "8");
     shouldBe("rects[5].top", "1355");
@@ -300,8 +300,12 @@
     shouldBe("rects[5].height", "18");
     shouldBe("rects[6].left", "8");
     shouldBe("rects[6].top", "1395");
-    shouldBe("rects[6].width", "171");
+    shouldBe("rects[6].width", "360");
     shouldBe("rects[6].height", "18");
+    shouldBe("rects[7].left", "8");
+    shouldBe("rects[7].top", "1435");
+    shouldBe("rects[7].width", "222");
+    shouldBe("rects[7].height", "18");
 
     // Test 7 - Should include green but not blue box
     debug("Test 7");
@@ -309,35 +313,39 @@
     range7.selectNodeContents(document.getElementById('test7'));
     show(range7);
     rects = range7.getClientRects();
-    shouldBe("rects.length", "7");
+    shouldBe("rects.length", "8");
     shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "1471");
-    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].top", "1511");
+    shouldBe("rects[0].width", "387");
     shouldBe("rects[0].height", "18");
     shouldBe("rects[1].left", "8");
-    shouldBe("rects[1].top", "1500");
-    shouldBe("rects[1].width", "400");
-    shouldBe("rects[1].height", "40");
+    shouldBe("rects[1].top", "1551");
+    shouldBe("rects[1].width", "16");
+    shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
-    shouldBe("rects[2].top", "1511");
-    shouldBe("rects[2].width", "57");
-    shouldBe("rects[2].height", "18");
-    shouldBe("rects[3].left", "105");
-    shouldBe("rects[3].top", "1511");
-    shouldBe("rects[3].width", "44");
+    shouldBe("rects[2].top", "1580");
+    shouldBe("rects[2].width", "400");
+    shouldBe("rects[2].height", "40");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "1591");
+    shouldBe("rects[3].width", "59");
     shouldBe("rects[3].height", "18");
-    shouldBe("rects[4].left", "8");
-    shouldBe("rects[4].top", "1551");
-    shouldBe("rects[4].width", "387");
+    shouldBe("rects[4].left", "106");
+    shouldBe("rects[4].top", "1591");
+    shouldBe("rects[4].width", "46");
     shouldBe("rects[4].height", "18");
     shouldBe("rects[5].left", "8");
-    shouldBe("rects[5].top", "1591");
+    shouldBe("rects[5].top", "1631");
     shouldBe("rects[5].width", "397");
     shouldBe("rects[5].height", "18");
     shouldBe("rects[6].left", "8");
-    shouldBe("rects[6].top", "1631");
-    shouldBe("rects[6].width", "171");
+    shouldBe("rects[6].top", "1671");
+    shouldBe("rects[6].width", "360");
     shouldBe("rects[6].height", "18");
+    shouldBe("rects[7].left", "8");
+    shouldBe("rects[7].top", "1711");
+    shouldBe("rects[7].width", "222");
+    shouldBe("rects[7].height", "18");
 
     // Test 8
     debug("Test 8");
@@ -347,21 +355,21 @@
     rects = range8.getClientRects();
     shouldBe("rects.length", "4");
     shouldBe("rects[0].left", "168");
-    shouldBe("rects[0].top", "1678");
-    shouldBe("rects[0].width", "269");
-    shouldBe("rects[0].height", "316");
+    shouldBe("rects[0].top", "1758");
+    shouldBe("rects[0].width", "263");
+    shouldBe("rects[0].height", "309");
     shouldBe("rects[1].left", "137");
-    shouldBe("rects[1].top", "1704");
-    shouldBe("rects[1].width", "271");
-    shouldBe("rects[1].height", "317");
+    shouldBe("rects[1].top", "1784");
+    shouldBe("rects[1].width", "247");
+    shouldBe("rects[1].height", "288");
     shouldBe("rects[2].left", "107");
-    shouldBe("rects[2].top", "1729");
-    shouldBe("rects[2].width", "246");
-    shouldBe("rects[2].height", "289");
+    shouldBe("rects[2].top", "1809");
+    shouldBe("rects[2].width", "260");
+    shouldBe("rects[2].height", "305");
     shouldBe("rects[3].left", "76");
-    shouldBe("rects[3].top", "1755");
-    shouldBe("rects[3].width", "212");
-    shouldBe("rects[3].height", "247");
+    shouldBe("rects[3].top", "1835");
+    shouldBe("rects[3].width", "252");
+    shouldBe("rects[3].height", "295");
 
     debug("Test 9");
     var range9 = document.createRange();
@@ -369,11 +377,7 @@
     range9.setStart(document.getElementById('test9'), 0);
     show(range9);
     rects = range9.getClientRects();
-    shouldBe("rects.length", "1");
-    shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "1903");
-    shouldBe("rects[0].width", "0");
-    shouldBe("rects[0].height", "18");
+    shouldBe("rects.length", "0");
 
     debug("Test 9b");
     var range9 = document.createRange();
@@ -382,7 +386,7 @@
     rects = range9.getClientRects();
     shouldBe("rects.length", "1");
     shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "1903");
+    shouldBe("rects[0].top", "1983");
     shouldBe("rects[0].width", "0");
     shouldBe("rects[0].height", "18");
 
@@ -392,23 +396,27 @@
     range10.selectNodeContents(document.getElementById('test10'));
     show(range10);
     rects = range10.getClientRects();
-    shouldBe("rects.length", "4");
+    shouldBe("rects.length", "5");
     shouldBe("rects[0].left", "19");
-    shouldBe("rects[0].top", "2088");
+    shouldBe("rects[0].top", "2168");
     shouldBe("rects[0].width", "18");
-    shouldBe("rects[0].height", "393");
+    shouldBe("rects[0].height", "375");
     shouldBe("rects[1].left", "59");
-    shouldBe("rects[1].top", "2088");
+    shouldBe("rects[1].top", "2168");
     shouldBe("rects[1].width", "18");
-    shouldBe("rects[1].height", "377");
+    shouldBe("rects[1].height", "368");
     shouldBe("rects[2].left", "99");
-    shouldBe("rects[2].top", "2088");
+    shouldBe("rects[2].top", "2168");
     shouldBe("rects[2].width", "18");
-    shouldBe("rects[2].height", "372");
+    shouldBe("rects[2].height", "349");
     shouldBe("rects[3].left", "139");
-    shouldBe("rects[3].top", "2088");
+    shouldBe("rects[3].top", "2168");
     shouldBe("rects[3].width", "18");
-    shouldBe("rects[3].height", "360");
+    shouldBe("rects[3].height", "376");
+    shouldBe("rects[4].left", "179");
+    shouldBe("rects[4].top", "2168");
+    shouldBe("rects[4].width", "18");
+    shouldBe("rects[4].height", "68");
 
     // Test 11
     debug("Test 11");
@@ -419,12 +427,12 @@
     rects = range11.getClientRects();
     shouldBe("rects.length", "2");
     shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "2524");
+    shouldBe("rects[0].top", "2604");
     shouldBe("rects[0].width", "400");
     shouldBe("rects[0].height", "40");
     shouldBe("rects[1].left", "8");
-    shouldBe("rects[1].top", "2535");
-    shouldBe("rects[1].width", "177");
+    shouldBe("rects[1].top", "2615");
+    shouldBe("rects[1].width", "182");
     shouldBe("rects[1].height", "18");
 
     // Test 12
@@ -436,7 +444,7 @@
     rects = range12.getClientRects();
     shouldBe("rects.length", "1");
     shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "2760");
+    shouldBe("rects[0].top", "2840");
     shouldBe("rects[0].width", "400");
     shouldBe("rects[0].height", "160");
 
@@ -449,20 +457,20 @@
     rects = range13.getClientRects();
     shouldBe("rects.length", "4");
     shouldBe("rects[0].left", "8");
-    shouldBe("rects[0].top", "2967");
-    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].top", "3047");
+    shouldBe("rects[0].width", "387");
     shouldBe("rects[0].height", "18");
     shouldBe("rects[1].left", "8");
-    shouldBe("rects[1].top", "3007");
-    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].top", "3087");
+    shouldBe("rects[1].width", "360");
     shouldBe("rects[1].height", "18");
     shouldBe("rects[2].left", "8");
-    shouldBe("rects[2].top", "3047");
-    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].top", "3127");
+    shouldBe("rects[2].width", "382");
     shouldBe("rects[2].height", "18");
     shouldBe("rects[3].left", "8");
-    shouldBe("rects[3].top", "3087");
-    shouldBe("rects[3].width", "306");
+    shouldBe("rects[3].top", "3167");
+    shouldBe("rects[3].width", "369");
     shouldBe("rects[3].height", "18");
 
     // Test 14

@@ -1,3 +1,18 @@
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/dom/{Element,Range}/getClientRects.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141665
+
+        Reviewed by Alexey Proskuryakov.
+
+        Line breaking is different due to different text metrics.
+
+        * fast/dom/Element/getClientRects-expected.txt:
+        * fast/dom/Element/getClientRects.html:
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/Range/getClientRects.html:
+        * platform/mac/TestExpectations:
+
 2015-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete LayoutTests/platform/mac-mountainlion directory
