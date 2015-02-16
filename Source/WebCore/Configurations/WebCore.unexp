@@ -1,4 +1,4 @@
-# These symbols should only be needed to build with Xcode 5.0.x.
+# These symbols should only be needed to build with Xcode 5.x.
 # This should be removed once we no longer need to build with those versions.
 
 __ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE
@@ -15,3 +15,84 @@ __ZTVNSt3__117bad_function_callE
 __ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
 __ZTVNSt3__119basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
 __ZTVNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+
+# FIXME: The following symbols only appear in Debug builds with Xcode 5.x.
+# They should be removed from this list after determining how to remove the
+# weak externals from WebCore.
+
+# Soft-linked functions in source files.  Most probably have
+# __attribute__((visibility("default"))) declared in the original header
+# file, so if the compiler doesn't inline the redeclared method in the
+# SOFT_LINK() macro, it gets exported from WebCore.
+
+# Source/WebCore/platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
+_AudioConverterConvertComplexBuffer
+_AudioConverterNew
+_CMTimebaseGetTime
+_MTAudioProcessingTapGetSourceAudio
+_MTAudioProcessingTapGetStorage
+
+# Source/WebCore/platform/mac/PlatformClockCM.mm
+_CMAudioDeviceClockCreate
+_CMTimeGetSeconds
+_CMTimebaseCreateWithMasterClock
+_CMTimebaseSetRate
+_CMTimebaseSetTime
+
+# Source/WebCore/platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
+_CMBlockBufferCopyDataBytes
+_CMBlockBufferGetDataLength
+_CMFormatDescriptionGetExtensions
+_CMSampleBufferGetDataBuffer
+_CMSampleBufferGetFormatDescription
+_CMSampleBufferGetSampleTimingInfo
+
+# Source/WebCore/platform/mediastream/mac/AVVideoCaptureSource.mm
+_CMTimeCompare
+_CMTimeMake
+
+# Source/WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm
+_CMTimeMakeWithSeconds
+_CMTimeRangeGetEnd
+
+# Source/WebCore/page/CaptionUserPreferencesMediaAF.cpp
+_MACaptionAppearanceAddSelectedLanguage
+_MACaptionAppearanceCopyBackgroundColor
+_MACaptionAppearanceCopyFontDescriptorForStyle
+_MACaptionAppearanceCopyForegroundColor
+_MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics
+_MACaptionAppearanceCopySelectedLanguages
+_MACaptionAppearanceCopyWindowColor
+_MACaptionAppearanceGetBackgroundOpacity
+_MACaptionAppearanceGetDisplayType
+_MACaptionAppearanceGetForegroundOpacity
+_MACaptionAppearanceGetRelativeCharacterSize
+_MACaptionAppearanceGetTextEdgeStyle
+_MACaptionAppearanceGetWindowOpacity
+_MACaptionAppearanceGetWindowRoundedCornerRadius
+_MACaptionAppearanceSetDisplayType
+
+# Source/WebCore/platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
+_CVPixelBufferGetBaseAddress
+_CVPixelBufferGetBytesPerRow
+_CVPixelBufferGetDataSize
+_CVPixelBufferGetHeight
+_CVPixelBufferGetPixelFormatType
+_CVPixelBufferGetWidth
+_CVPixelBufferLockBaseAddress
+_CVPixelBufferUnlockBaseAddress
+_VTPixelTransferSessionCreate
+_VTPixelTransferSessionTransferImage
+
+# Function marked ALWAYS_INLINE in header, but may not be inlined in a
+# Debug build.
+
+# Source/WebCore/bindings/js/JSNodeListCustom.h
+__ZN7WebCore4toJSEPN3JSC9ExecStateEPNS_17JSDOMGlobalObjectEPNS_8NodeListE
+
+# Subclasses of an exported C++ class in JavaScriptCore.
+
+# Source/JavaScriptCore/inspector/ScriptDebugServer.h
+__ZTVN9Inspector17ScriptDebugServer4TaskE
+# Source/JavaScriptCore/inspector/agents/InspectorDebuggerAgent.h
+__ZTVN9Inspector22InspectorDebuggerAgent8ListenerE

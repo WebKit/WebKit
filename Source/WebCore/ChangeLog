@@ -1,3 +1,19 @@
+2015-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+        <http://webkit.org/b/141607>
+
+        This should fix the build, but leaves a FIXME list in
+        WebCore.unexp.
+
+        * Configurations/WebCore.unexp: Add weak externals with a FIXME
+        statement so they can be removed later.  It's more important to
+        fix the build first.
+
+        * Configurations/WebCore.xcconfig: Change XCODE_VERSION_MINOR to
+        XCODE_VERSION_MAJOR since the internal bots use version 5.1.1
+        which still has the error.
+
 2015-02-15  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused XHR replay code
