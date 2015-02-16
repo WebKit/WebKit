@@ -1,3 +1,15 @@
+2015-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the MiniBrowser build with newer clang
+
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _toggleBooleanDefault:]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController windowWillClose:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController windowWillClose:]):
+        NSApp is id and clang gets confused about which -delegate we're talking about.
+
 2015-02-16  Antti Koivisto  <antti@apple.com>
 
         Develop/Disable Caches does not properly disable disk cache

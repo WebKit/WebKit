@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:![defaults boolForKey:defaultName] forKey:defaultName];
 
-    [(BrowserAppDelegate *)[NSApp delegate] didChangeSettings];
+    [(BrowserAppDelegate *)[[NSApplication sharedApplication] delegate] didChangeSettings];
 }
 
 - (void)toggleUseWebKit2ByDefault:(id)sender
