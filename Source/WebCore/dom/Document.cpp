@@ -145,6 +145,7 @@
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
+#include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
@@ -3684,6 +3685,11 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
             frame->page()->dragCaretController().nodeWillBeRemoved(*n);
         }
     }
+
+    if (m_markers->hasMarkers()) {
+        for (Text* textNode = TextNodeTraversal::firstChild(container); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
+            m_markers->removeMarkers(textNode);
+    }
 }
 
 void Document::nodeWillBeRemoved(Node& n)
@@ -3703,6 +3709,9 @@ void Document::nodeWillBeRemoved(Node& n)
         frame->selection().nodeWillBeRemoved(n);
         frame->page()->dragCaretController().nodeWillBeRemoved(n);
     }
+
+    if (is<Text>(n))
+        m_markers->removeMarkers(&n);
 }
 
 void Document::textInserted(Node* text, unsigned offset, unsigned length)
