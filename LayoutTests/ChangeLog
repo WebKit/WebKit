@@ -1,3 +1,16 @@
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/css/css3-ch-unit.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141657
+
+        Reviewed by Zalan Bujtas.
+
+        The alphabet is not expected to have the same width as 26 times the average character width.
+
+        * fast/css/css3-ch-unit-expected.txt:
+        * fast/css/css3-ch-unit.html:
+        * platform/mac/TestExpectations:
+
 2015-02-16  Alexey Proskuryakov  <ap@apple.com>
 
         fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2

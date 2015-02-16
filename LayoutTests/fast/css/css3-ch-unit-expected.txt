@@ -8,8 +8,6 @@ PASS document.getElementById("box_mono_four1").clientWidth is document.getElemen
 PASS document.getElementById("box_monofallthrough_four1").clientWidth is document.getElementById("box_monofallthrough_four2").clientWidth
 PASS document.getElementById("mono_box_alphalen1").clientWidth is document.getElementById("mono_box_alphalen2").clientWidth
 PASS document.getElementById("box_one").clientWidth * 26 is document.getElementById("box_alphalen").clientWidth
-PASS document.getElementById("arial_box_one").clientWidth * 26 is document.getElementById("arial_box_alphalen").clientWidth
-PASS document.getElementById("helvetica_box_one").clientWidth * 26 is document.getElementById("helvetica_box_alphalen").clientWidth
 PASS document.getElementById("times_box_one").clientWidth * 4 is document.getElementById("box_times_four").clientWidth
 PASS document.getElementById("arial_box_one").clientWidth * 4 is document.getElementById("box_arial_four").clientWidth
 PASS document.getElementById("helvetica_box_one").clientWidth * 4 is document.getElementById("box_helvetica_four").clientWidth
