@@ -1,3 +1,13 @@
+2015-02-16  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Loading page into WebView shows g_closure_unref warning
+        https://bugs.webkit.org/show_bug.cgi?id=127474
+
+        Reviewed by Carlos Garcia Campos.
+
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::gobjectDestroyed):
+
 2015-02-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Remove the usage of Length(Undefined) in GridLength
