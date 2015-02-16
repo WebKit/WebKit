@@ -1,5 +1,17 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update expected result for editing/pasteboard/5761530-1.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141603
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test used to have incorrect expected output, but the new results are correct.
+
+        * LayoutTests/editing/pasteboard/5761530-1-expected.txt:
+        * platform/mac/TestExpectations:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update fast/css/css3-ch-unit.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141657
 
