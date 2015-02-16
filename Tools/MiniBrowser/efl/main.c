@@ -2392,11 +2392,11 @@ elm_main(int argc, char *argv[])
         return quit(EINA_TRUE, NULL);
 
     if (evas_engine_name)
-        elm_config_preferred_engine_set(evas_engine_name);
+        elm_config_accel_preference_set(evas_engine_name);
 #if defined(HAVE_ECORE_X)
     else {
-        evas_engine_name = "opengl_x11";
-        elm_config_preferred_engine_set(evas_engine_name);
+        evas_engine_name = "opengl";
+        elm_config_accel_preference_set(evas_engine_name);
     }
 #endif
 
