@@ -1495,6 +1495,34 @@ EXPRESSION: function Foo() {}; new Foo
 }
 
 -----------------------------------------------------
+EXPRESSION: var Foo2 = function() {}; new Foo2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo2",
+  "_preview": {
+    "type": "object",
+    "description": "Foo2",
+    "lossless": true,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Foo3
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo3",
+  "_preview": {
+    "type": "object",
+    "description": "Foo3",
+    "lossless": true,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar
 {
   "_type": "object",
@@ -1518,6 +1546,26 @@ EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, g
       {
         "name": "x",
         "type": "accessor"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return this._x;}}; new Bar2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar2",
+  "_preview": {
+    "type": "object",
+    "description": "Bar2",
+    "lossless": true,
+    "properties": [
+      {
+        "name": "_x",
+        "type": "number",
+        "value": "5"
       }
     ]
   }

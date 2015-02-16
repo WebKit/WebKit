@@ -90,7 +90,10 @@ function test()
         {expression: "({a: 1, b: \"string\", c: /regex/, d: Symbol('sym')})"},
         {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
         {expression: "function Foo() {}; new Foo"},
+        {expression: "var Foo2 = function() {}; new Foo2"},
+        {expression: "var namespace = {}; namespace.Foo3 = function() {}; new namespace.Foo3"},
         {expression: "function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar"},
+        {expression: "function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return this._x;}}; new Bar2"},
         {expression: "window.loadEvent"}, // window.loadEvent is set inside of <body onload="..."> below.
         {expression: "new ArrayBuffer(16)"},
         {expression: "new DataView(new ArrayBuffer(16))"},

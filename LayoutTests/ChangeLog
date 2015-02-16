@@ -1,3 +1,15 @@
+2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scope details sidebar should label objects with constructor names
+        https://bugs.webkit.org/show_bug.cgi?id=139449
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Improve the test to include Objects where previously
+        we would have had poorer class name descriptions.
+
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update expected result for editing/pasteboard/5761530-1.html after r177774

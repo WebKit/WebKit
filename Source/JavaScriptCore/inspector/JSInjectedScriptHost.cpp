@@ -96,9 +96,8 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    JSObject* thisObject = jsCast<JSObject*>(exec->uncheckedArgument(0).toThis(exec, NotStrictMode));
-    String result = thisObject->methodTable()->className(thisObject);
-    return jsString(exec, result);
+    JSObject* object = jsCast<JSObject*>(exec->uncheckedArgument(0).toThis(exec, NotStrictMode));
+    return jsString(exec, JSObject::calculatedClassName(object));
 }
 
 JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)

@@ -100,6 +100,7 @@ public:
     JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
+    JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
 
     JSValue prototype() const;
     JS_EXPORT_PRIVATE void setPrototype(VM&, JSValue prototype);

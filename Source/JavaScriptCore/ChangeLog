@@ -1,3 +1,21 @@
+2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scope details sidebar should label objects with constructor names
+        https://bugs.webkit.org/show_bug.cgi?id=139449
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::internalConstructorName):
+        * runtime/Structure.cpp:
+        (JSC::Structure::toStructureShape):
+        Share calculatedClassName.
+
+        * runtime/JSObject.h:        
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        Elaborate on a way to get an Object's class name.
+
 2015-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SSA should use GetLocal for arguments, and the GetArgument node type should be removed

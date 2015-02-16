@@ -1059,32 +1059,10 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
                 curShape->addProperty(structure->m_nameInPrevious.get());
         }
 
-        bool foundCtorName = false;
-        if (JSObject* profilingVal = curValue.getObject()) {
-            ExecState* exec = profilingVal->globalObject()->globalExec();
-            PropertySlot slot(storedPrototype());
-            PropertyName constructor(exec->propertyNames().constructor);
-            if (profilingVal->getPropertySlot(exec, constructor, slot)) {
-                if (slot.isValue()) {
-                    JSValue constructorValue = slot.getValue(exec, constructor);
-                    if (constructorValue.isCell()) {
-                        if (JSCell* constructorCell = constructorValue.asCell()) {
-                            if (JSObject* ctorObject = constructorCell->getObject()) {
-                                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject)) {
-                                    curShape->setConstructorName(constructorFunction->calculatedDisplayName(exec));
-                                    foundCtorName = true;
-                                } else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject)) {
-                                    curShape->setConstructorName(constructorFunction->calculatedDisplayName(exec));
-                                    foundCtorName = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!foundCtorName)
+        
+        if (JSObject* curObject = curValue.getObject())
+            curShape->setConstructorName(JSObject::calculatedClassName(curObject));
+        else
             curShape->setConstructorName(curStructure->classInfo()->className);
 
         if (curStructure->isDictionary())

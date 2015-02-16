@@ -257,6 +257,44 @@ String JSObject::className(const JSObject* object)
     return info->className;
 }
 
+String JSObject::calculatedClassName(JSObject* object)
+{
+    String prototypeFunctionName;
+    ExecState* exec = object->globalObject()->globalExec();
+    PropertySlot slot(object->structure()->storedPrototype());
+    PropertyName constructor(exec->propertyNames().constructor);
+    if (object->getPropertySlot(exec, constructor, slot)) {
+        if (slot.isValue()) {
+            JSValue constructorValue = slot.getValue(exec, constructor);
+            if (constructorValue.isCell()) {
+                if (JSCell* constructorCell = constructorValue.asCell()) {
+                    if (JSObject* ctorObject = constructorCell->getObject()) {
+                        if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(exec);
+                        else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(exec);
+                    }
+                }
+            }
+        }
+    }
+
+    if (prototypeFunctionName.isNull() || prototypeFunctionName == "Object") {
+        String tableClassName = object->methodTable()->className(object);
+        if (!tableClassName.isNull() && tableClassName != "Object")
+            return tableClassName;
+
+        String classInfoName = object->classInfo()->className;
+        if (!classInfoName.isNull())
+            return classInfoName;
+
+        if (prototypeFunctionName.isNull())
+            return ASCIILiteral("Object");
+    }
+
+    return prototypeFunctionName;
+}
+
 bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     // NB. The fact that we're directly consulting our indexed storage implies that it is not
