@@ -1,3 +1,10 @@
+2015-02-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Update expectations for css2.1/t1202-counter-04-b.html and css2.1/t1202-counters-04-b.html
+        rdar://problem/19848737
+
+        * platform/mac/TestExpectations:
+
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update expected result for compositing/fixed-positioned-pseudo-content-no-compositing.html after r177774
