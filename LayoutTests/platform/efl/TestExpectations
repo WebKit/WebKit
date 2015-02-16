@@ -2062,11 +2062,17 @@ webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.h
 webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
 webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
 
-
 # Doesn't support inter-ideograph justification
 webkit.org/b/141593 fast/text/justify-ideograph-complex.html [ Failure ]
 webkit.org/b/141593 fast/text/justify-ideograph-simple.html [ Failure ]
 webkit.org/b/141593 fast/text/justify-ideograph-vertical.html [ Failure ]
+
+webkit.org/b/141631 fast/forms/basic-buttons.html [ Failure ]
+webkit.org/b/141631 fast/forms/datalist/datalist-child-validation.html [ Failure ]
+webkit.org/b/141631 fast/forms/search-vertical-alignment.html [ Failure ]
+webkit.org/b/141631 fast/forms/searchfield-heights.html [ Failure ]
+webkit.org/b/141631 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
+webkit.org/b/141630 accessibility/press-targets-center-point.html [ Failure ]
 
 # Need to have new baseline
 webkit.org/b/141594 fast/text/empty-shadow.html [ ImageOnlyFailure ]

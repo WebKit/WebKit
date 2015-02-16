@@ -1,5 +1,11 @@
 2015-02-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Mark 5 form tests and an accessibility test to failure.
+
+        * platform/efl/TestExpectations:
+
+2015-02-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. Mark fixed position tests to failure. 
 
         * platform/efl/TestExpectations: Rearrange tests order as well.
