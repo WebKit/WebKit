@@ -1,3 +1,11 @@
+2015-02-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Uploading a new test that should have been uploaded as
+        part of r180142.
+
+        * fast/css-grid-layout/grid-initialize-span-one-items-expected.txt: Added.
+        * fast/css-grid-layout/grid-initialize-span-one-items.html: Added.
+
 2015-02-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Invalid initialization of track sizes with non spanning grid items
