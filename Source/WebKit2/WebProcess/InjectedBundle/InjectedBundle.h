@@ -98,7 +98,6 @@ public:
 
     // TestRunner only SPI
     void setAlwaysAcceptCookies(bool);
-    void setCacheModel(uint32_t);
     void overrideBoolPreferenceForTestRunner(WebPageGroupProxy*, const String& preference, bool enabled);
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
     void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);

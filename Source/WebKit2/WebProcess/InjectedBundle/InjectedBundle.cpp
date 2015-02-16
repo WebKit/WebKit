@@ -141,11 +141,6 @@ void InjectedBundle::setAlwaysAcceptCookies(bool accept)
     WebProcess::singleton().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 }
 
-void InjectedBundle::setCacheModel(uint32_t cacheModel)
-{
-    WebProcess::singleton().setCacheModel(cacheModel);
-}
-
 void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* pageGroup, const String& preference, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

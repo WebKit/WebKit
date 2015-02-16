@@ -1,3 +1,13 @@
+2015-02-16  Antti Koivisto  <antti@apple.com>
+
+        Remove unused InjectedBundle::setCacheModel.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setCacheModel): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2015-02-16  Anders Carlsson  <andersca@apple.com>
 
         Build fix for versions of Xcode that support nullability but don't have the Foundation #defines.
