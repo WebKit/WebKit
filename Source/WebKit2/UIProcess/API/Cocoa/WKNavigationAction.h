@@ -33,6 +33,8 @@
 #import <AppKit/AppKit.h>
 #endif
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKFrameInfo;
 
 /*! @enum WKNavigationType
@@ -65,7 +67,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The target frame, or nil if this is a new window navigation.
  */
-@property (nonatomic, readonly, copy) WKFrameInfo *targetFrame;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, copy) WKFrameInfo *targetFrame;
 
 /*! @abstract The type of action that triggered the navigation.
  @discussion The value is one of the constants of the enumerated type WKNavigationType.
@@ -89,5 +91,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #endif
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

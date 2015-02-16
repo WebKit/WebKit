@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKScriptMessage;
 @class WKUserContentController;
 
@@ -47,5 +49,7 @@
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

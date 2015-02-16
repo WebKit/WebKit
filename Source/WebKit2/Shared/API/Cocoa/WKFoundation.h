@@ -88,10 +88,12 @@
 #if !__has_attribute(noescape)
 #define WK_NULLABLE
 #define WK_NULL_UNSPECIFIED
+#define WK_NULLABLE_SPECIFIER
 #define WK_NULLABLE_PROPERTY
 #else
 #define WK_NULLABLE nullable
 #define WK_NULL_UNSPECIFIED null_unspecified
+#define WK_NULLABLE_SPECIFIER __nullable
 #define WK_NULLABLE_PROPERTY nullable,
 #endif
 

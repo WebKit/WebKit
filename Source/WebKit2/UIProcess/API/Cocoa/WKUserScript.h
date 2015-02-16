@@ -34,6 +34,8 @@
  @constant WKUserScriptInjectionTimeAtDocumentStart    Inject the script after the document element has been created, but before any other content has been loaded.
  @constant WKUserScriptInjectionTimeAtDocumentEnd      Inject the script after the document has finished loading, but before any subresources may have finished loading.
  */
+WK_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
     WKUserScriptInjectionTimeAtDocumentStart,
     WKUserScriptInjectionTimeAtDocumentEnd
@@ -61,5 +63,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

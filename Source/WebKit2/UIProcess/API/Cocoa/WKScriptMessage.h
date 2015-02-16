@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKFrameInfo;
 @class WKWebView;
 
@@ -45,7 +47,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly, copy) id body;
 
 /*! @abstract The web view sending the message. */
-@property (nonatomic, readonly, weak) WKWebView *webView;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, weak) WKWebView *webView;
 
 /*! @abstract The frame sending the message. */
 @property (nonatomic, readonly, copy) WKFrameInfo *frameInfo;
@@ -55,5 +57,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly, copy) NSString *name;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

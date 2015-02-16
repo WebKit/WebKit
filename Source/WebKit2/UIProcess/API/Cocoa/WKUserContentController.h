@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
 
@@ -69,5 +71,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (void)removeScriptMessageHandlerForName:(NSString *)name;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

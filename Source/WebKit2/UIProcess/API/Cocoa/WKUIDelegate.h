@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKFrameInfo;
 @class WKNavigationAction;
 @class WKWebViewConfiguration;
@@ -53,7 +55,7 @@
 
  If you do not implement this method, the web view will cancel the navigation.
  */
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
+- (WK_NULLABLE WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
 
 /*! @abstract Displays a JavaScript alert panel.
  @param webView The web view invoking the delegate method.
@@ -103,8 +105,10 @@
 
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
-- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler;
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(WK_NULLABLE NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(WK_NULLABLE_SPECIFIER NSString *result))completionHandler;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

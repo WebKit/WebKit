@@ -1,3 +1,32 @@
+2015-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Add nullability qualifiers to all API headers
+        https://bugs.webkit.org/show_bug.cgi?id=141652
+        rdar://problem/19793630
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        Add a WK_NULLABLE_SPECIFIER macro.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKScriptMessageHandler.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserScript.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+
+        * mac/postprocess-framework-headers.sh:
+        Handle the WK_NULLABLE_SPECIFIER macro. Change the WK_NULLABLE sed command to replace
+        all occurrences of WK_NULLABLE instead of just the first one.
+
 2015-02-16  Dan Bernstein  <mitz@apple.com>
 
         Update SPI availability annotations 

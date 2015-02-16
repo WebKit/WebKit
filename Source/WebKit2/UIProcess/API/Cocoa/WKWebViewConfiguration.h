@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+WK_ASSUME_NONNULL_BEGIN
+
 @class WKPreferences;
 @class WKProcessPool;
 @class WKUserContentController;
@@ -79,7 +81,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The name of the application as used in the user agent string.
 */
-@property (nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
@@ -109,5 +111,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 #endif
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif
