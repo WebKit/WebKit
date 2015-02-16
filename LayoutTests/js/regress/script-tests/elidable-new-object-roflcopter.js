@@ -2,7 +2,7 @@ function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;
 }
 
-var n = 500000;
+var n = 5;
 
 function foo() {
     var result = 0;
@@ -14,6 +14,8 @@ function foo() {
     return result;
 }
 
-var result = foo();
-if (result != sumOfArithSeries(n - 1) + sumOfArithSeries(n))
-    throw "Error: bad result: " + result;
+for (var _i = 0; _i < 80000; ++_i) {
+    var result = foo();
+    if (result != sumOfArithSeries(n - 1) + sumOfArithSeries(n))
+        throw "Error: bad result: " + result;
+}

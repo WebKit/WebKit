@@ -1,3 +1,15 @@
+2015-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        js/regress/script-tests/elidable-new-object-roflcopter.js should tier up sooner so that it's more likely to test things
+        https://bugs.webkit.org/show_bug.cgi?id=141633
+
+        Reviewed by Michael Saboff.
+        
+        More function invocations, fewer loop iterations, but otherwise keep the number of
+        allocations the same.
+
+        * js/regress/script-tests/elidable-new-object-roflcopter.js:
+
 2015-02-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark 5 form tests and an accessibility test to failure.
