@@ -163,13 +163,13 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebColorPickerClient.cpp
     UIProcess/efl/WebColorPickerEfl.cpp
     UIProcess/efl/WebColorPickerResultListenerProxy.cpp
-    UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebContextMenuProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPopupItemEfl.cpp
     UIProcess/efl/WebPopupMenuListenerEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
+    UIProcess/efl/WebProcessPoolEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
     UIProcess/efl/WebUIPopupMenuClient.cpp
     UIProcess/efl/WebViewEfl.cpp

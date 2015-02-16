@@ -1,3 +1,15 @@
+2015-02-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Rename WebContextEfl to WebProcessPoolEfl
+        https://bugs.webkit.org/show_bug.cgi?id=141642
+
+        Reviewed by Csaba Osztrogonác.
+
+        Although we've renamed almost everything in r177716, this is still
+        required after r177692.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp: Renamed from Source/WebKit2/UIProcess/efl/WebContextEfl.cpp.
+
 2015-02-14  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix after <http://trac.webkit.org/changeset/180122>
