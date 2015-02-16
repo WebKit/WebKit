@@ -1,3 +1,20 @@
+2015-02-16  Antti Koivisto  <antti@apple.com>
+
+        Assertion in disk cache code with redirect to a non-http resource
+        https://bugs.webkit.org/show_bug.cgi?id=141644
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+
+            Check that response is HTTP before calling computeFreshnessLifetimeForHTTPFamily.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::canStore):
+
+            Deny storing non-HTTP responses to cache (though the above already covers this).
+
 2015-02-13  Anders Carlsson  <andersca@apple.com>
 
         Add support for nullability to the header postprocessing

@@ -1,3 +1,14 @@
+2015-02-16  Antti Koivisto  <antti@apple.com>
+
+        Assertion in disk cache code with redirect to a non-http resource
+        https://bugs.webkit.org/show_bug.cgi?id=141644
+
+        Reviewed by Anders Carlsson.
+
+        * http/tests/cache/disk-cache-redirect-to-data-expected.txt: Added.
+        * http/tests/cache/disk-cache-redirect-to-data.html: Added.
+        * http/tests/cache/resources/redirect-to-data.php: Added.
+
 2015-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Uploading a new test that should have been uploaded as

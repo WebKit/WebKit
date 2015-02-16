@@ -262,7 +262,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
 
 static bool canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
-    if (!originalRequest.url().protocolIsInHTTPFamily()) {
+    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP()) {
         LOG(NetworkCache, "(NetworkProcess) not HTTP");
         return false;
     }
