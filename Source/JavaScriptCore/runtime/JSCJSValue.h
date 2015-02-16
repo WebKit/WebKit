@@ -257,7 +257,7 @@ public:
 
     // Floating point conversions (this is a convenience method for webcore;
     // signle precision float is not a representation used in JS or JSC).
-    JS_EXPORT_PRIVATE float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
+    float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
     // Object operations, with the toObject operation included.
     JSValue get(ExecState*, PropertyName) const;

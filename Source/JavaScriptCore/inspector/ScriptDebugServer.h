@@ -60,7 +60,7 @@ public:
 
     const BreakpointActions& getActionsForBreakpoint(JSC::BreakpointID);
 
-    class JS_EXPORT_PRIVATE Task {
+    class Task {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~Task() { }
