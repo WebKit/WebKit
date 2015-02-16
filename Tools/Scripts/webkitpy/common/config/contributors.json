@@ -233,6 +233,14 @@
             "caseq"
          ]
       },
+      "Andrzej Badowski" : {
+         "emails" : [
+            "a.badowski@samsung.com"
+         ],
+         "nicks" : [
+            "abadowski"
+         ]
+      },
       "Andy Wingo" : {
          "emails" : [
             "wingo@igalia.com"
