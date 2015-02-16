@@ -1,3 +1,9 @@
+2015-02-16  David Kilzer  <ddkilzer@apple.com>
+
+        SoftLinking.h: Update copyright and license; clean up whitespace
+
+        * platform/mac/SoftLinking.h:
+
 2015-02-12  David Hyatt  <hyatt@apple.com>
 
         text-underline-position:under has multiple correctness issues

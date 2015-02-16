@@ -1,29 +1,25 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
- * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import <wtf/Assertions.h>
@@ -96,7 +92,7 @@
 
 #define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations ; \
+    resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     static resultType init##functionName parameterDeclarations; \
     static resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
@@ -106,16 +102,16 @@
         softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
         ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
         return softLink##functionName parameterNames; \
-    }\
+    } \
     \
     inline resultType functionName parameterDeclarations \
-    {\
+    { \
         return softLink##functionName parameterNames; \
     }
 
 #define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations ; \
+    resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     static resultType (*softLink##functionName) parameterDeclarations = 0; \
     \
@@ -141,7 +137,7 @@
 /* callingConvention is unused on Mac but is here to keep the macro prototype the same between Mac and Windows. */
 #define SOFT_LINK_OPTIONAL(framework, functionName, resultType, callingConvention, parameterDeclarations) \
     WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations ; \
+    resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     typedef resultType (*functionName##PtrType) parameterDeclarations; \
     \
@@ -160,7 +156,7 @@
     static Class className##Function() \
     { \
         return class##className; \
-    }\
+    } \
     \
     static Class init##className() \
     { \
@@ -187,7 +183,7 @@
     static Class className##Function() \
     { \
         return class##className; \
-    }\
+    } \
     \
     static Class init##className() \
     { \
@@ -212,7 +208,7 @@
     static type name##Function() \
     { \
         return pointer##name; \
-    }\
+    } \
     \
     static type init##name() \
     { \
@@ -231,7 +227,7 @@
     static type name##Function() \
     { \
         return pointer##name; \
-    }\
+    } \
     \
     static type init##name() \
     { \
@@ -250,7 +246,7 @@
     static type name##Function() \
     { \
         return constant##name; \
-    }\
+    } \
     \
     static type init##name() \
     { \
@@ -269,7 +265,7 @@
     static type name##Function() \
     { \
         return constant##name; \
-    }\
+    } \
     \
     static bool canLoad##name() \
     { \
