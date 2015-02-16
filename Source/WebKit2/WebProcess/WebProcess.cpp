@@ -1196,6 +1196,7 @@ bool WebProcess::markAllLayersVolatileIfPossible()
 void WebProcess::processSuspensionCleanupTimerFired()
 {
     if (markAllLayersVolatileIfPossible()) {
+        m_processSuspensionCleanupTimer.stop();
         parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
     }
 }
