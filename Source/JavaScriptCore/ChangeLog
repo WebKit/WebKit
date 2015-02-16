@@ -1,3 +1,21 @@
+2015-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Rare case profiling should actually work
+        https://bugs.webkit.org/show_bug.cgi?id=141632
+
+        Reviewed by Michael Saboff.
+        
+        This simple adjustment appears to be a 2% speed-up on Octane. Over time, the slow case
+        heuristic has essentially stopped working because the typical execution count threshold for a
+        bytecode instruction is around 66 while the slow case threshold is 100: virtually
+        guaranteeing that the DFG will never think that a bytecode instruction has taken the slow
+        case even if it took it every single time. So, this changes the slow case threshold to 20.
+        
+        I checked if we could lower this down further, like to 10. That is worse than 20, and about
+        as bad as 100.
+
+        * runtime/Options.h:
+
 2015-02-15  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused XHR replay code

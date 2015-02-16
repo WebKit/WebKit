@@ -239,7 +239,7 @@ typedef const char* optionString;
     v(int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000) \
     v(int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000) \
     \
-    v(unsigned, likelyToTakeSlowCaseMinimumCount, 100) \
+    v(unsigned, likelyToTakeSlowCaseMinimumCount, 20) \
     v(unsigned, couldTakeSlowCaseMinimumCount, 10) \
     \
     v(unsigned, osrExitCountForReoptimization, 100) \
