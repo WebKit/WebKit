@@ -255,6 +255,10 @@ fast/layers/no-clipping-overflow-hidden-added-after-transform.html
 # Animation tests that fail:
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
+animations/play-state-suspend.html [ Failure ]
+animations/suspend-resume-animation.html [ Failure ]
+animations/unprefixed-events-mixed-with-prefixed.html [ Failure ]
+animations/unprefixed-events.html [ Failure ]
 
 # Animation tests that are flaky:
 animations/3d/matrix-transform-type-animation.html [ Skip ] # Pass, Timeout, Missing
@@ -2547,6 +2551,7 @@ editing/spelling/spellcheck-queue.html
 editing/style/style-text-node-without-editable-parent.html
 
 # Editing tests that fail:
+editing/deleting/delete-emoji.html [ Failure ]
 editing/inserting/typing-at-end-of-line.html [ Failure ]
 editing/pasteboard/3976872.html [ Failure ]
 editing/pasteboard/4076267-2.html [ Failure ]
@@ -2558,6 +2563,10 @@ editing/pasteboard/8145-3.html [ Failure ]
 editing/pasteboard/bad-placeholder.html [ Failure ]
 editing/pasteboard/pasting-tabs.html [ Failure ]
 editing/pasteboard/unrendered-br.html [ Failure ]
+editing/undo/undo-combined-delete-boundary.html [ Failure ]
+editing/undo/undo-combined-delete.html [ Failure ]
+editing/undo/undo-forward-delete-boundary.html [ Failure ]
+editing/undo/undo-forward-delete.html [ Failure ]
 
 # Sputnik tests that are flaky:
 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
@@ -2574,6 +2583,7 @@ sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 storage/websql/sql-error-codes.html [ Failure ]
 
 # iOS-specific tests that fail:
+platform/ios-simulator/accessibility/text-marker-list-item.html [ Failure ]
 platform/ios-simulator/ios/compositing/overlap-page-scale.html [ Failure ]
 platform/ios-simulator/ios/fast/fixed/absolute-over-fixed.html [ Failure ]
 platform/ios-simulator/ios/fast/fixed/fixed-in-transform.html [ Failure ]

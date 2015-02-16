@@ -1,3 +1,11 @@
+2015-02-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Gardening; update test expectations
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update editing/selection/move-by-word-visually-mac.html after r177774
