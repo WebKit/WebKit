@@ -73,7 +73,7 @@ public:
         }
         
         // Find all SetLocals and create Defs for them. We handle SetArgument by creating a
-        // GetArgument.
+        // GetLocal, and recording the flush format.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -97,7 +97,9 @@ public:
                     ASSERT(node->op() == SetArgument);
                     childNode = m_insertionSet.insertNode(
                         nodeIndex, node->variableAccessData()->prediction(),
-                        GetArgument, node->origin, OpInfo(node->variableAccessData()));
+                        GetLocal, node->origin, OpInfo(node->variableAccessData()));
+                    m_argumentGetters.add(childNode);
+                    m_argumentMapping.add(node, childNode);
                 }
                 
                 m_calculator.newDef(
@@ -198,14 +200,14 @@ public:
         //   - PhantomLocal becomes Phantom, and its child is whatever is specified by
         //     valueForOperand.
         //
-        //   - SetArgument is removed. Note that GetArgument nodes have already been inserted.
+        //   - SetArgument is removed. Note that GetLocal nodes have already been inserted.
         Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             valueForOperand.clear();
             
             // CPS will claim that the root block has all arguments live. But we have already done
             // the first step of SSA conversion: argument locals are no longer live at head;
-            // instead we have GetArgument nodes for extracting the values of arguments. So, we
+            // instead we have GetLocal nodes for extracting the values of arguments. So, we
             // skip the at-head available value calculation for the root block.
             if (block != m_graph.block(0)) {
                 for (size_t i = valueForOperand.size(); i--;) {
@@ -293,9 +295,15 @@ public:
                 }
                     
                 case GetLocal: {
+                    VariableAccessData* variable = node->variableAccessData();
+                    if (m_argumentGetters.contains(node)) {
+                        if (verbose)
+                            dataLog("Mapping: ", variable->local(), " -> ", node, "\n");
+                        valueForOperand.operand(variable->local()) = node;
+                        break;
+                    }
                     node->children.reset();
                     
-                    VariableAccessData* variable = node->variableAccessData();
                     if (variable->isCaptured())
                         break;
                     
@@ -334,15 +342,6 @@ public:
                     
                 case SetArgument: {
                     node->convertToPhantom();
-                    break;
-                }
-                    
-                case GetArgument: {
-                    VariableAccessData* variable = node->variableAccessData();
-                    ASSERT(!variable->isCaptured());
-                    if (verbose)
-                        dataLog("Mapping: ", variable->local(), " -> ", node, "\n");
-                    valueForOperand.operand(variable->local()) = node;
                     break;
                 }
                     
@@ -392,7 +391,21 @@ public:
             block->ssa = std::make_unique<BasicBlock::SSAData>(block);
         }
         
-        m_graph.m_arguments.clear();
+        m_graph.m_argumentFormats.resize(m_graph.m_arguments.size());
+        for (unsigned i = m_graph.m_arguments.size(); i--;) {
+            FlushFormat format = FlushedJSValue;
+
+            Node* node = m_argumentMapping.get(m_graph.m_arguments[i]);
+
+            // m_argumentMapping.get could return null for a captured local. That's fine. We only
+            // track the argument loads of those arguments for which we speculate type. We don't
+            // speculate type for captured arguments.
+            if (node)
+                format = node->variableAccessData()->flushFormat();
+            
+            m_graph.m_argumentFormats[i] = format;
+            m_graph.m_arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
+        }
         
         m_graph.m_form = SSA;
 
@@ -408,6 +421,8 @@ private:
     SSACalculator m_calculator;
     InsertionSet m_insertionSet;
     HashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
+    HashMap<Node*, Node*> m_argumentMapping;
+    HashSet<Node*> m_argumentGetters;
     Vector<VariableAccessData*> m_variableForSSAIndex;
 };
 

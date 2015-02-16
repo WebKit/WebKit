@@ -371,7 +371,7 @@ public:
                     ssaCalculator.newDef(
                         operandToVariable.operand(node->local()), block, node->child1().node());
                     break;
-                case GetArgument:
+                case GetLocal:
                     ssaCalculator.newDef(
                         operandToVariable.operand(node->local()), block, node);
                     break;
@@ -450,13 +450,6 @@ public:
                     break;
                 }
                     
-                case GetArgument: {
-                    VariableAccessData* variable = node->variableAccessData();
-                    VirtualRegister operand = variable->local();
-                    mapping.operand(operand) = node;
-                    break;
-                }
-                    
                 case KillLocal: {
                     deferred.operand(node->unlinkedLocal()) = VariableDeferral();
                     break;
@@ -489,6 +482,16 @@ public:
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
                         [&] (VirtualRegister, Node*) { });
+                    
+                    // If we're a GetLocal, then we also create a mapping.
+                    // FIXME: We should be able to just eliminate such GetLocals, when we know
+                    // what their incoming value will be.
+                    // https://bugs.webkit.org/show_bug.cgi?id=141624
+                    if (node->op() == GetLocal) {
+                        VariableAccessData* variable = node->variableAccessData();
+                        VirtualRegister operand = variable->local();
+                        mapping.operand(operand) = node;
+                    }
                     break;
                 } }
             }

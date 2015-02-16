@@ -96,28 +96,37 @@ void InPlaceAbstractState::initialize()
     root->cfaStructureClobberStateAtTail = StructuresAreWatched;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
         root->valuesAtTail.argument(i).clear();
-        if (m_graph.m_form == SSA) {
-            root->valuesAtHead.argument(i).makeHeapTop();
-            continue;
+
+        FlushFormat format;
+        if (m_graph.m_form == SSA)
+            format = m_graph.m_argumentFormats[i];
+        else {
+            Node* node = m_graph.m_arguments[i];
+            if (!node)
+                format = FlushedJSValue;
+            else {
+                ASSERT(node->op() == SetArgument);
+                format = node->variableAccessData()->flushFormat();
+            }
         }
         
-        Node* node = root->variablesAtHead.argument(i);
-        ASSERT(node->op() == SetArgument);
-        if (!node->variableAccessData()->shouldUnboxIfPossible()) {
-            root->valuesAtHead.argument(i).makeHeapTop();
-            continue;
-        }
-        
-        SpeculatedType prediction =
-            node->variableAccessData()->argumentAwarePrediction();
-        if (isInt32Speculation(prediction))
+        switch (format) {
+        case FlushedInt32:
             root->valuesAtHead.argument(i).setType(SpecInt32);
-        else if (isBooleanSpeculation(prediction))
+            break;
+        case FlushedBoolean:
             root->valuesAtHead.argument(i).setType(SpecBoolean);
-        else if (isCellSpeculation(prediction))
+            break;
+        case FlushedCell:
             root->valuesAtHead.argument(i).setType(SpecCell);
-        else
+            break;
+        case FlushedJSValue:
             root->valuesAtHead.argument(i).makeHeapTop();
+            break;
+        default:
+            DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+            break;
+        }
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
         Node* node = root->variablesAtHead.local(i);

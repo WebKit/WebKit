@@ -552,7 +552,6 @@ private:
             break;
             
         case Upsilon:
-        case GetArgument:
             // These don't get inserted until we go into SSA.
             RELEASE_ASSERT_NOT_REACHED();
             break;

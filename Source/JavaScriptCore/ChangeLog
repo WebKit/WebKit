@@ -1,3 +1,80 @@
+2015-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG SSA should use GetLocal for arguments, and the GetArgument node type should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=141623
+
+        Reviewed by Oliver Hunt.
+        
+        During development of https://bugs.webkit.org/show_bug.cgi?id=141332, I realized that I
+        needed to use GetArgument for loading something that has magically already appeared on the
+        stack, so currently trunk sort of allows this. But then I realized three things:
+        
+        - A GetArgument with a non-JSValue flush format means speculating that the value on the
+          stack obeys that format, rather than just assuming that that it already has that format.
+          In bug 141332, I want it to assume rather than speculate. That also happens to be more
+          intuitive; I don't think I was wrong to expect that.
+        
+        - The node I really want is GetLocal. I'm just getting the value of the local and I don't
+          want to do anything else.
+        
+        - Maybe it would be easier if we just used GetLocal for all of the cases where we currently
+          use GetArgument.
+        
+        This changes the FTL to do argument speculations in the prologue just like the DFG does.
+        This brings some consistency to our system, and allows us to get rid of the GetArgument
+        node. The speculations that the FTL must do are now made explicit in the m_argumentFormats
+        vector in DFG::Graph. This has natural DCE behavior: even if all uses of the argument are
+        dead we will still speculate. We already have safeguards to ensure we only speculate if
+        there are uses that benefit from speculation (which is a much more conservative criterion
+        than DCE).
+        
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::typeFilterFor):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPutLocalSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArgument): Deleted.
+        * tests/stress/dead-speculating-argument-use.js: Added.
+        (foo):
+        (o.valueOf):
+
 2015-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Rare case profiling should actually work

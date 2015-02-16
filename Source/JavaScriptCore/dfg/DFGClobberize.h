@@ -391,7 +391,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case GetLocal:
-    case GetArgument:
         read(AbstractHeap(Variables, node->local()));
         def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->local())), node);
         return;

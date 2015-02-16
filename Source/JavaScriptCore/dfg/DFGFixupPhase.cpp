@@ -1033,7 +1033,6 @@ private:
         case GetArrayLength:
         case Phi:
         case Upsilon:
-        case GetArgument:
         case GetIndexedPropertyStorage:
         case GetTypedArrayByteOffset:
         case LastNodeType:

@@ -135,6 +135,8 @@ public:
         m_prologue = FTL_NEW_BLOCK(m_out, ("Prologue"));
         LBasicBlock stackOverflow = FTL_NEW_BLOCK(m_out, ("Stack overflow"));
         m_handleExceptions = FTL_NEW_BLOCK(m_out, ("Handle Exceptions"));
+        
+        LBasicBlock checkArguments = FTL_NEW_BLOCK(m_out, ("Check arguments"));
 
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             m_highBlock = m_graph.block(blockIndex);
@@ -193,7 +195,7 @@ public:
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
         
         m_out.branch(
-            didOverflowStack(), rarely(stackOverflow), usually(lowBlock(m_graph.block(0))));
+            didOverflowStack(), rarely(stackOverflow), usually(checkArguments));
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
         m_out.call(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()));
@@ -203,13 +205,58 @@ public:
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         m_out.unreachable();
         
-        m_out.appendTo(m_handleExceptions, lowBlock(m_graph.block(0)));
+        m_out.appendTo(m_handleExceptions, checkArguments);
         m_ftlState.handleExceptionStackmapID = m_stackmapIDs++;
         m_out.call(
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.handleExceptionStackmapID),
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         m_out.unreachable();
-
+        
+        m_out.appendTo(checkArguments, lowBlock(m_graph.block(0)));
+        availabilityMap().clear();
+        availabilityMap().m_locals = Operands<Availability>(codeBlock()->numParameters(), 0);
+        for (unsigned i = codeBlock()->numParameters(); i--;) {
+            availabilityMap().m_locals.argument(i) =
+                Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgument(i)));
+        }
+        m_codeOriginForExitTarget = CodeOrigin(0);
+        m_codeOriginForExitProfile = CodeOrigin(0);
+        m_node = nullptr;
+        for (unsigned i = codeBlock()->numParameters(); i--;) {
+            Node* node = m_graph.m_arguments[i];
+            VirtualRegister operand = virtualRegisterForArgument(i);
+            
+            LValue jsValue = m_out.load64(addressFor(operand));
+            
+            if (node) {
+                DFG_ASSERT(m_graph, node, operand == node->variableAccessData()->machineLocal());
+                
+                // This is a hack, but it's an effective one. It allows us to do CSE on the
+                // primordial load of arguments. This assumes that the GetLocal that got put in
+                // place of the original SetArgument doesn't have any effects before it. This
+                // should hold true.
+                m_loadedArgumentValues.add(node, jsValue);
+            }
+            
+            switch (m_graph.m_argumentFormats[i]) {
+            case FlushedInt32:
+                speculate(BadType, jsValueValue(jsValue), node, isNotInt32(jsValue));
+                break;
+            case FlushedBoolean:
+                speculate(BadType, jsValueValue(jsValue), node, isNotBoolean(jsValue));
+                break;
+            case FlushedCell:
+                speculate(BadType, jsValueValue(jsValue), node, isNotCell(jsValue));
+                break;
+            case FlushedJSValue:
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Bad flush format for argument");
+                break;
+            }
+        }
+        m_out.jump(lowBlock(m_graph.block(0)));
+        
         for (BasicBlock* block : preOrder)
             compileBlock(block);
         
@@ -380,9 +427,6 @@ private:
             break;
         case BooleanToNumber:
             compileBooleanToNumber();
-            break;
-        case GetArgument:
-            compileGetArgument();
             break;
         case ExtractOSREntryLocal:
             compileExtractOSREntryLocal();
@@ -981,36 +1025,6 @@ private:
         }
     }
 
-    void compileGetArgument()
-    {
-        VariableAccessData* variable = m_node->variableAccessData();
-        VirtualRegister operand = variable->machineLocal();
-        DFG_ASSERT(m_graph, m_node, operand.isArgument());
-
-        LValue jsValue = m_out.load64(addressFor(operand));
-
-        switch (useKindFor(variable->flushFormat())) {
-        case Int32Use:
-            speculate(BadType, jsValueValue(jsValue), m_node, isNotInt32(jsValue));
-            setInt32(unboxInt32(jsValue));
-            break;
-        case CellUse:
-            speculate(BadType, jsValueValue(jsValue), m_node, isNotCell(jsValue));
-            setJSValue(jsValue);
-            break;
-        case BooleanUse:
-            speculate(BadType, jsValueValue(jsValue), m_node, isNotBoolean(jsValue));
-            setBoolean(unboxBoolean(jsValue));
-            break;
-        case UntypedUse:
-            setJSValue(jsValue);
-            break;
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            break;
-        }
-    }
-    
     void compileExtractOSREntryLocal()
     {
         EncodedJSValue* buffer = static_cast<EncodedJSValue*>(
@@ -1020,12 +1034,15 @@ private:
     
     void compileGetLocal()
     {
-        // GetLocals arise only for captured variables.
+        // GetLocals arise only for captured variables and arguments. For arguments, we might have
+        // already loaded it.
+        if (LValue value = m_loadedArgumentValues.get(m_node)) {
+            setJSValue(value);
+            return;
+        }
         
         VariableAccessData* variable = m_node->variableAccessData();
         AbstractValue& value = m_state.variables().operand(variable->local());
-        
-        DFG_ASSERT(m_graph, m_node, variable->isCaptured());
         
         if (isInt32Speculation(value.m_type))
             setInt32(m_out.load32(payloadFor(variable->machineLocal())));
@@ -7013,6 +7030,11 @@ private:
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
+    
+    // This is a bit of a hack. It prevents LLVM from having to do CSE on loading of arguments.
+    // It's nice to have these optimizations on our end because we can guarantee them a bit better.
+    // Probably also saves LLVM compile time.
+    HashMap<Node*, LValue> m_loadedArgumentValues;
     
     HashMap<Node*, LValue> m_phis;
     

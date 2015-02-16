@@ -425,6 +425,10 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     out.print("\n");
     out.print("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
     out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
+    if (m_form == SSA)
+        out.print("  Argument formats: ", listDump(m_argumentFormats), "\n");
+    else
+        out.print("  Arguments: ", listDump(m_arguments), "\n");
     out.print("\n");
     
     Node* lastNode = 0;

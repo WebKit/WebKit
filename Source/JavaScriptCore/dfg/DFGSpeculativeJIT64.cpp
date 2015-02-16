@@ -4993,7 +4993,6 @@ void SpeculativeJIT::compile(Node* node)
     case LastNodeType:
     case Phi:
     case Upsilon:
-    case GetArgument:
     case ExtractOSREntryLocal:
     case CheckInBounds:
     case ArithIMul:

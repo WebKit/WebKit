@@ -53,12 +53,21 @@ public:
         if (m_graph.m_form == SSA) {
             for (BasicBlock* block : m_graph.blocksInPreOrder())
                 fixupBlock(block);
+            
+            // This is like cleanVariables, but has a much simpler approach to GetLocal.
+            for (unsigned i = m_graph.m_arguments.size(); i--;) {
+                Node* node = m_graph.m_arguments[i];
+                if (!node)
+                    continue;
+                if (node->op() != Phantom && node->op() != Check && node->shouldGenerate())
+                    continue;
+                m_graph.m_arguments[i] = nullptr;
+            }
         } else {
             RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
             
             for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
                 fixupBlock(m_graph.block(blockIndex));
-            
             cleanVariables(m_graph.m_arguments);
         }
         

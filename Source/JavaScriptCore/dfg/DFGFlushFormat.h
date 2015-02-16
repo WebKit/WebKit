@@ -93,6 +93,11 @@ inline UseKind useKindFor(FlushFormat format)
     return UntypedUse;
 }
 
+inline SpeculatedType typeFilterFor(FlushFormat format)
+{
+    return typeFilterFor(useKindFor(format));
+}
+
 inline DataFormat dataFormatFor(FlushFormat format)
 {
     switch (format) {

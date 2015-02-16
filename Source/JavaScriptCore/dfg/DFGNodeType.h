@@ -61,7 +61,6 @@ namespace JSC { namespace DFG {
     macro(KillLocal, NodeMustGenerate) \
     macro(MovHint, 0) \
     macro(ZombieHint, 0) \
-    macro(GetArgument, NodeResultJS | NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
     macro(HardPhantom, NodeMustGenerate) /* Like Phantom, but we never remove any of its children. */ \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\

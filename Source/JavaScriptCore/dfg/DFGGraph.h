@@ -475,21 +475,19 @@ public:
     ValueProfile* valueProfileFor(Node* node)
     {
         if (!node)
-            return 0;
+            return nullptr;
         
         CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
         
-        if (node->op() == GetArgument)
-            return profiledBlock->valueProfileForArgument(node->local().toArgument());
-        
         if (node->hasLocal(*this)) {
-            if (m_form == SSA)
-                return 0;
             if (!node->local().isArgument())
                 return 0;
             int argument = node->local().toArgument();
-            if (node->variableAccessData() != m_arguments[argument]->variableAccessData())
-                return 0;
+            Node* argumentNode = m_arguments[argument];
+            if (!argumentNode)
+                return nullptr;
+            if (node->variableAccessData() != argumentNode->variableAccessData())
+                return nullptr;
             return profiledBlock->valueProfileForArgument(argument);
         }
         
@@ -504,16 +502,19 @@ public:
         if (!node)
             return MethodOfGettingAValueProfile();
         
-        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+        if (ValueProfile* valueProfile = valueProfileFor(node))
+            return MethodOfGettingAValueProfile(valueProfile);
         
         if (node->op() == GetLocal) {
+            CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+        
             return MethodOfGettingAValueProfile::fromLazyOperand(
                 profiledBlock,
                 LazyOperandValueProfileKey(
                     node->origin.semantic.bytecodeIndex, node->local()));
         }
         
-        return MethodOfGettingAValueProfile(valueProfileFor(node));
+        return MethodOfGettingAValueProfile();
     }
     
     bool usesArguments() const
@@ -811,7 +812,37 @@ public:
     Bag<FrozenValue> m_frozenValues;
     
     Bag<StorageAccessData> m_storageAccessData;
+    
+    // In CPS, this is all of the SetArgument nodes for the arguments in the machine code block
+    // that survived DCE. All of them except maybe "this" will survive DCE, because of the Flush
+    // nodes.
+    //
+    // In SSA, this is all of the GetLocal nodes for the arguments in the machine code block that
+    // may have some speculation in the prologue and survived DCE. Note that to get the speculation
+    // for an argument in SSA, you must use m_argumentFormats, since we still have to speculate
+    // even if the argument got killed. For example:
+    //
+    //     function foo(x) {
+    //        var tmp = x + 1;
+    //     }
+    //
+    // Assume that x is always int during profiling. The ArithAdd for "x + 1" will be dead and will
+    // have a proven check for the edge to "x". So, we will not insert a Check node and we will
+    // kill the GetLocal for "x". But, we must do the int check in the progolue, because that's the
+    // thing we used to allow DCE of ArithAdd. Otherwise the add could be impure:
+    //
+    //     var o = {
+    //         valueOf: function() { do side effects; }
+    //     };
+    //     foo(o);
+    //
+    // If we DCE the ArithAdd and we remove the int check on x, then this won't do the side
+    // effects.
     Vector<Node*, 8> m_arguments;
+    
+    // In CPS, this is meaningless. In SSA, this is the argument speculation that we've locked in.
+    Vector<FlushFormat> m_argumentFormats;
+    
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     SegmentedVector<StructureSet, 16> m_structureSet;
