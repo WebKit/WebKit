@@ -1,3 +1,50 @@
+2015-02-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Remove the usage of Length(Undefined) in GridLength
+        https://bugs.webkit.org/show_bug.cgi?id=141562
+
+        Reviewed by Chris Dumez.
+
+        From Blink r164154 by <timloh@chromium.org>
+
+        The patch simplifies some of the logic in creating and applying
+        GridLength and GridTrackSize values to RenderStyles by using the
+        constructors for initialisation instead of deferring to setters.
+
+        The rationale behind this change is that neither of
+        createGridTrackSize() nor createGridTrackBreadth() should be able
+        to fail, so these are changed to return objects directly instead
+        of taking an out reference (note that in general failing in
+        applying properties is incorrect and we should catch these in the
+        parser).
+
+        The quirk value across to the Lengths was also removed because it
+        doesn't apply to Grid.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::createGridTrackBreadth): Return a
+        GridLength instead of a bool.
+        (WebCore::StyleBuilderConverter::createGridTrackSize): Return a
+        GridTrackSize instead of a bool.
+        (WebCore::StyleBuilderConverter::createGridTrackList): Do not
+        create temporary GridTrackSizes with undefined Lengths.
+        (WebCore::StyleBuilderConverter::convertGridTrackSize): Ditto.
+        * rendering/style/GridLength.h:
+        (WebCore::GridLength::GridLength): It now requires a mandatory
+        Length argument.
+        (WebCore::GridLength::length): Deleted.
+        (WebCore::GridLength::setFlex): Deleted.
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::GridTrackSize): It now requires a
+        mandatory GridLength argument.
+        (WebCore::GridTrackSize::length): Removed no longer valid ASSERTs.
+        (WebCore::GridTrackSize::minTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::maxTrackBreadth): Ditto.
+        (WebCore::GridTrackSize::setLength): Deleted.
+        (WebCore::GridTrackSize::setMinMax): Deleted.
+        * rendering/style/RenderStyle.h:
+
 2015-02-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Removing text node does not remove its associated markers

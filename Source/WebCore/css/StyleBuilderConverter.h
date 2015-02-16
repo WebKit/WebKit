@@ -95,7 +95,7 @@ public:
     static Vector<LengthSize> convertScrollSnapCoordinates(StyleResolver&, CSSValue&);
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
-    static Optional<GridTrackSize> convertGridTrackSize(StyleResolver&, CSSValue&);
+    static GridTrackSize convertGridTrackSize(StyleResolver&, CSSValue&);
     static Optional<GridPosition> convertGridPosition(StyleResolver&, CSSValue&);
     static GridAutoFlow convertGridAutoFlow(StyleResolver&, CSSValue&);
 #endif // ENABLE(CSS_GRID_LAYOUT)
@@ -135,8 +135,8 @@ private:
     static Length parseSnapCoordinate(StyleResolver&, const CSSValue&);
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
-    static bool createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&, GridLength&);
-    static bool createGridTrackSize(CSSValue&, GridTrackSize&, StyleResolver&);
+    static GridLength createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&);
+    static GridTrackSize createGridTrackSize(CSSValue&, StyleResolver&);
     static bool createGridTrackList(CSSValue&, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap&, OrderedNamedGridLinesMap&, StyleResolver&);
     static bool createGridPosition(CSSValue&, GridPosition&);
     static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap&, NamedGridLinesMap&, GridTrackSizingDirection);
@@ -754,55 +754,32 @@ inline Vector<LengthSize> StyleBuilderConverter::convertScrollSnapCoordinates(St
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-inline bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver, GridLength& workingLength)
+inline GridLength StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver)
 {
-    if (primitiveValue.getValueID() == CSSValueWebkitMinContent) {
-        workingLength = Length(MinContent);
-        return true;
-    }
+    if (primitiveValue.getValueID() == CSSValueWebkitMinContent)
+        return Length(MinContent);
 
-    if (primitiveValue.getValueID() == CSSValueWebkitMaxContent) {
-        workingLength = Length(MaxContent);
-        return true;
-    }
+    if (primitiveValue.getValueID() == CSSValueWebkitMaxContent)
+        return Length(MaxContent);
 
-    if (primitiveValue.isFlex()) {
-        // Fractional unit.
-        workingLength.setFlex(primitiveValue.getDoubleValue());
-        return true;
-    }
+    // Fractional unit.
+    if (primitiveValue.isFlex())
+        return GridLength(primitiveValue.getDoubleValue());
 
-    workingLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
-    if (workingLength.length().isUndefined())
-        return false;
-
-    if (primitiveValue.isLength())
-        workingLength.length().setHasQuirk(primitiveValue.isQuirkValue());
-
-    return true;
+    return primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
 }
 
-inline bool StyleBuilderConverter::createGridTrackSize(CSSValue& value, GridTrackSize& trackSize, StyleResolver& styleResolver)
+inline GridTrackSize StyleBuilderConverter::createGridTrackSize(CSSValue& value, StyleResolver& styleResolver)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        GridLength workingLength;
-        if (!createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), styleResolver, workingLength))
-            return false;
-
-        trackSize.setLength(workingLength);
-        return true;
-    }
+    if (is<CSSPrimitiveValue>(value))
+        return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), styleResolver));
 
     CSSValueList& arguments = *downcast<CSSFunctionValue>(value).arguments();
     ASSERT_WITH_SECURITY_IMPLICATION(arguments.length() == 2);
 
-    GridLength minTrackBreadth;
-    GridLength maxTrackBreadth;
-    if (!createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver, minTrackBreadth) || !createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1)), styleResolver, maxTrackBreadth))
-        return false;
-
-    trackSize.setMinMax(minTrackBreadth, maxTrackBreadth);
-    return true;
+    GridLength minTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver));
+    GridLength maxTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1)), styleResolver));
+    return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 
 inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines, StyleResolver& styleResolver)
@@ -828,11 +805,7 @@ inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<G
         }
 
         ++currentNamedGridLine;
-        GridTrackSize trackSize;
-        if (!createGridTrackSize(currentValue, trackSize, styleResolver))
-            return false;
-
-        trackSizes.append(trackSize);
+        trackSizes.append(createGridTrackSize(currentValue, styleResolver));
     }
 
     // The parser should have rejected any <track-list> without any <track-size> as
@@ -908,12 +881,9 @@ inline void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(cons
     }
 }
 
-inline Optional<GridTrackSize> StyleBuilderConverter::convertGridTrackSize(StyleResolver& styleResolver, CSSValue& value)
+inline GridTrackSize StyleBuilderConverter::convertGridTrackSize(StyleResolver& styleResolver, CSSValue& value)
 {
-    GridTrackSize trackSize;
-    if (createGridTrackSize(value, trackSize, styleResolver))
-        return trackSize;
-    return Nullopt;
+    return createGridTrackSize(value, styleResolver);
 }
 
 inline Optional<GridPosition> StyleBuilderConverter::convertGridPosition(StyleResolver&, CSSValue& value)

@@ -43,17 +43,17 @@ namespace WebCore {
 // an new unit to Length.h.
 class GridLength {
 public:
-    GridLength()
-        : m_length(Undefined)
-        , m_flex(0)
-        , m_type(LengthType)
-    {
-    }
-
     GridLength(const Length& length)
         : m_length(length)
         , m_flex(0)
         , m_type(LengthType)
+    {
+        ASSERT(!length.isUndefined());
+    }
+
+    explicit GridLength(double flex)
+        : m_flex(flex)
+        , m_type(FlexType)
     {
     }
 
@@ -61,14 +61,8 @@ public:
     bool isFlex() const { return m_type == FlexType; }
 
     const Length& length() const { ASSERT(isLength()); return m_length; }
-    Length& length() { ASSERT(isLength()); return m_length; }
 
     double flex() const { ASSERT(isFlex()); return m_flex; }
-    void setFlex(double flex)
-    {
-        m_type = FlexType;
-        m_flex = flex;
-    }
 
     bool isPercentage() const { return m_type == LengthType && m_length.isPercent(); }
 

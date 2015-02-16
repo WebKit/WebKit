@@ -479,8 +479,8 @@ justify-content
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas|-webkit-grid-auto-flow|-webkit-grid-auto-columns|-webkit-grid-auto-rows]
 -webkit-grid-area [Longhands=-webkit-grid-row-start|-webkit-grid-column-start|-webkit-grid-row-end|-webkit-grid-row-start]
--webkit-grid-auto-columns [ConditionalConverter=GridTrackSize]
--webkit-grid-auto-rows [ConditionalConverter=GridTrackSize]
+-webkit-grid-auto-columns [Converter=GridTrackSize]
+-webkit-grid-auto-rows [Converter=GridTrackSize]
 -webkit-grid-column-end [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnEnd]
 -webkit-grid-column-start [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnStart]
 -webkit-grid-template [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas]

@@ -1972,8 +1972,8 @@ public:
 
     static GridAutoFlow initialGridAutoFlow() { return AutoFlowRow; }
 
-    static GridTrackSize initialGridAutoColumns() { return GridTrackSize(Auto); }
-    static GridTrackSize initialGridAutoRows() { return GridTrackSize(Auto); }
+    static GridTrackSize initialGridAutoColumns() { return GridTrackSize(Length(Auto)); }
+    static GridTrackSize initialGridAutoRows() { return GridTrackSize(Length(Auto)); }
 
     static NamedGridAreaMap initialNamedGridArea() { return NamedGridAreaMap(); }
     static size_t initialNamedGridAreaCount() { return 0; }

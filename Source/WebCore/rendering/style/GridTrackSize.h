@@ -35,6 +35,7 @@
 #if ENABLE(CSS_GRID_LAYOUT)
 
 #include "GridLength.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -45,16 +46,18 @@ enum GridTrackSizeType {
 
 class GridTrackSize {
 public:
-    GridTrackSize(LengthType type = Undefined)
+    GridTrackSize(const GridLength& length)
         : m_type(LengthTrackSizing)
-        , m_minTrackBreadth(type)
-        , m_maxTrackBreadth(type)
+        , m_minTrackBreadth(length)
+        , m_maxTrackBreadth(length)
     {
     }
 
     GridTrackSize(const GridLength& minTrackBreadth, const GridLength& maxTrackBreadth)
+        : m_type(MinMaxTrackSizing)
+        , m_minTrackBreadth(minTrackBreadth)
+        , m_maxTrackBreadth(maxTrackBreadth)
     {
-        setMinMax(minTrackBreadth, maxTrackBreadth);
     }
 
     const GridLength& length() const
@@ -62,22 +65,13 @@ public:
         ASSERT(m_type == LengthTrackSizing);
         ASSERT(m_minTrackBreadth == m_maxTrackBreadth);
         const GridLength& minTrackBreadth = m_minTrackBreadth;
-        ASSERT(!minTrackBreadth.isLength() || !minTrackBreadth.length().isUndefined());
         return minTrackBreadth;
-    }
-
-    void setLength(const GridLength& length)
-    {
-        m_type = LengthTrackSizing;
-        m_minTrackBreadth = length;
-        m_maxTrackBreadth = length;
     }
 
     const GridLength& minTrackBreadth() const
     {
-        ASSERT(!m_minTrackBreadth.isLength() || !m_minTrackBreadth.length().isUndefined());
         if (m_minTrackBreadth.isLength() && m_minTrackBreadth.length().isAuto()) {
-            DEPRECATED_DEFINE_STATIC_LOCAL(GridLength, minContent, (MinContent));
+            static NeverDestroyed<const GridLength> minContent{Length(MinContent)};
             return minContent;
         }
         return m_minTrackBreadth;
@@ -85,19 +79,11 @@ public:
 
     const GridLength& maxTrackBreadth() const
     {
-        ASSERT(!m_maxTrackBreadth.isLength() || !m_maxTrackBreadth.length().isUndefined());
         if (m_maxTrackBreadth.isLength() && m_maxTrackBreadth.length().isAuto()) {
-            DEPRECATED_DEFINE_STATIC_LOCAL(GridLength, maxContent, (MaxContent));
+            static NeverDestroyed<const GridLength> maxContent{Length(MaxContent)};
             return maxContent;
         }
         return m_maxTrackBreadth;
-    }
-
-    void setMinMax(const GridLength& minTrackBreadth, const GridLength& maxTrackBreadth)
-    {
-        m_type = MinMaxTrackSizing;
-        m_minTrackBreadth = minTrackBreadth;
-        m_maxTrackBreadth = maxTrackBreadth;
     }
 
     GridTrackSizeType type() const { return m_type; }
