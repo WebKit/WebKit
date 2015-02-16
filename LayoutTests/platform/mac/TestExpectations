@@ -1265,7 +1265,6 @@ webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnl
 webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 # The following tests' expected results don't look like render tree dumps
-webkit.org/b/139968 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 webkit.org/b/139968 editing/pasteboard/5761530-1.html [ Failure ]
 webkit.org/b/139968 editing/selection/fake-drag.html [ Failure ]
 webkit.org/b/139968 fast/css/content/content-quotes-01.html [ Failure ]

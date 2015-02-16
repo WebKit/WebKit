@@ -1,3 +1,15 @@
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update expected result for compositing/fixed-positioned-pseudo-content-no-compositing.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141602
+
+        Reviewed by Simon Fraser.
+
+        Not sure if the change to contentsOpaque is right, so CC'ing smfr to see what he thinks.
+
+        * compositing/fixed-positioned-pseudo-content-no-compositing-expected.txt:
+        * platform/mac/TestExpectations:
+
 2015-02-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Gardening; update test expectations

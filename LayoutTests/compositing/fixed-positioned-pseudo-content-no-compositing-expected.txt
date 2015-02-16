@@ -7,14 +7,12 @@
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
-          (bounds 135.00 18.00)
-          (contentsOpaque 1)
+          (bounds 138.00 18.00)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 0.00 100.00)
-          (bounds 123.00 18.00)
-          (contentsOpaque 1)
+          (bounds 127.00 18.00)
           (drawsContent 1)
         )
       )
