@@ -748,18 +748,45 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     }
 }
 
-void InlineFlowBox::computeMaxLogicalBottom(float& maxLogicalBottom) const
+void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, TextDecoration textDecoration) const
 {
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
-
-        if (descendantsHaveSameLineHeightAndBaseline())
+        
+        if (!(child->lineStyle().textDecorationsInEffect() & textDecoration))
+            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
+        
+        if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &child->renderer()))
             continue;
-
-        maxLogicalBottom = std::max<float>(maxLogicalBottom, child->logicalBottom());
+        
         if (is<InlineFlowBox>(*child))
-            downcast<InlineFlowBox>(*child).computeMaxLogicalBottom(maxLogicalBottom);
+            downcast<InlineFlowBox>(*child).maxLogicalBottomForTextDecorationLine(maxLogicalBottom, decorationRenderer, textDecoration);
+        else {
+            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip() == TextDecorationSkipNone)
+                maxLogicalBottom = std::max<float>(maxLogicalBottom, child->logicalBottom());
+        }
+    }
+}
+
+void InlineFlowBox::minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, TextDecoration textDecoration) const
+{
+    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+        if (child->renderer().isOutOfFlowPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+        
+        if (!(child->lineStyle().textDecorationsInEffect() & textDecoration))
+            continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
+        
+        if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &child->renderer()))
+            continue;
+        
+        if (is<InlineFlowBox>(*child))
+            downcast<InlineFlowBox>(*child).minLogicalTopForTextDecorationLine(minLogicalTop, decorationRenderer, textDecoration);
+        else {
+            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip() == TextDecorationSkipNone)
+                minLogicalTop = std::min<float>(minLogicalTop, child->logicalTop());
+        }
     }
 }
 

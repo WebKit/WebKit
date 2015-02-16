@@ -2110,8 +2110,7 @@ static Color decorationColor(RenderStyle* style)
     return result;
 }
 
-void RenderObject::getTextDecorationColors(int decorations, Color& underline, Color& overline,
-                                           Color& linethrough, bool quirksMode, bool firstlineStyle)
+void RenderObject::getTextDecorationColors(int decorations, Color& underline, Color& overline, Color& linethrough, bool firstlineStyle)
 {
     RenderObject* current = this;
     RenderStyle* styleToUse = nullptr;
@@ -2141,7 +2140,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         current = current->parent();
         if (current && current->isAnonymousBlock() && downcast<RenderBlock>(*current).continuation())
             current = downcast<RenderBlock>(*current).continuation();
-    } while (current && decorations && (!quirksMode || !current->node() || (!is<HTMLAnchorElement>(*current->node()) && !current->node()->hasTagName(fontTag))));
+    } while (current && decorations && (!current->node() || (!is<HTMLAnchorElement>(*current->node()) && !current->node()->hasTagName(fontTag))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && current) {
