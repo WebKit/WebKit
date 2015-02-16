@@ -83,18 +83,27 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderElement& renderer,
     renderer.parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
+const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElement& renderer, AffineTransform &transform)
 {
     ASSERT(renderer.parent());
     auto& parent = *renderer.parent();
-    
-    // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
-    // to map an element from SVG viewport coordinates to CSS box coordinates.
-    // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
-    if (is<RenderSVGRoot>(parent))
-        transformState.applyTransform(downcast<RenderSVGRoot>(parent).localToBorderBoxTransform());
 
-    transformState.applyTransform(renderer.localToParentTransform());
+    // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform
+    // to map an element from SVG viewport coordinates to CSS box coordinates.
+    if (is<RenderSVGRoot>(parent))
+        transform = downcast<RenderSVGRoot>(parent).localToBorderBoxTransform() * renderer.localToParentTransform();
+    else
+        transform = renderer.localToParentTransform();
+
+    return parent;
+}
+
+void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
+{
+    AffineTransform transform;
+    auto& parent = localToParentTransform(renderer, transform);
+
+    transformState.applyTransform(transform);
 
     MapCoordinatesFlags mode = UseTransforms;
     parent.mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
@@ -104,19 +113,10 @@ const RenderElement* SVGRenderSupport::pushMappingToContainer(const RenderElemen
 {
     ASSERT_UNUSED(ancestorToStopAt, ancestorToStopAt != &renderer);
 
-    ASSERT(renderer.parent());
-    auto& parent = *renderer.parent();
+    AffineTransform transform;
+    auto& parent = localToParentTransform(renderer, transform);
 
-    // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
-    // to map an element from SVG viewport coordinates to CSS box coordinates.
-    // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
-    if (is<RenderSVGRoot>(parent)) {
-        TransformationMatrix matrix(renderer.localToParentTransform());
-        matrix.multiply(downcast<RenderSVGRoot>(parent).localToBorderBoxTransform());
-        geometryMap.push(&renderer, matrix);
-    } else
-        geometryMap.push(&renderer, renderer.localToParentTransform());
-
+    geometryMap.push(&renderer, transform);
     return &parent;
 }
 
