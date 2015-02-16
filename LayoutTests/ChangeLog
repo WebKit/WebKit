@@ -1,3 +1,17 @@
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update editing/selection/move-by-word-visually-mac.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141609
+
+        Reviewed by Alexey Proskuryakov.
+
+        Line break occurs in a different place, so option-left and option-right
+        have slightly different behavior.
+
+        * editing/selection/move-by-word-visually-mac.html:
+        * editing/selection/move-by-word-visually-mac-expected.txt:
+        * platform/mac/TestExpectations:
+
 2015-02-12  David Hyatt  <hyatt@apple.com>
 
         text-underline-position:under has multiple correctness issues

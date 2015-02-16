@@ -87,9 +87,9 @@ Move left by one word
 "opq rst uvw xyz"[15, 12, 8, 4, 0], "abc def ghi jkl mn "[16, 12, 8, 4, 0]
 Test 18, RTL:
 Move left by one word
-" abc def AAA AAA hij AAA AAA uvw xyz "[1, 5, 8, 12, 16, 20, 24, 28, 32, 36], "AAA kj AAA mn opq AAA AAA"[3, 6, 10, 13, 17, 21, 25]
+" abc def AAA AAA hij AAA AAA uvw xyz "[1, 5, 8, 12, 16, 20, 24, 28, 33, 36], "AAA kj AAA mn opq AAA AAA"[3, 6, 10, 13, 17, 21, 25]
 Move right by one word
-"AAA kj AAA mn opq AAA AAA"[25, 22, 18, 14, 11, 7, 4, 0], " abc def AAA AAA hij AAA AAA uvw xyz "[33, 29, 25, 21, 17, 13, 9, 4, 1]
+"AAA kj AAA mn opq AAA AAA"[25, 22, 18, 14, 11, 7, 4, 0], " abc def AAA AAA hij AAA AAA uvw xyz "[32, 29, 25, 21, 17, 13, 9, 4, 1]
 Test 19, LTR:
 Move right by one word
 "abc def    hij opq"[0, 3, 7, 14, 18]
