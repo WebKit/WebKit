@@ -414,6 +414,11 @@ void NetworkCacheStorage::retrieve(const NetworkCacheKey& key, unsigned priority
     ASSERT(RunLoop::isMain());
     ASSERT(priority <= maximumRetrievePriority);
 
+    if (!m_maximumSize) {
+        completionHandler(nullptr);
+        return;
+    }
+
     if (!m_contentsFilter.mayContain(key.shortHash())) {
         completionHandler(nullptr);
         return;
@@ -432,6 +437,11 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
 {
     ASSERT(RunLoop::isMain());
 
+    if (!m_maximumSize) {
+        completionHandler(false, Data());
+        return;
+    }
+
     auto writeOperation = std::make_unique<WriteOperation>(WriteOperation { key, entry, { }, WTF::move(completionHandler) });
     m_pendingWriteOperations.append(WTF::move(writeOperation));
 
@@ -444,6 +454,11 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
 void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+
+    if (!m_maximumSize) {
+        completionHandler(false, Data());
+        return;
+    }
 
     auto writeOperation = std::make_unique<WriteOperation>(WriteOperation { key, updateEntry, existingEntry, WTF::move(completionHandler) });
     m_pendingWriteOperations.append(WTF::move(writeOperation));

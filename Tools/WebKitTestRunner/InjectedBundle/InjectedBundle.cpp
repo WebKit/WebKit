@@ -251,7 +251,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAlwaysAcceptCookies(m_bundle, false); // FIXME: Do this from UI process, so that Networking process gets the preference, too.
     WKBundleSetSerialLoadingEnabled(m_bundle, false);
-    WKBundleSetCacheModel(m_bundle, 1 /*CacheModelDocumentBrowser*/);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
@@ -489,6 +488,13 @@ void InjectedBundle::setHidden(bool hidden)
     WKRetainPtr<WKBooleanRef> isInitialWK(AdoptWK, WKBooleanCreate(hidden));
     WKDictionarySetItem(messageBody.get(), isInitialKeyWK.get(), isInitialWK.get());
 
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+void InjectedBundle::setCacheModel(int model)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetCacheModel"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(model));
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 

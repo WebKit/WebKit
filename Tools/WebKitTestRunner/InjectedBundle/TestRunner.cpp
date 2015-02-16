@@ -651,7 +651,7 @@ void TestRunner::dispatchPendingLoadRequests()
 
 void TestRunner::setCacheModel(int model)
 {
-    WKBundleSetCacheModel(InjectedBundle::singleton().bundle(), model);
+    InjectedBundle::singleton().setCacheModel(model);
 }
 
 void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)

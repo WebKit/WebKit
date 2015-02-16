@@ -1,0 +1,21 @@
+Test that disabling disk cache by setting the cache model works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default (cache enabled)
+response headers: {"Cache-control":"max-age=100"}
+response source: Disk cache
+
+Disabling cache
+response headers: {"Cache-control":"max-age=100"}
+response source: Network
+
+Re-enabling cache
+response headers: {"Cache-control":"max-age=100"}
+response source: Disk cache
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

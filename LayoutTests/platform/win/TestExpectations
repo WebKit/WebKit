@@ -2050,9 +2050,12 @@ webkit.org/b/29213 http/tests/security/mixedContent [ Skip ]
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
+# Disk cache is WK2 only
+http/tests/cache/disk-cache-validation.html
+http/tests/cache/disk-cache-disable.html
+
 # The following are unreviewed:
 http/tests/cache/content-type-ignored-during-revalidation.html [ Failure ]
-http/tests/cache/disk-cache-validation.html [ Failure ]
 http/tests/cache/partitioned-cache.html [ Failure ]
 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 http/tests/cache/post-redirect-get.php [ Failure ] # Easy

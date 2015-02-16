@@ -1067,9 +1067,12 @@ void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
-    sendToAllProcesses(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)));
+    sendToAllProcesses(Messages::WebProcess::SetCacheModel(m_cacheModel));
 
-    // FIXME: Inform the Network Process if in use.
+#if ENABLE(NETWORK_PROCESS)
+    if (m_usesNetworkProcess && m_networkProcess)
+        m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(m_cacheModel), 0);
+#endif
 }
 
 void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)

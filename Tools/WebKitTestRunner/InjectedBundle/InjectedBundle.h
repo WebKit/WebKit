@@ -101,6 +101,9 @@ public:
     // Page Visibility.
     void setHidden(bool);
 
+    // Cache.
+    void setCacheModel(int);
+
     // Work queue.
     bool shouldProcessWorkQueue() const;
     void processWorkQueue();

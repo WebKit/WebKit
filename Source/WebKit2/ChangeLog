@@ -1,5 +1,35 @@
 2015-02-16  Antti Koivisto  <antti@apple.com>
 
+        Develop/Disable Caches does not properly disable disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=141636
+
+        Reviewed by Anders Carlsson.
+
+        The menu item sets the cache model to "document viewer" to disable the caches (cache size 0).
+        However the cache model was never passed to the network process after the initialization.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+
+            Don't try to store or retrieve when the maximum cache size is set to zero.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setCacheModel):
+
+           Message the network process too.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetCacheModel): Deleted.
+
+            Remove the now unused SPI.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
+2015-02-16  Antti Koivisto  <antti@apple.com>
+
         Assertion in disk cache code with redirect to a non-http resource
         https://bugs.webkit.org/show_bug.cgi?id=141644
 

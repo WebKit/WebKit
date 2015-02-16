@@ -87,19 +87,21 @@ function printResults(tests)
     }
 }
 
-function runTests(tests)
+function runTests(tests, completionHandler)
 {
     loadResources(tests, function () {
         // Otherwise we just get responses from the memory cache.
         internals.clearMemoryCache();
         // Wait a bit so things settle down in the disk cache.
-        // FIXME: Shoudn't be needed, the cache should also return in-memory entries that are pending writing.
         setTimeout(function () {
             loadResources(tests, function () {
                 printResults(tests);
-                finishJSTest();
+                if (completionHandler)
+                    completionHandler();
+                else
+                    finishJSTest();
             });
-        }, 2000);
+        }, 100);
     });
 }
 

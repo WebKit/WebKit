@@ -54,6 +54,7 @@ messages -> NetworkProcess LegacyReceiver {
     GetNetworkProcessStatistics(uint64_t callbackID)
     
     ClearCacheForAllOrigins(uint32_t cachesToClear)
+    SetCacheModel(uint32_t cacheModel);
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

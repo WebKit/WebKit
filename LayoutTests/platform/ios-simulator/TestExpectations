@@ -185,6 +185,10 @@ editing/pasteboard/dataTransfer-setData-getData.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
 
+# Disk cache is not enabled yet on iOS
+http/tests/cache/disk-cache-validation.html
+http/tests/cache/disk-cache-disable.html
+
 ###
 # Known failures
 ##

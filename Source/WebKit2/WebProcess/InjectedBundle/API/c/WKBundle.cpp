@@ -68,11 +68,6 @@ WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)
     return toAPI(toImpl(bundleRef)->webConnectionToUIProcess());
 }
 
-void WKBundleSetCacheModel(WKBundleRef bundleRef, uint32_t cacheModel)
-{
-    toImpl(bundleRef)->setCacheModel(cacheModel);
-}
-
 void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->garbageCollectJavaScriptObjects();
