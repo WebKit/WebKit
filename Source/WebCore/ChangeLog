@@ -53,6 +53,18 @@
         Crash when accessing an item in SVGTransformList and then removing a previous item from this list.
         https://bugs.webkit.org/show_bug.cgi?id=141550.
 
+        Reviewed by David Kilzer.
+
+        * svg/properties/SVGMatrixTearOff.h:
+        (WebCore::SVGMatrixTearOff::create): Fix a compilation error on the release build.
+        The ASSERT() here references a parameter which is not used anywhere else. We need 
+        to change it to ASSERT_UNUSED(). 
+
+2015-02-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when accessing an item in SVGTransformList and then removing a previous item from this list.
+        https://bugs.webkit.org/show_bug.cgi?id=141550.
+
         Reviewed by Darin Adler.
 
         Tests: LayoutTests/svg/dom/SVGTransformList-basics.xhtml: This test is modified to

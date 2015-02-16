@@ -32,7 +32,7 @@ public:
     // (for example: SVGTransform::matrix).
     static Ref<SVGMatrixTearOff> create(SVGPropertyTearOff<SVGTransform>& parent, SVGMatrix& value)
     {
-        ASSERT(&parent.propertyReference().svgMatrix() == &value);
+        ASSERT_UNUSED(value, &parent.propertyReference().svgMatrix() == &value);
         Ref<SVGMatrixTearOff> result = adoptRef(*new SVGMatrixTearOff(&parent));
         parent.addChild(result->m_weakFactory.createWeakPtr());
         return result;
