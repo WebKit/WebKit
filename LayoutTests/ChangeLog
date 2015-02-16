@@ -1,5 +1,12 @@
 2015-02-16  Alexey Proskuryakov  <ap@apple.com>
 
+        fullscreen/full-screen-plugin.html is very flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=141364
+
+        * platform/mac-wk2/TestExpectations: Marking as such.
+
+2015-02-16  Alexey Proskuryakov  <ap@apple.com>
+
         inspector/css/stylesheet-with-mutations.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=141601
 
