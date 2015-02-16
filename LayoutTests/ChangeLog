@@ -1,3 +1,15 @@
+2015-02-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Invalid initialization of track sizes with non spanning grid items
+        https://bugs.webkit.org/show_bug.cgi?id=140763
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt:
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html:
+        * fast/css-grid-layout/grid-initialize-span-one-items-expected.txt: Added.
+        * fast/css-grid-layout/grid-initialize-span-one-items.html: Added.
+
 2015-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         js/regress/script-tests/elidable-new-object-roflcopter.js should tier up sooner so that it's more likely to test things
