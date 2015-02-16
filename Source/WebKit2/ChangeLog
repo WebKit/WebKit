@@ -1,5 +1,14 @@
 2015-02-16  Anders Carlsson  <andersca@apple.com>
 
+        Check for the assume_nonnull feature instead of noescape
+        https://bugs.webkit.org/show_bug.cgi?id=141666
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
+2015-02-16  Anders Carlsson  <andersca@apple.com>
+
         Add nullability qualifiers to all API headers
         https://bugs.webkit.org/show_bug.cgi?id=141652
         rdar://problem/19793630

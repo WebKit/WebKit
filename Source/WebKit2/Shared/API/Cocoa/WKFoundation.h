@@ -67,34 +67,35 @@
 #define WK_UNAVAILABLE
 #endif
 
-// We check for the "noescape" attribute here since it was added in the same version of clang
-// that added nullability qualifiers.
+#if __has_feature(assume_nonnull)
+
 #ifdef NS_ASSUME_NONNULL_BEGIN
 #define WK_ASSUME_NONNULL_BEGIN NS_ASSUME_NONNULL_BEGIN
-#elif __has_attribute(noescape)
-#define WK_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
 #else
-#define WK_ASSUME_NONNULL_BEGIN
+#define WK_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
 #endif
 
 #ifdef NS_ASSUME_NONNULL_END
 #define WK_ASSUME_NONNULL_END NS_ASSUME_NONNULL_END
-#elif __has_attribute(noescape)
-#define WK_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
 #else
-#define WK_ASSUME_NONNULL_END
+#define WK_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
 #endif
 
-#if !__has_attribute(noescape)
-#define WK_NULLABLE
-#define WK_NULL_UNSPECIFIED
-#define WK_NULLABLE_SPECIFIER
-#define WK_NULLABLE_PROPERTY
-#else
 #define WK_NULLABLE nullable
 #define WK_NULL_UNSPECIFIED null_unspecified
 #define WK_NULLABLE_SPECIFIER __nullable
 #define WK_NULLABLE_PROPERTY nullable,
+
+#else
+
+#define WK_ASSUME_NONNULL_BEGIN
+#define WK_ASSUME_NONNULL_END
+
+#define WK_NULLABLE
+#define WK_NULL_UNSPECIFIED
+#define WK_NULLABLE_SPECIFIER
+#define WK_NULLABLE_PROPERTY
+
 #endif
 
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101000
