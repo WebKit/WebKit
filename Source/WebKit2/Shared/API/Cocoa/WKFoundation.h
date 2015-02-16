@@ -63,20 +63,24 @@
 #define WK_UNAVAILABLE
 #endif
 
-#ifndef NS_ASSUME_NONNULL_BEGIN
-#define WK_ASSUME_NONNULL_BEGIN
-#else
-#define WK_ASSUME_NONNULL_BEGIN NS_ASSUME_NONNULL_BEGIN
-#endif
-
-#ifndef NS_ASSUME_NONNULL_END
-#define WK_ASSUME_NONNULL_END
-#else
-#define WK_ASSUME_NONNULL_END NS_ASSUME_NONNULL_END
-#endif
-
 // We check for the "noescape" attribute here since it was added in the same version of clang
 // that added nullability qualifiers.
+#ifdef NS_ASSUME_NONNULL_BEGIN
+#define WK_ASSUME_NONNULL_BEGIN NS_ASSUME_NONNULL_BEGIN
+#elif __has_attribute(noescape)
+#define WK_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#else
+#define WK_ASSUME_NONNULL_BEGIN
+#endif
+
+#ifdef NS_ASSUME_NONNULL_END
+#define WK_ASSUME_NONNULL_END NS_ASSUME_NONNULL_END
+#elif __has_attribute(noescape)
+#define WK_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
+#else
+#define WK_ASSUME_NONNULL_END
+#endif
+
 #if !__has_attribute(noescape)
 #define WK_NULLABLE
 #define WK_NULL_UNSPECIFIED

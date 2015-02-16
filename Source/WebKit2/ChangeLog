@@ -1,3 +1,9 @@
+2015-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Build fix for versions of Xcode that support nullability but don't have the AppKit #defines.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
 2015-02-16  Antti Koivisto  <antti@apple.com>
 
         Develop/Disable Caches does not properly disable disk cache
