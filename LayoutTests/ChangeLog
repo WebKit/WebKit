@@ -1,3 +1,16 @@
+2015-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete LayoutTests/platform/mac-mountainlion directory
+
+        Rubber-stamped by Brent Fulgham.
+
+        The Win port falls back to mac-mountainlion, so this patch moves all files in
+        platform/mac-mountainlion that aren't already in platform/win into platform/win. It then deletes
+        the remaining files in platform/mac-mountainlion.
+
+        * platform/mac-mountainlion: Deleted.
+        * platform/win/{many files}: Moved from platform/mac-mountainlion
+
 2015-02-16  Zalan Bujtas  <zalan@apple.com>
 
         RenderTableCell can't access its parent while in detached state.
