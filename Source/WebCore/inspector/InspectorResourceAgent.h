@@ -64,7 +64,6 @@ class ResourceResponse;
 class SharedBuffer;
 class ThreadableLoaderClient;
 class URL;
-class XHRReplayData;
 class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
@@ -92,9 +91,6 @@ public:
     void didFinishLoading(unsigned long identifier, DocumentLoader&, double finishTime);
     void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader&, CachedResource&);
-    void documentThreadableLoaderStartedLoadingForClient(unsigned long identifier, ThreadableLoaderClient*);
-    void willLoadXHR(ThreadableLoaderClient*, const String& method, const URL&, bool async, RefPtr<FormData>&& body, const HTTPHeaderMap& headers, bool includeCrendentials);
-    void didFailXHRLoading(ThreadableLoaderClient*);
     void didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString);
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
@@ -123,7 +119,6 @@ public:
     virtual void disable(ErrorString&) override;
     virtual void setExtraHTTPHeaders(ErrorString&, const RefPtr<Inspector::InspectorObject>&&) override;
     virtual void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
-    virtual void replayXHR(ErrorString&, const String& requestId) override;
     virtual void canClearBrowserCache(ErrorString&, bool*) override;
     virtual void clearBrowserCache(ErrorString&) override;
     virtual void canClearBrowserCookies(ErrorString&, bool*) override;
@@ -148,8 +143,6 @@ private:
 
     HashSet<unsigned long> m_hiddenRequestIdentifiers;
 
-    typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData>> PendingXHRReplayDataMap;
-    PendingXHRReplayDataMap m_pendingXHRReplayData;
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
     RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle;

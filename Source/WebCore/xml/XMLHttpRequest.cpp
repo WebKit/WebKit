@@ -719,13 +719,6 @@ void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCod
     createRequest(ec);
 }
 
-void XMLHttpRequest::sendForInspectorXHRReplay(PassRefPtr<FormData> formData, ExceptionCode& ec)
-{
-    m_requestEntityBody = formData ? formData->deepCopy() : 0;
-    createRequest(ec);
-    m_exceptionCode = ec;
-}
-
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
     // Only GET request is supported for blob URL.
@@ -754,8 +747,6 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 
     ResourceRequest request(m_url);
     request.setHTTPMethod(m_method);
-
-    InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this, m_method, m_url, m_async, m_requestEntityBody ? m_requestEntityBody->deepCopy() : 0, m_requestHeaders, m_includeCredentials);
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
@@ -845,8 +836,6 @@ bool XMLHttpRequest::internalAbort()
     m_receivedLength = 0;
 
     m_decoder = 0;
-
-    InspectorInstrumentation::didFailXHRLoading(scriptExecutionContext(), this);
 
     if (!m_loader)
         return true;

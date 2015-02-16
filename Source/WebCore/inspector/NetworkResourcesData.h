@@ -47,27 +47,6 @@ class ResourceResponse;
 class SharedBuffer;
 class TextResourceDecoder;
 
-class XHRReplayData : public RefCounted<XHRReplayData> {
-public:
-    static Ref<XHRReplayData> create(const String &method, const URL&, bool async, RefPtr<FormData>&&, const HTTPHeaderMap& headers, bool includeCredentials);
-
-    const String& method() const { return m_method; }
-    const URL& url() const { return m_url; }
-    bool async() const { return m_async; }
-    PassRefPtr<FormData> formData() const { return m_formData; }
-    const HTTPHeaderMap& headers() const { return m_headers; }
-    bool includeCredentials() const { return m_includeCredentials; }
-private:
-    XHRReplayData(const String &method, const URL&, bool async, RefPtr<FormData>&&, const HTTPHeaderMap& headers, bool includeCredentials);
-
-    String m_method;
-    URL m_url;
-    bool m_async;
-    RefPtr<FormData> m_formData;
-    const HTTPHeaderMap m_headers;
-    bool m_includeCredentials;
-};
-
 class NetworkResourcesData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -114,9 +93,6 @@ public:
         CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
 
-        XHRReplayData* xhrReplayData() const { return m_xhrReplayData.get(); }
-        void setXHRReplayData(XHRReplayData* xhrReplayData) { m_xhrReplayData = xhrReplayData; }
-
     private:
         bool hasData() const { return m_dataBuffer; }
         size_t dataLength() const;
@@ -128,7 +104,6 @@ public:
         String m_frameId;
         String m_url;
         String m_content;
-        RefPtr<XHRReplayData> m_xhrReplayData;
         bool m_base64Encoded;
         RefPtr<SharedBuffer> m_dataBuffer;
         bool m_isContentEvicted;
@@ -159,10 +134,6 @@ public:
     Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());
 
-    void setXHRReplayData(const String& requestId, XHRReplayData*);
-    void reuseXHRReplayData(const String& requestId, const String& reusedRequestId);
-    XHRReplayData* xhrReplayData(const String& requestId);
-
 private:
     ResourceData* resourceDataForRequestId(const String& requestId);
     void ensureNoDataForRequestId(const String& requestId);
@@ -170,8 +141,6 @@ private:
 
     Deque<String> m_requestIdsDeque;
 
-    typedef HashMap<String, String> ReusedRequestIds;
-    ReusedRequestIds m_reusedXHRReplayDataRequestIds;
     typedef HashMap<String, ResourceData*> ResourceDataMap;
     ResourceDataMap m_requestIdToResourceDataMap;
     size_t m_contentSize;

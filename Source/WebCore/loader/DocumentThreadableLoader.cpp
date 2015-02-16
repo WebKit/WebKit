@@ -367,13 +367,9 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 #endif
         ASSERT(!m_resource);
         m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
-        if (m_resource) {
-            if (m_resource->loader()) {
-                unsigned long identifier = m_resource->loader()->identifier();
-                InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
-            }
+        if (m_resource)
             m_resource->addClient(this);
-        }
+
         return;
     }
     
@@ -384,8 +380,6 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     unsigned long identifier = std::numeric_limits<unsigned long>::max();
     if (m_document.frame())
         identifier = m_document.frame()->loader().loadResourceSynchronously(request, m_options.allowCredentials(), m_options.clientCredentialPolicy(), error, response, data);
-
-    InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         if (requestURL.isLocalFile()) {

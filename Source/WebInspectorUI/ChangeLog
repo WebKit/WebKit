@@ -1,3 +1,15 @@
+2015-02-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove unused XHR replay code
+        https://bugs.webkit.org/show_bug.cgi?id=141622
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+
 2015-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove specificity approximation

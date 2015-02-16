@@ -1,3 +1,53 @@
+2015-02-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove unused XHR replay code
+        https://bugs.webkit.org/show_bug.cgi?id=141622
+
+        Reviewed by Timothy Hatcher.
+
+        XHR Replay functionality became unused with the last frontend rewrite.
+        Remove instrumentation and data storage classes only used by this feature.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClientImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willLoadXHRImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didFailXHRLoadingImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient): Deleted.
+        (WebCore::InspectorInstrumentation::willLoadXHR): Deleted.
+        (WebCore::InspectorInstrumentation::didFailXHRLoading): Deleted.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::didFinishXHRLoading):
+        (WebCore::InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient): Deleted.
+        (WebCore::InspectorResourceAgent::willLoadXHR): Deleted.
+        (WebCore::InspectorResourceAgent::didFailXHRLoading): Deleted.
+        (WebCore::InspectorResourceAgent::replayXHR): Deleted.
+        * inspector/InspectorResourceAgent.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::clear):
+        (WebCore::XHRReplayData::create): Deleted.
+        (WebCore::XHRReplayData::XHRReplayData): Deleted.
+        (WebCore::NetworkResourcesData::xhrReplayData): Deleted.
+        (WebCore::NetworkResourcesData::setXHRReplayData): Deleted.
+        (WebCore::NetworkResourcesData::reuseXHRReplayData): Deleted.
+        * inspector/NetworkResourcesData.h:
+        (WebCore::XHRReplayData::method): Deleted.
+        (WebCore::XHRReplayData::url): Deleted.
+        (WebCore::XHRReplayData::async): Deleted.
+        (WebCore::XHRReplayData::formData): Deleted.
+        (WebCore::XHRReplayData::headers): Deleted.
+        (WebCore::XHRReplayData::includeCredentials): Deleted.
+        (WebCore::NetworkResourcesData::ResourceData::xhrReplayData): Deleted.
+        (WebCore::NetworkResourcesData::ResourceData::setXHRReplayData): Deleted.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::internalAbort):
+        (WebCore::XMLHttpRequest::sendForInspectorXHRReplay): Deleted.
+        * xml/XMLHttpRequest.h:
+
 2015-02-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash when accessing an item in SVGTransformList and then removing a previous item from this list.
