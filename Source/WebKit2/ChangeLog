@@ -1,6 +1,6 @@
 2015-02-16  Anders Carlsson  <andersca@apple.com>
 
-        Build fix for versions of Xcode that support nullability but don't have the AppKit #defines.
+        Build fix for versions of Xcode that support nullability but don't have the Foundation #defines.
 
         * Shared/API/Cocoa/WKFoundation.h:
 
