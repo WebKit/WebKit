@@ -46,8 +46,8 @@
 
 - (void)_webViewClose:(WKWebView *)webView;
 - (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;
-- (void)_webViewDidEnterFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_webViewDidExitFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_webViewDidEnterFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, 8_3);
+- (void)_webViewDidExitFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, 8_3);
 
 #if TARGET_OS_IPHONE
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;

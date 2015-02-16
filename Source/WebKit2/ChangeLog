@@ -1,3 +1,15 @@
+2015-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Update SPI availability annotations 
+        https://bugs.webkit.org/show_bug.cgi?id=141588
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h: Added a definition of __NSi_8_3 for when building with
+        an older SDK.
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
 2015-02-16  Antti Koivisto  <antti@apple.com>
 
         Remove unused InjectedBundle::setCacheModel.
