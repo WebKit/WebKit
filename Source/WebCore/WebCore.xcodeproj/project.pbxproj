@@ -5582,6 +5582,7 @@
 		C5278B0C17F212EA003A2998 /* PlatformPasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */; };
 		C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = C544274911A57E7A0063A749 /* DOMStringList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55610F011A704EB00B82D27 /* DOMStringList.cpp */; };
+		C5592F781A92AA28001F8862 /* CharacterProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C5592F771A92AA28001F8862 /* CharacterProperties.h */; };
 		C55C7BA11718AFBA001327E4 /* RenderThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */; };
 		C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */; };
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
@@ -13041,6 +13042,7 @@
 		C544274911A57E7A0063A749 /* DOMStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringList.h; sourceTree = "<group>"; };
 		C544274A11A57E7A0063A749 /* DOMStringList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMStringList.idl; sourceTree = "<group>"; };
 		C55610F011A704EB00B82D27 /* DOMStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringList.cpp; sourceTree = "<group>"; };
+		C5592F771A92AA28001F8862 /* CharacterProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterProperties.h; sourceTree = "<group>"; };
 		C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderThemeIOS.mm; sourceTree = "<group>"; };
 		C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
@@ -20695,6 +20697,7 @@
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
 				A8C402921348B2220063F1E5 /* BidiRunList.h */,
+				C5592F771A92AA28001F8862 /* CharacterProperties.h */,
 				0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */,
 				453EB635159C570400001BB7 /* DateTimeFormat.h */,
 				CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */,
@@ -23890,6 +23893,7 @@
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 				3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */,
 				59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */,
+				C5592F781A92AA28001F8862 /* CharacterProperties.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientationController.h in Headers */,
 				590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */,
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
