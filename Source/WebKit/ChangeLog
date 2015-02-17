@@ -1,3 +1,12 @@
+2015-02-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Remove CMakeLists.txt in WK1 port
+        https://bugs.webkit.org/show_bug.cgi?id=141617
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt: Removed.
+
 2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace

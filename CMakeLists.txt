@@ -132,7 +132,6 @@ else ()
     set(WebCore_LIBRARY_TYPE STATIC)
 endif ()
 
-set(WebKit_LIBRARY_TYPE SHARED)
 set(WebKit2_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
