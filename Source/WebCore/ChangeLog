@@ -1,3 +1,17 @@
+2015-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTableRow should check if it has access to its ancestor chain.
+        https://bugs.webkit.org/show_bug.cgi?id=141668
+
+        Reviewed by Andreas Kling.
+
+        Preventive fix.
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableRow.h:
+
 2015-02-16  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Build fix: declare undeclared identifier 'credential'.

@@ -78,12 +78,11 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
         section()->rowLogicalHeightChanged(rowIndex());
 
     // If border was changed, notify table.
-    if (parent()) {
-        RenderTable* table = this->table();
-        if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style().border())
+    if (RenderTable* table = this->table()) {
+        if (!table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style().border())
             table->invalidateCollapsedBorders();
         
-        if (table && oldStyle && diff == StyleDifferenceLayout && needsLayout() && table->collapseBorders() && borderWidthChanged(oldStyle, &style())) {
+        if (oldStyle && diff == StyleDifferenceLayout && needsLayout() && table->collapseBorders() && borderWidthChanged(oldStyle, &style())) {
             // If the border width changes on a row, we need to make sure the cells in the row know to lay out again.
             // This only happens when borders are collapsed, since they end up affecting the border sides of the cell
             // itself.
@@ -147,8 +146,8 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     RenderTableCell& cell = downcast<RenderTableCell>(*child);
 
     // Generated content can result in us having a null section so make sure to null check our parent.
-    if (parent())
-        section()->addCell(&cell, this);
+    if (RenderTableSection* section = this->section())
+        section->addCell(&cell, this);
 
     ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
     RenderBox::addChild(&cell, beforeChild);

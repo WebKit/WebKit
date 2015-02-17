@@ -43,8 +43,7 @@ public:
     RenderTableCell* firstCell() const;
     RenderTableCell* lastCell() const;
 
-    RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
-    RenderTable* table() const { return downcast<RenderTable>(parent()->parent()); }
+    RenderTable* table() const;
 
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
@@ -71,7 +70,8 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const
     {
-        if (section()->hasSameDirectionAs(table()))
+        RenderTableSection* section = this->section();
+        if (section && section->hasSameDirectionAs(table()))
             return style().borderStart();
 
         return style().borderEnd();
@@ -79,7 +79,8 @@ public:
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        if (section()->hasSameDirectionAs(table()))
+        RenderTableSection* section = this->section();
+        if (section && section->hasSameDirectionAs(table()))
             return style().borderEnd();
 
         return style().borderStart();
@@ -111,6 +112,8 @@ private:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
+    RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
+
     void firstChild() const = delete;
     void lastChild() const = delete;
     void nextSibling() const = delete;
@@ -118,6 +121,14 @@ private:
 
     unsigned m_rowIndex : 31;
 };
+
+inline RenderTable* RenderTableRow::table() const
+{
+    RenderTableSection* section = this->section();
+    if (!section)
+        return nullptr;
+    return downcast<RenderTable>(section->parent());
+}
 
 inline RenderTableRow* RenderTableSection::firstRow() const
 {
