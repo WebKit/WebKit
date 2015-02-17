@@ -1,3 +1,12 @@
+2015-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Silence two -Wcast-qual warnings.
+        rdar://problem/19758266
+
+        * platform/ios/wak/WKUtilities.c:
+        (WKRetain):
+        (WKRelease):
+
 2015-02-17  Zalan Bujtas  <zalan@apple.com>
 
         Minor RenderTable* class cleanups.

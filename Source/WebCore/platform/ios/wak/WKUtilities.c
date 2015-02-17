@@ -41,7 +41,7 @@ const void *WKCollectionRetain (CFAllocatorRef allocator, const void *value)
 
 const void *WKRetain(const void *o)
 {
-    WKObjectRef object = (WKObjectRef)o;
+    WKObjectRef object = (WKObjectRef)(uintptr_t)o;
     
     object->referenceCount++;
     
@@ -56,7 +56,7 @@ void WKCollectionRelease (CFAllocatorRef allocator, const void *value)
 
 void WKRelease(const void *o)
 {
-    WKObjectRef object = (WKObjectRef)o;
+    WKObjectRef object = (WKObjectRef)(uintptr_t)o;
 
     if (object->referenceCount == 0) {
         WKError ("attempt to release invalid object");
@@ -69,7 +69,7 @@ void WKRelease(const void *o)
         const WKClassInfo *info = object->classInfo;
         while (info) {
             if (info->dealloc)
-                info->dealloc ((void *)object);
+                info->dealloc ((void *)(uintptr_t)object);
             info = info->parent;
         }
     }
