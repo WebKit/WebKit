@@ -50,9 +50,7 @@ GCController& gcController()
 }
 
 GCController::GCController()
-#if !USE(CF)
     : m_GCTimer(*this, &GCController::gcTimerFired)
-#endif
 {
 }
 
@@ -67,17 +65,20 @@ void GCController::garbageCollectSoon()
     JSLockHolder lock(JSDOMWindow::commonVM());
     JSDOMWindow::commonVM().heap.reportAbandonedObjectGraph();
 #else
-    if (!m_GCTimer.isActive())
-        m_GCTimer.startOneShot(0);
+    garbageCollectOnNextRunLoop();
 #endif
 }
 
-#if !USE(CF)
+void GCController::garbageCollectOnNextRunLoop()
+{
+    if (!m_GCTimer.isActive())
+        m_GCTimer.startOneShot(0);
+}
+
 void GCController::gcTimerFired()
 {
     collect(nullptr);
 }
-#endif
 
 void GCController::garbageCollectNow()
 {

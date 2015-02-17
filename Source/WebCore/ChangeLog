@@ -1,3 +1,37 @@
+2015-02-16  Andreas Kling  <akling@apple.com>
+
+        GC (almost) immediately when navigating under memory pressure.
+        <https://webkit.org/b/141663>
+
+        Reviewed by Geoffrey Garen.
+
+        Since the PageCache is already disabled in memory pressure situations,
+        we know that detaching the old window shell on navigation is basically
+        guaranteed to generate a bunch of garbage, we can soften the memory
+        peak a bit by doing a GC right away instead of scheduling one for soon(tm).
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::GCController):
+        (WebCore::GCController::garbageCollectSoon):
+        (WebCore::GCController::garbageCollectOnNextRunLoop):
+        (WebCore::GCController::gcTimerFired):
+        * bindings/js/GCController.h:
+
+            Add a GCController::garbageCollectOnNextRunLoop() complement to the
+            "soon" and "now" options. There was already a zero timer in here for
+            non-CF builds, so I just used that same timer to implement this
+            and have the non-CF code path call garbageCollectOnNextRunLoop().
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::collectGarbageAfterWindowShellDestruction):
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::clearWindowShell):
+
+            Under system memory pressure conditions, schedule a full GC on next
+            runloop iteration instead of just asking for it to happen soon.
+            We do it on next runloop to ensure that there's no pointer to the
+            window object on the stack.
+
 2015-02-16  Enrica Casucci  <enrica@apple.com>
 
         Emoji sequences do not render properly.

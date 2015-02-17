@@ -35,6 +35,7 @@
 #include "JSDocument.h"
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
+#include "MemoryPressureHandler.h"
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -59,6 +60,18 @@
 using namespace JSC;
 
 namespace WebCore {
+
+static void collectGarbageAfterWindowShellDestruction()
+{
+    // Make sure to GC Extra Soon(tm) during memory pressure conditions
+    // to soften high peaks of memory usage during navigation.
+    if (memoryPressureHandler().isUnderMemoryPressure()) {
+        // NOTE: We do the collection on next runloop to ensure that there's no pointer
+        //       to the window object on the stack.
+        gcController().garbageCollectOnNextRunLoop();
+    } else
+        gcController().garbageCollectSoon();
+}
 
 void ScriptController::initializeThreading()
 {
@@ -98,7 +111,7 @@ ScriptController::~ScriptController()
             iter->value->window()->setConsoleClient(nullptr);
             destroyWindowShell(*iter->key);
         }
-        gcController().garbageCollectSoon();
+        collectGarbageAfterWindowShellDestruction();
     }
 }
 
@@ -227,7 +240,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
     // It's likely that resetting our windows created a lot of garbage, unless
     // it went in a back/forward cache.
     if (!goingIntoPageCache)
-        gcController().garbageCollectSoon();
+        collectGarbageAfterWindowShellDestruction();
 }
 
 JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
