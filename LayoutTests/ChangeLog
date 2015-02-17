@@ -1,3 +1,19 @@
+2015-02-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180191
+
+    2015-02-16  Enrica Casucci  <enrica@apple.com>
+
+            Emoji sequences do not render properly.
+            https://bugs.webkit.org/show_bug.cgi?id=141661
+            rdar://problem/19820463
+
+            Reviewed by Sam Weinig.
+
+            * TestExpectations:
+            * fast/text/emoji-expected.txt: Added.
+            * fast/text/emoji.html: Added.
+
 2015-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards making all bots green.

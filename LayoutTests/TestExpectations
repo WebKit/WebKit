@@ -131,6 +131,8 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 # Failing on some bots due to using resource load callbacks
 webkit.org/b/134769 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Skip ]
 
+webkit.org/b/141661 fast/text/emoji.html [ Failure ]
+
 compositing/fixed-image-loading.html [ Skip ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Skip ]
 http/tests/cache/partitioned-cache.html [ Skip ]

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
+#include "CharacterProperties.h"
 #include "FloatSize.h"
 #include "Font.h"
 #include "RenderBlock.h"
@@ -262,6 +263,8 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
     return 0;
 }
 
+// FIXME: We should consider reimplementing this function using ICU to advance by grapheme.
+// The current implementation only considers explicitly emoji sequences and emoji variations.
 static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UChar* end, UChar32& baseCharacter, unsigned& markCount)
 {
     ASSERT(iterator < end);
@@ -272,17 +275,33 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
     unsigned remainingCharacters = end - iterator;
     U16_NEXT(iterator, i, remainingCharacters, baseCharacter);
     iterator = iterator + i;
-
     if (U_IS_SURROGATE(baseCharacter))
         return false;
 
     // Consume marks.
+    bool sawEmojiGroupCandidate = isEmojiGroupCandidate(baseCharacter);
+    bool sawJoiner = false;
     while (iterator < end) {
         UChar32 nextCharacter;
         int markLength = 0;
+        bool shouldContinue = false;
         U16_NEXT(iterator, markLength, end - iterator, nextCharacter);
-        if (!(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK))
+
+        if (isVariationSelector(nextCharacter) || isEmojiModifier(nextCharacter))
+            shouldContinue = true;
+
+        if (sawJoiner && isEmojiGroupCandidate(nextCharacter))
+            shouldContinue = true;
+
+        sawJoiner = false;
+        if (sawEmojiGroupCandidate && nextCharacter == zeroWidthJoiner) {
+            sawJoiner = true;
+            shouldContinue = true;
+        }
+        
+        if (!shouldContinue && !(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK))
             break;
+
         markCount += markLength;
         iterator += markLength;
     }
