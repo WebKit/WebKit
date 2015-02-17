@@ -1,5 +1,12 @@
 2015-02-16  Jer Noble  <jer.noble@apple.com>
 
+        [iOS] Build fix: declare undeclared identifier 'credential'.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedCredential):
+
+2015-02-16  Jer Noble  <jer.noble@apple.com>
+
         [iOS] Unable to play .mp4 file over http with basic http authentication
         https://bugs.webkit.org/show_bug.cgi?id=141503
         rdar://problem/15799844

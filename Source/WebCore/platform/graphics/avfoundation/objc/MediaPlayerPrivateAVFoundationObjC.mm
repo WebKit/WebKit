@@ -412,7 +412,7 @@ private:
     virtual void refAuthenticationClient() override { ref(); }
     virtual void derefAuthenticationClient() override { deref(); }
 
-    virtual void receivedCredential(const AuthenticationChallenge&, const Credential&)
+    virtual void receivedCredential(const AuthenticationChallenge&, const Credential& credential)
     {
         [[m_challenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:m_challenge.get()];
     }
