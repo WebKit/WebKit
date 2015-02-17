@@ -2624,7 +2624,14 @@ EXPRESSION: new Promise(function(){})
     "type": "object",
     "description": "Promise",
     "lossless": true,
-    "properties": []
+    "properties": [
+      {
+        "name": "status",
+        "type": "string",
+        "value": "pending",
+        "internal": true
+      }
+    ]
   }
 }
 
@@ -2638,7 +2645,47 @@ EXPRESSION: Promise.reject()
     "type": "object",
     "description": "Promise",
     "lossless": true,
-    "properties": []
+    "properties": [
+      {
+        "name": "status",
+        "type": "string",
+        "value": "rejected",
+        "internal": true
+      },
+      {
+        "name": "result",
+        "type": "undefined",
+        "value": "undefined",
+        "internal": true
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.reject('result')
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "type": "object",
+    "description": "Promise",
+    "lossless": true,
+    "properties": [
+      {
+        "name": "status",
+        "type": "string",
+        "value": "rejected",
+        "internal": true
+      },
+      {
+        "name": "result",
+        "type": "string",
+        "value": "result",
+        "internal": true
+      }
+    ]
   }
 }
 
@@ -2652,7 +2699,47 @@ EXPRESSION: Promise.resolve()
     "type": "object",
     "description": "Promise",
     "lossless": true,
-    "properties": []
+    "properties": [
+      {
+        "name": "status",
+        "type": "string",
+        "value": "resolved",
+        "internal": true
+      },
+      {
+        "name": "result",
+        "type": "undefined",
+        "value": "undefined",
+        "internal": true
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.resolve({result:1})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "type": "object",
+    "description": "Promise",
+    "lossless": false,
+    "properties": [
+      {
+        "name": "status",
+        "type": "string",
+        "value": "resolved",
+        "internal": true
+      },
+      {
+        "name": "result",
+        "type": "object",
+        "value": "Object",
+        "internal": true
+      }
+    ]
   }
 }
 

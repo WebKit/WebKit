@@ -139,12 +139,24 @@ WebInspector.RemoteObject.prototype = {
             return;
         }
 
-        function remoteObjectBinder(error, properties)
+        function remoteObjectBinder(error, properties, internalProperties)
         {
             if (error) {
                 callback(null);
                 return;
             }
+
+            // FIXME: We should display Internal Properties visually distinct. For now treat as non-enumerable own properties.
+            if (internalProperties) {
+                properties = properties.concat(internalProperties.map(function(descriptor) {
+                    descriptor.writable = false;
+                    descriptor.configurable = false;
+                    descriptor.enumerable = false;
+                    descriptor.isOwn = true;
+                    return descriptor;
+                }));
+            }
+
             var result = [];
             for (var i = 0; properties && i < properties.length; ++i) {
                 var property = properties[i];

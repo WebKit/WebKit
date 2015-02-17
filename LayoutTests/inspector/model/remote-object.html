@@ -137,7 +137,10 @@ function test()
         // Promise
         {expression: "new Promise(function(){})"},
         {expression: "Promise.reject()"},
+        {expression: "Promise.reject('result')"},
         {expression: "Promise.resolve()"},
+        {expression: "Promise.resolve({result:1})"},
+
     ];
 
     if (!window.WebInspector) {

@@ -1,3 +1,25 @@
+2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Console Support for Promise Objects
+        https://bugs.webkit.org/show_bug.cgi?id=141634
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getInternalProperties):
+        * inspector/InjectedScriptSource.js:
+        Include internal properties in previews. Share code
+        with normal internal property handling.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::constructInternalProperty):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        Provide internal state of Promises.
+
+        * inspector/protocol/Runtime.json:
+        Provide an optional field to distinguish if a PropertyPreview
+        is for an Internal property or not.
+
 2015-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Throwing from an FTL call IC slow path may result in tag registers being clobbered on 64-bit CPUs

@@ -234,7 +234,7 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
-    getInternalProperties: function(objectId, ownProperties)
+    getInternalProperties: function(objectId)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -246,17 +246,15 @@ InjectedScript.prototype = {
         if (isSymbol(object))
             return false;
 
-        var descriptors = [];
-        var internalProperties = InjectedScriptHost.getInternalProperties(object);
-        if (internalProperties) {
-            for (var i = 0; i < internalProperties.length; i++) {
-                var property = internalProperties[i];
-                var descriptor = {
-                    name: property.name,
-                    value: this._wrapObject(property.value, objectGroupName)
-                };
-                descriptors.push(descriptor);
-            }
+        var descriptors = this._internalPropertyDescriptors(object);
+        if (!descriptors)
+            return [];
+
+        // Go over properties, wrap object values.
+        for (var i = 0; i < descriptors.length; ++i) {
+            var descriptor = descriptors[i];
+            if ("value" in descriptor)
+                descriptor.value = this._wrapObject(descriptor.value, objectGroupName);
         }
 
         return descriptors;
@@ -267,6 +265,7 @@ InjectedScript.prototype = {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         var objectGroupName = objectGroupName || this._idToObjectGroupName[parsedObjectId.id];
+
         if (!this._isDefined(object))
             return;
 
@@ -274,7 +273,6 @@ InjectedScript.prototype = {
             return;
 
         var entries = this._getCollectionEntries(object, InjectedScriptHost.subtype(object), startIndex, numberToFetch);
-        
         return entries.map(function(entry) {
             entry.value = injectedScript._wrapObject(entry.value, objectGroupName, false, true);
             if ("key" in entry)
@@ -537,6 +535,27 @@ InjectedScript.prototype = {
         var module = moduleFunction.call(inspectedGlobalObject, InjectedScriptHost, inspectedGlobalObject, injectedScriptId, this, host);
         this._modules[name] = module;
         return module;
+    },
+
+    _internalPropertyDescriptors: function(object, completeDescriptor)
+    {
+        var internalProperties = InjectedScriptHost.getInternalProperties(object);
+        if (!internalProperties)
+            return null;
+
+        var descriptors = [];
+        for (var i = 0; i < internalProperties.length; i++) {
+            var property = internalProperties[i];
+            var descriptor = {name: property.name, value: property.value};
+            if (completeDescriptor) {
+                descriptor.writable = false;
+                descriptor.configurable = false;
+                descriptor.enumerable = false;
+                descriptor.isOwn = true;
+            }
+            descriptors.push(descriptor);
+        }
+        return descriptors;
     },
 
     _propertyDescriptors: function(object, collectionMode)
@@ -875,14 +894,22 @@ InjectedScript.RemoteObject.prototype = {
             if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap")
                 this._appendEntryPreviews(object, preview);
 
-            // Properties.
             preview.properties = [];
+
+            // Internal Properties.
+            var internalPropertyDescriptors = injectedScript._internalPropertyDescriptors(object, true);
+            if (internalPropertyDescriptors) {
+                this._appendPropertyPreviews(preview, internalPropertyDescriptors, true, propertiesThreshold, firstLevelKeys, secondLevelKeys);
+                if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
+                    return preview;
+            }
+
+            // Properties.
             var descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties);
-            this._appendPropertyPreviews(preview, descriptors, propertiesThreshold, firstLevelKeys, secondLevelKeys);
+            this._appendPropertyPreviews(preview, descriptors, false, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;
 
-            // FIXME: Internal properties.
             // FIXME: Iterator entries.
         } catch (e) {
             preview.lossless = false;
@@ -891,7 +918,7 @@ InjectedScript.RemoteObject.prototype = {
         return preview;
     },
 
-    _appendPropertyPreviews: function(preview, descriptors, propertiesThreshold, firstLevelKeys, secondLevelKeys)
+    _appendPropertyPreviews: function(preview, descriptors, internal, propertiesThreshold, firstLevelKeys, secondLevelKeys)
     {
         for (var descriptor of descriptors) {
             // Seen enough.
@@ -924,14 +951,14 @@ InjectedScript.RemoteObject.prototype = {
             // Getter/setter.
             if (!("value" in descriptor)) {
                 preview.lossless = false;
-                this._appendPropertyPreview(preview, {name: name, type: "accessor"}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name: name, type: "accessor"}, propertiesThreshold);
                 continue;
             }
 
             // Null value.
             var value = descriptor.value;
             if (value === null) {
-                this._appendPropertyPreview(preview, {name: name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name: name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
                 continue;
             }
 
@@ -951,7 +978,7 @@ InjectedScript.RemoteObject.prototype = {
                     value = this._abbreviateString(value, maxLength, true);
                     preview.lossless = false;
                 }
-                this._appendPropertyPreview(preview, {name: name, type: type, value: toString(value)}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name: name, type: type, value: toString(value)}, propertiesThreshold);
                 continue;
             }
 
@@ -962,7 +989,7 @@ InjectedScript.RemoteObject.prototype = {
                     symbolString = this._abbreviateString(symbolString, maxLength, true);
                     preview.lossless = false;
                 }
-                this._appendPropertyPreview(preview, {name: name, type: type, value: symbolString}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name: name, type: type, value: symbolString}, propertiesThreshold);
                 return;
             }
 
@@ -988,11 +1015,11 @@ InjectedScript.RemoteObject.prototype = {
                 preview.lossless = false;
             }
 
-            this._appendPropertyPreview(preview, property, propertiesThreshold);
+            this._appendPropertyPreview(preview, internal, property, propertiesThreshold);
         }
     },
 
-    _appendPropertyPreview: function(preview, property, propertiesThreshold)
+    _appendPropertyPreview: function(preview, internal, property, propertiesThreshold)
     {
         if (toString(property.name >>> 0) === property.name)
             propertiesThreshold.indexes--;
@@ -1004,6 +1031,9 @@ InjectedScript.RemoteObject.prototype = {
             preview.lossless = false;
             return;
         }
+
+        if (internal)
+            property.internal = true;
 
         preview.properties.push(property);
     },
