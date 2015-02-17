@@ -36,22 +36,22 @@
     background-clip: padding;
 }
 
-.section .header::before {
-    position: absolute;
-    top: 5px;
-    left: 7px;
-
+.section .header .title::before {
     width: 8px;
     height: 8px;
+
+    margin-right: 4px;
+    margin-left: -8px;
 
     background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
     background-size: 8px 8px;
     background-repeat: no-repeat;
 
-    content: "";
+    content: " ";
+    display: inline-block;
 }
 
-.section.expanded .header::before {
+.section.expanded .header .title::before {
     background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
 }
 
@@ -59,7 +59,7 @@
     font-weight: normal;
     word-wrap: break-word;
     white-space: normal;
-    line-height: 18px;
+    line-height: 18px; /* @FIXME: Don't hardcode line-height. */
 }
 
 .section .header .title.blank-title {
@@ -140,7 +140,7 @@
     width: 8px;
     height: 8px;
 
-    margin-top: 3px;
+    margin-top: 2px;
     padding-right: 2px;
 }
 

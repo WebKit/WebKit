@@ -39,18 +39,28 @@ WebInspector.ConsoleCommand.prototype = {
 
     // Public
 
+    decorateMessageElement: function(element) {
+        if (this._element)
+            return this._element;
+
+        this._element = element;
+        this._element.command = this;
+        this._element.classList.add("console-user-command");
+        this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
+
+        this._formatCommand();
+        this._element.appendChild(this._formattedCommand);
+
+        return this._element;
+    },
+
     toMessageElement: function()
     {
-        if (!this._element) {
-            this._element = document.createElement("div");
-            this._element.command = this;
-            this._element.className = "console-user-command";
-            this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
+        if (this._element)
+            return this._element;
 
-            this._formatCommand();
-            this._element.appendChild(this._formattedCommand);
-        }
-        return this._element;
+        var element = document.createElement("div");
+        return this.decorateMessageElement(element);
     },
 
     // Private

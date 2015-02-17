@@ -54,21 +54,20 @@ WebInspector.ConsoleGroup.prototype = {
 
     addMessage: function(msg)
     {
-        var element = msg.toMessageElement();
+        var element = document.createElement("div");
+        element.className = WebInspector.LogContentView.ItemWrapperStyleClassName;
 
-        var wrapper = document.createElement("div");
-        wrapper.className = WebInspector.LogContentView.ItemWrapperStyleClassName;
-        wrapper.messageElement = wrapper.appendChild(element);
+        msg.decorateMessageElement(element);
 
         if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
-            this.messagesElement.parentNode.insertBefore(wrapper, this.messagesElement);
+            this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
             element.addEventListener("click", this._titleClicked.bind(this));
             element.addEventListener("mousedown", this._titleMouseDown.bind(this));
             var groupElement = element.enclosingNodeOrSelfWithClass("console-group");
             if (groupElement && msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
                 groupElement.classList.add("collapsed");
         } else
-            this.messagesElement.appendChild(wrapper);
+            this.messagesElement.appendChild(element);
     },
 
     hasMessages: function()

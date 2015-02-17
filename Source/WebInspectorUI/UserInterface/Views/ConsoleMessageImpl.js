@@ -225,7 +225,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // There can be string log and string eval result. We distinguish between them based on message type.
         var shouldFormatMessage = WebInspector.RemoteObject.type(parameters[0]) === "string" && this.type !== WebInspector.ConsoleMessage.MessageType.Result;
 
-        // Multiple parameters with the first being a format string. Save unused substitutions.
         if (shouldFormatMessage) {
             // Multiple parameters with the first being a format string. Save unused substitutions.
             var result = this._formatWithSubstitutionString(parameters, formattedResult);
@@ -242,14 +241,29 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // Single parameter, or unused substitutions from above.
         for (var i = 0; i < parameters.length; ++i) {
             // Inline strings when formatting.
-            if (shouldFormatMessage && parameters[i].type === "string")
-                formattedResult.appendChild(document.createTextNode(parameters[i].description));
-            else
+            if (shouldFormatMessage && parameters[i].type === "string") {
+                var span = document.createElement("span");
+                span.classList.add("type-string");
+                span.textContent = parameters[i].description;
+                formattedResult.appendChild(span);
+            } else
                 formattedResult.appendChild(this._formatParameter(parameters[i], false, true));
-            if (i < parameters.length - 1)
+
+            if (i < parameters.length - 1 && !this._isExpandable(parameters[i]))
                 formattedResult.appendChild(document.createTextNode(" "));
+
         }
         return formattedResult;
+    },
+
+    _isExpandable: function(remoteObject) {
+        if (!remoteObject)
+            return false;
+
+        if (remoteObject.hasChildren && remoteObject.preview && remoteObject.preview.lossless)
+            return false;
+
+        return remoteObject.hasChildren;
     },
 
     _formatParameter: function(output, forceObjectFormat, includePreview)
@@ -270,6 +284,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         var span = document.createElement("span");
         span.className = "console-formatted-" + type + " source-code";
+
+        if (this._isExpandable(output))
+            span.classList.add("expandable");
+
         formatter.call(this, output, span, includePreview);
         return span;
     },
@@ -708,7 +726,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
                     wrapper.appendChild(toAppend);
                     toAppend = wrapper;
                 }
-                a.appendChild(toAppend);
+                var span = document.createElement("span");
+                span.className = "type-string";
+                span.appendChild(toAppend);
+                a.appendChild(span);
             }
             return a;
         }
@@ -717,14 +738,13 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
     },
 
-    toMessageElement: function()
+    decorateMessageElement: function(element)
     {
         if (this._element)
             return this._element;
 
-        var element = document.createElement("div");
         element.message = this;
-        element.className = "console-message";
+        element.classList.add("console-message");
 
         this._element = element;
 
@@ -760,6 +780,16 @@ WebInspector.ConsoleMessageImpl.prototype = {
             this.updateRepeatCount();
 
         return element;
+    },
+
+    toMessageElement: function()
+    {
+        if (this._element)
+            return this._element;
+
+        var element = document.createElement("div");
+
+        return this.decorateMessageElement(element);
     },
 
     _populateStackTraceTreeElement: function(parentTreeElement)

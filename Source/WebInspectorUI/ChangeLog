@@ -1,3 +1,88 @@
+2015-02-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Tweak the styles on the Console
+        https://bugs.webkit.org/show_bug.cgi?id=140580
+
+            - Use non-monospace (default sans-serif) font for console messages, but keep using monospace font
+              for objects, functions, and anything else that presumably code.
+            - Display all expandable objects on a separate row.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleCommand.js:
+        (WebInspector.ConsoleCommand.prototype.decorateMessageElement):
+        (WebInspector.ConsoleCommand.prototype.toMessageElement):
+        * UserInterface/Views/ConsoleGroup.js:
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._format):
+        (WebInspector.ConsoleMessageImpl.prototype._isExpandable):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.ConsoleMessageImpl.prototype.append):
+        (WebInspector.ConsoleMessageImpl.prototype._formatWithSubstitutionString):
+        (WebInspector.ConsoleMessageImpl.prototype.decorateMessageElement):
+        (WebInspector.ConsoleMessageImpl.prototype.toMessageElement):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsString): Deleted.
+        * UserInterface/Views/LogContentView.css:
+        (.console-messages):
+        (.console-formatted-object):
+        (.expandable.source-code):
+        (.console-message):
+        (.console-item.selected::after):
+        (.console-messages:focus .console-item.selected::after):
+        (.console-user-command-result.console-log-level::before):
+        (.console-item::before):
+        (.console-message .bubble):
+        (.console-error-level):
+        (.console-error-level .section .header .title):
+        (.console-error-level::before):
+        (.console-warning-level):
+        (.console-warning-level .console-message-text):
+        (.console-warning-level::before):
+        (.console-user-command::before):
+        (.console-group-messages .section):
+        (.console-group-messages .section .header::before):
+        (.console-group-messages .section .header .title):
+        (.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap):
+        (.outline-disclosure li):
+        (.outline-disclosure li.parent::before):
+        (.console-item): Deleted.
+        (.console-item.selected): Deleted.
+        (.console-messages:focus .console-item.selected): Deleted.
+        (.console-item.selected .console-message::after): Deleted.
+        (.console-messages:focus .console-item.selected .data-grid tr.selected): Deleted.
+        (.console-messages:focus .console-item.selected .console-message::after): Deleted.
+        (.console-message, .console-user-command): Deleted.
+        (.console-message::before, .console-user-command::before, .javascript-prompt::before, .console-group-title::before): Deleted.
+        (.console-group): Deleted.
+        (.console-debug-level .console-message-text): Deleted.
+        (.console-debug-level::before): Deleted.
+        (.console-group-messages .section .header): Deleted.
+        (.console-group-messages .outline-disclosure): Deleted.
+        (.console-group-messages .outline-disclosure > ol): Deleted.
+        (.outline-disclosure li.elements-drag-over .selection): Deleted.
+        (.outline-disclosure ol:focus li.selected .selection): Deleted.
+        (.outline-disclosure > ol): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._mousemove):
+        (WebInspector.LogContentView.prototype._updateMessagesSelection):
+        (WebInspector.LogContentView.prototype._isMessageVisible):
+        (WebInspector.LogContentView.prototype._isMessageSelected):
+        (WebInspector.LogContentView.prototype._selectAllMessages):
+        (WebInspector.LogContentView.prototype._unfilteredMessages):
+        (WebInspector.LogContentView.prototype._visibleMessages):
+        (WebInspector.LogContentView.prototype._filterMessages):
+        (WebInspector.LogContentView.prototype._leftArrowWasPressed):
+        (WebInspector.LogContentView.prototype._propertiesSectionDidUpdateContent):
+        (WebInspector.LogContentView.prototype._performSearch):
+        * UserInterface/Views/Section.css:
+        (.section .header .title::before):
+        (.section.expanded .header .title::before):
+        (.section .header .title, .event-bar .header .title):
+        (.properties-tree li.parent::before):
+        (.section .header::before): Deleted.
+        (.section.expanded .header::before): Deleted.
+
 2015-02-15  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused XHR replay code
