@@ -392,21 +392,6 @@ def _set_up_derived_options(port, options):
     if options.platform == "gtk" or options.platform == "efl":
         options.webkit_test_runner = True
 
-    if options.platform == 'ios-simulator':
-        from webkitpy import xcode
-        if options.runtime is None:
-            options.runtime = xcode.simulator.Simulator().latest_available_runtime
-        else:
-            options.runtime = xcode.simulator.Runtime.from_identifier(options.runtime)
-            if not options.runtime.available:
-                raise Exception('The iOS Simulator runtime with identifier "{identifier}" cannot be used because it is unavailable.'.format(identifier=options.runtime.identifier))
-        if options.device_type is None:
-            iphone5 = xcode.simulator.DeviceType.from_name('iPhone 5')
-            iphone5s = xcode.simulator.DeviceType.from_name('iPhone 5s')
-            options.device_type = iphone5 if options.architecture == 'x86' else iphone5s
-        else:
-            options.device_type = xcode.simulator.DeviceType.from_identifier(options.device_type)
-
 
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()

@@ -20,23 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import itertools
 import logging
 import os
-import shutil
-import time
 import re
-import itertools
+import shutil
 import subprocess
+import time
 
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
+from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.port.apple import ApplePort
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
+from webkitpy.port import config as port_config
 from webkitpy.port import driver, image_diff
+from webkitpy.port.apple import ApplePort
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector import LeakDetector
-from webkitpy.port import config as port_config
-from webkitpy.xcode.simulator import Simulator
+from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
 
 
 _log = logging.getLogger(__name__)
@@ -100,6 +101,29 @@ class IOSSimulatorPort(Port):
         if self.get_option('webkit_test_runner'):
             return 'WebKitTestRunnerApp.app'
         return 'DumpRenderTree.app'
+
+    @property
+    @memoized
+    def simulator_runtime(self):
+        runtime_identifier = self.get_option('runtime')
+        if runtime_identifier:
+            runtime = Runtime.from_identifier(runtime_identifier)
+        else:
+            runtime = Runtime.from_version_string(self.host.platform.xcode_sdk_version('iphonesimulator'))
+        return runtime
+
+    @property
+    @memoized
+    def simulator_device_type(self):
+        device_type_identifier = self.get_option('device_type')
+        if device_type_identifier:
+            device_type = DeviceType.from_identifier(device_type_identifier)
+        else:
+            if self.architecture() == 'x86_64':
+                device_type = DeviceType.from_name('iPhone 5s')
+            else:
+                device_type = DeviceType.from_name('iPhone 5')
+        return device_type
 
     @property
     def relay_path(self):
@@ -211,6 +235,12 @@ class IOSSimulatorPort(Port):
     def operating_system(self):
         return 'ios-simulator'
 
+    def check_sys_deps(self, needs_http):
+        if not self.simulator_runtime.available:
+            _log.error('The iOS Simulator runtime with identifier "{0}" cannot be used because it is unavailable.'.format(self.simulator_runtime.identifier))
+            return False
+        return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
+
     def check_for_leaks(self, process_name, process_pid):
         if not self.get_option('leaks'):
             return
@@ -286,10 +316,7 @@ class IOSSimulatorPort(Port):
     def testing_device(self):
         if self._testing_device is not None:
             return self._testing_device
-
-        device_type = self.get_option('device_type')
-        runtime = self.get_option('runtime')
-        self._testing_device = Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester', device_type, runtime)
+        self._testing_device = Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester', self.simulator_device_type, self.simulator_runtime)
         return self.testing_device
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):

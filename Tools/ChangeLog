@@ -1,3 +1,44 @@
+2015-02-17  Daniel Bates  <dabates@apple.com>
+
+        run_webkit_tests.py should not know about iOS Simulator details
+        https://bugs.webkit.org/show_bug.cgi?id=141711
+
+        Reviewed by Alex Christensen.
+
+        Run_webkit_tests.py should only parse the iOS-specific command
+        line options --runtime and --device-type. Let the port-specific
+        logic in ios.py validate the parsed options and instantiate
+        internal data structures.
+
+        Currently run_webkit_tests.py parses the iOS-specific command
+        line options --runtime and --device-type, validates them, and
+        instantiates internal data structures from the parsed strings.
+        Instead the validation logic and instantiation of internal
+        data structures should be handled by the iOS port object.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options): Remove logic to validate --runtime and --device-type
+        and instantiate internal data structures for them.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line): Modified to reference IOSSimulatorPort.simulator_runtime
+        and IOSSimulatorPort.simulator_device_type for the iOS Simulator runtime and device type,
+        respectively.
+        * Scripts/webkitpy/port/ios.py: Sort the list of imports.
+        (IOSSimulatorPort.simulator_runtime): Added. Instantiates a Runtime
+        object from --runtime, if specified. Otherwise, instantiates a Runtime
+        object for the latest installed iphonesimulator SDK version.
+        (IOSSimulatorPort.simulator_device_type): Added. Instantiates a DeviceType
+        object from --device-type, if specified. Otherwise, instantiates
+        a DeviceType object for a iPhone 5 or iPhone 5s when on a 32-bit and 64-bit
+        machine, respectively.
+        (IOSSimulatorPort.check_sys_deps): Added. Validate if the chosen iOS simulator
+        runtime is available to use.
+        (IOSSimulatorPort.testing_device): Modified to make use of properties simulator_device_type
+        and simulator_runtime for the iOS Simulator device type and runtime, respectively.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Runtime.from_version_string): Added. Turns around and calls Runtime.from_identifier()
+        with a runtime identifier for the specified iOS version.
+
 2015-02-17  Dana Burkart  <dburkart@apple.com>
 
         ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack

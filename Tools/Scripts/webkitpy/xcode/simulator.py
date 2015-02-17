@@ -127,6 +127,10 @@ class Runtime(object):
         self.is_internal_runtime = is_internal_runtime
 
     @classmethod
+    def from_version_string(cls, version):
+        return cls.from_identifier('com.apple.CoreSimulator.SimRuntime.iOS-' + version.replace('.', '-'))
+
+    @classmethod
     def from_identifier(cls, identifier):
         """
         :param identifier: The identifier for the desired CoreSimulator runtime.
