@@ -1,5 +1,17 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update accessibility/table-cells.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141680
+
+        Reviewed by Chris Fleizach.
+
+        Simply needs a rebaseline.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/table-cells-expected.txt:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [OS X] Reordering TestExpectations
 
         Unreviewed.
