@@ -43,10 +43,10 @@
 
 #if USE(IOSURFACE)
 #import <mach/mach_port.h>
-#endif
 
 SOFT_LINK_FRAMEWORK(QuartzCore);
 SOFT_LINK_MAY_FAIL(QuartzCore, CAMachPortCreate, CAMachPortRef, (mach_port_t port), (port));
+#endif
 
 using namespace WebCore;
 

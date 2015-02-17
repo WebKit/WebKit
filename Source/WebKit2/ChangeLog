@@ -1,5 +1,12 @@
 2015-02-16  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the !USE(IOSURFACE) build
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        SOFT_LINK_MAY_FAIL makes a function that will be unused if !USE(IOSURFACE).
+
+2015-02-16  Tim Horton  <timothy_horton@apple.com>
+
         Sometimes RemoteLayerBackingStore ends up non-volatile while the process is suspended
         <rdar://problem/19842957>
         https://bugs.webkit.org/show_bug.cgi?id=141675
