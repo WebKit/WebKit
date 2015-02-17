@@ -135,8 +135,6 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_deleted(false)
     , m_lruIndex(0)
 #endif
-    , m_nextInAllResourcesList(0)
-    , m_prevInAllResourcesList(0)
     , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)

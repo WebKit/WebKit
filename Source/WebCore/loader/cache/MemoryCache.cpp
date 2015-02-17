@@ -347,59 +347,69 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
     if (m_inPruneResources)
         return;
     TemporaryChange<bool> reentrancyProtector(m_inPruneResources, true);
-
-    int size = m_allResources.size();
  
     if (targetSize && m_deadSize <= targetSize)
         return;
 
     bool canShrinkLRULists = true;
-    for (int i = size - 1; i >= 0; i--) {
-        // Remove from the tail, since this is the least frequently accessed of the objects.
-        CachedResource* current = m_allResources[i].m_tail;
-        
+    for (int i = m_allResources.size() - 1; i >= 0; i--) {
+        LRUList& list = *m_allResources[i];
+
         // First flush all the decoded data in this queue.
-        while (current) {
-            // Protect 'previous' so it can't get deleted during destroyDecodedData().
-            CachedResourceHandle<CachedResource> previous = current->m_prevInAllResourcesList;
-            ASSERT(!previous || previous->inCache());
-            if (!current->hasClients() && !current->isPreloaded() && current->isLoaded()) {
+        // Remove from the head, since this is the least frequently accessed of the objects.
+        auto it = list.begin();
+        while (it != list.end()) {
+            CachedResource& current = **it;
+
+            // Increment the iterator now as the call to destroyDecodedData() below may
+            // invalidate the current iterator.
+            ++it;
+
+            // Protect 'next' so it can't get deleted during destroyDecodedData().
+            CachedResourceHandle<CachedResource> next = it != list.end() ? *it : nullptr;
+            ASSERT(!next || next->inCache());
+            if (!current.hasClients() && !current.isPreloaded() && current.isLoaded()) {
                 // Destroy our decoded data. This will remove us from 
                 // m_liveDecodedResources, and possibly move us to a different 
                 // LRU list in m_allResources.
-                current->destroyDecodedData();
+                current.destroyDecodedData();
 
                 if (targetSize && m_deadSize <= targetSize)
                     return;
             }
-            // Decoded data may reference other resources. Stop iterating if 'previous' somehow got
+            // Decoded data may reference other resources. Stop iterating if 'next' somehow got
             // kicked out of cache during destroyDecodedData().
-            if (previous && !previous->inCache())
+            if (next && !next->inCache())
                 break;
-            current = previous.get();
         }
 
-        // Now evict objects from this queue.
-        current = m_allResources[i].m_tail;
-        while (current) {
-            CachedResourceHandle<CachedResource> previous = current->m_prevInAllResourcesList;
-            ASSERT(!previous || previous->inCache());
-            if (!current->hasClients() && !current->isPreloaded() && !current->isCacheValidator()) {
-                remove(*current);
+        // Now evict objects from this list.
+        // Remove from the head, since this is the least frequently accessed of the objects.
+        it = list.begin();
+        while (it != list.end()) {
+            CachedResource& current = **it;
+
+            // Increment the iterator now as the call to remove() below will
+            // invalidate the current iterator.
+            ++it;
+
+            CachedResourceHandle<CachedResource> next = it != list.end() ? *it : nullptr;
+            ASSERT(!next || next->inCache());
+            if (!current.hasClients() && !current.isPreloaded() && !current.isCacheValidator()) {
+                remove(current);
                 if (targetSize && m_deadSize <= targetSize)
                     return;
             }
-            if (previous && !previous->inCache())
+            if (next && !next->inCache())
                 break;
-            current = previous.get();
         }
             
         // Shrink the vector back down so we don't waste time inspecting
         // empty LRU lists on future prunes.
-        if (m_allResources[i].m_head)
+        if (!m_allResources[i]->isEmpty())
             canShrinkLRULists = false;
         else if (canShrinkLRULists)
-            m_allResources.resize(i);
+            m_allResources.shrink(i);
     }
 }
 
@@ -445,16 +455,18 @@ void MemoryCache::remove(CachedResource& resource)
     resource.deleteIfPossible();
 }
 
-MemoryCache::LRUList* MemoryCache::lruListFor(CachedResource& resource)
+auto MemoryCache::lruListFor(CachedResource& resource) -> LRUList&
 {
     unsigned accessCount = std::max(resource.accessCount(), 1U);
     unsigned queueIndex = WTF::fastLog2(resource.size() / accessCount);
 #ifndef NDEBUG
     resource.m_lruIndex = queueIndex;
 #endif
-    if (m_allResources.size() <= queueIndex)
-        m_allResources.grow(queueIndex + 1);
-    return &m_allResources[queueIndex];
+
+    m_allResources.reserveCapacity(queueIndex + 1);
+    while (m_allResources.size() <= queueIndex)
+        m_allResources.uncheckedAppend(std::make_unique<LRUList>());
+    return *m_allResources[queueIndex];
 }
 
 void MemoryCache::removeFromLRUList(CachedResource& resource)
@@ -467,73 +479,22 @@ void MemoryCache::removeFromLRUList(CachedResource& resource)
     unsigned oldListIndex = resource.m_lruIndex;
 #endif
 
-    LRUList* list = lruListFor(resource);
+    LRUList& list = lruListFor(resource);
 
-#if !ASSERT_DISABLED
     // Verify that the list we got is the list we want.
     ASSERT(resource.m_lruIndex == oldListIndex);
 
-    // Verify that we are in fact in this list.
-    bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInAllResourcesList) {
-        if (current == &resource) {
-            found = true;
-            break;
-        }
-    }
-    ASSERT(found);
-#endif
-
-    CachedResource* next = resource.m_nextInAllResourcesList;
-    CachedResource* prev = resource.m_prevInAllResourcesList;
-    
-    if (!next && !prev && list->m_head != &resource)
-        return;
-    
-    resource.m_nextInAllResourcesList = nullptr;
-    resource.m_prevInAllResourcesList = nullptr;
-    
-    if (next)
-        next->m_prevInAllResourcesList = prev;
-    else if (list->m_tail == &resource)
-        list->m_tail = prev;
-
-    if (prev)
-        prev->m_nextInAllResourcesList = next;
-    else if (list->m_head == &resource)
-        list->m_head = next;
+    bool removed = list.remove(&resource);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void MemoryCache::insertInLRUList(CachedResource& resource)
 {
-    // Make sure we aren't in some list already.
-    ASSERT(!resource.m_nextInAllResourcesList && !resource.m_prevInAllResourcesList);
     ASSERT(resource.inCache());
     ASSERT(resource.accessCount() > 0);
     
-    LRUList* list = lruListFor(resource);
-
-    resource.m_nextInAllResourcesList = list->m_head;
-    if (list->m_head)
-        list->m_head->m_prevInAllResourcesList = &resource;
-    list->m_head = &resource;
-    
-    if (!resource.m_nextInAllResourcesList)
-        list->m_tail = &resource;
-        
-#if !ASSERT_DISABLED
-    // Verify that we are in now in the list like we should be.
-    list = lruListFor(resource);
-    bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInAllResourcesList) {
-        if (current == &resource) {
-            found = true;
-            break;
-        }
-    }
-    ASSERT(found);
-#endif
-
+    auto addResult = lruListFor(resource).add(&resource);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 void MemoryCache::resourceAccessed(CachedResource& resource)
@@ -751,13 +712,9 @@ void MemoryCache::dumpLRULists(bool includeLive) const
     int size = m_allResources.size();
     for (int i = size - 1; i >= 0; i--) {
         printf("\n\nList %d: ", i);
-        CachedResource* current = m_allResources[i].m_tail;
-        while (current) {
-            CachedResource* prev = current->m_prevInAllResourcesList;
-            if (includeLive || !current->hasClients())
-                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients());
-
-            current = prev;
+        for (auto* resource : *m_allResources[i]) {
+            if (includeLive || !resource->hasClients())
+                printf("(%.1fK, %.1fK, %uA, %dR); ", resource->decodedSize() / 1024.0f, (resource->encodedSize() + resource->overheadSize()) / 1024.0f, resource->accessCount(), resource->hasClients());
         }
     }
 }

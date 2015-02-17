@@ -319,9 +319,6 @@ private:
     unsigned m_lruIndex;
 #endif
 
-    CachedResource* m_nextInAllResourcesList;
-    CachedResource* m_prevInAllResourcesList;
-
     CachedResourceLoader* m_owningCachedResourceLoader; // only non-null for resources that are not in the cache
     
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date

@@ -166,11 +166,7 @@ private:
 #else
     typedef HashMap<URL, CachedResource*> CachedResourceMap;
 #endif
-
-    struct LRUList {
-        CachedResource* m_head {nullptr};
-        CachedResource* m_tail {nullptr};
-    };
+    typedef ListHashSet<CachedResource*> LRUList;
 
     WEBCORE_EXPORT void pruneDeadResourcesToSize(unsigned targetSize);
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
@@ -178,7 +174,7 @@ private:
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
-    LRUList* lruListFor(CachedResource&);
+    LRUList& lruListFor(CachedResource&);
 #ifndef NDEBUG
     void dumpStats();
     void dumpLRULists(bool includeLive) const;
@@ -206,10 +202,10 @@ private:
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
     // more resources than the cached resource map, since it can also hold "stale" multiple versions of objects that are
     // waiting to die when the clients referencing them go away.
-    Vector<LRUList, 32> m_allResources;
+    Vector<std::unique_ptr<LRUList>, 32> m_allResources;
     
     // List just for live resources with decoded data.  Access to this list is based off of painting the resource.
-    ListHashSet<CachedResource*> m_liveDecodedResources;
+    LRUList m_liveDecodedResources;
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).
