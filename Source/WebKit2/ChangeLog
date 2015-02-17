@@ -1,3 +1,19 @@
+2015-02-17  Timothy Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r178595): Clicking on DD highlights sometimes do not work
+        https://bugs.webkit.org/show_bug.cgi?id=141728
+        <rdar://problem/19825372>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _cancelImmediateActionIfNeeded]):
+        (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        The change that r178595 intended to make was purely that things that we
+        have no immediate actions for should cancel the immediate action gesture recognizer.
+        Moving the DataDetectors activation code as well breaks strict ordering
+        of immediate action callbacks vs. shouldUseActionsWithContext: that they depend on.
+
 2015-02-17  Anders Carlsson  <andersca@apple.com>
 
         Only create the WebKit.framework symlink in PrivateFrameworks when the platform is iphoneos
