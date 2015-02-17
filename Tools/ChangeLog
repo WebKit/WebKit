@@ -1,3 +1,12 @@
+2015-02-17  Dana Burkart  <dburkart@apple.com>
+
+        ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack
+        https://bugs.webkit.org/show_bug.cgi?id=141672
+
+        Reviewed by David Kilzer.
+
+        * asan/webkit-asan-ignore.txt:
+
 2015-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebCore.exp.in and clean up.
