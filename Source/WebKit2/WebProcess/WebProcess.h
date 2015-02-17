@@ -181,7 +181,9 @@ public:
     void processWillSuspend();
     void cancelProcessWillSuspend();
     bool markAllLayersVolatileIfPossible();
+    void setAllLayerTreeStatesFrozen(bool);
     void processSuspensionCleanupTimerFired();
+    void processDidResume();
 
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();

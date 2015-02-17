@@ -96,4 +96,5 @@ messages -> WebProcess LegacyReceiver {
 
     ProcessWillSuspend()
     CancelProcessWillSuspend()
+    ProcessDidResume()
 }

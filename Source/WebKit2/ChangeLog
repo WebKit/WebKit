@@ -1,5 +1,41 @@
 2015-02-16  Tim Horton  <timothy_horton@apple.com>
 
+        Sometimes RemoteLayerBackingStore ends up non-volatile while the process is suspended
+        <rdar://problem/19842957>
+        https://bugs.webkit.org/show_bug.cgi?id=141675
+
+        Reviewed by Simon Fraser.
+
+        Previously, it was possible to get a layer tree flush in between the
+        process suspension cleanup code making surfaces volatile and the process
+        actually being suspended (it was racy because the suspension requires
+        a few IPC round trips). Depending on how far through the flush we got,
+        we could sometimes end up either making new non-volatile backing store,
+        or switching some recently-made-volatile backing store back to non-volatile.
+        We don't want to have any non-volatile backing store while suspended.
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertion):
+        Inform the WebProcess when it's going from suspended to runnable state.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessDidResume):
+        * UIProcess/WebProcessProxy.h:
+        Forward the message along.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspend):
+        (WebKit::WebProcess::cancelProcessWillSuspend):
+        (WebKit::WebProcess::setAllLayerTreeStatesFrozen):
+        (WebKit::WebProcess::processDidResume):
+        Freeze all of this process' pages' layer trees when we start trying to suspend,
+        and un-freeze them when either suspension is cancelled or we resume.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2015-02-16  Tim Horton  <timothy_horton@apple.com>
+
         Adopt CAMachPort-as-layer-contents
         https://bugs.webkit.org/show_bug.cgi?id=141687
         <rdar://problem/19393233>

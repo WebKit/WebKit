@@ -1164,6 +1164,7 @@ void WebProcess::resetAllGeolocationPermissions()
 void WebProcess::processWillSuspend()
 {
     memoryPressureHandler().releaseMemory(true);
+    setAllLayerTreeStatesFrozen(true);
 
     if (!markAllLayersVolatileIfPossible())
         m_processSuspensionCleanupTimer.startRepeating(std::chrono::milliseconds(20));
@@ -1173,6 +1174,8 @@ void WebProcess::processWillSuspend()
 
 void WebProcess::cancelProcessWillSuspend()
 {
+    setAllLayerTreeStatesFrozen(false);
+
     // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
     // shouldn't send DidCancelProcessSuspension; the UI process strictly expects one or the other.
     if (!m_processSuspensionCleanupTimer.isActive())
@@ -1193,12 +1196,25 @@ bool WebProcess::markAllLayersVolatileIfPossible()
     return successfullyMarkedAllLayersVolatile;
 }
 
+void WebProcess::setAllLayerTreeStatesFrozen(bool frozen)
+{
+    for (auto& page : m_pageMap.values()) {
+        if (auto drawingArea = page->drawingArea())
+            drawingArea->setLayerTreeStateIsFrozen(frozen);
+    }
+}
+
 void WebProcess::processSuspensionCleanupTimerFired()
 {
     if (markAllLayersVolatileIfPossible()) {
         m_processSuspensionCleanupTimer.stop();
         parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
     }
+}
+    
+void WebProcess::processDidResume()
+{
+    setAllLayerTreeStatesFrozen(false);
 }
 
 void WebProcess::pageDidEnterWindow(uint64_t pageID)

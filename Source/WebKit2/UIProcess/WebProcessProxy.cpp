@@ -762,6 +762,12 @@ void WebProcessProxy::sendCancelProcessWillSuspend()
         send(Messages::WebProcess::CancelProcessWillSuspend(), 0);
 }
     
+void WebProcessProxy::sendProcessDidResume()
+{
+    if (canSendMessage())
+        send(Messages::WebProcess::ProcessDidResume(), 0);
+}
+    
 void WebProcessProxy::processReadyToSuspend()
 {
     m_throttler->processReadyToSuspend();

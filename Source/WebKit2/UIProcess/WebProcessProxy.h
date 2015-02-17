@@ -140,6 +140,7 @@ public:
     void processReadyToSuspend();
     void sendCancelProcessWillSuspend();
     void didCancelProcessSuspension();
+    void sendProcessDidResume();
 
     void setIsHoldingLockedFiles(bool);
 

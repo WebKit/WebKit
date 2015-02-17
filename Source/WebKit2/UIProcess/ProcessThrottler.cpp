@@ -71,10 +71,15 @@ void ProcessThrottler::updateAssertion()
         m_assertion->setState(AssertionState::Background);
         return;
     }
+    
+    bool shouldBeRunnable = m_foregroundCounter.value() || m_backgroundCounter.value();
 
     // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
-    if (m_suspendTimer.isActive() && (m_foregroundCounter.value() || m_backgroundCounter.value()))
+    if (m_suspendTimer.isActive() && shouldBeRunnable)
         m_process->sendCancelProcessWillSuspend();
+    
+    if (m_assertion && m_assertion->state() == AssertionState::Suspended && shouldBeRunnable)
+        m_process->sendProcessDidResume();
 
     updateAssertionNow();
 }
