@@ -1,3 +1,10 @@
+2015-02-17  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/selectors/nth-last-child-of-register-requirement.html is extremely slow in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=141695
+
+        * TestExpectations: Fixed a copy/paste mistake.
+
 2015-02-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(?): inspector/css/selector-dynamic-specificity.html sometimes crashes
