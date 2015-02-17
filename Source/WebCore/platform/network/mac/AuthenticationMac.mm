@@ -33,15 +33,7 @@
 #import <Foundation/NSURLProtectionSpace.h>
 
 #if USE(CFNETWORK)
-
-@interface NSURLAuthenticationChallenge (Details)
-#if PLATFORM(IOS)
-+(NSURLAuthenticationChallenge *)_createAuthenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
-#else
-+(NSURLAuthenticationChallenge *)_authenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
-#endif
-@end
-
+#import "CFNSURLConnectionSPI.h"
 #endif
 
 using namespace WebCore;
