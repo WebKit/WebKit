@@ -1,3 +1,9 @@
+2015-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Document some debug assertions in Accessibility tests (Unreviewed)
+
+        * platform/win/TestExpectations:
+
 2015-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update svg/animations/animate-text-nested-transforms.html after r177774

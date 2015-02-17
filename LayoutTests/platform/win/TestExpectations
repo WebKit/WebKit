@@ -1308,28 +1308,50 @@ webkit.org/b/140798 [ Release ] accessibility/noscript-ignored.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/noscript-ignored.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/password-field-value.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/password-field-value.html [ Skip ] # Debug assertion
-webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
-webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
-webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
-webkit.org/b/140798 accessibility/range-alter-by-percent.html [ Failure ]
-webkit.org/b/140798 accessibility/render-counter-text.html [ Failure ]
-webkit.org/b/140798 accessibility/secure-textfield-title-ui.html [ Failure ]
-webkit.org/b/140798 accessibility/select-element-at-index.html [ Failure ]
-webkit.org/b/140798 accessibility/self-referencing-aria-labelledby.html [ Failure ]
-webkit.org/b/140798 accessibility/svg-bounds.html [ Failure ]
-webkit.org/b/140798 accessibility/svg-group-element-with-title.html [ Failure ]
-webkit.org/b/140798 accessibility/svg-labelledby.html [ Failure ]
-webkit.org/b/140798 accessibility/tabindex-elements-are-accessible.html [ Failure ]
-webkit.org/b/140798 accessibility/table-cell-for-column-and-row-crash.html [ Failure ]
-webkit.org/b/140798 accessibility/table-cell-spans.html [ Failure ]
-webkit.org/b/140798 accessibility/table-cells-roles.html [ Failure ]
-webkit.org/b/140798 accessibility/table-cells.html [ Failure ]
-webkit.org/b/140798 accessibility/table-column-headers-with-captions.html [ Failure ]
-webkit.org/b/140798 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
-webkit.org/b/140798 accessibility/table-headers.html [ Failure ]
-webkit.org/b/140798 accessibility/table-incorrect-colspan-cell.html [ Failure ]
-webkit.org/b/140798 accessibility/table-missing-column-header-crash.html [ Failure ]
-webkit.org/b/140798 accessibility/table-title.html [ Failure ]
+webkit.org/b/140798 [ Release ] accessibility/poorly-formed-aria-table.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/poorly-formed-aria-table.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/radio-button-group-members.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/radio-button-group-members.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/radio-button-title-label.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/radio-button-title-label.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/range-alter-by-percent.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/range-alter-by-percent.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/render-counter-text.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/render-counter-text.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/secure-textfield-title-ui.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/secure-textfield-title-ui.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/select-element-at-index.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/select-element-at-index.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/self-referencing-aria-labelledby.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/self-referencing-aria-labelledby.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/svg-bounds.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/svg-bounds.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/svg-group-element-with-title.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/svg-group-element-with-title.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/svg-labelledby.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/svg-labelledby.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/tabindex-elements-are-accessible.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/tabindex-elements-are-accessible.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-cell-for-column-and-row-crash.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-cell-for-column-and-row-crash.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-cell-spans.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-cell-spans.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-cells-roles.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-cells-roles.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-cells.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-cells.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-column-headers-with-captions.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-column-headers-with-captions.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-fallback-roles-expose-element-attributes.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-headers.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-headers.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-incorrect-colspan-cell.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-incorrect-colspan-cell.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-missing-column-header-crash.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-missing-column-header-crash.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/table-title.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/table-title.html [ Skip ] # Debug assertion
 webkit.org/b/140798 accessibility/table-with-aria-role.html [ Failure ]
 webkit.org/b/140798 accessibility/table-with-footer-section-above-body.html [ Failure ]
 webkit.org/b/140798 accessibility/table-with-hidden-head-section.html [ Failure ]
@@ -1351,14 +1373,17 @@ webkit.org/b/140832 [ Release ] accessibility/aria-slider-value.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/meter-element.html [ Skip ] # Debug assertion
-webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
-webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/progressbar.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/progressbar.html [ Skip ] # Debug assertion
+webkit.org/b/140832 [ Release ] accessibility/range-alter-by-step.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/range-alter-by-step.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-scrollbar-role.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/notification-listeners.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/spinbutton-value.html [ Failure ]
-webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/svg-remote-element.html [ Failure ]
+webkit.org/b/140832 [ Debug ] accessibility/svg-remote-element.html [ Skip ] # Debug assertion
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
 
@@ -1471,75 +1496,99 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/onclick-handlers.html [ Skip ] # Debug assertion
 [ Release ] accessibility/parent-delete.html [ Failure ]
 [ Debug ] accessibility/parent-delete.html [ Skip ] # Debug assertion
-accessibility/placeholder.html [ Failure ]
-accessibility/plugin.html [ Failure ]
-accessibility/press-target-uses-text-descendant-node.html [ Failure ]
-accessibility/roles-computedRoleString.html [ Failure ]
-accessibility/roles-exposed.html [ Failure ]
-accessibility/table-attributes.html [ Failure ]
-accessibility/table-detection.html [ Failure ]
-accessibility/table-one-cell.html [ Failure ]
-accessibility/table-roles-hierarchy.html [ Failure ]
-accessibility/table-sections.html [ Failure ]
+[ Release ] accessibility/placeholder.html [ Failure ]
+[ Debug ] accessibility/placeholder.html [ Skip ] # Debug assertion
+[ Release ] accessibility/plugin.html [ Failure ]
+[ Debug ] accessibility/plugin.html [ Skip ] # Debug assertion
+[ Release ] accessibility/press-target-uses-text-descendant-node.html [ Failure ]
+[ Debug ] accessibility/press-target-uses-text-descendant-node.html [ Skip ] # Debug assertion
+[ Release ] accessibility/roles-computedRoleString.html [ Failure ]
+[ Debug ] accessibility/roles-computedRoleString.html [ Skip ] # Debug assertion
+[ Release ] accessibility/roles-exposed.html [ Failure ]
+[ Debug ] accessibility/roles-exposed.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-attributes.html [ Failure ]
+[ Debug ] accessibility/table-attributes.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-detection.html [ Failure ]
+[ Debug ] accessibility/table-detection.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-one-cell.html [ Failure ]
+[ Debug ] accessibility/table-one-cell.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-roles-hierarchy.html [ Failure ]
+[ Debug ] accessibility/table-roles-hierarchy.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-sections.html [ Failure ]
+[ Debug ] accessibility/table-sections.html [ Skip ] # Debug assertion
 accessibility/table-with-rules.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
 accessibility/visible-elements.html [ Failure ]
 
 # Not Investigated: A lot of DEBUG asserts, maybe related to items listed above
-[ Debug ] accessibility/aria-label.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-hidden-updates-alldescendants.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-describedby-on-input.html [ Skip ] # Crashing
-[ Debug ] accessibility/accessibility-node-memory-management.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-checkbox-checked.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-help.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-disabled.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-labelledby-stay-within.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-menubar-menuitems.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-link-supports-press.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-table-hierarchy.html [ Skip ] # Crashing
-[ Debug ] accessibility/accessibility-node-reparent.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-roles.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-object-detached.html [ Skip ] # Crashing
+[ Debug ] accessibility/accessibility-node-memory-management.html [ Skip ] # Crashing
+[ Debug ] accessibility/accessibility-node-reparent.html [ Skip ] # Crashing
 [ Debug ] accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ] # Crashing
 [ Debug ] accessibility/anchor-linked-anonymous-block-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-activedescendant-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-checkbox-checked.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-checkbox-text.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-describedby-on-input.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-disabled.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-fallback-roles.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-mappings.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-presentational-role.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-inherits-presentational.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-help.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-hidden-update.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-list-and-listitem.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-hides-all-elements.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-none-role.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-activedescendant-crash.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-checkbox-text.html [ Skip ] # Crashing
-[ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-update.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-hidden-updates-alldescendants.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-inherits-presentational.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-label.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-on-input.html [ Skip ] # Crashing
-
+[ Debug ] accessibility/aria-labelledby-stay-within.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-link-supports-press.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-list-and-listitem.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-mappings.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-menubar-menuitems.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-none-role.html [ Skip ] # Crashing
 [ Debug ] accessibility/paragraph-with-linebreaks.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/aria-presentational-role.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-roles.html [ Skip ] # Crashing
+[ Debug ] accessibility/aria-table-hierarchy.html [ Skip ] # Crashing
+[ Debug ] accessibility/iframe-bastardization.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/ignore-spacer-elements.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/nested-layout-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/image-map1.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/nochildren-elements.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/inline-continuations.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/insert-selected-option-into-select-causes-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/label-element-press.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-link-inline-cont.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map-title-causes-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/image-map-update-parent-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/image-map-with-indirect-area-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/input-image-alt.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/iframe-bastardization.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/image-link-inline-cont.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/img-fallsback-to-title.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/media-controls.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/listbox-enabled-states.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/non-native-image-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/input-file-causes-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/img-alt-tag-only-whitespace.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/image-map1.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/image-with-alt-and-map.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/menu-item-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/img-alt-tag-only-whitespace.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/img-aria-button-alt-tag.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/image-map-title-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/img-fallsback-to-title.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/inline-continuations.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/input-file-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/input-image-alt.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/insert-selected-option-into-select-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/label-element-press.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/listbox-enabled-states.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/media-controls.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/menu-item-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/nested-layout-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/nochildren-elements.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/non-native-image-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/platform-name.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/popup-button-title.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/presentational-elements-with-focus.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/press-targets-center-point.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/press-works-on-control-types.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/removed-anonymous-block-child-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/removed-continuation-element-causes-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/selection-states.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/svg-image.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-destroyed-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-hierarchy.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-modification-crash.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-notbody.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-nofirstbody.html [ Skip ] # Debug assertion
+[ Debug ] accessibility/table-remove-cell-crash.html [ Skip ] # Debug assertion
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
