@@ -49,6 +49,7 @@ function test()
         {expression: "(function(){})"},
         {expression: "function foo(){}; foo"},
         {expression: "function myFunction(a, b) { console.log(a, b); }; myFunction"},
+        {expression: "function myTarget(a, b) { console.log(a, b); }; myTarget.bind(null)"}, // bound function
         {expression: "Array.prototype.push"}, // native (ECMAScript)
         {expression: "window.setTimeout"}, // native (DOM)
         {expression: "Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'getter').get"}, // getter

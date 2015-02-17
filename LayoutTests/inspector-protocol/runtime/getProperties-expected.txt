@@ -1,16 +1,24 @@
 Properties of Object(5)
-  __proto__ object undefined
+  __proto__ object Number
   foo string cat
 Properties of array
-  __proto__ object undefined
+  __proto__ object Array[0]
   0 string red
   1 string green
   2 string blue
   length number 3
 Properties of Bound function
-  __proto__ function undefined
+  __proto__ function function () {
+    [native code]
+}
   arguments
   caller
   length number 0
   name string Number
+Internal properties
+  boundArgs object Array[1]
+  boundThis object Object
+  targetFunction function function Number() {
+    [native code]
+}
 

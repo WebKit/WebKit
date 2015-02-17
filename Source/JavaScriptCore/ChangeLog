@@ -1,5 +1,16 @@
 2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improved Console Support for Bound Functions
+        https://bugs.webkit.org/show_bug.cgi?id=141635
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        Expose internal properties of a JSBoundFunction.
+
+2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ES6: Improved Console Support for Promise Objects
         https://bugs.webkit.org/show_bug.cgi?id=141634
 

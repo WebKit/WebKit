@@ -127,7 +127,7 @@ function test()
             var p = propertyArray[i];
             var v = p.value;
             if (v)
-                InspectorTest.log("  " + p.name + " " + v.type + " " + v.value);
+                InspectorTest.log("  " + p.name + " " + v.type + " " + (v.value || v.description));
             else
                 InspectorTest.log("  " + p.name);
         }
@@ -138,7 +138,7 @@ function test()
             for (var i = 0; i < internalPropertyArray.length; i++) {
                 var p = internalPropertyArray[i];
                 var v = p.value;
-                InspectorTest.log("  " + p.name + " " + v.type + " " + v.value);
+                InspectorTest.log("  " + p.name + " " + v.type + " " + (v.value || v.description));
             }
         }
 

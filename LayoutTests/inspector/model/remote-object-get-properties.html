@@ -41,6 +41,8 @@ ClassWithBadGetter.prototype = {
 var simpleObject = {a:1, b:"string"};
 var complexObject = new SuperFoo;
 var badGetterObject = new ClassWithBadGetter;
+var unboundFunction = function() { console.log(arguments); }
+var boundFunction = unboundFunction.bind(document.body, 1, 2, 3);
 
 
 // --------
@@ -55,6 +57,8 @@ function test()
         {expression: "window.loadEvent"},
         {expression: "window.complexObject"},
         {expression: "window.badGetterObject"},
+        {expression: "window.unboundFunction"},
+        {expression: "window.boundFunction"},
     ]
 
     function runNextStep() {

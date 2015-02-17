@@ -208,6 +208,14 @@ EXPRESSION: function myFunction(a, b) { console.log(a, b); }; myFunction
 }
 
 -----------------------------------------------------
+EXPRESSION: function myTarget(a, b) { console.log(a, b); }; myTarget.bind(null)
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myTarget() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
 EXPRESSION: Array.prototype.push
 {
   "_type": "function",

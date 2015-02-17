@@ -30,6 +30,7 @@
 #include "Error.h"
 #include "InjectedScriptHost.h"
 #include "JSArray.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInjectedScriptHostPrototype.h"
@@ -208,8 +209,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
 
     JSValue value = exec->uncheckedArgument(0);
 
-    JSPromise* promise = jsDynamicCast<JSPromise*>(value);
-    if (promise) {
+    if (JSPromise* promise = jsDynamicCast<JSPromise*>(value)) {
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr);
         switch (promise->status()) {
@@ -226,6 +226,15 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             break;
         }
         // FIXME: <https://webkit.org/b/141664> Web Inspector: ES6: Improved Support for Promises - Promise Reactions
+        return array;
+    }
+
+    if (JSBoundFunction* boundFunction = jsDynamicCast<JSBoundFunction*>(value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(exec, nullptr, 3);
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "targetFunction", boundFunction->targetFunction()));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundThis", boundFunction->boundThis()));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
         return array;
     }
 

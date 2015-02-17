@@ -178,5 +178,107 @@ ALL PROPERTIES:
     __lookupSetter__
     __proto__
 -----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.unboundFunction
+type: function
+description: function () { console.log(arguments); }
+
+OWN PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    __proto__
+
+OWN AND GETTER PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    __proto__
+
+ALL PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    toString
+    apply
+    call
+    bind
+    constructor
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.boundFunction
+type: function
+description: function () {
+    [native code]
+}
+
+OWN PROPERTIES:
+    name
+    length
+    get arguments
+    set arguments
+    get caller
+    set caller
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+
+OWN AND GETTER PROPERTIES:
+    name
+    length
+    get arguments
+    set arguments
+    get caller
+    set caller
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+
+ALL PROPERTIES:
+    name
+    length
+    get arguments
+    set arguments
+    get caller
+    set caller
+    toString
+    apply
+    call
+    bind
+    constructor
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+-----------------------------------------------------
 DONE
 
