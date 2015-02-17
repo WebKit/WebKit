@@ -1,5 +1,26 @@
 2015-02-17  Daniel Bates  <dabates@apple.com>
 
+        [iOS] run-webkit-tests should check that simctl can boot and shutdown simulator device before running tests
+        https://bugs.webkit.org/show_bug.cgi?id=141718
+
+        Reviewed by Alex Christensen.
+
+        We should only run layout tests if simctl can successfully boot and shutdown the testing device.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.check_sys_deps): Modified to call Simulator.check_simulator_device_and_erase_if_needed().
+        Log a error and return False if we are unable to boot the simulator device so that the caller can take
+        appropriate action, say exit(3) before running any layout tests.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator._boot_and_shutdown_simulator_device): Added. Boot and then shut down the simulator device
+        with the specified UDID.
+        (Simulator.check_simulator_device_and_erase_if_needed): Added. Checks that simulator device
+        with the specified UDID can successfully boot and shut down. We make at most two attempts to
+        boot and shut down the device, erasing the device between tries so as to restore the device
+        to a known good state.
+
+2015-02-17  Daniel Bates  <dabates@apple.com>
+
         run_webkit_tests.py should not know about iOS Simulator details
         https://bugs.webkit.org/show_bug.cgi?id=141711
 

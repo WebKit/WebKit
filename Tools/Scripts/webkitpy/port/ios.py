@@ -239,6 +239,10 @@ class IOSSimulatorPort(Port):
         if not self.simulator_runtime.available:
             _log.error('The iOS Simulator runtime with identifier "{0}" cannot be used because it is unavailable.'.format(self.simulator_runtime.identifier))
             return False
+        testing_device = self.testing_device  # May create a new simulator device
+        if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
+            _log.error('Unable to boot the simulator device with UDID {0}.'.format(testing_device.udid))
+            return False
         return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
 
     def check_for_leaks(self, process_name, process_pid):
