@@ -1,3 +1,20 @@
+2015-02-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r180060): C Loop crashes
+        https://bugs.webkit.org/show_bug.cgi?id=141671
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed a typo that only affected the C Loop in the prologue() macro in LowLevelInterpreter.asm.
+        After the stackHeightOKGetCodeBlock label, codeBlockSetter(t1) should be codeBlockGetter(t1).
+        Fixed the processing of an out of stack exception in llint_stack_check to not get the caller's
+        frame.  This isn't needed, since this helper is only called to check the stack on entry.  Any
+        exception will be handled by a call ancestor.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_stack_check): Changed to use the current frame for processing an exception.
+        * llint/LowLevelInterpreter.asm: Fixed a typo.
+
 2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Scope details sidebar should label objects with constructor names
