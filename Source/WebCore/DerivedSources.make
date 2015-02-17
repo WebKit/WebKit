@@ -1242,55 +1242,6 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 # --------
 
-ifneq ($(ACTION),installhdrs)
-
-ifeq ($(WTF_PLATFORM_IOS),1)
-
-ifeq ($(findstring armv7,$(ARCHS)), armv7)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7.exp
-endif
-ifeq ($(findstring armv7k,$(ARCHS)), armv7k)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7k.exp
-endif
-ifeq ($(findstring armv7s,$(ARCHS)), armv7s)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7s.exp
-endif
-ifeq ($(findstring arm64,$(ARCHS)), arm64)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.arm64.exp
-endif
-ifeq ($(findstring i386,$(ARCHS)), i386)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.i386.exp
-endif
-ifeq ($(findstring x86_64,$(ARCHS)), x86_64)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.x86_64.exp
-endif
-
-all : $(WEBCORE_EXPORT_FILES)
-
-WebCore.%.exp : generate-export-file WebCore.exp.in
-	$^ $@
-
-# Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
-WebCore.LP64.%.exp : WebCore.%.exp
-	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
-
-else
-
-all : WebCore.exp WebCore.LP64.exp
-
-WebCore.exp : $(BUILT_PRODUCTS_DIR)/WebCoreExportFileGenerator
-	$^ | grep -v '^# ' | sed -e 's/^#//' > $@
-
-# Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
-WebCore.LP64.exp : WebCore.exp
-	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
-
-endif # WTF_PLATFORM_IOS
-
-endif # installhdrs
-
-# --------
-
 # Objective-C bindings
 
 DOM_BINDINGS_SCRIPTS = $(GENERATE_BINDING_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm

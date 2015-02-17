@@ -20,17 +20,6 @@
 			name = All;
 			productName = All;
 		};
-		5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5D87BB6C11E3EC0000702B6F /* Build configuration list for PBXAggregateTarget "WebCoreExportFileGenerator Generator" */;
-			buildPhases = (
-				5D87BB6311E3EBC100702B6F /* Generate Export File Generator */,
-			);
-			dependencies = (
-			);
-			name = "WebCoreExportFileGenerator Generator";
-			productName = "WebCoreExportFileGenerator Generator";
-		};
 		DD041FBE09D9DDBE0010AF2A /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -38,7 +27,6 @@
 				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
 			);
 			dependencies = (
-				5D87BB8F11E3EE2B00702B6F /* PBXTargetDependency */,
 			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
@@ -2153,7 +2141,6 @@
 		5D5975B419635F1100D00878 /* SystemVersion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D5975B219635F1100D00878 /* SystemVersion.mm */; };
 		5D5975B71963637B00D00878 /* UserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D5975B61963637B00D00878 /* UserAgent.mm */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
-		5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */; };
 		5D8C4DBF1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */; };
 		5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */; };
 		5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */; };
@@ -6750,20 +6737,6 @@
 			remoteGlobalIDString = 417DA6CF13734E02007C57FB;
 			remoteInfo = WebCoreTestSupport;
 		};
-		5D87BB6A11E3EBD200702B6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D87BB6411E3EBC100702B6F;
-			remoteInfo = "WebCoreExportFileGenerator Generator";
-		};
-		5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D87BB4E11E3EAEB00702B6F;
-			remoteInfo = WebCoreExportFileGenerator;
-		};
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -9307,7 +9280,6 @@
 		5D5975B119635F1100D00878 /* SystemVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemVersion.h; sourceTree = "<group>"; };
 		5D5975B219635F1100D00878 /* SystemVersion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemVersion.mm; sourceTree = "<group>"; };
 		5D5975B61963637B00D00878 /* UserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgent.mm; sourceTree = "<group>"; };
-		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplaySleepDisablerCocoa.cpp; sourceTree = "<group>"; };
 		5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplaySleepDisablerCocoa.h; sourceTree = "<group>"; };
@@ -14355,13 +14327,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5D87BB4D11E3EAEB00702B6F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		93F19B1208245E59001E9ABC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -14408,7 +14373,6 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 				E1BA67161742BDE000C20251 /* libWebCoreTestShim.dylib */,
 				417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */,
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
@@ -26965,23 +26929,6 @@
 			productReference = 417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5D87BB5911E3EB0700702B6F /* Build configuration list for PBXNativeTarget "WebCoreExportFileGenerator" */;
-			buildPhases = (
-				5D87BB4C11E3EAEB00702B6F /* Sources */,
-				5D87BB4D11E3EAEB00702B6F /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */,
-			);
-			name = WebCoreExportFileGenerator;
-			productName = WebCoreExportFileGenerator;
-			productReference = 5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
-			productType = "com.apple.product-type.tool";
-		};
 		93F198A508245E59001E9ABC /* WebCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
@@ -27058,8 +27005,6 @@
 				41816F7913859C550057AAA4 /* All */,
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
-				5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
-				5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */,
 				417DA6CF13734E02007C57FB /* WebCoreTestSupport */,
 				E1BA66F31742BDE000C20251 /* WebCoreTestShim */,
 			);
@@ -27140,23 +27085,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"$SRCROOT/Info.plist\";\nfi;\n";
 		};
-		5D87BB6311E3EBC100702B6F /* Generate Export File Generator */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/WebCore.exp.in",
-				"$(SRCROOT)/make-export-file-generator",
-			);
-			name = "Generate Export File Generator";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/ExportFileGenerator.cpp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nmkdir -p \"${OUTPUT_DIR}\"\n\"${SRCROOT}\"/make-export-file-generator \"${SRCROOT}/WebCore.exp.in\" \"${OUTPUT_DIR}/ExportFileGenerator.cpp\"\n";
-		};
 		5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -27220,14 +27148,6 @@
 				2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */,
 				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5D87BB4C11E3EAEB00702B6F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -30246,16 +30166,6 @@
 			target = 417DA6CF13734E02007C57FB /* WebCoreTestSupport */;
 			targetProxy = 41816F8413859C7D0057AAA4 /* PBXContainerItemProxy */;
 		};
-		5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */;
-			targetProxy = 5D87BB6A11E3EBD200702B6F /* PBXContainerItemProxy */;
-		};
-		5D87BB8F11E3EE2B00702B6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */;
-			targetProxy = 5D87BB8E11E3EE2B00702B6F /* PBXContainerItemProxy */;
-		};
 		DD041FF109D9E3250010AF2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
@@ -30383,68 +30293,6 @@
 			};
 			name = Production;
 		};
-		5D87BB5111E3EAEB00702B6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				EXPORTED_SYMBOLS_FILE = "";
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "$(ASAN_OTHER_CFLAGS)";
-				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
-				OTHER_LDFLAGS = "$(ASAN_OTHER_LDFLAGS)";
-				PRODUCT_NAME = WebCoreExportFileGenerator;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		5D87BB5211E3EAEB00702B6F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				EXPORTED_SYMBOLS_FILE = "";
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "$(ASAN_OTHER_CFLAGS)";
-				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
-				OTHER_LDFLAGS = "$(ASAN_OTHER_LDFLAGS)";
-				PRODUCT_NAME = WebCoreExportFileGenerator;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		5D87BB5311E3EAEB00702B6F /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				EXPORTED_SYMBOLS_FILE = "";
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "$(ASAN_OTHER_LDFLAGS)";
-				PRODUCT_NAME = WebCoreExportFileGenerator;
-				SKIP_INSTALL = YES;
-			};
-			name = Production;
-		};
-		5D87BB6511E3EBC200702B6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
-			};
-			name = Debug;
-		};
-		5D87BB6611E3EBC200702B6F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
-			};
-			name = Release;
-		};
-		5D87BB6711E3EBC200702B6F /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "WebCoreExportFileGenerator Generator";
-			};
-			name = Production;
-		};
 		DD041FC209D9DDDC0010AF2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
@@ -30529,26 +30377,6 @@
 				41816F7A13859C560057AAA4 /* Debug */,
 				41816F7B13859C560057AAA4 /* Release */,
 				41816F7C13859C560057AAA4 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5D87BB5911E3EB0700702B6F /* Build configuration list for PBXNativeTarget "WebCoreExportFileGenerator" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5D87BB5111E3EAEB00702B6F /* Debug */,
-				5D87BB5211E3EAEB00702B6F /* Release */,
-				5D87BB5311E3EAEB00702B6F /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5D87BB6C11E3EC0000702B6F /* Build configuration list for PBXAggregateTarget "WebCoreExportFileGenerator Generator" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5D87BB6511E3EBC200702B6F /* Debug */,
-				5D87BB6611E3EBC200702B6F /* Release */,
-				5D87BB6711E3EBC200702B6F /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
