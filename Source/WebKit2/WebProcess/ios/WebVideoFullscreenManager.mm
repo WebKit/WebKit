@@ -215,9 +215,12 @@ void WebVideoFullscreenManager::didExitFullscreen()
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        m_layerHostingContext->setRootLayer(nullptr);
-        m_layerHostingContext = nullptr;
-        m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(), m_page->pageID());
+        if (m_layerHostingContext) {
+            m_layerHostingContext->setRootLayer(nullptr);
+            m_layerHostingContext = nullptr;
+        }
+        if (m_page)
+            m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(), m_page->pageID());
         protect.clear();
     });
 }
@@ -247,7 +250,8 @@ void WebVideoFullscreenManager::setVideoLayerGravityEnum(unsigned gravity)
     
 void WebVideoFullscreenManager::setVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort)
 {
-    m_layerHostingContext->setFencePort(fencePort.port());
+    if (m_layerHostingContext)
+        m_layerHostingContext->setFencePort(fencePort.port());
     setVideoLayerFrame(bounds);
     mach_port_deallocate(mach_task_self(), fencePort.port());
 }

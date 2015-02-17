@@ -1,3 +1,19 @@
+2015-02-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r177625.
+
+    2014-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] avoid WebVideoFullscreenManager crash
+            https://bugs.webkit.org/show_bug.cgi?id=139852
+            <rdar://problem/19319302>
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/ios/WebVideoFullscreenManager.mm:
+            (WebKit::WebVideoFullscreenManager::didExitFullscreen): NULL-check m_layerHostingContext and m_page.
+            (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced): NULL-check m_layerHostingContext.
+
 2015-02-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r179580. rdar://problem/19709200
