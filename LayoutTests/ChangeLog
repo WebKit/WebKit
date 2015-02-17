@@ -1,5 +1,14 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        fast/text/glyph-reordering.html no longer fails
+        https://bugs.webkit.org/show_bug.cgi?id=141678
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/TestExpectations:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update fast/text/decomposed-after-stacked-diacritics.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141677
 
