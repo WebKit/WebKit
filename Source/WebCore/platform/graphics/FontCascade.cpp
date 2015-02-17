@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#include "CharacterProperties.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "GlyphBuffer.h"
@@ -771,6 +772,8 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
                 previousCharacterIsEmojiGroupCandidate = true;
                 continue;
             }
+            if (isEmojiModifier(supplementaryCharacter))
+                return Complex;
             if (supplementaryCharacter < 0xE0100) // U+E0100 through U+E01EF Unicode variation selectors.
                 continue;
             if (supplementaryCharacter <= 0xE01EF)
