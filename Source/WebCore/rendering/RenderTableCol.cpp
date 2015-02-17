@@ -39,7 +39,6 @@ using namespace HTMLNames;
 
 RenderTableCol::RenderTableCol(Element& element, Ref<RenderStyle>&& style)
     : RenderBox(element, WTF::move(style), 0)
-    , m_span(1)
 {
     // init RenderObject attributes
     setInline(true); // our object is not Inline

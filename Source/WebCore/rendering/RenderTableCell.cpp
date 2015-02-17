@@ -58,8 +58,8 @@ RenderTableCell::RenderTableCell(Element& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
-    , m_intrinsicPaddingBefore(0)
-    , m_intrinsicPaddingAfter(0)
+    , m_hasColSpan(false)
+    , m_hasRowSpan(false)
 {
     // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
     // so we need to set their initial values here in case something asks for colSpan()/rowSpan() before then.
@@ -72,8 +72,6 @@ RenderTableCell::RenderTableCell(Document& document, Ref<RenderStyle>&& style)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)
     , m_hasRowSpan(false)
-    , m_intrinsicPaddingBefore(0)
-    , m_intrinsicPaddingAfter(0)
 {
 }
 
