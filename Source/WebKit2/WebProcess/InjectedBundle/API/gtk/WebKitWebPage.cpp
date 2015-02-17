@@ -42,6 +42,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/MainFrame.h>
 #include <glib/gi18n-lib.h>
@@ -75,7 +76,29 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
 
-typedef HashMap<WebFrame*, GRefPtr<WebKitFrame>> WebFrameMap;
+static void webFrameDestroyed(WebFrame*);
+
+class WebKitFrameWrapper final: public FrameDestructionObserver {
+public:
+    WebKitFrameWrapper(WebFrame& webFrame)
+        : FrameDestructionObserver(webFrame.coreFrame())
+        , m_webkitFrame(adoptGRef(webkitFrameCreate(&webFrame)))
+    {
+    }
+
+    WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
+
+private:
+    virtual void frameDestroyed() override
+    {
+        FrameDestructionObserver::frameDestroyed();
+        webFrameDestroyed(webkitFrameGetWebFrame(m_webkitFrame.get()));
+    }
+
+    GRefPtr<WebKitFrame> m_webkitFrame;
+};
+
+typedef HashMap<WebFrame*, std::unique_ptr<WebKitFrameWrapper>> WebFrameMap;
 
 static WebFrameMap& webFrameMap()
 {
@@ -85,14 +108,19 @@ static WebFrameMap& webFrameMap()
 
 static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
 {
-    GRefPtr<WebKitFrame> frame = webFrameMap().get(webFrame);
-    if (frame)
-        return frame.get();
+    auto wrapperPtr = webFrameMap().get(webFrame);
+    if (wrapperPtr)
+        return wrapperPtr->webkitFrame();
 
-    frame = adoptGRef(webkitFrameCreate(webFrame));
-    webFrameMap().set(webFrame, frame);
+    std::unique_ptr<WebKitFrameWrapper> wrapper = std::make_unique<WebKitFrameWrapper>(*webFrame);
+    wrapperPtr = wrapper.get();
+    webFrameMap().set(webFrame, WTF::move(wrapper));
+    return wrapperPtr->webkitFrame();
+}
 
-    return frame.get();
+static void webFrameDestroyed(WebFrame* webFrame)
+{
+    webFrameMap().remove(webFrame);
 }
 
 static CString getProvisionalURLForFrame(WebFrame* webFrame)
@@ -143,11 +171,6 @@ static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef fram
         return;
 
     g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[DOCUMENT_LOADED], 0);
-}
-
-static void willDestroyFrame(WKBundlePageRef, WKBundleFrameRef frame, const void* /* clientInfo */)
-{
-    webFrameMap().remove(toImpl(frame));
 }
 
 static void didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKBundleScriptWorldRef wkWorld, const void* clientInfo)
@@ -392,7 +415,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // didReceiveTitleForFrame
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
-        0, // didRemoveFrameFromHierarchy
+        0, // didRemoveFrameFromHierarchy,
         0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
         didClearWindowObjectForFrame,
@@ -415,7 +438,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // featuresUsedInPage
         0, // willLoadURLRequest
         0, // willLoadDataRequest
-        willDestroyFrame
+        0, // willDestroyFrame
     };
     WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient.base);
 

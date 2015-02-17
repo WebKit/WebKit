@@ -22,8 +22,11 @@
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/gobject/GUniquePtr.h>
+
+static HashSet<GObject*> s_watchedObjects;
 
 typedef HashMap<String, std::function<std::unique_ptr<WebProcessTest> ()>> TestsMap;
 static TestsMap& testsMap()
@@ -35,6 +38,14 @@ static TestsMap& testsMap()
 void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
 {
     testsMap().add(testName, WTF::move(closure));
+}
+
+void WebProcessTest::assertObjectIsDeletedWhenTestFinishes(GObject* object)
+{
+    s_watchedObjects.add(object);
+    g_object_weak_ref(object, [](gpointer, GObject* finalizedObject) {
+        s_watchedObjects.remove(finalizedObject);
+    }, nullptr);
 }
 
 std::unique_ptr<WebProcessTest> WebProcessTest::create(const String& testName)
@@ -53,6 +64,7 @@ static JSValueRef runTest(JSContextRef context, JSObjectRef function, JSObjectRe
 
     WebKitWebPage* webPage = WEBKIT_WEB_PAGE(JSObjectGetPrivate(thisObject));
     g_assert(WEBKIT_IS_WEB_PAGE(webPage));
+    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
 
     std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath.get()));
     return JSValueMakeBoolean(context, test->runTest(g_strrstr(testPath.get(), "/") + 1, webPage));
@@ -67,6 +79,16 @@ static const JSStaticFunction webProcessTestRunnerStaticFunctions[] =
 static void webProcessTestRunnerFinalize(JSObjectRef object)
 {
     g_object_unref(JSObjectGetPrivate(object));
+
+    if (s_watchedObjects.isEmpty())
+        return;
+
+    g_print("Leaked objects in WebProcess:");
+    for (const auto object : s_watchedObjects)
+        g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(object)), object);
+    g_print("\n");
+
+    g_assert(s_watchedObjects.isEmpty());
 }
 
 static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebExtension* extension)
