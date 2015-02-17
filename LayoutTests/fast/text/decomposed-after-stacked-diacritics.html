@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div style="font-size: 72px;">
-    <span id="reference">e&#x0300;</span><span id="test">&#x1e17;e&#x0300;</span>
+    <span id="reference">ee&#x0300;</span><br><span id="test">&#x1e17;e&#x0300;</span>
 </div>
 <div id="result">Test did not run.</div>
 <script>
@@ -9,8 +9,8 @@
 
     var reference = document.getElementById("reference").firstChild;
     var referenceRange = document.createRange();
-    referenceRange.setStart(reference, 0);
-    referenceRange.setEnd(reference, 2);
+    referenceRange.setStart(reference, 1);
+    referenceRange.setEnd(reference, 3);
     var referenceWidth = referenceRange.getBoundingClientRect().width;
 
     var test = document.getElementById("test").firstChild;

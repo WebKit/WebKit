@@ -1,5 +1,18 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update fast/text/decomposed-after-stacked-diacritics.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141677
+
+        Reviewed by Dan Bernstein.
+
+        Apply kerning to both spans in the same way.
+
+        * fast/text/decomposed-after-stacked-diacritics-expected.txt:
+        * fast/text/decomposed-after-stacked-diacritics.html:
+        * platform/mac/TestExpectations:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update fast/regions/cssom/get-regions-by-content-horiz-*.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141674
 
