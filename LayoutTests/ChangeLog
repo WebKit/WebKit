@@ -1,3 +1,20 @@
+2015-02-15  Sam Weinig  <sam@webkit.org>
+
+        Add experimental <attachment> element support
+        https://bugs.webkit.org/show_bug.cgi?id=141626
+
+        Reviewed by Tim Horton.
+
+        * fast/attachment: Added.
+        * fast/attachment/attachment-disabled-dom-expected.txt: Added.
+        * fast/attachment/attachment-disabled-dom.html: Added.
+        * fast/attachment/attachment-disabled-rendering-expected.txt: Added.
+        * fast/attachment/attachment-disabled-rendering.html: Added.
+        * fast/attachment/attachment-dom-expected.txt: Added.
+        * fast/attachment/attachment-dom.html: Added.
+        * fast/attachment/attachment-rendering-expected.txt: Added.
+        * fast/attachment/attachment-rendering.html: Added.
+
 2015-02-16  Enrica Casucci  <enrica@apple.com>
 
         Emoji sequences do not render properly.

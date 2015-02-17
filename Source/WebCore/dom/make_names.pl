@@ -192,6 +192,7 @@ sub defaultTagPropertyHash
         'JSInterfaceName' => defaultInterfaceName($_[0]),
         'mapToTagName' => '',
         'wrapperOnlyIfMediaIsAvailable' => 0,
+        'settingsConditional' => 0,
         'conditional' => 0,
         'runtimeConditional' => 0,
         'customTypeHelper' => 0,
@@ -418,6 +419,16 @@ END
         print F <<END
     if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled())
         return 0;
+END
+;
+    }
+
+    my $settingsConditional = $enabledTags{$tagName}{settingsConditional};
+    if ($settingsConditional) {
+        print F <<END
+    Settings* settings = document.settings();
+    if (!settings || !settings->${settingsConditional}())
+        return $parameters{fallbackInterfaceName}::create($constructorTagName, document);
 END
 ;
     }
@@ -653,7 +664,7 @@ public:
 private:
 END
        ;
-       if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
+       if ($parameters{namespace} eq "HTML" && ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable} || $parsedTags{$name}{settingsConditional})) {
            print F <<END
     static bool checkTagName(const WebCore::HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName(WebCore::$parameters{namespace}Names::${name}Tag); }
     static bool checkTagName(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && checkTagName(downcast<WebCore::HTMLElement>(node)); }
@@ -1075,7 +1086,7 @@ sub printWrapperFunctions
     for my $tagName (sort keys %enabledTags) {
         # Avoid defining the same wrapper method twice.
         my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
-        next if defined($tagsSeen{$JSInterfaceName}) || (usesDefaultJSWrapper($tagName) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element"));
+        next if (defined($tagsSeen{$JSInterfaceName}) || (usesDefaultJSWrapper($tagName) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element"))) && !$enabledTags{$tagName}{settingsConditional};
         $tagsSeen{$JSInterfaceName} = 1;
 
         my $conditional = $enabledTags{$tagName}{conditional};
@@ -1088,8 +1099,19 @@ sub printWrapperFunctions
             print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    if (element->isHTMLUnknownElement())
-        return CREATE_DOM_WRAPPER(globalObject, $parameters{namespace}Element, element.get());
+    if (element->is$parameters{fallbackInterfaceName}())
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
+}
+
+END
+            ;
+        } elsif ($enabledTags{$tagName}{settingsConditional}) {
+            print F <<END
+static JSDOMWrapper* create$enabledTags{$tagName}{interfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+{
+    if (element->is$parameters{fallbackInterfaceName}())
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackInterfaceName}, element.get());
     return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
 }
 
@@ -1194,7 +1216,12 @@ END
             print F "#if ${conditionalString}\n";
         }
 
-        my $ucTag = $enabledTags{$tag}{JSInterfaceName};
+        my $ucTag;
+        if ($enabledTags{$tag}{settingsConditional}) {
+            $ucTag = $enabledTags{$tag}{interfaceName};
+        } else {
+            $ucTag = $enabledTags{$tag}{JSInterfaceName};
+        }
 
         # FIXME Remove unnecessary '&' from the following (print) line once we switch to a non-broken Visual Studio compiler.
         # https://bugs.webkit.org/show_bug.cgi?id=121235:

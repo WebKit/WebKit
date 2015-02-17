@@ -234,3 +234,5 @@ serviceControlsEnabled initial=false, conditional=SERVICE_CONTROLS
 ignoreViewportScalingConstraints initial=false
 
 appleMailPaginationQuirkEnabled initial=false
+
+attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT

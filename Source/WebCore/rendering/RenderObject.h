@@ -344,6 +344,9 @@ public:
     virtual bool isVideo() const { return false; }
     virtual bool isWidget() const { return false; }
     virtual bool isCanvas() const { return false; }
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual bool isAttachment() const { return false; }
+#endif
 #if ENABLE(FULLSCREEN_API)
     virtual bool isRenderFullScreen() const { return false; }
     virtual bool isRenderFullScreenPlaceholder() const { return false; }

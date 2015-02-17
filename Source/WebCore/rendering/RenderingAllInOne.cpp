@@ -44,6 +44,7 @@
 #include "LayoutRepainter.cpp"
 #include "LayoutState.cpp"
 #include "PointerEventsHitRules.cpp"
+#include "RenderAttachment.cpp"
 #include "RenderBlock.cpp"
 #include "RenderBlockFlow.cpp"
 #include "RenderBlockLineLayout.cpp"

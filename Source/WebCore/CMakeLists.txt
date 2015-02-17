@@ -1542,6 +1542,7 @@ set(WebCore_SOURCES
     html/HTMLAnchorElement.cpp
     html/HTMLAppletElement.cpp
     html/HTMLAreaElement.cpp
+    html/HTMLAttachmentElement.cpp
     html/HTMLAudioElement.cpp
     html/HTMLBRElement.cpp
     html/HTMLBaseElement.cpp
@@ -2265,6 +2266,7 @@ set(WebCore_SOURCES
     rendering/LayoutState.cpp
     rendering/OrderIterator.cpp
     rendering/PointerEventsHitRules.cpp
+    rendering/RenderAttachment.cpp
     rendering/RenderBlock.cpp
     rendering/RenderBlockFlow.cpp
     rendering/RenderBlockLineLayout.cpp

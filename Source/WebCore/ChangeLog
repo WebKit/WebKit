@@ -1,3 +1,58 @@
+2015-02-15  Sam Weinig  <sam@webkit.org>
+
+        Add experimental <attachment> element support
+        https://bugs.webkit.org/show_bug.cgi?id=141626
+
+        Reviewed by Tim Horton.
+
+        Adds scaffolding for an experimental implementation of an <attachment> element
+        which can represent a file attachment (e.g. NSTextAttachment in NSAttributedString
+        parlance).
+
+        The implementation is guarded by both an #ifdef (ENABLE(ATTACHMENT_ELEMENT)) and 
+        a setting (Settings::attachmentElementEnabled()).
+
+        Tests: fast/attachment/attachment-disabled-dom.html
+               fast/attachment/attachment-disabled-rendering.html
+               fast/attachment/attachment-dom.html
+               fast/attachment/attachment-rendering.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add new ENABLE_ATTACHMENT_ELEMENT macro.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * dom/make_names.pl:
+        Add support for checking a setting to determine if a particular tag should be exposed.
+
+        * html/HTMLAttachmentElement.cpp: Added.
+        * html/HTMLAttachmentElement.h: Added.
+        Stub out the basics of the new element.
+
+        * html/HTMLElementsAllInOne.cpp:
+        Add HTMLAttachmentElement.cpp.
+
+        * html/HTMLTagNames.in:
+        Add 'attachment'.
+
+        * page/Settings.in:
+        Add attachmentElementEnabled setting.
+
+        * rendering/RenderAttachment.cpp: Added.
+        * rendering/RenderAttachment.h: Added.
+        Stub out the basics of the new render. We will probably want to replace this with
+        a non-replaced render, but this will do as a placeholder for now.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAttachment):
+        Add predicate for type casting.
+
+        * rendering/RenderingAllInOne.cpp:
+        Add RenderAttachment.cpp.
+
 2015-02-16  Andreas Kling  <akling@apple.com>
 
         GC (almost) immediately when navigating under memory pressure.

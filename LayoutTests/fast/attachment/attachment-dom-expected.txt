@@ -1,0 +1,10 @@
+This tests that attachments have an instance type of HTMLElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS attachment is an instance of HTMLElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
