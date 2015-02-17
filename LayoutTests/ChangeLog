@@ -1,5 +1,18 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update cross-frame http tests after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141679
+
+        Reviewed by Alexey Proskuryakov.
+
+        Simply a spacing change
+
+        * http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+        * http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW-expected.txt:
+        * platform/mac/TestExpectations:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update accessibility/table-cells.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141680
 
