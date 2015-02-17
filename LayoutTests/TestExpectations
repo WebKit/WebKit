@@ -481,3 +481,5 @@ webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass
 
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
+
+webkit.org/b/141695 [ Debug ] LayoutTests/TestExpectations [ Slow ]
