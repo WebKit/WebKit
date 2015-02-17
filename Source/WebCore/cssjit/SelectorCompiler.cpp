@@ -296,6 +296,7 @@ private:
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsNthChildOf(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsNthLastChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsNthLastChildOf(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesNotPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesMatchesPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -682,12 +683,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassNthChild:
         return addNthChildType(selector, selectorContext, positionInRootFragments, visitedMatchEnabled, fragment.nthChildFilters, fragment.nthChildOfFilters, internalSpecificity);
 
-    case CSSSelector::PseudoClassNthLastChild: {
-        FunctionType functionType = addNthChildType(selector, selectorContext, positionInRootFragments, visitedMatchEnabled, fragment.nthLastChildFilters, fragment.nthLastChildOfFilters, internalSpecificity);
-        if (!fragment.nthLastChildOfFilters.isEmpty())
-            return FunctionType::CannotCompile;
-        return functionType;
-    }
+    case CSSSelector::PseudoClassNthLastChild:
+        return addNthChildType(selector, selectorContext, positionInRootFragments, visitedMatchEnabled, fragment.nthLastChildFilters, fragment.nthLastChildOfFilters, internalSpecificity);
 
     case CSSSelector::PseudoClassNot:
         {
@@ -2543,8 +2540,6 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementIsNthChild(matchingPostTagNameFailureCases, fragment);
     if (!fragment.nthLastChildFilters.isEmpty())
         generateElementIsNthLastChild(matchingPostTagNameFailureCases, fragment);
-    if (!fragment.nthChildOfFilters.isEmpty())
-        generateElementIsNthChildOf(matchingPostTagNameFailureCases, fragment);
     if (!fragment.notFilters.isEmpty())
         generateElementMatchesNotPseudoClass(matchingPostTagNameFailureCases, fragment);
     if (!fragment.anyFilters.isEmpty())
@@ -2558,6 +2553,10 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
     if (fragment.langFilter)
         generateElementIsInLanguage(matchingPostTagNameFailureCases, *fragment.langFilter);
 #endif
+    if (!fragment.nthChildOfFilters.isEmpty())
+        generateElementIsNthChildOf(matchingPostTagNameFailureCases, fragment);
+    if (!fragment.nthLastChildOfFilters.isEmpty())
+        generateElementIsNthLastChildOf(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoElementSelector)
         generateElementHasPseudoElement(matchingPostTagNameFailureCases, fragment);
 
@@ -3702,14 +3701,6 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
 
-        for (const auto& slot : fragment.nthLastChildFilters) {
-            if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
-                continue;
-            validSubsetFilters.uncheckedAppend(slot);
-        }
-        if (validSubsetFilters.isEmpty())
-            return;
-
         if (m_selectorContext != SelectorContext::QuerySelector) {
             Assembler::Jump skipMarking;
             {
@@ -3724,6 +3715,16 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
 
             skipMarking.link(&m_assembler);
         }
+
+        failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
+
+        for (const auto& slot : fragment.nthLastChildFilters) {
+            if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
+                continue;
+            validSubsetFilters.uncheckedAppend(slot);
+        }
+        if (validSubsetFilters.isEmpty())
+            return;
     }
 
     LocalRegister elementCounter(m_registerAllocator);
@@ -3746,6 +3747,80 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
 
     for (const auto& slot : validSubsetFilters)
         generateNthFilterTest(failureCases, elementCounter, slot.first, slot.second);
+}
+
+static void setParentAffectedByLastChildOf(Element* parentElement)
+{
+    ASSERT(parentElement);
+    parentElement->setChildrenAffectedByPropertyBasedBackwardPositionalRules();
+    parentElement->setChildrenAffectedByBackwardPositionalRules();
+}
+
+void SelectorCodeGenerator::generateElementIsNthLastChildOf(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    Vector<const NthChildOfSelectorInfo*> validSubsetFilters;
+    validSubsetFilters.reserveInitialCapacity(fragment.nthLastChildOfFilters.size());
+    {
+        LocalRegister parentElement(m_registerAllocator);
+        generateWalkToParentElement(failureCases, parentElement);
+
+        if (m_selectorContext != SelectorContext::QuerySelector) {
+            Assembler::Jump skipMarking;
+            {
+                LocalRegister checkingContext(m_registerAllocator);
+                skipMarking = jumpIfNotResolvingStyle(checkingContext);
+            }
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(setParentAffectedByLastChildOf);
+            functionCall.setOneArgument(parentElement);
+            functionCall.call();
+
+            skipMarking.link(&m_assembler);
+        }
+
+        failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
+
+        // The initial element must match the selector list.
+        for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters)
+            generateElementMatchesSelectorList(failureCases, elementAddressRegister, nthLastChildOfSelectorInfo.selectorList);
+
+        for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters) {
+            if (nthFilterIsAlwaysSatisified(nthLastChildOfSelectorInfo.a, nthLastChildOfSelectorInfo.b))
+                continue;
+            validSubsetFilters.append(&nthLastChildOfSelectorInfo);
+        }
+        if (validSubsetFilters.isEmpty())
+            return;
+    }
+
+    for (const NthChildOfSelectorInfo* nthLastChildOfSelectorInfo : validSubsetFilters) {
+        // Setup the counter at 1.
+        LocalRegisterWithPreference elementCounter(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
+        m_assembler.move(Assembler::TrustedImm32(1), elementCounter);
+
+        // Loop over the following adjacent elements and increment the counter.
+        {
+            LocalRegister nextSibling(m_registerAllocator);
+            m_assembler.move(elementAddressRegister, nextSibling);
+
+            Assembler::JumpList noMoreSiblingsCases;
+
+            Assembler::Label loopStart = m_assembler.label();
+
+            generateWalkToNextAdjacentElement(noMoreSiblingsCases, nextSibling);
+
+            Assembler::JumpList localFailureCases;
+            generateElementMatchesSelectorList(localFailureCases, nextSibling, nthLastChildOfSelectorInfo->selectorList);
+            localFailureCases.linkTo(loopStart, &m_assembler);
+            m_assembler.add32(Assembler::TrustedImm32(1), elementCounter);
+            m_assembler.jump().linkTo(loopStart, &m_assembler);
+
+            noMoreSiblingsCases.link(&m_assembler);
+        }
+
+        generateNthFilterTest(failureCases, elementCounter, nthLastChildOfSelectorInfo->a, nthLastChildOfSelectorInfo->b);
+    }
 }
 
 void SelectorCodeGenerator::generateElementMatchesNotPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

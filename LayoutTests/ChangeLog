@@ -1,3 +1,32 @@
+2015-02-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: finish :nth-last-child()
+        https://bugs.webkit.org/show_bug.cgi?id=141629
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/nth-last-child-cannot-match-during-parsing-1-expected.txt: Added.
+        * fast/selectors/nth-last-child-cannot-match-during-parsing-1.html: Added.
+        * fast/selectors/nth-last-child-cannot-match-during-parsing-2-expected.txt: Added.
+        * fast/selectors/nth-last-child-cannot-match-during-parsing-2.html: Added.
+        * fast/selectors/nth-last-child-of-cannot-match-during-parsing-1-expected.txt: Added.
+        * fast/selectors/nth-last-child-of-cannot-match-during-parsing-1.html: Added.
+        * fast/selectors/nth-last-child-of-cannot-match-during-parsing-2-expected.txt: Added.
+        * fast/selectors/nth-last-child-of-cannot-match-during-parsing-2.html: Added.
+        Those test cover the bugs related to IsParsingChildrenFinished and style update.
+
+        I had to duplicate the tests to have a simple selector because :nth-last-child(n)
+        and :nth-last-child(2n) are optimized differently.
+
+        * fast/selectors/nth-last-child-of-register-requirement-expected.txt: Added.
+        * fast/selectors/nth-last-child-of-register-requirement.html: Added.
+        The ususal register pressure tests. This one is taken directly from
+        the :nth-child() tests, I just changed the expected values.
+
+        * fast/selectors/several-nth-last-child.html:
+        Due to the changes with IsParsingChildrenFinished, this test can no longer
+        use body:nth-last-child() during parsing. I changed it to an async test.
+
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update cross-frame http tests after r177774

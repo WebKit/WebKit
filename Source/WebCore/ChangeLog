@@ -1,3 +1,64 @@
+2015-02-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: finish :nth-last-child()
+        https://bugs.webkit.org/show_bug.cgi?id=141629
+
+        Reviewed by Andreas Kling.
+
+        This patch adds the matcher for :nth-child(An+B of selector list) and
+        fix a small bug I discovered while working on it.
+
+        The matcher is straightforward: count the next siblings matching the selector,
+        nothing fancy.
+
+        While working on it I noticed I forgot the test for IsParsingChildrenFinished
+        on the simple version of :nth-last-child(). I add it in both matcher, write
+        a couple of tests, the first part of the tests now succeed, but the second part
+        fails...
+
+        What happened is:
+        1) We interupt the parsing to execute the JavaScript.
+           From there, we force the style resolution to get the computed style.
+        2) When resolving the style, the early check for isFinishedParsingChildren()
+           quits the function early. This is done *before* we marked the parent
+           for :nth-last-child() style resolution.
+        3) After the script, parsing resume and the following elements are added.
+        4) When resolving the style, only the new elements are marked dirty,
+           the elements pending their :nth-last-child() style never get udpated.
+
+        To fix the problem, I moved the test for FinishedParsingChildren after
+        the parent marking.
+
+        Honestly, those early return for FinishedParsingChildren need to be refined
+        and they should be tested properly. We should not do this kind of things
+        for Query for example.
+
+        Tests: fast/selectors/nth-last-child-cannot-match-during-parsing-1.html
+               fast/selectors/nth-last-child-cannot-match-during-parsing-2.html
+               fast/selectors/nth-last-child-of-cannot-match-during-parsing-1.html
+               fast/selectors/nth-last-child-of-cannot-match-during-parsing-2.html
+               fast/selectors/nth-last-child-of-register-requirement.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        Fix the tree marking.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        The fragment creation was already done, all I had to do was
+        accept the compile.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        :nth-child() and :nth-last-child() with a selector list are heavier than :not()
+        and :matches(), move them accordingly.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChild):
+        More the early return after the tree marking.
+
+        (WebCore::SelectorCompiler::setParentAffectedByLastChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChildOf):
+        New matcher, nothing optimized yet.
+
 2015-02-16  Tim Horton  <timothy_horton@apple.com>
 
         Adopt CAMachPort-as-layer-contents
