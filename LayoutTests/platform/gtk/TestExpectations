@@ -556,6 +556,24 @@ webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cac
 webkit.org/b/141469 http/tests/media/hls/hls-progress.html [ Failure ]
 webkit.org/b/141423 svg/css/getComputedStyle-basic.xhtml [ Failure ]
 
+webkit.org/b/141467 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
+webkit.org/b/141467 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failure ]
+
+webkit.org/b/141697 accessibility/color-well.html [ Failure ]
+webkit.org/b/141698 editing/pasteboard/5761530-1.html [ Failure ]
+webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
+webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
+webkit.org/b/141700 fast/dom/Element/getClientRects.html [ Failure ]
+webkit.org/b/141700 fast/dom/Range/getClientRects.html [ Failure ]
+
+webkit.org/b/141702 http/tests/cache/disk-cache-disable.html [ Failure ]
+webkit.org/b/141703 http/tests/cache/disk-cache-redirect-to-data.html [ Failure ]
+webkit.org/b/141705 media/video-fullscreeen-only-controls.html [ Failure ]
+webkit.org/b/141706 fast/forms/color/input-appearance-color.html [ Failure ]
+webkit.org/b/141709 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
+webkit.org/b/141709 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1139,7 +1157,7 @@ webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
 Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
 
-webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout ]
+webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
 
@@ -1161,7 +1179,7 @@ webkit.org/b/122571 inspector-protocol/debugger/setPauseOnExceptions-none.html [
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-host.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-autoContinue.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Timeout Pass ]
-webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-actions.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-column.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-condition.html [ Timeout Pass ]

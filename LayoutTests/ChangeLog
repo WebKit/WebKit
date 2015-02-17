@@ -1,3 +1,14 @@
+2015-02-17  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK Gardening 17th February.
+
+        https://bugs.webkit.org/show_bug.cgi?id=141712
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/press-targets-center-point-expected.txt: Added. Rebaselined after r180107.
+        * platform/gtk/svg/custom/glyph-selection-non-bmp-expected.txt: Added. Rebaselined after r177774.
+        * platform/gtk/svg/text/textPathBoundsBug-expected.txt: Added. Rebaselined after r177774.
+
 2015-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Document some accessibility and animation debug assertions (Unreviewed)
