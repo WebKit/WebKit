@@ -1,3 +1,16 @@
+2015-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update expected result of fast/forms/cursor-at-editable-content-boundary.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141684
+
+        Reviewed by Andreas Kling.
+
+        One check no longer fails, and another fails in the same way it did before (but with 1-different
+        measurement values)
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/cursor-at-editable-content-boundary-expected.txt:
+
 2015-02-17  Alexey Proskuryakov  <ap@apple.com>
 
         fast/selectors/nth-last-child-of-register-requirement.html is extremely slow in debug builds
