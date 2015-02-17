@@ -37,7 +37,7 @@ def _should_file_trigger_build(target_platform, file):
     # and start using it for their bots. Someone familiar with each platform
     # will have to figure out what the right set of directories/patterns is for
     # that platform.
-    assert(target_platform in ("mac-mavericks", "mac-mountainlion", "mac-yosemite", "win"))
+    assert(target_platform in ("mac-mavericks", "mac-yosemite", "win"))
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.

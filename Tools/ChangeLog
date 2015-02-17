@@ -1,3 +1,17 @@
+2015-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Windows test results should not fall back to mac-mountainlion after r180176
+        https://bugs.webkit.org/show_bug.cgi?id=141719
+
+        Reviewed by Brent Fulgham.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_baseline_search_path):
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_baseline_search_path):
+
 2015-02-17  Daniel Bates  <dabates@apple.com>
 
         [iOS] run-webkit-tests should check that simctl can boot and shutdown simulator device before running tests

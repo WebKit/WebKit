@@ -63,13 +63,13 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):
-        self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-mountainlion', 'mac'], 'xp')
-        self._assert_search_path(['win-vista', 'win-7sp0', 'win', 'mac-mountainlion', 'mac'], 'vista')
-        self._assert_search_path(['win-7sp0', 'win', 'mac-mountainlion', 'mac'], '7sp0')
+        self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win', 'mac'], 'xp')
+        self._assert_search_path(['win-vista', 'win-7sp0', 'win', 'mac'], 'vista')
+        self._assert_search_path(['win-7sp0', 'win', 'mac'], '7sp0')
 
-        self._assert_search_path(['win-wk2', 'win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac-mountainlion', 'mac'], 'xp', use_webkit2=True)
-        self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac-mountainlion', 'mac'], 'vista', use_webkit2=True)
-        self._assert_search_path(['win-wk2', 'win-7sp0', 'win', 'mac-wk2', 'mac-mountainlion', 'mac'], '7sp0', use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac'], 'xp', use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac'], 'vista', use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-7sp0', 'win', 'mac-wk2', 'mac'], '7sp0', use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)
