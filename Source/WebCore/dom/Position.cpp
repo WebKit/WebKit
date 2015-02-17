@@ -50,7 +50,7 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
-  
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -937,7 +937,11 @@ bool Position::isCandidate() const
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
 
-    if (is<RenderBlockFlow>(*renderer) || is<RenderFlexibleBox>(*renderer) || is<RenderGrid>(*renderer)) {
+    if (is<RenderBlockFlow>(*renderer)
+#if ENABLE(CSS_GRID_LAYOUT)
+        || is<RenderGrid>(*renderer)
+#endif
+        || is<RenderFlexibleBox>(*renderer)) {
         RenderBlock& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))

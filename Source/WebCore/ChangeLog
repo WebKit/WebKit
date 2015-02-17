@@ -1,3 +1,15 @@
+2015-02-17  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        REGRESSION(r180050): It broke the !ENABLE(CSS_GRID_LAYOUT) build
+        https://bugs.webkit.org/show_bug.cgi?id=141647
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests since this just fixes a build break.
+
+        * dom/Position.cpp: Add a build guard ENABLE(CSS_GRID_LAYOUT) for RenderGrid.
+        (WebCore::Position::isCandidate):
+
 2015-02-16  Chris Dumez  <cdumez@apple.com>
 
         Keep all memory cache resources in ListHashSets
