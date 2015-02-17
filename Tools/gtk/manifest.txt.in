@@ -49,7 +49,6 @@ exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/platform/efl/DefaultTheme
 exclude Source/WebCore/Resources
-exclude Source/bmalloc
 exclude Source/cmake/EFLHelpers.cmake$
 exclude Source/cmake/OptionsWinCairo.cmake$
 exclude Source/cmake/OptionsWindows.cmake$

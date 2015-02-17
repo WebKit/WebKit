@@ -1,5 +1,13 @@
 2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ make distcheck.
+
+        Do not exclude bmalloc directory from the tarball.
+
+        * gtk/manifest.txt.in:
+
+2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix /webkit2/WebKitDOMNode/dom-cache after r180214.
 
         I forgot to add the return of a bool function.
