@@ -72,11 +72,14 @@ ControllerIOS.prototype = {
     shouldHaveStartPlaybackButton: function() {
         var allowsInline = this.host.mediaPlaybackAllowsInline;
 
-        if (this.isPlaying)
+        if (this.isPlaying || this.hasPlayed)
             return false;
 
         if (this.isAudio() && allowsInline)
             return false;
+
+        if (this.doingSetup)
+            return true;
 
         if (this.isFullScreen())
             return false;
@@ -89,9 +92,6 @@ ControllerIOS.prototype = {
 
         if (this.video.currentSrc && this.video.error)
             return true;
-
-        if (!this.doingSetup && !this.host.userGestureRequired && allowsInline)
-            return false;
 
         return true;
     },
@@ -248,6 +248,8 @@ ControllerIOS.prototype = {
     },
 
     showControls: function() {
+        this.updateTime(true);
+        this.updateProgress(true);
         Controller.prototype.showControls.call(this);
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
@@ -270,13 +272,9 @@ ControllerIOS.prototype = {
         this.setNeedsTimelineMetricsUpdate();
     },
 
-    updateTime: function() {
-        Controller.prototype.updateTime.call(this);
+    updateTime: function(forceUpdate) {
+        Controller.prototype.updateTime.call(this, forceUpdate);
         this.updateProgress();
-    },
-
-    progressFillStyle: function() {
-        return 'rgba(0, 0, 0, 0.5)';
     },
 
     addRoundedRect: function(ctx, x, y, width, height, radius) {
@@ -604,9 +602,16 @@ ControllerIOS.prototype = {
     setPlaying: function(isPlaying)
     {
         Controller.prototype.setPlaying.call(this, isPlaying);
+
+        this.updateControls();
+
         if (isPlaying && this.isAudio())
             this.controls.timelineBox.classList.remove(this.ClassNames.hidden);
-        this.updateControls();
+
+        if (isPlaying)
+            this.hasPlayed = true;
+        else
+            this.showControls();
     },
 
     setShouldListenForPlaybackTargetAvailabilityEvent: function(shouldListen)

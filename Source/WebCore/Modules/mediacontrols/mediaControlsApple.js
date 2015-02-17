@@ -1031,8 +1031,6 @@ Controller.prototype = {
             this.controls.panel.classList.remove(this.ClassNames.paused);
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
-
-            this.hideControls();
             this.resetHideControlsTimer();
         }
     },

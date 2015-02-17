@@ -1,3 +1,35 @@
+2015-02-16  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Video control fails to hide after playback begins in reflowable EPUB files
+        https://bugs.webkit.org/show_bug.cgi?id=141689
+        <rdar://problem/19689286>
+
+        Reviewed by Eric Carlson.
+
+        The iBooks app turns off the requirement for a user gesture
+        before triggering playback. When we moved to script-based
+        media controls there were a few regressions in this setup.
+        This makes them behave a lot more like iOS 7.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.setPlaying): We don't want to hide the controls
+        yet, just start a hiding timer.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.shouldHaveStartPlaybackButton): If we've ever
+        played before, we don't want to show the big start button. If we
+        are in the middle of construction, we do want to show it. We no
+        longer care about the case where you're not in setup and have
+        the relaxed restrictions (we still want to show the start button
+        in that case).
+        (ControllerIOS.prototype.showControls): When we show the controls,
+        make sure our timeline is up to date. This is necessary for the
+        cases where we automatically show the controls, such as when we hit
+        the end of a video.
+        (ControllerIOS.prototype.updateTime): Make sure to pass the forceUpdate
+        parameter on to the super-method.
+        (ControllerIOS.prototype.setPlaying):
+        (ControllerIOS.prototype.progressFillStyle): Deleted.
+
 2015-02-17  Chris Dumez  <cdumez@apple.com>
 
         Access MemoryPressureHandler global instance via a singleton() static member function
