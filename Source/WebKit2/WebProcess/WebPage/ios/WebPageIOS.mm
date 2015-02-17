@@ -2648,7 +2648,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), filteredScale));
 
     // Skip progressively redrawing tiles if pinch-zooming while the system is under memory pressure.
-    if (boundedScale != currentScale && !m_isInStableState && memoryPressureHandler().isUnderMemoryPressure())
+    if (boundedScale != currentScale && !m_isInStableState && MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return;
 
     if (m_isInStableState)

@@ -1,3 +1,21 @@
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Access MemoryPressureHandler global instance via a singleton() static member function
+        https://bugs.webkit.org/show_bug.cgi?id=141691
+
+        Reviewed by Andreas Kling.
+
+        Access MemoryPressureHandler global instance via a singleton() static
+        member function.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView registerForMemoryNotifications]):
+        (+[WebView _isUnderMemoryPressure]):
+        (+[WebView _clearMemoryPressure]):
+        (+[WebView _shouldWaitForMemoryClearMessage]):
+        (WebInstallMemoryPressureHandler):
+
 2015-02-15  Sam Weinig  <sam@webkit.org>
 
         Add experimental <attachment> element support

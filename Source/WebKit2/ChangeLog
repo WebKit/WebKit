@@ -1,3 +1,27 @@
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Access MemoryPressureHandler global instance via a singleton() static member function
+        https://bugs.webkit.org/show_bug.cgi?id=141691
+
+        Reviewed by Andreas Kling.
+
+        Access MemoryPressureHandler global instance via a singleton() static
+        member function.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::lowMemoryHandler): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializeProcess):
+        (WebKit::PluginProcess::lowMemoryHandler): Deleted.
+        * PluginProcess/PluginProcess.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::processWillSuspend):
+
 2015-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitFrame objects are never released

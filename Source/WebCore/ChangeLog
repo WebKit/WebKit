@@ -1,3 +1,51 @@
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Access MemoryPressureHandler global instance via a singleton() static member function
+        https://bugs.webkit.org/show_bug.cgi?id=141691
+
+        Reviewed by Andreas Kling.
+
+        Access MemoryPressureHandler global instance via a singleton() static
+        member function as per coding style. Also make all other member
+        functions non-static as callers can just use singleton() to get the
+        instance and access methods. This avoid having to call
+        MemoryPressureHandler::singleton() from member functions.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::collectGarbageAfterWindowShellDestruction):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCache):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+        (WebCore::FrameView::computeCoverageRect):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::singleton):
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+        (WebCore::memoryPressureHandler): Deleted.
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::setLowMemoryHandler):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::holdOff):
+        (WebCore::respondToMemoryPressureCallback):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::createTilesInActiveGrid):
+        * platform/ios/LegacyTileGrid.mm:
+        (WebCore::LegacyTileGrid::shouldUseMinimalTileCoverage):
+        * platform/ios/LegacyTileLayerPool.mm:
+        (WebCore::LegacyTileLayerPool::addLayer):
+        * platform/ios/TileControllerMemoryHandlerIOS.cpp:
+        (WebCore::TileControllerMemoryHandler::tileControllerGainedUnparentedTiles):
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        (WebCore::MemoryPressureHandler::waitForMemoryPressureEvent):
+
 2015-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebCore.exp.in and clean up.

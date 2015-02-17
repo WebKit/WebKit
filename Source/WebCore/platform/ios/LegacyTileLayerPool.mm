@@ -79,7 +79,7 @@ void LegacyTileLayerPool::addLayer(const RetainPtr<LegacyTileLayer>& layer)
     if (!canReuseLayerWithSize(layerSize))
         return;
 
-    if (memoryPressureHandler().isUnderMemoryPressure()) {
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure: %s, totalBytes: %d", __PRETTY_FUNCTION__, m_totalBytes);
         return;
     }

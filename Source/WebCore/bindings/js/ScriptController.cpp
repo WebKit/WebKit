@@ -65,7 +65,7 @@ static void collectGarbageAfterWindowShellDestruction()
 {
     // Make sure to GC Extra Soon(tm) during memory pressure conditions
     // to soften high peaks of memory usage during navigation.
-    if (memoryPressureHandler().isUnderMemoryPressure()) {
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         // NOTE: We do the collection on next runloop to ensure that there's no pointer
         //       to the window object on the stack.
         gcController().garbageCollectOnNextRunLoop();

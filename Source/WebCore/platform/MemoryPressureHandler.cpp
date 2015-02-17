@@ -46,16 +46,16 @@ namespace WebCore {
 
 WEBCORE_EXPORT bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
 
-MemoryPressureHandler& memoryPressureHandler()
+MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MemoryPressureHandler, staticMemoryPressureHandler, ());
-    return staticMemoryPressureHandler;
+    static NeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
+    return memoryPressureHandler;
 }
 
 MemoryPressureHandler::MemoryPressureHandler() 
     : m_installed(false)
     , m_lastRespondTime(0)
-    , m_lowMemoryHandler(releaseMemory)
+    , m_lowMemoryHandler([this] (bool critical) { releaseMemory(critical); })
     , m_underMemoryPressure(false)
 #if PLATFORM(IOS)
     // FIXME: Can we share more of this with OpenSource?
@@ -101,7 +101,7 @@ void MemoryPressureHandler::releaseCriticalMemory()
     {
         ReliefLogger log("Empty the PageCache");
         // Right now, the only reason we call release critical memory while not under memory pressure is if the process is about to be suspended.
-        PruningReason pruningReason = memoryPressureHandler().isUnderMemoryPressure() ? PruningReason::MemoryPressure : PruningReason::ProcessSuspended;
+        PruningReason pruningReason = isUnderMemoryPressure() ? PruningReason::MemoryPressure : PruningReason::ProcessSuspended;
         PageCache::singleton().pruneToSizeNow(0, pruningReason);
     }
 

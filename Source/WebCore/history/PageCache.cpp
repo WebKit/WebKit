@@ -337,7 +337,7 @@ bool PageCache::canCache(Page* page) const
     
     logCanCachePageDecision(*page);
 
-    if (memoryPressureHandler().isUnderMemoryPressure())
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return false;
 
     // Cache the page, if possible.

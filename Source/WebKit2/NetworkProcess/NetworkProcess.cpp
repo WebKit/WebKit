@@ -161,8 +161,12 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     WTF::setCurrentThreadIsUserInitiated();
 
-    memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
-    memoryPressureHandler().install();
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+    memoryPressureHandler.setLowMemoryHandler([this] (bool critical) {
+        platformLowMemoryHandler(critical);
+        WTF::releaseFastMallocFreeMemory();
+    });
+    memoryPressureHandler.install();
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
@@ -320,12 +324,6 @@ void NetworkProcess::terminate()
 {
     platformTerminate();
     ChildProcess::terminate();
-}
-
-void NetworkProcess::lowMemoryHandler(bool critical)
-{
-    platformLowMemoryHandler(critical);
-    WTF::releaseFastMallocFreeMemory();
 }
 
 #if !PLATFORM(COCOA)

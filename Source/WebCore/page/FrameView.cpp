@@ -3784,7 +3784,7 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
 
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
-    if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure()) {
+    if (paintingState.isTopLevelPainter && MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure: %s", WTF_PRETTY_FUNCTION);
 
         // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
@@ -3828,7 +3828,7 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
 
     // Painting can lead to decoding of large amounts of bitmaps
     // If we are low on memory, wipe them out after the paint.
-    if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure())
+    if (paintingState.isTopLevelPainter && MemoryPressureHandler::singleton().isUnderMemoryPressure())
         MemoryCache::singleton().pruneLiveResources(true);
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
@@ -4505,7 +4505,7 @@ void FrameView::setScrollVelocity(double horizontalVelocity, double verticalVelo
 FloatRect FrameView::computeCoverageRect(double horizontalMargin, double verticalMargin) const
 {
     FloatRect exposedContentRect = this->exposedContentRect();
-    if (!m_speculativeTilingEnabled || memoryPressureHandler().isUnderMemoryPressure())
+    if (!m_speculativeTilingEnabled || MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return exposedContentRect;
 
     double currentTime = monotonicallyIncreasingTime();

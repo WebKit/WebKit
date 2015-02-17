@@ -77,15 +77,10 @@ static inline String nextToken(FILE* file)
     return String(buffer);
 }
 
-MemoryPressureHandler::~MemoryPressureHandler()
-{
-    uninstall();
-}
-
 void MemoryPressureHandler::waitForMemoryPressureEvent(void*)
 {
     ASSERT(!isMainThread());
-    int eventFD = memoryPressureHandler().m_eventFD;
+    int eventFD = MemoryPressureHandler::singleton().m_eventFD;
     if (!eventFD) {
         LOG(MemoryPressure, "Invalidate eventfd.");
         return;
@@ -104,9 +99,9 @@ void MemoryPressureHandler::waitForMemoryPressureEvent(void*)
     if (ReliefLogger::loggingEnabled())
         LOG(MemoryPressure, "Got memory pressure notification (%s)", critical ? "critical" : "non-critical");
 
-    memoryPressureHandler().setUnderMemoryPressure(critical);
+    MemoryPressureHandler::singleton().setUnderMemoryPressure(critical);
     callOnMainThread([critical] {
-        memoryPressureHandler().respondToMemoryPressure(critical);
+        MemoryPressureHandler::singleton().respondToMemoryPressure(critical);
     });
 }
 

@@ -67,21 +67,17 @@ PluginProcess::~PluginProcess()
 {
 }
 
-void PluginProcess::lowMemoryHandler(bool critical)
-{
-    UNUSED_PARAM(critical);
-    auto& pluginProcess = PluginProcess::singleton();
-    if (pluginProcess.shouldTerminate())
-        pluginProcess.terminate();
-}
-
 void PluginProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
 {
     m_pluginPath = parameters.extraInitializationData.get("plugin-path");
     platformInitializeProcess(parameters);
 
-    memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
-    memoryPressureHandler().install();
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+    memoryPressureHandler.setLowMemoryHandler([this] (bool) {
+        if (shouldTerminate())
+            terminate();
+    });
+    memoryPressureHandler.install();
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)

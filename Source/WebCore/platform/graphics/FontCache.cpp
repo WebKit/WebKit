@@ -411,7 +411,7 @@ void FontCache::purgeTimerFired()
 
 void FontCache::purgeInactiveFontDataIfNeeded()
 {
-    bool underMemoryPressure = memoryPressureHandler().isUnderMemoryPressure();
+    bool underMemoryPressure = MemoryPressureHandler::singleton().isUnderMemoryPressure();
     int inactiveFontDataLimit = underMemoryPressure ? cMaxUnderMemoryPressureInactiveFontData : cMaxInactiveFontData;
 
     if (cachedFonts().size() < inactiveFontDataLimit)

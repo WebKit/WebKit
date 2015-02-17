@@ -1054,7 +1054,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setFontFallbackPrefersPictographs(true);
 #endif
 
-    memoryPressureHandler().install();
+    MemoryPressureHandler::singleton().install();
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.
@@ -1263,14 +1263,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     BOOL shouldAutoClearPressureOnMemoryRelease = !WebCore::applicationIsMobileSafari();
 
-    memoryPressureHandler().installMemoryReleaseBlock(^{
+    MemoryPressureHandler::singleton().installMemoryReleaseBlock(^{
         [WebView _handleMemoryWarning];
     }, shouldAutoClearPressureOnMemoryRelease);
 
     static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     dispatch_source_set_event_handler(memoryNotificationEventSource, ^{
         // Set memory pressure flag and schedule releasing memory in web thread runloop exit.
-        memoryPressureHandler().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMPressure);
+        MemoryPressureHandler::singleton().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMPressure);
     });
 
     dispatch_resume(memoryNotificationEventSource);
@@ -1284,9 +1284,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         dispatch_source_set_event_handler(memoryStatusEventSource, ^{
             unsigned long currentStatus = dispatch_source_get_data(memoryStatusEventSource);
             if (currentStatus == DISPATCH_MEMORYSTATUS_PRESSURE_NORMAL)
-                memoryPressureHandler().clearMemoryPressure();
+                MemoryPressureHandler::singleton().clearMemoryPressure();
             else if (currentStatus == DISPATCH_MEMORYSTATUS_PRESSURE_WARN)
-                memoryPressureHandler().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMStatus);
+                MemoryPressureHandler::singleton().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMStatus);
         });
 
         dispatch_resume(memoryStatusEventSource);
@@ -1610,17 +1610,17 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (BOOL)_isUnderMemoryPressure
 {
-    return memoryPressureHandler().isUnderMemoryPressure();
+    return MemoryPressureHandler::singleton().isUnderMemoryPressure();
 }
 
 + (void)_clearMemoryPressure
 {
-    memoryPressureHandler().clearMemoryPressure();
+    MemoryPressureHandler::singleton().clearMemoryPressure();
 }
 
 + (BOOL)_shouldWaitForMemoryClearMessage
 {
-    return memoryPressureHandler().shouldWaitForMemoryClearMessage();
+    return MemoryPressureHandler::singleton().shouldWaitForMemoryClearMessage();
 }
 #endif // PLATFORM(IOS)
 
@@ -8813,5 +8813,5 @@ bool LayerFlushController::flushLayers()
 
 void WebInstallMemoryPressureHandler(void)
 {
-    memoryPressureHandler().install();
+    MemoryPressureHandler::singleton().install();
 }

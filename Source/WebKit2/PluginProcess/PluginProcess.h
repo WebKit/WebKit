@@ -134,7 +134,6 @@ private:
     String m_nsurlCacheDirectory;
 #endif
 
-    static void lowMemoryHandler(bool critical);
     CountedUserActivity m_connectionActivity;
 
     RefPtr<WebCore::AudioHardwareListener> m_audioHardwareListener;
