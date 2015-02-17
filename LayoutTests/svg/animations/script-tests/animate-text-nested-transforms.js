@@ -20,7 +20,7 @@ rootSVGElement.appendChild(text)
 
 function startSample() {
     shouldBeCloseEnough("rootSVGElement.getBBox().x", "117", 1);
-    shouldBeCloseEnough("rootSVGElement.getBBox().y", "-160", 1);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "-162", 1);
 }
 
 function endSample() {

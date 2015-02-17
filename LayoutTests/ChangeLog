@@ -1,5 +1,19 @@
 2015-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update svg/animations/animate-text-nested-transforms.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141686
+
+        Reviewed by Andreas Kling.
+
+        Text metrics are expected to change.
+
+        * platform/mac/TestExpectations:
+        * svg/animations/animate-text-nested-transforms-expected.txt:
+        * svg/animations/script-tests/animate-text-nested-transforms.js:
+        (text.appendChild.rootSVGElement.appendChild.startSample):
+
+2015-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update expected result of fast/forms/cursor-at-editable-content-boundary.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141684
 

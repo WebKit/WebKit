@@ -1267,7 +1267,6 @@ webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOn
 # The following tests' expected results don't look like render tree dumps
 webkit.org/b/139968 editing/selection/fake-drag.html [ Failure ]
 webkit.org/b/139968 fast/forms/text-control-intrinsic-widths.html [ Failure ]
-webkit.org/b/139968 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/139968 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 webkit.org/b/139968 svg/text/text-rect-precision.html [ Failure ]
 webkit.org/b/139968 platform/mac/fast/dom/character-index-for-point.html [ Failure ]
