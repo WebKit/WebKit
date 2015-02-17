@@ -1,3 +1,23 @@
+2015-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt CAMachPort-as-layer-contents
+        https://bugs.webkit.org/show_bug.cgi?id=141687
+        <rdar://problem/19393233>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::decode):
+        If we have CAMachPort, just keep the MachSendRight around.
+
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        If we have CAMachPort, make one and leak our send right into it. CAMachPort
+        will adopt the port and destroy it when needed.
+
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        Tiny style fix.
+
 2015-02-15  Sam Weinig  <sam@webkit.org>
 
         Add experimental <attachment> element support

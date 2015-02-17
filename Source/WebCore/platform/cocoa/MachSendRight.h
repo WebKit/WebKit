@@ -50,6 +50,8 @@ public:
     WEBCORE_EXPORT MachSendRight copySendRight() const;
     WEBCORE_EXPORT mach_port_t leakSendRight() WARN_UNUSED_RETURN;
 
+    explicit operator bool() const { return m_port != MACH_PORT_NULL; }
+
 private:
     explicit MachSendRight(mach_port_t);
 

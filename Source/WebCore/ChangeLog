@@ -1,3 +1,20 @@
+2015-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt CAMachPort-as-layer-contents
+        https://bugs.webkit.org/show_bug.cgi?id=141687
+        <rdar://problem/19393233>
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a performance bump.
+
+        * platform/cocoa/MachSendRight.h:
+        (WebCore::MachSendRight::operator bool):
+        Add an operator bool() that checks if the underlying port is nonnull.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        Add some SPI.
+
 2015-02-15  Sam Weinig  <sam@webkit.org>
 
         Add experimental <attachment> element support

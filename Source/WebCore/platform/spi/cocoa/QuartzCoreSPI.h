@@ -142,3 +142,9 @@ EXTERN_C NSString * const kCAFilterExclusionBlendMode;
 EXTERN_C NSString * const kCAContextDisplayName;
 EXTERN_C NSString * const kCAContextDisplayId;
 EXTERN_C NSString * const kCAContextIgnoresHitTest;
+
+// FIXME: These should move into the !USE(APPLE_INTERNAL_SDK) block once they are more readily available.
+typedef struct _CAMachPort *CAMachPortRef;
+extern "C" {
+CAMachPortRef CAMachPortCreate(mach_port_t);
+};
