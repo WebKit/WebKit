@@ -29,7 +29,7 @@
 #include "CachedFrame.h"
 
 namespace WebCore {
-    
+
 class Document;
 class DocumentLoader;
 class Page;
@@ -45,7 +45,6 @@ public:
     Document* document() const { return m_cachedMainFrame->document(); }
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }
 
-    double timeStamp() const { return m_timeStamp; }
     bool hasExpired() const;
     
     CachedFrame* cachedMainFrame() { return m_cachedMainFrame.get(); }
@@ -59,14 +58,13 @@ public:
     void markForDeviceScaleChanged() { m_needsDeviceScaleChanged = true; }
 
 private:
-    void destroy();
-
-    double m_timeStamp;
     double m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
     bool m_needStyleRecalcForVisitedLinks;
     bool m_needsFullStyleRecalc;
+#if ENABLE(VIDEO_TRACK)
     bool m_needsCaptionPreferencesChanged;
+#endif
     bool m_needsDeviceScaleChanged;
 };
 
