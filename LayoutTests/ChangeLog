@@ -1,3 +1,16 @@
+2015-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards making all bots green.
+
+        * platform/mac-mavericks/css2.1: Added.
+        * platform/mac-mavericks/css2.1/t1202-counter-04-b-expected.txt: Copied from platform/mac/css2.1/t1202-counter-04-b-expected.txt.
+        * platform/mac-mavericks/css2.1/t1202-counters-04-b-expected.txt: Copied from platform/mac/css2.1/t1202-counters-04-b-expected.txt.
+        * platform/mac/TestExpectations:
+        Skip css3/filters/huge-blur-value.html until bug 141653 is resolved.
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+        Rebaselined for Yosemite.
+
 2015-02-12  Brent Fulgham  <bfulgham@apple.com>
 
        Merge r173806. <rdar://problem/19830405>
