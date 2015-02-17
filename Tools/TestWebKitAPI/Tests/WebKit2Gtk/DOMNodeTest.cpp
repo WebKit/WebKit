@@ -236,6 +236,8 @@ private:
         g_assert(WEBKIT_DOM_IS_ELEMENT(a));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(a));
         webkit_dom_node_remove_child(WEBKIT_DOM_NODE(div), WEBKIT_DOM_NODE(a), nullptr);
+
+        return true;
     }
 
     bool runTest(const char* testName, WebKitWebPage* page) override
