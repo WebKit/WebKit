@@ -26,6 +26,7 @@
 #include "RenderText.h"
 
 #include "AXObjectCache.h"
+#include "CharacterProperties.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
 #include "Frame.h"
@@ -1390,16 +1391,6 @@ static inline bool isRegionalIndicator(UChar32 character)
 {
     // National flag emoji each consists of a pair of regional indicator symbols.
     return 0x1F1E6 <= character && character <= 0x1F1FF;
-}
-
-static inline bool isEmojiGroupCandidate(UChar32 character)
-{
-    return character >= 0x1F466 && character <= 0x1F469;
-}
-
-static inline bool isEmojiModifier(UChar32 character)
-{
-    return character >= 0x1F3FB && character <= 0x1F3FF;
 }
 
 #endif
