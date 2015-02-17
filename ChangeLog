@@ -1,3 +1,9 @@
+2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.90 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, remove empty directories.

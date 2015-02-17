@@ -1,4 +1,26 @@
 =================
+WebKitGTK+ 2.7.90
+=================
+
+What's new in WebKitGTK+ 2.7.90?
+
+  - Use the new memory allocator bmalloc instead of TCMalloc which drastically improves
+    the overall performance.
+  - Remove WebKitWebView::close-notification signal and add WebKitNotification::closed
+    instead.
+  - Implement support for new AtkRole types for MathML.
+  - Add support for input color type.
+  - Add API to allow overriding the default color chooser implementation.
+  - Resize the accelerating compositing window to a minimum size again after leaving
+    accelerated compositing mode to save memory.
+  - Ensure WebKitFrame objects are released when the frame is destroyed.
+  - Clear the GObject DOM bindings internal cache when frames are destroyed.
+  - Implement page overlays to bring back the inspector element highlighting.
+  - Fix startup runtime critical warnings when using the network process.
+  - Fix the build with recent versions of GLib that have GMutexLocker.
+  - Fix the gtk-doc generation to appear in DevHelp.
+
+=================
 WebKitGTK+  2.7.4
 =================
 
