@@ -309,10 +309,6 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 webkit.org/b/140084 [ Yosemite+ ] js/dom/dfg-inline-resolve.html [ Pass Timeout ]
 
-#webkit.org/b/141252 [ Release Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Slow ]
-#webkit.org/b/141252 [ Debug Yosemite+ ] inspector/css/selector-dynamic-specificity.html [ Pass Timeout ]
-webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
-
 webkit.org/b/141601 [ Yosemite ] inspector/css/stylesheet-with-mutations.html [ Pass Timeout ]
 
 webkit.org/b/141364 [ Yosemite ] fullscreen/full-screen-plugin.html [ Pass Timeout ]
