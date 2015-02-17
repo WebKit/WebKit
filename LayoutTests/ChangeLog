@@ -1,5 +1,13 @@
 2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [OS X] Reordering TestExpectations
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2015-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         fast/text/glyph-reordering.html no longer fails
         https://bugs.webkit.org/show_bug.cgi?id=141678
 
