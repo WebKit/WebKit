@@ -36,7 +36,6 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-sub readXcode5SymbolsToIgnore();
 sub touch($);
 
 my $arch = $ENV{'CURRENT_ARCH'};
@@ -65,8 +64,6 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     }
     my @weakVTableClasses = ();
     my @weakExternalSymbols = ();
-    my $isXcode5 = $ENV{'XCODE_VERSION_MAJOR'} eq "0500";
-    my $ignoreXcode5SymbolsRegex = $isXcode5 ? "(" . join("|", grep(quotemeta($_), readXcode5SymbolsToIgnore())) . ")" : undef;
     while (<NM>) {
         if (/^STDOUT:/) {
             # Ignore undefined, RTTI and typeinfo symbols.
@@ -74,9 +71,6 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
 
             # ASan compiler-rt calls into __asan_mapping_offset and __asan_mapping_scale
             next if /\b___asan/;
-
-            # Symbols that need to be ignored when building with Xcode 5.x.
-            next if $isXcode5 && /\b${ignoreXcode5SymbolsRegex}\b/;
 
             if (/weak external vtable for (.*)$/) {
                 push @weakVTableClasses, $1;
@@ -120,24 +114,6 @@ if ($sawError and !$coverageBuild) {
 touch($buildTimestampPath);
 
 exit 0;
-
-sub readXcode5SymbolsToIgnore()
-{
-    my $unexportFile = "Source/WebCore/Configurations/WebCore.unexp";
-
-    open(SYMBOLS, File::Spec->catfile(sourceDir(), $unexportFile)) or die "$!";
-
-    my @result;
-    while (<SYMBOLS>) {
-        s/#.*$//;
-        s/^\s+|\s+$//g;
-        push(@result, $_) if $_;
-    }
-
-    close(SYMBOLS);
-
-    return @result;
-}
 
 sub touch($)
 {

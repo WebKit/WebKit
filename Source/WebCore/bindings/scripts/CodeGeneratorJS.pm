@@ -1149,8 +1149,9 @@ sub GenerateHeader
         push(@headerContent, "\n");
     }
     if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
-        # Node needs to not be exported, others need to be exported.
-        if ($implType eq "Node") {
+        # Node and NodeList have custom inline implementations which thus cannot be exported.
+        # FIXME: The special case for Node and NodeList should probably be implemented via an IDL attribute.
+        if ($implType eq "Node" or $implType eq "NodeList") {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         } else {
             push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");

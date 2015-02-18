@@ -1,3 +1,13 @@
+2015-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Streamline unexported function build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=141761
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/check-for-weak-vtables-and-externals: (readXcode5SymbolsToIgnore): Deleted.
+        We don't need to ignore symbols that are not exported due to the .unexp file.
+
 2015-02-18  Timothy Horton  <timothy_horton@apple.com>
 
         Remove more references to WebCore.exp.in

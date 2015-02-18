@@ -87,8 +87,22 @@ _VTPixelTransferSessionTransferImage
 # Function marked ALWAYS_INLINE in header, but may not be inlined in a
 # Debug build.
 
-# Source/WebCore/bindings/js/JSNodeListCustom.h
-__ZN7WebCore4toJSEPN3JSC9ExecStateEPNS_17JSDOMGlobalObjectEPNS_8NodeListE
+# Source/WebCore/platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
+_CMFormatDescriptionGetMediaSubType
+_CMFormatDescriptionGetMediaType
+_CMSampleBufferCreateCopy
+_CMSampleBufferCreateCopyWithNewTiming
+_CMSampleBufferGetDecodeTimeStamp
+_CMSampleBufferGetDuration
+_CMSampleBufferGetPresentationTimeStamp
+_CMSampleBufferGetSampleAttachmentsArray
+_CMSampleBufferGetSampleTimingInfoArray
+_CMSampleBufferGetTotalSampleSize
+_CMVideoFormatDescriptionGetPresentationDimensions
+
+# Source/WebCore/platform/cocoa/TelephoneNumberDetectorCocoa.cpp
+_DDDFAScannerCreateFromCache
+_DDDFAScannerFirstResultInUnicharArray
 
 # Subclasses of an exported C++ class in JavaScriptCore.
 
