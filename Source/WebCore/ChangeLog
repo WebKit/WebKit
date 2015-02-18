@@ -1,3 +1,29 @@
+2015-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Evict dead resources in MemoryCache in MemoryPressureHandler::releaseNoncriticalMemory()
+        https://bugs.webkit.org/show_bug.cgi?id=141723
+
+        Reviewed by Andreas Kling.
+
+        Evict dead resources from the MemoryCache on non-critical memory
+        pressure. On critical memory pressure, we already evict ALL resources
+        from the MemoryCache. It is a good idea to start by evicting resources
+        we care less about on non-critical warning to decrease the chances of
+        getting a critical warning and thus having to clear the whole
+        MemoryCache.
+
+        * loader/cache/MemoryCache.h:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseNoncriticalMemory):
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        Call releaseCriticalMemory() before releaseNoncriticalMemory()
+        as releaseCriticalMemory() is more aggressive. Doing it the
+        other way around would mean that on critical warning, we would
+        first evict dead resources, then evict all resources. It is
+        more efficient to evict all resources first, as it makes the
+        non-critical operation (evict dead resources) a no-op.
+
 2015-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] pause video when a tab moves to the background on some devices

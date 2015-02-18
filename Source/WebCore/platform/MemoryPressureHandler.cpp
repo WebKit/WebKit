@@ -94,6 +94,11 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
         ReliefLogger log("Clearing JS string cache");
         JSDOMWindow::commonVM().stringCache.clear();
     }
+
+    {
+        ReliefLogger log("Evict MemoryCache dead resources");
+        MemoryCache::singleton().pruneDeadResourcesToSize(0);
+    }
 }
 
 void MemoryPressureHandler::releaseCriticalMemory()
@@ -106,7 +111,7 @@ void MemoryPressureHandler::releaseCriticalMemory()
     }
 
     {
-        ReliefLogger log("Prune MemoryCache");
+        ReliefLogger log("Evict all MemoryCache resources");
         MemoryCache::singleton().evictResources();
     }
 
@@ -129,10 +134,10 @@ void MemoryPressureHandler::releaseCriticalMemory()
 
 void MemoryPressureHandler::releaseMemory(bool critical)
 {
-    releaseNoncriticalMemory();
-
     if (critical)
         releaseCriticalMemory();
+
+    releaseNoncriticalMemory();
 
     platformReleaseMemory(critical);
 

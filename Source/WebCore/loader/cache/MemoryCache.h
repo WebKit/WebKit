@@ -161,6 +161,9 @@ public:
     WEBCORE_EXPORT void pruneDeadResources(); // Automatically decide how much to prune.
     WEBCORE_EXPORT void pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources = false);
 
+    WEBCORE_EXPORT void pruneDeadResourcesToSize(unsigned targetSize);
+    WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
+
 private:
 #if ENABLE(CACHE_PARTITIONING)
     typedef HashMap<std::pair<URL, String /* partitionName */>, CachedResource*> CachedResourceMap;
@@ -168,9 +171,6 @@ private:
     typedef HashMap<URL, CachedResource*> CachedResourceMap;
 #endif
     typedef ListHashSet<CachedResource*> LRUList;
-
-    WEBCORE_EXPORT void pruneDeadResourcesToSize(unsigned targetSize);
-    WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
