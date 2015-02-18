@@ -1,3 +1,30 @@
+2015-02-16  David Hyatt  <hyatt@apple.com>
+
+        Wrong element's style is used for text-decoration-style.
+        https://bugs.webkit.org/show_bug.cgi?id=141673
+        <rdar://problem/19876774>
+
+        Reviewed by Dean Jackson.
+
+        Added fast/text/text-underline-style.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        Add arguments for fetching styles.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/InlineTextBox.h:
+        Remove the passed in TextDecorationStyle and instead patch the code to fetch the styles in the same
+        way it fetches the colors.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColorsAndStyles):
+        (WebCore::RenderObject::getTextDecorationColors): Deleted.
+        * rendering/RenderObject.h:
+        Add style fetching to the same function that fetches colors and rename it.
+
 2015-02-18  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r180260): Try to fix incremental builds by changing UserContentController.cpp

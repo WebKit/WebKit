@@ -1,3 +1,14 @@
+2015-02-16  David Hyatt  <hyatt@apple.com>
+        
+        Wrong element's style is used for text-decoration-style.
+        https://bugs.webkit.org/show_bug.cgi?id=141673
+        <rdar://problem/19876774>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/text-underline-style-expected.html: Added.
+        * fast/text/text-underline-style.html: Added.
+
 2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update more test expected results after r177774
