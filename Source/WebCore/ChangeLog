@@ -1,5 +1,17 @@
 2015-02-17  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r180224): Remove unused generate-export-file script
+        <http://webkit.org/b/141491>
+
+        * generate-export-file: Removed.  This was the script used to
+        create WebCore.exp files for iOS since we couldn't compile a
+        host-side tool to run like we did on Mac OS X.  Dont't tell
+        anyone, but this was an epic hack I created while merging open
+        source changes to the internal iOS WebKit repository around the
+        time that the WebCore.exp.in file was created.  End of an era.
+
+2015-02-17  David Kilzer  <ddkilzer@apple.com>
+
         SoftLinking.h: Update copyright and license; clean up whitespace
 
         * platform/win/SoftLinking.h:
