@@ -19,13 +19,21 @@ function step7()
 
 function step6()
 {
-    eventSender.mouseMoveTo(50, 10);
+    var r = document.createRange();
+    var c = document.getElementById("c").firstChild;
+    r.setStart(c, 0);
+    r.setEnd(c, 8);
+    eventSender.mouseMoveTo(r.getBoundingClientRect().right, 10);
     window.setTimeout(step7, 0);
 }
 
 function step5()
 {
-    eventSender.mouseMoveTo(31, 10);
+    var r = document.createRange();
+    var c = document.getElementById("c").firstChild;
+    r.setStart(c, 0);
+    r.setEnd(c, 5);
+    eventSender.mouseMoveTo(r.getBoundingClientRect().right, 10);
     window.setTimeout(step6, 0);
 }
 
@@ -37,7 +45,11 @@ function step4()
 
 function step3()
 {
-    eventSender.mouseMoveTo(30, 10);
+    var r = document.createRange();
+    var c = document.getElementById("c").firstChild;
+    r.setStart(c, 0);
+    r.setEnd(c, 4);
+    eventSender.mouseMoveTo(r.getBoundingClientRect().right, 10);
     eventSender.leapForward(1000);
     window.setTimeout(step4, 0);
 }
@@ -65,6 +77,6 @@ testRunner.waitUntilDone();
 </script>
 </head>
 <body>
-<div contenteditable>Select me, select me, select me</div>
+<div id="c" contenteditable>Select me, select me, select me</div>
 </body>
 </html>
