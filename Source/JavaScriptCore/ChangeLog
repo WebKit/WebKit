@@ -1,3 +1,12 @@
+2015-02-17  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, Restoring the C LOOP insta-crash fix in r180184.
+
+        Fixed a typo that only affected the C Loop in the prologue() macro in LowLevelInterpreter.asm.
+        After the stackHeightOKGetCodeBlock label, codeBlockSetter(t1) should be codeBlockGetter(t1).
+
+        * llint/LowLevelInterpreter.asm: Fixed a typo.
+
 2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r180258 to fix Windows build.
