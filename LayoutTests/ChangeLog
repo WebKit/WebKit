@@ -1,5 +1,19 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178426
+
+    2015-01-14  Jer Noble  <jer.noble@apple.com>
+
+            Null-deref crash when seeking immediately before looping.
+            https://bugs.webkit.org/show_bug.cgi?id=140394
+
+            Reviewed by Eric Carlson.
+
+            * media/video-ended-seek-crash-expected.txt: Added.
+            * media/video-ended-seek-crash.html: Added.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178363
 
     2015-01-13  Andreas Kling  <akling@apple.com>
