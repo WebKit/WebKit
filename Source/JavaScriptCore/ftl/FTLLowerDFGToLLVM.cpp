@@ -93,6 +93,7 @@ public:
     LowerDFGToLLVM(State& state)
         : m_graph(state.graph)
         , m_ftlState(state)
+        , m_loweringSucceeded(true)
         , m_heaps(state.context)
         , m_out(state.context)
         , m_state(state.graph)
@@ -102,8 +103,12 @@ public:
         , m_tbaaStructKind(mdKindID(state.context, "tbaa.struct"))
     {
     }
-    
-    void lower()
+
+
+#define LOWERING_FAILED(node, reason)                                  \
+    loweringFailed((node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason));
+
+    bool lower()
     {
         CString name;
         if (verboseCompilationEnabled()) {
@@ -251,14 +256,22 @@ public:
             case FlushedJSValue:
                 break;
             default:
-                DFG_CRASH(m_graph, node, "Bad flush format for argument");
+                LOWERING_FAILED(node, "Bad flush format for argument");
                 break;
             }
         }
+
+        if (!m_loweringSucceeded)
+            return m_loweringSucceeded;
+
         m_out.jump(lowBlock(m_graph.block(0)));
         
-        for (BasicBlock* block : preOrder)
+        for (BasicBlock* block : preOrder) {
             compileBlock(block);
+
+            if (!m_loweringSucceeded)
+                return m_loweringSucceeded;
+        }
         
         if (Options::dumpLLVMIR())
             dumpModule(m_ftlState.module);
@@ -267,6 +280,8 @@ public:
             m_ftlState.dumpState("after lowering");
         if (validationEnabled())
             verifyModule(m_ftlState.module);
+
+        return m_loweringSucceeded;
     }
 
 private:
@@ -299,8 +314,8 @@ private:
                     type = m_out.int64;
                     break;
                 default:
-                    DFG_CRASH(m_graph, node, "Bad Phi node result type");
-                    break;
+                    LOWERING_FAILED(node, "Bad Phi node result type");
+                    return;
                 }
                 m_phis.add(node, buildAlloca(m_out.m_builder, type));
             }
@@ -796,9 +811,12 @@ private:
         case KillLocal:
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
+            LOWERING_FAILED(m_node, "Unrecognized node in FTL backend");
             break;
         }
+
+        if (!m_loweringSucceeded)
+            return false;
 
         if (!m_state.isValid()) {
             safelyInvalidateAfterTermination();
@@ -835,7 +853,7 @@ private:
             m_out.set(lowJSValue(m_node->child1()), destination);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -861,7 +879,7 @@ private:
             setJSValue(m_out.get(source));
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -899,7 +917,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
         }
     }
     
@@ -924,7 +942,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
         }
     }
     
@@ -987,7 +1005,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1094,7 +1112,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad flush format");
+            LOWERING_FAILED(m_node, "Bad flush format");
             break;
         }
     }
@@ -1254,7 +1272,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1328,7 +1346,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1431,7 +1449,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1529,7 +1547,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1580,7 +1598,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1606,7 +1624,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1731,7 +1749,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             break;
         }
     }
@@ -1869,8 +1887,8 @@ private:
             vmCall(m_out.operation(operationEnsureArrayStorage), m_callFrame, cell);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
-            break;
+            LOWERING_FAILED(m_node, "Bad array type");
+            return;
         }
         
         structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
@@ -1938,7 +1956,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             return;
         }
     }
@@ -2089,7 +2107,8 @@ private:
             // FIXME: FTL should support activations.
             // https://bugs.webkit.org/show_bug.cgi?id=129576
             
-            DFG_CRASH(m_graph, m_node, "Unimplemented");
+            LOWERING_FAILED(m_node, "Unimplemented");
+            return;
         }
         
         TypedPointer base;
@@ -2135,7 +2154,7 @@ private:
                 return;
             }
             
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            LOWERING_FAILED(m_node, "Bad array type");
             return;
         }
     }
@@ -2285,7 +2304,8 @@ private:
                         result = m_out.load32(pointer);
                         break;
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad element size");
+                        LOWERING_FAILED(m_node, "Bad element size");
+                        return;
                     }
                     
                     if (elementSize(type) < 4) {
@@ -2329,14 +2349,15 @@ private:
                     result = m_out.loadDouble(pointer);
                     break;
                 default:
-                    DFG_CRASH(m_graph, m_node, "Bad typed array type");
+                    LOWERING_FAILED(m_node, "Bad typed array type");
+                    return;
                 }
                 
                 setDouble(result);
                 return;
             }
             
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            LOWERING_FAILED(m_node, "Bad array type");
             return;
         } }
     }
@@ -2440,9 +2461,10 @@ private:
                 m_out.storeDouble(value, elementPointer);
                 break;
             }
-                
+
             default:
-                DFG_CRASH(m_graph, m_node, "Bad array type");
+                LOWERING_FAILED(m_node, "Bad array type");
+                return;
             }
 
             m_out.jump(continuation);
@@ -2535,7 +2557,8 @@ private:
                     }
                         
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad use kind");
+                        LOWERING_FAILED(m_node, "Bad use kind");
+                        return;
                     }
                     
                     switch (elementSize(type)) {
@@ -2552,7 +2575,8 @@ private:
                         refType = m_out.ref32;
                         break;
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad element size");
+                        LOWERING_FAILED(m_node, "Bad element size");
+                        return;
                     }
                 } else /* !isInt(type) */ {
                     LValue value = lowDouble(child3);
@@ -2566,7 +2590,8 @@ private:
                         refType = m_out.refDouble;
                         break;
                     default:
-                        DFG_CRASH(m_graph, m_node, "Bad typed array type");
+                        LOWERING_FAILED(m_node, "Bad typed array type");
+                        return;
                     }
                 }
                 
@@ -2590,8 +2615,8 @@ private:
                 return;
             }
             
-            DFG_CRASH(m_graph, m_node, "Bad array type");
-            break;
+            LOWERING_FAILED(m_node, "Bad array type");
+            return;
         }
     }
     
@@ -2662,7 +2687,7 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            LOWERING_FAILED(m_node, "Bad array type");
             return;
         }
     }
@@ -2720,7 +2745,7 @@ private:
         }
 
         default:
-            DFG_CRASH(m_graph, m_node, "Bad array type");
+            LOWERING_FAILED(m_node, "Bad array type");
             return;
         }
     }
@@ -2757,8 +2782,8 @@ private:
                 switch (m_node->indexingType()) {
                 case ALL_BLANK_INDEXING_TYPES:
                 case ALL_UNDECIDED_INDEXING_TYPES:
-                    DFG_CRASH(m_graph, m_node, "Bad indexing type");
-                    break;
+                    LOWERING_FAILED(m_node, "Bad indexing type");
+                    return;
                     
                 case ALL_DOUBLE_INDEXING_TYPES:
                     m_out.storeDouble(
@@ -2775,8 +2800,8 @@ private:
                     break;
                     
                 default:
-                    DFG_CRASH(m_graph, m_node, "Corrupt indexing type");
-                    break;
+                    LOWERING_FAILED(m_node, "Corrupt indexing type");
+                    return;
                 }
             }
             
@@ -3057,8 +3082,8 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            break;
+            LOWERING_FAILED(m_node, "Bad use kind");
+            return;
         }
     }
     
@@ -3149,8 +3174,8 @@ private:
                 m_out.operation(operationMakeRope3), m_callFrame, kids[0], kids[1], kids[2]));
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad number of children");
-            break;
+            LOWERING_FAILED(m_node, "Bad number of children");
+            return;
         }
         m_out.jump(continuation);
         
@@ -3570,8 +3595,8 @@ private:
             nonSpeculativeCompare(LLVMIntEQ, operationCompareEq);
             return;
         }
-        
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+
+        LOWERING_FAILED(m_node, "Bad use kinds");
     }
     
     void compileCompareEqConstant()
@@ -3664,7 +3689,7 @@ private:
             return;
         }
         
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+        LOWERING_FAILED(m_node, "Bad use kinds");
     }
     
     void compileCompareStrictEqConstant()
@@ -3850,8 +3875,8 @@ private:
             }
                 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
-                break;
+                LOWERING_FAILED(m_node, "Bad use kind");
+                return;
             }
             
             m_out.appendTo(switchOnInts, lastNext);
@@ -3896,8 +3921,8 @@ private:
             }
                 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
-                break;
+                LOWERING_FAILED(m_node, "Bad use kind");
+                return;
             }
             
             LBasicBlock lengthIs1 = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar length is 1"));
@@ -3949,7 +3974,7 @@ private:
         }
         
         case SwitchString: {
-            DFG_CRASH(m_graph, m_node, "Unimplemented");
+            LOWERING_FAILED(m_node, "Unimplemented");
             return;
         }
             
@@ -3972,7 +3997,7 @@ private:
             }
                 
             default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                LOWERING_FAILED(m_node, "Bad use kind");
                 return;
             }
             
@@ -3980,7 +4005,7 @@ private:
             return;
         } }
         
-        DFG_CRASH(m_graph, m_node, "Bad switch kind");
+        LOWERING_FAILED(m_node, "Bad switch kind");
     }
     
     void compileReturn()
@@ -4950,7 +4975,7 @@ private:
             return;
         }
         
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+        LOWERING_FAILED(m_node, "Bad use kinds");
     }
     
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)
@@ -5263,7 +5288,7 @@ private:
             return m_out.phi(m_out.boolean, fastResult, slowResult);
         }
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            LOWERING_FAILED(m_node, "Bad use kind");
             return 0;
         }
     }
@@ -5642,7 +5667,7 @@ private:
         case StrictInt52:
             return Int52;
         }
-        DFG_CRASH(m_graph, m_node, "Bad use kind");
+        LOWERING_FAILED(m_node, "Bad use kind");
         return Int52;
     }
     
@@ -5786,7 +5811,7 @@ private:
             return result;
         }
         
-        DFG_CRASH(m_graph, m_node, "Value not defined");
+        LOWERING_FAILED(m_node, "Value not defined");
         return 0;
     }
     
@@ -6101,7 +6126,8 @@ private:
             speculateMisc(edge);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Unsupported speculation use kind");
+            LOWERING_FAILED(m_node, "Unsupported speculation use kind");
+            return;
         }
     }
     
@@ -6162,7 +6188,7 @@ private:
             
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
-                DFG_CRASH(m_graph, m_node, "Unexpected original array");
+                LOWERING_FAILED(m_node, "Unexpected original array");
                 return 0;
                 
             case Array::Array:
@@ -6182,7 +6208,8 @@ private:
                     m_out.constInt8(arrayMode.shapeMask()));
             }
             
-            DFG_CRASH(m_graph, m_node, "Corrupt array class");
+            LOWERING_FAILED(m_node, "Corrupt array class");
+            return 0;
         }
             
         default:
@@ -6716,7 +6743,7 @@ private:
             return ExitValue::argumentsObjectThatWasNotCreated();
         }
         
-        DFG_CRASH(m_graph, m_node, "Invalid flush format");
+        LOWERING_FAILED(m_node, "Invalid flush format");
         return ExitValue::dead();
     }
     
@@ -6789,7 +6816,7 @@ private:
         if (isValid(value))
             return exitArgument(arguments, ValueFormatDouble, value.value());
 
-        DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
+        LOWERING_FAILED(m_node, toCString("Cannot find value for node: ", node).data());
         return ExitValue::dead();
     }
     
@@ -6847,7 +6874,7 @@ private:
             return;
         }
         
-        DFG_CRASH(m_graph, m_node, "Corrupt int52 kind");
+        LOWERING_FAILED(m_node, "Corrupt int52 kind");
     }
     void setJSValue(Node* node, LValue value)
     {
@@ -7001,7 +7028,21 @@ private:
 #endif
         m_out.unreachable();
     }
-    
+
+    void loweringFailed(Node* node, const char* file, int line, const char* function, const char* assertion)
+    {
+#ifndef NDEBUG
+        m_graph.handleAssertionFailure(node, file, line, function, (assertion));
+#else
+        UNUSED_PARAM(node);
+        UNUSED_PARAM(file);
+        UNUSED_PARAM(line);
+        UNUSED_PARAM(function);
+        UNUSED_PARAM(assertion);
+#endif
+        m_loweringSucceeded = false;
+    }
+
     AvailabilityMap& availabilityMap() { return m_availabilityCalculator.m_availability; }
     
     VM& vm() { return m_graph.m_vm; }
@@ -7009,6 +7050,7 @@ private:
     
     Graph& m_graph;
     State& m_ftlState;
+    bool m_loweringSucceeded;
     AbstractHeapRepository m_heaps;
     Output m_out;
     
@@ -7056,12 +7098,14 @@ private:
     uint32_t m_stackmapIDs;
     unsigned m_tbaaKind;
     unsigned m_tbaaStructKind;
+
+#undef LOWERING_FAILED
 };
 
-void lowerDFGToLLVM(State& state)
+bool lowerDFGToLLVM(State& state)
 {
     LowerDFGToLLVM lowering(state);
-    lowering.lower();
+    return lowering.lower();
 }
 
 } } // namespace JSC::FTL
