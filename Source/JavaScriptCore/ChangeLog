@@ -1,3 +1,14 @@
+2015-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r180235): It broke the !ENABLE(PROMISES) build
+        https://bugs.webkit.org/show_bug.cgi?id=141746
+
+        Unreviewed build fix.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        Wrap JSPromise related code in ENABLE(PROMISES) guard.
+
 2015-02-18  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the C-Loop LLInt build
