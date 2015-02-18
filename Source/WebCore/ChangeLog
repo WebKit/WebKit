@@ -1,5 +1,44 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179959
+
+    2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+            Merge r179691
+
+        2015-02-05  Zalan Bujtas  <zalan@apple.com>
+
+                Do not destroy RenderQuote's text fragment child when quotation mark string is changing.
+                https://bugs.webkit.org/show_bug.cgi?id=141271
+                rdar://problem/18169375
+
+                Reviewed by Antti Koivisto.
+
+                Similar approach as https://codereview.chromium.org/679593004/
+
+                This patch ensures that laying out a RenderQuote does not force a sibling RenderQuote's
+                child renderer(RenderText) to be destroyed.
+                BreakingContext holds a pointer to the next renderer on the line (BreakingContext::m_nextObject).
+                While laying out the line, initiated by BreakingContext, placing the current renderer could end up destroying the "next" renderer.
+                This happens when the pseudo after quotation mark(RenderQuote) becomes floated, the sibling <q>'s pseudo
+                before text needs to be changed (from " to ') so that we don't end up with 2 sets of the same opening
+                strings.
+                The fix is to reuse the RenderTextFragment object instead of destroy/recreate it.
+
+                Test: fast/css/content/quote-crash-when-floating.html
+
+                * rendering/RenderQuote.cpp:
+                (WebCore::RenderQuote::RenderQuote):
+                (WebCore::fragmentChild):
+                (WebCore::RenderQuote::updateText):
+                * rendering/RenderQuote.h:
+                * rendering/RenderTextFragment.cpp:
+                (WebCore::RenderTextFragment::setText):
+                (WebCore::RenderTextFragment::setContentString):
+                * rendering/RenderTextFragment.h:
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179953
 
     2015-02-11  Lucas Forschler  <lforschler@apple.com>
