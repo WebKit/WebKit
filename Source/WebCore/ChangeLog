@@ -1,3 +1,9 @@
+2015-02-17  David Kilzer  <ddkilzer@apple.com>
+
+        SoftLinking.h: Update copyright and license; clean up whitespace
+
+        * platform/win/SoftLinking.h:
+
 2015-02-17  Chris Dumez  <cdumez@apple.com>
 
         Slight CachedPage class clean up
