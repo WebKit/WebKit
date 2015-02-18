@@ -64,7 +64,7 @@ static void setImageLoadingSettings(Page* page)
 
 static void invalidateAfterGenericFamilyChange(Page* page)
 {
-    invalidateFontGlyphsCache();
+    invalidateFontCascadeCache();
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }

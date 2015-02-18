@@ -8240,9 +8240,9 @@
     <ClCompile Include="..\platform\graphics\Font.cpp" />
     <ClCompile Include="..\platform\graphics\FontCache.cpp" />
     <ClCompile Include="..\platform\graphics\FontCascade.cpp" />
+    <ClCompile Include="..\platform\graphics\FontCascadeFonts.cpp" />
     <ClCompile Include="..\platform\graphics\FontDescription.cpp" />
     <ClCompile Include="..\platform\graphics\FontGenericFamilies.cpp" />
-    <ClCompile Include="..\platform\graphics\FontGlyphs.cpp" />
     <ClCompile Include="..\platform\graphics\FontFeatureSettings.cpp" />
     <ClCompile Include="..\platform\graphics\FontPlatformData.cpp" />
     <ClCompile Include="..\platform\graphics\FontRanges.cpp" />
@@ -19778,9 +19778,9 @@
     <ClInclude Include="..\platform\graphics\Font.h" />
     <ClInclude Include="..\platform\graphics\FontCache.h" />
     <ClInclude Include="..\platform\graphics\FontCascade.h" />
+    <ClInclude Include="..\platform\graphics\FontCascadeFonts.h" />
     <ClInclude Include="..\platform\graphics\FontDescription.h" />
     <ClInclude Include="..\platform\graphics\FontGenericFamilies.h" />
-    <ClInclude Include="..\platform\graphics\FontGlyphs.h" />
     <ClInclude Include="..\platform\graphics\FontFeatureSettings.h" />
     <ClInclude Include="..\platform\graphics\FontMetrics.h" />
     <ClInclude Include="..\platform\graphics\FontPlatformData.h" />

@@ -2071,10 +2071,10 @@ set(WebCore_SOURCES
     platform/graphics/Font.cpp
     platform/graphics/FontCache.cpp
     platform/graphics/FontCascade.cpp
+    platform/graphics/FontCascadeFonts.cpp
     platform/graphics/FontDescription.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/FontGenericFamilies.cpp
-    platform/graphics/FontGlyphs.cpp
     platform/graphics/FontRanges.cpp
     platform/graphics/GeneratedImage.cpp
     platform/graphics/GeometryUtilities.cpp

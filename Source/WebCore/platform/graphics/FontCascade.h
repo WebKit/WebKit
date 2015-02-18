@@ -27,8 +27,8 @@
 
 #include "DashArray.h"
 #include "Font.h"
+#include "FontCascadeFonts.h"
 #include "FontDescription.h"
-#include "FontGlyphs.h"
 #include "Path.h"
 #include "TextDirection.h"
 #include "TypesettingFeatures.h"
@@ -169,7 +169,7 @@ public:
     FontWeight weight() const { return m_fontDescription.weight(); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 
-    bool isPlatformFont() const { return m_glyphs->isForPlatformFont(); }
+    bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
     const FontMetrics& fontMetrics() const { return primaryFont().fontMetrics(); }
     float spaceWidth() const { return primaryFont().spaceWidth() + m_letterSpacing; }
@@ -285,7 +285,7 @@ public:
     static String normalizeSpaces(const UChar*, unsigned length);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
-    FontGlyphs* glyphs() const { return m_glyphs.get(); }
+    FontCascadeFonts* fonts() const { return m_fonts.get(); }
 
 private:
     bool isLoadingCustomFonts() const;
@@ -335,15 +335,15 @@ private:
     static TypesettingFeatures s_defaultTypesettingFeatures;
 
     FontDescription m_fontDescription;
-    mutable RefPtr<FontGlyphs> m_glyphs;
+    mutable RefPtr<FontCascadeFonts> m_fonts;
     float m_letterSpacing;
     float m_wordSpacing;
     mutable bool m_useBackslashAsYenSymbol;
     mutable unsigned m_typesettingFeatures : 2; // (TypesettingFeatures) Caches values computed from m_fontDescription.
 };
 
-void invalidateFontGlyphsCache();
-void pruneUnreferencedEntriesFromFontGlyphsCache();
+void invalidateFontCascadeCache();
+void pruneUnreferencedEntriesFromFontCascadeCache();
 void pruneSystemFallbackFonts();
 void clearWidthCaches();
 
@@ -353,25 +353,25 @@ inline FontCascade::~FontCascade()
 
 inline const Font& FontCascade::primaryFont() const
 {
-    ASSERT(m_glyphs);
-    return m_glyphs->primaryFont(m_fontDescription);
+    ASSERT(m_fonts);
+    return m_fonts->primaryFont(m_fontDescription);
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
-    ASSERT(m_glyphs);
-    return m_glyphs->realizeFallbackRangesAt(m_fontDescription, index);
+    ASSERT(m_fonts);
+    return m_fonts->realizeFallbackRangesAt(m_fontDescription, index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
-    ASSERT(m_glyphs);
-    return m_glyphs->isFixedPitch(m_fontDescription);
+    ASSERT(m_fonts);
+    return m_fonts->isFixedPitch(m_fontDescription);
 }
 
 inline FontSelector* FontCascade::fontSelector() const
 {
-    return m_glyphs ? m_glyphs->fontSelector() : 0;
+    return m_fonts ? m_fonts->fontSelector() : 0;
 }
 
 inline float FontCascade::tabWidth(const Font& font, unsigned tabSize, float position) const

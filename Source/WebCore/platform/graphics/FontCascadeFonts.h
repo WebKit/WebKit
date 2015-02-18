@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef FontGlyphs_h
-#define FontGlyphs_h
+#ifndef FontCascadeFonts_h
+#define FontCascadeFonts_h
 
 #include "Font.h"
 #include "FontRanges.h"
@@ -41,13 +41,13 @@ class FontDescription;
 class FontPlatformData;
 class FontSelector;
 
-class FontGlyphs : public RefCounted<FontGlyphs> {
-    WTF_MAKE_NONCOPYABLE(FontGlyphs);
+class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
+    WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
 public:
-    static Ref<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontGlyphs(fontSelector)); }
-    static Ref<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontGlyphs(platformData)); }
+    static Ref<FontCascadeFonts> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontCascadeFonts(fontSelector)); }
+    static Ref<FontCascadeFonts> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontCascadeFonts(platformData)); }
 
-    WEBCORE_EXPORT ~FontGlyphs();
+    WEBCORE_EXPORT ~FontCascadeFonts();
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
@@ -72,8 +72,8 @@ public:
     void pruneSystemFallbacks();
 
 private:
-    FontGlyphs(PassRefPtr<FontSelector>);
-    FontGlyphs(const FontPlatformData&);
+    FontCascadeFonts(PassRefPtr<FontSelector>);
+    FontCascadeFonts(const FontPlatformData&);
 
     GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontVariant);
     GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
@@ -98,14 +98,14 @@ private:
     bool m_isForPlatformFont { false };
 };
 
-inline bool FontGlyphs::isFixedPitch(const FontDescription& description)
+inline bool FontCascadeFonts::isFixedPitch(const FontDescription& description)
 {
     if (m_pitch == UnknownPitch)
         determinePitch(description);
     return m_pitch == FixedPitch;
 };
 
-inline const Font& FontGlyphs::primaryFont(const FontDescription& description)
+inline const Font& FontCascadeFonts::primaryFont(const FontDescription& description)
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimaryFont) {

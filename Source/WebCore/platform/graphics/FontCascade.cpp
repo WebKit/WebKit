@@ -51,7 +51,7 @@ template <> void deleteOwnedPtr<WebCore::TextLayout>(WebCore::TextLayout* ptr)
 
 namespace WebCore {
 
-static Ref<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription&, PassRefPtr<FontSelector>);
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription&, PassRefPtr<FontSelector>);
 
 const uint8_t FontCascade::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -125,8 +125,8 @@ FontCascade::FontCascade(const FontDescription& fd, float letterSpacing, float w
 }
 
 // FIXME: We should make this constructor platform-independent.
-FontCascade::FontCascade(const FontPlatformData& font, FontSmoothingMode fontSmoothingMode)
-    : m_glyphs(FontGlyphs::createForPlatformFont(font))
+FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
+    : m_fonts(FontCascadeFonts::createForPlatformFont(fontData))
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_useBackslashAsYenSymbol(false)
@@ -134,33 +134,32 @@ FontCascade::FontCascade(const FontPlatformData& font, FontSmoothingMode fontSmo
 {
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
 #if PLATFORM(IOS)
-    m_fontDescription.setSpecifiedSize(CTFontGetSize(font.font()));
-    m_fontDescription.setComputedSize(CTFontGetSize(font.font()));
-    m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(font.font()) & kCTFontTraitItalic);
-    m_fontDescription.setWeight((CTFontGetSymbolicTraits(font.font()) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
+    m_fontDescription.setSpecifiedSize(CTFontGetSize(fontData.font()));
+    m_fontDescription.setComputedSize(CTFontGetSize(fontData.font()));
+    m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitItalic);
+    m_fontDescription.setWeight((CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
 #endif
 }
 
 // FIXME: We should make this constructor platform-independent.
 #if PLATFORM(IOS)
-FontCascade::FontCascade(const FontPlatformData& font, PassRefPtr<FontSelector> fontSelector)
-    : m_glyphs(FontGlyphs::createForPlatformFont(font))
-    , m_letterSpacing(0)
+FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelector> fontSelector)
+    : m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
-    CTFontRef primaryFont = font.font();
+    CTFontRef primaryFont = fontData.font();
     m_fontDescription.setSpecifiedSize(CTFontGetSize(primaryFont));
     m_fontDescription.setComputedSize(CTFontGetSize(primaryFont));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitItalic);
     m_fontDescription.setWeight((CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
-    m_glyphs = retrieveOrAddCachedFontGlyphs(m_fontDescription, fontSelector.get());
+    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, fontSelector.get());
 }
 #endif
 
 FontCascade::FontCascade(const FontCascade& other)
     : m_fontDescription(other.m_fontDescription)
-    , m_glyphs(other.m_glyphs)
+    , m_fonts(other.m_fonts)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
@@ -171,7 +170,7 @@ FontCascade::FontCascade(const FontCascade& other)
 FontCascade& FontCascade::operator=(const FontCascade& other)
 {
     m_fontDescription = other.m_fontDescription;
-    m_glyphs = other.m_glyphs;
+    m_fonts = other.m_fonts;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
     m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
@@ -186,21 +185,21 @@ bool FontCascade::operator==(const FontCascade& other) const
 
     if (m_fontDescription != other.m_fontDescription || m_letterSpacing != other.m_letterSpacing || m_wordSpacing != other.m_wordSpacing)
         return false;
-    if (m_glyphs == other.m_glyphs)
+    if (m_fonts == other.m_fonts)
         return true;
-    if (!m_glyphs || !other.m_glyphs)
+    if (!m_fonts || !other.m_fonts)
         return false;
-    if (m_glyphs->fontSelector() != other.m_glyphs->fontSelector())
+    if (m_fonts->fontSelector() != other.m_fonts->fontSelector())
         return false;
     // Can these cases actually somehow occur? All fonts should get wiped out by full style recalc.
-    if (m_glyphs->fontSelectorVersion() != other.m_glyphs->fontSelectorVersion())
+    if (m_fonts->fontSelectorVersion() != other.m_fonts->fontSelectorVersion())
         return false;
-    if (m_glyphs->generation() != other.m_glyphs->generation())
+    if (m_fonts->generation() != other.m_fonts->generation())
         return false;
     return true;
 }
 
-struct FontGlyphsCacheKey {
+struct FontCascadeCacheKey {
     // This part of the key is shared with the lower level FontCache (caching FontData objects).
     FontDescriptionFontDataCacheKey fontDescriptionCacheKey;
     Vector<AtomicString, 3> families;
@@ -209,20 +208,20 @@ struct FontGlyphsCacheKey {
     unsigned fontSelectorFlags;
 };
 
-struct FontGlyphsCacheEntry {
+struct FontCascadeCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontGlyphsCacheEntry(FontGlyphsCacheKey&& k, Ref<FontGlyphs>&& g)
-        : key(WTF::move(k))
-        , glyphs(WTF::move(g))
+    FontCascadeCacheEntry(FontCascadeCacheKey&& key, Ref<FontCascadeFonts>&& fonts)
+        : key(WTF::move(key))
+        , fonts(WTF::move(fonts))
     { }
-    FontGlyphsCacheKey key;
-    Ref<FontGlyphs> glyphs;
+    FontCascadeCacheKey key;
+    Ref<FontCascadeFonts> fonts;
 };
 
-typedef HashMap<unsigned, std::unique_ptr<FontGlyphsCacheEntry>, AlreadyHashed> FontGlyphsCache;
+typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed> FontCascadeCache;
 
-static bool operator==(const FontGlyphsCacheKey& a, const FontGlyphsCacheKey& b)
+static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
     if (a.fontDescriptionCacheKey != b.fontDescriptionCacheKey)
         return false;
@@ -237,21 +236,21 @@ static bool operator==(const FontGlyphsCacheKey& a, const FontGlyphsCacheKey& b)
     return true;
 }
 
-static FontGlyphsCache& fontGlyphsCache()
+static FontCascadeCache& fontCascadeCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontGlyphsCache, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontCascadeCache, cache, ());
     return cache;
 }
 
-void invalidateFontGlyphsCache()
+void invalidateFontCascadeCache()
 {
-    fontGlyphsCache().clear();
+    fontCascadeCache().clear();
 }
 
 void clearWidthCaches()
 {
-    for (auto it = fontGlyphsCache().begin(), end = fontGlyphsCache().end(); it != end; ++it)
-        it->value->glyphs.get().widthCache().clear();
+    for (auto& value : fontCascadeCache().values())
+        value->fonts.get().widthCache().clear();
 }
 
 static unsigned makeFontSelectorFlags(const FontDescription& description)
@@ -259,17 +258,19 @@ static unsigned makeFontSelectorFlags(const FontDescription& description)
     return static_cast<unsigned>(description.script()) << 1 | static_cast<unsigned>(description.smallCaps());
 }
 
-static void makeFontGlyphsCacheKey(FontGlyphsCacheKey& key, const FontDescription& description, FontSelector* fontSelector)
+static FontCascadeCacheKey makeFontCascadeCacheKey(const FontDescription& description, FontSelector* fontSelector)
 {
+    FontCascadeCacheKey key;
     key.fontDescriptionCacheKey = FontDescriptionFontDataCacheKey(description);
     for (unsigned i = 0; i < description.familyCount(); ++i)
         key.families.append(description.familyAt(i));
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
     key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
     key.fontSelectorFlags = fontSelector && fontSelector->resolvesFamilyFor(description) ? makeFontSelectorFlags(description) : 0;
+    return key;
 }
 
-static unsigned computeFontGlyphsCacheHash(const FontGlyphsCacheKey& key)
+static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
 {
     Vector<unsigned, 7> hashCodes;
     hashCodes.reserveInitialCapacity(4 + key.families.size());
@@ -284,48 +285,47 @@ static unsigned computeFontGlyphsCacheHash(const FontGlyphsCacheKey& key)
     return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
 }
 
-void pruneUnreferencedEntriesFromFontGlyphsCache()
+void pruneUnreferencedEntriesFromFontCascadeCache()
 {
-    fontGlyphsCache().removeIf([](FontGlyphsCache::KeyValuePairType& entry) {
-        return entry.value->glyphs.get().hasOneRef();
+    fontCascadeCache().removeIf([](FontCascadeCache::KeyValuePairType& entry) {
+        return entry.value->fonts.get().hasOneRef();
     });
 }
 
 void pruneSystemFallbackFonts()
 {
-    for (auto& entry : fontGlyphsCache().values())
-        entry->glyphs->pruneSystemFallbacks();
+    for (auto& entry : fontCascadeCache().values())
+        entry->fonts->pruneSystemFallbacks();
 }
 
-static Ref<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)
 {
-    FontGlyphsCacheKey key;
-    makeFontGlyphsCacheKey(key, fontDescription, fontSelector.get());
+    auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
 
-    unsigned hash = computeFontGlyphsCacheHash(key);
-    FontGlyphsCache::AddResult addResult = fontGlyphsCache().add(hash, std::unique_ptr<FontGlyphsCacheEntry>());
+    unsigned hash = computeFontCascadeCacheHash(key);
+    auto addResult = fontCascadeCache().add(hash, std::unique_ptr<FontCascadeCacheEntry>());
     if (!addResult.isNewEntry && addResult.iterator->value->key == key)
-        return addResult.iterator->value->glyphs.get();
+        return addResult.iterator->value->fonts.get();
 
-    std::unique_ptr<FontGlyphsCacheEntry>& newEntry = addResult.iterator->value;
-    newEntry = std::make_unique<FontGlyphsCacheEntry>(WTF::move(key), FontGlyphs::create(fontSelector));
-    Ref<FontGlyphs> glyphs = newEntry->glyphs.get();
+    auto& newEntry = addResult.iterator->value;
+    newEntry = std::make_unique<FontCascadeCacheEntry>(WTF::move(key), FontCascadeFonts::create(fontSelector));
+    Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
 
     static const unsigned unreferencedPruneInterval = 50;
     static const int maximumEntries = 400;
     static unsigned pruneCounter;
-    // Referenced FontGlyphs would exist anyway so pruning them saves little memory.
+    // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
     if (!(++pruneCounter % unreferencedPruneInterval))
-        pruneUnreferencedEntriesFromFontGlyphsCache();
+        pruneUnreferencedEntriesFromFontCascadeCache();
     // Prevent pathological growth.
-    if (fontGlyphsCache().size() > maximumEntries)
-        fontGlyphsCache().remove(fontGlyphsCache().begin());
+    if (fontCascadeCache().size() > maximumEntries)
+        fontCascadeCache().remove(fontCascadeCache().begin());
     return glyphs;
 }
 
 void FontCascade::update(PassRefPtr<FontSelector> fontSelector) const
 {
-    m_glyphs = retrieveOrAddCachedFontGlyphs(m_fontDescription, fontSelector.get());
+    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, fontSelector.get());
     m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
     m_typesettingFeatures = computeTypesettingFeatures();
 }
@@ -384,7 +384,7 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
 
     bool hasKerningOrLigatures = typesettingFeatures() & (Kerning | Ligatures);
     bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
-    float* cacheEntry = m_glyphs->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), hasKerningOrLigatures, hasWordSpacingOrLetterSpacing, glyphOverflow);
+    float* cacheEntry = m_fonts->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), hasKerningOrLigatures, hasWordSpacingOrLetterSpacing, glyphOverflow);
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
@@ -432,7 +432,7 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     if (mirror)
         c = u_charMirror(c);
 
-    return m_glyphs->glyphDataForCharacter(c, m_fontDescription, variant);
+    return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant);
 }
 
 #if !PLATFORM(COCOA)
@@ -1095,7 +1095,7 @@ bool FontCascade::canReceiveTextEmphasis(UChar32 c)
 
 bool FontCascade::isLoadingCustomFonts() const
 {
-    return m_glyphs && m_glyphs->isLoadingCustomFonts();
+    return m_fonts && m_fonts->isLoadingCustomFonts();
 }
     
 GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, int index)
