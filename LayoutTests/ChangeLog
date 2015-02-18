@@ -1,5 +1,23 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179968
+
+    2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+            Merge r179706
+
+        2015-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+                Crash due to failing to dirty a removed text node's line box
+                https://bugs.webkit.org/show_bug.cgi?id=136544
+
+                Reviewed by David Hyatt.
+
+                * fast/text/remove-text-node-linebox-not-dirty-crash-expected.txt: Added.
+                * fast/text/remove-text-node-linebox-not-dirty-crash.html: Added.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179959
 
     2015-02-11  Lucas Forschler  <lforschler@apple.com>
