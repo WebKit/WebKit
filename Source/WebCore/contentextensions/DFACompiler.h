@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef DFACompiler_h
+#define DFACompiler_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "DFA.h"
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
-#include <JavaScriptCore/VM.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-class URL;
-
 namespace ContentExtensions {
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
-public:
-    ContentExtensionsBackend();
+class DFA;
 
-    // - Rule management interface. This can be used by upper layer.
-
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-    void removeRuleList(const String& identifier);
-    void removeAllRuleLists();
-
-    // - Internal WebCore Interface.
-    bool shouldBlockURL(const URL&);
-
-private:
-    struct CompiledContentExtension {
-        JSC::MacroAssemblerCodeRef compiledMatcher;
-        Vector<ContentExtensionRule> ruleList;
-    };
-
-    Ref<JSC::VM> m_vm;
-    HashMap<String, CompiledContentExtension> m_ruleLists;
+struct PotentialPageLoadDescriptor {
+    const char* urlBuffer;
+    unsigned urlBufferSize;
 };
+
+typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> TriggeredActionSet;
+
+typedef void (*AddActionFunction)(TriggeredActionSet*, unsigned);
+typedef void (*CompiledRuleMatcher)(PotentialPageLoadDescriptor*, AddActionFunction, TriggeredActionSet*);
+
+JSC::MacroAssemblerCodeRef compileDFA(const DFA&, JSC::VM&);
 
 } // namespace ContentExtensions
 
@@ -78,4 +55,4 @@ private:
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsBackend_h
+#endif // DFACompiler_h
