@@ -1,3 +1,76 @@
+2015-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to use WEBCORE_EXPORT on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=141735
+
+        Reviewed by Brent Fulgham.
+
+        * bindings/js/GCController.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        * bindings/scripts/test/JS/JSreadonly.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * dom/make_names.pl:
+        (printNamesHeaderFile):
+        * history/HistoryItem.h:
+        * loader/FrameLoader.h:
+        * loader/LoaderStrategy.h:
+        * loader/ResourceLoadScheduler.h:
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.h:
+        * page/DatabaseProvider.h:
+        * page/Page.h:
+        * page/PageConsoleClient.h:
+        * page/PageOverlay.h:
+        * platform/FileSystem.h:
+        * platform/MemoryPressureHandler.h:
+        * platform/ThreadGlobalData.h:
+        * platform/URL.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/network/BlobDataFileReference.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.h:
+        * platform/sql/SQLiteDatabase.h:
+        * rendering/ScrollBehavior.h:
+        * rendering/break_lines.h:
+        Add and move some WEBCORE_EXPORT macros.
+
 2015-02-18  Anders Carlsson  <andersca@apple.com>
 
         Rename LocalizedStringsMac.cpp to LocalizedStringsCocoa.mm

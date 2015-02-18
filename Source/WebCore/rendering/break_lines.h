@@ -33,7 +33,7 @@ static const UChar asciiLineBreakTableFirstChar = '!';
 static const UChar asciiLineBreakTableLastChar = 127;
 static const unsigned asciiLineBreakTableColumnCount = (asciiLineBreakTableLastChar - asciiLineBreakTableFirstChar) / 8 + 1;
 
-extern const unsigned char asciiLineBreakTable[][asciiLineBreakTableColumnCount];
+WEBCORE_EXPORT extern const unsigned char asciiLineBreakTable[][asciiLineBreakTableColumnCount];
 
 enum class NBSPBehavior {
     IgnoreNBSP,

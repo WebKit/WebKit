@@ -50,7 +50,7 @@ class WEBCORE_EXPORT BlobRegistryImpl final : public BlobRegistry {
 public:
     virtual ~BlobRegistryImpl();
 
-    WEBCORE_EXPORT BlobData* getBlobDataFromURL(const URL&) const;
+    BlobData* getBlobDataFromURL(const URL&) const;
 
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 

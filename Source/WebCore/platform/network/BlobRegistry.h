@@ -66,7 +66,7 @@ public:
     virtual bool isBlobRegistryImpl() const { return false; }
 
 protected:
-    WEBCORE_EXPORT virtual ~BlobRegistry();
+    virtual ~BlobRegistry();
 };
 
 } // namespace WebCore

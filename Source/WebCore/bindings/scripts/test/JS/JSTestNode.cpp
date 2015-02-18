@@ -119,7 +119,7 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
+const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 void JSTestNodePrototype::finishCreation(VM& vm)
 {
@@ -127,7 +127,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestNodePrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
+const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
 
 JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
     : JSNode(structure, globalObject, WTF::move(impl))

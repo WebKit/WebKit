@@ -470,7 +470,7 @@ private:
 #if ENABLE(POINTER_LOCK)
     const std::unique_ptr<PointerLockController> m_pointerLockController;
 #endif
-    WEBCORE_EXPORT RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+    RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
     const std::unique_ptr<ProgressTracker> m_progress;

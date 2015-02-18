@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestNondeterministic : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestNondeterministic : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestNondeterministic* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNondeterministic>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestNondeterministic* toWrapped(JSC::JSValue);
+    static TestNondeterministic* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestNondeterministic();
 

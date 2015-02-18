@@ -32,7 +32,7 @@
 namespace JSC {
 namespace Bindings {
 
-class RuntimeObject : public JSDestructibleObject {
+class WEBCORE_EXPORT RuntimeObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
@@ -43,16 +43,16 @@ public:
         return object;
     }
 
-    WEBCORE_EXPORT static void destroy(JSCell*);
+    static void destroy(JSCell*);
 
-    WEBCORE_EXPORT static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    WEBCORE_EXPORT static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    WEBCORE_EXPORT static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    WEBCORE_EXPORT static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
-    WEBCORE_EXPORT static CallType getCallData(JSCell*, CallData&);
-    WEBCORE_EXPORT static ConstructType getConstructData(JSCell*, ConstructData&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    static CallType getCallData(JSCell*, CallData&);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
 
-    WEBCORE_EXPORT static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
     void invalidate();
 
@@ -73,8 +73,8 @@ public:
     }
 
 protected:
-    WEBCORE_EXPORT RuntimeObject(VM&, Structure*, PassRefPtr<Instance>);
-    WEBCORE_EXPORT void finishCreation(VM&);
+    RuntimeObject(VM&, Structure*, PassRefPtr<Instance>);
+    void finishCreation(VM&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:

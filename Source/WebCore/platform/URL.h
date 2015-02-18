@@ -154,9 +154,9 @@ public:
     void setFragmentIdentifier(const String&);
     void removeFragmentIdentifier();
 
-    friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+    WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
 
-    friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
+    WEBCORE_EXPORT friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
     unsigned hostStart() const;
     unsigned hostEnd() const;

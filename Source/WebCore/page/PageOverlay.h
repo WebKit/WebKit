@@ -70,7 +70,7 @@ public:
     };
 
     WEBCORE_EXPORT static PassRefPtr<PageOverlay> create(Client&, OverlayType = OverlayType::View);
-    virtual ~PageOverlay();
+    WEBCORE_EXPORT virtual ~PageOverlay();
 
     WEBCORE_EXPORT PageOverlayController* controller() const;
 

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestActiveDOMObject : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestActiveDOMObject : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestActiveDOMObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestActiveDOMObject>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestActiveDOMObject* toWrapped(JSC::JSValue);
+    static TestActiveDOMObject* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
     ~JSTestActiveDOMObject();

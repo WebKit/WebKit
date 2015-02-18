@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestEventTarget : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestEventTarget : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
@@ -39,7 +39,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestEventTarget* toWrapped(JSC::JSValue);
+    static TestEventTarget* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);

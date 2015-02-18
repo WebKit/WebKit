@@ -121,7 +121,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
     { "cachedReadonlyValue", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
+const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 {
@@ -129,7 +129,7 @@ void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestSerializedScriptValueInterfacePrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
+const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
 
 JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
     : JSDOMWrapper(structure, globalObject)

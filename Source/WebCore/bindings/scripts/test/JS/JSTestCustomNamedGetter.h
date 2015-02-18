@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestCustomNamedGetter : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestCustomNamedGetter : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestCustomNamedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomNamedGetter>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestCustomNamedGetter* toWrapped(JSC::JSValue);
+    static TestCustomNamedGetter* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);

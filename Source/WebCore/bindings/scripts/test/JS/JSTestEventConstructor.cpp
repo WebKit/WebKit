@@ -157,7 +157,7 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
     { "attr2", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorAttr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
+const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 {
@@ -165,7 +165,7 @@ void JSTestEventConstructorPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestEventConstructorPrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructor) };
+const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
 JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
     : JSDOMWrapper(structure, globalObject)

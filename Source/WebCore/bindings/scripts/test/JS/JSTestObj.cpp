@@ -645,7 +645,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "any", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) },
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 void JSTestObjPrototype::finishCreation(VM& vm)
 {
@@ -653,7 +653,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestObjPrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
+const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
     : JSDOMWrapper(structure, globalObject)

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestTypedefs : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestTypedefs : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestTypedefs* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestTypedefs* toWrapped(JSC::JSValue);
+    static TestTypedefs* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
     ~JSTestTypedefs();

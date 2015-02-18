@@ -48,7 +48,7 @@ class SubresourceLoader;
 class ResourceLoadScheduler {
     WTF_MAKE_NONCOPYABLE(ResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
-    friend ResourceLoadScheduler* resourceLoadScheduler();
+    WEBCORE_EXPORT friend ResourceLoadScheduler* resourceLoadScheduler();
 
     WEBCORE_EXPORT virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
     WEBCORE_EXPORT virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);

@@ -198,7 +198,7 @@ uint64_t getVolumeFreeSizeForPath(const char*);
 #endif
 
 #if PLATFORM(WIN)
-String localUserSpecificStorageDirectory();
+WEBCORE_EXPORT String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
 #endif
 

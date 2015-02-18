@@ -40,11 +40,11 @@ class ResourceResponse;
 
 class WEBCORE_EXPORT LoaderStrategy {
 public:
-    WEBCORE_EXPORT virtual ResourceLoadScheduler* resourceLoadScheduler();
+    virtual ResourceLoadScheduler* resourceLoadScheduler();
 
-    WEBCORE_EXPORT virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
+    virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    WEBCORE_EXPORT virtual BlobRegistry* createBlobRegistry();
+    virtual BlobRegistry* createBlobRegistry();
 
 protected:
     virtual ~LoaderStrategy()

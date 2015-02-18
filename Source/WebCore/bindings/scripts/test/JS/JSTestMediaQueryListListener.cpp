@@ -109,7 +109,7 @@ static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
     { "method", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) },
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
+const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {
@@ -117,7 +117,7 @@ void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
+const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
     : JSDOMWrapper(structure, globalObject)

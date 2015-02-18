@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class JSTestException : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestException : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
@@ -39,7 +39,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestException* toWrapped(JSC::JSValue);
+    static TestException* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
     ~JSTestException();

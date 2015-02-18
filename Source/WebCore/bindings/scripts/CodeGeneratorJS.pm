@@ -801,7 +801,7 @@ sub GenerateHeader
     AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($interface, "Event");
 
     # Class declaration
-    push(@headerContent, "class $className : public $parentClassName {\n");
+    push(@headerContent, "class WEBCORE_EXPORT $className : public $parentClassName {\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
@@ -858,7 +858,7 @@ sub GenerateHeader
         } elsif ($interfaceName eq "DOMStringList") {
             push(@headerContent, "    static PassRefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
         } else {
-            push(@headerContent, "    WEBCORE_EXPORT static $implType* toWrapped(JSC::JSValue);\n");
+            push(@headerContent, "    static $implType* toWrapped(JSC::JSValue);\n");
         }
     }
 
@@ -915,7 +915,7 @@ sub GenerateHeader
     if ($interfaceName eq "Node") {
         push(@headerContent, "\n");
         push(@headerContent, "protected:\n");
-        push(@headerContent, "    WEBCORE_EXPORT static const JSC::ClassInfo s_info;\n");
+        push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
         push(@headerContent, "public:\n");
         push(@headerContent, "    static const JSC::ClassInfo* info() { return &s_info; }\n\n");
     } else {
@@ -1937,9 +1937,9 @@ sub GenerateImplementation
                                \%conditionals, $justGenerateValueArray);
 
     if ($justGenerateValueArray) {
-        push(@implContent, "WEBCORE_EXPORT const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
-        push(@implContent, "WEBCORE_EXPORT const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
@@ -2000,7 +2000,7 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    push(@implContent, "WEBCORE_EXPORT const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
+    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
     if ($numInstanceAttributes > 0) {
         push(@implContent, "&${className}Table");

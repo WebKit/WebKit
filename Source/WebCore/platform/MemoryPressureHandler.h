@@ -104,7 +104,7 @@ public:
         const char* m_logString;
         size_t m_initialMemory;
 
-        static bool s_loggingEnabled;
+        WEBCORE_EXPORT static bool s_loggingEnabled;
     };
 
     WEBCORE_EXPORT void releaseMemory(bool critical);

@@ -34,7 +34,7 @@ namespace WebCore {
 
     class GCController {
         WTF_MAKE_NONCOPYABLE(GCController); WTF_MAKE_FAST_ALLOCATED;
-        friend GCController& gcController();
+        WEBCORE_EXPORT friend GCController& gcController();
 
     public:
         WEBCORE_EXPORT void garbageCollectSoon();

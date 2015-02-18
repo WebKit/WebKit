@@ -35,7 +35,7 @@ class IDBFactoryBackendInterface;
 
 class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
 public:
-    WEBCORE_EXPORT virtual ~DatabaseProvider();
+    virtual ~DatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
     IDBFactoryBackendInterface* idbFactoryBackend();
@@ -43,7 +43,7 @@ public:
 
 private:
 #if ENABLE(INDEXED_DATABASE)
-    WEBCORE_EXPORT virtual RefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend() = 0;
+    virtual RefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend() = 0;
 
     bool m_didCreateIDBFactoryBackendInterface { false };
     RefPtr<IDBFactoryBackendInterface> m_backendInterface;

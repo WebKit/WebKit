@@ -138,7 +138,7 @@ private:
     PassRefPtr<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
     
-    WEBCORE_EXPORT bool m_isEnabled;
+    bool m_isEnabled;
     bool m_privateBrowsingEnabled;
 
     mutable Mutex m_syncLock;

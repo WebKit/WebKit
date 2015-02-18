@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestMediaQueryListListener : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestMediaQueryListListener : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestMediaQueryListListener* toWrapped(JSC::JSValue);
+    static TestMediaQueryListListener* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestMediaQueryListListener();
 

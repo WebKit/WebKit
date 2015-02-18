@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestOverloadedConstructors : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestOverloadedConstructors : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestOverloadedConstructors* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestOverloadedConstructors* toWrapped(JSC::JSValue);
+    static TestOverloadedConstructors* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestOverloadedConstructors();
 

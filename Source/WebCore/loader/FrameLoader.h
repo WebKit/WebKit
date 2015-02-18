@@ -402,7 +402,7 @@ private:
 
     bool m_quickRedirectComing;
     bool m_sentRedirectNotification;
-    WEBCORE_EXPORT bool m_inStopAllLoaders;
+    bool m_inStopAllLoaders;
 
     String m_outgoingReferrer;
 

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class JSTestGenerateIsReachable : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestGenerateIsReachable : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
@@ -38,7 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestGenerateIsReachable* toWrapped(JSC::JSValue);
+    static TestGenerateIsReachable* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestGenerateIsReachable();
 

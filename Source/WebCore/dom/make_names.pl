@@ -120,7 +120,7 @@ if (length($fontNamesIn)) {
     print F StaticString::GenerateStrings(\%parameters);
 
     for my $name (sort keys %parameters) {
-        print F "WEBCORE_EXPORT DEFINE_GLOBAL(AtomicString, $name)\n";
+        print F "DEFINE_GLOBAL(AtomicString, $name)\n";
     }
 
     printInit($F, 0);
@@ -716,16 +716,16 @@ sub printNamesHeaderFile
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "// Namespace\n";
-    print F "extern const WTF::AtomicString ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "WEBCORE_EXPORT extern const WTF::AtomicString ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";
-        printMacros($F, "extern const WebCore::$parameters{namespace}QualifiedName", "Tag", \%allTags);
+        printMacros($F, "WEBCORE_EXPORT extern const WebCore::$parameters{namespace}QualifiedName", "Tag", \%allTags);
     }
 
     if (keys %allAttrs) {
         print F "// Attributes\n";
-        printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%allAttrs);
+        printMacros($F, "WEBCORE_EXPORT extern const WebCore::QualifiedName", "Attr", \%allAttrs);
     }
     print F "#endif\n\n";
 

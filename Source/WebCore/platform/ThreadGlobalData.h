@@ -86,7 +86,7 @@ namespace WebCore {
 #if USE(WEB_THREAD)
         WEBCORE_EXPORT static ThreadGlobalData* sharedMainThreadStaticData;
 #endif
-        friend ThreadGlobalData& threadGlobalData();
+        WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
     };
 
 #if USE(WEB_THREAD)

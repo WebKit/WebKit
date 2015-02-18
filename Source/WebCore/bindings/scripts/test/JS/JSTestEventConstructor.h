@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSDictionary;
 
-class JSTestEventConstructor : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestEventConstructor : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
@@ -40,7 +40,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    WEBCORE_EXPORT static TestEventConstructor* toWrapped(JSC::JSValue);
+    static TestEventConstructor* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestEventConstructor();
 

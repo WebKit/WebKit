@@ -44,14 +44,14 @@ class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
-extern const int SQLResultDone;
+WEBCORE_EXPORT extern const int SQLResultDone;
 extern const int SQLResultError;
-extern const int SQLResultOk;
-extern const int SQLResultRow;
+WEBCORE_EXPORT extern const int SQLResultOk;
+WEBCORE_EXPORT extern const int SQLResultRow;
 extern const int SQLResultSchema;
 extern const int SQLResultFull;
 extern const int SQLResultInterrupt;
-extern const int SQLResultConstraint;
+WEBCORE_EXPORT extern const int SQLResultConstraint;
 
 class SQLiteDatabase {
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);

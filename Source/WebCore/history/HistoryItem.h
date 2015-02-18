@@ -57,7 +57,7 @@ enum class PruningReason;
 
 typedef Vector<Ref<HistoryItem>> HistoryItemVector;
 
-extern void (*notifyHistoryItemChanged)(HistoryItem*);
+WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem*);
 
 class HistoryItem : public RefCounted<HistoryItem> {
     friend class PageCache;

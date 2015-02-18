@@ -403,7 +403,7 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 };
 
-WEBCORE_EXPORT const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
@@ -411,7 +411,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestInterfacePrototypeTableValues, *this);
 }
 
-WEBCORE_EXPORT const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
+const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
     : JSDOMWrapper(structure, globalObject)
