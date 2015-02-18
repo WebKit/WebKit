@@ -319,6 +319,11 @@ void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
     toImpl(contextRef)->visitedLinkProvider().addVisitedLinkHash(visitedLinkHash(visitedURLString));
 }
 
+void WKContextClearVisitedLinks(WKContextRef contextRef)
+{
+    toImpl(contextRef)->visitedLinkProvider().removeAll();
+}
+
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)
 {
     toImpl(contextRef)->setCacheModel(toCacheModel(cacheModel));

@@ -117,6 +117,7 @@ WK_EXPORT void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef 
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody);
 
 WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visitedURL);
+WK_EXPORT void WKContextClearVisitedLinks(WKContextRef contextRef);
 
 WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
 WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
