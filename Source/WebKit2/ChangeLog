@@ -1,3 +1,65 @@
+2015-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Add API for clearing in-memory caches to WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=141724
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeMemoryCache.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        Add WKWebsiteDataTypeMemoryCache.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataTypes):
+        Handle WKWebsiteDataTypeMemoryCache and convert it to WebsiteDataTypeMemoryCache.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::generateCallbackID):
+        Generate a new callback.
+
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Assert that we don't have any pending callbacks.
+
+        (WebKit::WebProcessProxy::connectionDidClose):
+        Invoke pending callbacks.
+
+        (WebKit::WebProcessProxy::canTerminateChildProcess):
+        Don't try to terminate if we have pending callbacks.
+
+        (WebKit::WebProcessProxy::didDeleteWebsiteData):
+        Take the callback and invoke it.
+
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        Send a delete message.
+
+        * UIProcess/WebProcessProxy.h:
+        Add new members.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add DidDeleteWebsiteData message.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessType):
+        Spell persistent correctly.
+
+        (WebKit::computeWebProcessAccessType):
+        Return a web process access type given the a data type mask.
+
+        (WebKit::WebsiteDataStore::removeData):
+        Ask any associated web processes to remove website data.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteData):
+        Delete the memory cache if requested.
+
+        * WebProcess/WebProcess.h:
+        Add new member.
+
+        * WebProcess/WebProcess.messages.in:
+        Add DeleteWebsiteData message.
+
 2015-02-17  Timothy Horton  <timothy_horton@apple.com>
 
         REGRESSION (r178595): Clicking on DD highlights sometimes do not work

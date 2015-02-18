@@ -680,6 +680,22 @@ void MemoryCache::evictResources()
     setDisabled(false);
 }
 
+void MemoryCache::evictResources(SessionID sessionID)
+{
+    if (disabled())
+        return;
+
+    auto it = m_sessionResources.find(sessionID);
+    if (it == m_sessionResources.end())
+        return;
+    auto& resources = *it->value;
+
+    for (int i = 0, size = resources.size(); i < size; ++i)
+        remove(*resources.begin()->value);
+
+    ASSERT(!m_sessionResources.contains(sessionID));
+}
+
 void MemoryCache::prune()
 {
     if (m_liveSize + m_deadSize <= m_capacity && m_deadSize <= m_maxDeadCapacity) // Fast path.

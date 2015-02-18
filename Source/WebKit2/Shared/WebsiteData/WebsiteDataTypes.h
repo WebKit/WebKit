@@ -31,7 +31,8 @@ namespace WebKit {
 enum WebsiteDataTypes {
     WebsiteDataTypeCookies = 1 << 0,
     WebsiteDataTypeDiskCache = 1 << 1,
-    WebsiteDataTypeLocalStorage = 1 << 2,
+    WebsiteDataTypeMemoryCache = 1 << 2,
+    WebsiteDataTypeLocalStorage = 1 << 3,
 };
 
 };

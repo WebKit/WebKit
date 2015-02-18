@@ -115,6 +115,7 @@ public:
     bool disabled() const { return m_disabled; }
 
     WEBCORE_EXPORT void evictResources();
+    WEBCORE_EXPORT void evictResources(SessionID);
     
     void prune();
     unsigned size() const { return m_liveSize + m_deadSize; }

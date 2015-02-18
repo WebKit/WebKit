@@ -1,3 +1,15 @@
+2015-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Add API for clearing in-memory caches to WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=141724
+
+        Reviewed by Tim Horton.
+
+        Add a version of evictResources that takes a session id.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::evictResources):
+
 2015-02-18  Timothy Horton  <timothy_horton@apple.com>
 
         Remove more references to WebCore.exp.in

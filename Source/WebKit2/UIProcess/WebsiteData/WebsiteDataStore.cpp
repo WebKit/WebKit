@@ -95,19 +95,29 @@ enum class ProcessAccessType {
     Launch,
 };
 
-static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistantStore)
+static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
     if (dataTypes & WebsiteDataTypeCookies) {
-        if (isNonPersistantStore)
+        if (isNonPersistentStore)
             processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
         else
             processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     }
 
-    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistantStore)
+    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
+    return processAccessType;
+}
+
+static ProcessAccessType computeWebProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+{
+    ProcessAccessType processAccessType = ProcessAccessType::None;
+
+    if (dataTypes & WebsiteDataTypeMemoryCache)
+        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
 
     return processAccessType;
 }
@@ -168,6 +178,31 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
             callbackAggregator->addPendingCallback();
             processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        }
+    }
+
+    auto webProcessAccessType = computeWebProcessAccessType(dataTypes, isNonPersistent());
+    if (webProcessAccessType != ProcessAccessType::None) {
+        for (auto& process : processes()) {
+            switch (webProcessAccessType) {
+            case ProcessAccessType::OnlyIfLaunched:
+                if (!process->canSendMessage())
+                    continue;
+                break;
+
+            case ProcessAccessType::Launch:
+                // FIXME: Handle this.
+                ASSERT_NOT_REACHED();
+                break;
+
+            case ProcessAccessType::None:
+                ASSERT_NOT_REACHED();
+            }
+
+            callbackAggregator->addPendingCallback();
+            process->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
         }

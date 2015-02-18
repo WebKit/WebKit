@@ -259,6 +259,8 @@ private:
 
     void releasePageCache();
 
+    void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
+
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
 #endif

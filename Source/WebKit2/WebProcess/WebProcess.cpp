@@ -61,6 +61,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
+#include "WebsiteDataTypes.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/AXObjectCache.h>
@@ -1129,6 +1130,18 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 void WebProcess::releasePageCache()
 {
     PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
+}
+
+void WebProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+{
+    if (websiteDataTypes & WebsiteDataTypeMemoryCache) {
+        PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
+        MemoryCache::singleton().evictResources(sessionID);
+
+        CrossOriginPreflightResultCache::singleton().empty();
+    }
+
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidDeleteWebsiteData(callbackID), 0);
 }
 
 #if !PLATFORM(COCOA)

@@ -37,6 +37,7 @@
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxyMessages.h"
+#include "WebsiteDataTypes.h"
 #include <WebCore/LinkHash.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -121,6 +122,8 @@ public:
     void didSaveToPageCache();
     void releasePageCache();
 
+    void deleteWebsiteData(WebCore::SessionID, WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+
     void enableSuddenTermination();
     void disableSuddenTermination();
 
@@ -145,7 +148,7 @@ public:
     void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() { return *m_throttler; }
-    
+
 private:
     explicit WebProcessProxy(WebProcessPool&);
 
@@ -164,6 +167,8 @@ private:
     void didDestroyFrame(uint64_t);
     
     void shouldTerminate(bool& shouldTerminate);
+
+    void didDeleteWebsiteData(uint64_t callbackID);
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -219,6 +224,8 @@ private:
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
+
+    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     std::unique_ptr<ProcessThrottler> m_throttler;
