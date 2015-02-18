@@ -2057,6 +2057,14 @@ void Document::prepareForDestruction()
     clearTouchEventListeners();
 #endif
 
+#if HAVE(ACCESSIBILITY)
+    // Sub-frames need to cleanup Nodes in the text marker cache when the Document disappears.
+    if (this != &topDocument()) {
+        if (AXObjectCache* cache = existingAXObjectCache())
+            cache->clearTextMarkerNodesInUse(this);
+    }
+#endif
+    
     disconnectDescendantFrames();
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
