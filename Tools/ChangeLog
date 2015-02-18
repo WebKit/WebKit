@@ -1,3 +1,18 @@
+2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Run JSC tests on ARM EFL bots
+        https://bugs.webkit.org/show_bug.cgi?id=141165
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.countFailures):
+        (RunRemoteJavaScriptCoreTests):
+        (RunRemoteJavaScriptCoreTests.start):
+        (BuildAndRemoteJSCTestsFactory):
+        (BuildAndRemoteJSCTestsFactory.__init__):
+
 2015-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Streamline unexported function build fixes
