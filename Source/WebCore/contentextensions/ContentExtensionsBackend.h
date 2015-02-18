@@ -30,8 +30,6 @@
 
 #include "ContentExtensionRule.h"
 #include "DFA.h"
-#include <JavaScriptCore/MacroAssemblerCodeRef.h>
-#include <JavaScriptCore/VM.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -49,8 +47,6 @@ namespace ContentExtensions {
 // 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
 class ContentExtensionsBackend {
 public:
-    ContentExtensionsBackend();
-
     // - Rule management interface. This can be used by upper layer.
 
     // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
@@ -64,11 +60,10 @@ public:
 
 private:
     struct CompiledContentExtension {
-        JSC::MacroAssemblerCodeRef compiledMatcher;
+        DFA dfa;
         Vector<ContentExtensionRule> ruleList;
     };
 
-    Ref<JSC::VM> m_vm;
     HashMap<String, CompiledContentExtension> m_ruleLists;
 };
 

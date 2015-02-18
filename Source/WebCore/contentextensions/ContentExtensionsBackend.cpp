@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionsDebugging.h"
-#include "DFACompiler.h"
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URL.h"
@@ -42,11 +41,6 @@
 namespace WebCore {
 
 namespace ContentExtensions {
-
-ContentExtensionsBackend::ContentExtensionsBackend()
-    : m_vm(JSC::VM::sharedInstance())
-{
-}
 
 void ContentExtensionsBackend::setRuleList(const String& identifier, const Vector<ContentExtensionRule>& ruleList)
 {
@@ -91,24 +85,19 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     double dfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
-    const DFA dfa = NFAToDFA::convert(nfa);
+    CompiledContentExtension compiledContentExtension = { NFAToDFA::convert(nfa), ruleList };
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double dfaBuildTimeEnd = monotonicallyIncreasingTime();
     dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
 #endif
 
-    JSC::MacroAssemblerCodeRef compiledDfa;
-    {
-        JSC::JSLockHolder locker(m_vm.get());
-        compiledDfa = compileDFA(dfa, m_vm.get());
-    }
+    // FIXME: never add a DFA that only matches the empty set.
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    dfa.debugPrintDot();
+    compiledContentExtension.dfa.debugPrintDot();
 #endif
 
-    CompiledContentExtension compiledContentExtension = { compiledDfa, ruleList };
     m_ruleLists.set(identifier, compiledContentExtension);
 }
 
@@ -122,11 +111,6 @@ void ContentExtensionsBackend::removeAllRuleLists()
     m_ruleLists.clear();
 }
 
-static void addActionToHashSet(TriggeredActionSet* triggeredActionSet, unsigned actionId)
-{
-    triggeredActionSet->add(actionId);
-}
-
 bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
 {
     const String& urlString = url.string();
@@ -134,17 +118,21 @@ bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
 
     for (auto& ruleListSlot : m_ruleLists) {
         CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
+        unsigned state = compiledContentExtension.dfa.root();
 
-        CString urlCString = urlString.utf8();
-        PotentialPageLoadDescriptor potentialPageLoadDescriptor;
-        potentialPageLoadDescriptor.urlBuffer = urlCString.data();
-        potentialPageLoadDescriptor.urlBufferSize = urlCString.length();
+        HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> triggeredActions;
 
-        TriggeredActionSet triggeredActions;
+        for (unsigned i = 0; i < urlString.length(); ++i) {
+            char character = static_cast<char>(urlString[i]);
+            bool ok;
+            state = compiledContentExtension.dfa.nextState(state, character, ok);
+            if (!ok)
+                break;
 
-        void* compiledMatcher = compiledContentExtension.compiledMatcher.code().executableAddress();
-        reinterpret_cast<CompiledRuleMatcher>(compiledMatcher)(&potentialPageLoadDescriptor, addActionToHashSet, &triggeredActions);
-
+            const Vector<uint64_t>& actions = compiledContentExtension.dfa.actions(state);
+            if (!actions.isEmpty())
+                triggeredActions.add(actions.begin(), actions.end());
+        }
         if (!triggeredActions.isEmpty()) {
             Vector<uint64_t> sortedActions;
             copyToVector(triggeredActions, sortedActions);

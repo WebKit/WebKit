@@ -59,6 +59,31 @@ DFA& DFA::operator=(const DFA& dfa)
     return *this;
 }
 
+unsigned DFA::nextState(unsigned currentState, char character, bool& ok) const
+{
+    ASSERT(currentState < m_nodes.size());
+
+    const DFANode& node = m_nodes[currentState];
+    auto nextNode = node.transitions.find(character);
+    if (nextNode != node.transitions.end()) {
+        ok = true;
+        return nextNode->value;
+    }
+    if (node.hasFallbackTransition) {
+        ok = true;
+        return node.fallbackTransition;
+    }
+    ok = false;
+    return 0;
+
+}
+
+const Vector<uint64_t>& DFA::actions(unsigned currentState) const
+{
+    ASSERT(currentState < m_nodes.size());
+    return m_nodes[currentState].actions;
+}
+
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
 static void printRange(bool firstRange, char rangeStart, char rangeEnd)
 {
