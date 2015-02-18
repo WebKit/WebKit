@@ -1,3 +1,19 @@
+2015-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180260): Try to fix incremental builds by changing UserContentController.cpp
+
+        Attempt to fix this linker error by making a non-coding change:
+
+            Undefined symbols for architecture i386:
+              "__ZN7WebCore17ContentExtensions24ContentExtensionsBackendC1Ev", referenced from:
+                  __ZN7WebCore21UserContentController20addUserContentFilterERKN3WTF6StringES4_ in UserContentController.o
+            ld: symbol(s) not found for architecture i386
+
+        This should have been fixed by r180266, but perhaps Xcode didn't
+        recognize that it needed to rebuild this source file.
+
+        * page/UserContentController.cpp: Update copyright.
+
 2015-02-18  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from CanvasRenderingContext2D.
