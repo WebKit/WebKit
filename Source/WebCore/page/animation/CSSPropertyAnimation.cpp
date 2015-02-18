@@ -1108,7 +1108,7 @@ private:
 
 class CSSPropertyAnimationWrapperMap {
 public:
-    static CSSPropertyAnimationWrapperMap& instance()
+    static CSSPropertyAnimationWrapperMap& singleton()
     {
         // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
         static NeverDestroyed<CSSPropertyAnimationWrapperMap> map;
@@ -1140,6 +1140,8 @@ public:
 
 private:
     CSSPropertyAnimationWrapperMap();
+    ~CSSPropertyAnimationWrapperMap() = delete;
+
     unsigned char& indexFromPropertyID(CSSPropertyID propertyID)
     {
         return m_propertyToIdMap[propertyID - firstCSSProperty];
@@ -1399,7 +1401,7 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
 {
     ASSERT(prop != CSSPropertyInvalid);
 
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     if (wrapper) {
         wrapper->blend(anim, dst, a, b, progress);
         return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
@@ -1410,14 +1412,14 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
 
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     return wrapper ? wrapper->animationIsAccelerated() : false;
 }
 
 // Note: this is inefficient. It's only called from pauseTransitionAtTime().
 HashSet<CSSPropertyID> CSSPropertyAnimation::animatableShorthandsAffectingProperty(CSSPropertyID property)
 {
-    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
+    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
 
     HashSet<CSSPropertyID> foundProperties;
     for (unsigned i = 0; i < map.size(); ++i)
@@ -1428,7 +1430,7 @@ HashSet<CSSPropertyID> CSSPropertyAnimation::animatableShorthandsAffectingProper
 
 bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID prop, const RenderStyle* a, const RenderStyle* b)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     if (wrapper)
         return wrapper->equals(a, b);
     return true;
@@ -1436,7 +1438,7 @@ bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID prop, const RenderStyle
 
 CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, bool& isShorthand)
 {
-    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
+    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
 
     if (i < 0 || static_cast<unsigned>(i) >= map.size())
         return CSSPropertyInvalid;
@@ -1448,7 +1450,7 @@ CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, bool& isShorthand)
 
 int CSSPropertyAnimation::getNumProperties()
 {
-    return CSSPropertyAnimationWrapperMap::instance().size();
+    return CSSPropertyAnimationWrapperMap::singleton().size();
 }
 
 }
