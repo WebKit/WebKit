@@ -965,7 +965,7 @@ void RenderLayerBacking::updateGeometry()
     compositor().updateScrollCoordinatedStatus(m_owningLayer);
 }
 
-void RenderLayerBacking::updateAfterDescendents()
+void RenderLayerBacking::updateAfterDescendants()
 {
     bool isSimpleContainer = false;
     if (!m_owningLayer.isRootLayer()) {
