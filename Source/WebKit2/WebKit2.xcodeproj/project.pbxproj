@@ -8857,11 +8857,9 @@
 			files = (
 			);
 			inputPaths = (
-				WebKit2.xcodeproj,
 			);
 			name = "Make Frameworks Symbolic Link";
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/frameworks-symlink-stamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

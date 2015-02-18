@@ -1,3 +1,12 @@
+2015-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove input and output files from "Make Frameworks Symbolic Link" step
+        https://bugs.webkit.org/show_bug.cgi?id=141769
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-18  Timothy Horton  <timothy_horton@apple.com>
 
         Adopt WebCore::IOSurface in ImageBuffer
