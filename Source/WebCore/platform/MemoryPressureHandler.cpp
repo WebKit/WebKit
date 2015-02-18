@@ -76,7 +76,7 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
 {
     {
         ReliefLogger log("Purge inactive FontData");
-        fontCache().purgeInactiveFontData();
+        FontCache::singleton().purgeInactiveFontData();
     }
 
     {

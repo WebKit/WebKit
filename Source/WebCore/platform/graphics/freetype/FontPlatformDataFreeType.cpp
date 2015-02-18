@@ -346,29 +346,29 @@ bool FontPlatformData::hasCompatibleCharmap()
 PassRefPtr<OpenTypeVerticalData> FontPlatformData::verticalData() const
 {
     ASSERT(hash());
-    return fontCache().getVerticalData(String::number(hash()), *this);
+    return FontCache::singleton().getVerticalData(String::number(hash()), *this);
 }
 
 PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     FT_Face freeTypeFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
     if (!freeTypeFace)
-        return 0;
+        return nullptr;
 
     FT_ULong tableSize = 0;
     // Tag bytes need to be reversed because OT_MAKE_TAG uses big-endian order.
     uint32_t tag = FT_MAKE_TAG((table & 0xff), (table & 0xff00) >> 8, (table & 0xff0000) >> 16, table >> 24);
     if (FT_Load_Sfnt_Table(freeTypeFace, tag, 0, 0, &tableSize))
-        return 0;
+        return nullptr;
 
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(tableSize);
     FT_ULong expectedTableSize = tableSize;
     if (buffer->size() != tableSize)
-        return 0;
+        return nullptr;
 
     FT_Error error = FT_Load_Sfnt_Table(freeTypeFace, tag, 0, reinterpret_cast<FT_Byte*>(const_cast<char*>(buffer->data())), &tableSize);
     if (error || tableSize != expectedTableSize)
-        return 0;
+        return nullptr;
 
     cairo_ft_scaled_font_unlock_face(m_scaledFont);
 

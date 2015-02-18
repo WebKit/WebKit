@@ -884,7 +884,7 @@ void Internals::setMarkedTextMatchesAreHighlighted(bool flag, ExceptionCode& ec)
 
 void Internals::invalidateFontCache()
 {
-    fontCache().invalidate();
+    FontCache::singleton().invalidate();
 }
 
 void Internals::setScrollViewPosition(long x, long y, ExceptionCode& ec)

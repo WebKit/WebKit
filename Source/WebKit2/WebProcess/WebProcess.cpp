@@ -587,7 +587,7 @@ void WebProcess::terminate()
 {
 #ifndef NDEBUG
     gcController().garbageCollectNow();
-    fontCache().invalidate();
+    FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif
 
@@ -640,12 +640,12 @@ void WebProcess::didClose(IPC::Connection&)
     // Close all the live pages.
     Vector<RefPtr<WebPage>> pages;
     copyValuesToVector(m_pageMap, pages);
-    for (size_t i = 0; i < pages.size(); ++i)
-        pages[i]->close();
+    for (auto& page : pages)
+        page->close();
     pages.clear();
 
     gcController().garbageCollectSoon();
-    fontCache().invalidate();
+    FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif    
 
@@ -940,8 +940,9 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     data.statisticsNumbers.set(ASCIILiteral("IconsWithDataCount"), iconDatabase().iconRecordCountWithData());
     
     // Gather font statistics.
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache().fontCount());
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache().inactiveFontCount());
+    auto& fontCache = FontCache::singleton();
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache.fontCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache.inactiveFontCount());
     
     // Gather glyph page statistics.
     data.statisticsNumbers.set(ASCIILiteral("GlyphPageCount"), GlyphPage::count());

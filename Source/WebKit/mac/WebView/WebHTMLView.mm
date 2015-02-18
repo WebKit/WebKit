@@ -4875,7 +4875,7 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
     fontDescription.setIsItalic(italic);
     fontDescription.setWeight(bold ? FontWeight900 : FontWeight500);
     fontDescription.setSpecifiedSize(pointSize);
-    RefPtr<Font> font = fontCache().fontForFamily(fontDescription, familyName);
+    RefPtr<Font> font = FontCache::singleton().fontForFamily(fontDescription, familyName);
     return [font->platformData().nsFont() fontName];
 }
 

@@ -86,7 +86,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-FontCache& fontCache()
+FontCache& FontCache::singleton()
 {
     static NeverDestroyed<FontCache> globalFontCache;
     return globalFontCache;

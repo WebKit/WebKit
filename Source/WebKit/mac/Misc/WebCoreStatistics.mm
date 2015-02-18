@@ -147,17 +147,17 @@ using namespace WebCore;
 
 + (size_t)cachedFontDataCount
 {
-    return fontCache().fontCount();
+    return FontCache::singleton().fontCount();
 }
 
 + (size_t)cachedFontDataInactiveCount
 {
-    return fontCache().inactiveFontCount();
+    return FontCache::singleton().inactiveFontCount();
 }
 
 + (void)purgeInactiveFontData
 {
-    fontCache().purgeInactiveFontData();
+    FontCache::singleton().purgeInactiveFontData();
 }
 
 + (size_t)glyphPageCount

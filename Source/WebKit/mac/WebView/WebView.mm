@@ -1346,7 +1346,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Purging inactive font data.");
-    fontCache().purgeInactiveFontData();
+    FontCache::singleton().purgeInactiveFontData();
 }
 
 + (void)drainLayerPool

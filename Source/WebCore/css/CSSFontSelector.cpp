@@ -70,13 +70,13 @@ CSSFontSelector::CSSFontSelector(Document& document)
     // seem to be any such guarantee.
 
     ASSERT(m_document);
-    fontCache().addClient(this);
+    FontCache::singleton().addClient(this);
 }
 
 CSSFontSelector::~CSSFontSelector()
 {
     clearDocument();
-    fontCache().removeClient(this);
+    FontCache::singleton().removeClient(this);
 }
 
 bool CSSFontSelector::isEmpty() const
@@ -299,7 +299,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
             ASSERT(!m_locallyInstalledFontFaces.contains(familyName));
 
             Vector<unsigned> locallyInstalledFontsTraitsMasks;
-            fontCache().getTraitsInFamily(familyName, locallyInstalledFontsTraitsMasks);
+            FontCache::singleton().getTraitsInFamily(familyName, locallyInstalledFontsTraitsMasks);
             if (unsigned numLocallyInstalledFaces = locallyInstalledFontsTraitsMasks.size()) {
                 auto familyLocallyInstalledFaces = std::make_unique<Vector<RefPtr<CSSFontFace>>>();
 
@@ -468,7 +468,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
-        return FontRanges(fontCache().fontForFamily(fontDescription, familyForLookup));
+        return FontRanges(FontCache::singleton().fontForFamily(fontDescription, familyForLookup));
     }
 
     return face->fontRanges(fontDescription);
@@ -617,13 +617,13 @@ PassRefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDesc
     ASSERT_UNUSED(index, !index);
 
     if (!m_document)
-        return 0;
+        return nullptr;
 
     Settings* settings = m_document->settings();
     if (!settings || !settings->fontFallbackPrefersPictographs())
-        return 0;
+        return nullptr;
 
-    return fontCache().fontForFamily(fontDescription, settings->pictographFontFamily());
+    return FontCache::singleton().fontForFamily(fontDescription, settings->pictographFontFamily());
 }
 
 }

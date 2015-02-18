@@ -428,7 +428,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnitsLength = 2;
         }
 
-        fallbackFont = fontCache().systemFallbackForCharacters(description, this, isForPlatformFont, codeUnits, codeUnitsLength).get();
+        fallbackFont = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, codeUnits, codeUnitsLength).get();
         if (fallbackFont)
             fallbackFont->m_isUsedInSystemFallbackCache = true;
     }

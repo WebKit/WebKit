@@ -105,7 +105,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 {
     // If the font hasn't loaded or an error occurred, then we've got nothing.
     if (!isValid())
-        return 0;
+        return nullptr;
 
     if (!m_font
 #if ENABLE(SVG_FONTS)
@@ -114,7 +114,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     ) {
         // We're local. Just return a Font from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
-        return fontCache().fontForFamily(fontDescription, m_string, true);
+        return FontCache::singleton().fontForFamily(fontDescription, m_string, true);
     }
 
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 5 | fontDescription.widthVariant() << 3
@@ -163,7 +163,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         // and the loader may invoke arbitrary delegate or event handler code.
         fontSelector->beginLoadingFontSoon(m_font.get());
 
-        Ref<Font> placeholderFont = fontCache().lastResortFallbackFont(fontDescription);
+        Ref<Font> placeholderFont = FontCache::singleton().lastResortFallbackFont(fontDescription);
         Ref<Font> placeholderFontCopyInLoadingState = Font::create(placeholderFont->platformData(), true, true);
         return WTF::move(placeholderFontCopyInLoadingState);
     }
