@@ -37,18 +37,7 @@
 
 namespace WebCore {
 
-ScopedEventQueue::ScopedEventQueue()
-    : m_scopingLevel(0)
-{
-}
-
-ScopedEventQueue::~ScopedEventQueue()
-{
-    ASSERT(!m_scopingLevel);
-    ASSERT(!m_queuedEvents.size());
-}
-
-ScopedEventQueue& ScopedEventQueue::instance()
+ScopedEventQueue& ScopedEventQueue::singleton()
 {
     static NeverDestroyed<ScopedEventQueue> scopedEventQueue;
     return scopedEventQueue;
@@ -73,19 +62,19 @@ void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
 void ScopedEventQueue::dispatchAllEvents()
 {
     Vector<RefPtr<Event>> queuedEvents = WTF::move(m_queuedEvents);
-    for (size_t i = 0; i < queuedEvents.size(); i++)
-        dispatchEvent(queuedEvents[i].release());
+    for (auto& queuedEvent : queuedEvents)
+        dispatchEvent(queuedEvent.release());
 }
 
 void ScopedEventQueue::incrementScopingLevel()
 {
-    m_scopingLevel++;
+    ++m_scopingLevel;
 }
 
 void ScopedEventQueue::decrementScopingLevel()
 {
     ASSERT(m_scopingLevel);
-    m_scopingLevel--;
+    --m_scopingLevel;
     if (!m_scopingLevel)
         dispatchAllEvents();
 }

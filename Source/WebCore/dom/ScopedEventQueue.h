@@ -45,12 +45,12 @@ class EventQueueScope;
 class ScopedEventQueue {
     WTF_MAKE_NONCOPYABLE(ScopedEventQueue); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static ScopedEventQueue& instance();
+    static ScopedEventQueue& singleton();
     void enqueueEvent(PassRefPtr<Event>);
 
 private:
-    ScopedEventQueue();
-    ~ScopedEventQueue();
+    ScopedEventQueue() = default;
+    ~ScopedEventQueue() = delete;
 
     void dispatchEvent(PassRefPtr<Event>) const;
     void dispatchAllEvents();
@@ -58,7 +58,7 @@ private:
     void decrementScopingLevel();
 
     Vector<RefPtr<Event>> m_queuedEvents;
-    unsigned m_scopingLevel;
+    unsigned m_scopingLevel { 0 };
 
     friend class WTF::NeverDestroyed<WebCore::ScopedEventQueue>;
     friend class EventQueueScope;
@@ -67,8 +67,8 @@ private:
 class EventQueueScope {
     WTF_MAKE_NONCOPYABLE(EventQueueScope);
 public:
-    EventQueueScope() { ScopedEventQueue::instance().incrementScopingLevel(); }
-    ~EventQueueScope() { ScopedEventQueue::instance().decrementScopingLevel(); }
+    EventQueueScope() { ScopedEventQueue::singleton().incrementScopingLevel(); }
+    ~EventQueueScope() { ScopedEventQueue::singleton().decrementScopingLevel(); }
 };
 
 }

@@ -1,5 +1,29 @@
 2015-02-17  Chris Dumez  <cdumez@apple.com>
 
+        Rename ScopedEventQueue::instance() to singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=141738
+
+        Reviewed by Daniel Bates.
+
+        Rename ScopedEventQueue::instance() to singleton(), as per coding
+        style. Also modernize the code a little bit.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::singleton):
+        (WebCore::ScopedEventQueue::dispatchAllEvents):
+        (WebCore::ScopedEventQueue::incrementScopingLevel):
+        (WebCore::ScopedEventQueue::decrementScopingLevel):
+        (WebCore::ScopedEventQueue::ScopedEventQueue): Deleted.
+        (WebCore::ScopedEventQueue::~ScopedEventQueue): Deleted.
+        (WebCore::ScopedEventQueue::instance): Deleted.
+        * dom/ScopedEventQueue.h:
+        (WebCore::EventQueueScope::EventQueueScope):
+        (WebCore::EventQueueScope::~EventQueueScope):
+
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
         Remove dead code from FontCache
         https://bugs.webkit.org/show_bug.cgi?id=141741
 
