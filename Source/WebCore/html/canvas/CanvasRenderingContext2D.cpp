@@ -1699,65 +1699,65 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
     compositeBuffer(buffer.get(), bufferRect, op);
 }
 
-void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const
+void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient& gradient) const
 {
 #if ENABLE(DASHBOARD_SUPPORT)
     if (m_usesDashboardCompatibilityMode)
-        gradient->setDashboardCompatibilityMode();
+        gradient.setDashboardCompatibilityMode();
 #else
     UNUSED_PARAM(gradient);
 #endif
 }
 
-PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode& ec)
+RefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode& ec)
 {
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
-    RefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
+    Ref<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
     prepareGradientForDashboard(gradient.get());
-    return gradient.release();
+    return WTF::move(gradient);
 }
 
-PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
+RefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
 {
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(r0) || !std::isfinite(x1) || !std::isfinite(y1) || !std::isfinite(r1)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (r0 < 0 || r1 < 0) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
 
-    RefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
+    Ref<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
     prepareGradientForDashboard(gradient.get());
-    return gradient.release();
+    return WTF::move(gradient);
 }
 
-PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image,
+RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image,
     const String& repetitionType, ExceptionCode& ec)
 {
     if (!image) {
         ec = TYPE_MISMATCH_ERR;
-        return 0;
+        return nullptr;
     }
     bool repeatX, repeatY;
     ec = 0;
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     if (!image->complete())
-        return 0;
+        return nullptr;
 
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage || cachedImage->status() == CachedResource::LoadError) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (!image->cachedImage()->imageForRenderer(image->renderer()))
@@ -1767,23 +1767,23 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     return CanvasPattern::create(cachedImage->imageForRenderer(image->renderer()), repeatX, repeatY, originClean);
 }
 
-PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
+RefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
     const String& repetitionType, ExceptionCode& ec)
 {
     if (!canvas) {
         ec = TYPE_MISMATCH_ERR;
-        return 0;
+        return nullptr;
     }
     if (!canvas->width() || !canvas->height() || !canvas->buffer()) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     bool repeatX, repeatY;
     ec = 0;
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
-        return 0;
+        return nullptr;
     return CanvasPattern::create(canvas->copiedImage(), repeatX, repeatY, canvas->originClean());
 }
 
@@ -1841,41 +1841,41 @@ GraphicsContext* CanvasRenderingContext2D::drawingContext() const
     return canvas()->drawingContext();
 }
 
-static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
+static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     if (RefPtr<ImageData> data = ImageData::create(size)) {
         data->data()->zeroFill();
-        return data.release();
+        return data;
     }
 
     return nullptr;
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(PassRefPtr<ImageData> imageData, ExceptionCode& ec) const
+RefPtr<ImageData> CanvasRenderingContext2D::createImageData(RefPtr<ImageData>&& imageData, ExceptionCode& ec) const
 {
     if (!imageData) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     return createEmptyImageData(imageData->size());
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh, ExceptionCode& ec) const
+RefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh, ExceptionCode& ec) const
 {
     ec = 0;
     if (!sw || !sh) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
     if (!std::isfinite(sw) || !std::isfinite(sh)) {
         ec = TypeError;
-        return 0;
+        return nullptr;
     }
 
     FloatSize logicalSize(fabs(sw), fabs(sh));
     if (!logicalSize.isExpressibleAsIntSize())
-        return 0;
+        return nullptr;
 
     IntSize size = expandedIntSize(logicalSize);
     if (size.width() < 1)
@@ -1886,32 +1886,32 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
     return createEmptyImageData(size);
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
+RefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     return getImageData(ImageBuffer::LogicalCoordinateSystem, sx, sy, sw, sh, ec);
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
+RefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     return getImageData(ImageBuffer::BackingStoreCoordinateSystem, sx, sy, sw, sh, ec);
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode& ec) const
+RefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     if (!canvas()->originClean()) {
         DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data.")));
         canvas()->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         ec = SECURITY_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (!sw || !sh) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
     if (!std::isfinite(sx) || !std::isfinite(sy) || !std::isfinite(sw) || !std::isfinite(sh)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (sw < 0) {
@@ -1929,7 +1929,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
     if (logicalRect.height() < 1)
         logicalRect.setHeight(1);
     if (!logicalRect.isExpressibleAsIntRect())
-        return 0;
+        return nullptr;
 
     IntRect imageDataRect = enclosingIntRect(logicalRect);
     ImageBuffer* buffer = canvas()->buffer();
@@ -1938,7 +1938,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
 
     RefPtr<Uint8ClampedArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
     if (!byteArray)
-        return 0;
+        return nullptr;
 
     return ImageData::create(imageDataRect.size(), byteArray.release());
 }
@@ -2257,16 +2257,16 @@ static void normalizeSpaces(String& text)
     text = String::adopt(charVector);
 }
 
-PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
+Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
-    RefPtr<TextMetrics> metrics = TextMetrics::create();
+    Ref<TextMetrics> metrics = TextMetrics::create();
 
     String normalizedText = text;
     normalizeSpaces(normalizedText);
 
     metrics->setWidth(accessFont().width(TextRun(normalizedText)));
 
-    return metrics.release();
+    return metrics;
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, float maxWidth, bool useMaxWidth)

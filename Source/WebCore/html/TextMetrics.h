@@ -26,14 +26,14 @@
 #ifndef TextMetrics_h
 #define TextMetrics_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class TextMetrics : public RefCounted<TextMetrics> {
 public:
-    static PassRefPtr<TextMetrics> create() { return adoptRef(new TextMetrics); }
+    static Ref<TextMetrics> create() { return adoptRef(*new TextMetrics); }
 
     float width() const { return m_width; }
     void setWidth(float w) { m_width = w; }

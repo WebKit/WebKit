@@ -1,3 +1,31 @@
+2015-02-18  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from CanvasRenderingContext2D.
+        <https://webkit.org/b/141749>
+
+        Reviewed by Gyuyoung Kim.
+
+        Switch from using PassRefPtr to RefPtr/Ref in CanvasRenderingContext2D.
+
+        * html/TextMetrics.h:
+        (WebCore::TextMetrics::create): Changed create() helper to return Ref.
+
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::prepareGradientForDashboard): Changed to take a reference.
+
+        (WebCore::CanvasRenderingContext2D::createLinearGradient):
+        (WebCore::CanvasRenderingContext2D::createRadialGradient):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::createEmptyImageData):
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        (WebCore::CanvasRenderingContext2D::webkitGetImageDataHD): Made these return RefPtr. Also did
+        a bunch of 0 -> nullptr conversion, removed a bunch of unnecessary RefPtr::release() calls,
+        and changed a PassRefPtr argument to RefPtr&&.
+
+        (WebCore::CanvasRenderingContext2D::measureText): Made this return Ref.
+
 2015-02-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180260.
