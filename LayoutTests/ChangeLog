@@ -1,3 +1,18 @@
+2015-02-18  Dean Jackson  <dino@apple.com>
+
+        Rebaseline tests for safari-600.5-branch.
+        <rdar://problem/19861390>
+
+        * media/video-colorspace-yuv420-expected.txt:
+        * media/video-colorspace-yuv422-expected.txt:
+        * platform/mac/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/mac/fast/layers/video-layer-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/controls-without-preload-expected.txt:
+        * platform/mac/media/media-controls-clone-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+
 2015-02-16  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180191
