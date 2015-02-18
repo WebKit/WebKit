@@ -1,3 +1,14 @@
+2015-02-18  Timothy Horton  <timothy_horton@apple.com>
+
+        Adopt WebCore::IOSurface in ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=141751
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Remove old WKSI IOSurface-related functions.
+
 2015-02-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180286.

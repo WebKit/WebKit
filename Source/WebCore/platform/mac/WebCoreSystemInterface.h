@@ -221,11 +221,6 @@ extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef 
 extern void* wkGetHyphenationLocationBeforeIndex;
 #endif
 
-#if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
-extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
-extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
-#endif
-
 #if !PLATFORM(IOS)
 extern int (*wkRecommendedScrollerStyle)(void);
 

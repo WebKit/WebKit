@@ -102,9 +102,6 @@ void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRe
 
 void* wkGetHyphenationLocationBeforeIndex;
 
-CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
-CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
-
 int (*wkRecommendedScrollerStyle)(void);
 
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);

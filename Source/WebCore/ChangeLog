@@ -1,3 +1,73 @@
+2015-02-18  Timothy Horton  <timothy_horton@apple.com>
+
+        Adopt WebCore::IOSurface in ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=141751
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createIOSurface): Deleted.
+        (WebCore::ImageBuffer::ImageBuffer):
+        Make use of cachedCGColorSpace.
+        Make use of WebCore::IOSurface.
+        Remove the unused size argument from ImageBufferDataCG.
+        Clear the IOSurface once we've allocated it; WebCore::IOSurface doesn't
+        do this for us, unlike wkIOSurfaceContextCreate.
+        Apply the flipping and scale factor to whichever context we made.
+        We don't need to setIsAcceleratedContext anymore because it's always
+        false for software contexts, and WebCore::IOSurface will set it for
+        any accelerated contexts.
+
+        (WebCore::ImageBuffer::context):
+        If we are IOSurface-backed, return WebCore::IOSurface's GraphicsContext.
+
+        (WebCore::ImageBuffer::flushContext):
+        Make use of context(); m_context is now null for accelerated ImageBuffers.
+
+        (WebCore::ImageBuffer::copyNativeImage):
+        Adopt in-line with the Create functions for clarity. Make use of
+        IOSurface::createImage instead of wkIOSurfaceContextCreateImage.
+
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::ImageBuffer::toDataURL):
+        Make use of context(); m_context is now null for accelerated ImageBuffers.
+
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        Indentation fix, and use nullptr.
+
+        (WebCore::convertScanline):
+        Grammar fix (is -> are).
+
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        Grab the IOSurfaceRef from the IOSurface wrapper. Eventually these things
+        should be made more convenient by the wrapper.
+
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        Drop the unused size argument from the constructor.
+        Reorganize and label the various members which are only used
+        for a particular type of ImageBufferDataCG.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::ensureGraphicsContext):
+        IOSurface-backed GraphicsContexts are always considered accelerated.
+
+        (IOSurface::create):
+        (IOSurface::IOSurface):
+        Add a constructor that take an extra size to use when making the CGContext;
+        it can only be less than the actual backing IOSurface size.
+        This is needed for r160121.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Remove old WKSI IOSurface-related functions.
+
 2015-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to use WEBCORE_EXPORT on Windows.

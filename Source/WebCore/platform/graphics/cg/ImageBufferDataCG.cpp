@@ -35,6 +35,7 @@
 #endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#include "IOSurface.h"
 #include "IOSurfaceSPI.h"
 #include <dispatch/dispatch.h>
 #endif
@@ -54,10 +55,10 @@ struct ScanlineData {
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData(const IntSize&)
-: m_data(0)
+ImageBufferData::ImageBufferData()
+    : m_data(nullptr)
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-, m_surface(0)
+    , m_surface(nullptr)
 #endif
 {
 }
@@ -89,7 +90,7 @@ static void convertScanline(void* data, size_t tileNumber, bool premultiply)
             return;
     }
 
-    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces is BGRA, ImageData expects RGBA.
+    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces are BGRA, ImageData expects RGBA.
     const uint8_t map[4] = { 2, 1, 0, 3 };
     vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageDoNotTile);
 }
@@ -269,7 +270,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surface = m_surface.get();
+        // FIXME: WebCore::IOSurface should have a locking RAII object and base-address getter.
+        IOSurfaceRef surface = m_surface->surface();
         IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
         srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
@@ -513,7 +515,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surface = m_surface.get();
+        IOSurfaceRef surface = m_surface->surface();
         IOSurfaceLock(surface, 0, 0);
         destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + (desty * destBytesPerRow + destx * 4).unsafeGet();

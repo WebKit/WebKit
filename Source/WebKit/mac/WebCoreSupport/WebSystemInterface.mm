@@ -128,10 +128,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetMediaUIImageData);
 #endif
 
-#if !PLATFORM(IOS_SIMULATOR)
-    INIT(IOSurfaceContextCreate);
-    INIT(IOSurfaceContextCreateImage);
-#endif
 #if !PLATFORM(IOS)
     INIT(RecommendedScrollerStyle);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

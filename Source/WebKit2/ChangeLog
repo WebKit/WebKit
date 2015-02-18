@@ -1,3 +1,14 @@
+2015-02-18  Timothy Horton  <timothy_horton@apple.com>
+
+        Adopt WebCore::IOSurface in ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=141751
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Remove old WKSI IOSurface-related functions.
+
 2015-02-18  Beth Dakin  <bdakin@apple.com>
 
         iBooks immediate action blacklist should not even create the gesture recognizer

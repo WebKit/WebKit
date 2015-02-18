@@ -70,11 +70,6 @@ WEBCORE_EXPORT void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRe
 WEBCORE_EXPORT void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
 
-#if !PLATFORM(IOS_SIMULATOR)
-WEBCORE_EXPORT CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
-WEBCORE_EXPORT CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
-#endif // !PLATFORM(IOS_SIMULATOR)
-
 WEBCORE_EXPORT CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 WEBCORE_EXPORT NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 WEBCORE_EXPORT CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);

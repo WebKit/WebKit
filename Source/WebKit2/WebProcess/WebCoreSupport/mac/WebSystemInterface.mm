@@ -119,10 +119,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetMetadataURL);
 #endif // !PLATFORM(IOS)
 
-#if !PLATFORM(IOS_SIMULATOR)
-        INIT(IOSurfaceContextCreate);
-        INIT(IOSurfaceContextCreateImage);
-#endif // !PLATFORM(IOS_SIMULATOR)
 #if !PLATFORM(IOS)
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

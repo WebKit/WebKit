@@ -43,20 +43,26 @@ typedef uint32_t CGBitmapInfo;
 
 namespace WebCore {
 
+class IOSurface;
 class IntSize;
 
 class ImageBufferData {
 public:
-    ImageBufferData(const IntSize&);
+    ImageBufferData();
 
-    void* m_data;
-    
-    RetainPtr<CGDataProviderRef> m_dataProvider;
-    CGBitmapInfo m_bitmapInfo;
+    IntSize m_backingStoreSize;
     Checked<unsigned, RecordOverflow> m_bytesPerRow;
     CGColorSpaceRef m_colorSpace;
-    RetainPtr<IOSurfaceRef> m_surface;
-    IntSize m_backingStoreSize;
+
+    // Only for Software ImageBuffers.
+    void* m_data;
+    RetainPtr<CGDataProviderRef> m_dataProvider;
+    CGBitmapInfo m_bitmapInfo;
+
+#if WTF_USE_IOSURFACE_CANVAS_BACKING_STORE
+    // Only for Accelerated ImageBuffers.
+    std::unique_ptr<IOSurface> m_surface;
+#endif
 
     PassRefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
     void putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale);
