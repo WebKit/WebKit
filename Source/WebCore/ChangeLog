@@ -1,5 +1,18 @@
 2015-02-17  Chris Dumez  <cdumez@apple.com>
 
+        Remove dead code from FontCache
+        https://bugs.webkit.org/show_bug.cgi?id=141741
+
+        Reviewed by Daniel Bates.
+
+        Remove dead code from FontCache:
+        - getFontFamilyForCharacters() has no implementation.
+        - SimpleFontFamily is unused.
+
+        * platform/graphics/FontCache.h:
+
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
         Rename CSSPropertyAnimationWrapperMap::instance() to singleton()
         https://bugs.webkit.org/show_bug.cgi?id=141739
 

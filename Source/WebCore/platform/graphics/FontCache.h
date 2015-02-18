@@ -151,13 +151,6 @@ public:
     PassRefPtr<OpenTypeVerticalData> getVerticalData(const FontFileKey&, const FontPlatformData&);
 #endif
 
-    struct SimpleFontFamily {
-        String name;
-        bool isBold;
-        bool isItalic;
-    };
-    static void getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale, SimpleFontFamily*);
-
 private:
     FontCache();
     ~FontCache();
