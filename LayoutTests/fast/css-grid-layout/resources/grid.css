@@ -147,10 +147,6 @@
 }
 
 /* Grid element flow. */
-.gridAutoFlowStack {
-    -webkit-grid-auto-flow: stack;
-}
-
 .gridAutoFlowColumnSparse {
     -webkit-grid-auto-flow: column;
 }
