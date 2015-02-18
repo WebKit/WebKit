@@ -167,9 +167,9 @@ struct OSRExit : public DFG::OSRExitBase {
     
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     
-    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
+    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
-        return OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
+        OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
 };
 

@@ -57,15 +57,14 @@ struct OSRExitBase {
     CodeOrigin m_codeOriginForExitProfile;
 
 protected:
-    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
+    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
     {
-        if (!m_count)
-            return false;
-        return considerAddingAsFrequentExitSiteSlow(profiledCodeBlock, jitType);
+        if (m_count)
+            considerAddingAsFrequentExitSiteSlow(profiledCodeBlock, jitType);
     }
 
 private:
-    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType);
+    void considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType);
 };
 
 } } // namespace JSC::DFG
