@@ -1,3 +1,15 @@
+2015-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Rename LocalizedStringsMac.cpp to LocalizedStringsCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=141767
+
+        Reviewed by Tim Horton.
+
+        Also, move it to platform/cocoa instead of platform/mac.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/LocalizedStringsCocoa.mm: Renamed from Source/WebCore/platform/mac/LocalizedStringsMac.cpp.
+
 2015-02-18  Antti Koivisto  <antti@apple.com>
 
         Rename FontGlyphs to FontCascadeFonts
