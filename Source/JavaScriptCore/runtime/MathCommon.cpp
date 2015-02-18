@@ -406,7 +406,7 @@ static ALWAYS_INLINE double mathPowInternal(double x, double y)
 
 ALWAYS_INLINE double mathPowInternal(double x, double y)
 {
-    return std::pow(x, y);
+    return pow(x, y);
 }
 
 #endif

@@ -1,3 +1,10 @@
+2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r180258 to fix Windows build.
+
+        * runtime/MathCommon.cpp:
+        (JSC::mathPowInternal):
+
 2015-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r180235): It broke the !ENABLE(PROMISES) build
