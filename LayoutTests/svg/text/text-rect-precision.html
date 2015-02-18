@@ -40,7 +40,7 @@
     var el = document.getElementById('test');
     var elementWidth = el.getBoundingClientRect().width;
     var textWidth = measureText(el);
-    var tolerance = hasSubpixelPrecision ? 0.1 : 2; // enclosing may expand up to one pixel in each direction.
+    var tolerance = hasSubpixelPrecision ? 0.15 : 2; // enclosing may expand up to one pixel in each direction.
     if (Math.abs(elementWidth - textWidth) <= tolerance)
         testPassed('Width of text element is the sum of the width of all characters.');
     else

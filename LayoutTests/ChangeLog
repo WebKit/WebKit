@@ -1,3 +1,23 @@
+2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update more test expected results after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141743
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/dom/character-index-for-point-expected.txt:
+        * platform/mac/fast/forms/select-initial-position-expected.txt:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/mac/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/mac-mavericks/fast/forms/select-initial-position-expected.txt:
+        * platform/mac-mavericks/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac-mavericks/fast/text/international/text-combine-image-test-expected.txt:
+        * svg/text/lengthAdjust-text-metrics-expected.txt:
+        * svg/text/script-tests/lengthAdjust-text-metrics.js:
+        * svg/text/text-rect-precision.html:
+
 2015-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Gardening: Update baselines on Windows bots after removing mac-mountainlion

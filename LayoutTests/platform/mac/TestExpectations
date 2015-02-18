@@ -1125,17 +1125,8 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 # We should land updated results if we can't get this bug fixed in time.
 [ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16802900>)
-[ Yosemite+ ] fast/forms/select-initial-position.html [ Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16802068>)
 [ Yosemite+ ] fast/css/input-search-padding.html [ Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16801910>)
-[ Yosemite+ ] fast/replaced/width100percent-textarea.html [ Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/15992006>)
-[ Yosemite+ ] fast/text/international/text-combine-image-test.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17458024>)
 [ Yosemite ] http/tests/misc/webtiming-ssl.php [ Skip ]
@@ -1266,18 +1257,8 @@ webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 # The following tests' expected results don't look like render tree dumps
 webkit.org/b/139968 fast/forms/text-control-intrinsic-widths.html [ Failure ]
-webkit.org/b/139968 svg/text/lengthAdjust-text-metrics.html [ Failure ]
-webkit.org/b/139968 svg/text/text-rect-precision.html [ Failure ]
-webkit.org/b/139968 platform/mac/fast/dom/character-index-for-point.html [ Failure ]
-webkit.org/b/139968 fast/forms/select-initial-position.html [ Failure ]
-webkit.org/b/139968 fast/replaced/width100percent-textarea.html [ Failure ]
 webkit.org/b/139968 fast/text/glyph-reordering.html [ Failure ]
-webkit.org/b/139968 fast/text/international/text-combine-image-test.html [ Failure ]
-webkit.org/b/139968 media/video-layer-crash.html [ Failure ]
-webkit.org/b/139968 media/video-layer-crash.html [ Failure ]
 
-# Fails on Mountain Lion and Yosemite on bots.
-webkit.org/b/139968 fast/text/atsui-rtl-override-selection.html [ Failure ]
 # These tests became flaky, text width gets slightly off.
 webkit.org/b/139968 fast/block/margin-collapse/103.html [ Pass Failure ]
 webkit.org/b/139968 fast/dom/52776.html [ Pass Failure ]

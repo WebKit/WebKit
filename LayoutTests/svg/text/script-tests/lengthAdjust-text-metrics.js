@@ -82,37 +82,37 @@ shouldBeEqualToString("lengthToString(svgText.getComputedTextLength())", "200.0"
 
 debug("");
 debug("Test getSubStringLength() API");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 1))", "61.5");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 2))", "117.9");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 3))", "169.2");;
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 4))", "200.0");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 1))", "56.4");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 2))", "107.7");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 3))", "138.5");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(2, 1))", "51.3");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(2, 2))", "82.1");
-shouldBeEqualToString("lengthToString(svgText.getSubStringLength(3, 1))", "30.8");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 1))", "62.8");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 2))", "108.6");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 3))", "160.0");;
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(0, 4))", "188.6");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 1))", "57.2");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 2))", "108.6");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(1, 3))", "137.2");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(2, 1))", "51.4");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(2, 2))", "80.0");
+shouldBeEqualToString("lengthToString(svgText.getSubStringLength(3, 1))", "28.6");
 
 debug("");
 debug("Test getStartPositionOfChar() API");
 shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(0))", "(10.0,20.0)");
-shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(1))", "(71.5,20.0)");
-shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(2))", "(127.9,20.0)");
-shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(3))", "(179.2,20.0)");
+shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(1))", "(72.8,20.0)");
+shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(2))", "(118.6,20.0)");
+shouldBeEqualToString("pointToString(svgText.getStartPositionOfChar(3))", "(170.0,20.0)");
 
 debug("");
 debug("Test getEndPositionOfChar() API");
-shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(0))", "(71.5,20.0)");
-shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(1))", "(127.9,20.0)");
-shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(2))", "(179.2,20.0)");
-shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(3))", "(210.0,20.0)");
+shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(0))", "(72.8,20.0)");
+shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(1))", "(118.6,20.0)");
+shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(2))", "(170.0,20.0)");
+shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(3))", "(198.6,20.0)");
 
 debug("");
 debug("Test getExtentOfChar() API");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(0))", "(10.0,1.9)-(61.5x22.3)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(1))", "(71.5,1.9)-(56.4x22.3)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(2))", "(127.9,1.9)-(51.3x22.3)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(3))", "(179.2,1.9)-(30.8x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(0))", "(10.0,1.9)-(62.8x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(1))", "(72.8,1.9)-(57.2x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(2))", "(118.6,1.9)-(51.4x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(3))", "(170.0,1.9)-(28.6x22.3)");
 
 debug("");
 debug("Test getRotationOfChar() API");
@@ -150,7 +150,7 @@ shouldBe("svgText.getCharNumAtPosition(point)", "0");
 point.x = 71.6;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
-shouldBe("svgText.getCharNumAtPosition(point)", "1");
+shouldBe("svgText.getCharNumAtPosition(point)", "0");
 
 point.x = 127.8;
 point = point.matrixTransform(inverseScaleMatrix);
@@ -160,12 +160,12 @@ shouldBe("svgText.getCharNumAtPosition(point)", "1");
 point.x = 128.0;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
-shouldBe("svgText.getCharNumAtPosition(point)", "2");
+shouldBe("svgText.getCharNumAtPosition(point)", "1");
 
 point.x = 179.1;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
-shouldBe("svgText.getCharNumAtPosition(point)", "2");
+shouldBe("svgText.getCharNumAtPosition(point)", "3");
 
 point.x = 179.3;
 point = point.matrixTransform(inverseScaleMatrix);
@@ -175,7 +175,7 @@ shouldBe("svgText.getCharNumAtPosition(point)", "3");
 point.x = 209.9;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
-shouldBe("svgText.getCharNumAtPosition(point)", "3");
+shouldBe("svgText.getCharNumAtPosition(point)", "-1");
 
 point.x = 210.1;
 point = point.matrixTransform(inverseScaleMatrix);
