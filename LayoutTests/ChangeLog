@@ -1,5 +1,26 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179953
+
+    2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+            Merge r179597
+
+        2015-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+                Crash when printing snapshotted plugins
+                https://bugs.webkit.org/show_bug.cgi?id=141212
+
+                Reviewed by Simon Fraser.
+
+                This test would crash without the fix due to a bad cast to RenderBox. <object>
+                is not prepared to have rendered inline children when rendering a plugin.
+
+                * plugins/snapshotting/print-snapshotted-plugin-expected.txt: Added.
+                * plugins/snapshotting/print-snapshotted-plugin.html: Added.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178426
 
     2015-01-14  Jer Noble  <jer.noble@apple.com>

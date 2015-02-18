@@ -77,7 +77,7 @@ public:
     void subframeLoaderDidCreatePlugIn(const Widget*);
 
     void setIsPrimarySnapshottedPlugIn(bool);
-    bool partOfSnapshotOverlay(Node*);
+    bool partOfSnapshotOverlay(const Node*) const;
 
     bool needsCheckForSizeChange() const { return m_needsCheckForSizeChange; }
     void setNeedsCheckForSizeChange() { m_needsCheckForSizeChange = true; }
@@ -118,6 +118,7 @@ private:
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override final;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual bool willRecalcStyle(Style::Change) override final;
     virtual void didAttachRenderers() override final;
     virtual void willDetachRenderers() override final;
