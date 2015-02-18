@@ -309,8 +309,6 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 webkit.org/b/140084 [ Yosemite+ ] js/dom/dfg-inline-resolve.html [ Pass Timeout ]
 
-webkit.org/b/141601 [ Yosemite ] inspector/css/stylesheet-with-mutations.html [ Pass Timeout ]
-
 webkit.org/b/141364 [ Yosemite ] fullscreen/full-screen-plugin.html [ Pass Timeout ]
 
 ### END OF (3) Unclassified failures
