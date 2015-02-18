@@ -1214,6 +1214,10 @@ private:
         case AllocationProfileWatchpoint:
         case Call:
         case Construct:
+        case CallVarargs:
+        case ConstructVarargs:
+        case CallForwardVarargs:
+        case LoadVarargs:
         case ProfileControlFlow:
         case NativeCall:
         case NativeConstruct:

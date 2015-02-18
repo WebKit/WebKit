@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -357,13 +357,8 @@ public:
     LValue call(LValue function, const VectorType& vector) { return buildCall(m_builder, function, vector); }
     LValue call(LValue function) { return buildCall(m_builder, function); }
     LValue call(LValue function, LValue arg1) { return buildCall(m_builder, function, arg1); }
-    LValue call(LValue function, LValue arg1, LValue arg2) { return buildCall(m_builder, function, arg1, arg2); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3) { return buildCall(m_builder, function, arg1, arg2, arg3); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4, arg5); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4, arg5, arg6); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6, LValue arg7) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4, arg5, arg6, arg7); }
-    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6, LValue arg7, LValue arg8) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8); }
+    template<typename... Args>
+    LValue call(LValue function, LValue arg1, Args... args) { return buildCall(m_builder, function, arg1, args...); }
     
     template<typename FunctionType>
     LValue operation(FunctionType function)

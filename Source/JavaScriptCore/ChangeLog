@@ -1,3 +1,314 @@
+2015-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should really support varargs
+        https://bugs.webkit.org/show_bug.cgi?id=141332
+
+        Reviewed by Oliver Hunt.
+        
+        This adds comprehensive vararg call support to the DFG and FTL compilers. Previously, if a
+        function had a varargs call, then it could only be compiled if that varargs call was just
+        forwarding arguments and we were inlining the function rather than compiling it directly. Also,
+        only varargs calls were dealt with; varargs constructs were not.
+        
+        This lifts all of those restrictions. Every varargs call or construct can now be compiled by both
+        the DFG and the FTL. Those calls can also be inlined, too - provided that profiling gives us a
+        sensible bound on arguments list length. When we inline a varargs call, the act of loading the
+        varargs is now made explicit in IR. I believe that we have enough IR machinery in place that we
+        would be able to do the arguments forwarding optimization as an IR transformation. This patch
+        doesn't implement that yet, and keeps the old bytecode-based varargs argument forwarding
+        optimization for now.
+        
+        There are three major IR features introduced in this patch:
+        
+        CallVarargs/ConstructVarargs: these are like Call/Construct except that they take an arguments
+        array rather than a list of arguments. Currently, they splat this arguments array onto the stack
+        using the same basic technique as the baseline JIT has always done. Except, these nodes indicate
+        that we are not interested in doing the non-escaping "arguments" optimization.
+        
+        CallForwardVarargs: this is a form of CallVarargs that just does the non-escaping "arguments"
+        optimization, aka forwarding arguments. It's somewhat lazy that this doesn't include
+        ConstructForwardVarargs, but the reason is that once we eliminate the lazy tear-off for
+        arguments, this whole thing will have to be tweaked - and for now forwarding on construct is just
+        not important in benchmarks. ConstructVarargs will still do forwarding, just not inlined.
+        
+        LoadVarargs: loads all elements out of an array onto the stack in a manner suitable for a varargs
+        call. This is used only when a varargs call (or construct) was inlined. The bytecode parser will
+        make room on the stack for the arguments, and will use LoadVarars to put those arguments into
+        place.
+        
+        In the future, we can consider adding strength reductions like:
+        
+        - If CallVarargs/ConstructVarargs see an array of known size with known elements, turn them into
+          Call/Construct.
+        
+        - If CallVarargs/ConstructVarargs are passed an unmodified, unescaped Arguments object, then
+          turn them into CallForwardVarargs/ConstructForwardVarargs.
+        
+        - If LoadVarargs sees an array of known size, then turn it into a sequence of GetByVals and
+          PutLocals.
+        
+        - If LoadVarargs sees an unmodified, unescaped Arguments object, then turn it into something like
+          LoadForwardVarargs.
+        
+        - If CallVarargs/ConstructVarargs/LoadVarargs see the result of a splice (or other Array
+          prototype function), then do the splice and varargs loading in one go (maybe via a new node
+          type).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::rshiftPtr):
+        (JSC::MacroAssembler::urshiftPtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::urshift64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::urshift64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::shrq_i8r):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::setProvenConstantCallee):
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::maxNumArguments):
+        (JSC::CallLinkStatus::setIsProved): Deleted.
+        * bytecode/CodeOrigin.cpp:
+        (WTF::printInternal):
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::varargsKindFor):
+        (JSC::InlineCallFrame::specializationKindFor):
+        (JSC::InlineCallFrame::isVarargs):
+        (JSC::InlineCallFrame::isNormalCall): Deleted.
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::handleTypedArrayConstructor):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::removeLastNodeFromGraph): Deleted.
+        (JSC::DFG::ByteCodeParser::undoFunctionChecks): Deleted.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::functionCapabilityLevel):
+        (JSC::DFG::mightCompileFunctionFor):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.cpp:
+        (WTF::printInternal):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::canInline):
+        (JSC::DFG::leastUpperBound):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::isLiveInBytecode):
+        (JSC::DFG::Graph::valueProfileFor):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor): Deleted.
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor): Deleted.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCallVarargsData):
+        (JSC::DFG::Node::callVarargsData):
+        (JSC::DFG::Node::hasLoadVarargsData):
+        (JSC::DFG::Node::loadVarargsData):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::dumpAndVerifyGraph):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::writeTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSSAConversionPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isFlushed):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        (JSC::DFG::StackLayoutPhase::assign):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::functionType):
+        (JSC::FTL::buildCall):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCall):
+        (JSC::FTL::sizeOfCallVarargs):
+        (JSC::FTL::sizeOfCallForwardVarargs):
+        (JSC::FTL::sizeOfConstructVarargs):
+        (JSC::FTL::sizeOfIn):
+        (JSC::FTL::sizeOfICFor):
+        (JSC::FTL::sizeOfCheckIn): Deleted.
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        * ftl/FTLJSCallBase.cpp:
+        * ftl/FTLJSCallBase.h:
+        * ftl/FTLJSCallVarargs.cpp: Added.
+        (JSC::FTL::JSCallVarargs::JSCallVarargs):
+        (JSC::FTL::JSCallVarargs::numSpillSlotsNeeded):
+        (JSC::FTL::JSCallVarargs::emit):
+        (JSC::FTL::JSCallVarargs::link):
+        * ftl/FTLJSCallVarargs.h: Added.
+        (JSC::FTL::JSCallVarargs::node):
+        (JSC::FTL::JSCallVarargs::stackmapID):
+        (JSC::FTL::JSCallVarargs::operator<):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::LowerDFGToLLVM::compileLoadVarargs):
+        (JSC::FTL::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::vmCall):
+        (JSC::FTL::LowerDFGToLLVM::vmCallNoExceptions):
+        (JSC::FTL::LowerDFGToLLVM::callCheck):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::call):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::sizeFrameForVarargs):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readInlinedFrame):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::addressFor):
+        (JSC::AssemblyHelpers::calleeFrameSlot):
+        (JSC::AssemblyHelpers::calleeArgumentSlot):
+        (JSC::AssemblyHelpers::calleeFrameTagSlot):
+        (JSC::AssemblyHelpers::calleeFramePayloadSlot):
+        (JSC::AssemblyHelpers::calleeArgumentTagSlot):
+        (JSC::AssemblyHelpers::calleeArgumentPayloadSlot):
+        (JSC::AssemblyHelpers::calleeFrameCallerFrame):
+        (JSC::AssemblyHelpers::selectScratchGPR):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/GPRInfo.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOperations.h:
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h:
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::registerArraySizeInBytes):
+        (JSC::Arguments::finishCreation):
+        * runtime/Options.h:
+        * tests/stress/construct-varargs-inline-smaller-Foo.js: Added.
+        (Foo):
+        (bar):
+        (checkEqual):
+        (test):
+        * tests/stress/construct-varargs-inline.js: Added.
+        (Foo):
+        (bar):
+        (checkEqual):
+        (test):
+        * tests/stress/construct-varargs-no-inline.js: Added.
+        (Foo):
+        (bar):
+        (checkEqual):
+        (test):
+        * tests/stress/get-argument-by-val-in-inlined-varargs-call-out-of-bounds.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/get-argument-by-val-safe-in-inlined-varargs-call-out-of-bounds.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/get-my-argument-by-val-creates-arguments.js: Added.
+        (blah):
+        (foo):
+        (bar):
+        (checkEqual):
+        (test):
+        * tests/stress/load-varargs-then-inlined-call-exit-in-foo.js: Added.
+        (foo):
+        (bar):
+        (checkEqual):
+        * tests/stress/load-varargs-then-inlined-call-inlined.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        (checkEqual):
+        (test):
+        * tests/stress/load-varargs-then-inlined-call.js: Added.
+        (foo):
+        (bar):
+        (checkEqual):
+        (test):
+
 2015-02-17  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, Restoring the C LOOP insta-crash fix in r180184.

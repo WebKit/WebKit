@@ -366,6 +366,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Construct:
     case NativeCall:
     case NativeConstruct:
+    case CallVarargs:
+    case CallForwardVarargs:
+    case ConstructVarargs:
     case ToPrimitive:
     case In:
     case GetMyArgumentsLengthSafe:
@@ -399,6 +402,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutLocal:
         write(AbstractHeap(Variables, node->local()));
         def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->local())), node->child1().node());
+        return;
+        
+    case LoadVarargs:
+        // This actually writes to local variables as well. But when it reads the array, it does
+        // so in a way that may trigger getters or various traps.
+        read(World);
+        write(World);
         return;
         
     case GetLocalUnlinked:
@@ -881,7 +891,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
     
-    RELEASE_ASSERT_NOT_REACHED();
+    DFG_CRASH(graph, node, toCString("Unrecognized node type: ", Graph::opName(node->op())).data());
 }
 
 class NoOpClobberize {

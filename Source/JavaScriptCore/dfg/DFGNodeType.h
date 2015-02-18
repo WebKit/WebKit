@@ -147,6 +147,7 @@ namespace JSC { namespace DFG {
     /* this must be the directly subsequent property put. Note that PutByVal */\
     /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate) \
+    macro(LoadVarargs, NodeMustGenerate) \
     macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
@@ -217,6 +218,9 @@ namespace JSC { namespace DFG {
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(CallVarargs, NodeResultJS | NodeMustGenerate) \
+    macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
+    macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
     macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \

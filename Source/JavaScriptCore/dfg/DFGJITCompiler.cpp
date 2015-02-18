@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,6 +122,7 @@ void JITCompiler::compileExceptionHandlers()
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
 
 #if CPU(X86)
         // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
@@ -247,7 +248,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         JSCallRecord& record = m_jsCalls[i];
         CallLinkInfo& info = *record.m_info;
         ThunkGenerator generator = linkThunkGeneratorFor(
-            info.callType == CallLinkInfo::Construct ? CodeForConstruct : CodeForCall,
+            info.specializationKind(),
             RegisterPreservationNotRequired);
         linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
         info.callReturnLocation = linkBuffer.locationOfNearCall(record.m_slowCall);

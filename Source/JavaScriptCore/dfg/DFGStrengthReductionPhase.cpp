@@ -271,6 +271,7 @@ private:
                     case GetScope:
                     case PhantomLocal:
                     case GetCallee:
+                    case CountExecution:
                         break;
                 
                     default:

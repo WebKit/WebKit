@@ -68,12 +68,6 @@ public:
     {
     }
     
-    CallLinkStatus& setIsProved(bool isProved)
-    {
-        m_isProved = isProved;
-        return *this;
-    }
-    
     static CallLinkStatus computeFor(
         CodeBlock*, unsigned bytecodeIndex, const CallLinkInfoMap&);
 
@@ -108,6 +102,8 @@ public:
     static CallLinkStatus computeFor(
         CodeBlock*, CodeOrigin, const CallLinkInfoMap&, const ContextMap&);
     
+    void setProvenConstantCallee(CallVariant);
+    
     bool isSet() const { return !m_variants.isEmpty() || m_couldTakeSlowPath; }
     
     bool operator!() const { return !isSet(); }
@@ -123,6 +119,8 @@ public:
     
     bool isClosureCall() const; // Returns true if any callee is a closure call.
     
+    unsigned maxNumArguments() const { return m_maxNumArguments; }
+    
     void dump(PrintStream&) const;
     
 private:
@@ -137,6 +135,7 @@ private:
     CallVariantList m_variants;
     bool m_couldTakeSlowPath;
     bool m_isProved;
+    unsigned m_maxNumArguments;
 };
 
 } // namespace JSC

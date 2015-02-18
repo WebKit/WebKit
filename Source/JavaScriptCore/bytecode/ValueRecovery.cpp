@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,25 +92,25 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
 #endif
     case DisplacedInJSStack:
-        out.printf("*%d", virtualRegister().offset());
+        out.print("*", virtualRegister());
         return;
     case Int32DisplacedInJSStack:
-        out.printf("*int32(%d)", virtualRegister().offset());
+        out.print("*int32(", virtualRegister(), ")");
         return;
     case Int52DisplacedInJSStack:
-        out.printf("*int52(%d)", virtualRegister().offset());
+        out.print("*int52(", virtualRegister(), ")");
         return;
     case StrictInt52DisplacedInJSStack:
-        out.printf("*strictInt52(%d)", virtualRegister().offset());
+        out.print("*strictInt52(", virtualRegister(), ")");
         return;
     case DoubleDisplacedInJSStack:
-        out.printf("*double(%d)", virtualRegister().offset());
+        out.print("*double(", virtualRegister(), ")");
         return;
     case CellDisplacedInJSStack:
-        out.printf("*cell(%d)", virtualRegister().offset());
+        out.print("*cell(", virtualRegister(), ")");
         return;
     case BooleanDisplacedInJSStack:
-        out.printf("*bool(%d)", virtualRegister().offset());
+        out.print("*bool(", virtualRegister(), ")");
         return;
     case ArgumentsThatWereNotCreated:
         out.printf("arguments");

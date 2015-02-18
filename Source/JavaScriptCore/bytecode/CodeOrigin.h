@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,6 +121,8 @@ struct InlineCallFrame {
     enum Kind {
         Call,
         Construct,
+        CallVarargs,
+        ConstructVarargs,
         
         // For these, the stackOffset incorporates the argument count plus the true return PC
         // slot.
@@ -140,29 +142,47 @@ struct InlineCallFrame {
         return Call;
     }
     
+    static Kind varargsKindFor(CodeSpecializationKind kind)
+    {
+        switch (kind) {
+        case CodeForCall:
+            return CallVarargs;
+        case CodeForConstruct:
+            return ConstructVarargs;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Call;
+    }
+    
     static CodeSpecializationKind specializationKindFor(Kind kind)
     {
         switch (kind) {
         case Call:
+        case CallVarargs:
         case GetterCall:
         case SetterCall:
             return CodeForCall;
         case Construct:
+        case ConstructVarargs:
             return CodeForConstruct;
         }
         RELEASE_ASSERT_NOT_REACHED();
         return CodeForCall;
     }
     
-    static bool isNormalCall(Kind kind)
+    static bool isVarargs(Kind kind)
     {
         switch (kind) {
-        case Call:
-        case Construct:
+        case CallVarargs:
+        case ConstructVarargs:
             return true;
         default:
             return false;
         }
+    }
+    bool isVarargs() const
+    {
+        return isVarargs(static_cast<Kind>(kind));
     }
     
     Vector<ValueRecovery> arguments; // Includes 'this'.
@@ -171,10 +191,11 @@ struct InlineCallFrame {
     CodeOrigin caller;
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
 
-    signed stackOffset : 29;
-    unsigned kind : 2; // real type is Kind
+    signed stackOffset : 28;
+    unsigned kind : 3; // real type is Kind
     bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
     VirtualRegister argumentsRegister; // This is only set if the code uses arguments. The unmodified arguments register follows the unmodifiedArgumentsRegister() convention (see CodeBlock.h).
+    VirtualRegister argumentCountRegister; // Only set when we inline a varargs call.
     
     // There is really no good notion of a "default" set of values for
     // InlineCallFrame's fields. This constructor is here just to reduce confusion if

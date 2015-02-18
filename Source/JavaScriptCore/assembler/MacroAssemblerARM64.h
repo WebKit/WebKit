@@ -689,6 +689,26 @@ public:
         urshift32(dest, imm, dest);
     }
 
+    void urshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.lsr<64>(dest, src, shiftAmount);
+    }
+    
+    void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.lsr<64>(dest, src, imm.m_value & 0x1f);
+    }
+
+    void urshift64(RegisterID shiftAmount, RegisterID dest)
+    {
+        urshift64(dest, shiftAmount, dest);
+    }
+    
+    void urshift64(TrustedImm32 imm, RegisterID dest)
+    {
+        urshift64(dest, imm, dest);
+    }
+
     void xor32(RegisterID src, RegisterID dest)
     {
         xor32(dest, src, dest);

@@ -183,6 +183,20 @@ struct SwitchData {
     bool didUseJumpTable;
 };
 
+struct CallVarargsData {
+    int firstVarArgOffset;
+};
+
+struct LoadVarargsData {
+    VirtualRegister start; // Local for the first element.
+    VirtualRegister count; // Local for the count.
+    VirtualRegister machineStart;
+    VirtualRegister machineCount;
+    unsigned offset; // Which array element to start with. Usually this is 0.
+    unsigned mandatoryMinimum; // The number of elements on the stack that must be initialized; if the array is too short then the missing elements must get undefined. Does not include "this".
+    unsigned limit; // Maximum number of elements to load. Includes "this".
+};
+
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
@@ -895,6 +909,35 @@ struct Node {
         return bitwise_cast<WriteBarrier<Unknown>*>(m_opInfo);
     }
     
+    bool hasCallVarargsData()
+    {
+        switch (op()) {
+        case CallVarargs:
+        case CallForwardVarargs:
+        case ConstructVarargs:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    CallVarargsData* callVarargsData()
+    {
+        ASSERT(hasCallVarargsData());
+        return bitwise_cast<CallVarargsData*>(m_opInfo);
+    }
+    
+    bool hasLoadVarargsData()
+    {
+        return op() == LoadVarargs;
+    }
+    
+    LoadVarargsData* loadVarargsData()
+    {
+        ASSERT(hasLoadVarargsData());
+        return bitwise_cast<LoadVarargsData*>(m_opInfo);
+    }
+    
     bool hasResult()
     {
         return !!result();
@@ -1049,6 +1092,9 @@ struct Node {
         case GetMyArgumentByValSafe:
         case Call:
         case Construct:
+        case CallVarargs:
+        case ConstructVarargs:
+        case CallForwardVarargs:
         case NativeCall:
         case NativeConstruct:
         case GetByOffset:

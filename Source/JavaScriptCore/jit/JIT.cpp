@@ -464,11 +464,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_canBeOptimizedOrInlined = false;
         m_shouldEmitProfiling = false;
         break;
-    case DFG::CanInline:
-        m_canBeOptimized = false;
-        m_canBeOptimizedOrInlined = true;
-        m_shouldEmitProfiling = true;
-        break;
     case DFG::CanCompile:
     case DFG::CanCompileAndInline:
         m_canBeOptimized = true;

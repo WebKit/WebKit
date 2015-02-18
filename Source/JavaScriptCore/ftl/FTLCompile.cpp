@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Samsung Electronics
  * Copyright (C) 2014 University of Szeged
  *
@@ -128,6 +128,20 @@ static void dumpDataSection(DataSection* section, const char* prefix)
     }
 }
 
+static int offsetOfStackRegion(StackMaps::RecordMap& recordMap, uint32_t stackmapID)
+{
+    StackMaps::RecordMap::iterator iter = recordMap.find(stackmapID);
+    RELEASE_ASSERT(iter != recordMap.end());
+    RELEASE_ASSERT(iter->value.size() == 1);
+    RELEASE_ASSERT(iter->value[0].locations.size() == 1);
+    Location capturedLocation =
+        Location::forStackmaps(nullptr, iter->value[0].locations[0]);
+    RELEASE_ASSERT(capturedLocation.kind() == Location::Register);
+    RELEASE_ASSERT(capturedLocation.gpr() == GPRInfo::callFrameRegister);
+    RELEASE_ASSERT(!(capturedLocation.addend() % sizeof(Register)));
+    return capturedLocation.addend() / sizeof(Register);
+}
+
 template<typename DescriptorType>
 void generateICFastPath(
     State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
@@ -243,6 +257,32 @@ static RegisterSet usedRegistersFor(const StackMaps::Record& record)
     return RegisterSet(record.usedRegisterSet(), RegisterSet::calleeSaveRegisters());
 }
 
+template<typename CallType>
+void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& recordMap)
+{
+    // Handling JS calls is weird: we need to ensure that we sort them by the PC in LLVM
+    // generated code. That implies first pruning the ones that LLVM didn't generate.
+
+    Vector<CallType> oldCalls;
+    oldCalls.swap(calls);
+    
+    for (unsigned i = 0; i < oldCalls.size(); ++i) {
+        CallType& call = oldCalls[i];
+        
+        StackMaps::RecordMap::iterator iter = recordMap.find(call.stackmapID());
+        if (iter == recordMap.end())
+            continue;
+        
+        for (unsigned j = 0; j < iter->value.size(); ++j) {
+            CallType copy = call;
+            copy.m_instructionOffset = iter->value[j].instructionOffset;
+            calls.append(copy);
+        }
+    }
+
+    std::sort(calls.begin(), calls.end());
+}
+
 static void fixFunctionBasedOnStackMaps(
     State& state, CodeBlock* codeBlock, JITCode* jitCode, GeneratedFunction generatedFunction,
     StackMaps::RecordMap& recordMap, bool didSeeUnwindInfo)
@@ -251,16 +291,14 @@ static void fixFunctionBasedOnStackMaps(
     VM& vm = graph.m_vm;
     StackMaps stackmaps = jitCode->stackmaps;
     
-    StackMaps::RecordMap::iterator iter = recordMap.find(state.capturedStackmapID);
-    RELEASE_ASSERT(iter != recordMap.end());
-    RELEASE_ASSERT(iter->value.size() == 1);
-    RELEASE_ASSERT(iter->value[0].locations.size() == 1);
-    Location capturedLocation =
-        Location::forStackmaps(&jitCode->stackmaps, iter->value[0].locations[0]);
-    RELEASE_ASSERT(capturedLocation.kind() == Location::Register);
-    RELEASE_ASSERT(capturedLocation.gpr() == GPRInfo::callFrameRegister);
-    RELEASE_ASSERT(!(capturedLocation.addend() % sizeof(Register)));
-    int32_t localsOffset = capturedLocation.addend() / sizeof(Register) + graph.m_nextMachineLocal;
+    int localsOffset =
+        offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
+    
+    int varargsSpillSlotsOffset;
+    if (state.varargsSpillSlotsStackmapID != UINT_MAX)
+        varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
+    else
+        varargsSpillSlotsOffset = 0;
     
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
@@ -293,18 +331,12 @@ static void fixFunctionBasedOnStackMaps(
         
         // At this point it's perfectly fair to just blow away all state and restore the
         // JS JIT view of the universe.
-        checkJIT.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
-        checkJIT.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
-
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
         checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         MacroAssembler::Call callLookupExceptionHandler = checkJIT.call();
         checkJIT.jumpToExceptionHandler();
 
         stackOverflowException = checkJIT.label();
-        checkJIT.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
-        checkJIT.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
-
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
         checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         MacroAssembler::Call callLookupExceptionHandlerFromCallerFrame = checkJIT.call();
@@ -336,7 +368,7 @@ static void fixFunctionBasedOnStackMaps(
             if (verboseCompilationEnabled())
                 dataLog("Handling OSR stackmap #", exit.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
 
-            iter = recordMap.find(exit.m_stackmapID);
+            auto iter = recordMap.find(exit.m_stackmapID);
             if (iter == recordMap.end()) {
                 // It was optimized out.
                 continue;
@@ -375,7 +407,7 @@ static void fixFunctionBasedOnStackMaps(
             if (verboseCompilationEnabled())
                 dataLog("Handling GetById stackmap #", getById.stackmapID(), "\n");
             
-            iter = recordMap.find(getById.stackmapID());
+            auto iter = recordMap.find(getById.stackmapID());
             if (iter == recordMap.end()) {
                 // It was optimized out.
                 continue;
@@ -412,7 +444,7 @@ static void fixFunctionBasedOnStackMaps(
             if (verboseCompilationEnabled())
                 dataLog("Handling PutById stackmap #", putById.stackmapID(), "\n");
             
-            iter = recordMap.find(putById.stackmapID());
+            auto iter = recordMap.find(putById.stackmapID());
             if (iter == recordMap.end()) {
                 // It was optimized out.
                 continue;
@@ -444,14 +476,13 @@ static void fixFunctionBasedOnStackMaps(
             }
         }
 
-
         for (unsigned i = state.checkIns.size(); i--;) {
             CheckInDescriptor& checkIn = state.checkIns[i];
             
             if (verboseCompilationEnabled())
                 dataLog("Handling checkIn stackmap #", checkIn.stackmapID(), "\n");
             
-            iter = recordMap.find(checkIn.stackmapID());
+            auto iter = recordMap.find(checkIn.stackmapID());
             if (iter == recordMap.end()) {
                 // It was optimized out.
                 continue;
@@ -480,7 +511,6 @@ static void fixFunctionBasedOnStackMaps(
                 checkIn.m_generators.append(CheckInGenerator(stubInfo, slowCall, begin));
             }
         }
-
         
         exceptionTarget.link(&slowPathJIT);
         MacroAssembler::Jump exceptionJump = slowPathJIT.jump();
@@ -503,29 +533,11 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned i = state.checkIns.size(); i--;) {
             generateCheckInICFastPath(
                 state, codeBlock, generatedFunction, recordMap, state.checkIns[i],
-                sizeOfCheckIn()); 
+                sizeOfIn()); 
         } 
     }
     
-    // Handling JS calls is weird: we need to ensure that we sort them by the PC in LLVM
-    // generated code. That implies first pruning the ones that LLVM didn't generate.
-    Vector<JSCall> oldCalls = state.jsCalls;
-    state.jsCalls.resize(0);
-    for (unsigned i = 0; i < oldCalls.size(); ++i) {
-        JSCall& call = oldCalls[i];
-        
-        StackMaps::RecordMap::iterator iter = recordMap.find(call.stackmapID());
-        if (iter == recordMap.end())
-            continue;
-
-        for (unsigned j = 0; j < iter->value.size(); ++j) {
-            JSCall copy = call;
-            copy.m_instructionOffset = iter->value[j].instructionOffset;
-            state.jsCalls.append(copy);
-        }
-    }
-    
-    std::sort(state.jsCalls.begin(), state.jsCalls.end());
+    adjustCallICsForStackmaps(state.jsCalls, recordMap);
     
     for (unsigned i = state.jsCalls.size(); i--;) {
         JSCall& call = state.jsCalls[i];
@@ -547,9 +559,32 @@ static void fixFunctionBasedOnStackMaps(
         call.link(vm, linkBuffer);
     }
     
+    adjustCallICsForStackmaps(state.jsCallVarargses, recordMap);
+    
+    for (unsigned i = state.jsCallVarargses.size(); i--;) {
+        JSCallVarargs& call = state.jsCallVarargses[i];
+        
+        CCallHelpers fastPathJIT(&vm, codeBlock);
+        call.emit(fastPathJIT, graph, varargsSpillSlotsOffset);
+        
+        char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
+        size_t sizeOfIC = sizeOfICFor(call.node());
+
+        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfIC);
+        if (!linkBuffer.isValid()) {
+            dataLog("Failed to insert inline cache for varargs call (specifically, ", Graph::opName(call.node()->op()), ") because we thought the size would be ", sizeOfIC, " but it ended up being ", fastPathJIT.m_assembler.codeSize(), " prior to compaction.\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        
+        MacroAssembler::AssemblerType_T::fillNops(
+            startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
+        
+        call.link(vm, linkBuffer, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+    }
+    
     RepatchBuffer repatchBuffer(codeBlock);
 
-    iter = recordMap.find(state.handleStackOverflowExceptionStackmapID);
+    auto iter = recordMap.find(state.handleStackOverflowExceptionStackmapID);
     // It's sort of remotely possible that we won't have an in-band exception handling
     // path, for some kinds of functions.
     if (iter != recordMap.end()) {

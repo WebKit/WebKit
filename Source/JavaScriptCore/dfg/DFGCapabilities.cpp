@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,6 +96,8 @@ inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel r
 
 CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)
 {
+    UNUSED_PARAM(codeBlock); // This function does some bytecode parsing. Ordinarily bytecode parsing requires the owning CodeBlock. It's sort of strange that we don't use it here right now.
+    
     switch (opcodeID) {
     case op_enter:
     case op_touch_entry:
@@ -182,6 +184,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_throw_static_error:
     case op_call:
     case op_construct:
+    case op_call_varargs:
+    case op_construct_varargs:
     case op_init_lazy_reg:
     case op_create_arguments:
     case op_tear_off_arguments:
@@ -222,14 +226,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
             return CannotCompile;
         return CanCompileAndInline;
     }
-
-    case op_call_varargs:
-        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister().offset()
-            && !pc[6].u.operand)
-            return CanInline;
-        // FIXME: We should handle this.
-        // https://bugs.webkit.org/show_bug.cgi?id=127626
-        return CannotCompile;
 
     case op_new_regexp: 
     case op_create_lexical_environment:

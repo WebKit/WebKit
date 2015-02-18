@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,10 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
 
         m_frame.m_callFrame = callFrame;
         m_frame.m_inlineCallFrame = inlineCallFrame;
-        m_frame.m_argumentCountIncludingThis = inlineCallFrame->arguments.size();
+        if (inlineCallFrame->argumentCountRegister.isValid())
+            m_frame.m_argumentCountIncludingThis = callFrame->r(inlineCallFrame->argumentCountRegister.offset()).unboxedInt32();
+        else
+            m_frame.m_argumentCountIncludingThis = inlineCallFrame->arguments.size();
         m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock();
         m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
 

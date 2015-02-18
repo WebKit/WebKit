@@ -56,7 +56,7 @@ public:
         
     static Arguments* create(VM& vm, CallFrame* callFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode = NormalArgumentsCreationMode)
     {
-        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap, offsetOfInlineRegisterArray() + registerArraySizeInBytes(inlineCallFrame))) Arguments(callFrame);
+        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap, offsetOfInlineRegisterArray() + registerArraySizeInBytes(callFrame, inlineCallFrame))) Arguments(callFrame);
         arguments->finishCreation(callFrame, inlineCallFrame, mode);
         return arguments;
     }
@@ -124,7 +124,15 @@ private:
     void createStrictModeCalleeIfNecessary(ExecState*);
 
     static size_t registerArraySizeInBytes(CallFrame* callFrame) { return sizeof(WriteBarrier<Unknown>) * callFrame->argumentCount(); }
-    static size_t registerArraySizeInBytes(InlineCallFrame* inlineCallFrame) { return sizeof(WriteBarrier<Unknown>) * (inlineCallFrame->arguments.size() - 1); }
+    static size_t registerArraySizeInBytes(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+    {
+        unsigned argumentCountIncludingThis;
+        if (inlineCallFrame->argumentCountRegister.isValid())
+            argumentCountIncludingThis = callFrame->r(inlineCallFrame->argumentCountRegister.offset()).unboxedInt32();
+        else
+            argumentCountIncludingThis = inlineCallFrame->arguments.size();
+        return sizeof(WriteBarrier<Unknown>) * (argumentCountIncludingThis - 1);
+    }
     bool isArgument(size_t);
     bool trySetArgument(VM&, size_t argument, JSValue);
     JSValue tryGetArgument(size_t argument);
@@ -340,11 +348,15 @@ inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inl
     m_overrodeCallee = false;
     m_overrodeCaller = false;
     m_isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
-
+    
+    if (inlineCallFrame->argumentCountRegister.isValid())
+        m_numArguments = callFrame->r(inlineCallFrame->argumentCountRegister.offset()).unboxedInt32();
+    else
+        m_numArguments = inlineCallFrame->arguments.size();
+    m_numArguments--;
+    
     switch (mode) {
     case NormalArgumentsCreationMode: {
-        m_numArguments = inlineCallFrame->arguments.size() - 1;
-        
         if (m_numArguments) {
             int offsetForArgumentOne = inlineCallFrame->arguments[1].virtualRegister().offset();
             m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + offsetForArgumentOne - virtualRegisterForArgument(1).offset();
@@ -361,7 +373,6 @@ inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inl
     }
         
     case ClonedArgumentsCreationMode: {
-        m_numArguments = inlineCallFrame->arguments.size() - 1;
         if (m_numArguments) {
             int offsetForArgumentOne = inlineCallFrame->arguments[1].virtualRegister().offset();
             m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + offsetForArgumentOne - virtualRegisterForArgument(1).offset();

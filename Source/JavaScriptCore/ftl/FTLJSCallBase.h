@@ -36,6 +36,10 @@ namespace JSC {
 
 class LinkBuffer;
 
+namespace DFG {
+struct Node;
+}
+
 namespace FTL {
 
 class JSCallBase {

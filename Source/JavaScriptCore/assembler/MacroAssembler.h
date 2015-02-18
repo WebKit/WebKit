@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -471,6 +471,16 @@ public:
     {
         lshift32(trustedImm32ForShift(imm), srcDest);
     }
+    
+    void rshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        rshift32(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void urshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        urshift32(trustedImm32ForShift(imm), srcDest);
+    }
 
     void negPtr(RegisterID dest)
     {
@@ -748,6 +758,16 @@ public:
     void lshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         lshift64(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void rshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        rshift64(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void urshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        urshift64(trustedImm32ForShift(imm), srcDest);
     }
 
     void negPtr(RegisterID dest)

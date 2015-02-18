@@ -313,6 +313,18 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, RawPointer(node->storagePointer()));
     if (node->hasObjectMaterializationData())
         out.print(comma, node->objectMaterializationData());
+    if (node->hasCallVarargsData())
+        out.print(comma, "firstVarArgOffset = ", node->callVarargsData()->firstVarArgOffset);
+    if (node->hasLoadVarargsData()) {
+        LoadVarargsData* data = node->loadVarargsData();
+        out.print(comma, "start = ", data->start, ", count = ", data->count);
+        if (data->machineStart.isValid())
+            out.print(", machineStart = ", data->machineStart);
+        if (data->machineCount.isValid())
+            out.print(", machineCount = ", data->machineCount);
+        out.print(", offset = ", data->offset, ", mandatoryMinimum = ", data->mandatoryMinimum);
+        out.print(", limit = ", data->limit);
+    }
     if (node->isConstant())
         out.print(comma, pointerDumpInContext(node->constant(), context));
     if (node->isJump())
@@ -400,7 +412,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
             Node* phiNode = block->phis[i];
             if (!phiNode->shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
                 continue;
-            out.print(" @", phiNode->index(), "<", phiNode->refCount(), ">->(");
+            out.print(" @", phiNode->index(), "<", phiNode->local(), ",", phiNode->refCount(), ">->(");
             if (phiNode->child1()) {
                 out.print("@", phiNode->child1()->index());
                 if (phiNode->child2()) {
@@ -869,10 +881,12 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
             if (reg.isArgument()) {
                 RELEASE_ASSERT(reg.offset() < JSStack::CallFrameHeaderSize);
                 
-                if (!codeOrigin.inlineCallFrame->isClosureCall)
-                    return false;
+                if (codeOrigin.inlineCallFrame->isClosureCall
+                    && reg.offset() == JSStack::Callee)
+                    return true;
                 
-                if (reg.offset() == JSStack::Callee)
+                if (codeOrigin.inlineCallFrame->isVarargs()
+                    && reg.offset() == JSStack::ArgumentCount)
                     return true;
                 
                 return false;
@@ -1233,6 +1247,51 @@ void Graph::handleAssertionFailure(
     BasicBlock* block, const char* file, int line, const char* function, const char* assertion)
 {
     crash(*this, toCString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
+}
+
+ValueProfile* Graph::valueProfileFor(Node* node)
+{
+    if (!node)
+        return nullptr;
+        
+    CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+        
+    if (node->hasLocal(*this)) {
+        if (!node->local().isArgument())
+            return nullptr;
+        int argument = node->local().toArgument();
+        Node* argumentNode = m_arguments[argument];
+        if (!argumentNode)
+            return nullptr;
+        if (node->variableAccessData() != argumentNode->variableAccessData())
+            return nullptr;
+        return profiledBlock->valueProfileForArgument(argument);
+    }
+        
+    if (node->hasHeapPrediction())
+        return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        
+    return nullptr;
+}
+
+MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
+{
+    if (!node)
+        return MethodOfGettingAValueProfile();
+    
+    if (ValueProfile* valueProfile = valueProfileFor(node))
+        return MethodOfGettingAValueProfile(valueProfile);
+    
+    if (node->op() == GetLocal) {
+        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+        
+        return MethodOfGettingAValueProfile::fromLazyOperand(
+            profiledBlock,
+            LazyOperandValueProfileKey(
+                node->origin.semantic.bytecodeIndex, node->local()));
+    }
+    
+    return MethodOfGettingAValueProfile();
 }
 
 } } // namespace JSC::DFG

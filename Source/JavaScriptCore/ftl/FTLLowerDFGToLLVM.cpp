@@ -192,6 +192,30 @@ public:
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
         
+        // If we have any CallVarargs then we nee to have a spill slot for it.
+        bool hasVarargs = false;
+        for (BasicBlock* block : preOrder) {
+            for (Node* node : *block) {
+                switch (node->op()) {
+                case CallVarargs:
+                case CallForwardVarargs:
+                case ConstructVarargs:
+                    hasVarargs = true;
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        if (hasVarargs) {
+            LValue varargsSpillSlots = m_out.alloca(
+                arrayType(m_out.int64, JSCallVarargs::numSpillSlotsNeeded()));
+            m_ftlState.varargsSpillSlotsStackmapID = m_stackmapIDs++;
+            m_out.call(
+                m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.varargsSpillSlotsStackmapID),
+                m_out.int32Zero, varargsSpillSlots);
+        }
+        
         m_callFrame = m_out.ptrToInt(
             m_out.call(m_out.frameAddressIntrinsic(), m_out.int32Zero), m_out.intPtr);
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
@@ -697,6 +721,14 @@ private:
         case Call:
         case Construct:
             compileCallOrConstruct();
+            break;
+        case CallVarargs:
+        case CallForwardVarargs:
+        case ConstructVarargs:
+            compileCallOrConstructVarargs();
+            break;
+        case LoadVarargs:
+            compileLoadVarargs();
             break;
 #if ENABLE(FTL_NATIVE_CALL_INLINING)
         case NativeCall:
@@ -2082,8 +2114,22 @@ private:
     {
         checkArgumentsNotCreated();
 
-        DFG_ASSERT(m_graph, m_node, !m_node->origin.semantic.inlineCallFrame);
-        setInt32(m_out.add(m_out.load32NonNegative(payloadFor(JSStack::ArgumentCount)), m_out.constInt32(-1)));
+        if (m_node->origin.semantic.inlineCallFrame
+            && !m_node->origin.semantic.inlineCallFrame->isVarargs()) {
+            setInt32(
+                m_out.constInt32(
+                    m_node->origin.semantic.inlineCallFrame->arguments.size() - 1));
+        } else {
+            VirtualRegister argumentCountRegister;
+            if (!m_node->origin.semantic.inlineCallFrame)
+                argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+            else
+                argumentCountRegister = m_node->origin.semantic.inlineCallFrame->argumentCountRegister;
+            setInt32(
+                m_out.add(
+                    m_out.load32NonNegative(payloadFor(argumentCountRegister)),
+                    m_out.constInt32(-1)));
+        }
     }
     
     void compileGetMyArgumentByVal()
@@ -2095,10 +2141,17 @@ private:
         LValue index = lowInt32(m_node->child1());
         
         LValue limit;
-        if (codeOrigin.inlineCallFrame)
+        if (codeOrigin.inlineCallFrame
+            && !codeOrigin.inlineCallFrame->isVarargs())
             limit = m_out.constInt32(codeOrigin.inlineCallFrame->arguments.size() - 1);
-        else
-            limit = m_out.sub(m_out.load32(payloadFor(JSStack::ArgumentCount)), m_out.int32One);
+        else {
+            VirtualRegister argumentCountRegister;
+            if (!codeOrigin.inlineCallFrame)
+                argumentCountRegister = VirtualRegister(JSStack::ArgumentCount);
+            else
+                argumentCountRegister = codeOrigin.inlineCallFrame->argumentCountRegister;
+            limit = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
+        }
         
         speculate(Uncountable, noValue(), 0, m_out.aboveOrEqual(index, limit));
         
@@ -3811,6 +3864,87 @@ private:
         
         setJSValue(call);
     }
+    
+    void compileCallOrConstructVarargs()
+    {
+        LValue jsCallee = lowJSValue(m_node->child1());
+        
+        LValue jsArguments = nullptr;
+        LValue thisArg = nullptr;
+        
+        switch (m_node->op()) {
+        case CallVarargs:
+            jsArguments = lowJSValue(m_node->child2());
+            thisArg = lowJSValue(m_node->child3());
+            break;
+        case CallForwardVarargs:
+            thisArg = lowJSValue(m_node->child2());
+            break;
+        case ConstructVarargs:
+            jsArguments = lowJSValue(m_node->child2());
+            break;
+        default:
+            DFG_CRASH(m_graph, m_node, "bad node type");
+            break;
+        }
+        
+        unsigned stackmapID = m_stackmapIDs++;
+        
+        Vector<LValue> arguments;
+        arguments.append(m_out.constInt64(stackmapID));
+        arguments.append(m_out.constInt32(sizeOfICFor(m_node)));
+        arguments.append(constNull(m_out.ref8));
+        arguments.append(m_out.constInt32(1 + !!jsArguments + !!thisArg));
+        arguments.append(jsCallee);
+        if (jsArguments)
+            arguments.append(jsArguments);
+        if (thisArg)
+            arguments.append(thisArg);
+        
+        callPreflight();
+        
+        LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
+        setInstructionCallingConvention(call, LLVMCCallConv);
+        
+        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, m_node));
+        
+        setJSValue(call);
+    }
+    
+    void compileLoadVarargs()
+    {
+        LoadVarargsData* data = m_node->loadVarargsData();
+        LValue jsArguments = lowJSValue(m_node->child1());
+        
+        LValue length = vmCall(
+            m_out.operation(operationSizeOfVarargs), m_callFrame, jsArguments,
+            m_out.constInt32(data->offset));
+        
+        // FIXME: There is a chance that we will call an effectful length property twice. This is safe
+        // from the standpoint of the VM's integrity, but it's subtly wrong from a spec compliance
+        // standpoint. The best solution would be one where we can exit *into* the op_call_varargs right
+        // past the sizing.
+        // https://bugs.webkit.org/show_bug.cgi?id=141448
+        
+        LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
+        speculate(
+            VarargsOverflow, noValue(), nullptr,
+            m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
+        
+        m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
+        
+        // FIXME: This computation is rather silly. If operationLaodVarargs just took a pointer instead
+        // of a VirtualRegister, we wouldn't have to do this.
+        // https://bugs.webkit.org/show_bug.cgi?id=141660
+        LValue machineStart = m_out.lShr(
+            m_out.sub(addressFor(data->machineStart.offset()).value(), m_callFrame),
+            m_out.constIntPtr(3));
+        
+        vmCall(
+            m_out.operation(operationLoadVarargs), m_callFrame,
+            m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset),
+            length, m_out.constInt32(data->mandatoryMinimum));
+    }
 
     void compileJump()
     {
@@ -4115,7 +4249,7 @@ private:
             
                 LValue call = m_out.call(
                     m_out.patchpointInt64Intrinsic(),
-                    m_out.constInt64(stackmapID), m_out.constInt32(sizeOfCheckIn()),
+                    m_out.constInt64(stackmapID), m_out.constInt32(sizeOfIn()),
                     constNull(m_out.ref8), m_out.constInt32(1), cell);
 
                 setInstructionCallingConvention(call, LLVMAnyRegCallConv);
@@ -6510,7 +6644,7 @@ private:
 
         // Buffer is out of space, flush it.
         m_out.appendTo(bufferIsFull, continuation);
-        vmCall(m_out.operation(operationFlushWriteBarrierBuffer), m_callFrame, base, NoExceptions);
+        vmCallNoExceptions(m_out.operation(operationFlushWriteBarrierBuffer), m_callFrame, base);
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -6519,44 +6653,23 @@ private:
 #endif
     }
 
-    enum ExceptionCheckMode { NoExceptions, CheckExceptions };
-    
-    LValue vmCall(LValue function, ExceptionCheckMode mode = CheckExceptions)
+    template<typename... Args>
+    LValue vmCall(LValue function, Args... args)
     {
         callPreflight();
-        LValue result = m_out.call(function);
-        callCheck(mode);
-        return result;
-    }
-    LValue vmCall(LValue function, LValue arg1, ExceptionCheckMode mode = CheckExceptions)
-    {
-        callPreflight();
-        LValue result = m_out.call(function, arg1);
-        callCheck(mode);
-        return result;
-    }
-    LValue vmCall(LValue function, LValue arg1, LValue arg2, ExceptionCheckMode mode = CheckExceptions)
-    {
-        callPreflight();
-        LValue result = m_out.call(function, arg1, arg2);
-        callCheck(mode);
-        return result;
-    }
-    LValue vmCall(LValue function, LValue arg1, LValue arg2, LValue arg3, ExceptionCheckMode mode = CheckExceptions)
-    {
-        callPreflight();
-        LValue result = m_out.call(function, arg1, arg2, arg3);
-        callCheck(mode);
-        return result;
-    }
-    LValue vmCall(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, ExceptionCheckMode mode = CheckExceptions)
-    {
-        callPreflight();
-        LValue result = m_out.call(function, arg1, arg2, arg3, arg4);
-        callCheck(mode);
+        LValue result = m_out.call(function, args...);
+        callCheck();
         return result;
     }
     
+    template<typename... Args>
+    LValue vmCallNoExceptions(LValue function, Args... args)
+    {
+        callPreflight();
+        LValue result = m_out.call(function, args...);
+        return result;
+    }
+
     void callPreflight(CodeOrigin codeOrigin)
     {
         m_out.store32(
@@ -6570,11 +6683,8 @@ private:
         callPreflight(m_node->origin.semantic);
     }
     
-    void callCheck(ExceptionCheckMode mode = CheckExceptions)
+    void callCheck()
     {
-        if (mode == NoExceptions)
-            return;
-        
         if (Options::enableExceptionFuzz())
             m_out.call(m_out.operation(operationExceptionFuzz));
         

@@ -48,6 +48,7 @@ JSCall::JSCall(unsigned stackmapID, Node* node)
     , m_stackmapID(stackmapID)
     , m_instructionOffset(0)
 {
+    ASSERT(node->op() == Call || node->op() == Construct);
 }
 
 } } // namespace JSC::FTL

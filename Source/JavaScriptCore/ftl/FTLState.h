@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 #include "FTLJSCall.h"
+#include "FTLJSCallVarargs.h"
 #include "FTLStackMaps.h"
 #include "FTLState.h"
 #include <wtf/Noncopyable.h>
@@ -71,10 +72,12 @@ public:
     unsigned handleStackOverflowExceptionStackmapID;
     unsigned handleExceptionStackmapID;
     unsigned capturedStackmapID;
+    unsigned varargsSpillSlotsStackmapID;
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
     SegmentedVector<CheckInDescriptor> checkIns;
     Vector<JSCall> jsCalls;
+    Vector<JSCallVarargs> jsCallVarargses;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
     void* unwindDataSection;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,13 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGNode.h"
 #include "JITInlineCacheGenerator.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
+
+using namespace DFG;
 
 // The default sizes are x86-64-specific, and were found empirically. They have to cover the worst
 // possible combination of registers leading to the largest possible encoding of each instruction in
@@ -61,7 +64,43 @@ size_t sizeOfPutById()
 #endif
 }
 
-size_t sizeOfCheckIn()
+size_t sizeOfCall()
+{
+#if CPU(ARM64)
+    return 56;
+#else
+    return 53;
+#endif
+}
+
+size_t sizeOfCallVarargs()
+{
+#if CPU(ARM64)
+    return 300;
+#else
+    return 275;
+#endif
+}
+
+size_t sizeOfCallForwardVarargs()
+{
+#if CPU(ARM64)
+    return 460;
+#else
+    return 372;
+#endif
+}
+
+size_t sizeOfConstructVarargs()
+{
+#if CPU(ARM64)
+    return 284;
+#else
+    return 253;
+#endif
+}
+
+size_t sizeOfIn()
 {
 #if CPU(ARM64)
     return 4;
@@ -70,14 +109,27 @@ size_t sizeOfCheckIn()
 #endif
 }
 
-
-size_t sizeOfCall()
+size_t sizeOfICFor(Node* node)
 {
-#if CPU(ARM64)
-    return 56;
-#else
-    return 53;
-#endif
+    switch (node->op()) {
+    case GetById:
+        return sizeOfGetById();
+    case PutById:
+        return sizeOfPutById();
+    case Call:
+    case Construct:
+        return sizeOfCall();
+    case CallVarargs:
+        return sizeOfCallVarargs();
+    case CallForwardVarargs:
+        return sizeOfCallForwardVarargs();
+    case ConstructVarargs:
+        return sizeOfConstructVarargs();
+    case In:
+        return sizeOfIn();
+    default:
+        return 0;
+    }
 }
 
 } } // namespace JSC::FTL

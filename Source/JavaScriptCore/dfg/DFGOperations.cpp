@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1016,6 +1016,27 @@ void JIT_OPERATION operationNotifyWrite(ExecState* exec, VariableWatchpointSet* 
     JSValue value = JSValue::decode(encodedValue);
 
     set->notifyWrite(vm, value, "Executed NotifyWrite");
+}
+
+int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t firstVarArgOffset)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue arguments = JSValue::decode(encodedArguments);
+    
+    return sizeOfVarargs(exec, arguments, firstVarArgOffset);
+}
+
+void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDest, EncodedJSValue encodedArguments, int32_t offset, int32_t length, int32_t mandatoryMinimum)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue arguments = JSValue::decode(encodedArguments);
+    
+    loadVarargs(exec, VirtualRegister(firstElementDest), arguments, offset, length);
+    
+    for (int32_t i = length; i < mandatoryMinimum; ++i)
+        exec->r(firstElementDest + i) = jsUndefined();
 }
 
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)

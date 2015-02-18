@@ -33,6 +33,8 @@
 
 namespace JSC { namespace FTL {
 
+using namespace DFG;
+
 JSCallBase::JSCallBase()
     : m_type(CallLinkInfo::None)
     , m_callLinkInfo(nullptr)

@@ -42,6 +42,9 @@ void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg
 // Variant that assumes normal stack frame.
 void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
 
+// Variant for potentially inlined stack frames.
+void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame*, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -480,50 +480,8 @@ public:
         return m_profiledBlock->uncheckedActivationRegister();
     }
     
-    ValueProfile* valueProfileFor(Node* node)
-    {
-        if (!node)
-            return nullptr;
-        
-        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
-        
-        if (node->hasLocal(*this)) {
-            if (!node->local().isArgument())
-                return 0;
-            int argument = node->local().toArgument();
-            Node* argumentNode = m_arguments[argument];
-            if (!argumentNode)
-                return nullptr;
-            if (node->variableAccessData() != argumentNode->variableAccessData())
-                return nullptr;
-            return profiledBlock->valueProfileForArgument(argument);
-        }
-        
-        if (node->hasHeapPrediction())
-            return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        
-        return 0;
-    }
-    
-    MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node* node)
-    {
-        if (!node)
-            return MethodOfGettingAValueProfile();
-        
-        if (ValueProfile* valueProfile = valueProfileFor(node))
-            return MethodOfGettingAValueProfile(valueProfile);
-        
-        if (node->op() == GetLocal) {
-            CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
-        
-            return MethodOfGettingAValueProfile::fromLazyOperand(
-                profiledBlock,
-                LazyOperandValueProfileKey(
-                    node->origin.semantic.bytecodeIndex, node->local()));
-        }
-        
-        return MethodOfGettingAValueProfile();
-    }
+    ValueProfile* valueProfileFor(Node*);
+    MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node*);
     
     bool usesArguments() const
     {
@@ -861,6 +819,8 @@ public:
     Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
     Bag<MultiPutByOffsetData> m_multiPutByOffsetData;
     Bag<ObjectMaterializationData> m_objectMaterializationData;
+    Bag<CallVarargsData> m_callVarargsData;
+    Bag<LoadVarargsData> m_loadVarargsData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     bool m_hasArguments;

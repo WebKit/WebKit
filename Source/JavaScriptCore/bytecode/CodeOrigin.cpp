@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,6 +205,12 @@ void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
         return;
     case JSC::InlineCallFrame::Construct:
         out.print("Construct");
+        return;
+    case JSC::InlineCallFrame::CallVarargs:
+        out.print("CallVarargs");
+        return;
+    case JSC::InlineCallFrame::ConstructVarargs:
+        out.print("ConstructVarargs");
         return;
     case JSC::InlineCallFrame::GetterCall:
         out.print("GetterCall");

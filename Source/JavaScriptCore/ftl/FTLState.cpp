@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,10 @@ State::State(Graph& graph)
     , module(0)
     , function(0)
     , generatedFunction(0)
+    , handleStackOverflowExceptionStackmapID(UINT_MAX)
+    , handleExceptionStackmapID(UINT_MAX)
+    , capturedStackmapID(UINT_MAX)
+    , varargsSpillSlotsStackmapID(UINT_MAX)
     , unwindDataSection(0)
     , unwindDataSectionSize(0)
 {

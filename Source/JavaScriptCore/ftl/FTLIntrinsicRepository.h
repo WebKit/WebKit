@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,10 +99,12 @@ namespace JSC { namespace FTL {
     macro(V_JITOperation_EC, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_ECb, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_EVwsJ, functionType(voidType, intPtr, intPtr, int64)) \
+    macro(V_JITOperation_EZJZZZ, functionType(voidType, intPtr, int32, int64, int32, int32, int32)) \
     macro(V_JITOperation_J, functionType(voidType, int64)) \
     macro(V_JITOperation_Z, functionType(voidType, int32)) \
     macro(Z_JITOperation_D, functionType(int32, doubleType)) \
-    macro(Z_JITOperation_EC, functionType(int32, intPtr, intPtr))
+    macro(Z_JITOperation_EC, functionType(int32, intPtr, intPtr)) \
+    macro(Z_JITOperation_EJZ, functionType(int32, intPtr, int64, int32))
     
 class IntrinsicRepository : public CommonValues {
 public:

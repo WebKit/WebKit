@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,11 +133,25 @@ private:
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
             if (inlineCallFrame->isClosureCall)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee));
+            if (inlineCallFrame->isVarargs())
+                m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ArgumentCount));
         }
     }
     
     void writeTop()
     {
+        if (m_node->op() == LoadVarargs) {
+            // Make sure we note the writes to the locals that will store the array elements and
+            // count.
+            LoadVarargsData* data = m_node->loadVarargsData();
+            m_write(data->count);
+            for (unsigned i = data->limit; i--;)
+                m_write(VirtualRegister(data->start.offset() + i));
+        }
+        
+        // Note that we don't need to do anything special for CallForwardVarargs, since it reads
+        // our arguments the same way that any effectful thing might.
+        
         if (m_graph.m_codeBlock->usesArguments()) {
             for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
                 m_write(virtualRegisterForArgument(i));

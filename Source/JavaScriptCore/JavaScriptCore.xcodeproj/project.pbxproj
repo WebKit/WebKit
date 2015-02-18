@@ -564,6 +564,8 @@
 		0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADE180738C000472CE4 /* FTLLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD1202F1A8AED12000F5280 /* FTLJSCallBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */; };
 		0FD120301A8AED12000F5280 /* FTLJSCallBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD120331A8C85BD000F5280 /* FTLJSCallVarargs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */; };
+		0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82014115CF800FD81CB /* DFGDriver.cpp */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
@@ -2249,6 +2251,8 @@
 		0FCEFADE180738C000472CE4 /* FTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLocation.h; path = ftl/FTLLocation.h; sourceTree = "<group>"; };
 		0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCallBase.cpp; path = ftl/FTLJSCallBase.cpp; sourceTree = "<group>"; };
 		0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCallBase.h; path = ftl/FTLJSCallBase.h; sourceTree = "<group>"; };
+		0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCallVarargs.cpp; path = ftl/FTLJSCallVarargs.cpp; sourceTree = "<group>"; };
+		0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCallVarargs.h; path = ftl/FTLJSCallVarargs.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
@@ -3610,6 +3614,8 @@
 				0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */,
 				0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */,
 				0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */,
+				0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */,
+				0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */,
 				0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */,
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
 				0FCEFADD180738C000472CE4 /* FTLLocation.cpp */,
@@ -5455,6 +5461,7 @@
 				6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
+				0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */,
 				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
 				0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h in Headers */,
 				A7A8AF3717ADB5F3005AB174 /* ArrayBufferView.h in Headers */,
@@ -6872,6 +6879,7 @@
 				A78A9774179738B8009DF744 /* DFGFailedFinalizer.cpp in Sources */,
 				A78A9776179738B8009DF744 /* DFGFinalizer.cpp in Sources */,
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
+				0FD120331A8C85BD000F5280 /* FTLJSCallVarargs.cpp in Sources */,
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,

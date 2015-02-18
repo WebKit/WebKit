@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,11 @@
 #include "config.h"
 #include "DFGCommon.h"
 
-#if ENABLE(DFG_JIT)
-
 #include "DFGNode.h"
 #include "JSCInlines.h"
+#include <wtf/PrintStream.h>
+
+#if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
 
@@ -130,4 +131,29 @@ void printInternal(PrintStream& out, ProofStatus status)
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+namespace WTF {
+
+using namespace JSC::DFG;
+
+void printInternal(PrintStream& out, CapabilityLevel capabilityLevel)
+{
+    switch (capabilityLevel) {
+    case CannotCompile:
+        out.print("CannotCompile");
+        return;
+    case CanCompile:
+        out.print("CanCompile");
+        return;
+    case CanCompileAndInline:
+        out.print("CanCompileAndInline");
+        return;
+    case CapabilityLevelNotSet:
+        out.print("CapabilityLevelNotSet");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 

@@ -101,11 +101,31 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
 
 void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
 {
-    emitSetupVarargsFrameFastCase(
-        jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3,
-        ValueRecovery::displacedInJSStack(VirtualRegister(JSStack::ArgumentCount), DataFormatInt32),
-        VirtualRegister(CallFrame::argumentOffset(0)),
-        firstVarArgOffset, slowCase);
+    emitSetupVarargsFrameFastCase(jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, nullptr, firstVarArgOffset, slowCase);
+}
+
+void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame* inlineCallFrame, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    ValueRecovery argumentCountRecovery;
+    VirtualRegister firstArgumentReg;
+    if (inlineCallFrame) {
+        if (inlineCallFrame->isVarargs()) {
+            argumentCountRecovery = ValueRecovery::displacedInJSStack(
+                inlineCallFrame->argumentCountRegister, DataFormatInt32);
+        } else {
+            argumentCountRecovery = ValueRecovery::constant(
+                jsNumber(inlineCallFrame->arguments.size()));
+        }
+        if (inlineCallFrame->arguments.size() > 1)
+            firstArgumentReg = inlineCallFrame->arguments[1].virtualRegister();
+        else
+            firstArgumentReg = VirtualRegister(0);
+    } else {
+        argumentCountRecovery = ValueRecovery::displacedInJSStack(
+            VirtualRegister(JSStack::ArgumentCount), DataFormatInt32);
+        firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
+    }
+    emitSetupVarargsFrameFastCase(jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);
 }
 
 } // namespace JSC

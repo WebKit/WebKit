@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ public:
             startCrashing(); \
             dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
-            dataLogF(": validation %s (%s:%d) failed.\n", #assertion, __FILE__, __LINE__); \
+            dataLogF(": validation failed: %s (%s:%d).\n", #assertion, __FILE__, __LINE__); \
             dumpGraphIfAppropriate(); \
             WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
             CRASH(); \
@@ -62,11 +62,11 @@ public:
             startCrashing(); \
             dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
-            dataLogF(": validation (%s = ", #left); \
+            dataLogF(": validation failed: (%s = ", #left); \
             dataLog(left); \
             dataLogF(") == (%s = ", #right); \
             dataLog(right); \
-            dataLogF(") (%s:%d) failed.\n", __FILE__, __LINE__); \
+            dataLogF(") (%s:%d).\n", __FILE__, __LINE__); \
             dumpGraphIfAppropriate(); \
             WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #left " == " #right); \
             CRASH(); \
@@ -455,6 +455,14 @@ private:
                     if (setLocalPositions.operand(node->local()) != notSet)
                         break;
                     setLocalPositions.operand(node->local()) = i;
+                    break;
+                case SetArgument:
+                    if (node->variableAccessData()->isCaptured())
+                        break;
+                    // This acts like a reset. It's ok to have a second GetLocal for a local in the same
+                    // block if we had a SetArgument for that local.
+                    getLocalPositions.operand(node->local()) = notSet;
+                    setLocalPositions.operand(node->local()) = notSet;
                     break;
                 default:
                     break;

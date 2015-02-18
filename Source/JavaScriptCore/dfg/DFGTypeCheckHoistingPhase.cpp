@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,6 @@ public:
                 // from the node, before doing any appending.
                 switch (node->op()) {
                 case SetArgument: {
-                    ASSERT(!blockIndex);
                     // Insert a GetLocal and a CheckStructure immediately following this
                     // SetArgument, if the variable was a candidate for structure hoisting.
                     // If the basic block previously only had the SetArgument as its
@@ -126,6 +125,9 @@ public:
                         break;
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
                         break;
+
+                    // Currently we should only be doing this hoisting for SetArguments at the prologue.
+                    ASSERT(!blockIndex);
 
                     NodeOrigin origin = node->origin;
                     
