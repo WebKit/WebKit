@@ -1,5 +1,44 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r176899
+
+    2014-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+            Programmatic scrolling and content changes are not always synchronized
+            https://bugs.webkit.org/show_bug.cgi?id=139245
+            rdar://problem/18833612
+
+            Reviewed by Anders Carlsson.
+
+            For programmatic scrolls, AsyncScrollingCoordinator::requestScrollPositionUpdate()
+            calls updateScrollPositionAfterAsyncScroll(), then dispatches the requested
+            scroll position to the scrolling thread.
+
+            Once the scrolling thread commits, it calls back to the main thread via
+            scheduleUpdateScrollPositionAfterAsyncScroll(), which schedules a second
+            call to updateScrollPositionAfterAsyncScroll() on a timer. That's a problem,
+            because some other scroll may have happened in the meantime; when the timer
+            fires, it can sometimes restore a stale scroll position.
+
+            Fix by bailing early from scheduleUpdateScrollPositionAfterAsyncScroll()
+            for programmatic scrolls, since we know that requestScrollPositionUpdate()
+            already did the updateScrollPositionAfterAsyncScroll().
+
+            Test:
+                ManualTests/programmatic-scroll-flicker.html
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::reset): nullptr.
+            (WebCore::FrameView::setScrollPosition): Ditto.
+            (WebCore::FrameView::setWasScrolledByUser): Ditto.
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate): Use a local variable for
+            isProgrammaticScroll just to make sure we use the same value for the duration of this function.
+            (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll): Do nothing
+            if this is a programmatic scroll.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r176750
 
     2014-12-03  Zalan Bujtas  <zalan@apple.com>

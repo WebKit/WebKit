@@ -1,3 +1,19 @@
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r176899
+
+    2014-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+            Programmatic scrolling and content changes are not always synchronized
+            https://bugs.webkit.org/show_bug.cgi?id=139245
+            rdar://problem/18833612
+
+            Reviewed by Anders Carlsson.
+
+            Manual test that tries to sync layout with programmatic scrolling.
+
+            * ManualTests/programmatic-scroll-flicker.html: Added.
+
 2014-07-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] ENABLE_ENCRYPTED_MEDIA_V2 should depend on ENABLE_VIDEO
