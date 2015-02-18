@@ -1,3 +1,13 @@
+2015-02-18  Brady Eidson  <beidson@apple.com>
+
+        Page::userContentController() should return a reference, not a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=141764
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebView.mm:
+        (-[WebView setGroupName:]):
+
 2015-02-18  Chris Dumez  <cdumez@apple.com>
 
         Access FontCache global instance via singleton() static member function

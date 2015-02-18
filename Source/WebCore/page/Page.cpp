@@ -204,7 +204,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_framesHandlingBeforeUnloadEvent(0)
     , m_databaseProvider(*WTF::move(pageConfiguration.databaseProvider))
     , m_storageNamespaceProvider(*WTF::move(pageConfiguration.storageNamespaceProvider))
-    , m_userContentController(WTF::move(pageConfiguration.userContentController))
+    , m_userContentController(*WTF::move(pageConfiguration.userContentController))
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
@@ -213,10 +213,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 
     m_storageNamespaceProvider->addPage(*this);
-
-    if (m_userContentController)
-        m_userContentController->addPage(*this);
-
+    m_userContentController->addPage(*this);
     m_visitedLinkStore->addPage(*this);
 
     if (!allPages) {
@@ -268,9 +265,7 @@ Page::~Page()
 #endif
 
     m_storageNamespaceProvider->removePage(*this);
-
-    if (m_userContentController)
-        m_userContentController->removePage(*this);
+    m_userContentController->removePage(*this);
     m_visitedLinkStore->removePage(*this);
 }
 
@@ -1622,15 +1617,11 @@ bool Page::isAnyFrameHandlingBeforeUnloadEvent()
     return m_framesHandlingBeforeUnloadEvent;
 }
 
-void Page::setUserContentController(UserContentController* userContentController)
+void Page::setUserContentController(Ref<UserContentController>&& userContentController)
 {
-    if (m_userContentController)
-        m_userContentController->removePage(*this);
-
-    m_userContentController = userContentController;
-
-    if (m_userContentController)
-        m_userContentController->addPage(*this);
+    m_userContentController->removePage(*this);
+    m_userContentController = WTF::move(userContentController);
+    m_userContentController->addPage(*this);
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document *document = frame->document()) {

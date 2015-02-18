@@ -1,3 +1,31 @@
+2015-02-18  Brady Eidson  <beidson@apple.com>
+
+        Page::userContentController() should return a reference, not a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=141764
+
+        Reviewed by Jer Noble.
+
+        No new tests (No behavior change)
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::updateInjectedStyleSheetCache):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOveride):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::shouldHaveWebKitNamespaceForWorld):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::setUserContentController):
+        * page/Page.h:
+        (WebCore::Page::userContentController):
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::handler):
+
 2015-02-18  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Promote various WebGL1 extensions to core for WebGL2.

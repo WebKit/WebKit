@@ -59,12 +59,8 @@ UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& na
     Page* page = frame()->page();
     if (!page)
         return nullptr;
-    
-    const auto* userContentController = page->userContentController();
-    if (!userContentController)
-        return nullptr;
 
-    const auto* userMessageHandlerDescriptors = userContentController->userMessageHandlerDescriptors();
+    const auto* userMessageHandlerDescriptors = page->userContentController().userMessageHandlerDescriptors();
     if (!userMessageHandlerDescriptors)
         return nullptr;
 

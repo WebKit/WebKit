@@ -464,7 +464,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frame() && frame()->page() && frame()->page()->userContentController() && frame()->page()->userContentController()->contentFilterBlocksURL(url))
+    if (frame() && frame()->page() && frame()->page()->userContentController().contentFilterBlocksURL(url))
         return nullptr;
 #endif
 

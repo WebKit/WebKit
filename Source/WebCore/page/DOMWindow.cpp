@@ -758,11 +758,7 @@ bool DOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
     if (!page)
         return false;
 
-    auto* userContentController = page->userContentController();
-    if (!userContentController)
-        return false;
-
-    auto* descriptorMap = userContentController->userMessageHandlerDescriptors();
+    auto* descriptorMap = page->userContentController().userMessageHandlerDescriptors();
     if (!descriptorMap)
         return false;
 

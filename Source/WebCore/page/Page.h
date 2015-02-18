@@ -406,8 +406,8 @@ public:
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
     void setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&&);
 
-    UserContentController* userContentController() { return m_userContentController.get(); }
-    WEBCORE_EXPORT void setUserContentController(UserContentController*);
+    UserContentController& userContentController() { return m_userContentController.get(); }
+    WEBCORE_EXPORT void setUserContentController(Ref<UserContentController>&&);
 
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
@@ -574,7 +574,7 @@ private:
 
     Ref<DatabaseProvider> m_databaseProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
-    RefPtr<UserContentController> m_userContentController;
+    Ref<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;
 
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
