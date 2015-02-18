@@ -1,3 +1,13 @@
+2015-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More unreviewed Windows gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/press-targets-center-point-expected.txt: Added.
+        * platform/win/fast/frames/frame-scrolling-attribute-exepected.txt: Removed.
+        * platform/win/fast/frames/frame-scrolling-attribute-expected.txt: Copied from platform/win/fast/frames/frame-scrolling-attribute-exepected.txt.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+
 2015-02-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; add expectation for WK2-only failing test.

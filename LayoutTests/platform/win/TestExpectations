@@ -2288,6 +2288,7 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 [ Debug ] inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ]
 [ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
+inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
