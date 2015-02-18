@@ -1,5 +1,26 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177089
+
+    2014-12-10  Antti Koivisto  <antti@apple.com>
+
+            Crash when creating CSSCalcBinaryOperation
+            https://bugs.webkit.org/show_bug.cgi?id=134886
+            rdar://problem/17663561
+
+            Reviewed by Chris Dumez.
+
+            Test: fast/css/calc-binary-operation-crash.html
+
+            * css/CSSCalculationValue.cpp:
+            (WebCore::determineCategory):
+
+            Ensure that both axis are within the addSubtractResult table.
+            Remove unneeded CalcOther test. The call site guarantees it doesn't happen and the normal cases would handle it anyway.
+            Also strengthen some asserts.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r176899
 
     2014-12-05  Simon Fraser  <simon.fraser@apple.com>
