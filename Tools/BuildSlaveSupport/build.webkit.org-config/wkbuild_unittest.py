@@ -43,7 +43,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/mac/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/win/foo"], ["win"]),
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
