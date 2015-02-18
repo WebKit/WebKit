@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200">
+  <g>
+    <text id="text">PASS if no crash.</text>
+  </g>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    document.getElementById("text").setAttribute("style","-webkit-column-span:all;");
+    document.documentElement.setAttribute("style","-webkit-mask-origin:content;overflow:-webkit-paged-y;");
+  </script>
+</svg>

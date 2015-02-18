@@ -1,5 +1,24 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r176750
+
+    2014-12-03  Zalan Bujtas  <zalan@apple.com>
+
+            ASSERTION: RenderMultiColumnFlowThread::processPossibleSpannerDescendant() when column spanner's parent is not a RenderBlockFlow.
+            https://bugs.webkit.org/show_bug.cgi?id=139188
+            rdar://problem/18502182
+
+            Reviewed by David Hyatt.
+
+            This patch ensures that the validation check for spanner in isValidColumnSpanner() is in synch
+            with the expectation in RenderMultiColumnFlowThread::processPossibleSpannerDescendant().
+            (descendant's parent is expected to be a RenderBlockFlow)
+
+            * fast/multicol/svg-content-as-column-spanner-crash-expected.txt: Added.
+            * fast/multicol/svg-content-as-column-spanner-crash.html: Added.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174712
 
     2014-10-14  Dan Bernstein  <mitz@apple.com>
