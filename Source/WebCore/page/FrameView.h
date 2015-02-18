@@ -4,7 +4,7 @@
              (C) 1998, 1999 Torben Weis (weis@kde.org)
              (C) 1999 Lars Knoll (knoll@kde.org)
              (C) 1999 Antti Koivisto (koivisto@kde.org)
-   Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+   Copyright (C) 2004-2009, 2014 Apple Inc. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -232,7 +232,6 @@ public:
     virtual void setFixedVisibleContentRect(const IntRect&) override;
 #endif
     virtual void setScrollPosition(const IntPoint&) override;
-    void scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition);
     virtual void updateLayerPositionsAfterScrolling() override;
     virtual void updateCompositingLayersAfterScrolling() override;
     virtual bool requestScrollPositionUpdate(const IntPoint&) override;
@@ -520,6 +519,7 @@ private:
         InLayout,
         InViewSizeAdjust,
         InPostLayout,
+        InPostLayerPositionsUpdatedAfterLayout,
     };
     LayoutPhase layoutPhase() const { return m_layoutPhase; }
 
@@ -535,6 +535,10 @@ private:
     bool shouldLayoutAfterContentsResized() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
+
+    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
+
+    virtual void scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition) override;
 
     void applyOverflowToViewport(RenderElement*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
