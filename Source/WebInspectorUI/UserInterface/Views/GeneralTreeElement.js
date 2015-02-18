@@ -52,6 +52,7 @@ WebInspector.GeneralTreeElement.Event = {
 
 WebInspector.GeneralTreeElement.prototype = {
     constructor: WebInspector.GeneralTreeElement,
+    __proto__: TreeElement.prototype,
 
     // Public
 
@@ -394,5 +395,3 @@ WebInspector.GeneralTreeElement.prototype = {
             this._statusElement.textContent = this._status;
     }
 };
-
-WebInspector.GeneralTreeElement.prototype.__proto__ = TreeElement.prototype;

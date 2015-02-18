@@ -88,6 +88,8 @@ WebInspector.FolderizedTreeElement.prototype = {
             folder.removeChildren();
 
         this._folderTypeMap.clear();
+
+        this._groupedIntoFolders = false;
     },
 
     // Protected
@@ -98,21 +100,6 @@ WebInspector.FolderizedTreeElement.prototype = {
         console.assert(settings);
         if (!settings) {
             console.error("No settings for represented object", representedObject);
-            return;
-        }
-
-        this.updateParentStatus();
-
-        if (!this.treeOutline) {
-            // Just mark as needing to update to avoid doing work that might not be needed.
-            this.shouldRefreshChildren = true;
-            return;
-        }
-
-        if (!this._groupedIntoFolders && this._shouldGroupIntoFolders()) {
-            // Mark as needing a refresh to rebuild the tree into folders.
-            this._groupedIntoFolders = true;
-            this.shouldRefreshChildren = true;
             return;
         }
 
@@ -172,6 +159,12 @@ WebInspector.FolderizedTreeElement.prototype = {
             this.removeChildren();
     },
 
+    prepareToPopulate: function()
+    {
+        if (!this._groupedIntoFolders && this._shouldGroupIntoFolders())
+            this._groupedIntoFolders = true;
+    },
+
     // Private
 
     _clearNewChildQueue: function()
@@ -190,6 +183,8 @@ WebInspector.FolderizedTreeElement.prototype = {
             this.shouldRefreshChildren = true;
             return;
         }
+
+        this.prepareToPopulate();
 
         for (var i = 0; i < this._newChildQueue.length; ++i)
             this.addChildForRepresentedObject(this._newChildQueue[i]);

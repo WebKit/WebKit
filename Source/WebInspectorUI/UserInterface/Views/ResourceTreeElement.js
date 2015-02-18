@@ -76,6 +76,7 @@ WebInspector.ResourceTreeElement.compareFolderAndResourceTreeElements = function
 
 WebInspector.ResourceTreeElement.prototype = {
     constructor: WebInspector.ResourceTreeElement,
+    __proto__: WebInspector.SourceCodeTreeElement.prototype,
 
     // Public
 
@@ -194,5 +195,3 @@ WebInspector.ResourceTreeElement.prototype = {
         this.callFirstAncestorFunction("descendantResourceTreeElementTypeDidChange", [this, event.data.oldType]);
     }
 };
-
-WebInspector.ResourceTreeElement.prototype.__proto__ = WebInspector.SourceCodeTreeElement.prototype;

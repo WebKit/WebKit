@@ -229,10 +229,11 @@ WebInspector.FrameTreeElement.prototype = {
     {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
-
         this.shouldRefreshChildren = false;
 
         this.removeChildren();
+        this.updateParentStatus();
+        this.prepareToPopulate();
 
         for (var i = 0; i < this._frame.childFrames.length; ++i)
             this.addChildForRepresentedObject(this._frame.childFrames[i]);
@@ -250,6 +251,7 @@ WebInspector.FrameTreeElement.prototype = {
         var flowMap = this._frame.domTree.flowMap;
         for (var flowKey in flowMap)
             this.addChildForRepresentedObject(flowMap[flowKey]);
+
     },
 
     onexpand: function()

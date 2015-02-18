@@ -1,3 +1,29 @@
+2015-02-18  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Inspecting a page where resources are in folders forces folder organization on every subsequent page
+        https://bugs.webkit.org/show_bug.cgi?id=141397
+
+        Reviewed by Timothy Hatcher.
+
+        When removeChildren is called on an instance of a FolderizedTreeElement, the element's _groupedIntoFolders flag
+        will now be set to false. This will prevent unnecessary folderization upon a frame navigation. Also during an
+        onpopulate event, addChildForRepresentedObject is called repeatedly and much of the work done during each call
+        was unnecessary. That work has now been partially removed and partially relocated to a function that is only
+        called at the beginning of an onpopulate event.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype.set removeChildren): Set _groupedIntoFolders to false.
+        (WebInspector.FolderizedTreeElement.prototype.addChildForRepresentedObject): Remove unnecessary treeOutline
+        emptiness check, and move _shouldGroupIntoFolders() check to new function prepareToPopulate().
+        (WebInspector.FolderizedTreeElement.prototype.prepareToPopulate): Create.
+        (WebInspector.FolderizedTreeElement.prototype._populateFromNewChildQueue): Call prepareToPopulate().
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onpopulate): Call prepareToPopulate().
+
+        * UserInterface/Views/GeneralTreeElement.js: Drive-by inheritance style fix.
+        * UserInterface/Views/ResourceTreeElement.js: Drive-by inheritance style fix.
+
 2015-02-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Console Support for Promise Objects
