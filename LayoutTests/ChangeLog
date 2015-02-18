@@ -1,3 +1,31 @@
+2015-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Gardening: Update baselines on Windows bots after removing mac-mountainlion
+
+        * platform/win/TestExpectations:
+        * platform/win/editing/selection/5057506-2-expected.png: Added.
+        * platform/win/editing/selection/5057506-2-expected.txt: Added.
+        * platform/win/fast/attachment: Added.
+        * platform/win/fast/attachment/attachment-disabled-rendering-expected.txt: Added.
+        * platform/win/fast/attachment/attachment-rendering-expected.txt: Added.
+        * platform/win/fast/frames/frame-scrolling-attribute-exepected.txt: Added.
+        * platform/win/fast/repaint/selection-ruby-rl-expected.txt: Added.
+        * platform/win/http/tests/security/XFrameOptions: Added.
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt: Added.
+        * platform/win/http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW-expected.txt: Added.
+        * platform/win/svg/batik/text/textEffect2-expected.txt: Added.
+        * platform/win/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/win/svg/batik/text/textProperties-expected.txt: Added.
+        * platform/win/svg/custom/text-filter-expected.txt: Added.
+        * platform/win/svg/filters/feColorMatrix-values-expected.png:
+        * platform/win/svg/filters/feColorMatrix-values-expected.txt: Added.
+        * platform/win/svg/filters/filter-on-filter-for-text-expected.txt: Added.
+        * platform/win/svg/filters/filter-on-tspan-expected.txt: Added.
+        * platform/win/svg/filters/sourceAlpha-expected.txt: Added.
+        * platform/win/svg/repaint/text-mask-update-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug131020-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug131020-expected.txt: Added.
+
 2015-02-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove some leftovers related to "stack" removal

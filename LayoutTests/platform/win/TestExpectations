@@ -1818,6 +1818,8 @@ svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml	 [ Failure ]
 # Tiny image diff. Why!?!?
 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
 
+svg/animations/animate-text-nested-transforms.html [ Failure ]
+svg/repaint/text-mask-update.svg [ ImageOnlyFailure ]
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################
@@ -1956,7 +1958,9 @@ webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 ################################################################################
 ################             DOM Issues                  #######################
 ################################################################################
+webkit.org/b/141756 fast/dom/Element/getClientRects.html [ Failure ]
 webkit.org/b/140768 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
+webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Failure ]
 
 # Tests that exceed maximum call stack on windows
 fast/dom/Window/window-postmessage-clone-deep-array.html [ Skip ]
@@ -2728,11 +2732,13 @@ webkit.org/b/128855 fast/regions/hover-and-js-in-visual-overflow.html [ Timeout 
 webkit.org/b/128855 fast/regions/overflow/overflow-scrollable-3.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/region-styling/region-style-block-background-color.html [ Pass Timeout ]
 fast/regions/hover-single-flow-into-none.html [ Pass Timeout ]
+
 # Skip image only failures that have very low percentage differences
 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-in-variable-width-regions.html [ Pass ImageOnlyFailure ]
 webkit.org/b/132990 fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html [ Pass ImageOnlyFailure ]
 fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
+
 # [Win] REGRESSION: fast/regions reference tests are failing with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=139973. Many are also flaky, which was documented
 # under https://bugs.webkit.org/show_bug.cgi?id=128855.
@@ -2935,6 +2941,9 @@ webkit.org/b/138042 fast/repaint/search-field-cancel.html [ Failure ]
 webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
 webkit.org/b/138042 fast/repaint/button-spurious-layout-hint.html [ Failure ]
 webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html [ Failure ]
+fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
+fast/repaint/line-flow-with-floats-9.html [ Failure ]
+fast/repaint/selection-rl.html [ Failure ]
 
 fast/replaced/border-radius-clip.html [ Failure ]
 webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html [ Failure ]
