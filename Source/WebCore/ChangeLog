@@ -1,5 +1,28 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178363
+
+    2015-01-13  Andreas Kling  <akling@apple.com>
+
+            Element::normalizeAttributes() needs to handle arbitrary JS executing between loop iterations.
+            <https://webkit.org/b/140379>
+            <rdar://problem/19446901>
+
+            Reviewed by Benjamin Poulain.
+
+            Since DOM mutation events may arise below the call to Node::normalize(),
+            have the loop in Element::normalizeAttributes() make a copy of the Attr nodes
+            beforehand, to guard against mutations.
+
+            Based on a patch by Chris "Chris Dumez" Dumez.
+
+            Test: fast/dom/Element/normalize-crash2.html
+
+            * dom/Element.cpp:
+            (WebCore::Element::normalizeAttributes):
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178038
 
     2015-01-07  Chris Fleizach  <cfleizach@apple.com>
