@@ -7029,7 +7029,7 @@ private:
         m_out.unreachable();
     }
 
-    void loweringFailed(Node* node, const char* file, int line, const char* function, const char* assertion)
+    NO_RETURN_DUE_TO_ASSERT void loweringFailed(Node* node, const char* file, int line, const char* function, const char* assertion)
     {
 #ifndef NDEBUG
         m_graph.handleAssertionFailure(node, file, line, function, (assertion));
