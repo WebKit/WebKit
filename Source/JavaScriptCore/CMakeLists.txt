@@ -507,6 +507,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/MapIteratorConstructor.cpp
     runtime/MapIteratorPrototype.cpp
     runtime/MapPrototype.cpp
+    runtime/MathCommon.cpp
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp
     runtime/NativeErrorConstructor.cpp

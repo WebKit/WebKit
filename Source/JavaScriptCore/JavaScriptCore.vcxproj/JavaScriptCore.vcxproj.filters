@@ -735,6 +735,9 @@
     <ClCompile Include="..\runtime\MapConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\MathCommon.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\MathObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
