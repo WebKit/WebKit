@@ -226,7 +226,7 @@ public:
     PassRefPtr<WebGLContextAttributes> getContextAttributes();
     GC3Denum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
-    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
+    virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&) = 0;
     virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) = 0;
     WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname, ExceptionCode&);
     String getProgramInfoLog(WebGLProgram*, ExceptionCode&);
@@ -242,7 +242,7 @@ public:
     WebGLGetInfo getVertexAttrib(GC3Duint index, GC3Denum pname, ExceptionCode&);
     long long getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
-    void hint(GC3Denum target, GC3Denum mode);
+    virtual void hint(GC3Denum target, GC3Denum mode) = 0;
     GC3Dboolean isBuffer(WebGLBuffer*);
     bool isContextLost() const;
     GC3Dboolean isEnabled(GC3Denum cap);
@@ -258,7 +258,7 @@ public:
     void polygonOffset(GC3Dfloat factor, GC3Dfloat units);
     void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode&);
     void releaseShaderCompiler();
-    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
+    virtual void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) = 0;
     void sampleCoverage(GC3Dfloat value, GC3Dboolean invert);
     void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
     void shaderSource(WebGLShader*, const String&, ExceptionCode&);
@@ -398,7 +398,7 @@ protected:
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
 
-    void initializeNewContext();
+    virtual void initializeNewContext();
     void setupFlags();
 
     // ActiveDOMObject
@@ -432,7 +432,7 @@ protected:
     bool validateElementArraySize(GC3Dsizei count, GC3Denum type, GC3Dintptr offset);
 
     // Conservative but quick index validation
-    bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired);
+    virtual bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) = 0;
 
     // Precise but slow index validation -- only done if conservative checks fail
     bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired);
@@ -441,7 +441,7 @@ protected:
     bool validateWebGLObject(const char*, WebGLObject*);
 
     bool validateDrawArrays(const char* functionName, GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primcount);
+    virtual bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primcount) = 0;
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);
@@ -770,7 +770,7 @@ protected:
     bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment);
 
     // Helper function to validate blend equation mode.
-    bool validateBlendEquation(const char* functionName, GC3Denum);
+    virtual bool validateBlendEquation(const char* functionName, GC3Denum) = 0;
 
     // Helper function to validate blend func factors.
     bool validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst);

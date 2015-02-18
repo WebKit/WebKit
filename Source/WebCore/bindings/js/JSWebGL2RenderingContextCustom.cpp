@@ -69,12 +69,6 @@ void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&impl());
 }
-    
-JSValue JSWebGL2RenderingContext::getFramebufferAttachmentParameter(ExecState* exec)
-{
-    UNUSED_PARAM(exec);
-    return jsUndefined();
-}
 
 JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState* exec)
 {

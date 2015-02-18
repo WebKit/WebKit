@@ -1,3 +1,63 @@
+2015-02-18  Roger Fong  <roger_fong@apple.com>
+
+        WebGL2: Promote various WebGL1 extensions to core for WebGL2.
+        https://bugs.webkit.org/show_bug.cgi?id=141446
+        <rdar://problem/19633715>
+
+        Reviewed by Brent Fulham.
+
+        Tests covered by WebGL2 conformance tests.
+
+        This patch promotes the following WebGL1 extensions to core in WebGL2:
+        OES_element_index_uint 
+        EXT_sRGB 
+        EXT_blend_minmax 
+        EXT_frag_depth 
+        EXT_shader_texture_lod
+        OES_standard_derivatives 
+        
+        The latter 3 are enabled by default now for GLSL1, though we will get these extensions 
+        for free when GLSL3 becomes available.
+
+        WebGL2 binding code should actually fall back to base implementation for getFramebufferAttachmentParameter.
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp: 
+        (WebCore::JSWebGL2RenderingContext::getFramebufferAttachmentParameter): Deleted.
+        * html/canvas/WebGL2RenderingContext.idl: Ditto.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension): Enable WEBGL_lose_context as an extension again.
+        It was not promoted to core as I originally thought it had been.
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions): Ditto.
+        (WebCore::WebGL2RenderingContext::WebGL2RenderingContext): Promote the 3 shader extensions for GLSL1 to core.
+        (WebCore::WebGL2RenderingContext::initializeShaderExtensions): Ditto.
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter): Promote SRGB extension to core.
+        (WebCore::WebGL2RenderingContext::renderbufferStorage): Ditto.
+        (WebCore::WebGL2RenderingContext::hint): Ditto.
+        (WebCore::WebGL2RenderingContext::validateTexFuncFormatAndType): Ditto.
+        (WebCore::WebGL2RenderingContext::validateIndexArrayConservative): Promote OES_element_index_uint extension to core.
+        (WebCore::WebGL2RenderingContext::validateDrawElements): Ditto.
+        (WebCore::WebGL2RenderingContext::validateBlendEquation): Promote EXT_blend_minmax extension to core.
+        * html/canvas/WebGL2RenderingContext.h:
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): Copied form WebGLRenderingContextBase.
+        (WebCore::WebGLRenderingContext::renderbufferStorage): Ditto.
+        (WebCore::WebGLRenderingContext::hint): Ditto.
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative): Ditto.
+        (WebCore::WebGLRenderingContext::validateDrawElements): Ditto.
+        (WebCore::WebGLRenderingContext::validateBlendEquation): Ditto.
+        * html/canvas/WebGLRenderingContext.h:
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateIndexArrayConservative): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateDrawElements): Deleted.
+        (WebCore::WebGLRenderingContextBase::getExtension): Deleted.
+        (WebCore::WebGLRenderingContextBase::getFramebufferAttachmentParameter): Deleted.
+        (WebCore::WebGLRenderingContextBase::hint): Deleted.
+        (WebCore::WebGLRenderingContextBase::renderbufferStorage): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateBlendEquation): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2015-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Streamline unexported function build fixes

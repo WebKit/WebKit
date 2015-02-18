@@ -48,7 +48,7 @@ public:
     void getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData);
     
     /* Framebuffer objects */
-    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
+    virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&) override;
     void blitFramebuffer(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void framebufferTextureLayer(GC3Denum target, GC3Denum attachment, GC3Duint texture, GC3Dint level, GC3Dint layer);
     WebGLGetInfo getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname);
@@ -167,9 +167,10 @@ public:
     /* Extensions */
     virtual WebGLExtension* getExtension(const String&) override;
     virtual Vector<String> getSupportedExtensions() override;
-
     virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;
-    
+
+    virtual void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
+    virtual void hint(GC3Denum target, GC3Denum mode) override;
     virtual void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) override;
     virtual void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&) override;
     virtual void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) override;
@@ -188,6 +189,9 @@ public:
 #endif
 
 protected:
+    virtual bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) override;
+    virtual bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primitiveCount) override;
+    virtual bool validateBlendEquation(const char* functionName, GC3Denum mode) override;
     virtual bool validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level) override;
     virtual bool validateTexFuncParameters(const char* functionName,
         TexFuncValidationFunctionType,
@@ -204,6 +208,7 @@ protected:
     
 private:
     GC3Denum baseInternalFormatFromInternalFormat(GC3Denum internalformat);
+    void initializeShaderExtensions();
 };
 
 } // namespace WebCore

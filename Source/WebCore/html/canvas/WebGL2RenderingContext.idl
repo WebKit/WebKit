@@ -338,7 +338,6 @@ typedef unrestricted float GLclampf;
     [StrictTypeChecking] void getBufferSubData(GLenum target, GLintptr offset, ArrayBuffer returnedData);
 
     /* Framebuffer objects */
-    [StrictTypeChecking, Custom] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
     [StrictTypeChecking] void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
     [StrictTypeChecking] void framebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
     [StrictTypeChecking, Custom] any getInternalformatParameter(GLenum target, GLenum internalformat, GLenum pname);

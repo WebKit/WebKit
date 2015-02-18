@@ -287,6 +287,135 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     return result;
 }
 
+WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
+        return WebGLGetInfo();
+    
+    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
+        return WebGLGetInfo();
+    }
+    
+    WebGLSharedObject* object = m_framebufferBinding->getAttachmentObject(attachment);
+    if (!object) {
+        if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+            return WebGLGetInfo(GraphicsContext3D::NONE);
+        // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL
+        // specifies INVALID_OPERATION.
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
+        return WebGLGetInfo();
+    }
+    
+    ASSERT(object->isTexture() || object->isRenderbuffer());
+    if (object->isTexture()) {
+        switch (pname) {
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return WebGLGetInfo(GraphicsContext3D::TEXTURE);
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return WebGLGetInfo(PassRefPtr<WebGLTexture>(reinterpret_cast<WebGLTexture*>(object)));
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+            GC3Dint value = 0;
+            m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+            return WebGLGetInfo(value);
+        }
+        default:
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
+            return WebGLGetInfo();
+        }
+    } else {
+        switch (pname) {
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return WebGLGetInfo(GraphicsContext3D::RENDERBUFFER);
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(reinterpret_cast<WebGLRenderbuffer*>(object)));
+        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+            if (!m_extsRGB) {
+                synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+                return WebGLGetInfo();
+            }
+            WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
+            GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
+            ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
+            if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)
+                return WebGLGetInfo(Extensions3D::SRGB_EXT);
+            return WebGLGetInfo(GraphicsContext3D::LINEAR);
+        }
+        default:
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+            return WebGLGetInfo();
+        }
+    }
+}
+
+void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+{
+    if (isContextLostOrPending())
+        return;
+    if (target != GraphicsContext3D::RENDERBUFFER) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid target");
+        return;
+    }
+    if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "renderbufferStorage", "no bound renderbuffer");
+        return;
+    }
+    if (!validateSize("renderbufferStorage", width, height))
+        return;
+    switch (internalformat) {
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::STENCIL_INDEX8:
+    case Extensions3D::SRGB8_ALPHA8_EXT:
+        if (internalformat == Extensions3D::SRGB8_ALPHA8_EXT && !m_extsRGB) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+            return;
+        }
+        m_context->renderbufferStorage(target, internalformat, width, height);
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        m_renderbufferBinding->setIsValid(true);
+        m_renderbufferBinding->setSize(width, height);
+        break;
+    case GraphicsContext3D::DEPTH_STENCIL:
+        if (isDepthStencilSupported())
+            m_context->renderbufferStorage(target, Extensions3D::DEPTH24_STENCIL8, width, height);
+        m_renderbufferBinding->setSize(width, height);
+        m_renderbufferBinding->setIsValid(isDepthStencilSupported());
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+        return;
+    }
+    applyStencilTest();
+}
+
+void WebGLRenderingContext::hint(GC3Denum target, GC3Denum mode)
+{
+    if (isContextLostOrPending())
+        return;
+    bool isValid = false;
+    switch (target) {
+    case GraphicsContext3D::GENERATE_MIPMAP_HINT:
+        isValid = true;
+        break;
+    case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
+        if (m_oesStandardDerivatives)
+            isValid = true;
+        break;
+    }
+    if (!isValid) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "hint", "invalid target");
+        return;
+    }
+    m_context->hint(target, mode);
+}
+
 void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
 {
     if (isContextLostOrPending())
@@ -973,6 +1102,168 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
         return WebGLGetInfo();
+    }
+}
+
+bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired)
+{
+    // Performs conservative validation by caching a maximum index of
+    // the given type per element array buffer. If all of the bound
+    // array buffers have enough elements to satisfy that maximum
+    // index, skips the expensive per-draw-call iteration in
+    // validateIndexArrayPrecise.
+    
+    RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
+    
+    if (!elementArrayBuffer)
+        return false;
+    
+    GC3Dsizeiptr numElements = elementArrayBuffer->byteLength();
+    // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
+    if (!numElements)
+        return false;
+    const ArrayBuffer* buffer = elementArrayBuffer->elementArrayBuffer();
+    ASSERT(buffer);
+    
+    int maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
+    if (maxIndex < 0) {
+        // Compute the maximum index in the entire buffer for the given type of index.
+        switch (type) {
+        case GraphicsContext3D::UNSIGNED_BYTE: {
+            const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
+            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+            break;
+        }
+        case GraphicsContext3D::UNSIGNED_SHORT: {
+            numElements /= sizeof(GC3Dushort);
+            const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
+            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+            break;
+        }
+        case GraphicsContext3D::UNSIGNED_INT: {
+            if (!m_oesElementIndexUint)
+                return false;
+            numElements /= sizeof(GC3Duint);
+            const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
+            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+            break;
+        }
+        default:
+            return false;
+    }
+    elementArrayBuffer->setCachedMaxIndex(type, maxIndex);
+    }
+    
+    if (maxIndex >= 0) {
+        // The number of required elements is one more than the maximum
+        // index that will be accessed.
+        numElementsRequired = maxIndex + 1;
+        return true;
+    }
+    
+    return false;
+}
+
+bool WebGLRenderingContext::validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primitiveCount)
+{
+    if (isContextLostOrPending() || !validateDrawMode(functionName, mode))
+        return false;
+    
+    if (!validateStencilSettings(functionName))
+        return false;
+    
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        break;
+    case GraphicsContext3D::UNSIGNED_INT:
+        if (m_oesElementIndexUint)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid type");
+        return false;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid type");
+        return false;
+    }
+    
+    if (count < 0 || offset < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "count or offset < 0");
+        return false;
+    }
+    
+    if (!count) {
+        markContextChanged();
+        return false;
+    }
+    
+    if (primitiveCount < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "primcount < 0");
+        return false;
+    }
+    
+    if (!m_boundVertexArrayObject->getElementArrayBuffer()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no ELEMENT_ARRAY_BUFFER bound");
+        return false;
+    }
+    
+    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
+        // Ensure we have a valid rendering state
+        if (!validateElementArraySize(count, type, static_cast<GC3Dintptr>(offset))) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "request out of bounds for current ELEMENT_ARRAY_BUFFER");
+            return false;
+        }
+        if (!count)
+            return false;
+        
+        Checked<GC3Dint, RecordOverflow> checkedCount(count);
+        Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
+        if (checkedCount.hasOverflowed() || checkedPrimitiveCount.hasOverflowed()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+            return false;
+        }
+        
+        if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+            if (!validateIndexArrayPrecise(checkedCount.unsafeGet(), type, static_cast<GC3Dintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+                synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+                return false;
+            }
+        }
+    } else {
+        if (!validateVertexAttributes(0)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attribs not setup correctly");
+            return false;
+        }
+    }
+    
+    const char* reason = "framebuffer incomplete";
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, functionName, reason);
+        return false;
+    }
+    
+    return true;
+}
+
+bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3Denum mode)
+{
+    switch (mode) {
+    case GraphicsContext3D::FUNC_ADD:
+    case GraphicsContext3D::FUNC_SUBTRACT:
+    case GraphicsContext3D::FUNC_REVERSE_SUBTRACT:
+    case Extensions3D::MIN_EXT:
+    case Extensions3D::MAX_EXT:
+        if ((mode == Extensions3D::MIN_EXT || mode == Extensions3D::MAX_EXT) && !m_extBlendMinMax) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
+            return false;
+        }
+        return true;
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
+        return false;
     }
 }
 
