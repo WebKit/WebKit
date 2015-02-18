@@ -276,16 +276,20 @@ void CaptionUserPreferences::updateCaptionStyleSheetOveride()
     DEPRECATED_DEFINE_STATIC_LOCAL(URL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
 
     auto& pages = m_pageGroup.pages();
-    for (auto& page : pages)
-        page->userContentController().removeUserStyleSheet(mainThreadNormalWorld(), captionsStyleSheetURL);
+    for (auto& page : pages) {
+        if (auto* pageUserContentController = page->userContentController())
+            pageUserContentController->removeUserStyleSheet(mainThreadNormalWorld(), captionsStyleSheetURL);
+    }
 
     String captionsOverrideStyleSheet = captionsStyleSheetOverride();
     if (captionsOverrideStyleSheet.isEmpty())
         return;
 
     for (auto& page : pages) {
-        auto userStyleSheet = std::make_unique<UserStyleSheet>(captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(), Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel);
-        page->userContentController().addUserStyleSheet(mainThreadNormalWorld(), WTF::move(userStyleSheet), InjectInExistingDocuments);
+        if (auto* pageUserContentController = page->userContentController()) {
+            auto userStyleSheet = std::make_unique<UserStyleSheet>(captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(), Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel);
+            pageUserContentController->addUserStyleSheet(mainThreadNormalWorld(), WTF::move(userStyleSheet), InjectInExistingDocuments);
+        }
     }
 }
 

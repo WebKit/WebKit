@@ -6117,7 +6117,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     if (!_private->page)
         return;
 
-    _private->page->setUserContentController(_private->group->userContentController());
+    _private->page->setUserContentController(&_private->group->userContentController());
     _private->page->setVisitedLinkStore(_private->group->visitedLinkStore());
     _private->page->setGroupName(groupName);
 }

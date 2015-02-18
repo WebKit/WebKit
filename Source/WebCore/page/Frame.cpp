@@ -695,8 +695,12 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
+    const auto* userContentController = m_page->userContentController();
+    if (!userContentController)
+        return;
+
     // Walk the hashtable. Inject by world.
-    const UserScriptMap* userScripts = m_page->userContentController().userScripts();
+    const UserScriptMap* userScripts = userContentController->userScripts();
     if (!userScripts)
         return;
 

@@ -137,7 +137,11 @@ void DocumentStyleSheetCollection::updateInjectedStyleSheetCache() const
     if (!owningPage)
         return;
 
-    const UserStyleSheetMap* userStyleSheets = owningPage->userContentController().userStyleSheets();
+    const auto* userContentController = owningPage->userContentController();
+    if (!userContentController)
+        return;
+
+    const UserStyleSheetMap* userStyleSheets = userContentController->userStyleSheets();
     if (!userStyleSheets)
         return;
 
