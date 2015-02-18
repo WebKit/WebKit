@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ namespace bmalloc {
 class BeginTag;
 class EndTag;
 class Heap;
+class SuperChunk;
 
 class VMHeap {
 public:
@@ -55,17 +56,18 @@ public:
     void deallocateLargeRange(std::unique_lock<StaticMutex>&, Range);
 
 private:
-    void allocateSuperChunk();
+    void grow();
 
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeRanges;
+    Vector<SuperChunk*> m_superChunks;
 };
 
 inline SmallPage* VMHeap::allocateSmallPage()
 {
     if (!m_smallPages.size())
-        allocateSuperChunk();
+        grow();
 
     return m_smallPages.pop();
 }
@@ -73,7 +75,7 @@ inline SmallPage* VMHeap::allocateSmallPage()
 inline MediumPage* VMHeap::allocateMediumPage()
 {
     if (!m_mediumPages.size())
-        allocateSuperChunk();
+        grow();
 
     return m_mediumPages.pop();
 }
@@ -82,7 +84,7 @@ inline Range VMHeap::allocateLargeRange(size_t size)
 {
     Range range = m_largeRanges.take(size);
     if (!range) {
-        allocateSuperChunk();
+        grow();
         range = m_largeRanges.take(size);
         BASSERT(range);
     }
@@ -93,7 +95,7 @@ inline Range VMHeap::allocateLargeRange(size_t alignment, size_t size, size_t un
 {
     Range range = m_largeRanges.take(alignment, size, unalignedSize);
     if (!range) {
-        allocateSuperChunk();
+        grow();
         range = m_largeRanges.take(alignment, size, unalignedSize);
         BASSERT(range);
     }

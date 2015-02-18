@@ -1,3 +1,31 @@
+2015-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: VMHeap should keep a record of all of its VM ranges (for malloc introspection)
+        https://bugs.webkit.org/show_bug.cgi?id=141759
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/SuperChunk.h: Added.
+        (bmalloc::SuperChunk::create):
+        (bmalloc::SuperChunk::SuperChunk):
+        (bmalloc::SuperChunk::smallChunk):
+        (bmalloc::SuperChunk::mediumChunk):
+        (bmalloc::SuperChunk::largeChunk): Factored out super chunk creation
+        into a separate class, for clarity and type safety.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        (bmalloc::VMHeap::allocateSuperChunk): Renamed "allocateSuperChunk" to
+        "grow" because Andreas found "allocateSuperChunk" to be unclear.
+
+        * bmalloc/VMHeap.h: Track all our VM ranges. We will use this information
+        for malloc introspection.
+
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeRange): Updated for renames.
+
 2015-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Build bmalloc through CMake as a static library. It's then linked either
