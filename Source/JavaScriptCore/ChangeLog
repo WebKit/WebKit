@@ -1,5 +1,30 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178311
+
+    2015-01-12  Geoffrey Garen  <ggaren@apple.com>
+
+            Out of bounds read in IdentifierArena::makeIdentifier
+            https://bugs.webkit.org/show_bug.cgi?id=140376
+
+            Patch by Alexey Proskuryakov.
+
+            Reviewed and ChangeLogged by Geoffrey Garen.
+
+            No test, since this is a small past-the-end read, which is very
+            difficult to turn into a reproducible failing test -- and existing tests
+            crash reliably using ASan.
+
+            * parser/ParserArena.h:
+            (JSC::IdentifierArena::makeIdentifier):
+            (JSC::IdentifierArena::makeIdentifierLCharFromUChar): Check for a
+            zero-length string input, like we do in the literal parser, since it is
+            not valid to dereference characters in a zero-length string.
+
+            A zero-length string is allowed in JavaScript -- for example, "".
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177849
 
     2015-01-01  Jeff Miller  <jeffm@apple.com>
