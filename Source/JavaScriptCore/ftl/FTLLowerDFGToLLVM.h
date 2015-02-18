@@ -33,7 +33,7 @@
 
 namespace JSC { namespace FTL {
 
-bool lowerDFGToLLVM(State&);
+void lowerDFGToLLVM(State&);
 
 } } // namespace JSC::FTL
 

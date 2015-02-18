@@ -386,10 +386,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         }
 
         FTL::State state(dfg);
-        if (!FTL::lowerDFGToLLVM(state)) {
-            FTL::fail(state);
-            return FTLPath;
-        }
+        FTL::lowerDFGToLLVM(state);
         
         if (reportCompileTimes())
             m_timeBeforeFTL = monotonicallyIncreasingTime();

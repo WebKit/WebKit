@@ -1,3 +1,61 @@
+2015-02-18  Michael Saboff  <msaboff@apple.com>
+
+        Rollout r180247 & r180249 from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=141773
+
+        Reviewed by Filip Pizlo.
+
+        Theses changes makes sense to fix the crash reported in https://bugs.webkit.org/show_bug.cgi?id=141730
+        only for branches.  The change to fail the FTL compile but continue running is not comprehensive
+        enough for general use on trunk.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::createPhiVariables):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileUpsilon):
+        (JSC::FTL::LowerDFGToLLVM::compilePhi):
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+        (JSC::FTL::LowerDFGToLLVM::compileValueRep):
+        (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+        (JSC::FTL::LowerDFGToLLVM::compilePutLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArray):
+        (JSC::FTL::LowerDFGToLLVM::compileToString):
+        (JSC::FTL::LowerDFGToLLVM::compileMakeRope):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::compare):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (JSC::FTL::LowerDFGToLLVM::opposite):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::isArrayType):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::LowerDFGToLLVM::setInt52):
+        (JSC::FTL::lowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::loweringFailed): Deleted.
+        * ftl/FTLLowerDFGToLLVM.h:
+
 2015-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should really support varargs
