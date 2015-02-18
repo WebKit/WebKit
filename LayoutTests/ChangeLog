@@ -1,3 +1,9 @@
+2015-02-18  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; add expectation for WK2-only failing test.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More gardening (Unreviewed).

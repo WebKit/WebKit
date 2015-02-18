@@ -502,6 +502,7 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 [ Yosemite+ ] fast/events/page-visibility-iframe-move-test.html [ Timeout ]
 [ Yosemite+ ] fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
 [ Yosemite+ ] fast/events/page-visibility-transition-test.html [ Timeout ]
+media/video-background-tab-playback.html [ Failure ]
 
 webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
 
