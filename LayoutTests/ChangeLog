@@ -1,3 +1,13 @@
+2015-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More gardening (Unreviewed).
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/frames/frame-scrolling-attribute-exepected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/masking-path-04-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt: Added.
+
 2015-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should really support varargs
