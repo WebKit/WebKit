@@ -109,6 +109,36 @@
         return softLink##functionName parameterNames; \
     }
 
+#define SOFT_LINK_FUNCTION_DECL(functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace WebCore { \
+    extern resultType (*softLink##functionName) parameterDeclarations; \
+    } \
+    inline resultType softLink_##functionName parameterDeclarations \
+    { \
+        return WebCore::softLink##functionName parameterNames; \
+    }
+
+#define SOFT_LINK_FUNCTION_IMPL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace WebCore { \
+    static resultType init##functionName parameterDeclarations; \
+    resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
+    static resultType init##functionName parameterDeclarations \
+    { \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+            ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
+        }); \
+        return softLink##functionName parameterNames; \
+    } \
+    }
+
 #define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \

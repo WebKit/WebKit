@@ -31,6 +31,7 @@
 #import "WebVideoFullscreenInterfaceAVKit.h"
 
 #import "AVKitSPI.h"
+#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "GeometryUtilities.h"
 #import "WebCoreSystemInterface.h"
@@ -65,7 +66,6 @@ SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
 
 SOFT_LINK_FRAMEWORK(CoreMedia)
-SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 SOFT_LINK(CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
 SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))

@@ -28,6 +28,12 @@
 #include <windows.h>
 #include <wtf/Assertions.h>
 
+#ifdef DEBUG_ALL
+#define SOFT_LINK_FRAMEWORK(framework) SOFT_LINK_DEBUG_LIBRARY(framework)
+#else
+#define SOFT_LINK_FRAMEWORK(framework) SOFT_LINK_LIBRARY(framework)
+#endif
+
 #define SOFT_LINK_LIBRARY_HELPER(lib, suffix) \
     static HMODULE lib##Library() \
     { \
@@ -108,6 +114,27 @@
     inline resultType softLink_##functionName parameterDeclarations \
     { \
         return softLink##functionName parameterNames; \
+    }
+
+#define SOFT_LINK_FUNCTION_DECL(functionName, resultType, parameterDeclarations, parameterNames) \
+    namespace WebCore { \
+    extern resultType(__cdecl*softLink##functionName) parameterDeclarations; \
+    } \
+    inline resultType softLink_##functionName parameterDeclarations \
+    { \
+        return WebCore::softLink##functionName parameterNames; \
+    }
+
+#define SOFT_LINK_FUNCTION_IMPL(library, functionName, resultType, parameterDeclarations, parameterNames) \
+    namespace WebCore { \
+    static resultType __cdecl init##functionName parameterDeclarations; \
+    resultType(__cdecl*softLink##functionName) parameterDeclarations = init##functionName; \
+    static resultType __cdecl init##functionName parameterDeclarations \
+    { \
+        softLink##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
+        ASSERT(softLink##functionName); \
+        return softLink##functionName parameterNames; \
+    } \
     }
 
 #define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \

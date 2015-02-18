@@ -12169,6 +12169,9 @@
     <ClInclude Include="..\platform\cf\CFURLExtras.h">
       <Filter>platform\cf</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\cf\CoreMediaSoftLink.h">
+      <Filter>platform\cf</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h">
       <Filter>platform\cf\win</Filter>
     </ClInclude>

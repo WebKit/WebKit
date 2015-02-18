@@ -50,9 +50,6 @@ SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeMake, CMTime, __cdecl, (int64_t value, int
 SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeMakeFromDictionary, CMTime, __cdecl, (CFDictionaryRef dict), (dict))
 #define CMTimeMakeFromDictionary softLink_CMTimeMakeFromDictionary
 
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeMakeWithSeconds, CMTime, __cdecl, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
-#define CMTimeMakeWithSeconds softLink_CMTimeMakeWithSeconds
-
 SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeRangeGetEnd, CMTime, __cdecl, (CMTimeRange range), (range))
 #define CMTimeRangeGetEnd softLink_CMTimeRangeGetEnd
 

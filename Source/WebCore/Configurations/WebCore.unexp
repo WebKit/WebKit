@@ -52,7 +52,6 @@ _CMTimeCompare
 _CMTimeMake
 
 # Source/WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm
-_CMTimeMakeWithSeconds
 _CMTimeRangeGetEnd
 
 # Source/WebCore/page/CaptionUserPreferencesMediaAF.cpp

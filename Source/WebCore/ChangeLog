@@ -1,3 +1,55 @@
+2015-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        Consolidate soft-linked CMTimeMakeWithSeconds() function
+        <http://webkit.org/b/141655>
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/WebCore.unexp: Remove workaround for
+        CMTimeMakeWithSeconds() weak external.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add CoreMediaSoftLink.{cpp,h} to the project.
+
+        * platform/cf/CoreMediaSoftLink.cpp: Add.
+        * platform/cf/CoreMediaSoftLink.h: Add.
+        - Implement new strategy where code for soft-linking is only
+          in one place, and the header can simply be included wherever a
+          soft-linked method is needed.
+
+        * platform/graphics/avfoundation/MediaTimeAVFoundation.cpp:
+        * platform/graphics/avfoundation/cf/CoreMediaSoftLinking.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/mac/PlatformClockCM.mm:
+        - Remove old soft-linking strategy and include
+          CoreMediaSoftLink.h.
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_FUNCTION_DECL): Add.  New macro function used for
+        header declaration.  Split out from SOFT_LINK() macro.  Also
+        stop violating C++ standards by redeclaring an inline function
+        with the exact same signature as an extern "C" function.  This
+        now matches what we do on Windows (where Visual C++ already
+        prevented these shenanigans).
+        (SOFT_LINK_FUNCTION_IMPL): Add.  New macro function used for
+        source implementation.  Split out the from SOFT_LINK() macro.
+
+        * platform/win/SoftLinking.h:
+        (SOFT_LINK_FRAMEWORK): Map mac/SoftLinking.h macro name to
+        Windows macros so we can simplify CoreMediaSoftLink.{cpp,h}.
+        (SOFT_LINK_FUNCTION_DECL): Add.
+        (SOFT_LINK_FUNCTION_IMPL): Add.
+        - New macro functions split out from SOFT_LINK_DLL_IMPORT()
+          macro for header declaration and source implementation.
+        - We assume the __cdecl calling convention because that's what
+          all Apple libraries use, and so we are able to use the exact
+          same macro function on both Mac and Windows to simplify
+          CoreMediaSoftLink.{cpp,h}.
+
 2015-02-18  Brady Eidson  <beidson@apple.com>
 
         Page::userContentController() should return a reference, not a pointer
