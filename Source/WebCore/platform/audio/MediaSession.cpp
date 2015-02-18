@@ -190,7 +190,16 @@ void MediaSession::visibilityChanged()
 
 void MediaSession::clientDataBufferingTimerFired()
 {
+    LOG(Media, "MediaSession::visibilityChanged(%p)- visible = %s", this, m_client.elementIsHidden() ? "false" : "true");
+
     updateClientDataBuffering();
+
+    if (m_state != Playing || !m_client.elementIsHidden())
+        return;
+
+    MediaSessionManager::SessionRestrictions restrictions = MediaSessionManager::sharedManager().restrictions(mediaType());
+    if ((restrictions & MediaSessionManager::BackgroundTabPlaybackRestricted) == MediaSessionManager::BackgroundTabPlaybackRestricted)
+        pauseSession();
 }
 
 void MediaSession::updateClientDataBuffering()

@@ -1,7 +1,7 @@
   
 Test switching application state when <video> is not allowed to play in background.
 
-RUN(internals.setMediaSessionRestrictions('video', 'BackgroundPlaybackNotPermitted'))
+RUN(internals.setMediaSessionRestrictions('video', 'BackgroundProcessPlaybackRestricted'))
 
 EVENT(canplaythrough)
 EVENT(canplaythrough)

@@ -270,7 +270,7 @@ void MediaSessionManager::applicationWillEnterBackground() const
     LOG(Media, "MediaSessionManager::applicationWillEnterBackground");
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* session : sessions) {
-        if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
+        if (m_restrictions[session->mediaType()] & BackgroundProcessPlaybackRestricted)
             session->beginInterruption(MediaSession::EnteringBackground);
     }
 }
@@ -280,7 +280,7 @@ void MediaSessionManager::applicationWillEnterForeground() const
     LOG(Media, "MediaSessionManager::applicationWillEnterForeground");
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* session : sessions) {
-        if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
+        if (m_restrictions[session->mediaType()] & BackgroundProcessPlaybackRestricted)
             session->endInterruption(MediaSession::MayResumePlaying);
     }
 }
