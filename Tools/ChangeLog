@@ -1,3 +1,27 @@
+2015-02-19  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: do not warn about missing primary header for *SoftLink.cpp files
+        <http://webkit.org/b/141799>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_IncludeState.check_next_include_order): Don't emit a warning
+        if the primary header exists and the source file name ends with
+        "SoftLink.cpp".  Add 'filename' argument to method.
+        (check_include_line): Pass in 'filename'.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_next_include_order__no_config):
+        (OrderOfIncludesTest.test_check_next_include_order__no_self):
+        (OrderOfIncludesTest.test_check_next_include_order__likely_then_config):
+        (OrderOfIncludesTest.test_check_next_include_order__other_then_config):
+        (OrderOfIncludesTest.test_check_next_include_order__config_then_other_then_likely):
+        - Add test filename arguments for calls to
+          check_next_include_order().
+        (OrderOfIncludesTest.test_primary_header): Add test for a file
+        name ending in "SoftLink.cpp".
+
 2015-02-18  Enrica Casucci  <enrica@apple.com>
 
         Add new tool to test editable Webviews.

@@ -277,7 +277,7 @@ class _IncludeState(dict):
     def visited_primary_section(self):
         return self._visited_primary_section
 
-    def check_next_include_order(self, header_type, file_is_header, primary_header_exists):
+    def check_next_include_order(self, header_type, filename, file_is_header, primary_header_exists):
         """Returns a non-empty error message if the next header is out of order.
 
         This function also updates the internal state to be ready to check
@@ -285,7 +285,9 @@ class _IncludeState(dict):
 
         Args:
           header_type: One of the _XXX_HEADER constants defined above.
+          filename: The name of the current file.
           file_is_header: Whether the file that owns this _IncludeState is itself a header
+          primary_header_exists: Whether the primary header file actually exists on disk
 
         Returns:
           The empty string if the header is in the right order, or an
@@ -322,7 +324,7 @@ class _IncludeState(dict):
         else:
             assert header_type == _OTHER_HEADER
             if not file_is_header and self._section < self._PRIMARY_SECTION:
-                if primary_header_exists:
+                if primary_header_exists and not filename.endswith('SoftLink.cpp'):
                     error_message = before_error_message
             self._section = self._OTHER_SECTION
 
@@ -2981,6 +2983,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
     # The include_state object keeps track of the last type seen
     # and complains if the header types are out of order or missing.
     error_message = include_state.check_next_include_order(header_type,
+                                                           filename,
                                                            file_extension == "h",
                                                            primary_header_exists)
 
