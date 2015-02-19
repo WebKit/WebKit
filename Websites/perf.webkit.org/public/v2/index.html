@@ -591,11 +591,22 @@
                     </tbody>
                 {{/each}}
             </table>
+            <div class="reference-chart">
+                {{#if referenceChart}}
+                    {{interactive-chart
+                        chartData=referenceChart.data
+                        domain=overviewDomain
+                        chartPointRadius=2
+                        showYAxis=false
+                        enableSelection=false
+                        highlightedItems=referenceChart.highlightedItems}}
+                {{/if}}
+            </div>
         </section>
     </script>
 
     <script type="text/x-handlebars" data-template-name="testGroupRow">
-        {{#each revisions}}
+        {{#each revisionList}}
             <td>{{this}}</td>
         {{/each}}
         <td>
@@ -605,11 +616,7 @@
             {{formattedValue}}
         </td>
         <td>
-            {{#if buildNumber}}
-                 {{statusLabel}} / <a {{bind-attr href=url}}>Build {{buildNumber}}</a>
-            {{else}}
-                <a {{bind-attr href=url}}>{{statusLabel}}</a>
-            {{/if}}
+            <a {{bind-attr href=url title=buildLabel}}>{{statusLabel}}</a>
         </td>
     </script>
 

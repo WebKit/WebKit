@@ -152,13 +152,18 @@ function Measurement(rawData)
     this._formattedRevisions = undefined;
 }
 
+Measurement.prototype.revisionForRepository = function (repositoryId)
+{
+    var revisions = this._raw['revisions'];
+    var rawData = revisions[repositoryId];
+    return rawData ? rawData[0] : null;
+}
+
 Measurement.prototype.commitTimeForRepository = function (repositoryId)
 {
     var revisions = this._raw['revisions'];
     var rawData = revisions[repositoryId];
-    if (!rawData)
-        return null;
-    return new Date(rawData[1]);
+    return rawData ? new Date(rawData[1]) : null;
 }
 
 Measurement.prototype.formattedRevisions = function (previousMeasurement)
@@ -366,6 +371,17 @@ function TimeSeries(series)
 TimeSeries.prototype.findPointByBuild = function (buildId)
 {
     return this._series.find(function (point) { return point.measurement.buildId() == buildId; })
+}
+
+TimeSeries.prototype.findPointByRevisions = function (revisions)
+{
+    return this._series.find(function (point, index) {
+        for (var repositoryId in revisions) {
+            if (point.measurement.revisionForRepository(repositoryId) != revisions[repositoryId])
+                return false;
+        }
+        return true;
+    });
 }
 
 TimeSeries.prototype.findPointByMeasurementId = function (measurementId)

@@ -87,7 +87,7 @@ App.TestGroup = App.NameLabelModel.extend({
     createdAt: DS.attr('date'),
     buildRequests: DS.hasMany('buildRequests'),
     rootSets: DS.hasMany('rootSets'),
-    _fetchChartData: function ()
+    _fetchTestResults: function ()
     {
         var task = this.get('task');
         if (!task)
@@ -95,7 +95,7 @@ App.TestGroup = App.NameLabelModel.extend({
         var self = this;
         return App.Manifest.fetchRunsWithPlatformAndMetric(this.store,
             task.get('platform').get('id'), task.get('metric').get('id'), this.get('id')).then(
-            function (result) { self.set('chartData', result.data); },
+            function (result) { self.set('testResults', result.data); },
             function (error) {
                 // FIXME: Somehow this never gets called.
                 alert('Failed to fetch the results:' + error);

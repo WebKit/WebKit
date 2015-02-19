@@ -1,3 +1,46 @@
+2015-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Relationship between A/B testing results are unclear
+        https://bugs.webkit.org/show_bug.cgi?id=141810
+
+        Reviewed by Andreas Kling.
+
+        Show a "reference chart" indicating which two points have been tested in each test group pane.
+
+        Now the chart shown at the top of an analysis task page is called the "overview pane", and we use the pane
+        and the domain used in this chart to show charts in each test group.
+
+        Also renamed an array of revisions used in the A/B test results tables from 'revisions' to 'revisionList'.
+
+        * public/v2/analysis.js:
+        (App.TestGroup._fetchTestResults): Renamed from _fetchChartData. Set 'testResults' instead of 'chartData'
+        since this is the results of A/B testing results, not the data for charts shown next to them.
+
+        * public/v2/app.css: Added CSS rules for reference charts.
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController.paneDomain): Set 'overviewPane' and 'overviewDomain' on each test group pane.
+        (App.TestGroupPane._populate): Updated per 'chartData' to 'testResults' rename.
+        (App.TestGroupPane._updateReferenceChart): Get the chart data via the overview pane and find points that
+        identically matches root sets. If one of configuration used a set of revisions for which no measurement
+        was made in the original chart, don't show the reference chart as that would be misleading / confusing.
+        (App.TestGroupPane._computeRepositoryList): Updated per 'chartData' to 'testResults' rename.
+        (App.TestGroupPane._createConfigurationSummary): Ditto. Also renamed 'revisions' to 'revisionList'.
+        In addition, renamed 'buildNumber' to 'buildLabel' and prefixed it with "Build ".
+
+        * public/v2/data.js:
+        (Measurement.prototype.revisionForRepository): Added.
+        (Measurement.prototype.commitTimeForRepository): Cleanup.
+        (TimeSeries.prototype.findPointByRevisions): Added. Finds a point based on a set of revisions.
+
+        * public/v2/index.html: Added the reference chart. Streamlined the status label for each build request
+        by including the build number in the title attribute instead of in the markup.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._updateDomain): Fixed a typo introduced as a consequence of r179913.
+        (App.InteractiveChartComponent._computeYAxisDomain): Expand the y-axis to show the highlighted points.
+        (App.InteractiveChartComponent._highlightedItemsChanged): Adjust the y-axis as needed.
+
 2015-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Analysis task pages are unusable

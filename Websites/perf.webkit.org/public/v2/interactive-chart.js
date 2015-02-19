@@ -208,7 +208,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         var currentYDomain = this._y.domain();
         if (currentXDomain && App.domainsAreEqual(currentXDomain, xDomain)
             && currentYDomain && App.domainsAreEqual(currentYDomain, yDomain))
-            return currentDomain;
+            return currentXDomain;
 
         this._x.domain(xDomain);
         this._y.domain(yDomain);
@@ -343,6 +343,16 @@ App.InteractiveChartComponent = Ember.Component.extend({
         var range = this._minMaxForAllTimeSeries(startTime, endTime, !shouldShowFullYAxis);
         var min = range[0];
         var max = range[1];
+
+        var highlightedItems = this.get('highlightedItems');
+        if (highlightedItems) {
+            var data = this._currentTimeSeriesData
+                .filter(function (point) { return startTime <= point.time && point.time <= endTime && highlightedItems[point.measurement.id()]; })
+                .map(function (point) { return point.value });
+            min = Math.min(min, Statistics.min(data));
+            max = Math.max(max, Statistics.max(data));
+        }
+
         if (max < min)
             min = max = 0;
         else if (shouldShowFullYAxis)
@@ -615,7 +625,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("class", "highlight")
                 .attr("r", (this.get('chartPointRadius') || 1) * 1.8);
 
-        this._updateHighlightPositions();
+        this._domainChanged();
     }.observes('highlightedItems'),
     _rangesChanged: function ()
     {

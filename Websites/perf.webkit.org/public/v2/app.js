@@ -1048,8 +1048,16 @@ App.AnalysisTaskController = Ember.Controller.extend({
         this.set('highlightedItems', highlightedItems);
         this.set('analysisPoints', formatedPoints);
 
-        return [start.time - margin, +end.time + margin];
-    }.property('pane.chartData', 'model', 'model'),
+        var paneDomain = [start.time - margin, +end.time + margin];
+
+        var testGroupPanes = this.get('testGroupPanes');
+        if (testGroupPanes) {
+            testGroupPanes.setEach('overviewPane', pane);
+            testGroupPanes.setEach('overviewDomain', paneDomain);
+        }
+
+        return paneDomain;
+    }.property('pane.chartData'),
     testSets: function ()
     {
         var analysisPoints = this.get('analysisPoints');
@@ -1166,8 +1174,8 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
     _populate: function ()
     {
         var buildRequests = this.get('buildRequests');
-        var chartData = this.get('chartData');
-        if (!buildRequests || !chartData)
+        var testResults = this.get('testResults');
+        if (!buildRequests || !testResults)
             return [];
 
         var repositories = this._computeRepositoryList();
@@ -1188,7 +1196,41 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
         range.min -= margin;
 
         this.set('configurations', configurations);
-    }.observes('chartData', 'buildRequests'),
+    }.observes('testResults', 'buildRequests'),
+    _updateReferenceChart: function ()
+    {
+        var configurations = this.get('configurations');
+        var chartData = this.get('overviewPane') ? this.get('overviewPane').get('chartData') : null;
+        if (!configurations || !chartData || this.get('referenceChart'))
+            return;
+
+        var currentTimeSeries = chartData.current;
+        if (!currentTimeSeries)
+            return;
+
+        var repositories = this.get('repositories');
+        var highlightedItems = {};
+        var failedToFindPoint = false;
+        configurations.forEach(function (config) {
+            var revisions = {};
+            config.get('rootSet').get('roots').forEach(function (root) {
+                revisions[root.get('repository').get('id')] = root.get('revision');
+            });
+            var point = currentTimeSeries.findPointByRevisions(revisions);
+            if (!point) {
+                failedToFindPoint = true;
+                return;
+            }
+            highlightedItems[point.measurement.id()] = true;
+        });
+        if (failedToFindPoint)
+            return;
+
+        this.set('referenceChart', {
+            data: chartData,
+            highlightedItems: highlightedItems,
+        });
+    }.observes('configurations', 'overviewPane.chartData'),
     _computeRepositoryList: function ()
     {
         var specifiedRepositories = new Ember.Set();
@@ -1198,9 +1240,9 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
             });
         });
         var reportedRepositories = new Ember.Set();
-        var chartData = this.get('chartData');
+        var testResults = this.get('testResults');
         (this.get('buildRequests') || []).forEach(function (request) {
-            var point = chartData.current.findPointByBuild(request.get('build'));
+            var point = testResults.current.findPointByBuild(request.get('build'));
             if (!point)
                 return;
 
@@ -1228,19 +1270,19 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
     _createConfigurationSummary: function (buildRequests, configLetter, range)
     {
         var repositories = this.get('repositories');
-        var chartData = this.get('chartData');
+        var testResults = this.get('testResults');
         var requests = buildRequests.map(function (originalRequest) {
-            var point = chartData.current.findPointByBuild(originalRequest.get('build'));
+            var point = testResults.current.findPointByBuild(originalRequest.get('build'));
             var revisionByRepositoryId = point ? point.measurement.formattedRevisions() : {};
             return Ember.ObjectProxy.create({
                 content: originalRequest,
-                revisions: repositories.map(function (repository, index) {
+                revisionList: repositories.map(function (repository, index) {
                     return (revisionByRepositoryId[repository.get('id')] || {label:null}).label;
                 }),
                 value: point ? point.value : null,
                 valueRange: range,
-                formattedValue: point ? chartData.formatWithUnit(point.value) : null,
-                buildNumber: point ? point.measurement.buildNumber() : null,
+                formattedValue: point ? testResults.formatWithUnit(point.value) : null,
+                buildLabel: point ? 'Build ' + point.measurement.buildNumber() : null,
             });
         });
 
@@ -1248,15 +1290,15 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
         var summaryRevisions = repositories.map(function (repository, index) {
             var revision = rootSet ? rootSet.revisionForRepository(repository) : null;
             if (!revision)
-                return requests[0].get('revisions')[index];
+                return requests[0].get('revisionList')[index];
             return Measurement.formatRevisionRange(revision).label;
         });
 
         requests.forEach(function (request) {
-            var revisions = request.get('revisions');
+            var revisionList = request.get('revisionList');
             repositories.forEach(function (repository, index) {
-                if (revisions[index] == summaryRevisions[index])
-                    revisions[index] = null;
+                if (revisionList[index] == summaryRevisions[index])
+                    revisionList[index] = null;
             });
         });
 
@@ -1275,15 +1317,15 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
         var summary = Ember.Object.create({
             isAverage: true,
             configLetter: configLetter,
-            revisions: summaryRevisions,
-            formattedValue: isNaN(mean) ? null : chartData.formatWithDeltaAndUnit(mean, ciDelta),
+            revisionList: summaryRevisions,
+            formattedValue: isNaN(mean) ? null : testResults.formatWithDeltaAndUnit(mean, ciDelta),
             value: mean,
             confidenceIntervalDelta: ciDelta,
             valueRange: range,
             statusLabel: App.BuildRequest.aggregateStatuses(requests),
         });
 
-        return Ember.Object.create({summary: summary, items: requests});
+        return Ember.Object.create({summary: summary, items: requests, rootSet: rootSet});
     },
 });
 

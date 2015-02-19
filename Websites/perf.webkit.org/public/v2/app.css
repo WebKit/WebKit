@@ -472,6 +472,29 @@ table.dashboard tbody td .failure {
     display: none;
 }
 
+.analysis-group {
+    display: block;
+    position: relative;
+    min-height: 6.5rem;
+}
+
+.analysis-group .results {
+    margin-right: 20rem;
+}
+
+.analysis-group .reference-chart {
+    position: absolute;
+    top: 1.2rem;
+    right: -0.7rem;
+    width: 19rem;
+    height: 5rem;
+}
+
+.analysis-group .reference-chart .chart {
+    width: 100%;
+    height: 100%;
+}
+
 .box-plot {
     display: inline-block;
     width: 100px;
