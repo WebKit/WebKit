@@ -146,7 +146,7 @@ private:
     CallbackFunction m_callback;
 };
 
-template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
+template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType*>
 static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGenericCallbackFunction(void* context, void (*callback)(APIReturnValueType, WKErrorRef, void*))
 {
     return [context, callback](InternalReturnValueType returnValue, CallbackBase::Error error) {

@@ -1,5 +1,18 @@
 2015-02-19  Anders Carlsson  <andersca@apple.com>
 
+        Use the real implementation type in our API cast traits
+        https://bugs.webkit.org/show_bug.cgi?id=141805
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toURLRef):
+        (WebKit::toAPI): Deleted.
+        (WebKit::toImpl): Deleted.
+        * UIProcess/GenericCallback.h:
+
+2015-02-19  Anders Carlsson  <andersca@apple.com>
+
         Remove the stray storage manager from WebProcessPool
         https://bugs.webkit.org/show_bug.cgi?id=141800
 

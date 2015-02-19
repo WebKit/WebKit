@@ -84,12 +84,12 @@ class WebContextMenuItem;
 class WebGraphicsContext;
 class WebImage;
 
-template<typename APIType> struct APITypeInfo { };
-template<typename ImplType> struct ImplTypeInfo { };
+template<typename APIType> struct APITypeInfo;
+template<typename ImplType> struct ImplTypeInfo;
 
 #define WK_ADD_API_MAPPING(TheAPIType, TheImplType) \
-    template<> struct APITypeInfo<TheAPIType> { typedef TheImplType* ImplType; }; \
-    template<> struct ImplTypeInfo<TheImplType*> { typedef TheAPIType APIType; };
+    template<> struct APITypeInfo<TheAPIType> { typedef TheImplType ImplType; }; \
+    template<> struct ImplTypeInfo<TheImplType> { typedef TheAPIType APIType; };
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
@@ -116,8 +116,8 @@ WK_ADD_API_MAPPING(WKURLResponseRef, API::URLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, API::UserContentURLPattern)
 WK_ADD_API_MAPPING(WKSessionRef, API::Session)
 
-template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
-template<> struct APITypeInfo<WKMutableDictionaryRef> { typedef API::Dictionary* ImplType; };
+template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array ImplType; };
+template<> struct APITypeInfo<WKMutableDictionaryRef> { typedef API::Dictionary ImplType; };
 
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
@@ -125,13 +125,19 @@ WK_ADD_API_MAPPING(WKWebArchiveResourceRef, API::WebArchiveResource)
 WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 #endif
 
-template<typename T>
-inline typename ImplTypeInfo<T>::APIType toAPI(T t)
+template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>
+auto toAPI(T* t) -> APIType
 {
-    return reinterpret_cast<typename ImplTypeInfo<T>::APIType>(t);
+    return reinterpret_cast<APIType>(t);
 }
 
-template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType*>::APIType>
+template<typename T, typename ImplType = typename APITypeInfo<T>::ImplType>
+auto toImpl(T t) -> ImplType*
+{
+    return static_cast<ImplType*>(static_cast<void*>(const_cast<typename std::remove_const<typename std::remove_pointer<T>::type>::type*>(t)));
+}
+
+template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType>::APIType>
 class ProxyingRefPtr {
 public:
     ProxyingRefPtr(PassRefPtr<ImplType> impl)
@@ -144,20 +150,6 @@ public:
 private:
     RefPtr<ImplType> m_impl;
 };
-
-/* Opaque typing convenience methods */
-
-template<typename T>
-inline typename APITypeInfo<T>::ImplType toImpl(T t)
-{
-    // An example of the conversions that take place:
-    // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> API::Array*
-    
-    typedef typename std::remove_pointer<T>::type PotentiallyConstValueType;
-    typedef typename std::remove_const<PotentiallyConstValueType>::type NonConstValueType;
-
-    return reinterpret_cast<typename APITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
-}
 
 /* Special cases. */
 
@@ -175,7 +167,7 @@ inline WKStringRef toCopiedAPI(const String& string)
 inline ProxyingRefPtr<API::URL> toURLRef(StringImpl* string)
 {
     if (!string)
-        return ProxyingRefPtr<API::URL>(0);
+        return ProxyingRefPtr<API::URL>(nullptr);
     return ProxyingRefPtr<API::URL>(API::URL::create(String(string)));
 }
 
