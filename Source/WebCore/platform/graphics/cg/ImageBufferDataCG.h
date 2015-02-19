@@ -58,6 +58,7 @@ public:
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;
     CGBitmapInfo m_bitmapInfo;
+    OwnPtr<GraphicsContext> m_context;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     // Only for Accelerated ImageBuffers.

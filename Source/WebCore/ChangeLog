@@ -1,3 +1,24 @@
+2015-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        Move the software-only ImageBuffer::m_context to ImageBufferData
+        https://bugs.webkit.org/show_bug.cgi?id=141784
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        Move m_context to ImageBufferData in the software-only section;
+        for accelerated contexts, the GraphicsContext is owned by the IOSurface wrapper.
+        This will make it harder for ImageBuffer to make the mistake of using
+        m_context blindly without thinking when it will often be null.
+
 2015-02-18  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.

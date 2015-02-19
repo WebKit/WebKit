@@ -140,7 +140,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         if (!cgContext)
             return;
 
-        m_context = adoptPtr(new GraphicsContext(cgContext.get()));
+        m_data.m_context = adoptPtr(new GraphicsContext(cgContext.get()));
     }
 
     context()->scale(FloatSize(1, -1));
@@ -160,7 +160,7 @@ GraphicsContext* ImageBuffer::context() const
     if (m_data.m_surface)
         return &m_data.m_surface->ensureGraphicsContext();
 #endif
-    return m_context.get();
+    return m_data.m_context.get();
 }
 
 void ImageBuffer::flushContext() const
