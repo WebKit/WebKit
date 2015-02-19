@@ -70,6 +70,9 @@ private:
     virtual void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;
     virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
 
+    void platformInitialize();
+    void platformDestroy();
+
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
 

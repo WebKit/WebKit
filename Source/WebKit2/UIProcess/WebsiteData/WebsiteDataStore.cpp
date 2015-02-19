@@ -62,16 +62,19 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration)
     , m_sessionID(WebCore::SessionID::defaultSessionID())
     , m_storageManager(StorageManager::create(WTF::move(configuration.localStorageDirectory)))
 {
+    platformInitialize();
 }
 
 WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
     : m_identifier(generateIdentifier())
     , m_sessionID(sessionID)
 {
+    platformInitialize();
 }
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+    platformDestroy();
 }
 
 void WebsiteDataStore::cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage)
