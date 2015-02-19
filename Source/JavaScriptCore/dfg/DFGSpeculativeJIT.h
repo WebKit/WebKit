@@ -1770,7 +1770,7 @@ public:
 
     JITCompiler::Call callOperation(Z_JITOperation_EJZZ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, unsigned arg2, unsigned arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg2), TrustedImm32(arg3));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG  arg1Payload, arg1Tag, TrustedImm32(arg2), TrustedImm32(arg3));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(F_JITOperation_EFJZZ operation, GPRReg result, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, unsigned arg3, GPRReg arg4)
@@ -1780,7 +1780,7 @@ public:
     }
     JITCompiler::Call callOperation(Z_JITOperation_EJZ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, unsigned arg2)
     {
-        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg2));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImm32(arg2));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(V_JITOperation_EZJZZZ operation, unsigned arg1, GPRReg arg2Tag, GPRReg arg2Payload, unsigned arg3, GPRReg arg4, unsigned arg5)

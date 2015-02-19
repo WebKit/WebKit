@@ -1,3 +1,13 @@
+2015-02-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r180279): It broke 20 tests on ARM Linux
+        https://bugs.webkit.org/show_bug.cgi?id=141771
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Align 64-bit values to respect ARM EABI.
+
 2015-02-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove BytecodeGenerator's numberMap, it is dead code
