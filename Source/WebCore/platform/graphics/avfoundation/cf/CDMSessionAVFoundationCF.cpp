@@ -77,7 +77,7 @@ PassRefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String
     CFDataAppendBytes(assetID.get(), reinterpret_cast<const UInt8*>(assetStr.data()), assetStr.length());
 
     CFErrorRef cfError = nullptr;
-    RetainPtr<CFDataRef> keyRequest = AVCFAssetResourceLoadingRequestCreateStreamingContentKeyRequestDataForApp(m_request.get(), certificateData.get(), assetID.get(), nullptr, &cfError);
+    RetainPtr<CFDataRef> keyRequest = adoptCF(AVCFAssetResourceLoadingRequestCreateStreamingContentKeyRequestDataForApp(m_request.get(), certificateData.get(), assetID.get(), nullptr, &cfError));
 
     if (!keyRequest) {
         RetainPtr<CFDictionaryRef> userInfo;

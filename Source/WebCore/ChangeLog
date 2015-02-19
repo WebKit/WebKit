@@ -1,3 +1,15 @@
+2015-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] CFData leak in CDMSessionAVFoundationCF
+        https://bugs.webkit.org/show_bug.cgi?id=141765
+        <rdar://problem/141765>
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::generateKeyRequest): use 'adoptCF'
+        so we don't double-increment the retain count.
+
 2015-02-18  Timothy Horton  <timothy_horton@apple.com>
 
         Adopt WebCore::IOSurface in ImageBuffer
