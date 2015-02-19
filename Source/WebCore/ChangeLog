@@ -1,5 +1,20 @@
 2015-02-19  David Kilzer  <ddkilzer@apple.com>
 
+        Rename SOFT_LINK_FUNCTION_{DECL,IMPL}() to SOFT_LINK_FUNCTION_{HEADER,SOURCE}()
+
+        Rubber-stamped by Brent Fulgham.
+
+        "HEADER" and "SOURCE" seem clearer than "DECL" and "IMPL", and
+        Brent agreed when I talked to him in person.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/mac/SoftLinking.h:
+        * platform/win/SoftLinking.h:
+        - Do the rename.
+
+2015-02-19  David Kilzer  <ddkilzer@apple.com>
+
         Move more CoreMedia soft-linked functions to CoreMediaSoftLink.{cpp,h}
         <http://webkit.org/b/141791>
 

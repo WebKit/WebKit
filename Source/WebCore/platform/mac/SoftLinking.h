@@ -109,7 +109,7 @@
         return softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_DECL(functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_HEADER(functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
@@ -121,7 +121,7 @@
         return WebCore::softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_IMPL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_SOURCE(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \

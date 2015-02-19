@@ -116,7 +116,7 @@
         return softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_DECL(functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_HEADER(functionName, resultType, parameterDeclarations, parameterNames) \
     namespace WebCore { \
     extern resultType(__cdecl*softLink##functionName) parameterDeclarations; \
     } \
@@ -125,7 +125,7 @@
         return WebCore::softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_IMPL(library, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_SOURCE(library, functionName, resultType, parameterDeclarations, parameterNames) \
     namespace WebCore { \
     static resultType __cdecl init##functionName parameterDeclarations; \
     resultType(__cdecl*softLink##functionName) parameterDeclarations = init##functionName; \

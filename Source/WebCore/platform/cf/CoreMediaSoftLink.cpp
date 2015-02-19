@@ -34,23 +34,23 @@ namespace WebCore {
 SOFT_LINK_FRAMEWORK(CoreMedia)
 }
 
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 
 #if PLATFORM(COCOA)
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ());
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ());
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(WIN)
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeAdd, CMTime, (CMTime addend1, CMTime addend2), (addend1, addend2))
-SOFT_LINK_FUNCTION_IMPL(CoreMedia, CMTimeMakeFromDictionary, CMTime, (CFDictionaryRef dict), (dict))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeAdd, CMTime, (CMTime addend1, CMTime addend2), (addend1, addend2))
+SOFT_LINK_FUNCTION_SOURCE(CoreMedia, CMTimeMakeFromDictionary, CMTime, (CFDictionaryRef dict), (dict))
 #endif // PLATFORM(WIN)
 
 #endif // USE(AVFOUNDATION)
