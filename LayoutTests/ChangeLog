@@ -1,3 +1,9 @@
+2015-02-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Disable media tests due to bot failures.
+
+        * platform/win/TestExpectations:
+
 2015-02-18  Chris Dumez  <cdumez@apple.com>
 
         Clean up / modernize test introduced in r180337.
