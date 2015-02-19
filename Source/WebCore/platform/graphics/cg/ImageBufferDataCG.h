@@ -59,7 +59,7 @@ public:
     RetainPtr<CGDataProviderRef> m_dataProvider;
     CGBitmapInfo m_bitmapInfo;
 
-#if WTF_USE_IOSURFACE_CANVAS_BACKING_STORE
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     // Only for Accelerated ImageBuffers.
     std::unique_ptr<IOSurface> m_surface;
 #endif

@@ -1,3 +1,9 @@
+2015-02-18  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS Simulator build after r180308.
+
+        * platform/graphics/cg/ImageBufferDataCG.h:
+
 2015-02-18  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r174761) Dangling spanner pointer in RenderMultiColumnSpannerPlaceholder.
