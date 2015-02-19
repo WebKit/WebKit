@@ -63,6 +63,8 @@ using namespace WTF;
 
 namespace WebCore {
 
+static const unsigned LiveMarker = 0xCACED;
+
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
@@ -181,6 +183,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
+    , m_liveObjectMarker(LiveMarker)
 {
     ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
     ASSERT(sessionID.isValid());
@@ -212,6 +215,7 @@ CachedResource::~CachedResource()
 
     if (m_owningCachedResourceLoader)
         m_owningCachedResourceLoader->removeCachedResource(this);
+    m_liveObjectMarker = 0;
 }
 
 void CachedResource::failBeforeStarting()
@@ -801,6 +805,9 @@ bool CachedResource::isSafeToMakePurgeable() const
 
 bool CachedResource::makePurgeable(bool purgeable) 
 { 
+    if (m_liveObjectMarker != LiveMarker)
+        return false;
+
     if (purgeable) {
         ASSERT(isSafeToMakePurgeable());
 
