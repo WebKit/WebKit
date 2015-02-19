@@ -120,6 +120,7 @@ WebInspector.DOMTreeUpdater.prototype = {
 
             var parentNodeItem = this._treeOutline.findTreeElement(parent);
             if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
+                parentNodeItem.updateTitle();
                 parentNodeItem.updateChildren();
                 parentNodeItem.alreadyUpdatedChildren = true;
                 updatedParentTreeElements.push(parentNodeItem);

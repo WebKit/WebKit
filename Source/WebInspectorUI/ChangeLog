@@ -1,5 +1,22 @@
 2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: DOMTree / Node Details Sidebar do not update as <input> content changes
+        https://bugs.webkit.org/show_bug.cgi?id=141790
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._characterDataModified):
+        Update Node "Value" details if character data changes.
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WebInspector.DOMTreeUpdater.prototype._updateModifiedNodes):
+        Update the title of the parent. If the parent had a single text node child
+        and now doesn't, it will need to update its display.
+
+2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Disable DOM Tree Editing / Styles Editing of Shadow DOM Nodes
         https://bugs.webkit.org/show_bug.cgi?id=141793
 

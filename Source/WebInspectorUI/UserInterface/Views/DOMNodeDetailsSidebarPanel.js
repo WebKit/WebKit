@@ -29,6 +29,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function()
 
     WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeModified, this._attributesChanged, this);
     WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeRemoved, this._attributesChanged, this);
+    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
 
     this.element.classList.add(WebInspector.DOMNodeDetailsSidebarPanel.StyleClassName);
 
@@ -542,6 +543,13 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
             return;
         this._refreshAttributes();
         this._refreshAccessibility();
+    },
+
+    _characterDataModified: function(event)
+    {
+        if (event.data.node !== this.domNode)
+            return;
+        this._identityNodeValueRow.value = this.domNode.nodeValue();
     },
 
     _nodeTypeDisplayName: function()
