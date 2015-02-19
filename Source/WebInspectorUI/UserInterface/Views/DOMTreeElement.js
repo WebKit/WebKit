@@ -514,6 +514,9 @@ WebInspector.DOMTreeElement.prototype = {
 
     ondelete: function()
     {
+        if (this.representedObject.isInShadowTree())
+            return false;
+
         var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
         if (startTagTreeElement)
             startTagTreeElement.remove();
@@ -579,6 +582,9 @@ WebInspector.DOMTreeElement.prototype = {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
 
+        if (this.representedObject.isInShadowTree())
+            return false;
+
         if (this.representedObject.nodeType() !== Node.ELEMENT_NODE && this.representedObject.nodeType() !== Node.TEXT_NODE)
             return false;
 
@@ -603,19 +609,22 @@ WebInspector.DOMTreeElement.prototype = {
 
     _populateTagContextMenu: function(contextMenu, event)
     {
-        var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
-        var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
+        var node = this.representedObject;
+        if (!node.isInShadowTree()) {
+            var attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
+            var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
 
-        // Add attribute-related actions.
-        contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
-        if (attribute && !newAttribute)
-            contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
-        contextMenu.appendSeparator();
-
-        if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
-            var pseudoSubMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Forced Pseudo-Classes"));
-            this._populateForcedPseudoStateItems(pseudoSubMenu);
+            // Add attribute-related actions.
+            contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
+            if (attribute && !newAttribute)
+                contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
             contextMenu.appendSeparator();
+
+            if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
+                var pseudoSubMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Forced Pseudo-Classes"));
+                this._populateForcedPseudoStateItems(pseudoSubMenu);
+                contextMenu.appendSeparator();
+            }
         }
 
         this._populateNodeContextMenu(contextMenu);
@@ -638,21 +647,30 @@ WebInspector.DOMTreeElement.prototype = {
 
     _populateTextContextMenu: function(contextMenu, textNode)
     {
-        contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
+        var node = this.representedObject;
+        if (!node.isInShadowTree())
+            contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
+
         this._populateNodeContextMenu(contextMenu);
     },
 
     _populateNodeContextMenu: function(contextMenu)
     {
         // Add free-form node-related actions.
-        contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
+        var node = this.representedObject;
+        if (!node.isInShadowTree())
+            contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
+        if (!node.isInShadowTree())
+            contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
     },
 
     _startEditing: function()
     {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
+            return false;
+
+        if (this.representedObject.isInShadowTree())
             return false;
 
         var listItem = this._listItemNode;

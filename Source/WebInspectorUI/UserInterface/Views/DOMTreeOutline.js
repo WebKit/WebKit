@@ -453,19 +453,16 @@ WebInspector.DOMTreeOutline.prototype = {
             return;
 
         var contextMenu = new WebInspector.ContextMenu(event);
-        this.populateContextMenu(contextMenu, event);
+        this.populateContextMenu(contextMenu, event, treeElement);
         contextMenu.show();
     },
 
-    populateContextMenu: function(contextMenu, event)
+    populateContextMenu: function(contextMenu, event, treeElement)
     {
-        var treeElement = this._treeElementFromEvent(event);
-        if (!treeElement)
-            return false;
-
         var tag = event.target.enclosingNodeOrSelfWithClass("html-tag");
         var textNode = event.target.enclosingNodeOrSelfWithClass("html-text-node");
         var commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
+
         var populated = false;
         if (tag && treeElement._populateTagContextMenu) {
             if (populated)

@@ -90,7 +90,16 @@ WebInspector.CSSStyleDeclaration.prototype = {
 
     get editable()
     {
-        return !!this._id && ((this._type === WebInspector.CSSStyleDeclaration.Type.Rule && this._ownerRule && this._ownerRule.editable) || this._type === WebInspector.CSSStyleDeclaration.Type.Inline);
+        if (!this._id)
+            return false;
+
+        if (this._type === WebInspector.CSSStyleDeclaration.Type.Rule)
+            return this._ownerRule && this._ownerRule.editable;
+
+        if (this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
+            return !this._node.isInShadowTree();
+
+        return false;
     },
 
     update: function(text, properties, styleSheetTextRange, dontFireEvents)

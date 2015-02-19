@@ -1,3 +1,38 @@
+2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Disable DOM Tree Editing / Styles Editing of Shadow DOM Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=141793
+
+        Reviewed by Timothy Hatcher.
+
+        Currently the backend disallows editing of Shadow DOM nodes,
+        so the frontend should not provide options that do not work.
+        Long term we should allow editing Shadow DOM nodes.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.get editable):
+        Inline styles on a Shadow DOM node are not editable.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.ondelete):
+        (WebInspector.DOMTreeElement.prototype._startEditingTarget):
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.DOMTreeElement.prototype._populateTextContextMenu):
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WebInspector.DOMTreeElement.prototype._startEditing):
+        Disable context menus and keyboard shortcuts on Shadow DOM nodes.
+        Only Context Menu item we keep is "Copy as HTML".
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        Eliminate double look-up.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.addNewRuleButton):
+        Do not add the New Rule Button to the Styles Sidebar of Shadow DOM Nodes.
+        Instead this will just be an empty divider.
+
 2015-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION: Missing Divider line between console.log and console evaluation

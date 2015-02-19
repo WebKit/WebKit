@@ -148,14 +148,16 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
             if (previousSection)
                 previousSection.lastInGroup = true;
 
-            var newRuleButton = document.createElement("div");
-            newRuleButton.className = WebInspector.RulesStyleDetailsPanel.NewRuleElementStyleClassName;
-            newRuleButton.addEventListener("click", this._newRuleClicked.bind(this));
+            if (!this.nodeStyles.node.isInShadowTree()) {
+                var newRuleButton = document.createElement("div");
+                newRuleButton.className = WebInspector.RulesStyleDetailsPanel.NewRuleElementStyleClassName;
+                newRuleButton.addEventListener("click", this._newRuleClicked.bind(this));
 
-            newRuleButton.appendChild(document.createElement("img"));
-            newRuleButton.appendChild(document.createTextNode(WebInspector.UIString("New Rule")));
+                newRuleButton.appendChild(document.createElement("img"));
+                newRuleButton.appendChild(document.createTextNode(WebInspector.UIString("New Rule")));
 
-            newDOMFragment.appendChild(newRuleButton);
+                newDOMFragment.appendChild(newRuleButton);
+            }
 
             addedNewRuleButton = true;
         }
