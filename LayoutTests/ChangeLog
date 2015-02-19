@@ -1,3 +1,13 @@
+2015-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / modernize test introduced in r180337.
+        https://bugs.webkit.org/show_bug.cgi?id=141788
+
+        Reviewed by Andreas Kling.
+
+        * fast/history/page-cache-clearing-expected.txt:
+        * fast/history/page-cache-clearing.html:
+
 2015-02-18  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.
