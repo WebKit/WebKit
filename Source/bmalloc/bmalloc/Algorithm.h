@@ -27,6 +27,7 @@
 #define Algorithm_h
 
 #include "Algorithm.h"
+#include "BAssert.h"
 #include <algorithm>
 #include <cstdint>
 #include <cstddef>

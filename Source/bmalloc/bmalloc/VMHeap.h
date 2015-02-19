@@ -34,6 +34,9 @@
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
 #include "Vector.h"
+#if BPLATFORM(DARWIN)
+#include "Zone.h"
+#endif
 
 namespace bmalloc {
 
@@ -61,7 +64,9 @@ private:
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeRanges;
-    Vector<SuperChunk*> m_superChunks;
+#if BPLATFORM(DARWIN)
+    Zone m_zone;
+#endif
 };
 
 inline SmallPage* VMHeap::allocateSmallPage()
