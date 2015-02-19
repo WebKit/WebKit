@@ -8826,6 +8826,9 @@
     <ClInclude Include="..\platform\spi\cg\CoreGraphicsSPI.h">
       <Filter>platform\spi\cg</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\spi\cf\CoreMediaSPI.h">
+      <Filter>platform\spi\cf</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h">
       <Filter>platform\sql</Filter>
     </ClInclude>

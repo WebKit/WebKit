@@ -27,11 +27,44 @@
 
 #if USE(AVFOUNDATION)
 
+#include "CoreMediaSPI.h"
 #include "SoftLinking.h"
-#include <CoreMedia/CMTime.h>
+#include <CoreMedia/CoreMedia.h>
 
+SOFT_LINK_FUNCTION_DECL(CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
+#define CMTimeCompare softLink_CMTimeCompare
+SOFT_LINK_FUNCTION_DECL(CMTimeGetSeconds, Float64, (CMTime time), (time))
+#define CMTimeGetSeconds softLink_CMTimeGetSeconds
+SOFT_LINK_FUNCTION_DECL(CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
+#define CMTimeMake softLink_CMTimeMake
 SOFT_LINK_FUNCTION_DECL(CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 #define CMTimeMakeWithSeconds softLink_CMTimeMakeWithSeconds
+SOFT_LINK_FUNCTION_DECL(CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
+#define CMTimeRangeGetEnd softLink_CMTimeRangeGetEnd
+
+#if PLATFORM(COCOA)
+
+SOFT_LINK_FUNCTION_DECL(CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ());
+#define CMNotificationCenterGetDefaultLocalCenter softLink_CMNotificationCenterGetDefaultLocalCenter
+SOFT_LINK_FUNCTION_DECL(CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
+#define CMNotificationCenterAddListener softLink_CMNotificationCenterAddListener
+SOFT_LINK_FUNCTION_DECL(CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
+#define CMNotificationCenterRemoveListener softLink_CMNotificationCenterRemoveListener
+SOFT_LINK_FUNCTION_DECL(CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+#define CMTimebaseGetTime softLink_CMTimebaseGetTime
+SOFT_LINK_FUNCTION_DECL(CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
+#define CMTimeCopyAsDictionary softLink_CMTimeCopyAsDictionary
+
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(WIN)
+
+SOFT_LINK_FUNCTION_DECL(CMTimeAdd, CMTime, (CMTime addend1, CMTime addend2), (addend1, addend2))
+#define CMTimeAdd softLink_CMTimeAdd
+SOFT_LINK_FUNCTION_DECL(CMTimeMakeFromDictionary, CMTime, (CFDictionaryRef dict), (dict))
+#define CMTimeMakeFromDictionary softLink_CMTimeMakeFromDictionary
+
+#endif // PLATFORM(WIN)
 
 #endif // USE(AVFOUNDATION)
 

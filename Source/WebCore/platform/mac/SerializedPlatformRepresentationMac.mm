@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,12 @@
 #import <runtime/ArrayBuffer.h>
 #import <runtime/JSArrayBuffer.h>
 #import <AVFoundation/AVFoundation.h>
-#import <CoreMedia/CoreMedia.h>
 #import <Foundation/NSString.h>
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <wtf/text/Base64.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
-SOFT_LINK(CoreMedia, CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
 
 typedef AVMetadataItem AVMetadataItemType;
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,7 +88,6 @@
 #import <Foundation/NSGeometry.h>
 #import <QuartzCore/CoreImage.h>
 #endif
-#import <CoreMedia/CoreMedia.h>
 
 #if USE(VIDEOTOOLBOX)
 #import <CoreVideo/CoreVideo.h>
@@ -154,10 +153,6 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
 #if USE(VIDEOTOOLBOX)
 SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolbox)
 #endif
-
-SOFT_LINK(CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
-SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
-SOFT_LINK(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 
 SOFT_LINK(CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
 SOFT_LINK(CoreVideo, CVPixelBufferGetHeight, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))

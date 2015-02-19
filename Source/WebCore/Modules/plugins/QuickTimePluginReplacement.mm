@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import "QuickTimePluginReplacement.h"
 
+#import "CoreMediaSoftLink.h"
 #import "Event.h"
 #import "HTMLPlugInElement.h"
 #import "HTMLVideoElement.h"
@@ -46,14 +47,10 @@
 #import "UserAgentScripts.h"
 #import <objc/runtime.h>
 #import <AVFoundation/AVFoundation.h>
-#import <CoreMedia/CoreMedia.h>
 #import <Foundation/NSString.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/APICast.h>
 #import <wtf/text/Base64.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
-SOFT_LINK(CoreMedia, CMTimeCopyAsDictionary, CFDictionaryRef, (CMTime time, CFAllocatorRef allocator), (time, allocator))
 
 typedef AVMetadataItem AVMetadataItemType;
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

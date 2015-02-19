@@ -1,3 +1,71 @@
+2015-02-19  David Kilzer  <ddkilzer@apple.com>
+
+        Move more CoreMedia soft-linked functions to CoreMediaSoftLink.{cpp,h}
+        <http://webkit.org/b/141791>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebCore.unexp:
+        - Remove five more symbols.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        - Remove all local soft-links and include CoreMediaSoftLink.h.
+          Note that SOFT_LINK_FRAMEWORK_OPTIONAL() should not have been
+          used here since we didn't use the optional function soft-link
+          method.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreCFNetwork.props:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add CoreMediaSPI.h to the project.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        - Add three cross-platform symbols, five Cocoa-only symbols, and
+          two Windows-only symbols (based on current usage, not
+          availability on each platform).
+        - Include CoreMediaSPI.h header.
+        - Include <CoreMedia/CoreMedia.h> instead of just CMTime.h.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        - Remove all CoreMedia soft-linked functions.  Constants remain.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        - Remove one CoreMedia soft-linked method.
+
+        * platform/graphics/avfoundation/MediaTimeAVFoundation.cpp:
+        - Remove all CoreMedia soft-linked funtions.  With this change,
+          we are already realizing space savings for duplicate
+          SOFT_LINK_FRAMEWORK() calls.  (On Windows, there was code
+          generated for many unused functions included by
+          CoreMediaSoftLinking.h.)
+
+        * platform/graphics/avfoundation/cf/CoreMediaSoftLinking.h:
+        - Remove all CoreMedia soft-linked funtions.  Constants remain.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        - Remove duplicate header included by CoreMediaSoftLink.h.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        - Remove all CoreMedia soft-linked funtions.  Constants remain.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        - Remove three CoreMedia soft-linked methods.
+
+        * platform/mac/PlatformClockCM.mm:
+        - Remove two CoreMedia soft-linked methods.
+
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        - Remove only CoreMedia soft-linked funtion.  It wasn't even
+          used.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        - Remove two CoreMedia soft-linked method.
+
+        * platform/spi/cf/CoreMediaSPI.h:
+        - Add for SPI from CMNotificationCenter.h.
+
 2015-02-19  David Hyatt  <hyatt@apple.com>
 
         Columns are splitting unsplittable content.

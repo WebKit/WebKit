@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,20 +20,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SoftLinking.h"
+#ifndef CoreMediaSPI_h
+#define CoreMediaSPI_h
 
-// Soft-link against CoreMedia functions and variables required by MediaPlayerPrivateAVFoundationCF.cpp.
+#if PLATFORM(COCOA)
 
-#ifdef DEBUG_ALL
-SOFT_LINK_DEBUG_LIBRARY(CoreMedia)
+#if USE(APPLE_INTERNAL_SDK)
+#import <CoreMedia/CMNotificationCenter.h>
 #else
-SOFT_LINK_LIBRARY(CoreMedia)
+typedef struct opaqueCMNotificationCenter *CMNotificationCenterRef;
+typedef void (*CMNotificationCallback)(CMNotificationCenterRef inCenter, const void *inListener, CFStringRef inNotificationName, const void *inNotifyingObject, CFTypeRef inNotificationPayload);
 #endif
 
-// Variables
+WTF_EXTERN_C_BEGIN
+CMNotificationCenterRef CMNotificationCenterGetDefaultLocalCenter(void);
+OSStatus CMNotificationCenterAddListener(CMNotificationCenterRef inCenter, const void *inListener, CMNotificationCallback inCallBack, CFStringRef inNotificationName, const void *inObjectToObserve, UInt32 inFlags);
+OSStatus CMNotificationCenterRemoveListener(CMNotificationCenterRef inCenter, const void *inListener, CMNotificationCallback inCallBack, CFStringRef inNotificationName, const void *inObject);
+WTF_EXTERN_C_END
 
-SOFT_LINK_VARIABLE_DLL_IMPORT(CoreMedia, kCMTimeZero, const CMTime);
-#define kCMTimeZero getkCMTimeZero()
+#endif // PLATFORM(COCOA)
+
+#endif // CoreMediaSPI_h

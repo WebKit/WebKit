@@ -28,13 +28,11 @@ __ZTVNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
 # Source/WebCore/platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 _AudioConverterConvertComplexBuffer
 _AudioConverterNew
-_CMTimebaseGetTime
 _MTAudioProcessingTapGetSourceAudio
 _MTAudioProcessingTapGetStorage
 
 # Source/WebCore/platform/mac/PlatformClockCM.mm
 _CMAudioDeviceClockCreate
-_CMTimeGetSeconds
 _CMTimebaseCreateWithMasterClock
 _CMTimebaseSetRate
 _CMTimebaseSetTime
@@ -46,13 +44,6 @@ _CMFormatDescriptionGetExtensions
 _CMSampleBufferGetDataBuffer
 _CMSampleBufferGetFormatDescription
 _CMSampleBufferGetSampleTimingInfo
-
-# Source/WebCore/platform/mediastream/mac/AVVideoCaptureSource.mm
-_CMTimeCompare
-_CMTimeMake
-
-# Source/WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm
-_CMTimeRangeGetEnd
 
 # Source/WebCore/page/CaptionUserPreferencesMediaAF.cpp
 _MACaptionAppearanceAddSelectedLanguage
