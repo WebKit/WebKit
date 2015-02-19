@@ -1,3 +1,14 @@
+2015-02-18  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Fix NetworkCache build
+        https://bugs.webkit.org/show_bug.cgi?id=141778
+
+        Reviewed by Antti Koivisto.
+
+        Add missing header include to use round_page() on iOS.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+
 2015-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Remove input and output files from "Make Frameworks Symbolic Link" step

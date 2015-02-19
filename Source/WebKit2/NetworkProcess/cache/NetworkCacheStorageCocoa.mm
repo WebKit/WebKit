@@ -32,6 +32,7 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheFileSystemPosix.h"
 #include <dispatch/dispatch.h>
+#include <mach/vm_param.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <wtf/RandomNumber.h>
