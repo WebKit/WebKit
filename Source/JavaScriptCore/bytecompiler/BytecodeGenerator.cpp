@@ -1144,19 +1144,6 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
     return emitLoad(dst, jsBoolean(b));
 }
 
-RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
-{
-    // FIXME: Our hash tables won't hold infinity, so we make a new JSValue each time.
-    // Later we can do the extra work to handle that like the other cases.  They also don't
-    // work correctly with NaN as a key.
-    if (std::isnan(number) || number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
-        return emitLoad(dst, jsNumber(number));
-    JSValue& valueInMap = m_numberMap.add(number, JSValue()).iterator->value;
-    if (!valueInMap)
-        valueInMap = jsNumber(number);
-    return emitLoad(dst, valueInMap);
-}
-
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
     JSString*& stringInMap = m_stringMap.add(identifier.impl(), nullptr).iterator->value;
