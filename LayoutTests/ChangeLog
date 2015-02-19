@@ -1,3 +1,13 @@
+2015-02-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/text/glyph-reordering.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141775
+
+        Reviewed by Dan Bernstein.
+
+        * fast/text/glyph-reordering.html:
+        * platform/mac/TestExpectations:
+
 2015-02-19  David Hyatt  <hyatt@apple.com>
 
         Columns are splitting unsplittable content.

@@ -25,5 +25,5 @@
     range.setEnd(reference, 3);
     var referenceWidth = totalWidth - range.getBoundingClientRect().width;
 
-    document.getElementById("result").innerText = width === referenceWidth ? "PASS" : "FAIL: width was " + width + " instead of " + referenceWidth;
+    document.getElementById("result").innerText = Math.abs(width - referenceWidth) < 1.5 ? "PASS" : "FAIL: width was " + width + " instead of " + referenceWidth;
 </script>

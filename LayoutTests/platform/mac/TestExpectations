@@ -1255,8 +1255,6 @@ webkit.org/b/139968 platform/mac/fast/text/multiple-codeunit-vertical-upright.ht
 webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
-# The following tests' expected results don't look like render tree dumps
-webkit.org/b/139968 fast/text/glyph-reordering.html [ Failure ]
 
 # These tests became flaky, text width gets slightly off.
 webkit.org/b/139968 fast/block/margin-collapse/103.html [ Pass Failure ]
