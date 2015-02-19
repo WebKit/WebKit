@@ -1,3 +1,12 @@
+2015-02-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Unreviewed buildfix for non-Cocoa platforms.
+
+        * CMakeLists.txt:
+        * UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp: Added.
+        (WebKit::WebsiteDataStore::platformInitialize): Added.
+        (WebKit::WebsiteDataStore::platformDestroy): Added.
+
 2015-02-19  Anders Carlsson  <andersca@apple.com>
 
         WebsiteDataStore should ensure that local storage is written before exiting
