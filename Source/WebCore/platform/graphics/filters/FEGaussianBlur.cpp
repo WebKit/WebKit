@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Igalia, S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -385,22 +386,24 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
     platformApplyGeneric(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
 }
 
+static int clampedToKernelSize(float value)
+{
+    // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
+    // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
+    unsigned size = std::max<unsigned>(2, static_cast<unsigned>(floorf(value * gaussianKernelFactor() + 0.5f)));
+    return clampTo<int>(std::min(size, static_cast<unsigned>(gMaxKernelSize)));
+}
+    
 IntSize FEGaussianBlur::calculateUnscaledKernelSize(const FloatPoint& stdDeviation)
 {
     ASSERT(stdDeviation.x() >= 0 && stdDeviation.y() >= 0);
     IntSize kernelSize;
 
-    // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
-    // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
-    if (stdDeviation.x()) {
-        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdDeviation.x() * gaussianKernelFactor() + 0.5f)));
-        kernelSize.setWidth(std::min(size, gMaxKernelSize));
-    }
+    if (stdDeviation.x())
+        kernelSize.setWidth(clampedToKernelSize(stdDeviation.x()));
 
-    if (stdDeviation.y()) {
-        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdDeviation.y() * gaussianKernelFactor() + 0.5f)));
-        kernelSize.setHeight(std::min(size, gMaxKernelSize));
-    }
+    if (stdDeviation.y())
+        kernelSize.setHeight(clampedToKernelSize(stdDeviation.y()));
 
     return kernelSize;
 }
