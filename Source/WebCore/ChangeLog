@@ -1,3 +1,47 @@
+2015-02-18  Dean Jackson  <dino@apple.com>
+
+        Sufficiently small media controls should remove toolbar elements
+        https://bugs.webkit.org/show_bug.cgi?id=141780
+        <rdar://problem/16548548>
+        <rdar://problem/17598778>
+        <rdar://problem/18351963>
+
+        Reviewed by Eric Carlson.
+
+        Implement some logic where elements on the media controls are
+        hidden when there isn't enough room. We start by dropping
+        the scrubber, then the various buttons on the right hand
+        side.
+
+        This solution isn't perfect. If we had perfection, it would
+        be because we get resize events and respond accordingly. Instead
+        we check the size when the user has pinch-zoomed, or when
+        we start/stop playing.
+
+        This is going to cause some extra layout, because we need
+        to know the size of things before we can work out which
+        bits to hide.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (::-webkit-media-controls): Remove the minimum width. This can
+        cause the controls to get clipped.
+        (audio::-webkit-media-controls-spacer): Add this empty element to
+        replace the scrubber when it is hidden.
+        (audio::-webkit-media-controls-timeline-container):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS): Remember our size so we don't churn.
+        (ControllerIOS.prototype.createControls): Create a new spacer element.
+        (ControllerIOS.prototype.configureInlineControls):
+        (ControllerIOS.prototype.showControls): Check if we need to hide stuff.
+        (ControllerIOS.prototype.updateControls):
+        (ControllerIOS.prototype.setPlaying): Ditto.
+        (ControllerIOS.prototype.set pageScaleFactor): Ditto.
+        (ControllerIOS.prototype.scheduleUpdateLayoutForDisplayedWidth): Trigger an update
+        asap. In this case it's probably ok to be in a bad state for a frame, or
+        we are inside setup and we know that we'll layout soon.
+        (ControllerIOS.prototype.updateLayoutForDisplayedWidth): The actual code
+        that hides elements.
+
 2015-02-19  Tim Horton  <timothy_horton@apple.com>
 
         Move the software-only ImageBuffer::m_context to ImageBufferData

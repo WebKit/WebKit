@@ -59,7 +59,6 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     -webkit-flex-direction: column;
     font-family: -apple-system-font;
     overflow: hidden;
-    min-width: 260px;
 }
 
 video::-webkit-media-controls-panel input[type="button"],
@@ -301,6 +300,18 @@ video::-webkit-media-controls-optimized-fullscreen-button {
     -webkit-order: 5;
 }
 
+/* ================== SPACER ====================== */
+
+video::-webkit-media-controls-spacer,
+audio::-webkit-media-controls-spacer {
+    -webkit-appearance: none !important;
+    -webkit-flex: 1 1 0; /* Should be the same as the timeline container. */
+    -webkit-order: 2;
+    height: 8px;
+    margin: 0;
+    background-color: transparent !important;
+}
+
 /* ================== TIMELINE ====================== */
 
 video::-webkit-media-controls-timeline,
@@ -395,7 +406,7 @@ audio::-webkit-media-controls-timeline-container {
     -webkit-flex-direction: row;
     -webkit-align-items: center;
     -webkit-user-select: none;
-    -webkit-flex: 1 1 0;
+    -webkit-flex: 1 1 0; /* Any changes here should also be made on the spacer. */
     position: relative;
     padding: 0;
     -webkit-order: 2;
