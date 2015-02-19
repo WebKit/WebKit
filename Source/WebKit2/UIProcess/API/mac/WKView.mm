@@ -339,8 +339,6 @@ struct WKViewInterpretKeyEventsParameters {
     NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:NSApp];
-
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
 
@@ -2716,11 +2714,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
-- (void)_applicationWillTerminate:(NSNotification *)notification
-{
-    _data->_page->process().processPool().applicationWillTerminate();
-}
-
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
     [self _setTextIndicator:nil fadeOut:NO];
@@ -3620,8 +3613,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:NSApp];
 
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];

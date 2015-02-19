@@ -58,6 +58,8 @@ public:
 
     void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
 
+    StorageManager* storageManager() { return m_storageManager.get(); }
+
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration);

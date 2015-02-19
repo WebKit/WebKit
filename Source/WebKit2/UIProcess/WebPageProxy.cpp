@@ -402,15 +402,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewStateChangeWantsSynchronousReply(false)
     , m_isPlayingAudio(false)
 {
-    m_process->processPool().storageManager().createSessionStorageNamespace(m_pageID, std::numeric_limits<unsigned>::max());
-
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkProvider);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
             m_process->addWebUserContentControllerProxy(*m_userContentController);
-        m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, m_process->connection());
         m_process->addVisitedLinkProvider(m_visitedLinkProvider);
     }
 
@@ -772,7 +769,6 @@ void WebPageProxy::close()
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    m_process->processPool().storageManager().destroySessionStorageNamespace(m_pageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 }
 

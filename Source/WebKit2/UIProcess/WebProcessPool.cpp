@@ -158,7 +158,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
-    , m_storageManager(StorageManager::create(m_configuration->localStorageDirectory()))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
@@ -765,11 +764,6 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
     }
 
     return true;
-}
-
-void WebProcessPool::applicationWillTerminate()
-{
-    m_storageManager->applicationWillTerminate();
 }
 
 void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)

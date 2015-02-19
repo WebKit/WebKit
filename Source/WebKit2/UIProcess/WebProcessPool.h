@@ -37,7 +37,6 @@
 #include "ProcessModel.h"
 #include "ProcessThrottler.h"
 #include "StatisticsRequest.h"
-#include "StorageManager.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
@@ -162,11 +161,10 @@ public:
 
     void processDidFinishLaunching(WebProcessProxy*);
 
-    void applicationWillTerminate();
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    StorageManager& storageManager() const { return *m_storageManager; }
+    WebsiteDataStore& websiteDataStore() const { return *m_websiteDataStore; }
 
     PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageConfiguration);
 
@@ -482,7 +480,6 @@ private:
 #endif
 
     RefPtr<WebsiteDataStore> m_websiteDataStore;
-    RefPtr<StorageManager> m_storageManager;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
     WebContextSupplementMap m_supplements;

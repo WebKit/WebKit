@@ -1,3 +1,38 @@
+2015-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove the stray storage manager from WebProcessPool
+        https://bugs.webkit.org/show_bug.cgi?id=141800
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView _applicationWillTerminate:]): Deleted.
+        Remove code that calls applicationWillTerminate on the WebPageProxy.
+
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        Get the storage manager from the website data store.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        Remove storage manager calls.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::applicationWillTerminate): Deleted.
+        * UIProcess/WebProcessPool.h:
+        Remove storage manager code.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::storageManager):
+        Add getter.
+
 2015-02-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Unreviewed buildfix for non-Cocoa platforms.
