@@ -1,3 +1,53 @@
+2015-02-18  Enrica Casucci  <enrica@apple.com>
+
+        Add new tool to test editable Webviews.
+        https://bugs.webkit.org/show_bug.cgi?id=141772
+
+        Reviewed by Tim Horton.
+
+        Adding WebEditingTester, a Cocoa application to
+        test WK1 and Wk2 views in editable mode.
+
+        * WebEditingTester: Added.
+        * WebEditingTester/AppDelegate.h: Added.
+        * WebEditingTester/AppDelegate.m: Added.
+        (-[WebEditingAppDelegate init]):
+        (defaultConfiguration):
+        (-[WebEditingAppDelegate applicationDidFinishLaunching:]):
+        (-[WebEditingAppDelegate applicationWillTerminate:]):
+        (-[WebEditingAppDelegate newEditor:]):
+        (-[WebEditingAppDelegate showOperations:]):
+        (-[WebEditingAppDelegate useWebKit2ByDefault]):
+        (-[WebEditingAppDelegate toggleUseWK2ByDefault:]):
+        (-[WebEditingAppDelegate validateMenuItem:]):
+        * WebEditingTester/Info.plist: Added.
+        * WebEditingTester/MainMenu.xib: Added.
+        * WebEditingTester/WK1WebDocumentController.h: Added.
+        * WebEditingTester/WK1WebDocumentController.m: Added.
+        (-[WK1WebDocumentController awakeFromNib]):
+        (-[WK1WebDocumentController loadContent]):
+        (-[WK1WebDocumentController dealloc]):
+        (-[WK1WebDocumentController pasteAsMarkup:]):
+        * WebEditingTester/WK2WebDocumentController.h: Added.
+        * WebEditingTester/WK2WebDocumentController.m: Added.
+        (-[WK2WebDocumentController initWithConfiguration:]):
+        (-[WK2WebDocumentController pasteAsMarkup:]):
+        (-[WK2WebDocumentController awakeFromNib]):
+        (-[WK2WebDocumentController dealloc]):
+        (-[WK2WebDocumentController loadContent]):
+        * WebEditingTester/WebDocument.xib: Added.
+        * WebEditingTester/WebDocumentController.h: Added.
+        * WebEditingTester/WebDocumentController.m: Added.
+        (-[WebDocumentController initWithWindow:]):
+        (-[WebDocumentController windowDidLoad]):
+        (-[WebDocumentController defaultEditingSource]):
+        (-[WebDocumentController applicationTerminating]):
+        (-[WebDocumentController loadContent]):
+        * WebEditingTester/WebEditingTester.xcodeproj: Added.
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj: Added.
+        * WebEditingTester/main.m: Added.
+        (main):
+
 2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Run JSC tests on ARM EFL bots
