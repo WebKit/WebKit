@@ -467,6 +467,8 @@ EXPORTS
         symbolWithPointer(?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QAEX_N@Z, ?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?storeUpdatedQuotaForOrigin@ApplicationCacheStorage@WebCore@@QAE_NPBVSecurityOrigin@2@_J@Z, ?storeUpdatedQuotaForOrigin@ApplicationCacheStorage@WebCore@@QEAA_NPEBVSecurityOrigin@2@_J@Z)
         symbolWithPointer(?cacheStorage@WebCore@@YAAAVApplicationCacheStorage@1@XZ, ?cacheStorage@WebCore@@YAAEAVApplicationCacheStorage@1@XZ)
+        symbolWithPointer(?singleton@PageCache@WebCore@@SAAAV12@XZ, ?singleton@PageCache@WebCore@@SAAAV12@XZ)
+        symbolWithPointer(?pruneToSizeNow@PageCache@WebCore@@QAEXIW4PruningReason@2@@Z, ?pruneToSizeNow@PageCache@WebCore@@QAEXIW4PruningReason@2@@Z)
         symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QEAAX_J@Z)
         symbolWithPointer(?vm@ScriptExecutionContext@WebCore@@QAEAAVVM@JSC@@XZ, ?vm@ScriptExecutionContext@WebCore@@QEAAAEAVVM@JSC@@XZ)
         symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UEBA?AVURL@2@AEBVString@WTF@@@Z)
