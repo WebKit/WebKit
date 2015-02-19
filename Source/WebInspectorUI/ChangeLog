@@ -1,3 +1,14 @@
+2015-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION: Missing Divider line between console.log and console evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=141770
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item):
+        (.console-message): Deleted.
+
 2015-02-18  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Inspecting a page where resources are in folders forces folder organization on every subsequent page
