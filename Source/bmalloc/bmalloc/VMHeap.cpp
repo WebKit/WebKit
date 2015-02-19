@@ -40,7 +40,7 @@ VMHeap::VMHeap()
 void VMHeap::grow()
 {
     SuperChunk* superChunk = SuperChunk::create();
-#if BPLATFORM(DARWIN)
+#if BOS(DARWIN)
     m_zone.addSuperChunk(superChunk);
 #endif
 
