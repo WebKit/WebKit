@@ -1,5 +1,16 @@
 2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Many flakey tests for webkit.org/b/139968 do not appear to be flakey
+        https://bugs.webkit.org/show_bug.cgi?id=141762
+
+        Reviewed by Jer Noble.
+
+        Removing them from TestExpectations.
+
+        * platform/mac/TestExpectations:
+
+2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update expected result of fast/forms/text-control-intrinsic-widths.html after r177774
         https://bugs.webkit.org/show_bug.cgi?id=141685
 
