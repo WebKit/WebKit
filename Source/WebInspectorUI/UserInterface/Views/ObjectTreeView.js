@@ -131,7 +131,7 @@ WebInspector.ObjectTreeView.ComparePropertyDescriptors = function(propertyA, pro
 
 WebInspector.ObjectTreeView.prototype = {
     constructor: WebInspector.ObjectTreeView,
-    __proto__: WebInspector.Object,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 

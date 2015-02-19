@@ -47,7 +47,7 @@ WebInspector.ObjectPreviewView.Mode = {
 
 WebInspector.ObjectPreviewView.prototype = {
     constructor: WebInspector.ObjectPreviewView,
-    __proto__: WebInspector.Object,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
