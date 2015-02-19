@@ -1,3 +1,13 @@
+2015-02-19  Timothy Horton  <timothy_horton@apple.com>
+
+        Remove unused forward declaration from WKWebViewInternal.h
+        https://bugs.webkit.org/show_bug.cgi?id=141806
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        The use of WebCore::Highlight moved to WKContentView.
+
 2015-02-19  Anders Carlsson  <andersca@apple.com>
 
         Use the real implementation type in our API cast traits

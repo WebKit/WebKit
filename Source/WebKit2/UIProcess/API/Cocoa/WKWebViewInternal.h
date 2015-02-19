@@ -46,10 +46,6 @@
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
 
-namespace WebCore {
-struct Highlight;
-}
-
 namespace WebKit {
 class ViewSnapshot;
 class WebPageProxy;
