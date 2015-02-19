@@ -1,3 +1,31 @@
+2015-02-19  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Fix inefficiencies in ResourceResponse::platformLazyInit()
+        https://bugs.webkit.org/show_bug.cgi?id=141744
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix inefficiencies in iOS's ResourceResponse::platformLazyInit()
+        implementation, similarly to what was already done for Mac in:
+        <http://trac.webkit.org/changeset/174717>
+
+        The following changes were made:
+        - Add missing "initLevel == AllFields" check before initializing
+          uncommon fields. This bug was causing us to initialize uncommon
+          fields even if called with 'CommonFieldsOnly' initLevel.
+        - Bypass the first pass populating common HTTP headers in
+          m_httpHeaderFields if the initLevel is AllFields. If called
+          with AllFields initLevel, we will end up populating all HTTP
+          headers later on so this first pass is redundant.
+        - Use C++11 range loop to iterator over commonHeaderFields array
+          for readability.
+        - Use CFDictionaryApplyFunction() to populate m_httpHeaderFields
+          for the CFDictionaryRef containing the headers instead of creating
+          copies of keys and values using CFDictionaryGetKeysAndValues() and
+          then iterating over those. This avoids allocating Vectors for keys /
+          values and avoids unnecessary copying.
+
+
 2015-02-18  Dean Jackson  <dino@apple.com>
 
         Sufficiently small media controls should remove toolbar elements

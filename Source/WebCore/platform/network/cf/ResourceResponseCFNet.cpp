@@ -47,7 +47,6 @@ namespace WebCore {
 static CFStringRef const commonHeaderFields[] = {
     CFSTR("Age"), CFSTR("Cache-Control"), CFSTR("Content-Type"), CFSTR("Date"), CFSTR("Etag"), CFSTR("Expires"), CFSTR("Last-Modified"), CFSTR("Pragma")
 };
-static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(CFStringRef);
 
 CFURLResponseRef ResourceResponse::cfURLResponse() const
 {
@@ -62,6 +61,12 @@ CFURLResponseRef ResourceResponse::cfURLResponse() const
     }
 
     return m_cfResponse.get();
+}
+
+static void addToHTTPHeaderMap(const void* key, const void* value, void* context)
+{
+    HTTPHeaderMap* httpHeaderMap = (HTTPHeaderMap*)context;
+    httpHeaderMap->set((CFStringRef)key, (CFStringRef)value);
 }
 
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
@@ -87,30 +92,26 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         if (httpResponse) {
             m_httpStatusCode = CFHTTPMessageGetResponseStatusCode(httpResponse);
             
-            RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(httpResponse));
-            
-            for (int i = 0; i < numCommonHeaderFields; i++) {
-                CFStringRef value;
-                if (CFDictionaryGetValueIfPresent(headers.get(), commonHeaderFields[i], (const void **)&value))
-                    m_httpHeaderFields.set(commonHeaderFields[i], value);
+            if (initLevel < AllFields) {
+                RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(httpResponse));
+                for (auto& commonHeader : commonHeaderFields) {
+                    CFStringRef value;
+                    if (CFDictionaryGetValueIfPresent(headers.get(), commonHeader, (const void **)&value))
+                        m_httpHeaderFields.set(commonHeader, value);
+                }
             }
         } else
             m_httpStatusCode = 0;
     }
 
-    if (m_initLevel < AllFields) {
+    if (m_initLevel < AllFields && initLevel == AllFields) {
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
             RetainPtr<CFStringRef> statusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(httpResponse));
             m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(statusLine.get());
 
             RetainPtr<CFDictionaryRef> headers = adoptCF(CFHTTPMessageCopyAllHeaderFields(httpResponse));
-            CFIndex headerCount = CFDictionaryGetCount(headers.get());
-            Vector<const void*, 128> keys(headerCount);
-            Vector<const void*, 128> values(headerCount);
-            CFDictionaryGetKeysAndValues(headers.get(), keys.data(), values.data());
-            for (int i = 0; i < headerCount; ++i)
-                m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
+            CFDictionaryApplyFunction(headers.get(), addToHTTPHeaderMap, &m_httpHeaderFields);
         }
     }
 
