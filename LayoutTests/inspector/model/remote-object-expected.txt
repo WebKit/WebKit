@@ -5,7 +5,7 @@ EXPRESSION: null
   "_type": "object",
   "_subtype": "null",
   "_description": "null",
-  "value": null
+  "_value": null
 }
 
 -----------------------------------------------------
@@ -36,7 +36,7 @@ EXPRESSION: true
 {
   "_type": "boolean",
   "_description": "true",
-  "value": true
+  "_value": true
 }
 
 -----------------------------------------------------
@@ -44,7 +44,7 @@ EXPRESSION: false
 {
   "_type": "boolean",
   "_description": "false",
-  "value": false
+  "_value": false
 }
 
 -----------------------------------------------------
@@ -52,7 +52,7 @@ EXPRESSION: 0
 {
   "_type": "number",
   "_description": "0",
-  "value": 0
+  "_value": 0
 }
 
 -----------------------------------------------------
@@ -60,7 +60,7 @@ EXPRESSION: -0
 {
   "_type": "number",
   "_description": "0",
-  "value": 0
+  "_value": 0
 }
 
 -----------------------------------------------------
@@ -68,7 +68,7 @@ EXPRESSION: 1
 {
   "_type": "number",
   "_description": "1",
-  "value": 1
+  "_value": 1
 }
 
 -----------------------------------------------------
@@ -76,7 +76,7 @@ EXPRESSION: -1
 {
   "_type": "number",
   "_description": "-1",
-  "value": -1
+  "_value": -1
 }
 
 -----------------------------------------------------
@@ -84,7 +84,7 @@ EXPRESSION: 1.234
 {
   "_type": "number",
   "_description": "1.234",
-  "value": 1.234
+  "_value": 1.234
 }
 
 -----------------------------------------------------
@@ -92,7 +92,7 @@ EXPRESSION: -1.234
 {
   "_type": "number",
   "_description": "-1.234",
-  "value": -1.234
+  "_value": -1.234
 }
 
 -----------------------------------------------------
@@ -100,7 +100,7 @@ EXPRESSION: 1e3
 {
   "_type": "number",
   "_description": "1000",
-  "value": 1000
+  "_value": 1000
 }
 
 -----------------------------------------------------
@@ -108,7 +108,7 @@ EXPRESSION: Number.MAX_VALUE
 {
   "_type": "number",
   "_description": "1.7976931348623157e+308",
-  "value": 1.7976931348623157e+308
+  "_value": 1.7976931348623157e+308
 }
 
 -----------------------------------------------------
@@ -116,7 +116,7 @@ EXPRESSION: Number.MIN_VALUE
 {
   "_type": "number",
   "_description": "5e-324",
-  "value": 5e-324
+  "_value": 5e-324
 }
 
 -----------------------------------------------------
@@ -124,7 +124,7 @@ EXPRESSION: NaN
 {
   "_type": "number",
   "_description": "NaN",
-  "value": null
+  "_value": null
 }
 
 -----------------------------------------------------
@@ -132,7 +132,7 @@ EXPRESSION: Infinity
 {
   "_type": "number",
   "_description": "Infinity",
-  "value": null
+  "_value": null
 }
 
 -----------------------------------------------------
@@ -140,7 +140,7 @@ EXPRESSION: ''
 {
   "_type": "string",
   "_description": "",
-  "value": ""
+  "_value": ""
 }
 
 -----------------------------------------------------
@@ -148,7 +148,7 @@ EXPRESSION: '"'
 {
   "_type": "string",
   "_description": "\"",
-  "value": "\""
+  "_value": "\""
 }
 
 -----------------------------------------------------
@@ -156,7 +156,7 @@ EXPRESSION: "'"
 {
   "_type": "string",
   "_description": "'",
-  "value": "'"
+  "_value": "'"
 }
 
 -----------------------------------------------------
@@ -164,7 +164,7 @@ EXPRESSION: 'string'
 {
   "_type": "string",
   "_description": "string",
-  "value": "string"
+  "_value": "string"
 }
 
 -----------------------------------------------------
@@ -172,7 +172,7 @@ EXPRESSION: 'Unicode…'
 {
   "_type": "string",
   "_description": "Unicode…",
-  "value": "Unicode…"
+  "_value": "Unicode…"
 }
 
 -----------------------------------------------------
@@ -180,7 +180,7 @@ EXPRESSION: 'I wish I had something to put here.'
 {
   "_type": "string",
   "_description": "I wish I had something to put here.",
-  "value": "I wish I had something to put here."
+  "_value": "I wish I had something to put here."
 }
 
 -----------------------------------------------------
@@ -255,38 +255,39 @@ EXPRESSION: / /
   "_objectId": "<filtered>",
   "_description": "/ /",
   "_preview": {
-    "type": "object",
-    "description": "/ /",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/ /",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "false"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "false"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": " "
+        "_name": "source",
+        "_type": "string",
+        "_value": " "
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -298,38 +299,39 @@ EXPRESSION: /(?:)/
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
-    "type": "object",
-    "description": "/(?:)/",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/(?:)/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "false"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "false"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": "(?:)"
+        "_name": "source",
+        "_type": "string",
+        "_value": "(?:)"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -341,38 +343,39 @@ EXPRESSION: /^r(e)g[e]{1,}x+/
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/",
   "_preview": {
-    "type": "object",
-    "description": "/^r(e)g[e]{1,}x+/",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/^r(e)g[e]{1,}x+/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "false"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "false"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": "^r(e)g[e]{1,}x+"
+        "_name": "source",
+        "_type": "string",
+        "_value": "^r(e)g[e]{1,}x+"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -384,38 +387,39 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/gi",
   "_preview": {
-    "type": "object",
-    "description": "/^r(e)g[e]{1,}x+/gi",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/^r(e)g[e]{1,}x+/gi",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "true"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "true"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": "^r(e)g[e]{1,}x+"
+        "_name": "source",
+        "_type": "string",
+        "_value": "^r(e)g[e]{1,}x+"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -427,38 +431,39 @@ EXPRESSION: new RegExp('')
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
-    "type": "object",
-    "description": "/(?:)/",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/(?:)/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "false"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "false"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": "(?:)"
+        "_name": "source",
+        "_type": "string",
+        "_value": "(?:)"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -470,38 +475,39 @@ EXPRESSION: new RegExp('test', 'i')
   "_objectId": "<filtered>",
   "_description": "/test/i",
   "_preview": {
-    "type": "object",
-    "description": "/test/i",
-    "lossless": true,
-    "subtype": "regexp",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/test/i",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "lastIndex",
-        "type": "number",
-        "value": "0"
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "global",
-        "type": "boolean",
-        "value": "false"
+        "_name": "global",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "ignoreCase",
-        "type": "boolean",
-        "value": "true"
+        "_name": "ignoreCase",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "multiline",
-        "type": "boolean",
-        "value": "false"
+        "_name": "multiline",
+        "_type": "boolean",
+        "_value": "false"
       },
       {
-        "name": "source",
-        "type": "string",
-        "value": "test"
+        "_name": "source",
+        "_type": "string",
+        "_value": "test"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -513,12 +519,13 @@ EXPRESSION: []
   "_objectId": "<filtered>",
   "_description": "Array[0]",
   "_preview": {
-    "type": "object",
-    "description": "Array[0]",
-    "lossless": true,
-    "subtype": "array",
-    "overflow": false,
-    "properties": []
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[0]",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -530,23 +537,24 @@ EXPRESSION: [1, 2]
   "_objectId": "<filtered>",
   "_description": "Array[2]",
   "_preview": {
-    "type": "object",
-    "description": "Array[2]",
-    "lossless": true,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[2]",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "number",
-        "value": "1"
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "1",
-        "type": "number",
-        "value": "2"
+        "_name": "1",
+        "_type": "number",
+        "_value": "2"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -558,31 +566,32 @@ EXPRESSION: [[1],[2],[3]]
   "_objectId": "<filtered>",
   "_description": "Array[3]",
   "_preview": {
-    "type": "object",
-    "description": "Array[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "subtype": "array",
-        "value": "Array[1]"
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array[1]"
       },
       {
-        "name": "1",
-        "type": "object",
-        "subtype": "array",
-        "value": "Array[1]"
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array[1]"
       },
       {
-        "name": "2",
-        "type": "object",
-        "subtype": "array",
-        "value": "Array[1]"
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array[1]"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -594,39 +603,40 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
   "_objectId": "<filtered>",
   "_description": "Array[5]",
   "_preview": {
-    "type": "object",
-    "description": "Array[5]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[5]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "boolean",
-        "value": "true"
+        "_name": "0",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "1",
-        "type": "number",
-        "value": "1"
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "2",
-        "type": "number",
-        "value": "1.234"
+        "_name": "2",
+        "_type": "number",
+        "_value": "1.234"
       },
       {
-        "name": "3",
-        "type": "string",
-        "value": "string"
+        "_name": "3",
+        "_type": "string",
+        "_value": "string"
       },
       {
-        "name": "4",
-        "type": "object",
-        "subtype": "regexp",
-        "value": "/regex/"
+        "_name": "4",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -638,28 +648,29 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
   "_objectId": "<filtered>",
   "_description": "Array[3]",
   "_preview": {
-    "type": "object",
-    "description": "Array[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "value": "Object"
+        "_name": "0",
+        "_type": "object",
+        "_value": "Object"
       },
       {
-        "name": "1",
-        "type": "object",
-        "value": "Object"
+        "_name": "1",
+        "_type": "object",
+        "_value": "Object"
       },
       {
-        "name": "2",
-        "type": "object",
-        "value": "Object"
+        "_name": "2",
+        "_type": "object",
+        "_value": "Object"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -671,19 +682,20 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
   "_objectId": "<filtered>",
   "_description": "Array[1]",
   "_preview": {
-    "type": "object",
-    "description": "Array[1]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[1]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "subtype": "array",
-        "value": "Array[3]"
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array[3]"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -695,12 +707,13 @@ EXPRESSION: arr = []; arr.length = 100; arr
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
-    "type": "object",
-    "description": "Array[100]",
-    "lossless": true,
-    "subtype": "array",
-    "overflow": false,
-    "properties": []
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[100]",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -712,513 +725,514 @@ EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
-    "type": "object",
-    "description": "Array[100]",
-    "lossless": true,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[100]",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "number",
-        "value": "1"
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "1",
-        "type": "number",
-        "value": "1"
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "2",
-        "type": "number",
-        "value": "1"
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "3",
-        "type": "number",
-        "value": "1"
+        "_name": "3",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "4",
-        "type": "number",
-        "value": "1"
+        "_name": "4",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "5",
-        "type": "number",
-        "value": "1"
+        "_name": "5",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "6",
-        "type": "number",
-        "value": "1"
+        "_name": "6",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "7",
-        "type": "number",
-        "value": "1"
+        "_name": "7",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "8",
-        "type": "number",
-        "value": "1"
+        "_name": "8",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "9",
-        "type": "number",
-        "value": "1"
+        "_name": "9",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "10",
-        "type": "number",
-        "value": "1"
+        "_name": "10",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "11",
-        "type": "number",
-        "value": "1"
+        "_name": "11",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "12",
-        "type": "number",
-        "value": "1"
+        "_name": "12",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "13",
-        "type": "number",
-        "value": "1"
+        "_name": "13",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "14",
-        "type": "number",
-        "value": "1"
+        "_name": "14",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "15",
-        "type": "number",
-        "value": "1"
+        "_name": "15",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "16",
-        "type": "number",
-        "value": "1"
+        "_name": "16",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "17",
-        "type": "number",
-        "value": "1"
+        "_name": "17",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "18",
-        "type": "number",
-        "value": "1"
+        "_name": "18",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "19",
-        "type": "number",
-        "value": "1"
+        "_name": "19",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "20",
-        "type": "number",
-        "value": "1"
+        "_name": "20",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "21",
-        "type": "number",
-        "value": "1"
+        "_name": "21",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "22",
-        "type": "number",
-        "value": "1"
+        "_name": "22",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "23",
-        "type": "number",
-        "value": "1"
+        "_name": "23",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "24",
-        "type": "number",
-        "value": "1"
+        "_name": "24",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "25",
-        "type": "number",
-        "value": "1"
+        "_name": "25",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "26",
-        "type": "number",
-        "value": "1"
+        "_name": "26",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "27",
-        "type": "number",
-        "value": "1"
+        "_name": "27",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "28",
-        "type": "number",
-        "value": "1"
+        "_name": "28",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "29",
-        "type": "number",
-        "value": "1"
+        "_name": "29",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "30",
-        "type": "number",
-        "value": "1"
+        "_name": "30",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "31",
-        "type": "number",
-        "value": "1"
+        "_name": "31",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "32",
-        "type": "number",
-        "value": "1"
+        "_name": "32",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "33",
-        "type": "number",
-        "value": "1"
+        "_name": "33",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "34",
-        "type": "number",
-        "value": "1"
+        "_name": "34",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "35",
-        "type": "number",
-        "value": "1"
+        "_name": "35",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "36",
-        "type": "number",
-        "value": "1"
+        "_name": "36",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "37",
-        "type": "number",
-        "value": "1"
+        "_name": "37",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "38",
-        "type": "number",
-        "value": "1"
+        "_name": "38",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "39",
-        "type": "number",
-        "value": "1"
+        "_name": "39",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "40",
-        "type": "number",
-        "value": "1"
+        "_name": "40",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "41",
-        "type": "number",
-        "value": "1"
+        "_name": "41",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "42",
-        "type": "number",
-        "value": "1"
+        "_name": "42",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "43",
-        "type": "number",
-        "value": "1"
+        "_name": "43",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "44",
-        "type": "number",
-        "value": "1"
+        "_name": "44",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "45",
-        "type": "number",
-        "value": "1"
+        "_name": "45",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "46",
-        "type": "number",
-        "value": "1"
+        "_name": "46",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "47",
-        "type": "number",
-        "value": "1"
+        "_name": "47",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "48",
-        "type": "number",
-        "value": "1"
+        "_name": "48",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "49",
-        "type": "number",
-        "value": "1"
+        "_name": "49",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "50",
-        "type": "number",
-        "value": "1"
+        "_name": "50",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "51",
-        "type": "number",
-        "value": "1"
+        "_name": "51",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "52",
-        "type": "number",
-        "value": "1"
+        "_name": "52",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "53",
-        "type": "number",
-        "value": "1"
+        "_name": "53",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "54",
-        "type": "number",
-        "value": "1"
+        "_name": "54",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "55",
-        "type": "number",
-        "value": "1"
+        "_name": "55",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "56",
-        "type": "number",
-        "value": "1"
+        "_name": "56",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "57",
-        "type": "number",
-        "value": "1"
+        "_name": "57",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "58",
-        "type": "number",
-        "value": "1"
+        "_name": "58",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "59",
-        "type": "number",
-        "value": "1"
+        "_name": "59",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "60",
-        "type": "number",
-        "value": "1"
+        "_name": "60",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "61",
-        "type": "number",
-        "value": "1"
+        "_name": "61",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "62",
-        "type": "number",
-        "value": "1"
+        "_name": "62",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "63",
-        "type": "number",
-        "value": "1"
+        "_name": "63",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "64",
-        "type": "number",
-        "value": "1"
+        "_name": "64",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "65",
-        "type": "number",
-        "value": "1"
+        "_name": "65",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "66",
-        "type": "number",
-        "value": "1"
+        "_name": "66",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "67",
-        "type": "number",
-        "value": "1"
+        "_name": "67",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "68",
-        "type": "number",
-        "value": "1"
+        "_name": "68",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "69",
-        "type": "number",
-        "value": "1"
+        "_name": "69",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "70",
-        "type": "number",
-        "value": "1"
+        "_name": "70",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "71",
-        "type": "number",
-        "value": "1"
+        "_name": "71",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "72",
-        "type": "number",
-        "value": "1"
+        "_name": "72",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "73",
-        "type": "number",
-        "value": "1"
+        "_name": "73",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "74",
-        "type": "number",
-        "value": "1"
+        "_name": "74",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "75",
-        "type": "number",
-        "value": "1"
+        "_name": "75",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "76",
-        "type": "number",
-        "value": "1"
+        "_name": "76",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "77",
-        "type": "number",
-        "value": "1"
+        "_name": "77",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "78",
-        "type": "number",
-        "value": "1"
+        "_name": "78",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "79",
-        "type": "number",
-        "value": "1"
+        "_name": "79",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "80",
-        "type": "number",
-        "value": "1"
+        "_name": "80",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "81",
-        "type": "number",
-        "value": "1"
+        "_name": "81",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "82",
-        "type": "number",
-        "value": "1"
+        "_name": "82",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "83",
-        "type": "number",
-        "value": "1"
+        "_name": "83",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "84",
-        "type": "number",
-        "value": "1"
+        "_name": "84",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "85",
-        "type": "number",
-        "value": "1"
+        "_name": "85",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "86",
-        "type": "number",
-        "value": "1"
+        "_name": "86",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "87",
-        "type": "number",
-        "value": "1"
+        "_name": "87",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "88",
-        "type": "number",
-        "value": "1"
+        "_name": "88",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "89",
-        "type": "number",
-        "value": "1"
+        "_name": "89",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "90",
-        "type": "number",
-        "value": "1"
+        "_name": "90",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "91",
-        "type": "number",
-        "value": "1"
+        "_name": "91",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "92",
-        "type": "number",
-        "value": "1"
+        "_name": "92",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "93",
-        "type": "number",
-        "value": "1"
+        "_name": "93",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "94",
-        "type": "number",
-        "value": "1"
+        "_name": "94",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "95",
-        "type": "number",
-        "value": "1"
+        "_name": "95",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "96",
-        "type": "number",
-        "value": "1"
+        "_name": "96",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "97",
-        "type": "number",
-        "value": "1"
+        "_name": "97",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "98",
-        "type": "number",
-        "value": "1"
+        "_name": "98",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "99",
-        "type": "number",
-        "value": "1"
+        "_name": "99",
+        "_type": "number",
+        "_value": "1"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1230,18 +1244,19 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
-    "type": "object",
-    "description": "Array[100]",
-    "lossless": true,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array[100]",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "10",
-        "type": "number",
-        "value": "1"
+        "_name": "10",
+        "_type": "number",
+        "_value": "1"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1253,29 +1268,30 @@ EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
   "_objectId": "<filtered>",
   "_description": "Arguments[3]",
   "_preview": {
-    "type": "object",
-    "description": "Arguments[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Arguments[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "number",
-        "value": "1"
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "1",
-        "type": "string",
-        "value": "2"
+        "_name": "1",
+        "_type": "string",
+        "_value": "2"
       },
       {
-        "name": "2",
-        "type": "object",
-        "subtype": "regexp",
-        "value": "/3/"
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/3/"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1287,48 +1303,49 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
   "_objectId": "<filtered>",
   "_description": "Int32Array[4]",
   "_preview": {
-    "type": "object",
-    "description": "Int32Array[4]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array[4]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "number",
-        "value": "0"
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "1",
-        "type": "number",
-        "value": "0"
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "2",
-        "type": "number",
-        "value": "0"
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "3",
-        "type": "number",
-        "value": "0"
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "byteOffset",
-        "type": "number",
-        "value": "0"
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "byteLength",
-        "type": "number",
-        "value": "16"
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
       },
       {
-        "name": "buffer",
-        "type": "object",
-        "value": "ArrayBuffer"
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1340,48 +1357,49 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
   "_objectId": "<filtered>",
   "_description": "Int32Array[4]",
   "_preview": {
-    "type": "object",
-    "description": "Int32Array[4]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array[4]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "number",
-        "value": "0"
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "1",
-        "type": "number",
-        "value": "1"
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "2",
-        "type": "number",
-        "value": "2"
+        "_name": "2",
+        "_type": "number",
+        "_value": "2"
       },
       {
-        "name": "3",
-        "type": "number",
-        "value": "3"
+        "_name": "3",
+        "_type": "number",
+        "_value": "3"
       },
       {
-        "name": "byteOffset",
-        "type": "number",
-        "value": "0"
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "byteLength",
-        "type": "number",
-        "value": "16"
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
       },
       {
-        "name": "buffer",
-        "type": "object",
-        "value": "ArrayBuffer"
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1392,10 +1410,12 @@ EXPRESSION: ({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -1406,16 +1426,18 @@ EXPRESSION: ({a: 1})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "a",
-        "type": "number",
-        "value": "1"
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1426,32 +1448,34 @@ EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol('sym')})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "a",
-        "type": "number",
-        "value": "1"
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "b",
-        "type": "string",
-        "value": "string"
+        "_name": "b",
+        "_type": "string",
+        "_value": "string"
       },
       {
-        "name": "c",
-        "type": "object",
-        "subtype": "regexp",
-        "value": "/regex/"
+        "_name": "c",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
       },
       {
-        "name": "d",
-        "type": "symbol",
-        "value": "Symbol(sym)"
+        "_name": "d",
+        "_type": "symbol",
+        "_value": "Symbol(sym)"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1462,29 +1486,31 @@ EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "a",
-        "type": "function",
-        "value": ""
+        "_name": "a",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "b",
-        "type": "function",
-        "value": ""
+        "_name": "b",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "getter",
-        "type": "accessor"
+        "_name": "getter",
+        "_type": "accessor"
       },
       {
-        "name": "setter",
-        "type": "accessor"
+        "_name": "setter",
+        "_type": "accessor"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1495,10 +1521,12 @@ EXPRESSION: function Foo() {}; new Foo
   "_objectId": "<filtered>",
   "_description": "Foo",
   "_preview": {
-    "type": "object",
-    "description": "Foo",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Foo",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -1509,10 +1537,12 @@ EXPRESSION: var Foo2 = function() {}; new Foo2
   "_objectId": "<filtered>",
   "_description": "Foo2",
   "_preview": {
-    "type": "object",
-    "description": "Foo2",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Foo2",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -1523,10 +1553,12 @@ EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Fo
   "_objectId": "<filtered>",
   "_description": "Foo3",
   "_preview": {
-    "type": "object",
-    "description": "Foo3",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Foo3",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -1537,25 +1569,27 @@ EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, g
   "_objectId": "<filtered>",
   "_description": "Bar",
   "_preview": {
-    "type": "object",
-    "description": "Bar",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "Bar",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "_x",
-        "type": "number",
-        "value": "5"
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
       },
       {
-        "name": "constructor",
-        "type": "function",
-        "value": ""
+        "_name": "constructor",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "x",
-        "type": "accessor"
+        "_name": "x",
+        "_type": "accessor"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1566,16 +1600,18 @@ EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return th
   "_objectId": "<filtered>",
   "_description": "Bar2",
   "_preview": {
-    "type": "object",
-    "description": "Bar2",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Bar2",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "_x",
-        "type": "number",
-        "value": "5"
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1586,38 +1622,39 @@ EXPRESSION: window.loadEvent
   "_objectId": "<filtered>",
   "_description": "Event",
   "_preview": {
-    "type": "object",
-    "description": "Event",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "Event",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "clipboardData",
-        "type": "undefined",
-        "value": "undefined"
+        "_name": "clipboardData",
+        "_type": "undefined",
+        "_value": "undefined"
       },
       {
-        "name": "type",
-        "type": "string",
-        "value": "load"
+        "_name": "type",
+        "_type": "string",
+        "_value": "load"
       },
       {
-        "name": "target",
-        "type": "object",
-        "subtype": "node",
-        "value": "#document"
+        "_name": "target",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "#document"
       },
       {
-        "name": "currentTarget",
-        "type": "object",
-        "value": "Window"
+        "_name": "currentTarget",
+        "_type": "object",
+        "_value": "Window"
       },
       {
-        "name": "eventPhase",
-        "type": "number",
-        "value": "2"
+        "_name": "eventPhase",
+        "_type": "number",
+        "_value": "2"
       }
     ],
-    "overflow": true
+    "_entries": null
   }
 }
 
@@ -1628,16 +1665,18 @@ EXPRESSION: new ArrayBuffer(16)
   "_objectId": "<filtered>",
   "_description": "ArrayBuffer",
   "_preview": {
-    "type": "object",
-    "description": "ArrayBuffer",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "ArrayBuffer",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "byteLength",
-        "type": "number",
-        "value": "16"
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1648,26 +1687,28 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
   "_objectId": "<filtered>",
   "_description": "DataView",
   "_preview": {
-    "type": "object",
-    "description": "DataView",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "DataView",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "byteOffset",
-        "type": "number",
-        "value": "0"
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
       },
       {
-        "name": "byteLength",
-        "type": "number",
-        "value": "16"
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
       },
       {
-        "name": "buffer",
-        "type": "object",
-        "value": "ArrayBuffer"
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1679,38 +1720,39 @@ EXPRESSION: document.body
   "_objectId": "<filtered>",
   "_description": "body",
   "_preview": {
-    "type": "object",
-    "description": "body",
-    "lossless": false,
-    "subtype": "node",
-    "overflow": true,
-    "properties": [
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "body",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "aLink",
-        "type": "string",
-        "value": ""
+        "_name": "aLink",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "background",
-        "type": "string",
-        "value": ""
+        "_name": "background",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "bgColor",
-        "type": "string",
-        "value": ""
+        "_name": "bgColor",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "link",
-        "type": "string",
-        "value": ""
+        "_name": "link",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "text",
-        "type": "string",
-        "value": ""
+        "_name": "text",
+        "_type": "string",
+        "_value": ""
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1722,38 +1764,39 @@ EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
   "_objectId": "<filtered>",
   "_description": "div.foo.bar",
   "_preview": {
-    "type": "object",
-    "description": "div.foo.bar",
-    "lossless": false,
-    "subtype": "node",
-    "overflow": true,
-    "properties": [
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "div.foo.bar",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "align",
-        "type": "string",
-        "value": ""
+        "_name": "align",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "title",
-        "type": "string",
-        "value": ""
+        "_name": "title",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "lang",
-        "type": "string",
-        "value": ""
+        "_name": "lang",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "translate",
-        "type": "boolean",
-        "value": "true"
+        "_name": "translate",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "dir",
-        "type": "string",
-        "value": ""
+        "_name": "dir",
+        "_type": "string",
+        "_value": ""
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1765,38 +1808,39 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
   "_objectId": "<filtered>",
   "_description": "span#foo",
   "_preview": {
-    "type": "object",
-    "description": "span#foo",
-    "lossless": false,
-    "subtype": "node",
-    "overflow": true,
-    "properties": [
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "span#foo",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "title",
-        "type": "string",
-        "value": ""
+        "_name": "title",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "lang",
-        "type": "string",
-        "value": ""
+        "_name": "lang",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "translate",
-        "type": "boolean",
-        "value": "true"
+        "_name": "translate",
+        "_type": "boolean",
+        "_value": "true"
       },
       {
-        "name": "dir",
-        "type": "string",
-        "value": ""
+        "_name": "dir",
+        "_type": "string",
+        "_value": ""
       },
       {
-        "name": "tabIndex",
-        "type": "number",
-        "value": "-1"
+        "_name": "tabIndex",
+        "_type": "number",
+        "_value": "-1"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1808,38 +1852,39 @@ EXPRESSION: document.createTextNode('text')
   "_objectId": "<filtered>",
   "_description": "#text",
   "_preview": {
-    "type": "object",
-    "description": "#text",
-    "lossless": false,
-    "subtype": "node",
-    "overflow": true,
-    "properties": [
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "#text",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "wholeText",
-        "type": "string",
-        "value": "text"
+        "_name": "wholeText",
+        "_type": "string",
+        "_value": "text"
       },
       {
-        "name": "splitText",
-        "type": "function",
-        "value": ""
+        "_name": "splitText",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "replaceWholeText",
-        "type": "function",
-        "value": ""
+        "_name": "replaceWholeText",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "data",
-        "type": "string",
-        "value": "text"
+        "_name": "data",
+        "_type": "string",
+        "_value": "text"
       },
       {
-        "name": "length",
-        "type": "number",
-        "value": "4"
+        "_name": "length",
+        "_type": "number",
+        "_value": "4"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1851,41 +1896,42 @@ EXPRESSION: document.head.children
   "_objectId": "<filtered>",
   "_description": "HTMLCollection[3]",
   "_preview": {
-    "type": "object",
-    "description": "HTMLCollection[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "HTMLCollection[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "subtype": "node",
-        "value": "meta"
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "meta"
       },
       {
-        "name": "1",
-        "type": "object",
-        "subtype": "node",
-        "value": "script"
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "script"
       },
       {
-        "name": "2",
-        "type": "object",
-        "subtype": "node",
-        "value": "script"
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "script"
       },
       {
-        "name": "item",
-        "type": "function",
-        "value": ""
+        "_name": "item",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "name": "namedItem",
-        "type": "function",
-        "value": ""
+        "_name": "namedItem",
+        "_type": "function",
+        "_value": ""
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1897,41 +1943,42 @@ EXPRESSION: document.getElementsByClassName('my-test')
   "_objectId": "<filtered>",
   "_description": "NodeList[3]",
   "_preview": {
-    "type": "object",
-    "description": "NodeList[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "NodeList[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "1",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "2",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "constructor",
-        "type": "object",
-        "value": "NodeListConstructor"
+        "_name": "constructor",
+        "_type": "object",
+        "_value": "NodeListConstructor"
       },
       {
-        "name": "item",
-        "type": "function",
-        "value": ""
+        "_name": "item",
+        "_type": "function",
+        "_value": ""
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1943,41 +1990,42 @@ EXPRESSION: document.querySelectorAll('.my-test')
   "_objectId": "<filtered>",
   "_description": "NodeList[3]",
   "_preview": {
-    "type": "object",
-    "description": "NodeList[3]",
-    "lossless": false,
-    "subtype": "array",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "NodeList[3]",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "0",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "1",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "2",
-        "type": "object",
-        "subtype": "node",
-        "value": "p.my-test"
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "p.my-test"
       },
       {
-        "name": "constructor",
-        "type": "object",
-        "value": "NodeListConstructor"
+        "_name": "constructor",
+        "_type": "object",
+        "_value": "NodeListConstructor"
       },
       {
-        "name": "item",
-        "type": "function",
-        "value": ""
+        "_name": "item",
+        "_type": "function",
+        "_value": ""
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -1989,33 +2037,34 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
   "_preview": {
-    "type": "object",
-    "description": "TypeError: undefined is not an object (evaluating '[].x.x')",
-    "lossless": true,
-    "subtype": "error",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "message",
-        "type": "string",
-        "value": "undefined is not an object (evaluating '[].x.x')"
+        "_name": "message",
+        "_type": "string",
+        "_value": "undefined is not an object (evaluating '[].x.x')"
       },
       {
-        "name": "line",
-        "type": "number",
-        "value": "1"
+        "_name": "line",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "column",
-        "type": "number",
-        "value": "25"
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
       },
       {
-        "name": "stack",
-        "type": "string",
-        "value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_name": "stack",
+        "_type": "string",
+        "_value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2027,33 +2076,34 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "SyntaxError: Unexpected token ')'",
   "_preview": {
-    "type": "object",
-    "description": "SyntaxError: Unexpected token ')'",
-    "lossless": true,
-    "subtype": "error",
-    "overflow": false,
-    "properties": [
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "SyntaxError: Unexpected token ')'",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "message",
-        "type": "string",
-        "value": "Unexpected token ')'"
+        "_name": "message",
+        "_type": "string",
+        "_value": "Unexpected token ')'"
       },
       {
-        "name": "line",
-        "type": "number",
-        "value": "1"
+        "_name": "line",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "column",
-        "type": "number",
-        "value": "25"
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
       },
       {
-        "name": "stack",
-        "type": "string",
-        "value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_name": "stack",
+        "_type": "string",
+        "_value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2065,38 +2115,39 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
   "_objectId": "<filtered>",
   "_description": "Error: IndexSizeError: DOM Exception 1",
   "_preview": {
-    "type": "object",
-    "description": "Error: IndexSizeError: DOM Exception 1",
-    "lossless": false,
-    "subtype": "error",
-    "overflow": true,
-    "properties": [
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "Error: IndexSizeError: DOM Exception 1",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
       {
-        "name": "code",
-        "type": "number",
-        "value": "1"
+        "_name": "code",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "name",
-        "type": "string",
-        "value": "IndexSizeError"
+        "_name": "name",
+        "_type": "string",
+        "_value": "IndexSizeError"
       },
       {
-        "name": "message",
-        "type": "string",
-        "value": "IndexSizeError: DOM Exception 1"
+        "_name": "message",
+        "_type": "string",
+        "_value": "IndexSizeError: DOM Exception 1"
       },
       {
-        "name": "line",
-        "type": "number",
-        "value": "1"
+        "_name": "line",
+        "_type": "number",
+        "_value": "1"
       },
       {
-        "name": "column",
-        "type": "number",
-        "value": "58"
+        "_name": "column",
+        "_type": "number",
+        "_value": "58"
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2107,10 +2158,12 @@ EXPRESSION: Object.seal({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -2121,10 +2174,12 @@ EXPRESSION: Object.freeze({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "type": "object",
-    "description": "Object",
-    "lossless": true,
-    "properties": []
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
   }
 }
 
@@ -2136,13 +2191,13 @@ EXPRESSION: new Map
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
-    "type": "object",
-    "description": "Map",
-    "lossless": true,
-    "subtype": "map",
-    "overflow": false,
-    "properties": [],
-    "entries": []
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": []
   }
 }
 
@@ -2154,35 +2209,47 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
-    "type": "object",
-    "description": "Map",
-    "lossless": true,
-    "subtype": "map",
-    "overflow": false,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": [
       {
-        "key": {
-          "type": "number",
-          "description": "1",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "2",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "string",
-          "description": "key",
-          "lossless": true
+        "_key": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "string",
-          "description": "value",
-          "lossless": true
+        "_value": {
+          "_type": "string",
+          "_description": "value",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       }
     ]
@@ -2197,92 +2264,98 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
-    "type": "object",
-    "description": "Map",
-    "lossless": true,
-    "subtype": "map",
-    "overflow": false,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": [
       {
-        "key": {
-          "type": "object",
-          "description": "Object",
-          "lossless": true,
-          "properties": [
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "a",
-              "type": "number",
-              "value": "1"
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
             }
-          ]
+          ],
+          "_entries": null
         },
-        "value": {
-          "type": "object",
-          "description": "Object",
-          "lossless": true,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "b",
-              "type": "number",
-              "value": "2"
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
             }
-          ]
+          ],
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "object",
-          "description": "body",
-          "lossless": false,
-          "subtype": "node",
-          "overflow": true,
-          "properties": [
+        "_key": {
+          "_type": "object",
+          "_subtype": "node",
+          "_description": "body",
+          "_lossless": false,
+          "_overflow": true,
+          "_properties": [
             {
-              "name": "aLink",
-              "type": "string",
-              "value": ""
+              "_name": "aLink",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "background",
-              "type": "string",
-              "value": ""
+              "_name": "background",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "bgColor",
-              "type": "string",
-              "value": ""
+              "_name": "bgColor",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "link",
-              "type": "string",
-              "value": ""
+              "_name": "link",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "text",
-              "type": "string",
-              "value": ""
+              "_name": "text",
+              "_type": "string",
+              "_value": ""
             }
-          ]
+          ],
+          "_entries": null
         },
-        "value": {
-          "type": "object",
-          "description": "Array[2]",
-          "lossless": true,
-          "subtype": "array",
-          "overflow": false,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array[2]",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "0",
-              "type": "number",
-              "value": "1"
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
             },
             {
-              "name": "1",
-              "type": "number",
-              "value": "2"
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
             }
-          ]
+          ],
+          "_entries": null
         }
       }
     ]
@@ -2297,71 +2370,101 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
-    "type": "object",
-    "description": "Map",
-    "lossless": false,
-    "subtype": "map",
-    "overflow": true,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [],
+    "_entries": [
       {
-        "key": {
-          "type": "number",
-          "description": "0",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "0",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "number",
-          "description": "1",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "1",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "number",
-          "description": "2",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "2",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "number",
-          "description": "3",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "3",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "key": {
-          "type": "number",
-          "description": "4",
-          "lossless": true
+        "_key": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         },
-        "value": {
-          "type": "number",
-          "description": "4",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       }
     ]
@@ -2376,44 +2479,47 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
   "_objectId": "<filtered>",
   "_description": "WeakMap",
   "_preview": {
-    "type": "object",
-    "description": "WeakMap",
-    "lossless": true,
-    "subtype": "weakmap",
-    "overflow": false,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "weakmap",
+    "_description": "WeakMap",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": [
       {
-        "key": {
-          "type": "object",
-          "description": "Object",
-          "lossless": true,
-          "properties": [
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "id",
-              "type": "number",
-              "value": "1"
+              "_name": "id",
+              "_type": "number",
+              "_value": "1"
             }
-          ]
+          ],
+          "_entries": null
         },
-        "value": {
-          "type": "object",
-          "description": "Array[2]",
-          "lossless": true,
-          "subtype": "array",
-          "overflow": false,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array[2]",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "0",
-              "type": "number",
-              "value": "1"
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
             },
             {
-              "name": "1",
-              "type": "number",
-              "value": "2"
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
             }
-          ]
+          ],
+          "_entries": null
         }
       }
     ]
@@ -2428,13 +2534,13 @@ EXPRESSION: new Set
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
-    "type": "object",
-    "description": "Set",
-    "lossless": true,
-    "subtype": "set",
-    "overflow": false,
-    "properties": [],
-    "entries": []
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": []
   }
 }
 
@@ -2446,32 +2552,41 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
-    "type": "object",
-    "description": "Set",
-    "lossless": true,
-    "subtype": "set",
-    "overflow": false,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": [
       {
-        "value": {
-          "type": "number",
-          "description": "1",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "number",
-          "description": "2",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "string",
-          "description": "key",
-          "lossless": true
+        "_value": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       }
     ]
@@ -2486,82 +2601,86 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
-    "type": "object",
-    "description": "Set",
-    "lossless": true,
-    "subtype": "set",
-    "overflow": false,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": [
       {
-        "value": {
-          "type": "object",
-          "description": "Object",
-          "lossless": true,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "a",
-              "type": "number",
-              "value": "1"
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
             }
-          ]
+          ],
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "object",
-          "description": "body",
-          "lossless": false,
-          "subtype": "node",
-          "overflow": true,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_subtype": "node",
+          "_description": "body",
+          "_lossless": false,
+          "_overflow": true,
+          "_properties": [
             {
-              "name": "aLink",
-              "type": "string",
-              "value": ""
+              "_name": "aLink",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "background",
-              "type": "string",
-              "value": ""
+              "_name": "background",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "bgColor",
-              "type": "string",
-              "value": ""
+              "_name": "bgColor",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "link",
-              "type": "string",
-              "value": ""
+              "_name": "link",
+              "_type": "string",
+              "_value": ""
             },
             {
-              "name": "text",
-              "type": "string",
-              "value": ""
+              "_name": "text",
+              "_type": "string",
+              "_value": ""
             }
-          ]
+          ],
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "object",
-          "description": "Array[2]",
-          "lossless": true,
-          "subtype": "array",
-          "overflow": false,
-          "properties": [
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array[2]",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
             {
-              "name": "0",
-              "type": "number",
-              "value": "1"
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
             },
             {
-              "name": "1",
-              "type": "number",
-              "value": "2"
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
             }
-          ]
+          ],
+          "_entries": null
         }
       }
     ]
@@ -2576,46 +2695,61 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
-    "type": "object",
-    "description": "Set",
-    "lossless": false,
-    "subtype": "set",
-    "overflow": true,
-    "properties": [],
-    "entries": [
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [],
+    "_entries": [
       {
-        "value": {
-          "type": "number",
-          "description": "0",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "number",
-          "description": "1",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "number",
-          "description": "2",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "number",
-          "description": "3",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       },
       {
-        "value": {
-          "type": "number",
-          "description": "4",
-          "lossless": true
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
         }
       }
     ]
@@ -2629,17 +2763,19 @@ EXPRESSION: new Promise(function(){})
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "type": "object",
-    "description": "Promise",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "status",
-        "type": "string",
-        "value": "pending",
-        "internal": true
+        "_name": "status",
+        "_type": "string",
+        "_value": "pending",
+        "_internal": true
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2650,23 +2786,25 @@ EXPRESSION: Promise.reject()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "type": "object",
-    "description": "Promise",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "status",
-        "type": "string",
-        "value": "rejected",
-        "internal": true
+        "_name": "status",
+        "_type": "string",
+        "_value": "rejected",
+        "_internal": true
       },
       {
-        "name": "result",
-        "type": "undefined",
-        "value": "undefined",
-        "internal": true
+        "_name": "result",
+        "_type": "undefined",
+        "_value": "undefined",
+        "_internal": true
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2677,23 +2815,25 @@ EXPRESSION: Promise.reject('result')
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "type": "object",
-    "description": "Promise",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "status",
-        "type": "string",
-        "value": "rejected",
-        "internal": true
+        "_name": "status",
+        "_type": "string",
+        "_value": "rejected",
+        "_internal": true
       },
       {
-        "name": "result",
-        "type": "string",
-        "value": "result",
-        "internal": true
+        "_name": "result",
+        "_type": "string",
+        "_value": "result",
+        "_internal": true
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2704,23 +2844,25 @@ EXPRESSION: Promise.resolve()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "type": "object",
-    "description": "Promise",
-    "lossless": true,
-    "properties": [
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "status",
-        "type": "string",
-        "value": "resolved",
-        "internal": true
+        "_name": "status",
+        "_type": "string",
+        "_value": "resolved",
+        "_internal": true
       },
       {
-        "name": "result",
-        "type": "undefined",
-        "value": "undefined",
-        "internal": true
+        "_name": "result",
+        "_type": "undefined",
+        "_value": "undefined",
+        "_internal": true
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 
@@ -2731,23 +2873,25 @@ EXPRESSION: Promise.resolve({result:1})
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "type": "object",
-    "description": "Promise",
-    "lossless": false,
-    "properties": [
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
       {
-        "name": "status",
-        "type": "string",
-        "value": "resolved",
-        "internal": true
+        "_name": "status",
+        "_type": "string",
+        "_value": "resolved",
+        "_internal": true
       },
       {
-        "name": "result",
-        "type": "object",
-        "value": "Object",
-        "internal": true
+        "_name": "result",
+        "_type": "object",
+        "_value": "Object",
+        "_internal": true
       }
-    ]
+    ],
+    "_entries": null
   }
 }
 

@@ -128,15 +128,11 @@ ALL PROPERTIES:
     _bar
     _foo
     constructor
-    get getterProperty
-    set getterProperty
-    get foo
-    set foo
+    getterProperty
+    foo
     BAR_CONSTANT
-    get bar
-    set bar
-    get setterOnly
-    set setterOnly
+    bar
+    setterOnly
     toString
     toLocaleString
     valueOf
@@ -164,8 +160,7 @@ OWN AND GETTER PROPERTIES:
 
 ALL PROPERTIES:
     constructor
-    get badGetter
-    set badGetter
+    badGetter
     toString
     toLocaleString
     valueOf
@@ -233,10 +228,8 @@ description: function () {
 OWN PROPERTIES:
     name
     length
-    get arguments
-    set arguments
-    get caller
-    set caller
+    arguments
+    caller
     __proto__
     targetFunction
     boundThis
@@ -245,10 +238,8 @@ OWN PROPERTIES:
 OWN AND GETTER PROPERTIES:
     name
     length
-    get arguments
-    set arguments
-    get caller
-    set caller
+    arguments
+    caller
     __proto__
     targetFunction
     boundThis
@@ -257,10 +248,8 @@ OWN AND GETTER PROPERTIES:
 ALL PROPERTIES:
     name
     length
-    get arguments
-    set arguments
-    get caller
-    set caller
+    arguments
+    caller
     toString
     apply
     call

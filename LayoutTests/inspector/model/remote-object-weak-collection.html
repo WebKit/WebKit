@@ -32,7 +32,7 @@ function test()
 
     function remoteObjectJSONFilter(key, value)
     {
-        if (key === "objectId")
+        if (key === "_objectId")
             return "<filtered>";
 
         return value;
@@ -59,6 +59,8 @@ function test()
                 remoteObject.getCollectionEntries(0, 100, function(entries) {
                     InspectorTest.log("ENTRIES:");
                     entries.sort(function(a, b) { return a.value.value - b.value.value; });
+                    for (var entry of entries)
+                        InspectorTest.assert(entry instanceof WebInspector.CollectionEntry);
                     InspectorTest.log(JSON.stringify(entries, remoteObjectJSONFilter, "  "));
                     remoteObject.releaseWeakCollectionEntries();
                     runNextStep();

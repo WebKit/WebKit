@@ -88,7 +88,7 @@ WebInspector.TreeOutlineDataGridSynchronizer = function(treeOutline, dataGrid, d
 
 WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
     constructor: WebInspector.TreeOutlineDataGridSynchronizer,
-    __proto__: WebInspector.Object,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 

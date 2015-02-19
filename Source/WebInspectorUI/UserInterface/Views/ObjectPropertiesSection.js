@@ -207,7 +207,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.property.wasThrown)
             this.valueElement.textContent = "[Exception: " + description + "]";
         else if (this.property.value.type === "string" && typeof description === "string") {
-            this.valueElement.textContent = "\"" + description.replace(/\n/g, "\u21B5") + "\"";
+            this.valueElement.textContent = "\"" + description.replace(/\n/g, "\u21B5").replace(/"/g, "\\\"") + "\"";
             this.valueElement._originalTextContent = "\"" + description + "\"";
         } else if (this.property.value.type === "function" && typeof description === "string") {
             this.valueElement.textContent = /.*/.exec(description)[0].replace(/ +$/g, "");
@@ -404,7 +404,7 @@ WebInspector.CollectionEntriesMainTreeElement.prototype = {
                 else {
                     this.appendChild(new WebInspector.ObjectPropertyTreeElement({
                         name: "" + i,
-                        value: WebInspector.RemoteObject.fromPayload(entry.value),
+                        value: entry.value,
                         enumerable: true,
                         writable: false,
                     }));
@@ -472,8 +472,8 @@ WebInspector.CollectionEntryTreeElement = function(entry, index)
     console.assert(entry);
 
     this._name = "" + index;
-    this._key = WebInspector.RemoteObject.fromPayload(entry.key);
-    this._value = WebInspector.RemoteObject.fromPayload(entry.value);
+    this._key = entry.key;
+    this._value = entry.value;
 
     this.toggleOnClick = true;
     this.selectable = false;

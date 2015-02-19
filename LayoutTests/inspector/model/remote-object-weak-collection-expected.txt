@@ -9,53 +9,59 @@ EXPRESSION: weakMap.set(strongKey1, 1); weakMap.set(strongKey2, 2); weakMap
 ENTRIES:
 [
   {
-    "key": {
-      "type": "object",
-      "objectId": "<filtered>",
-      "className": "Object",
-      "description": "Object",
-      "preview": {
-        "type": "object",
-        "description": "Object",
-        "lossless": true,
-        "properties": [
+    "_key": {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
           {
-            "name": "id",
-            "type": "number",
-            "value": "1"
+            "_name": "id",
+            "_type": "number",
+            "_value": "1"
           }
-        ]
+        ],
+        "_entries": null
       }
     },
-    "value": {
-      "type": "number",
-      "value": 1,
-      "description": "1"
+    "_value": {
+      "_type": "number",
+      "_description": "1",
+      "_hasChildren": false,
+      "_value": 1
     }
   },
   {
-    "key": {
-      "type": "object",
-      "objectId": "<filtered>",
-      "className": "Object",
-      "description": "Object",
-      "preview": {
-        "type": "object",
-        "description": "Object",
-        "lossless": true,
-        "properties": [
+    "_key": {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
           {
-            "name": "id",
-            "type": "number",
-            "value": "2"
+            "_name": "id",
+            "_type": "number",
+            "_value": "2"
           }
-        ]
+        ],
+        "_entries": null
       }
     },
-    "value": {
-      "type": "number",
-      "value": 2,
-      "description": "2"
+    "_value": {
+      "_type": "number",
+      "_description": "2",
+      "_hasChildren": false,
+      "_value": 2
     }
   }
 ]
@@ -65,28 +71,31 @@ EXPRESSION: delete window.strongKey1; weakMap
 ENTRIES:
 [
   {
-    "key": {
-      "type": "object",
-      "objectId": "<filtered>",
-      "className": "Object",
-      "description": "Object",
-      "preview": {
-        "type": "object",
-        "description": "Object",
-        "lossless": true,
-        "properties": [
+    "_key": {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
           {
-            "name": "id",
-            "type": "number",
-            "value": "2"
+            "_name": "id",
+            "_type": "number",
+            "_value": "2"
           }
-        ]
+        ],
+        "_entries": null
       }
     },
-    "value": {
-      "type": "number",
-      "value": 2,
-      "description": "2"
+    "_value": {
+      "_type": "number",
+      "_description": "2",
+      "_hasChildren": false,
+      "_value": 2
     }
   }
 ]
@@ -96,28 +105,31 @@ EXPRESSION: weakMap.set({id:3}, 3); weakMap.set({id:4}, 4); weakMap
 ENTRIES:
 [
   {
-    "key": {
-      "type": "object",
-      "objectId": "<filtered>",
-      "className": "Object",
-      "description": "Object",
-      "preview": {
-        "type": "object",
-        "description": "Object",
-        "lossless": true,
-        "properties": [
+    "_key": {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
           {
-            "name": "id",
-            "type": "number",
-            "value": "2"
+            "_name": "id",
+            "_type": "number",
+            "_value": "2"
           }
-        ]
+        ],
+        "_entries": null
       }
     },
-    "value": {
-      "type": "number",
-      "value": 2,
-      "description": "2"
+    "_value": {
+      "_type": "number",
+      "_description": "2",
+      "_hasChildren": false,
+      "_value": 2
     }
   }
 ]
