@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKPageGroup.h"
 
+#include "APIUserContentFilter.h"
 #include "WKAPICast.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"

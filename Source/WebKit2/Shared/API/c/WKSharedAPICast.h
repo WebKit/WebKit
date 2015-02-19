@@ -128,13 +128,13 @@ WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>
 auto toAPI(T* t) -> APIType
 {
-    return reinterpret_cast<APIType>(t);
+    return reinterpret_cast<APIType>(API::Object::wrap(t));
 }
 
 template<typename T, typename ImplType = typename APITypeInfo<T>::ImplType>
 auto toImpl(T t) -> ImplType*
 {
-    return static_cast<ImplType*>(static_cast<void*>(const_cast<typename std::remove_const<typename std::remove_pointer<T>::type>::type*>(t)));
+    return static_cast<ImplType*>(API::Object::unwrap(static_cast<void*>(const_cast<typename std::remove_const<typename std::remove_pointer<T>::type>::type*>(t))));
 }
 
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType>::APIType>

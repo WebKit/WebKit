@@ -1,3 +1,48 @@
+2015-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Make C SPI objects and modern API objects toll-free bridged
+        https://bugs.webkit.org/show_bug.cgi?id=141808
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/APIObject.h:
+        (API::Object::wrap):
+        (API::Object::unwrap):
+        Add default implementations of wrap and unwrap. These just cast.
+
+        * Shared/API/c/WKArray.cpp:
+        (WKArrayCreate):
+        (WKArrayCreateAdoptingValues):
+        (WKArrayGetItemAtIndex):
+        * Shared/API/c/WKDictionary.cpp:
+        (WKDictionaryGetItemForKey):
+        Add toImpl and toAPI where necessary.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        Add API::Object::wrap in toAPI and unwrap in toImpl.
+
+        * Shared/API/c/WKType.cpp:
+        (WKGetTypeID):
+        (WKRetain):
+        (WKRelease):
+        Add missing toImpl calls.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::wrap):
+        Return the APIObject Objective-C wrapper.
+
+        (API::Object::unwrap):
+        Return the API::Object from the Objective-C object.
+
+        * Shared/Cocoa/WKObject.h:
+        Add wrap and unwrap declarations.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPageConfigurationRef.cpp:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        Add missing includes; toImpl now requires a complete type.
+
 2015-02-19  Timothy Horton  <timothy_horton@apple.com>
 
         Remove unused forward declaration from WKWebViewInternal.h

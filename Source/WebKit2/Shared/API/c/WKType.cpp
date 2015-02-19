@@ -33,16 +33,17 @@ using namespace WebKit;
 
 WKTypeID WKGetTypeID(WKTypeRef typeRef)
 {
-    return toAPI(static_cast<API::Object*>(const_cast<void*>(typeRef))->type());
+    return toAPI(toImpl(typeRef)->type());
 }
 
 WKTypeRef WKRetain(WKTypeRef typeRef)
 {
-    static_cast<API::Object*>(const_cast<void*>(typeRef))->ref();
+    toImpl(typeRef)->ref();
+
     return typeRef;
 }
 
 void WKRelease(WKTypeRef typeRef)
 {
-    static_cast<API::Object*>(const_cast<void*>(typeRef))->deref();
+    toImpl(typeRef)->deref();
 }

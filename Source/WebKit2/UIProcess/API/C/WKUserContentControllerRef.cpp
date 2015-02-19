@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKUserContentControllerRef.h"
 
+#include "APIUserContentFilter.h"
+#include "APIUserScript.h"
 #include "WKAPICast.h"
 #include "WebUserContentControllerProxy.h"
 

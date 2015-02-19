@@ -28,6 +28,9 @@
 
 #include "APIPageConfiguration.h"
 #include "WKAPICast.h"
+#include "WebPageGroup.h"
+#include "WebProcessPool.h"
+#include "WebUserContentControllerProxy.h"
 
 using namespace WebKit;
 

@@ -205,6 +205,9 @@ public:
     void deref();
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
 
+    static void* wrap(API::Object*);
+    static API::Object* unwrap(void*);
+
 protected:
     Object();
 
@@ -242,6 +245,18 @@ protected:
     void* operator new(size_t size, void* value) { return value; }
 #endif
 };
+
+#if !DELEGATE_REF_COUNTING_TO_COCOA
+inline void* Object::wrap(API::Object* object)
+{
+    return static_cast<void*>(object);
+}
+
+inline API::Object* Object::unwrap(void* object)
+{
+    return static_cast<API::Object*>(object);
+}
+#endif
 
 } // namespace Object
 

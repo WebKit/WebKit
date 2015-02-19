@@ -233,6 +233,25 @@ void* Object::newObject(size_t size, Type type)
     return &object;
 }
 
+void* Object::wrap(API::Object* object)
+{
+    if (!object)
+        return nullptr;
+
+    return static_cast<void*>(object->wrapper());
+}
+
+API::Object* Object::unwrap(void* object)
+{
+    if (!object)
+        return nullptr;
+
+    ASSERT([(id)object conformsToProtocol:@protocol(WKObject)]);
+    ASSERT([(id)object respondsToSelector:@selector(_apiObject)]);
+
+    return &static_cast<id <WKObject>>(object)._apiObject;
+}
+
 } // namespace API
 
 #endif // WK_API_ENABLED

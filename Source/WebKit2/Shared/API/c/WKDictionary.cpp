@@ -48,7 +48,7 @@ WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTy
 
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)
 {
-    return toImpl(dictionaryRef)->get(toImpl(key)->string());
+    return toAPI(toImpl(dictionaryRef)->get(toImpl(key)->string()));
 }
 
 size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)

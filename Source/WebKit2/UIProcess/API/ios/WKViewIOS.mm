@@ -36,6 +36,7 @@
 #import "WKContentView.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKScrollView.h"
+#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import <UIKit/UIScreen.h>

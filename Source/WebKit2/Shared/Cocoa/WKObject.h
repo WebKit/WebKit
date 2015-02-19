@@ -41,6 +41,9 @@ struct ObjectStorage {
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type data;
 };
 
+API::Object* unwrap(void*);
+void* wrap(API::Object*);
+
 }
 
 @protocol WKObject <NSObject>
