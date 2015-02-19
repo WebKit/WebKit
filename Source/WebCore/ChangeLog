@@ -1,5 +1,48 @@
 2015-02-18  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179963
+
+    2015-02-11  Lucas Forschler  <lforschler@apple.com>
+
+            Merge r179772
+
+        2015-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+                Invalid cast in WebCore::SVGAnimateElement::calculateAnimatedValue.
+                https://bugs.webkit.org/show_bug.cgi?id=135171.
+
+                Reviewed by Dean Jackson.
+
+                The bug happens when an SVG element is animated by <animateMotion> followed by an
+                <animateColor> or an <animate> and the values of the "attributeName" in both elements
+                are the same. The problem is <animateMotion> should not have an attribute to animate.
+                If it does by fuzz or by mistake, then we assume the <animateMotion> and the <animate>
+                animate the same attribute for the same element target. Therefore we schedule them in
+                the same AnimationVector in SMILTimeContainer::schedule(). When we call
+                SVGAnimateElementBase::calculateAnimatedValue() for an SVGAnimateColorElement and the
+                resultElement is SVGAnimateMotionElement, we fail to cast it to SVGAnimateElementBase
+                because SVGAnimateMotionElement is derived from SVGAnimationElement which is the base
+                class of all animate elements including SVGAnimateElementBase.
+
+                The fix is to nullify setting "attributeName" of an SVGAnimationElement. By doing so,
+                "attributeName" and its value will be ignored from the <animateMotion> which is correct.
+
+                Tests: svg/animations/animate-montion-invalid-attribute.svg.
+
+                * svg/SVGAnimateElementBase.cpp:
+                (WebCore::SVGAnimateElementBase::setAttributeName):
+                Do not call SVGAnimationElement::setAttributeName() since SVGAnimationElement should
+                not have an attribute to animate. We prevent this by bypassing the parent in the class 
+                hierarchy: SVGAnimationElement and calling SVGSMILElement::setAttributeName() directly.
+
+                * svg/SVGAnimationElement.cpp:
+                (WebCore::SVGAnimationElement::setAttributeName): Deleted.
+                * svg/SVGAnimationElement.h:
+                SVGAnimationElement should not have an attribute to animate. So implement its
+                setAttributeName() as a null function.
+
+2015-02-18  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179969
 
     2015-02-11  Lucas Forschler  <lforschler@apple.com>
