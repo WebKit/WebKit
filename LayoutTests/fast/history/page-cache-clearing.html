@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests that clearing the page cache doesn't leave pages in the cache.");
+
+if (!window.internals)
+    debug("This test requires window.internals");
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        var cachedPageCountBefore = window.internals.pageCacheSize();
+        debug("Cached page count before clearing: " + cachedPageCountBefore);
+        debug("Clearing the page cache");
+        window.internals.clearPageCache();
+        var cachedPageCountAfter = window.internals.pageCacheSize();
+        debug("Cached page count after clearing: " + cachedPageCountAfter);
+        if (cachedPageCountBefore != 0 && cachedPageCountAfter == 0)
+            debug("PASS");
+        else
+            debug("FAIL");
+        finishJSTest();
+        window.testRunner.notifyDone();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        debug("FAIL - Page did not enter the page cache.");
+        finishJSTest();
+        window.testRunner.notifyDone();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+
+    // Enable the PageCache and make this an async test.
+    if (window.testRunner) {
+        window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        window.testRunner.waitUntilDone();
+    }
+
+    // Force a back navigation back to this page.
+    setTimeout(function() {
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+
+}, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+</body>
+</html>

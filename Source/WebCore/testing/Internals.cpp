@@ -80,6 +80,7 @@
 #include "MemoryInfo.h"
 #include "MockPageOverlayClient.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "PageOverlay.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -422,6 +423,16 @@ void Internals::pruneMemoryCacheToSize(unsigned size)
 unsigned Internals::memoryCacheSize() const
 {
     return MemoryCache::singleton().size();
+}
+
+void Internals::clearPageCache()
+{
+    PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
+}
+
+unsigned Internals::pageCacheSize() const
+{
+    return PageCache::singleton().pageCount();
 }
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
