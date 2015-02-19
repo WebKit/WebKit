@@ -113,3 +113,103 @@ function testBaseAndExponentConstantLiterals()
     }
 }
 testBaseAndExponentConstantLiterals();
+
+
+function exponentIsIntegerConstant(x) {
+    return Math.pow(x, 42);
+}
+noInline(exponentIsIntegerConstant);
+
+function testExponentIsIntegerConstant() {
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsIntegerConstant(2);
+        if (result !== 4398046511104)
+            throw "Error: exponentIsIntegerConstant(2) should be 4398046511104, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsIntegerConstant(5);
+        if (result !== 2.2737367544323207e+29)
+            throw "Error: exponentIsIntegerConstant(5) should be 2.2737367544323207e+29, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsIntegerConstant(2.1);
+        if (result !== 34135823067412.42)
+            throw "Error: exponentIsIntegerConstant(2.1) should be 34135823067412.42, was = " + result;
+    }
+}
+testExponentIsIntegerConstant();
+
+
+function exponentIsDoubleConstant(x) {
+    return Math.pow(x, 42.5);
+}
+noInline(exponentIsDoubleConstant);
+
+function testExponentIsDoubleConstant() {
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsDoubleConstant(2);
+        if (result !== 6219777023950.95)
+            throw "Error: exponentIsDoubleConstant(2) should be 6219777023950.95, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsDoubleConstant(5);
+        if (result !== 5.084229945850415e+29)
+            throw "Error: exponentIsDoubleConstant(5) should be 5.084229945850415e+29, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsDoubleConstant(2.1);
+        if (result !== 49467507261113.805)
+            throw "Error: exponentIsDoubleConstant(2.1) should be 49467507261113.805, was = " + result;
+    }
+}
+testExponentIsDoubleConstant();
+
+
+function exponentIsInfinityConstant(x) {
+    return Math.pow(x, Infinity);
+}
+noInline(exponentIsInfinityConstant);
+
+function testExponentIsInfinityConstant() {
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsInfinityConstant(2);
+        if (result !== Infinity)
+            throw "Error: exponentIsInfinityConstant(2) should be Infinity, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsInfinityConstant(5);
+        if (result !== Infinity)
+            throw "Error: exponentIsInfinityConstant(5) should be Infinity, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsInfinityConstant(2.1);
+        if (result !== Infinity)
+            throw "Error: exponentIsInfinityConstant(2.1) should be Infinity, was = " + result;
+    }
+}
+testExponentIsInfinityConstant();
+
+
+function exponentIsNegativeInfinityConstant(x) {
+    return Math.pow(x, -Infinity);
+}
+noInline(exponentIsNegativeInfinityConstant);
+
+function testExponentIsNegativeInfinityConstant() {
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsNegativeInfinityConstant(2);
+        if (result !== 0)
+            throw "Error: exponentIsNegativeInfinityConstant(2) should be zero, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsNegativeInfinityConstant(5);
+        if (result !== 0)
+            throw "Error: exponentIsNegativeInfinityConstant(5) should be zero, was = " + result;
+    }
+    for (var i = 0; i < 1000; ++i) {
+        var result = exponentIsNegativeInfinityConstant(2.1);
+        if (result !== 0)
+            throw "Error: exponentIsNegativeInfinityConstant(2.1) should be zero, was = " + result;
+    }
+}
+testExponentIsNegativeInfinityConstant();

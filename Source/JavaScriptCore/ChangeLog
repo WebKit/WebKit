@@ -1,3 +1,38 @@
+2015-02-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Refine the FTL part of ArithPow
+        https://bugs.webkit.org/show_bug.cgi?id=141792
+
+        Reviewed by Filip Pizlo.
+
+        This patch refines the FTL lowering of ArithPow. This was left out
+        of the original patch to keep it simpler.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileArithPow):
+        Two improvements here:
+        1) Do not generate the NaN check unless we know the exponent might be a NaN.
+        2) Use one BasicBlock per check with the appropriate weight. Now that we have
+           one branch per test, move the Infinity check before the check for 1 since
+           it is the less common case.
+
+        * tests/stress/math-pow-becomes-custom-function.js: Added.
+        Test for changing the Math.pow() function after it has been optimized.
+
+        * tests/stress/math-pow-nan-behaviors.js:
+        The previous tests were only going as far as the DFGAbstractInterpreter
+        were the operations were replaced by the equivalent constant.
+
+        I duplicated the test functions to also test the dynamic behavior of DFG
+        and FTL.
+
+        * tests/stress/math-pow-with-constants.js:
+        Add cases covering exponent constants. LLVM removes many value
+        checks for those.
+
+        * tests/stress/math-pow-with-never-NaN-exponent.js: Added.
+        Test for the new optimization removing the NaN check.
+
 2015-02-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r180279): It broke 20 tests on ARM Linux
