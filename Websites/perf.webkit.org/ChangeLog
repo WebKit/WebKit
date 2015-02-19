@@ -1,3 +1,102 @@
+2015-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task pages are unusable
+        https://bugs.webkit.org/show_bug.cgi?id=141786
+
+        Reviewed by Andreas Kling.
+
+        This patch makes following improvements to analysis task pages:
+        1. Making the main chart interactive. This change required the use of App.Pane as well as moving the code to
+        compute the data for the details pane from PaneController.
+        2. Moving the form to add a new test group to the top of test groups instead of the bottom of them.
+        3. Grouping the build requests in each test group by root sets instead of the order by which they were ran.
+        This change required the creation of App.TestGroupPane as well as its methods.
+        4. Show a box plot for each root set configuration as well as each build request. This change required
+        App.BoxPlotComponent.
+        5. Show revisions of each repository (e.g. WebKit) for each root set and build request.
+
+        * public/api/build-requests.php:
+        (main): Update per the rename of BuildRequestsFetcher::root_sets to BuildRequestsFetcher::root_sets_by_id.
+
+        * public/api/test-groups.php:
+        (main): Include root sets and roots in the response.
+        (format_test_group):
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::root_sets_by_id): Renamed from root_sets.
+        (BuildRequestsFetcher::root_sets): Added.
+        (BuildRequestsFetcher::roots): Added.
+        (BuildRequestsFetcher::fetch_roots_for_set): Takes a boolean argument $resolve_ids. This flag is only set to
+        true in /api/build-requests/ (as done prior to this patch) to use repository names as identifiers since
+        tools/sync-with-buildbot.py can't convert repository names to their ids.
+
+        * public/v2/analysis.js:
+        (App.Root): Added.
+        (App.RootSet): Added.
+        (App.RootSet.revisionForRepository): Added.
+        (App.TestGroup.rootSets): Deleted the code to compute root set ids from build requests now that the JSON
+        response at /api/test-groups will include them.
+        (App.BuildRequest): Ditto. Also deleted 'configLetter' property, which has been moved to a proxy created by
+        _createConfigurationSummary.
+        (App.BuildRequest.statusLabel): Use 'Completed' as the human readable label for 'completed' status.
+        (App.BuildRequest.aggregateStatuses): Added. Generates a human readable status for a set of build requests.
+
+        * public/v2/app.css: Updated style rules for analysis task pages.
+
+        * public/v2/app.js:
+        (App.Pane): This class is now used in analysis task pages to make the main chart interactive.
+        (App.Pane._updateDetails): Moved from App.PaneController.
+
+        (App.PaneController._updateCanAnalyze): Updated the code per the move of selectedPoints.
+
+        (App.AnalysisTaskController): Added 'details'.
+        (App.AnalysisTaskController._taskUpdated):
+        (App.AnalysisTaskController.paneDomain):Renamed from _fetchedRuns.
+        (App.AnalysisTaskController.updateTestGroupPanes): Added. Creates App.TestGroupPane for each test group.
+        (App.AnalysisTaskController.actions.toggleShowRequestList): Added.
+
+        (App.TestGroupPane): Added.
+        (App.TestGroupPane._populate): Added. Group build requests by root sets and create a summary for each group.
+        (App.TestGroupPane._computeRepositoryList): Added. Returns a sorted list of repositories which is the union
+        of all repositories appearing in root sets and builds associated with A/B testing results.
+        (App.TestGroupPane._groupRequestsByConfigurations): Added. Groups build requests by root sets.
+        (App.TestGroupPane._createConfigurationSummary): Added. Creates a summary for a group of build requests that
+        use the same root set. We start by wrapping "raw" build requests in a proxy with formatted values,
+        build numbers, etc... obtained from the fetched chart data. The list of revisions shown in the group summary
+        is a union of revisions in the root set and the first build request in the group. We null-out revision info
+        for a build request if it is identical to the one in the summary. The range of values is expanded as needed
+        by the values in the group as well as 95% percentile confidence interval.
+
+        (App.BoxPlotComponent): Added. Controls a box plot shown for each test group summary and build request.
+        (App.BoxPlotComponent.didInsertElement): Added. Inserts a SVG element as well as two indicator rects to show
+        the mean and the confidence interval.
+        (App.BoxPlotComponent._updateBars): Added. Updates the dimensions of the indicator rects.
+        (App.BoxPlotComponent.valueChanged): Added. Computes the relative dimensions of the indicator rects and
+        calls _updateBars to update the rects.
+
+        * public/v2/chart-pane.css: Added some style rules to be used in the details pane in analysis task pages.
+
+        * public/v2/data.js:
+        (Measurement.prototype.formattedRevisions):
+        (Measurement.formatRevisionRange): Renamed from Measurement.prototype._formatRevisionRange so that it can be
+        called in _createConfigurationSummary.
+
+        * public/v2/index.html: Updated the templates for analysis task pages. Moved the form to create a new test
+        group above all test groups, and replaced the list of data points by "details" pane used in the charts page.
+        Also made the fetching of chartData no longer block showing of test groups.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._updateDomain): Added an early exit to fix a newly revealed race condition.
+        (App.InteractiveChartComponent._domainChanged): Ditto.
+        (App.InteractiveChartComponent._updateSelectionToolbar): Made it respect 'zoomable' boolean property.
+
+        * public/v2/js/statistics.js:
+        (Statistics.min): Added.
+        (Statistics.max): Added.
+
+        * public/v2/manifest.js:
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Added formatWithDeltaAndUnit to be used in _createConfigurationSummary.
+
 2015-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build URL on new perf dashboard doesn't resolve $builderName

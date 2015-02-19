@@ -65,21 +65,28 @@ App.BugAdapter = DS.RESTAdapter.extend({
     }
 });
 
+App.Root = App.Model.extend({
+    repository: DS.belongsTo('repository'),
+    revision: DS.attr('string'),
+});
+
+App.RootSet = App.Model.extend({
+    roots: DS.hasMany('roots'),
+    revisionForRepository: function (repository)
+    {
+        var root = this.get('roots').findBy('repository', repository);
+        if (!root)
+            return null;
+        return root.get('revision');
+    }
+});
+
 App.TestGroup = App.NameLabelModel.extend({
     task: DS.belongsTo('analysisTask'),
     author: DS.attr('string'),
     createdAt: DS.attr('date'),
     buildRequests: DS.hasMany('buildRequests'),
-    rootSets: function ()
-    {
-        var rootSetIds = [];
-        this.get('buildRequests').forEach(function (request) {
-            var rootSet = request.get('rootSet');
-            if (!rootSetIds.contains(rootSet))
-                rootSetIds.push(rootSet);
-        });
-        return rootSetIds;
-    }.property('buildRequests'),
+    rootSets: DS.hasMany('rootSets'),
     _fetchChartData: function ()
     {
         var task = this.get('task');
@@ -144,13 +151,7 @@ App.BuildRequest = App.Model.extend({
     {
         return this.get('order') + 1;
     }.property('order'),
-    rootSet: DS.attr('number'),
-    configLetter: function ()
-    {
-        var rootSets = this.get('testGroup').get('rootSets');
-        var index = rootSets.indexOf(this.get('rootSet'));
-        return String.fromCharCode('A'.charCodeAt(0) + index);
-    }.property('testGroup', 'testGroup.rootSets'),
+    rootSet: DS.belongsTo('rootSet'),
     status: DS.attr('string'),
     statusLabel: function ()
     {
@@ -164,24 +165,33 @@ App.BuildRequest = App.Model.extend({
         case 'failed':
             return 'Failed';
         case 'completed':
-            return 'Finished';
+            return 'Completed';
         }
     }.property('status'),
     url: DS.attr('string'),
     build: DS.attr('number'),
-    _fetchMean: function ()
-    {
-        var testGroup = this.get('testGroup');
-        if (!testGroup)
-            return;
-        var chartData = testGroup.get('chartData');
-        if (!chartData)
-            return;
-
-        var point = chartData.current.findPointByBuild(this.get('build'));
-        if (!point)
-            return;
-        this.set('mean', chartData.formatter(point.value) + (chartData.unit ? ' ' + chartData.unit : ''));
-        this.set('buildNumber', point.measurement.buildNumber());
-    }.observes('build', 'testGroup', 'testGroup.chartData').on('init'),
 });
+
+App.BuildRequest.aggregateStatuses = function (requests)
+{
+    var completeCount = 0;
+    var failureCount = 0;
+    requests.forEach(function (request) {
+        switch (request.get('status')) {
+        case 'failed':
+            failureCount++;
+            break;
+        case 'completed':
+            completeCount++;
+            break;
+        }
+    });
+    if (completeCount == requests.length)
+        return 'Done';
+    if (failureCount == requests.length)
+        return 'All failed';
+    var status = completeCount + ' out of ' + requests.length + ' completed';
+    if (failureCount)
+        status += ', ' + failureCount + ' failed';
+    return status;
+}

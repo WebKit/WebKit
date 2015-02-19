@@ -451,6 +451,49 @@ table.dashboard tbody td .failure {
     border-top: solid 1px #ddd;
 }
 
+.analysis-group .results .summary td {
+    vertical-align: top;
+}
+
+.analysis-group .results thead td {
+    text-align: center;
+}
+
+.analysis-group .results .config-letter,
+.analysis-group .results .summary {
+    cursor: pointer;
+}
+
+.analysis-group .results .request .config-letter {
+    border-color: transparent;
+}
+
+.analysis-group .results .hideRequests .request {
+    display: none;
+}
+
+.box-plot {
+    display: inline-block;
+    width: 100px;
+    height: 0.6rem;
+    border: solid 1px #ddd;
+    padding: 1px;
+    vertical-align: middle;
+}
+
+.box-plot .percentage {
+    fill: #ccc;
+}
+
+.box-plot .delta {
+    fill: #333;
+    opacity: 0.5;
+}
+
+.box-plot svg {
+    display: block;
+}
+
 #analysis-task-title {
     font-weight: normal;
     font-size: 1.2rem;
@@ -470,15 +513,27 @@ table.dashboard tbody td .failure {
     border: 1px solid #bbb;
     border-radius: 0.5rem;
     box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
-
-    padding: 0.5rem 1rem;
     margin-bottom: 1.5rem;
 }
 
-.analysis-group caption {
+.analysis-group > * {
+    margin: 0.5rem;
+}
+
+.analysis-group > h1 {
     font-size: 1.1rem;
+    font-weight: normal;
     text-align: left;
     margin-bottom: 0.5rem;
+    border-bottom: 1px solid #bbb;
+    margin: 0;
+    padding: 0.2rem 0.5rem;
+}
+
+.analysis-group h1 > input {
+    font-size: 1rem;
+    min-width: 20rem;
+    margin: 0.2rem 0;
 }
 
 .analysis-bugs th {

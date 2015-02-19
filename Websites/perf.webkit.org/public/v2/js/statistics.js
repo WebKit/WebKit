@@ -1,5 +1,13 @@
 var Statistics = new (function () {
 
+    this.min = function (values) {
+        return Math.min.apply(Math, values);
+    }
+
+    this.max = function (values) {
+        return Math.max.apply(Math, values);
+    }
+
     this.sum = function (values) {
         return values.length ? values.reduce(function (a, b) { return a + b; }) : 0;
     }

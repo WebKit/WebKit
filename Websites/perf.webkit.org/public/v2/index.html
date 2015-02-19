@@ -169,15 +169,15 @@
                             domain=mainPlotDomain
                             interactive=true
                             chartPointRadius=2
-                            currentItem=currentItem
+                            currentItem=hoveredOrSelectedItem
                             currentTime=sharedTime
                             selectedItem=selectedItem
                             highlightedItems=highlightedItems
                             rangeRoute="analysisTask"
                             selection=timeRange
                             selectedPoints=selectedPoints
-                            markedPoints=markedPoints
                             showFullYAxis=showFullYAxis
+                            zoomable=true
                             zoom="zoomed"}}
                     {{else}}
                         {{#if failure}}
@@ -197,9 +197,7 @@
                                 selection=overviewSelection}}
                         {{/if}}
                         </div>
-                        {{#if details}}
-                            {{partial "chart-details"}}
-                        {{/if}}
+                        {{partial "chart-details"}}
                     </div>
                 </div>
 
@@ -248,6 +246,7 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="chart-details">
+    {{#if details}}
     <div class="details-table-container">
         <table class="details-table">
             <tbody class="bugs">
@@ -313,6 +312,7 @@
             {{/each}}
         </div>
     </div>
+    {{/if}}
     </script>
 
     <script type="text/x-handlebars" data-template-name="components/commits-viewer">
@@ -529,72 +529,96 @@
             <h3 id="analysis-task-testname">{{metric.fullName}} - {{platform.label}}</h3>
         {{/if}}
 
-        {{#if chartData}}
-            <section class="analysis-chart-pane chart-pane">
+        {{#if pane}}
+            <section class="analysis-chart-pane chart-pane" tabindex="0">
                 <div class="svg-container">
                     {{interactive-chart
-                        chartData=chartData
-                        enableSelection=false
+                        chartData=pane.chartData
+                        ranges=pane.analyticRanges
+                        domain=paneDomain
+                        interactive=true
                         chartPointRadius=2
-                        domain=chartDomain
-                        highlightedItems=highlightedItems}}
+                        currentItem=pane.hoveredOrSelectedItem
+                        selectedPoints=pane.selectedPoints
+                        selection=timeRange
+                        highlightedItems=highlightedItems
+                        rangeRoute="analysisTask"}}
                 </div>
                 <div class="details">
-                    <table class="analysis-bugs">
-                        <tbody>
-                            {{#each bugTrackers}}
-                                <tr>
-                                    <th>{{label}}</th>
-                                    <td>
-                                        <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                            {{input type=text value=editedBugNumber}}
-                                        </form>
-                                    </td>
-                                </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
-                    <table>
-                        <tbody>
-                            {{#each analysisPoints}}
-                                <tr><td>{{label}}</td><td>{{value}}</td></tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
+                    {{partial "chart-details"}}
                 </div>
             </section>
-            {{#each testGroups}}
-                <section class="analysis-group">
-                    <table>
-                        <caption>{{name}}</caption>
-                        <thead>
-                            <tr>
-                                <td>Order</td>
-                                <td>Configuration</td>
-                                <td>Status</td>
-                                <td>Build</td>
-                                <td>{{../metric.fullName}}</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each buildRequests}}
-                                <tr>
-                                    <td>{{orderLabel}}</td>
-                                    <td>{{configLetter}}</td>
-                                    <td><a {{bind-attr href=url}}>{{statusLabel}}</a></td>
-                                    <td>{{buildNumber}}</td>
-                                    <td>{{mean}}</td>
-                                </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
-                </section>
-            {{/each}}
+        {{/if}}
 
-            {{#if roots}}
-            <form method="POST" {{action "createTestGroup" newTestGroupName repetitionCount on="submit"}} class="analysis-group">
+        {{partial "testGroupForm"}}
+
+        {{#each testGroupPanes}}
+            {{partial "testGroup"}}
+        {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroup">
+        <section class="analysis-group">
+            <h1>{{name}}</h1>
+            <table class="results">
+                <thead>
+                    <tr>
+                        <td colspan="2">Configuration</td>
+                        {{#each repositories}}
+                            <td>{{name}}</td>
+                        {{/each}}
+                        <td>Results</td>
+                        <td>Status</td>
+                    </tr>
+                </thead>
+                {{#each configurations}}
+                    <tbody {{bind-attr class="showRequestList::hideRequests"}}>
+                        <tr class="summary" {{action toggleShowRequestList this}}>
+                            <td class="config-letter" colspan="2">{{summary.configLetter}}</td>
+                            {{#with summary}}
+                                {{partial "testGroupRow"}}
+                            {{/with}}
+                        </tr>
+                        {{#each items}}
+                            <tr class="request">
+                                {{#with ../this}}
+                                    <td class="config-letter" {{action toggleShowRequestList this}}></td>
+                                {{/with}}
+                                <td>Run {{orderLabel}}</td>
+                                {{partial "testGroupRow"}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                {{/each}}
+            </table>
+        </section>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroupRow">
+        {{#each revisions}}
+            <td>{{this}}</td>
+        {{/each}}
+        <td>
+            {{#if value}}
+                {{box-plot range=valueRange value=value delta=confidenceIntervalDelta}}
+            {{/if}}
+            {{formattedValue}}
+        </td>
+        <td>
+            {{#if buildNumber}}
+                 {{statusLabel}} / <a {{bind-attr href=url}}>Build {{buildNumber}}</a>
+            {{else}}
+                <a {{bind-attr href=url}}>{{statusLabel}}</a>
+            {{/if}}
+        </td>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroupForm">
+    {{#if roots}}
+        <form method="POST" {{action "createTestGroup" newTestGroupName repetitionCount on="submit"}}>
+            <section class="analysis-group">
+                <h1>{{input name="name" value=newTestGroupName placeholder="Test group name" required=true type="text"}}</h1>
                 <table>
-                    <caption>{{input name="name" value=newTestGroupName placeholder="Test group name" required=true type="text"}}</caption>
                     <thead>
                         <tr>
                             <th>Root</th>
@@ -633,9 +657,9 @@
                 </table>
 
                 <button type="submit">Start A/B testing</button>
-            </form>
-            {{/if}}
-        {{/if}}
+            </section>
+        </form>
+    {{/if}}
     </script>
 
 </head>

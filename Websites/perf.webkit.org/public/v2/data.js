@@ -169,14 +169,14 @@ Measurement.prototype.formattedRevisions = function (previousMeasurement)
     for (var repositoryId in revisions) {
         var currentRevision = revisions[repositoryId][0];
         var previousRevision = previousRevisions ? previousRevisions[repositoryId][0] : null;
-        var formatttedRevision = this._formatRevisionRange(previousRevision, currentRevision);
+        var formatttedRevision = Measurement.formatRevisionRange(currentRevision, previousRevision);
         formattedRevisions[repositoryId] = formatttedRevision;
     }
 
     return formattedRevisions;
 }
 
-Measurement.prototype._formatRevisionRange = function (previousRevision, currentRevision)
+Measurement.formatRevisionRange = function (currentRevision, previousRevision)
 {
     var revisionChanged = false;
     if (previousRevision == currentRevision)

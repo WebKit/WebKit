@@ -297,6 +297,8 @@ App.Pane = Ember.Object.extend({
     metricId: null,
     metric: null,
     selectedItem: null,
+    selectedPoints: null,
+    hoveredOrSelectedItem: null,
     showFullYAxis: false,
     searchCommit: function (repository, keyword) {
         var self = this;
@@ -538,6 +540,56 @@ App.Pane = Ember.Object.extend({
         if (JSON.stringify(config) != JSON.stringify(this.get(configName)))
             this.set(configName, config);
     },
+    _updateDetails: function ()
+    {
+        var selectedPoints = this.get('selectedPoints');
+        var currentPoint = this.get('hoveredOrSelectedItem');
+        if (!selectedPoints && !currentPoint) {
+            this.set('details', null);
+            return;
+        }
+
+        var currentMeasurement;
+        var previousPoint;
+        if (!selectedPoints)
+            previousPoint = currentPoint.series.previousPoint(currentPoint);
+        else {
+            currentPoint = selectedPoints[selectedPoints.length - 1];
+            previousPoint = selectedPoints[0];
+        }
+        var currentMeasurement = currentPoint.measurement;
+        var oldMeasurement = previousPoint ? previousPoint.measurement : null;
+
+        var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
+        var revisions = App.Manifest.get('repositories')
+            .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
+            .map(function (repository) {
+            var revision = Ember.Object.create(formattedRevisions[repository.get('id')]);
+            revision['url'] = revision.previousRevision
+                ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision)
+                : repository.urlForRevision(revision.currentRevision);
+            revision['name'] = repository.get('name');
+            revision['repository'] = repository;
+            return revision; 
+        });
+
+        var buildNumber = null;
+        var buildURL = null;
+        if (!selectedPoints) {
+            buildNumber = currentMeasurement.buildNumber();
+            var builder = App.Manifest.builder(currentMeasurement.builderId());
+            if (builder)
+                buildURL = builder.urlFromBuildNumber(buildNumber);
+        }
+
+        this.set('details', Ember.Object.create({
+            status: this.computeStatus(currentPoint, previousPoint),
+            buildNumber: buildNumber,
+            buildURL: buildURL,
+            buildTime: currentMeasurement.formattedBuildTime(),
+            revisions: revisions,
+        }));
+    }.observes('hoveredOrSelectedItem', 'selectedPoints'),
 });
 
 App.encodePrettifiedJSON = function (plain)
@@ -900,64 +952,12 @@ App.PaneController = Ember.ObjectController.extend({
         this.set('mainPlotDomain', newSelection || this.get('overviewDomain'));
         this.set('overviewSelection', newSelection);
     }.observes('parentController.sharedZoom').on('init'),
-    _updateDetails: function ()
-    {
-        var selectedPoints = this.get('selectedPoints');
-        var currentPoint = this.get('currentItem');
-        if (!selectedPoints && !currentPoint) {
-            this.set('details', null);
-            return;
-        }
-
-        var currentMeasurement;
-        var previousPoint;
-        if (!selectedPoints)
-            previousPoint = currentPoint.series.previousPoint(currentPoint);
-        else {
-            currentPoint = selectedPoints[selectedPoints.length - 1];
-            previousPoint = selectedPoints[0];
-        }
-        var currentMeasurement = currentPoint.measurement;
-        var oldMeasurement = previousPoint ? previousPoint.measurement : null;
-
-        var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
-        var revisions = App.Manifest.get('repositories')
-            .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
-            .map(function (repository) {
-            var revision = Ember.Object.create(formattedRevisions[repository.get('id')]);
-            revision['url'] = revision.previousRevision
-                ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision)
-                : repository.urlForRevision(revision.currentRevision);
-            revision['name'] = repository.get('name');
-            revision['repository'] = repository;
-            return revision; 
-        });
-
-        var buildNumber = null;
-        var buildURL = null;
-        if (!selectedPoints) {
-            buildNumber = currentMeasurement.buildNumber();
-            var builder = App.Manifest.builder(currentMeasurement.builderId());
-            if (builder)
-                buildURL = builder.urlFromBuildNumber(buildNumber);
-        }
-
-        this.set('details', Ember.Object.create({
-            status: this.get('model').computeStatus(currentPoint, previousPoint),
-            buildNumber: buildNumber,
-            buildURL: buildURL,
-            buildTime: currentMeasurement.formattedBuildTime(),
-            revisions: revisions,
-        }));
-        this._updateCanAnalyze();
-    }.observes('currentItem', 'selectedPoints'),
     _updateCanAnalyze: function ()
     {
-        var points = this.get('selectedPoints');
+        var points = this.get('model').get('selectedPoints');
         this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !points || points.length < 2);
-    }.observes('newAnalysisTaskName'),
+    }.observes('newAnalysisTaskName', 'model.selectedPoints'),
 });
-
 
 App.AnalysisRoute = Ember.Route.extend({
     model: function () {
@@ -978,7 +978,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
     label: Ember.computed.alias('model.name'),
     platform: Ember.computed.alias('model.platform'),
     metric: Ember.computed.alias('model.metric'),
-    testGroups: Ember.computed.alias('model.testGroups'),
+    details: Ember.computed.alias('pane.details'),
     testSets: [],
     roots: [],
     bugTrackers: [],
@@ -989,10 +989,12 @@ App.AnalysisTaskController = Ember.Controller.extend({
         if (!model)
             return;
 
-        var platformId = model.get('platform').get('id');
-        var metricId = model.get('metric').get('id');
         App.Manifest.fetch(this.store).then(this._fetchedManifest.bind(this));
-        App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(this._fetchedRuns.bind(this));
+        this.set('pane', App.Pane.create({
+            store: this.store,
+            platformId: model.get('platform').get('id'),
+            metricId: model.get('metric').get('id'),
+        }));
     }.observes('model').on('init'),
     _fetchedManifest: function ()
     {
@@ -1010,17 +1012,24 @@ App.AnalysisTaskController = Ember.Controller.extend({
             });
         }));
     },
-    _fetchedRuns: function (result)
+    paneDomain: function ()
     {
-        var chartData = result.data;
+        var pane = this.get('pane');
+        if (!pane)
+            return;
+
+        var chartData = pane.get('chartData');
+        if (!chartData)
+            return null;
+
         var currentTimeSeries = chartData.current;
         if (!currentTimeSeries)
-            return; // FIXME: Report an error.
+            return null; // FIXME: Report an error.
 
         var start = currentTimeSeries.findPointByMeasurementId(this.get('model').get('startRun'));
         var end = currentTimeSeries.findPointByMeasurementId(this.get('model').get('endRun'));
         if (!start || !end)
-            return; // FIXME: Report an error.
+            return null; // FIXME: Report an error.
 
         var highlightedItems = {};
         highlightedItems[start.measurement.id()] = true;
@@ -1031,16 +1040,16 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 id: point.measurement.id(),
                 measurement: point.measurement,
                 label: 'Point ' + (index + 1),
-                value: chartData.formatter(point.value) + (chartData.unit ? ' ' + chartData.unit : ''),
+                value: chartData.formatWithUnit(point.value),
             };
         });
 
         var margin = (end.time - start.time) * 0.1;
-        this.set('chartData', chartData);
-        this.set('chartDomain', [start.time - margin, +end.time + margin]);
         this.set('highlightedItems', highlightedItems);
         this.set('analysisPoints', formatedPoints);
-    },
+
+        return [start.time - margin, +end.time + margin];
+    }.property('pane.chartData', 'model', 'model'),
     testSets: function ()
     {
         var analysisPoints = this.get('analysisPoints');
@@ -1115,6 +1124,16 @@ App.AnalysisTaskController = Ember.Controller.extend({
             }));
         });
     }.observes('analysisPoints'),
+    updateTestGroupPanes: function ()
+    {
+        var model = this.get('model');
+        if (!model)
+            return;
+        var self = this;
+        model.get('testGroups').then(function (groups) {
+            self.set('testGroupPanes', groups.map(function (group) { return App.TestGroupPane.create({content: group}); }));
+        });
+    }.observes('model'),
     actions: {
         associateBug: function (bugTracker, bugNumber)
         {
@@ -1136,5 +1155,190 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 
             });
         },
+        toggleShowRequestList: function (configuration)
+        {
+            configuration.toggleProperty('showRequestList');
+        }
     },
+});
+
+App.TestGroupPane = Ember.ObjectProxy.extend({
+    _populate: function ()
+    {
+        var buildRequests = this.get('buildRequests');
+        var chartData = this.get('chartData');
+        if (!buildRequests || !chartData)
+            return [];
+
+        var repositories = this._computeRepositoryList();
+        this.set('repositories', repositories);
+
+        var requestsByRooSet = this._groupRequestsByConfigurations(buildRequests);
+
+        var configurations = [];
+        var index = 0;
+        var range = {min: Infinity, max: -Infinity};
+        for (var rootSetId in requestsByRooSet) {
+            var configLetter = String.fromCharCode('A'.charCodeAt(0) + index++);
+            configurations.push(this._createConfigurationSummary(requestsByRooSet[rootSetId], configLetter, range));
+        }
+
+        var margin = 0.1 * (range.max - range.min);
+        range.max += margin;
+        range.min -= margin;
+
+        this.set('configurations', configurations);
+    }.observes('chartData', 'buildRequests'),
+    _computeRepositoryList: function ()
+    {
+        var specifiedRepositories = new Ember.Set();
+        (this.get('rootSets') || []).forEach(function (rootSet) {
+            (rootSet.get('roots') || []).forEach(function (root) {
+                specifiedRepositories.add(root.get('repository'));
+            });
+        });
+        var reportedRepositories = new Ember.Set();
+        var chartData = this.get('chartData');
+        (this.get('buildRequests') || []).forEach(function (request) {
+            var point = chartData.current.findPointByBuild(request.get('build'));
+            if (!point)
+                return;
+
+            var revisionByRepositoryId = point.measurement.formattedRevisions();
+            for (var repositoryId in revisionByRepositoryId) {
+                var repository = App.Manifest.repository(repositoryId);
+                if (!specifiedRepositories.contains(repository))
+                    reportedRepositories.add(repository);
+            }
+        });
+        return specifiedRepositories.sortBy('name').concat(reportedRepositories.sortBy('name'));
+    },
+    _groupRequestsByConfigurations: function (requests, repositoryList)
+    {
+        var rootSetIdToRequests = {};
+        var testGroup = this;
+        requests.forEach(function (request) {
+            var rootSetId = request.get('rootSet').get('id');
+            if (!rootSetIdToRequests[rootSetId])
+                rootSetIdToRequests[rootSetId] = [];
+            rootSetIdToRequests[rootSetId].push(request);
+        });
+        return rootSetIdToRequests;
+    },
+    _createConfigurationSummary: function (buildRequests, configLetter, range)
+    {
+        var repositories = this.get('repositories');
+        var chartData = this.get('chartData');
+        var requests = buildRequests.map(function (originalRequest) {
+            var point = chartData.current.findPointByBuild(originalRequest.get('build'));
+            var revisionByRepositoryId = point ? point.measurement.formattedRevisions() : {};
+            return Ember.ObjectProxy.create({
+                content: originalRequest,
+                revisions: repositories.map(function (repository, index) {
+                    return (revisionByRepositoryId[repository.get('id')] || {label:null}).label;
+                }),
+                value: point ? point.value : null,
+                valueRange: range,
+                formattedValue: point ? chartData.formatWithUnit(point.value) : null,
+                buildNumber: point ? point.measurement.buildNumber() : null,
+            });
+        });
+
+        var rootSet = requests ? requests[0].get('rootSet') : null;
+        var summaryRevisions = repositories.map(function (repository, index) {
+            var revision = rootSet ? rootSet.revisionForRepository(repository) : null;
+            if (!revision)
+                return requests[0].get('revisions')[index];
+            return Measurement.formatRevisionRange(revision).label;
+        });
+
+        requests.forEach(function (request) {
+            var revisions = request.get('revisions');
+            repositories.forEach(function (repository, index) {
+                if (revisions[index] == summaryRevisions[index])
+                    revisions[index] = null;
+            });
+        });
+
+        var valuesInConfig = requests.mapBy('value').filter(function (value) { return typeof(value) === 'number' && !isNaN(value); });
+        var sum = Statistics.sum(valuesInConfig);
+        var ciDelta = Statistics.confidenceIntervalDelta(0.95, valuesInConfig.length, sum, Statistics.squareSum(valuesInConfig));
+        var mean = sum / valuesInConfig.length;
+
+        range.min = Math.min(range.min, Statistics.min(valuesInConfig));
+        range.max = Math.max(range.max, Statistics.max(valuesInConfig));
+        if (ciDelta && !isNaN(ciDelta)) {
+            range.min = Math.min(range.min, mean - ciDelta);
+            range.max = Math.max(range.max, mean + ciDelta);
+        }
+
+        var summary = Ember.Object.create({
+            isAverage: true,
+            configLetter: configLetter,
+            revisions: summaryRevisions,
+            formattedValue: isNaN(mean) ? null : chartData.formatWithDeltaAndUnit(mean, ciDelta),
+            value: mean,
+            confidenceIntervalDelta: ciDelta,
+            valueRange: range,
+            statusLabel: App.BuildRequest.aggregateStatuses(requests),
+        });
+
+        return Ember.Object.create({summary: summary, items: requests});
+    },
+});
+
+App.BoxPlotComponent = Ember.Component.extend({
+    classNames: ['box-plot'],
+    range: null,
+    value: null,
+    delta: null,
+    didInsertElement: function ()
+    {
+        var element = this.get('element');
+        var svg = d3.select(element).append('svg')
+            .attr('viewBox', '0 0 100 20')
+            .attr('preserveAspectRatio', 'none')
+            .style({width: '100%', height: '100%'});
+
+        this._percentageRect = svg
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 0)
+            .attr('height', 20)
+            .attr('class', 'percentage');
+
+        this._deltaRect = svg
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', 5)
+            .attr('width', 0)
+            .attr('height', 10)
+            .attr('class', 'delta')
+            .attr('opacity', 0.5)
+        this._updateBars();
+    },
+    _updateBars: function ()
+    {
+        if (!this._percentageRect || typeof(this._percentage) !== 'number' || isNaN(this._percentage))
+            return;
+
+        this._percentageRect.attr('width', this._percentage);
+        if (typeof(this._delta) === 'number' && !isNaN(this._delta)) {
+            this._deltaRect.attr('x', this._percentage - this._delta);
+            this._deltaRect.attr('width', this._delta * 2);
+        }
+    },
+    valueChanged: function ()
+    {
+        var range = this.get('range');
+        var value = this.get('value');
+        if (!range || !value)
+            return;
+        var scalingFactor = 100 / (range.max - range.min);
+        var percentage = (value - range.min) * scalingFactor;
+        this._percentage = percentage;
+        this._delta = this.get('delta') * scalingFactor;
+        this._updateBars();
+    }.observes('value', 'range').on('init'),
 });

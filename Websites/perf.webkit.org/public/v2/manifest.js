@@ -302,6 +302,8 @@ App.Manifest = Ember.Controller.extend({
             var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
 
             var useSI = unit == 'bytes';
+            var unitSuffix = unit ? ' ' + unit : '';
+            var deltaFormatterWithoutSign = useSI ? d3.format('.2s') : d3.format('.2g');
             return {
                 platform: platform,
                 metric: metric,
@@ -310,6 +312,11 @@ App.Manifest = Ember.Controller.extend({
                     baseline: runs.baseline ? runs.baseline.timeSeriesByCommitTime() : null,
                     target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
                     unit: unit,
+                    formatWithUnit: function (value) { return this.formatter(value) + unitSuffix; },
+                    formatWithDeltaAndUnit: function (value, delta)
+                    {
+                        return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '') + unitSuffix;
+                    },
                     formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
                     deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
                     smallerIsBetter: smallerIsBetter,

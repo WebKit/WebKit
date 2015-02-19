@@ -6,6 +6,8 @@ class BuildRequestsFetcher {
     function __construct($db) {
         $this->db = $db;
         $this->rows = null;
+        $this->root_sets = array();
+        $this->roots = array();
         $this->root_sets_by_id = array();
     }
 
@@ -50,7 +52,7 @@ class BuildRequestsFetcher {
             $root_set_id = $row['request_root_set'];
 
             if (!array_key_exists($root_set_id, $this->root_sets_by_id))
-                $this->root_sets_by_id[$root_set_id] = $this->fetch_roots_for_set($root_set_id);
+                $this->root_sets_by_id[$root_set_id] = $this->fetch_roots_for_set($root_set_id, $resolve_ids);
 
             array_push($requests, array(
                 'id' => $row['request_id'],
@@ -69,18 +71,34 @@ class BuildRequestsFetcher {
         return $requests;
     }
 
-    function root_sets() {
+    function root_sets_by_id() {
         return $this->root_sets_by_id;
     }
 
-    private function fetch_roots_for_set($root_set_id) {
+    function root_sets() {
+        return $this->root_sets;
+    }
+
+    function roots() {
+        return $this->roots;
+    }
+
+    private function fetch_roots_for_set($root_set_id, $resolve_ids) {
         $root_rows = $this->db->query_and_fetch_all('SELECT *
             FROM roots, commits LEFT OUTER JOIN repositories ON commit_repository = repository_id
             WHERE root_commit = commit_id AND root_set = $1', array($root_set_id));
 
         $roots = array();
-        foreach ($root_rows as $row)
-            $roots[$row['repository_name']] = $row['commit_revision'];
+        $root_ids = array();
+        foreach ($root_rows as $row) {
+            $repository = $row['repository_id'];
+            $revision = $row['commit_revision'];
+            $root_id = $root_set_id . '-' . $repository;
+            array_push($root_ids, $root_id);
+            array_push($this->roots, array('id' => $root_id, 'repository' => $repository, 'revision' => $revision));
+            $roots[$resolve_ids ? $row['repository_name'] : $row['repository_id']] = $revision;
+        }
+        array_push($this->root_sets, array('id' => $root_set_id, 'roots' => $root_ids));
 
         return $roots;
     }

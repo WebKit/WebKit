@@ -39,10 +39,16 @@ function main($path) {
         $group_by_id[$group['id']] = &$group;
 
     $build_requests = $build_requests_fetcher->results();
-    foreach ($build_requests as $request)
-        array_push($group_by_id[$request['testGroup']]['buildRequests'], $request['id']);
+    foreach ($build_requests as $request) {
+        $request_group = &$group_by_id[$request['testGroup']];
+        array_push($request_group['buildRequests'], $request['id']);
+        array_push($request_group['rootSets'], $request['rootSet']);
+    }
 
-    exit_with_success(array('testGroups' => $test_groups, 'buildRequests' => $build_requests));
+    exit_with_success(array('testGroups' => $test_groups,
+        'buildRequests' => $build_requests,
+        'rootSets' => $build_requests_fetcher->root_sets(),
+        'roots' => $build_requests_fetcher->roots()));
 }
 
 function format_test_group($group_row) {
@@ -53,6 +59,7 @@ function format_test_group($group_row) {
         'author' => $group_row['testgroup_author'],
         'createdAt' => strtotime($group_row['testgroup_created_at']) * 1000,
         'buildRequests' => array(),
+        'rootSets' => array(),
     );
 }
 

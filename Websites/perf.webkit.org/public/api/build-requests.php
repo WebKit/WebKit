@@ -45,7 +45,7 @@ function main($path, $post_data) {
 
     exit_with_success(array(
         'buildRequests' => $requests_fetcher->results_with_resolved_ids(),
-        'rootSets' => $requests_fetcher->root_sets(),
+        'rootSets' => $requests_fetcher->root_sets_by_id(),
         'updates' => $updates,
     ));
 }
