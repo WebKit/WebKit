@@ -31,30 +31,33 @@
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-@implementation WK1WebDocumentController {
-    WebView *_webView;
-}
+@interface WK1WebDocumentController()
+@property (nonatomic, strong) WebView *webView;
+@end
+
+@implementation WK1WebDocumentController
 
 - (void)awakeFromNib
 {
-    _webView = [[WebView alloc] initWithFrame:[containerView bounds] frameName:nil groupName:@"WebEditingTester"];
-    [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    self.webView = [[WebView alloc] initWithFrame:[containerView bounds] frameName:nil groupName:@"WebEditingTester"];
+    _webView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     
-    [_webView setEditable:YES];
-    [_webView setUIDelegate:self];
+    _webView.editable = YES;
+    _webView.UIDelegate = self;
     
-    [[WebPreferences standardPreferences] setFullScreenEnabled:YES];
-    [[WebPreferences standardPreferences] setDeveloperExtrasEnabled:YES];
-    [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
-    [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+    preferences.fullScreenEnabled = YES;
+    preferences.developerExtrasEnabled = YES;
+    preferences.imageControlsEnabled = YES;
+    preferences.serviceControlsEnabled = YES;
     
-    [self.window setTitle:@"WebEditor [WK1]"];
+    self.window.title = @"WebEditor [WK1]";
     [containerView addSubview:_webView];
 }
 
 - (void)loadHTMLString:(NSString *)content
 {
-    [[_webView mainFrame] loadHTMLString:content baseURL:nil];
+    [_webView.mainFrame loadHTMLString:content baseURL:nil];
 }
 
 - (IBAction)pasteAsMarkup:(id)sender

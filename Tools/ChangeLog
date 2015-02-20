@@ -1,3 +1,20 @@
+2015-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [WebEditingTester] @properties, dot syntax, and remember the window position
+        https://bugs.webkit.org/show_bug.cgi?id=141843
+
+        Reviewed by Tim Horton.
+        
+        Modernize a bit with more dot syntax, use @property for the web views,
+        and give the main window an Autosave name so it remembers the widow position.
+
+        * WebEditingTester/WK1WebDocumentController.m:
+        (-[WK1WebDocumentController awakeFromNib]):
+        (-[WK1WebDocumentController loadHTMLString:]):
+        * WebEditingTester/WK2WebDocumentController.m:
+        (-[WK2WebDocumentController awakeFromNib]):
+        * WebEditingTester/WebDocument.xib:
+
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
         [WebEditingTester] Hook up key equivalents for new window action

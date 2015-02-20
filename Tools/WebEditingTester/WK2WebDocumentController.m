@@ -35,11 +35,10 @@
 #import <WebKit/_WKWebsiteDataStore.h>
 
 @interface WK2WebDocumentController () <WKUIDelegate>
+@property (nonatomic, strong) WKWebView *webView;
 @end
 
-@implementation WK2WebDocumentController {
-    WKWebView *_webView;
-}
+@implementation WK2WebDocumentController
 
 static WKWebViewConfiguration *defaultConfiguration()
 {
@@ -61,13 +60,13 @@ static WKWebViewConfiguration *defaultConfiguration()
 
 - (void)awakeFromNib
 {
-    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:defaultConfiguration()];
-    [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-    [_webView _setEditable:YES];
-    [_webView setUIDelegate:self];
+    self.webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:defaultConfiguration()];
+    _webView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    _webView._editable = YES;
+    _webView.UIDelegate = self;
     
     [containerView addSubview:_webView];
-    [self.window setTitle:@"WebEditor [WK2]"];
+    self.window.title = @"WebEditor [WK2]";
 }
 
 - (void)loadHTMLString:(NSString *)content
