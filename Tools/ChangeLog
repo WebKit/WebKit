@@ -1,5 +1,57 @@
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
+        [WebEditingTester] Hook up key equivalents for new window action
+        https://bugs.webkit.org/show_bug.cgi?id=141828
+
+        Reviewed by Enrica Casucci.
+
+        * WebEditingTester/AppDelegate.h:
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate applicationDidFinishLaunching:]):
+        (-[WebEditingAppDelegate newEditor:]):
+        (-[WebEditingAppDelegate _defaultWebDocumentControllerClass]):
+        (-[WebEditingAppDelegate toggleUseWK2ByDefault:]):
+        (-[WebEditingAppDelegate _updateNewWindowKeyEquivalents]):
+        (defaultConfiguration): Deleted.
+        (-[WebEditingAppDelegate applicationWillTerminate:]): Deleted.
+        Move WKWebViewConfiguration setup into WK2WebDocumentController.
+        Remove unused application termination code.
+        Update new-window menu item key equivalents when launching and when
+        changing the use-WebKit2-by-default setting.
+        Make WebDocumentController subclasses all initialized the same way,
+        and use that to factor out alloc/init.
+        Rename loadContent to loadHTMLString for future use.
+
+        * WebEditingTester/MainMenu.xib:
+        Add default key equivalents.
+        Cmd-N will always make the default kind of window (controlled by the pref).
+        Cmd-Opt-N will always make the other kind.
+        The menu items are configured as alternates so they only show up if you
+        press alt (just like in MiniBrowser).
+
+        * WebEditingTester/WK1WebDocumentController.m:
+        (-[WK1WebDocumentController loadHTMLString:]):
+        (-[WK1WebDocumentController loadContent]): Deleted.
+        * WebEditingTester/WK2WebDocumentController.h:
+        * WebEditingTester/WK2WebDocumentController.m:
+        (defaultConfiguration):
+        (-[WK2WebDocumentController awakeFromNib]):
+        (-[WK2WebDocumentController loadHTMLString:]):
+        (-[WK2WebDocumentController initWithConfiguration:]): Deleted.
+        (-[WK2WebDocumentController dealloc]): Deleted.
+        * WebEditingTester/WebDocumentController.h:
+        * WebEditingTester/WebDocumentController.m:
+        (-[WebDocumentController init]):
+        (-[WebDocumentController initWithWindow:]):
+        (+[WebDocumentController defaultEditingSource]):
+        (-[WebDocumentController loadHTMLString:]):
+        (-[WebDocumentController windowDidLoad]): Deleted.
+        (-[WebDocumentController defaultEditingSource]): Deleted.
+        (-[WebDocumentController applicationTerminating]): Deleted.
+        (-[WebDocumentController loadContent]): Deleted.
+
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
         [WebEditingTester] ARC-ify WebEditingTester
         https://bugs.webkit.org/show_bug.cgi?id=141827
 

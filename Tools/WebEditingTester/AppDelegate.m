@@ -28,10 +28,6 @@
 #import "EditingOperations.h"
 #import "WK1WebDocumentController.h"
 #import "WK2WebDocumentController.h"
-#import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WebKit.h>
-#import <WebKit/_WKWebsiteDataStore.h>
 
 static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
 
@@ -45,49 +41,27 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
     return self;
 }
 
-static WKWebViewConfiguration *defaultConfiguration()
-{
-    static WKWebViewConfiguration *configuration;
-    
-    if (!configuration) {
-        configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.preferences._fullScreenEnabled = YES;
-        configuration.preferences._developerExtrasEnabled = YES;
-    }
-    
-    return configuration;
-}
-
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [self newEditor:self];
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-    for (WebDocumentController *documents in _webDocuments)
-        [documents applicationTerminating];
+    [self _updateNewWindowKeyEquivalents];
 }
 
 - (IBAction)newEditor:(id)sender
 {
-    BOOL useWebKit2 = NO;
+    Class controllerClass;
 
     if (sender == self)
-        useWebKit2 = [self useWebKit2ByDefault];
+        controllerClass = self._defaultWebDocumentControllerClass;
     else if (sender == _newWK2EditorItem)
-        useWebKit2 = YES;
+        controllerClass = [WK2WebDocumentController class];
+    else if (sender == _newWK1EditorItem)
+        controllerClass = [WK1WebDocumentController class];
     
-    WebDocumentController *controller = nil;
-    if (useWebKit2)
-        controller = [[WK2WebDocumentController alloc] initWithConfiguration:defaultConfiguration()];
-    else
-        controller = [[WK1WebDocumentController alloc] initWithWindowNibName:@"WebDocument"];
-    
+    WebDocumentController *controller = [[controllerClass alloc] init];
     [[controller window] makeKeyAndOrderFront:sender];
     [_webDocuments addObject:controller];
-    [controller loadContent];
+    [controller loadHTMLString:[WebDocumentController defaultEditingSource]];
 }
 
 - (IBAction)showOperations:(id)sender
@@ -138,6 +112,11 @@ static WKWebViewConfiguration *defaultConfiguration()
     [_operationsPanel orderFront:nil];
 }
 
+- (Class)_defaultWebDocumentControllerClass
+{
+    return self.useWebKit2ByDefault ? [WK2WebDocumentController class] : [WK1WebDocumentController class];
+}
+
 - (BOOL)useWebKit2ByDefault
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseWebKit2ByDefaultPreferenceKey];
@@ -147,6 +126,7 @@ static WKWebViewConfiguration *defaultConfiguration()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:![defaults boolForKey:UseWebKit2ByDefaultPreferenceKey] forKey:UseWebKit2ByDefaultPreferenceKey];
+    [self _updateNewWindowKeyEquivalents];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
@@ -157,6 +137,17 @@ static WKWebViewConfiguration *defaultConfiguration()
         [menuItem setState:[self useWebKit2ByDefault] ? NSOnState : NSOffState];
     
     return YES;
+}
+
+- (void)_updateNewWindowKeyEquivalents
+{
+    if (self.useWebKit2ByDefault) {
+        [_newWK1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWK2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+    } else {
+        [_newWK1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWK2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+    }
 }
 
 @end

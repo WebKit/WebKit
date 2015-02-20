@@ -38,18 +38,20 @@
 @end
 
 @implementation WK2WebDocumentController {
-    WKWebViewConfiguration *_configuration;
     WKWebView *_webView;
 }
 
-- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
+static WKWebViewConfiguration *defaultConfiguration()
 {
-    if (!(self = [super initWithWindowNibName:@"WebDocument"]))
-        return nil;
-    _configuration = [configuration copy];
-    
-    return self;
-    
+    static WKWebViewConfiguration *configuration;
+
+    if (!configuration) {
+        configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.preferences._fullScreenEnabled = YES;
+        configuration.preferences._developerExtrasEnabled = YES;
+    }
+
+    return configuration;
 }
 
 - (IBAction)pasteAsMarkup:(id)sender
@@ -59,7 +61,7 @@
 
 - (void)awakeFromNib
 {
-    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:_configuration];
+    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:defaultConfiguration()];
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [_webView _setEditable:YES];
     [_webView setUIDelegate:self];
@@ -68,9 +70,9 @@
     [self.window setTitle:@"WebEditor [WK2]"];
 }
 
-- (void)loadContent
+- (void)loadHTMLString:(NSString *)content
 {
-    [_webView loadHTMLString:[self defaultEditingSource] baseURL:nil];
+    [_webView loadHTMLString:content baseURL:nil];
 }
 
 @end

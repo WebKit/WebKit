@@ -27,28 +27,27 @@
 
 @implementation WebDocumentController
 
+- (instancetype)init
+{
+    if (!(self = [super initWithWindowNibName:@"WebDocument"]))
+        return nil;
+
+    return self;
+}
+
 - (id)initWithWindow:(NSWindow *)window
 {
     self = [super initWithWindow:window];
     return self;
 }
 
-- (void)windowDidLoad
-{    
-    [super windowDidLoad];
-}
-
-- (const NSString *)defaultEditingSource
++ (const NSString *)defaultEditingSource
 {
     const static NSString *source = @"<html><body></body></html>";
     return source;
 }
 
-- (void)applicationTerminating
-{
-}
-
-- (void)loadContent
+- (void)loadHTMLString:(NSString *)content
 {
 }
 

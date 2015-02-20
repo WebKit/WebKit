@@ -33,9 +33,10 @@
 {
     IBOutlet NSView *containerView;
 }
-- (NSString *)defaultEditingSource;
-- (void)applicationTerminating;
-- (void)loadContent;
+
++ (NSString *)defaultEditingSource;
+
+- (void)loadHTMLString:(NSString *)content;
 
 @end
 

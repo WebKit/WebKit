@@ -31,6 +31,7 @@
     IBOutlet NSMenuItem *_newWK2EditorItem;
     IBOutlet NSPanel *_operationsPanel;
 }
+
 - (IBAction)newEditor:(id)sender;
 - (IBAction)showOperations:(id)sender;
 - (IBAction)toggleUseWK2ByDefault:(id)sender;

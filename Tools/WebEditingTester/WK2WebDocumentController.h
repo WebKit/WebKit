@@ -29,7 +29,5 @@
 
 @interface WK2WebDocumentController : WebDocumentController<WebDocument>
 
-- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
-
 @end
 

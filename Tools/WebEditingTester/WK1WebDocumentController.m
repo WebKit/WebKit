@@ -52,9 +52,9 @@
     [containerView addSubview:_webView];
 }
 
-- (void)loadContent
+- (void)loadHTMLString:(NSString *)content
 {
-    [[_webView mainFrame] loadHTMLString:[self defaultEditingSource] baseURL:nil];    
+    [[_webView mainFrame] loadHTMLString:content baseURL:nil];
 }
 
 - (IBAction)pasteAsMarkup:(id)sender
