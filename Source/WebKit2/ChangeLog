@@ -1,5 +1,25 @@
 2015-02-20  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180293. <rdar://problem/19890148>
+
+    2015-02-18  Beth Dakin  <bdakin@apple.com>
+
+            iBooks immediate action blacklist should not even create the gesture recognizer
+            https://bugs.webkit.org/show_bug.cgi?id=141768
+            -and corresponding-
+            rdar://problem/19806770
+
+            Reviewed by Tim Horton.
+
+            Move the runtime-application check to the point where the gesture recognizer is 
+            created so that we can avoid doing so.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView initWithFrame:processPool:configuration:webView:]):
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _updateImmediateActionItem]):
+
+2015-02-20  Dana Burkart  <dburkart@apple.com>
+
         Merged r180242. <rdar://problem/19870992>
 
     2015-02-17  Timothy Horton  <timothy_horton@apple.com>
