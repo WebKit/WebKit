@@ -71,11 +71,6 @@ WebInspector.ObjectTreeView.Mode = {
     API: Symbol("object-tree-api"),
 };
 
-WebInspector.ObjectTreeView.classNameForObject = function(object)
-{
-    return "formatted-" + (object.subtype ? object.subtype : object.type);
-}
-
 WebInspector.ObjectTreeView.ComparePropertyDescriptors = function(propertyA, propertyB)
 {
     var a = propertyA.name;

@@ -1,5 +1,71 @@
 2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Introduce FormattedValue helpers and use them in Console/ObjectTree
+        https://bugs.webkit.org/show_bug.cgi?id=141812
+
+        Reviewed by Timothy Hatcher.
+
+        There were a few different ways to get styled values. Try to consolidate them
+        all in FormattedValue. That is also a convenient place to have the styles.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsValue):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsString):
+
+        (WebInspector.ConsoleMessageImpl.prototype._userProvidedColumnNames):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsTable):
+        (WebInspector.ConsoleMessageImpl.prototype._populateStackTraceTreeElement):
+        (WebInspector.ConsoleMessageImpl.prototype._propertyPreviewElement): Deleted.
+        Fix console.table after renaming ObjectPreview.properties to ObjectPreview.propertyPreviews.
+        Also, use FormattedValue to create the value elements. Also, remove class
+        "source-code" as I do not see it actually being used in a meaningful way.
+
+        * UserInterface/Views/FormattedValue.css: Added.
+        (.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap):
+        (.formatted-number):
+        (.formatted-string, .formatted-regexp):
+        (.formatted-string):
+        (.formatted-regexp):
+        (.formatted-symbol):
+        (.formatted-null, .formatted-undefined):
+        * UserInterface/Views/FormattedValue.js: Added.
+        (WebInspector.FormattedValue.classNameForTypes):
+        (WebInspector.FormattedValue.classNameForObject):
+        (WebInspector.FormattedValue.createLinkifiedElementString):
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+        (WebInspector.FormattedValue.createElementForRemoteObject):
+        (WebInspector.FormattedValue.createElementForObjectPreview):
+        (WebInspector.FormattedValue.createElementForPropertyPreview):
+        Styles and formatted value element creation.
+
+        * UserInterface/Views/LogContentView.css:
+        (.expandable.source-code): Deleted.
+        Remove ".source-code". I do not see it actually being used in a meaningful way.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendValuePreview):
+        (WebInspector.ObjectPreviewView.prototype._formattedObjectElementForPreview): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateTitlePropertyStyle):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._descriptionString): Deleted.
+        * UserInterface/Views/ObjectTreeView.css:
+        (.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap): Deleted.
+        (.formatted-number): Deleted.
+        (.formatted-string, .formatted-regexp): Deleted.
+        (.formatted-string): Deleted.
+        (.formatted-regexp): Deleted.
+        (.formatted-symbol): Deleted.
+        (.formatted-null, .formatted-undefined): Deleted.
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.classNameForObject): Deleted.
+        Extract styles and value formatting to FormattedValue helpers.
+
+2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Disable DOM Tree Editing / Styles Editing of Shadow DOM Nodes
         https://bugs.webkit.org/show_bug.cgi?id=141793
 

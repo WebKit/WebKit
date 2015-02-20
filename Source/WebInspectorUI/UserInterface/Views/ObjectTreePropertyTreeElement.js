@@ -97,21 +97,20 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         separatorElement.textContent = ": ";
 
         // Value / Getter.
-        var valueOrGetterElement = document.createElement("span");
-        valueOrGetterElement.className = "value";
-
+        var valueOrGetterElement;
         if (this._property.hasValue()) {
-            valueOrGetterElement.textContent = this._descriptionString();
-            valueOrGetterElement.classList.add(WebInspector.ObjectTreeView.classNameForObject(this._property.value));
+            valueOrGetterElement = WebInspector.FormattedValue.createElementForRemoteObject(this._property.value, this._property.wasThrown);
             // FIXME: Context Menu for Value. (See ObjectPropertiesSection).
             // FIXME: Option+Click for Value.
         } else {
             console.assert(this._property.hasGetter());
+            valueOrGetterElement = document.createElement("span");
             valueOrGetterElement.textContent = "(...)";
             // FIXME: Click to Populate Value.
             // FIXME: Context Menu to Populate Value.
         }
 
+        valueOrGetterElement.classList.add("value");
         if (this._property.wasThrown)
             valueOrGetterElement.classList.add("error");
 
@@ -156,26 +155,6 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             icon.textContent += "[S]";
             this.listItemElement.appendChild(icon);
         }
-    },
-
-    _descriptionString: function()
-    {
-        var value = this._property.value;
-        var description = value.description;
-
-        // Exception.
-        if (this._property.wasThrown)
-            return "[Exception: " + description + "]";
-
-        // String: replace newlines as nice unicode symbols.
-        if (value.type === "string")
-            return "\"" + description.replace(/\n/g, "\u21B5").replace(/"/g, "\\\"") + "\"";
-
-        // Function: Collapse whitespace in function display strings.
-        if (value.type === "function")
-            return /.*/.exec(description)[0].replace(/ +$/g, "");
-
-        return description;
     },
 
     _functionParameterString: function()

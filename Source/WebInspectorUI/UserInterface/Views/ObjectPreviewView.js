@@ -153,7 +153,7 @@ WebInspector.ObjectPreviewView.prototype = {
                 element.appendChild(document.createTextNode(": "));
             }
 
-            element.appendChild(this._formattedObjectElementForPreview(property, property.value));
+            element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
         }
 
         if (preview.overflow)
@@ -166,26 +166,7 @@ WebInspector.ObjectPreviewView.prototype = {
 
     _appendValuePreview: function(element, preview)
     {
-        element.appendChild(this._formattedObjectElementForPreview(preview, preview.description));
+        element.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(preview));
         return true;
-    },
-
-    _formattedObjectElementForPreview: function(propertyPreviewOrObjectPreview, value)
-    {
-        var span = document.createElement("span");
-        span.classList.add(WebInspector.ObjectTreeView.classNameForObject(propertyPreviewOrObjectPreview));
-
-        if (propertyPreviewOrObjectPreview.type === "string") {
-            span.textContent = "\"" + value.replace(/\n/g, "\u21B5").replace(/"/g, "\\\"") + "\"";
-            return span;
-        }
-
-        if (propertyPreviewOrObjectPreview.type === "function") {
-            span.textContent = "function";
-            return span;
-        }
-
-        span.textContent = value;
-        return span;
     }
 };

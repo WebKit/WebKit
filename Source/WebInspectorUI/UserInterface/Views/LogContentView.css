@@ -47,10 +47,6 @@
     font-size: 11px;
 }
 
-.expandable.source-code {
-    display: block;
-}
-
 .console-messages > :first-child {
     margin-top: auto;
 }

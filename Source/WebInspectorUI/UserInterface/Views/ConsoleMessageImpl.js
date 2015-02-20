@@ -58,7 +58,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _formatMessage: function()
     {
         this._formattedMessage = document.createElement("span");
-        this._formattedMessage.className = "console-message-text source-code";
+        this._formattedMessage.className = "console-message-text";
 
         var messageText;
         if (this.source === WebInspector.ConsoleMessage.MessageSource.ConsoleAPI) {
@@ -283,7 +283,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         var span = document.createElement("span");
-        span.className = "console-formatted-" + type + " source-code";
+        span.className = "console-formatted-" + type;
 
         if (this._isExpandable(output))
             span.classList.add("expandable");
@@ -292,9 +292,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return span;
     },
 
-    _formatParameterAsValue: function(val, elem)
+    _formatParameterAsValue: function(value, elem)
     {
-        elem.appendChild(document.createTextNode(val));
+        elem.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(value));
     },
 
     _formatParameterAsObject: function(obj, elem, forceExpansion)
@@ -303,25 +303,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
         elem.appendChild(objectTree.element);
     },
 
-    _propertyPreviewElement: function(property)
+    _formatParameterAsString: function(output, elem)
     {
-        // FIXME: Used by console.table. We should be able to eliminate this in favor of ObjectPreview.
-
-        var span = document.createElement("span");
-        span.classList.add(WebInspector.ObjectTreeView.classNameForObject(property));
-
-        if (property.type === "string") {
-            span.textContent = "\"" + property.value.replace(/\n/g, "\u21B5").replace(/"/g, "\\\"") + "\"";
-            return span;
-        }
-
-        if (property.type === "function") {
-            span.textContent = "function";
-            return span;
-        }
-
-        span.textContent = property.value;
-        return span;
+        var span = WebInspector.FormattedValue.createLinkifiedElementString(output.description);
+        elem.classList.remove("console-formatted-string");
+        elem.appendChild(span);
     },
 
     _formatParameterAsNode: function(object, elem)
@@ -363,12 +349,12 @@ WebInspector.ConsoleMessageImpl.prototype = {
             return [String(columnNamesArgument.value)];
 
         // Ignore everything that is not an array with property previews.
-        if (remoteObject.type !== "object" || remoteObject.subtype !== "array" || !remoteObject.preview || !remoteObject.preview.properties)
+        if (remoteObject.type !== "object" || remoteObject.subtype !== "array" || !remoteObject.preview || !remoteObject.preview.propertyPreviews)
             return null;
 
         // Array. Look into the preview and get string values.
         var extractedColumnNames = [];
-        for (var propertyPreview of remoteObject.preview.properties) {
+        for (var propertyPreview of remoteObject.preview.propertyPreviews) {
             if (propertyPreview.type === "string" || propertyPreview.type === "number")
                 extractedColumnNames.push(String(propertyPreview.value));
         }
@@ -397,27 +383,29 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         // Check first for valuePreviews in the properties meaning this was an array of objects.
-        for (var i = 0; i < preview.properties.length; ++i) {
-            var rowProperty = preview.properties[i];
-            var rowPreview = rowProperty.valuePreview;
-            if (!rowPreview)
-                continue;
+        if (preview.propertyPreviews) {
+            for (var i = 0; i < preview.propertyPreviews.length; ++i) {
+                var rowProperty = preview.propertyPreviews[i];
+                var rowPreview = rowProperty.valuePreview;
+                if (!rowPreview)
+                    continue;
 
-            var rowValue = {};
-            const maxColumnsToRender = 10;
-            for (var j = 0; j < rowPreview.properties.length; ++j) {
-                var cellProperty = rowPreview.properties[j];
-                var columnRendered = columnNames.contains(cellProperty.name);
-                if (!columnRendered) {
-                    if (userProvidedColumnNames || columnNames.length === maxColumnsToRender)
-                        continue;
-                    columnRendered = true;
-                    columnNames.push(cellProperty.name);
+                var rowValue = {};
+                const maxColumnsToRender = 10;
+                for (var j = 0; j < rowPreview.propertyPreviews.length; ++j) {
+                    var cellProperty = rowPreview.propertyPreviews[j];
+                    var columnRendered = columnNames.contains(cellProperty.name);
+                    if (!columnRendered) {
+                        if (userProvidedColumnNames || columnNames.length === maxColumnsToRender)
+                            continue;
+                        columnRendered = true;
+                        columnNames.push(cellProperty.name);
+                    }
+
+                    rowValue[cellProperty.name] = WebInspector.FormattedValue.createElementForPropertyPreview(cellProperty);
                 }
-
-                rowValue[cellProperty.name] = this._propertyPreviewElement(cellProperty);
+                rows.push([rowProperty.name, rowValue]);
             }
-            rows.push([rowProperty.name, rowValue]);
         }
 
         // If there were valuePreviews, convert to a flat list.
@@ -439,9 +427,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         // If there were no value Previews, then check for an array of values.
-        if (!flatValues.length) {
-            for (var i = 0; i < preview.properties.length; ++i) {
-                var rowProperty = preview.properties[i];
+        if (!flatValues.length && preview.propertyPreviews) {
+            for (var i = 0; i < preview.propertyPreviews.length; ++i) {
+                var rowProperty = preview.propertyPreviews[i];
                 if (!("value" in rowProperty))
                     continue;
 
@@ -451,13 +439,13 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 }
 
                 flatValues.push(rowProperty.name);
-                flatValues.push(this._propertyPreviewElement(rowProperty));
+                flatValues.push(WebInspector.FormattedValue.createElementForPropertyPreview(rowProperty));
             }
         }
 
         // If lossless or not table data, output the object so full data can be gotten.
         if (!preview.lossless || !flatValues.length) {
-            element.appendChild(this._formatParameter(table, true));
+            element.appendChild(this._formatParameter(table));
             if (!flatValues.length)
                 return element;
         }
@@ -468,18 +456,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         dataGridContainer.appendChild(dataGrid.element);
 
         return element;
-    },
-
-    _formatParameterAsString: function(output, elem)
-    {
-        var span = document.createElement("span");
-        span.className = "console-formatted-string source-code";
-        span.appendChild(document.createTextNode("\""));
-        span.appendChild(WebInspector.linkifyStringAsFragment(output.description.replace(/"/g, "\\\"")));
-        span.appendChild(document.createTextNode("\""));
-
-        elem.classList.remove("console-formatted-string");
-        elem.appendChild(span);
     },
 
     _printArray: function(array, elem, properties)
@@ -685,7 +661,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
             var content = document.createElement("div");
             var messageTextElement = document.createElement("span");
-            messageTextElement.className = "console-message-text source-code";
+            messageTextElement.className = "console-message-text";
             var functionName = frame.functionName || WebInspector.UIString("(anonymous function)");
             messageTextElement.appendChild(document.createTextNode(functionName));
             content.appendChild(messageTextElement);

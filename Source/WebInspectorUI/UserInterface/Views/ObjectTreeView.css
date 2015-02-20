@@ -142,40 +142,6 @@
 }
 
 
-/* Object Tree Type Colors */
-
-.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap {
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    color: black;
-}
-
-.formatted-number {
-    color: rgb(28, 0, 207);
-}
-
-.formatted-string, .formatted-regexp {
-    white-space: pre;
-}
-
-.formatted-string {
-    color: rgb(196, 26, 22);
-}
-
-.formatted-regexp {
-    color: rgb(255, 88, 0);
-}
-
-.formatted-symbol {
-    color: rgb(63, 169, 156);
-}
-
-.formatted-null, .formatted-undefined {
-    color: rgb(128, 128, 128);
-}
-
-
 /* Console Overrides */
 
 .console-group-messages .object-tree:not(.lossless-preview) {
