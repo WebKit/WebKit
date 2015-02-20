@@ -1,3 +1,15 @@
+2015-02-20  Anders Carlsson  <andersca@apple.com>
+
+        API::String::string() needs to return an isolated string copy
+        https://bugs.webkit.org/show_bug.cgi?id=141846
+
+        Reviewed by Tim Horton.
+
+        Since we can expose API::String objects as NSStrings now, we need to make sure that
+        we return copied strings so we won't mess up the StringImpl refcounts.
+
+        * Shared/API/APIString.h:
+
 2015-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Remove svn:keywords property.

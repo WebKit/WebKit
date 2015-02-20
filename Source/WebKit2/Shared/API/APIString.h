@@ -91,7 +91,7 @@ public:
     bool equalToUTF8String(const char* other) { return m_string == WTF::String::fromUTF8(other); }
     bool equalToUTF8StringIgnoringCase(const char* other) { return equalIgnoringCase(m_string, other); }
 
-    const WTF::String& string() const { return m_string; }
+    WTF::String string() const { return m_string.isolatedCopy(); }
 
 private:
     String()
