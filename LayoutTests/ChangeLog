@@ -1,3 +1,11 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        svg/animations/animateMotion-additive-2a.svg and svg/animations/animateMotion-additive-2b.svg
+        sometimes fail with a very small difference
+        https://bugs.webkit.org/show_bug.cgi?id=139828
+
+        * platform/mac-wk2/TestExpectations: Adding a test expectation.
+
 2015-02-20  Michael Saboff  <msaboff@apple.com>
 
         Layout Test js/regress-141098.html is failing on 32-bit Machines
