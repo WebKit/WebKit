@@ -1,5 +1,23 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r179937. <rdar://problem/19812932>
+
+    2015-02-11  Sam Weinig  <sam@webkit.org>
+
+            performance.now can crash if accessed from a window that has navigated
+            <rdar://problem/16892506>
+            https://bugs.webkit.org/show_bug.cgi?id=141478
+
+            Reviewed by Alexey Proskuryakov.
+
+            Test: fast/performance/performance-now-crash-on-navigated-window.html
+
+            * page/Performance.cpp:
+            (WebCore::Performance::now):
+            Check for a null frame, which can happen when the window has been navigated.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179933. <rdar://problem/19812926>
 
     2015-02-10  Alexey Proskuryakov  <ap@apple.com>
