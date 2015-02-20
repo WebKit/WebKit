@@ -131,6 +131,8 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 # Failing on some bots due to using resource load callbacks
 webkit.org/b/134769 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Skip ]
 
+webkit.org/b/141661 fast/text/emoji.html [ Failure ]
+
 # border painting diff (Path vs. drawLine)
 webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]

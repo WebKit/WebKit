@@ -1,5 +1,38 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180191.
+
+    2015-02-16  Enrica Casucci  <enrica@apple.com>
+
+            Emoji sequences do not render properly.
+            https://bugs.webkit.org/show_bug.cgi?id=141661
+            rdar://problem/19820463
+
+            Reviewed by Sam Weinig.
+
+            Emoji sequences and emoji with variations should be rendered
+            using the Complex code path and should be treated as graphemes.
+            This change modifies advanceByCombiningCharacterSequence to add
+            this logic.
+
+            Test: fast/text/emoji.html
+
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/graphics/FontCascade.cpp:
+            (WebCore::FontCascade::characterRangeCodePath):
+            * platform/graphics/mac/ComplexTextController.cpp:
+            (WebCore::advanceByCombiningCharacterSequence): Implements a simple
+            logic to treat emoji sequences and emoji with variations as graphemes.
+            * platform/text/CharacterProperties.h: Added.
+            (WebCore::isEmojiGroupCandidate):
+            (WebCore::isEmojiModifier):
+            (WebCore::isVariationSelector):
+            * rendering/RenderText.cpp:
+            (WebCore::isEmojiGroupCandidate): Deleted.
+            (WebCore::isEmojiModifier): Deleted.
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180155.
 
     2015-02-16  David Hyatt  <hyatt@apple.com>
