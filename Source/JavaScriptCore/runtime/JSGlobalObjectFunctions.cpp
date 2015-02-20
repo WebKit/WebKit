@@ -709,6 +709,16 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
     return throwVMTypeError(exec);
 }
 
+EncodedJSValue JSC_HOST_CALL globalPrivateFuncAbs(ExecState* exec)
+{
+    return JSValue::encode(jsNumber(fabs(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL globalPrivateFuncFloor(ExecState* exec)
+{
+    return JSValue::encode(jsNumber(floor(exec->argument(0).toNumber(exec))));
+}
+
 class GlobalFuncProtoGetterFunctor {
 public:
     GlobalFuncProtoGetterFunctor(JSObject* thisObject)

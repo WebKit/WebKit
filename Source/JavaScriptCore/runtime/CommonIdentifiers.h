@@ -246,6 +246,11 @@
     macro(deferred) \
     macro(countdownHolder) \
     macro(Object) \
+    macro(Number) \
+    macro(Array) \
+    macro(abs) \
+    macro(floor) \
+    macro(isFinite) \
     macro(TypeError) \
     macro(undefined) \
     macro(BuiltinLog)
