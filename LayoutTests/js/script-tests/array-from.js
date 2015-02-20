@@ -51,8 +51,6 @@ shouldThrow("Array.from([1, 2, 3], [])");
 shouldThrow("Array.from([1, 2, 3], [1])");
 
 section("Weird construction");
-var numberOfPassingSpans = document.querySelectorAll('span.pass').length;
-shouldBe("Array.from(document.querySelectorAll('span.pass')).length", "numberOfPassingSpans");
 shouldBe("Array.from(Math).length", "0");
 debug("Declare wayTooWrong = { length: NaN }");
 wayTooWrong = { length: NaN };

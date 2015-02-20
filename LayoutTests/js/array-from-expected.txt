@@ -48,7 +48,6 @@ PASS Array.from([1, 2, 3], [1]) threw exception TypeError: Array.from requires t
 
 Weird construction
 -------
-PASS Array.from(document.querySelectorAll('span.pass')).length is numberOfPassingSpans
 PASS Array.from(Math).length is 0
 Declare wayTooWrong = { length: NaN }
 PASS Array.from(wayTooWrong) is []

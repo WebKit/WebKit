@@ -1,3 +1,15 @@
+2015-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Array.from test fix.
+
+        Unreviewed.
+
+        Remove document.querySelectorAll use, as there is no DOM when running js tests
+        in run-javascriptcore-tests.
+
+        * js/array-from-expected.txt:
+        * js/script-tests/array-from.js:
+
 2015-02-19  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: merge in upstream Esprima to support parsing more of ES6
