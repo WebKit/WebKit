@@ -1,5 +1,26 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r179956. <rdar://problem/19812935>
+
+    2015-02-11  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] SampleMap::addRange() returns an inverted iterator_range, possibly causing a crash when that iterator_range is traversed.
+            https://bugs.webkit.org/show_bug.cgi?id=141479
+            rdar://problem/19067597
+
+            Reviewed by Chris Dumez.
+
+            When looking backwards through a presentationOrder map to find samples, we then reverse our iterators
+            and put them in an iterator_range to return to the caller. But in addition to reversing the iterators
+            themselves, we also need to put them in the iterator_range in reverse order, so that when the caller
+            iterates from iterator_range.first -> iterator_range.second, they don't end up off the end of the
+            the underlying storage.
+
+            * Modules/mediasource/SampleMap.cpp:
+            (WebCore::PresentationOrderSampleMap::findSamplesWithinPresentationRangeFromEnd):
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179937. <rdar://problem/19812932>
 
     2015-02-11  Sam Weinig  <sam@webkit.org>
