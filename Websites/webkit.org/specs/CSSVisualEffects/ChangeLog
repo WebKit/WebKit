@@ -1,3 +1,12 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * index.html: Removed property svn:keywords.
+
 2009-11-03  Darin Adler  <darin@apple.com>
 
         Set the MIME type for all PNG files in this directory.

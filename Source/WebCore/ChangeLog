@@ -1,3 +1,67 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * Modules/mediacontrols/assets-apple-iOS.svg: Removed property svn:keywords.
+        * Modules/mediacontrols/mediaControlsBase.css: Removed property svn:keywords.
+        * Modules/mediacontrols/mediaControlsBase.js: Removed property svn:keywords.
+        * bindings/js/JSDeviceMotionEventCustom.cpp: Removed property svn:keywords.
+        * css/CSSKeyframeRule.cpp: Removed property svn:keywords.
+        * css/CSSKeyframeRule.h: Removed property svn:keywords.
+        * css/CSSKeyframesRule.cpp: Removed property svn:keywords.
+        * css/CSSKeyframesRule.h: Removed property svn:keywords.
+        * css/WebKitCSSFilterValue.cpp: Removed property svn:keywords.
+        * css/WebKitCSSFilterValue.h: Removed property svn:keywords.
+        * css/plugIns.css: Removed property svn:keywords.
+        * dom/AnimationEvent.cpp: Removed property svn:keywords.
+        * dom/AnimationEvent.h: Removed property svn:keywords.
+        * dom/DeviceMotionClient.h: Removed property svn:keywords.
+        * dom/DeviceMotionController.cpp: Removed property svn:keywords.
+        * dom/DeviceMotionController.h: Removed property svn:keywords.
+        * dom/DeviceMotionData.cpp: Removed property svn:keywords.
+        * dom/DeviceMotionData.h: Removed property svn:keywords.
+        * dom/DeviceMotionEvent.cpp: Removed property svn:keywords.
+        * dom/DeviceMotionEvent.h: Removed property svn:keywords.
+        * html/canvas/ANGLEInstancedArrays.cpp: Removed property svn:keywords.
+        * html/canvas/ANGLEInstancedArrays.h: Removed property svn:keywords.
+        * html/canvas/OESTextureFloatLinear.cpp: Removed property svn:keywords.
+        * html/canvas/OESTextureFloatLinear.h: Removed property svn:keywords.
+        * html/canvas/OESTextureHalfFloatLinear.cpp: Removed property svn:keywords.
+        * html/canvas/OESTextureHalfFloatLinear.h: Removed property svn:keywords.
+        * html/shadow/MediaControlsApple.cpp: Removed property svn:keywords.
+        * html/shadow/MediaControlsApple.h: Removed property svn:keywords.
+        * page/Frame.h: Removed property svn:keywords.
+        * page/scrolling/ScrollingConstraints.cpp: Removed property svn:keywords.
+        * page/scrolling/ScrollingConstraints.h: Removed property svn:keywords.
+        * page/scrolling/ScrollingStateStickyNode.cpp: Removed property svn:keywords.
+        * page/scrolling/ios/ScrollingTreeIOS.cpp: Removed property svn:keywords.
+        * page/scrolling/mac/ScrollingTreeStickyNode.h: Removed property svn:keywords.
+        * platform/ControlStates.h: Removed property svn:keywords.
+        * platform/ScrollbarTheme.cpp: Removed property svn:keywords.
+        * platform/graphics/GraphicsLayerUpdater.cpp: Removed property svn:keywords.
+        * platform/graphics/GraphicsLayerUpdater.h: Removed property svn:keywords.
+        * platform/graphics/ca/TileController.h: Removed property svn:keywords.
+        * platform/graphics/ca/mac/WebTiledBackingLayer.h: Removed property svn:keywords.
+        * platform/graphics/filters/FilterOperation.cpp: Removed property svn:keywords.
+        * platform/graphics/filters/FilterOperation.h: Removed property svn:keywords.
+        * platform/graphics/filters/FilterOperations.h: Removed property svn:keywords.
+        * platform/ios/SystemMemory.h: Removed property svn:keywords.
+        * platform/mock/ScrollbarThemeMock.cpp: Removed property svn:keywords.
+        * platform/mock/ScrollbarThemeMock.h: Removed property svn:keywords.
+        * platform/spi/cocoa/ServersSPI.h: Removed property svn:keywords.
+        * platform/text/mac/ios-encodings.txt: Removed property svn:keywords.
+        * rendering/FilterEffectRenderer.cpp: Removed property svn:keywords.
+        * rendering/FilterEffectRenderer.h: Removed property svn:keywords.
+        * rendering/RenderGeometryMap.cpp: Removed property svn:keywords.
+        * rendering/RenderGeometryMap.h: Removed property svn:keywords.
+        * rendering/RenderMediaControlElements.h: Removed property svn:keywords.
+        * rendering/TextAutoSizing.cpp: Removed property svn:keywords.
+        * rendering/TextAutoSizing.h: Removed property svn:keywords.
+        * rendering/style/StylePendingImage.h: Removed property svn:keywords.
+
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] REGRESSION: Scroll snap points broken after r180018

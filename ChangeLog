@@ -1,3 +1,25 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * ManualTests/animation-with-transition.html: Removed property svn:keywords.
+        * ManualTests/blur-filter-timing.html: Removed property svn:keywords.
+        * ManualTests/compositing/caret-in-compositing-frame.html: Removed property svn:keywords.
+        * ManualTests/compositing/font-smoothing.html: Removed property svn:keywords.
+        * ManualTests/compositing/missing-iframe-contents.html: Removed property svn:keywords.
+        * ManualTests/compositing/requires-backing-change.html: Removed property svn:keywords.
+        * ManualTests/compositing/resources/composited-subframe.html: Removed property svn:keywords.
+        * ManualTests/compositing/resources/editable-compositing-subframe.html: Removed property svn:keywords.
+        * ManualTests/frames/nested-iframe-blit-on-scroll.html: Removed property svn:keywords.
+        * ManualTests/frames/resources/blit-on-scroll-subframe.html: Removed property svn:keywords.
+        * ManualTests/frames/resources/blit-on-scroll-subsubframe.html: Removed property svn:keywords.
+        * ManualTests/plugins/plugin-paint-causes-layout.html: Removed property svn:keywords.
+        * ManualTests/screen-availLeft.html: Removed property svn:keywords.
+        * ManualTests/transition-accelerated.html: Removed property svn:keywords.
+
 2015-02-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Remove CMakeLists.txt in WK1 port

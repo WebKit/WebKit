@@ -1,3 +1,31 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * Platform/spi/ios/DataDetectorsUISPI.h: Removed property svn:keywords.
+        * Platform/spi/ios/ManagedConfigurationSPI.h: Removed property svn:keywords.
+        * Platform/spi/ios/TextInputSPI.h: Removed property svn:keywords.
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp: Removed property svn:keywords.
+        * Scripts/webkit/LegacyMessages-expected.h: Removed property svn:keywords.
+        * Scripts/webkit/MessageReceiver-expected.cpp: Removed property svn:keywords.
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp: Removed property svn:keywords.
+        * Scripts/webkit/Messages-expected.h: Removed property svn:keywords.
+        * Scripts/webkit/MessagesSuperclass-expected.h: Removed property svn:keywords.
+        * UIProcess/ios/PageClientImplIOS.h: Removed property svn:keywords.
+        * UIProcess/ios/WKActionSheet.h: Removed property svn:keywords.
+        * UIProcess/ios/WKActionSheetAssistant.h: Removed property svn:keywords.
+        * UIProcess/ios/WKContentView.h: Removed property svn:keywords.
+        * UIProcess/ios/WKContentViewInteraction.h: Removed property svn:keywords.
+        * UIProcess/ios/WKGeolocationProviderIOS.h: Removed property svn:keywords.
+        * UIProcess/ios/WKScrollView.h: Removed property svn:keywords.
+        * UIProcess/mac/PageClientImpl.h: Removed property svn:keywords.
+        * UIProcess/mac/WKPrintingView.h: Removed property svn:keywords.
+        * UIProcess/mac/WKTextInputWindowController.h: Removed property svn:keywords.
+        * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.h: Removed property svn:keywords.
+
 2015-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         EFL URTBF

@@ -1,3 +1,19 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * css/multicol/multicol-basic-001-expected.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-001.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-002-expected.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-002.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-003-expected.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-003.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-004-expected.html: Removed property svn:keywords.
+        * css/multicol/multicol-basic-004.html: Removed property svn:keywords.
+
 2015-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should sort the list of files when generating the w3c-import.log

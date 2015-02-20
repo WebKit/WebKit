@@ -1,3 +1,13 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * demos/srcset/index.html: Removed property svn:keywords.
+        * specs/index.html: Removed property svn:keywords.
+
 2015-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, remove empty directories.
