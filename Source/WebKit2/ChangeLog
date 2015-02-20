@@ -1,3 +1,17 @@
+2015-02-19  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebKit2/WebProcess and UIProcess module.
+        https://bugs.webkit.org/show_bug.cgi?id=141794.
+
+        Reviewed by Anders Carlsson.
+
+        Fix build warning by using UNUSED_PARAM macro.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeWebProcessAccessType):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteData):
+
 2015-02-19  Remy Demarest  <rdemarest@apple.com>
 
         Make EnvironmentVariables::appendValue() handle the case where the existing value is an empty string.

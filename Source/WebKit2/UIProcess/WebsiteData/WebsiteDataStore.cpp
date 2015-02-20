@@ -117,6 +117,8 @@ static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTy
 
 static ProcessAccessType computeWebProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
+    UNUSED_PARAM(isNonPersistentStore);
+
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
     if (dataTypes & WebsiteDataTypeMemoryCache)

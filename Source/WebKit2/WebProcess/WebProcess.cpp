@@ -1135,6 +1135,8 @@ void WebProcess::releasePageCache()
 
 void WebProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
+    UNUSED_PARAM(modifiedSince);
+
     if (websiteDataTypes & WebsiteDataTypeMemoryCache) {
         PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
         MemoryCache::singleton().evictResources(sessionID);
