@@ -1,3 +1,23 @@
+2015-02-20  Dana Burkart  <dburkart@apple.com>
+
+        Merged r180150. <rdar://problem/19894685>
+
+    2015-02-12  David Hyatt  <hyatt@apple.com>
+
+            text-underline-position:under has multiple correctness issues
+            https://bugs.webkit.org/show_bug.cgi?id=141528
+
+            Reviewed by Dean Jackson.
+
+            * fast/text/text-underline-first-line-decoration-expected.html: Added.
+            * fast/text/text-underline-first-line-decoration.html: Added.
+            * fast/text/text-underline-position-mixed-fonts-expected.html: Added.
+            * fast/text/text-underline-position-mixed-fonts.html: Added.
+            * fast/text/text-underline-position-subscript-expected.html: Added.
+            * fast/text/text-underline-position-subscript.html: Added.
+            * fast/text/text-underline-vertical-first-line-decoration-expected.html: Added.
+            * fast/text/text-underline-vertical-first-line-decoration.html: Added.
+
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
         Merged r180128. <rdar://problem/19850739>
