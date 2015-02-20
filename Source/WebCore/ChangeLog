@@ -1,5 +1,24 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180076. <rdar://problem/19850750>
+
+    2015-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac, iOS] Adjust pagination behavior for Mail.app printing use
+            https://bugs.webkit.org/show_bug.cgi?id=141569
+            <rdar://problem/14912763>
+
+            Reviewed by Anders Carlsson.
+
+            * page/Settings.in: Add new pagination setting flag.
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::messageContainerName): Added.
+            (WebCore::needsPaginationQuirk): Added.
+            (WebCore::RenderBlockFlow::adjustLinePositionForPagination): Don't move the message content
+            div to a new page when using this special printing mode.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r180063. <rdar://problem/19812938>
 
     2015-02-13  Simon Fraser  <simon.fraser@apple.com>

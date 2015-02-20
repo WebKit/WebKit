@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,9 +43,11 @@
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "SimpleLineLayoutFunctions.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -1617,6 +1619,15 @@ static inline LayoutUnit calculateMinimumPageHeight(RenderStyle* renderStyle, Ro
     return lineBottom - lineTop;
 }
 
+static inline bool needsAppleMailPaginationQuirk(RootInlineBox& lineBox)
+{
+    bool appleMailPaginationQuirkEnabled = lineBox.renderer().document().settings()->appleMailPaginationQuirkEnabled();
+    if (appleMailPaginationQuirkEnabled && lineBox.renderer().element() && lineBox.renderer().element()->idForStyleResolution() == AtomicString("messageContentContainer", AtomicString::ConstructFromLiteral))
+        return true;
+
+    return false;
+}
+    
 void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta, bool& overflowsRegion, RenderFlowThread* flowThread)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
@@ -1699,6 +1710,8 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
             auto firstRootBox = this->firstRootBox();
             auto firstRootBoxOverflowRect = firstRootBox->logicalVisualOverflowRect(firstRootBox->lineTop(), firstRootBox->lineBottom());
             auto firstLineUpperOverhang = std::max(-firstRootBoxOverflowRect.y(), LayoutUnit());
+            if (needsAppleMailPaginationQuirk(*lineBox))
+                return;
             setPaginationStrut(remainingLogicalHeight + logicalOffset + firstLineUpperOverhang);
         } else {
             delta += remainingLogicalHeight;
