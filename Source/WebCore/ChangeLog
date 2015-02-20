@@ -1,5 +1,41 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180364.
+
+    2015-02-19  David Hyatt  <hyatt@apple.com>
+
+            Columns are splitting unsplittable content.
+            https://bugs.webkit.org/show_bug.cgi?id=141807
+            <rdar://problem/18387659>
+
+            Reviewed by Dean Jackson.
+
+            Added inline-table-dynamic-movement.html
+
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::pageLogicalTopForOffset):
+            (WebCore::RenderBlockFlow::pageLogicalHeightForOffset):
+            Patch these functions to always check the layout state for a zero
+            pageLogicalHeight, since that is actually our indicator that we're
+            doing column balancing and don't have a height set yet.
+
+            * rendering/RenderMultiColumnFlowThread.cpp:
+            (WebCore::RenderMultiColumnFlowThread::isPageLogicalHeightKnown):
+            * rendering/RenderMultiColumnSet.cpp:
+            (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+            (WebCore::RenderMultiColumnSet::setAndConstrainColumnHeight):
+            (WebCore::RenderMultiColumnSet::prepareForLayout):
+            * rendering/RenderMultiColumnSet.h:
+            The function for deciding whether the logical height of the columns was
+            known was checking for a zero computedColumnHeight. However, a column set
+            can legitimately compute a zero column height, and with the fix to examine
+            the layout state, this bug was exposed.
+
+            The fix is to add a new variable that caches whether or not the column height
+            has been computed, so that even if it computes to zero, we aren't fooled.
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180147
 
     2015-02-16  Brent Fulgham  <bfulgham@apple.com>
