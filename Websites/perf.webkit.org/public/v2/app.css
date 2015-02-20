@@ -421,6 +421,21 @@ table.dashboard tbody td .failure {
     vertical-align: middle;
 }
 
+.chart-pane,
+.analysis-group {
+    border: 1px solid #bbb;
+    border-radius: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
+    padding: 0;
+    margin-bottom: 1rem;
+    outline: none;
+    position: relative;
+}
+
+form .analysis-group > * {
+    margin: 0.5rem;
+}
+
 #analysis-tasks,
 .analysis-group > table {
     border: solid 0px #999;
@@ -472,20 +487,15 @@ table.dashboard tbody td .failure {
     display: none;
 }
 
-.analysis-group {
-    display: block;
-    position: relative;
-    min-height: 6.5rem;
-}
-
 .analysis-group .results {
+    margin: 0.5rem;
     margin-right: 20rem;
 }
 
 .analysis-group .reference-chart {
     position: absolute;
-    top: 1.2rem;
-    right: -0.7rem;
+    top: 1.8rem;
+    right: 0rem;
     width: 19rem;
     height: 5rem;
 }
@@ -530,17 +540,6 @@ table.dashboard tbody td .failure {
     margin: 0 0 1rem 0.5rem;
     padding: 0;
     color: #333;
-}
-
-.analysis-group {
-    border: 1px solid #bbb;
-    border-radius: 0.5rem;
-    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
-    margin-bottom: 1.5rem;
-}
-
-.analysis-group > * {
-    margin: 0.5rem;
 }
 
 .analysis-group > h1 {

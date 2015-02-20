@@ -1,12 +1,3 @@
-.chart-pane {
-    border: 1px solid #bbb;
-    border-radius: 0.5rem;
-    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
-    padding: 0;
-    margin-bottom: 1rem;
-    outline: none;
-    position: relative;
-}
 .chart-pane header {
     background: #fff;
     margin: 0;
@@ -294,13 +285,15 @@
     cursor: pointer;
 }
 
-.chart-pane .commits-viewer caption:before {
+.chart-pane .commits-viewer caption:before,
+.analysis-group .results .summary .config-letter:before {
     display: inline-block;
     width: 0.8rem;
     content: "\25BE"; /* Down arrow */
 }
 
-.chart-pane .commits-viewer.hidden caption:before {
+.chart-pane .commits-viewer.hidden caption:before,
+.analysis-group .results .hideRequests .summary .config-letter:before {
     display: inline-block;
     width: 0.8rem;
     content: "\25B8"; /* Right arrow */

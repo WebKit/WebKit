@@ -1,5 +1,36 @@
 2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Selecting revisions for A/B testing is hard
+        https://bugs.webkit.org/show_bug.cgi?id=141824
+
+        Reviewed by Andreas Kling.
+
+        Update the revisions used in A/B testing based on the selection in the overview chart. This allows users to
+        intuitively select revisions based on points shown in the chart. Removed the old select elements used to
+        select A/B testing points manually.
+
+        Also renamed 'testSets' to 'configurations', 'roots' to 'rootConfigurations', and 'revisions' in each root's
+        sets to 'options' for clarity.
+
+        * public/v2/app.css: Reorganized style rules. 
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController):
+        (App.AnalysisTaskController._taskUpdated): Merged updateTestGroupPanes.
+        (App.AnalysisTaskController._chartDataChanged): Renamed from paneDomain. It's now an observer instead of
+        a property, which sets 'overviewDomain' property as well as other properties.
+        (App.AnalysisTaskController.updateRootConfigurations): Renamed from updateRoots.
+        (App.AnalysisTaskController._updateRootsBySelectedPoints): Added. Select roots based on the selected points
+        in the overview chart.
+
+        * public/v2/chart-pane.css: Added arrows next to the configuration names (e.g. 'A') to indicate whether
+        individual build requests / test results are shown or not.
+
+        * public/v2/index.html: Removed the select element per configuration column. Also moved the select element
+        for the number of runs as it doesn't belong in the same table as the one that lists repositories and roots.
+
+2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed test fixes after r179037, r179591, and r179763.
 
         * tests/admin-regenerate-manifest.js:
