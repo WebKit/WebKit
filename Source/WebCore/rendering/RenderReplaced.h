@@ -86,6 +86,8 @@ private:
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override final;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio) const;
 
+    virtual bool shouldDrawSelectionTint() const;
+
     mutable LayoutSize m_intrinsicSize;
 };
 

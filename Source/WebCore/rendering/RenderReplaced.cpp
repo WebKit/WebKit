@@ -130,6 +130,11 @@ void RenderReplaced::intrinsicSizeChanged()
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
+bool RenderReplaced::shouldDrawSelectionTint() const
+{
+    return selectionState() != SelectionNone && !document().printing();
+}
+
 void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
@@ -155,7 +160,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
     
-    bool drawSelectionTint = selectionState() != SelectionNone && !document().printing();
+    bool drawSelectionTint = shouldDrawSelectionTint();
     if (paintInfo.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
