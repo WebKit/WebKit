@@ -31,7 +31,10 @@
 
 static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
 
-@implementation WebEditingAppDelegate
+@implementation WebEditingAppDelegate {
+    Class _openingDocumentController;
+}
+
 - (id)init
 {
     self = [super init];
@@ -137,6 +140,49 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
         [menuItem setState:[self useWebKit2ByDefault] ? NSOnState : NSOffState];
     
     return YES;
+}
+
+- (void)_openDocumentWithWebKit1:(id)sender
+{
+    _openingDocumentController = [WK1WebDocumentController class];
+}
+
+- (void)_openDocumentWithWebKit2:(id)sender
+{
+    _openingDocumentController = [WK2WebDocumentController class];
+}
+
+- (IBAction)openDocument:(id)sender
+{
+    _openingDocumentController = self._defaultWebDocumentControllerClass;
+
+    NSButtonCell *radioButtonPrototype = [[NSButtonCell alloc] init];
+    radioButtonPrototype.buttonType = NSRadioButton;
+
+    NSMatrix *openPanelAccessoryView = [[NSMatrix alloc] initWithFrame:NSZeroRect mode:NSRadioModeMatrix prototype:radioButtonPrototype numberOfRows:2 numberOfColumns:1];
+    openPanelAccessoryView.autorecalculatesCellSize = YES;
+    openPanelAccessoryView.autosizesCells = YES;
+    NSArray *cells = openPanelAccessoryView.cells;
+    [[cells objectAtIndex:0] setTitle:@"Open with WebKit1"];
+    [[cells objectAtIndex:0] setAction:@selector(_openDocumentWithWebKit1:)];
+    [[cells objectAtIndex:0] setState:!self.useWebKit2ByDefault];
+    [[cells objectAtIndex:1] setTitle:@"Open with WebKit2"];
+    [[cells objectAtIndex:1] setAction:@selector(_openDocumentWithWebKit2:)];
+    [[cells objectAtIndex:1] setState:self.useWebKit2ByDefault];
+    [openPanelAccessoryView sizeToFit];
+
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    [panel setAccessoryView:openPanelAccessoryView];
+
+    [panel beginWithCompletionHandler:^(NSInteger result) {
+        if (result != NSFileHandlingPanelOKButton)
+            return;
+
+        WebDocumentController *controller = [[_openingDocumentController alloc] init];
+        [controller.window makeKeyAndOrderFront:nil];
+        [_webDocuments addObject:controller];
+        [controller loadHTMLString:[NSString stringWithContentsOfURL:panel.URLs.lastObject encoding:NSUTF8StringEncoding error:nil]];
+    }];
 }
 
 - (void)_updateNewWindowKeyEquivalents

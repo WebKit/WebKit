@@ -1,3 +1,17 @@
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
+        [WebEditingTester] Implement an open panel
+        https://bugs.webkit.org/show_bug.cgi?id=141829
+
+        Reviewed by Simon Fraser.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate _useWebKit1ForOpeningDocument:]):
+        (-[WebEditingAppDelegate _useWebKit2ForOpeningDocument:]):
+        (-[WebEditingAppDelegate openDocument:]):
+        Add an open panel (with radio buttons to pick which WebKit to open with).
+        Loads the file as an HTML string.
+
 2015-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         [WebEditingTester] @properties, dot syntax, and remember the window position
