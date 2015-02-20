@@ -42,6 +42,13 @@ template<typename T> static void remoteRead(task_t task, memory_reader_t reader,
     memcpy(&result, tmp, sizeof(T));
 }
 
+// Support malloc_zone_from_ptr, which calls size() on each registered zone.
+size_t Zone::size(malloc_zone_t*, const void*)
+{
+    // Our zone is not public API, so no pointer can belong to us.
+    return 0;
+}
+
 // This function runs inside the leaks process.
 kern_return_t Zone::enumerator(task_t task, void* context, unsigned type_mask, vm_address_t zone_address, memory_reader_t reader, vm_range_recorder_t recorder)
 {
@@ -63,9 +70,10 @@ kern_return_t Zone::enumerator(task_t task, void* context, unsigned type_mask, v
 
 Zone::Zone()
 {
-    version = 4;
-    zone_name = "WebKit Malloc";
-    introspect = &bmalloc::introspect;
+    malloc_zone_t::size = size;
+    malloc_zone_t::zone_name = "WebKit Malloc";
+    malloc_zone_t::introspect = &bmalloc::introspect;
+    malloc_zone_t::version = 4;
     malloc_zone_register(this);
 }
 
