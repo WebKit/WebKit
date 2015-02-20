@@ -61,9 +61,9 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 
     if (sender == self)
         controllerClass = self._defaultWebDocumentControllerClass;
-    else if (sender == _newWK2EditorItem)
+    else if (sender == _newWebKit2EditorItem)
         controllerClass = [WK2WebDocumentController class];
-    else if (sender == _newWK1EditorItem)
+    else if (sender == _newWebKit1EditorItem)
         controllerClass = [WK1WebDocumentController class];
     
     WebDocumentController *controller = [[controllerClass alloc] init];
@@ -130,7 +130,7 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseWebKit2ByDefaultPreferenceKey];
 }
 
-- (IBAction)toggleUseWK2ByDefault:(id)sender
+- (IBAction)toggleUseWebKit2ByDefault:(id)sender
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:![defaults boolForKey:UseWebKit2ByDefaultPreferenceKey] forKey:UseWebKit2ByDefaultPreferenceKey];
@@ -141,7 +141,7 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 {
     SEL action = [menuItem action];
     
-    if (action == @selector(toggleUseWK2ByDefault:))
+    if (action == @selector(toggleUseWebKit2ByDefault:))
         [menuItem setState:[self useWebKit2ByDefault] ? NSOnState : NSOffState];
     
     return YES;
@@ -193,11 +193,11 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 - (void)_updateNewWindowKeyEquivalents
 {
     if (self.useWebKit2ByDefault) {
-        [_newWK1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
-        [_newWK2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
     } else {
-        [_newWK1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
-        [_newWK2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+        [_newWebKit1EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [_newWebKit2EditorItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
     }
 }
 

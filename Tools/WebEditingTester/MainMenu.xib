@@ -13,8 +13,8 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" userLabel="Delegate" customClass="WebEditingAppDelegate">
             <connections>
-                <outlet property="_newWK1EditorItem" destination="2Pd-3X-Tvf" id="oy2-LL-9U7"/>
-                <outlet property="_newWK2EditorItem" destination="kzr-0m-cAu" id="vsf-6z-Lk3"/>
+                <outlet property="_newWebKit1EditorItem" destination="2Pd-3X-Tvf" id="YUu-7J-250"/>
+                <outlet property="_newWebKit2EditorItem" destination="kzr-0m-cAu" id="ljF-38-G4o"/>
                 <outlet property="_operationsPanel" destination="XRZ-ss-zpK" id="YJ2-gq-nmx"/>
             </connections>
         </customObject>
@@ -69,12 +69,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="New WK1 Editor" keyEquivalent="n" id="2Pd-3X-Tvf" userLabel="New WK1 Editor">
+                            <menuItem title="New WebKit1 Editor" keyEquivalent="n" id="2Pd-3X-Tvf" userLabel="New WK1 Editor">
                                 <connections>
                                     <action selector="newEditor:" target="Voe-Tx-rLC" id="21m-3B-oXY"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="New WK2 Editor" alternate="YES" keyEquivalent="n" id="kzr-0m-cAu" userLabel="New WK2 Editor">
+                            <menuItem title="New WebKit2 Editor" alternate="YES" keyEquivalent="n" id="kzr-0m-cAu" userLabel="New WK2 Editor">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="newEditor:" target="Voe-Tx-rLC" id="Za3-gM-3R7"/>
@@ -670,10 +670,10 @@
                                     <action selector="pasteAsMarkup:" target="-1" id="Ejb-zz-08R"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Use WK2 by default" id="AiO-8z-Uwi">
+                            <menuItem title="Use WebKit2 by Default" id="AiO-8z-Uwi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleUseWK2ByDefault:" target="Voe-Tx-rLC" id="GoJ-wy-wd2"/>
+                                    <action selector="toggleUseWebKit2ByDefault:" target="Voe-Tx-rLC" id="MFc-Wa-XWw"/>
                                 </connections>
                             </menuItem>
                         </items>

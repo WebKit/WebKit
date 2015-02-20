@@ -1,5 +1,24 @@
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
+        [WebEditingTester] Expand "WK" to "WebKit" in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=141833
+
+        Reviewed by Anders Carlsson.
+
+        * WebEditingTester/AppDelegate.h:
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate newEditor:]):
+        (-[WebEditingAppDelegate toggleUseWebKit2ByDefault:]):
+        (-[WebEditingAppDelegate validateMenuItem:]):
+        (-[WebEditingAppDelegate _updateNewWindowKeyEquivalents]):
+        (-[WebEditingAppDelegate applicationDidFinishLaunching:]): Deleted.
+        (-[WebEditingAppDelegate applicationWillTerminate:]): Deleted.
+        (-[WebEditingAppDelegate showOperations:]): Deleted.
+        * WebEditingTester/MainMenu.xib:
+        The WK abbreviation is unnaturally grating in menu items for some reason.
+
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
         [WebEditingTester] Add a custom protocol for loading canned content
         https://bugs.webkit.org/show_bug.cgi?id=141830
 

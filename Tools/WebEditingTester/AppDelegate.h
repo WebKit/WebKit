@@ -27,14 +27,14 @@
 
 @interface WebEditingAppDelegate : NSObject <NSApplicationDelegate> {
     NSMutableSet *_webDocuments;
-    IBOutlet NSMenuItem *_newWK1EditorItem;
-    IBOutlet NSMenuItem *_newWK2EditorItem;
+    IBOutlet NSMenuItem *_newWebKit1EditorItem;
+    IBOutlet NSMenuItem *_newWebKit2EditorItem;
     IBOutlet NSPanel *_operationsPanel;
 }
 
 - (IBAction)newEditor:(id)sender;
 - (IBAction)showOperations:(id)sender;
-- (IBAction)toggleUseWK2ByDefault:(id)sender;
+- (IBAction)toggleUseWebKit2ByDefault:(id)sender;
 
 @end
 
