@@ -1,3 +1,17 @@
+2015-02-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; rebaseline tests on safari-600.1.4.15-branch
+
+        * css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt:
+        * css3/blending/blend-mode-parent-of-composited-blended-has-layer-expected.txt:
+        * css3/blending/blend-mode-with-composited-descendant-should-have-layer-expected.txt:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/mac/fast/text/vertical-no-sideways-expected.png: Added.
+        * platform/mac/fast/text/vertical-no-sideways-expected.txt: Added.
+
 2015-02-13  Lucas Forschler  <lforschler@apple.com>
 
         Merge r174823
