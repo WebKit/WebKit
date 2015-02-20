@@ -57,14 +57,6 @@
     [[_webView mainFrame] loadHTMLString:[self defaultEditingSource] baseURL:nil];    
 }
 
-- (void)dealloc
-{
-    [_webView setUIDelegate:nil];
-    [_webView release];
-    
-    [super dealloc];
-}
-
 - (IBAction)pasteAsMarkup:(id)sender
 {
     // FIXME: This is probably incorrect, should use WebArchive

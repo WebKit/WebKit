@@ -120,7 +120,7 @@ static WKWebViewConfiguration *defaultConfiguration()
                 y = firstY - 16;
                 x += maxWidth;
             }
-            NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(x, y, maxWidth, 16)] autorelease];
+            NSButton *button = [[NSButton alloc] initWithFrame:NSMakeRect(x, y, maxWidth, 16)];
             [button setBezelStyle:NSRoundedBezelStyle];
             [button.cell setControlSize:NSMiniControlSize];
             [button setFont:font];

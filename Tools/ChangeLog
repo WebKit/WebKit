@@ -1,5 +1,26 @@
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
+        [WebEditingTester] ARC-ify WebEditingTester
+        https://bugs.webkit.org/show_bug.cgi?id=141827
+
+        Reviewed by Sam Weinig.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate showOperations:]):
+        * WebEditingTester/EditingOperations.m:
+        (editingOperations):
+        * WebEditingTester/WK1WebDocumentController.m:
+        (-[WK1WebDocumentController dealloc]): Deleted.
+        * WebEditingTester/WK2WebDocumentController.m:
+        (-[WK2WebDocumentController dealloc]): Deleted.
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+        Turn on ARC and remove a few retain/release/autorelease calls.
+        We don't need to implement dealloc in either document controller
+        because WebView and WKWebView's UIDelegate property does not hold a
+        strong reference.
+
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
         [WebEditingTester] Factor out list of editing operations
         https://bugs.webkit.org/show_bug.cgi?id=141826
 

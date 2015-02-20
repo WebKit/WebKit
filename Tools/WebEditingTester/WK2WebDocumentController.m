@@ -68,15 +68,6 @@
     [self.window setTitle:@"WebEditor [WK2]"];
 }
 
-- (void)dealloc
-{
-    [_webView setUIDelegate:nil];
-    [_webView release];
-    [_configuration release];
-    
-    [super dealloc];
-}
-
 - (void)loadContent
 {
     [_webView loadHTMLString:[self defaultEditingSource] baseURL:nil];
