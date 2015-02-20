@@ -1,5 +1,35 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180062. <rdar://problem/19812938>
+
+    2015-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+            determinePrimarySnapshottedPlugIn() should only traverse visible Frames
+            https://bugs.webkit.org/show_bug.cgi?id=141547
+            Part of rdar://problem/18445733.
+
+            Reviewed by Anders Carlsson.
+
+            There's an expectation from clients that FrameView::updateLayoutAndStyleIfNeededRecursive()
+            updates layout in all frames, but it uses the widget tree, so only hits frames
+            that are parented via renderers (i.e. not display:none frames or their descendants).
+            
+            Moving towards a future where we remove Widgets, fix by adding a FrameTree 
+            traversal function that only finds rendered frames (those with an ownerRenderer).
+            
+            Not testable.
+
+            * page/FrameTree.cpp:
+            (WebCore::FrameTree::firstRenderedChild):
+            (WebCore::FrameTree::nextRenderedSibling):
+            (WebCore::FrameTree::traverseNextRendered):
+            (printFrames):
+            * page/FrameTree.h:
+            * page/FrameView.cpp:
+            (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179956. <rdar://problem/19812935>
 
     2015-02-11  Jer Noble  <jer.noble@apple.com>
