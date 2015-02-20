@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -483,6 +483,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (WebMediaKeyStorageManager* manager = WebProcess::shared().supplement<WebMediaKeyStorageManager>())
         m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
 #endif
+    m_page->settings().setAppleMailPaginationQuirkEnabled(parameters.appleMailPaginationQuirkEnabled);
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
