@@ -1,5 +1,27 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179877.
+
+    2015-02-07  Zalan Bujtas  <zalan@apple.com>
+
+            REGRESSION (r168046): Crash in WebCore::InlineBox::renderer / WebCore::RenderFlowThread::checkLinesConsistency
+            https://bugs.webkit.org/show_bug.cgi?id=133462
+
+            Reviewed by David Hyatt.
+
+            RenderFlowThread::m_lineToRegionMap stores pointers to the root inlineboxes in the block flow.
+            Normally root inlineboxes remove themselves from this map in their dtors. However when collapsing an anonymous block,
+            we detach the inline tree first and destroy them after. The detached root boxes can't access
+            the flowthread containing block and we end up with dangling pointers in this map.
+            Call removeFlowChildInfo() before detaching the subtree to ensure proper pointer removal.
+
+            Test: fast/multicol/newmulticol/crash-when-switching-to-floating.html
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::collapseAnonymousBoxChild):
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r179776.
 
     2015-02-06  Zalan Bujtas  <zalan@apple.com>
