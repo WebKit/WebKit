@@ -606,6 +606,8 @@ LayoutUnit RootInlineBox::selectionTop() const
     if (renderer().style().isFlippedLinesWritingMode())
         return selectionTop;
 
+#if !PLATFORM(IOS)
+    // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
     if (renderer().isRubyBase()) {
         // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text above us.
         RenderRubyBase* base = &toRenderRubyBase(renderer());
@@ -633,6 +635,7 @@ LayoutUnit RootInlineBox::selectionTop() const
             }
         }
     }
+#endif
 
     LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : blockFlow().borderAndPaddingBefore();
     if (prevBottom < selectionTop && blockFlow().containsFloats()) {
@@ -686,6 +689,8 @@ LayoutUnit RootInlineBox::selectionBottom() const
     if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
     
+#if !PLATFORM(IOS)
+    // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
     if (renderer().isRubyBase()) {
         // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text below us.
         RenderRubyBase* base = &toRenderRubyBase(renderer());
@@ -713,6 +718,7 @@ LayoutUnit RootInlineBox::selectionBottom() const
             }
         }
     }
+#endif
 
     LayoutUnit nextTop = nextRootBox()->selectionTop();
     if (nextTop > selectionBottom && blockFlow().containsFloats()) {

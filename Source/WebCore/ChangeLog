@@ -1,5 +1,21 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180155.
+
+    2015-02-16  David Hyatt  <hyatt@apple.com>
+
+            Add ifdefs to avoid adjusting Ruby selection rects to avoid overlap on iOS.
+            https://bugs.webkit.org/show_bug.cgi?id=141651
+            <rdar://problem/19182526>
+
+            Reviewed by Simon Fraser.
+
+            * rendering/RootInlineBox.cpp:
+            (WebCore::RootInlineBox::selectionTop):
+            (WebCore::RootInlineBox::selectionBottom):
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180128.
 
     2015-02-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
