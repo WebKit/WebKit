@@ -277,10 +277,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
             type = typeof output;
 
         var formatter = this._customFormatters[type];
-        if (!formatter) {
+        if (!formatter)
             formatter = this._formatParameterAsValue;
-            output = output.description;
-        }
 
         var span = document.createElement("span");
         span.className = "console-formatted-" + type;

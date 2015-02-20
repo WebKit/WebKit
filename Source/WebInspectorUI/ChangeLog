@@ -1,5 +1,14 @@
 2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Follow-up fix to r180371. formatParameterAsValue expects full object, not just a description.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+
+2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Introduce FormattedValue helpers and use them in Console/ObjectTree
         https://bugs.webkit.org/show_bug.cgi?id=141812
 
