@@ -157,22 +157,22 @@
     debug('');
 
     shouldBe('document.querySelectorAll(":lang(\\\\*)").length', '35');
-    shouldBe('document.querySelectorAll(":lang(*-CH)").length', '5');
+    shouldBe('document.querySelectorAll(\':lang("*-CH")\').length', '5');
 
     debug('');  
 
     shouldBe('document.querySelectorAll(":lang(a)").length', '2');
     shouldBe('document.querySelectorAll(":lang(a-\\\\*)").length', '1');
-    shouldBe('document.querySelectorAll(":lang(*-fr-\\\\*)").length', '2');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-lang)").length', '2');   
+    shouldBe('document.querySelectorAll(\':lang("*-fr-\\\\*\")\').length', '2');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-lang\")\').length', '2');   
 
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-aa-bb-cc-dd)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-bb-cc-dd)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-cc-dd)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-\\\\*-dd)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-\\\\*-\\\\*)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-aa-\\\\*-cc-\\\\*)").length', '3');
-    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-bb-\\\\*)").length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-aa-bb-cc-dd")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-\\\\*-bb-cc-dd")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-\\\\*-\\\\*-cc-dd")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-\\\\*-\\\\*-\\\\*-dd")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-\\\\*-\\\\*-\\\\*-\\\\*\")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-aa-\\\\*-cc-\\\\*\")\').length', '3');
+    shouldBe('document.querySelectorAll(\':lang("*-\\\\*-\\\\*-bb-\\\\*")\').length', '3');
 
     shouldBe('document.querySelectorAll(":lang(fooÉ)").length', '1');
     shouldBe('document.querySelectorAll(":lang(fOOÉ)").length', '1');
