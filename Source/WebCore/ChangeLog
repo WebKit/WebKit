@@ -1,5 +1,38 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r179933. <rdar://problem/19812926>
+
+    2015-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+            URL::setUser and URL::setPass don't percent encode
+            https://bugs.webkit.org/show_bug.cgi?id=141453
+            rdar://problem/14844503&16551802&19623145
+
+            Reviewed by Darin Adler.
+
+            Tests: fast/url/url-credentials-escaping.html
+                   http/tests/xmlhttprequest/basic-auth-credentials-escaping.html
+
+            Start adding some code that performs escaping in a way that matches the URL Standard.
+            Right now, it's only used where we failed to do any escaping at all, and over time,
+            we'll be moving towards a new implementation.
+
+            * html/URLUtils.h:
+            (WebCore::URLUtils<T>::username):
+            (WebCore::URLUtils<T>::password):
+            * platform/URL.cpp:
+            (WebCore::isSchemeFirstChar):
+            (WebCore::URL::user):
+            (WebCore::URL::pass):
+            (WebCore::URL::encodedUser):
+            (WebCore::URL::encodedPass):
+            (WebCore::URL::setUser):
+            (WebCore::URL::setPass):
+            (WebCore::encodeWithURLEscapeSequences):
+            * platform/URL.h:
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179877. <rdar://problem/19850766>
 
     2015-02-07  Zalan Bujtas  <zalan@apple.com>

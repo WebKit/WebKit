@@ -1,5 +1,31 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r179933. <rdar://problem/19812926>
+
+    2015-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+            URL::setUser and URL::setPass don't percent encode
+            https://bugs.webkit.org/show_bug.cgi?id=141453
+            rdar://problem/14844503&16551802&19623145
+
+            Reviewed by Darin Adler.
+
+            * fast/url/url-credentials-escaping-expected.txt: Added.
+            * fast/url/url-credentials-escaping.html: Added.
+            This change is most directly testable via URL API.
+
+            * http/tests/xmlhttprequest/basic-auth-credentials-escaping-expected.txt: Added.
+            * http/tests/xmlhttprequest/basic-auth-credentials-escaping.html: Added.
+            Verify that this doesn't break XMLHttpRequest authentication.
+
+            * fast/dom/DOMURL/invalid-url-getters-expected.txt: Removed.
+            * fast/dom/DOMURL/invalid-url-getters.html: Removed.
+            * fast/dom/DOMURL/url-origin-expected.txt:
+            * fast/dom/DOMURL/url-origin.html:
+            Removed tests for invalid URLs, there is no such thing with URL API.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179877. <rdar://problem/19850766>
 
     2015-02-07  Zalan Bujtas  <zalan@apple.com>
