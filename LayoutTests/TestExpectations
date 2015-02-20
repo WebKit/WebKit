@@ -135,3 +135,6 @@ webkit.org/b/134769 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [
 webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
+
+# The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
+webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]

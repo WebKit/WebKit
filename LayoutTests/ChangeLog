@@ -1,5 +1,24 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179955.
+
+    2015-02-11  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (iOS 8): PDFs embedded in <object>/<embed> tag don't load at all
+            https://bugs.webkit.org/show_bug.cgi?id=141457
+            <rdar://problem/18221851>
+
+            Reviewed by Alexey Proskuryakov.
+
+            * TestExpectations:
+            * fast/replaced/pdf-as-object-and-embed-expected.html: Added.
+            * fast/replaced/pdf-as-object-and-embed.html: Added.
+            * platform/ios-simulator-wk2/TestExpectations:
+            Add a test that ensures that WebKit2 on iOS treats <object>, <embed>,
+            and <img> the same when rendering a PDF.
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r179877.
 
     2015-02-07  Zalan Bujtas  <zalan@apple.com>

@@ -1482,6 +1482,12 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
 
+#if PLATFORM(IOS)
+    // iOS can render PDF in <object>/<embed> via PDFDocumentImage.
+    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType))
+        return ObjectContentImage;
+#endif
+
     return ObjectContentNone;
 }
 
