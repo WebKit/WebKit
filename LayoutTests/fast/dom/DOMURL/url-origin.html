@@ -5,9 +5,6 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var invalidURL = new URL("http://www.example.com/bar")
-invalidURL.username = "@@";
-
 var cases = [
     new URL("http://example.com/foo/bar"),
     new URL("HTTP://example.com/foo/bar"),
@@ -15,7 +12,6 @@ var cases = [
     new URL("ftp://example.com/ttt?ggg"),
     new URL("file:///home/abarth"),
     new URL("data:text/html,<b>foo</b>"),
-    invalidURL
 ];
 
 window.onload = function(e)
