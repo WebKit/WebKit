@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,46 +48,49 @@ WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
 };
 
 WebInspector.ScriptSyntaxTree.NodeType = {
-    AssignmentExpression: "assignment-expression",
-    ArrayExpression: "expression",
-    BlockStatement: "block-statement",
-    BinaryExpression: "binary-expression",
-    BreakStatement: "break-statement",
-    CallExpression: "call-expression",
-    CatchClause: "catch-clause",
-    ConditionalExpression: "conditional-expression",
-    ContinueStatement: "continue-statement",
-    DoWhileStatement: "do-while-statement",
-    DebuggerStatement: "debugger-statement",
-    EmptyStatement: "empty-statement",
-    ExpressionStatement: "expression-statement",
-    ForStatement: "for-statement",
-    ForInStatement: "for-in-statement",
-    FunctionDeclaration: "function-declaration",
-    FunctionExpression: "function-expression",
-    Identifier: "identifier",
-    IfStatement: "if-statement",
-    Literal: "literal",
-    LabeledStatement: "labeled-statement",
-    LogicalExpression: "logical-expression",
-    MemberExpression: "member-expression",
-    NewExpression: "new-expression",
-    ObjectExpression: "objectExpression",
-    Program: "program",
-    Property: "property",
-    ReturnStatement: "return-statement",
-    SequenceExpression: "sequence-expression",
-    SwitchStatement: "switch-statement",
-    SwitchCase: "switch-case",
-    ThisExpression: "this-expression",
-    ThrowStatement: "throw-statement",
-    TryStatement: "try-statement",
-    UnaryExpression: "unary-expression",
-    UpdateExpression: "update-expression",
-    VariableDeclaration: "variable-declaration",
-    VariableDeclarator: "variable-declarator",
-    WhileStatement: "while-statement",
-    WithStatement: "with-statement"
+    AssignmentExpression: Symbol("assignment-expression"),
+    ArrayExpression: Symbol("array-expression"),
+    ArrayPattern: Symbol("array-pattern"),
+    BlockStatement: Symbol("block-statement"),
+    BinaryExpression: Symbol("binary-expression"),
+    BreakStatement: Symbol("break-statement"),
+    CallExpression: Symbol("call-expression"),
+    CatchClause: Symbol("catch-clause"),
+    ConditionalExpression: Symbol("conditional-expression"),
+    ContinueStatement: Symbol("continue-statement"),
+    DoWhileStatement: Symbol("do-while-statement"),
+    DebuggerStatement: Symbol("debugger-statement"),
+    EmptyStatement: Symbol("empty-statement"),
+    ExpressionStatement: Symbol("expression-statement"),
+    ForStatement: Symbol("for-statement"),
+    ForInStatement: Symbol("for-in-statement"),
+    ForOfStatement: Symbol("for-of-statement"),
+    FunctionDeclaration: Symbol("function-declaration"),
+    FunctionExpression: Symbol("function-expression"),
+    Identifier: Symbol("identifier"),
+    IfStatement: Symbol("if-statement"),
+    Literal: Symbol("literal"),
+    LabeledStatement: Symbol("labeled-statement"),
+    LogicalExpression: Symbol("logical-expression"),
+    MemberExpression: Symbol("member-expression"),
+    NewExpression: Symbol("new-expression"),
+    ObjectExpression: Symbol("object-expression"),
+    ObjectPattern: Symbol("object-pattern"),
+    Program: Symbol("program"),
+    Property: Symbol("property"),
+    ReturnStatement: Symbol("return-statement"),
+    SequenceExpression: Symbol("sequence-expression"),
+    SwitchStatement: Symbol("switch-statement"),
+    SwitchCase: Symbol("switch-case"),
+    ThisExpression: Symbol("this-expression"),
+    ThrowStatement: Symbol("throw-statement"),
+    TryStatement: Symbol("try-statement"),
+    UnaryExpression: Symbol("unary-expression"),
+    UpdateExpression: Symbol("update-expression"),
+    VariableDeclaration: Symbol("variable-declaration"),
+    VariableDeclarator: Symbol("variable-declarator"),
+    WhileStatement: Symbol("while-statement"),
+    WithStatement: Symbol("with-statement")
 };
 
 WebInspector.ScriptSyntaxTree.prototype = {
@@ -229,12 +232,14 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 allRequestNodes.push(node);
                 break;
             case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
-                allRequests.push({
-                    typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
-                    sourceID: sourceID,
-                    divot: node.id.range[0]
-                });
-                allRequestNodes.push(node);
+                for (var identifier of this.gatherIdentifiersInVariableDeclaration(node)) {
+                    allRequests.push({
+                        typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
+                        sourceID: sourceID,
+                        divot: identifier.range[0]
+                    });
+                    allRequestNodes.push(identifier);
+                }
                 break;
             }
         }
@@ -263,6 +268,38 @@ WebInspector.ScriptSyntaxTree.prototype = {
         RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
     },
 
+    gatherIdentifiersInVariableDeclaration: function (node) {
+        function gatherIdentifiers(node) 
+        {
+            switch (node.type) {
+                case WebInspector.ScriptSyntaxTree.NodeType.Identifier:
+                    return [node];
+                case WebInspector.ScriptSyntaxTree.NodeType.Property:
+                    return gatherIdentifiers(node.value);
+                case WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern:
+                    var identifiers = [];
+                    for (var property of node.properties) {
+                        for (var identifier of gatherIdentifiers(property))
+                            identifiers.push(identifier);
+                    }
+                    return identifiers;
+                case WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern:
+                    var identifiers = [];
+                    for (var element of node.elements) {
+                        for (var identifier of gatherIdentifiers(element))
+                            identifiers.push(identifier);
+                    }
+                    return identifiers;
+                default:
+                    console.assert(false, "Unexecpted node type in variable declarator: " + node.type);
+                    return [];
+            }
+        }
+
+        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+        return gatherIdentifiers(node.id);
+    },
+
     // Private
 
     _defaultParserState: function() 
@@ -288,6 +325,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
             this._recurse(node.right, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression:
+        case WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern:
             callback(node, state);
             this._recurseArray(node.elements, callback, state);
             break;
@@ -341,6 +379,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
             this._recurse(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.ForInStatement:
+        case WebInspector.ScriptSyntaxTree.NodeType.ForOfStatement:
             callback(node, state);
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
@@ -391,6 +430,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
             this._recurseArray(node.arguments, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression:
+        case WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern:
             callback(node, state);
             this._recurseArray(node.properties, callback, state);
             break;
@@ -504,6 +544,12 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
             };
             break;
+        case "ArrayPattern":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern,
+                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
+            };
+            break;
         case "BlockStatement":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.BlockStatement,
@@ -592,6 +638,14 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
+        case "ForOfStatement":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ForOfStatement,
+                left: this._createInternalSyntaxTree(node.left),
+                right: this._createInternalSyntaxTree(node.right),
+                body: this._createInternalSyntaxTree(node.body)
+            };
+            break;
         case "FunctionDeclaration":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration,
@@ -664,6 +718,12 @@ WebInspector.ScriptSyntaxTree.prototype = {
         case "ObjectExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression,
+                properties: node.properties.map(this._createInternalSyntaxTree.bind(this))
+            };
+            break;
+        case "ObjectPattern":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern,
                 properties: node.properties.map(this._createInternalSyntaxTree.bind(this))
             };
             break;

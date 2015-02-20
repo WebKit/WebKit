@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,6 @@ WebInspector.TypeTokenAnnotator.prototype = {
                 return;
 
             allNodesInRange.forEach(this._insertTypeTokensForEachNode, this);
-            allNodesInRange.forEach(this._updateTypeTokensForEachNode, this);
 
             var totalTime = Date.now() - startTime;
             var timeoutTime = Math.min(Math.max(7500, totalTime), 8 * totalTime);
@@ -97,6 +96,9 @@ WebInspector.TypeTokenAnnotator.prototype = {
             for (var param of node.params) {
                 if (!param.attachments.__typeToken && param.attachments.types && param.attachments.types.isValid)
                     this._insertToken(param.range[0], param, false, WebInspector.TypeTokenView.TitleType.Variable, param.name);
+
+                if (param.attachments.__typeToken)
+                    param.attachments.__typeToken.update(param.attachments.types);
             }
 
             // If a function does not have an explicit return type, then don't show a return type unless we think it's a constructor.
@@ -106,13 +108,22 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
             if (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !WebInspector.TypeSet.fromPayload(functionReturnType).isContainedIn(WebInspector.TypeSet.TypeBit.Undefined)) {
                 var functionName = node.id ? node.id.name : null;
-                this._insertToken(node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0], node,
-                    true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);
+                this._insertToken(node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0], node, true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);
             }
+
+            if (node.attachments.__typeToken)
+                node.attachments.__typeToken.update(node.attachments.returnTypes);
+
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
-            if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.isValid)
-                this._insertToken(node.id.range[0], node, false, WebInspector.TypeTokenView.TitleType.Variable, node.id.name);
+            var identifiers = scriptSyntaxTree.gatherIdentifiersInVariableDeclaration(node);
+            for (identifier of identifiers) {
+                if (!identifier.attachments.__typeToken && identifier.attachments.types && identifier.attachments.types.isValid)
+                    this._insertToken(identifier.range[0], identifier, false, WebInspector.TypeTokenView.TitleType.Variable, identifier.name);
+
+                if (identifier.attachments.__typeToken)
+                    identifier.attachments.__typeToken.update(identifier.attachments.types);
+            }
 
             break;
         }
@@ -141,25 +152,6 @@ WebInspector.TypeTokenAnnotator.prototype = {
         node.attachments.__typeToken = typeToken;
         this._typeTokenNodes.push(node);
         this._typeTokenBookmarks.push(bookmark);
-    },
-
-    _updateTypeTokensForEachNode: function(node)
-    {
-        switch (node.type) {
-        case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
-        case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
-            node.params.forEach(function(param) {
-                if (param.attachments.__typeToken)
-                    param.attachments.__typeToken.update(param.attachments.types);
-            });
-            if (node.attachments.__typeToken)
-                node.attachments.__typeToken.update(node.attachments.returnTypes);
-            break;
-        case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
-            if (node.attachments.__typeToken)
-                node.attachments.__typeToken.update(node.attachments.types);
-            break;
-        }
     },
 
     _translateToOffsetAfterFunctionParameterList: function(node, offset, sourceString)

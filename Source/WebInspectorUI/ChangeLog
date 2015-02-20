@@ -1,3 +1,38 @@
+2015-02-19  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: merge in upstream Esprima to support parsing more of ES6
+        https://bugs.webkit.org/show_bug.cgi?id=141215
+
+        Reviewed by Timothy Hatcher.
+
+        This patch merges in a new esprima that has some ES6 support.
+        Specifically, the ES6 support ScriptSyntaxTree now has is:
+        - ForOf loops
+        - Object destructuring
+        - Array destructuring
+
+        ScriptSyntaxTree now uses Symbols for identifying AST node types
+        instead of strings. This will prevent any direct usage of strings 
+        for node types instead of a direct property access off the 
+        ScriptSyntaxTree constructor.
+
+        This patch also does some gardening work: 
+        - TypeTokenAnnotator only walks over the incoming type information
+          data once to be more efficient. 
+        - TypeTokenView is now smarter about updating its associated DOM node
+          only if its display name has changed.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeTokensForEachNode):
+        * UserInterface/External/Esprima/esprima.js:
+        (.):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.gatherIdentifiersInVariableDeclaration):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView.prototype.update):
+
 2015-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use of Array.from for NodeList/Arguments to Array conversion

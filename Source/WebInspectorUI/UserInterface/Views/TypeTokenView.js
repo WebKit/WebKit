@@ -93,6 +93,9 @@ WebInspector.TypeTokenView.prototype = {
         this._typeSet = WebInspector.TypeSet.fromPayload(this._types);
 
         var title = this._displayTypeName();
+        if (title === this.element.textContent)
+            return;
+
         this.element.textContent = title;
         var hashString = title[title.length - 1] === "?" ? title.slice(0, title.length - 1) : title;
 

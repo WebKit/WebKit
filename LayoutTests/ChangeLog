@@ -1,3 +1,13 @@
+2015-02-19  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: merge in upstream Esprima to support parsing more of ES6
+        https://bugs.webkit.org/show_bug.cgi?id=141215
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+
 2015-02-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Updating more tests after r177774

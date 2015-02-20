@@ -14,6 +14,7 @@ passed EmptyStatement
 passed ExpressionStatement
 passed ForStatement
 passed ForInStatement
+passed ForOfStatement
 passed FunctionDeclaration
 passed FunctionExpression
 passed Identifier
