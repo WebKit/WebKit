@@ -416,7 +416,7 @@ InspectorBackend.Command.prototype = {
     promise: function()
     {
         var instance = this._instance;
-        var promiseArguments = Array.prototype.slice.call(arguments);
+        var promiseArguments = Array.from(arguments);
         return new Promise(function(resolve, reject) {
             function convertToPromiseCallback(error, payload) {
                 return error ? reject(error) : resolve(payload);
@@ -443,7 +443,7 @@ InspectorBackend.Command.prototype = {
     _invokeWithArguments: function()
     {
         var instance = this._instance;
-        var commandArguments = Array.prototype.slice.call(arguments);
+        var commandArguments = Array.from(arguments);
         var callback = typeof commandArguments.lastValue === "function" ? commandArguments.pop() : null;
 
         var parameters = {};

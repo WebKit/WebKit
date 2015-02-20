@@ -583,7 +583,7 @@ WebInspector.LogContentView.prototype = {
 
     _allMessages: function()
     {
-        return Array.prototype.slice.call(this.messagesElement.querySelectorAll(".console-message, .console-user-command"));
+        return Array.from(this.messagesElement.querySelectorAll(".console-message, .console-user-command"));
     },
 
     _unfilteredMessages: function()

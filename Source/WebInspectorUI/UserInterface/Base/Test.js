@@ -264,6 +264,6 @@ for (var logType of ["log", "error", "info"]) {
     // Redirect console methods to log messages into the test page's DOM.
     InspectorTest._originalConsoleMethods[logType] = console[logType].bind(console);
     console[logType] = function() {
-        InspectorTest.addResult(logType.toUpperCase() + ": " + Array.prototype.slice.call(arguments).toString());
+        InspectorTest.addResult(logType.toUpperCase() + ": " + Array.from(arguments).toString());
     };
 }
