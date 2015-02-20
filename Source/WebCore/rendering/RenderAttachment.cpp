@@ -29,6 +29,7 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "FloatRect.h"
+#include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
 #include "PaintInfo.h"
 
@@ -50,9 +51,18 @@ void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 {
     // FIXME: Implement
 
+    RefPtr<Range> selectionRange = frame().selection().selection().firstRange();
+    bool selected = selectionRange && selectionRange->intersectsNode(&nodeForNonAnonymous(), ASSERT_NO_EXCEPTION);
+    bool focused = frame().selection().isFocusedAndActive() && document().focusedElement() == &attachmentElement();
+
     paintInfo.context->save();
-    paintInfo.context->fillRect(FloatRect(paintOffset.x(), paintOffset.y(), 200, 200), Color::cyan, ColorSpaceSRGB);
+    paintInfo.context->fillRect(FloatRect(paintOffset.x(), paintOffset.y(), 200, 200), selected || focused ? Color::cyan : Color::lightGray, ColorSpaceSRGB);
     paintInfo.context->restore();
+}
+
+void RenderAttachment::focusChanged()
+{
+    repaint();
 }
 
 } // namespace WebCore

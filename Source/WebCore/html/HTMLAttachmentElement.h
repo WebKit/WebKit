@@ -40,6 +40,9 @@ private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
+
+    virtual bool isFocusable() const override { return true; }
+    virtual void setFocus(bool shouldBeFocused) override;
 };
 
 } // namespace WebCore

@@ -50,6 +50,20 @@ RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(Ref<Render
 {
     return createRenderer<RenderAttachment>(*this, WTF::move(style));
 }
+    
+void HTMLAttachmentElement::setFocus(bool shouldBeFocused)
+{
+    if (focused() == shouldBeFocused)
+        return;
+    
+    HTMLElement::setFocus(shouldBeFocused);
+    
+    auto* renderer = this->renderer();
+    if (!is<RenderAttachment>(renderer))
+        return;
+    
+    downcast<RenderAttachment>(*renderer).focusChanged();
+}
 
 } // namespace WebCore
 
