@@ -127,32 +127,39 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCacheStorage::Entry& storageEntry, const WebCore::ResourceRequest& request)
+static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCacheStorage::Entry& storageEntry, const WebCore::ResourceRequest& request, NetworkCache::CachedEntryReuseFailure& failure)
 {
     NetworkCacheDecoder decoder(storageEntry.header.data(), storageEntry.header.size());
 
     WebCore::ResourceResponse cachedResponse;
     if (!decoder.decode(cachedResponse)) {
         LOG(NetworkCache, "(NetworkProcess) response decoding failed\n");
+        failure = NetworkCache::CachedEntryReuseFailure::Other;
         return nullptr;
     }
 
     bool hasVaryingRequestHeaders;
-    if (!decoder.decode(hasVaryingRequestHeaders))
+    if (!decoder.decode(hasVaryingRequestHeaders)) {
+        failure = NetworkCache::CachedEntryReuseFailure::Other;
         return nullptr;
+    }
 
     if (hasVaryingRequestHeaders) {
         Vector<std::pair<String, String>> varyingRequestHeaders;
-        if (!decoder.decode(varyingRequestHeaders))
+        if (!decoder.decode(varyingRequestHeaders)) {
+            failure = NetworkCache::CachedEntryReuseFailure::Other;
             return nullptr;
+        }
 
         if (!verifyVaryingRequestHeaders(varyingRequestHeaders, request)) {
             LOG(NetworkCache, "(NetworkProcess) varying header mismatch\n");
+            failure = NetworkCache::CachedEntryReuseFailure::VaryingHeaderMismatch;
             return nullptr;
         }
     }
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
+        failure = NetworkCache::CachedEntryReuseFailure::Other;
         return nullptr;
     }
 
@@ -166,8 +173,10 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     if (needsRevalidation) {
         bool hasValidatorFields = cachedResponse.hasCacheValidatorFields();
         LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d isExpired=%d age=%f lifetime=%f", isExpired, hasValidatorFields, age, lifetime);
-        if (!hasValidatorFields)
+        if (!hasValidatorFields) {
+            failure = NetworkCache::CachedEntryReuseFailure::MissingValidatorFields;
             return nullptr;
+        }
     }
 
     auto entry = std::make_unique<NetworkCache::Entry>();
@@ -190,20 +199,20 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     return entry;
 }
 
-static bool canRetrieve(const WebCore::ResourceRequest& request)
+static NetworkCache::RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
 {
     if (!request.url().protocolIsInHTTPFamily())
-        return false;
+        return NetworkCache::RetrieveDecision::NoDueToProtocol;
     // FIXME: Support HEAD and OPTIONS requests.
     if (request.httpMethod() != "GET")
-        return false;
+        return NetworkCache::RetrieveDecision::NoDueToHTTPMethod;
     // FIXME: We should be able to validate conditional requests using cache.
     if (request.isConditional())
-        return false;
+        return NetworkCache::RetrieveDecision::NoDueToConditionalRequest;
     if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData)
-        return false;
+        return NetworkCache::RetrieveDecision::NoDueToReloadIgnoringCache;
 
-    return true;
+    return NetworkCache::RetrieveDecision::Yes;
 }
 
 static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
@@ -225,9 +234,10 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
 
     NetworkCacheKey storageKey = makeCacheKey(originalRequest);
-    if (!canRetrieve(originalRequest)) {
+    RetrieveDecision retrieveDecision = canRetrieve(originalRequest);
+    if (retrieveDecision != RetrieveDecision::Yes) {
         if (m_statistics)
-            m_statistics->recordNotUsingCacheForRequest(webPageID, storageKey, originalRequest);
+            m_statistics->recordNotUsingCacheForRequest(webPageID, storageKey, originalRequest, retrieveDecision);
 
         completionHandler(nullptr);
         return;
@@ -246,10 +256,11 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
             completionHandler(nullptr);
             return false;
         }
-        auto decodedEntry = decodeStorageEntry(*entry, originalRequest);
+        CachedEntryReuseFailure failure = CachedEntryReuseFailure::None;
+        auto decodedEntry = decodeStorageEntry(*entry, originalRequest, failure);
         bool success = !!decodedEntry;
         if (m_statistics)
-            m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, success);
+            m_statistics->recordRetrievedCachedEntry(webPageID, storageKey, originalRequest, failure);
 
 #if !LOG_DISABLED
         auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
@@ -260,19 +271,19 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
     });
 }
 
-static bool canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
+static NetworkCache::StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP()) {
         LOG(NetworkCache, "(NetworkProcess) not HTTP");
-        return false;
+        return NetworkCache::StoreDecision::NoDueToProtocol;
     }
     if (originalRequest.httpMethod() != "GET") {
         LOG(NetworkCache, "(NetworkProcess) method %s", originalRequest.httpMethod().utf8().data());
-        return false;
+        return NetworkCache::StoreDecision::NoDueToHTTPMethod;
     }
     if (response.isAttachment()) {
         LOG(NetworkCache, "(NetworkProcess) attachment");
-        return false;
+        return NetworkCache::StoreDecision::NoDueToAttachmentResponse;
     }
 
     switch (response.httpStatusCode()) {
@@ -285,14 +296,14 @@ static bool canStore(const WebCore::ResourceRequest& originalRequest, const WebC
     case 410: // Gone
         if (response.cacheControlContainsNoStore()) {
             LOG(NetworkCache, "(NetworkProcess) Cache-control:no-store");
-            return false;
+            return NetworkCache::StoreDecision::NoDueToNoStoreResponse;
         }
-        return true;
+        return NetworkCache::StoreDecision::Yes;
     default:
         LOG(NetworkCache, "(NetworkProcess) status code %d", response.httpStatusCode());
     }
 
-    return false;
+    return NetworkCache::StoreDecision::NoDueToHTTPStatusCode;
 }
 
 void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
@@ -302,12 +313,15 @@ void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const 
 
     LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", originalRequest.url().string().latin1().data(), originalRequest.cachePartition().latin1().data());
 
-    if (!canStore(originalRequest, response)) {
+    auto key = makeCacheKey(originalRequest);
+    StoreDecision storeDecision = canStore(originalRequest, response);
+    if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store");
+        if (m_statistics)
+            m_statistics->recordNotCachingResponse(key, storeDecision);
         return;
     }
 
-    auto key = makeCacheKey(originalRequest);
     auto storageEntry = encodeStorageEntry(originalRequest, response, WTF::move(responseData));
 
     m_storage->store(key, storageEntry, [completionHandler](bool success, const NetworkCacheStorage::Data& bodyData) {

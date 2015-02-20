@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include "NetworkCache.h"
 #include "NetworkCacheKey.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/SQLiteDatabase.h>
@@ -44,9 +45,10 @@ public:
 
     void clear();
 
-    void recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&);
+    void recordNotCachingResponse(const NetworkCacheKey&, NetworkCache::StoreDecision);
+    void recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&, NetworkCache::RetrieveDecision);
     void recordRetrievalFailure(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&);
-    void recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&, bool success);
+    void recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey&, const WebCore::ResourceRequest&, NetworkCache::CachedEntryReuseFailure);
 
 private:
     explicit NetworkCacheStatistics(const String& databasePath);
@@ -57,7 +59,7 @@ private:
 
     void addHashToDatabase(const String& hash);
 
-    typedef std::function<void (bool wasEverRequested)> RequestedCompletionHandler;
+    typedef std::function<void (bool wasEverRequested, const Optional<NetworkCache::StoreDecision>&)> RequestedCompletionHandler;
     void queryWasEverRequested(const String&, const RequestedCompletionHandler&);
     void markAsRequested(const String& hash);
 

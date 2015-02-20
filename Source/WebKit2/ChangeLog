@@ -1,3 +1,44 @@
+2015-02-20  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add more detailed diagnostic logging for measuring network cache efficacy
+        https://bugs.webkit.org/show_bug.cgi?id=141803
+        <rdar://problem/19632080>
+
+        Reviewed by Antti Koivisto.
+
+        Add more detailed diagnostic logging for measuring network cache
+        efficacy.
+
+        We want to know the reason the network cache is being by-passed, why
+        the network cache decided not to cache a response and why it cannot
+        reuse a cache entry.
+
+        This patch adds a new "UncachedReason" table to the SQLite database
+        to store the reason the network cache is deciding not to cache a
+        given response. This information is used later, when the resource is
+        requested again to log the reason why the request cannot be satistied
+        by the cache.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::decodeStorageEntry):
+        (WebKit::canRetrieve):
+        (WebKit::NetworkCache::retrieve):
+        (WebKit::canStore):
+        (WebKit::NetworkCache::store):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm:
+        (WebKit::NetworkCacheStatistics::initialize):
+        (WebKit::NetworkCacheStatistics::recordNotCachingResponse):
+        (WebKit::retrieveDecisionToDiagnosticKey):
+        (WebKit::NetworkCacheStatistics::recordNotUsingCacheForRequest):
+        (WebKit::storeDecisionToDiagnosticKey):
+        (WebKit::NetworkCacheStatistics::recordRetrievalFailure):
+        (WebKit::cachedEntryReuseFailureToDiagnosticKey):
+        (WebKit::NetworkCacheStatistics::recordRetrievedCachedEntry):
+        (WebKit::NetworkCacheStatistics::queryWasEverRequested):
+        (WebKit::NetworkCacheStatistics::clear):
+
 2015-02-20  Anders Carlsson  <andersca@apple.com>
 
         API::String should just be a simple wrapper for WTF strings

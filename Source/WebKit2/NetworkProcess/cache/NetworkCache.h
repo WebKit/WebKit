@@ -47,6 +47,30 @@ class NetworkCache {
     WTF_MAKE_NONCOPYABLE(NetworkCache);
     friend class WTF::NeverDestroyed<NetworkCache>;
 public:
+    enum class RetrieveDecision {
+        Yes,
+        NoDueToProtocol,
+        NoDueToHTTPMethod,
+        NoDueToConditionalRequest,
+        NoDueToReloadIgnoringCache
+    };
+
+    enum class StoreDecision {
+        Yes,
+        NoDueToProtocol,
+        NoDueToHTTPMethod,
+        NoDueToAttachmentResponse,
+        NoDueToNoStoreResponse,
+        NoDueToHTTPStatusCode
+    };
+
+    enum class CachedEntryReuseFailure {
+        None,
+        VaryingHeaderMismatch,
+        MissingValidatorFields,
+        Other,
+    };
+
     static NetworkCache& singleton();
 
     bool initialize(const String& cachePath, bool enableEfficacyLogging);

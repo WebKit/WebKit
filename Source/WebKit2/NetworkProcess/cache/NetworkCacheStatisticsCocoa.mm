@@ -110,6 +110,8 @@ void NetworkCacheStatistics::initialize(const String& databasePath)
         }
 
         executeSQLCommand(m_database, ASCIILiteral("CREATE TABLE IF NOT EXISTS AlreadyRequested (hash TEXT PRIMARY KEY)"));
+        executeSQLCommand(m_database, ASCIILiteral("CREATE TABLE IF NOT EXISTS UncachedReason (hash TEXT PRIMARY KEY, reason INTEGER)"));
+
         WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT count(*) FROM AlreadyRequested"));
         if (statement.prepareAndStep() != WebCore::SQLResultRow) {
             LOG_ERROR("Network cache statistics: Failed to count the number of rows in AlreadyRequested table");
@@ -168,42 +170,120 @@ void NetworkCacheStatistics::shrinkIfNeeded()
     });
 }
 
-void NetworkCacheStatistics::recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
+void NetworkCacheStatistics::recordNotCachingResponse(const NetworkCacheKey& key, NetworkCache::StoreDecision storeDecision)
 {
+    ASSERT(storeDecision != NetworkCache::StoreDecision::Yes);
+
+    StringCapture hashCapture(key.hashAsString());
+    dispatch_async(m_backgroundIOQueue.get(), [this, hashCapture, storeDecision] {
+        if (!m_database.isOpen())
+            return;
+        WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"));
+        if (statement.prepare() != WebCore::SQLResultOk)
+            return;
+
+        statement.bindText(1, hashCapture.string());
+        statement.bindInt(2, static_cast<int>(storeDecision));
+        executeSQLStatement(statement);
+    });
+}
+
+static String retrieveDecisionToDiagnosticKey(NetworkCache::RetrieveDecision retrieveDecision)
+{
+    switch (retrieveDecision) {
+    case NetworkCache::RetrieveDecision::NoDueToProtocol:
+        return WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey();
+    case NetworkCache::RetrieveDecision::NoDueToHTTPMethod:
+        return WebCore::DiagnosticLoggingKeys::unsupportedHTTPMethodKey();
+    case NetworkCache::RetrieveDecision::NoDueToConditionalRequest:
+        return WebCore::DiagnosticLoggingKeys::isConditionalRequestKey();
+    case NetworkCache::RetrieveDecision::NoDueToReloadIgnoringCache:
+        return WebCore::DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey();
+    case NetworkCache::RetrieveDecision::Yes:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return emptyString();
+}
+
+void NetworkCacheStatistics::recordNotUsingCacheForRequest(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request, NetworkCache::RetrieveDecision retrieveDecision)
+{
+    ASSERT(retrieveDecision != NetworkCache::RetrieveDecision::Yes);
+
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasEverRequested) {
+    queryWasEverRequested(hash, [this, hash, requestURL, webPageID, retrieveDecision](bool wasEverRequested, const Optional<NetworkCache::StoreDecision>&) {
         if (wasEverRequested) {
-            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously requested but is not handled by the cache", webPageID, requestURL.string().ascii().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::unhandledRequestFailureKey());
+            String diagnosticKey = retrieveDecisionToDiagnosticKey(retrieveDecision);
+            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously requested but we are not using the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
+            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusedKey(), diagnosticKey);
         } else
             markAsRequested(hash);
     });
+}
+
+static String storeDecisionToDiagnosticKey(NetworkCache::StoreDecision storeDecision)
+{
+    switch (storeDecision) {
+    case NetworkCache::StoreDecision::NoDueToProtocol:
+        return WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey();
+    case NetworkCache::StoreDecision::NoDueToHTTPMethod:
+        return WebCore::DiagnosticLoggingKeys::unsupportedHTTPMethodKey();
+    case NetworkCache::StoreDecision::NoDueToAttachmentResponse:
+        return WebCore::DiagnosticLoggingKeys::isAttachmentKey();
+    case NetworkCache::StoreDecision::NoDueToNoStoreResponse:
+        return WebCore::DiagnosticLoggingKeys::cacheControlNoStoreKey();
+    case NetworkCache::StoreDecision::NoDueToHTTPStatusCode:
+        return WebCore::DiagnosticLoggingKeys::uncacheableStatusCodeKey();
+    case NetworkCache::StoreDecision::Yes:
+        // It was stored but could not be retrieved so it must have been pruned from the cache.
+        return WebCore::DiagnosticLoggingKeys::noLongerInCacheKey();
+    }
+    return String();
 }
 
 void NetworkCacheStatistics::recordRetrievalFailure(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request)
 {
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested) {
+    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested, const Optional<NetworkCache::StoreDecision>& storeDecision) {
         if (wasPreviouslyRequested) {
-            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously cached but is no longer in the cache", webPageID, requestURL.string().ascii().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::noLongerInCacheFailureKey());
+            String diagnosticKey = storeDecisionToDiagnosticKey(storeDecision.value());
+            LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously request but is not in the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
+            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::notInCacheKey(), diagnosticKey);
         } else
             markAsRequested(hash);
     });
 }
 
-void NetworkCacheStatistics::recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request, bool success)
+static String cachedEntryReuseFailureToDiagnosticKey(NetworkCache::CachedEntryReuseFailure failure)
+{
+    switch (failure) {
+    case NetworkCache::CachedEntryReuseFailure::VaryingHeaderMismatch:
+        return WebCore::DiagnosticLoggingKeys::varyingHeaderMismatchKey();
+    case NetworkCache::CachedEntryReuseFailure::MissingValidatorFields:
+        return WebCore::DiagnosticLoggingKeys::missingValidatorFieldsKey();
+    case NetworkCache::CachedEntryReuseFailure::Other:
+        return WebCore::DiagnosticLoggingKeys::otherKey();
+    case NetworkCache::CachedEntryReuseFailure::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return emptyString();
+}
+
+void NetworkCacheStatistics::recordRetrievedCachedEntry(uint64_t webPageID, const NetworkCacheKey& key, const WebCore::ResourceRequest& request, NetworkCache::CachedEntryReuseFailure failure)
 {
     WebCore::URL requestURL = request.url();
-    if (success) {
+    if (failure == NetworkCache::CachedEntryReuseFailure::None) {
         LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache and is used", webPageID, requestURL.string().ascii().data());
         NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingResultPass);
-    } else {
-        LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but wasn't used", webPageID, requestURL.string().ascii().data());
-        NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryFailureKey());
+        return;
     }
+
+    String diagnosticKey = cachedEntryReuseFailureToDiagnosticKey(failure);
+    LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s is in the cache but wasn't used, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
+    NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryKey(), diagnosticKey);
 }
 
 void NetworkCacheStatistics::markAsRequested(const String& hash)
@@ -230,15 +310,19 @@ void NetworkCacheStatistics::queryWasEverRequested(const String& hash, const Req
     dispatch_async(m_backgroundIOQueue.get(), [this, &query] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
         bool wasAlreadyRequested = false;
+        Optional<NetworkCache::StoreDecision> storeDecision;
         if (m_database.isOpen()) {
-            WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT hash FROM AlreadyRequested WHERE hash=?"));
+            WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT AlreadyRequested.hash, reason FROM AlreadyRequested LEFT OUTER JOIN UncachedReason ON AlreadyRequested.hash=UncachedReason.hash WHERE AlreadyRequested.hash=?"));
             if (statement.prepare() == WebCore::SQLResultOk) {
                 statement.bindText(1, query.hash);
-                wasAlreadyRequested = statement.step() == WebCore::SQLResultRow;
+                if (statement.step() == WebCore::SQLResultRow) {
+                    wasAlreadyRequested = true;
+                    storeDecision = statement.isColumnNull(1) ? NetworkCache::StoreDecision::Yes : static_cast<NetworkCache::StoreDecision>(statement.getColumnInt(1));
+                }
             }
         }
-        dispatch_async(dispatch_get_main_queue(), [this, &query, wasAlreadyRequested] {
-            query.completionHandler(wasAlreadyRequested);
+        dispatch_async(dispatch_get_main_queue(), [this, &query, wasAlreadyRequested, storeDecision] {
+            query.completionHandler(wasAlreadyRequested, storeDecision);
             m_activeQueries.remove(&query);
         });
     });
@@ -249,9 +333,13 @@ void NetworkCacheStatistics::clear()
     ASSERT(RunLoop::isMain());
 
     dispatch_async(m_backgroundIOQueue.get(), [this] {
-        WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
         if (m_database.isOpen()) {
+            WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
+            WebCore::SQLiteTransaction deleteTransaction(m_database);
+            deleteTransaction.begin();
             executeSQLCommand(m_database, ASCIILiteral("DELETE FROM AlreadyRequested"));
+            executeSQLCommand(m_database, ASCIILiteral("DELETE FROM UncachedReason"));
+            deleteTransaction.commit();
             m_approximateEntryCount = 0;
         }
     });
