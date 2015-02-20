@@ -31,8 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-class WorkQueue;
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class SecurityOrigin;

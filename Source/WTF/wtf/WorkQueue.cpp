@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+namespace WTF {
+
 Ref<WorkQueue> WorkQueue::create(const char* name, Type type, QOS qos)
 {
     return adoptRef(*new WorkQueue(name, type, qos));
@@ -39,4 +41,6 @@ WorkQueue::WorkQueue(const char* name, Type type, QOS qos)
 WorkQueue::~WorkQueue()
 {
     platformInvalidate();
+}
+
 }

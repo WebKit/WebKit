@@ -29,6 +29,9 @@
 #include "WorkQueue.h"
 
 #include <gio/gio.h>
+#include <string.h>
+
+namespace WTF {
 
 static const size_t kVisualStudioThreadNameLimit = 31;
 
@@ -112,4 +115,6 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
     ref();
     GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy("[WebKit] WorkQueue::dispatchAfter", WTF::move(function),
         std::chrono::duration_cast<std::chrono::milliseconds>(duration), G_PRIORITY_DEFAULT, [this] { deref(); }, m_eventContext.get());
+}
+
 }

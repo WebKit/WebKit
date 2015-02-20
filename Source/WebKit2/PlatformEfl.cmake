@@ -11,7 +11,6 @@ list(APPEND WebKit2_SOURCES
     Platform/efl/DispatchQueueEfl.cpp
     Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
-    Platform/efl/WorkQueueEfl.cpp
 
     Platform/unix/SharedMemoryUnix.cpp
 

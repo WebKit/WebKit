@@ -110,6 +110,7 @@ set(WTF_HEADERS
     Vector.h
     VectorTraits.h
     WTFThreadData.h
+    WorkQueue.h
     WeakPtr.h
     dtoa.h
 
@@ -184,6 +185,7 @@ set(WTF_SOURCES
     StringPrintStream.cpp
     Threading.cpp
     WTFThreadData.cpp
+    WorkQueue.cpp
     dtoa.cpp
 
     dtoa/bignum-dtoa.cc

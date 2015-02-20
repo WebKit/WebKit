@@ -29,7 +29,7 @@
 #include "Connection.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
-#include "WorkQueue.h"
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

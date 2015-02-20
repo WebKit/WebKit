@@ -27,22 +27,16 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
-#if OS(DARWIN)
-#include <dispatch/dispatch.h>
-#endif
-
 #include <chrono>
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Functional.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
-#include "PlatformProcessIdentifier.h"
+#if OS(DARWIN)
+#include <dispatch/dispatch.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -51,6 +45,8 @@
 #elif PLATFORM(EFL)
 #include <DispatchQueueEfl.h>
 #endif
+
+namespace WTF {
 
 class WorkQueue final : public FunctionDispatcher {
 public:
@@ -66,11 +62,11 @@ public:
         Background
     };
     
-    static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
+    WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     virtual ~WorkQueue();
 
-    virtual void dispatch(std::function<void ()>) override;
-    void dispatchAfter(std::chrono::nanoseconds, std::function<void ()>);
+    WTF_EXPORT_PRIVATE virtual void dispatch(std::function<void ()>) override;
+    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, std::function<void ()>);
 
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
@@ -102,4 +98,8 @@ private:
 #endif
 };
 
-#endif // WorkQueue_h
+}
+
+using WTF::WorkQueue;
+
+#endif

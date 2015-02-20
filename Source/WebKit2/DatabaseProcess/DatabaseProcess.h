@@ -33,8 +33,6 @@
 #include "WebOriginDataManagerSupplement.h"
 #include <wtf/NeverDestroyed.h>
 
-class WorkQueue;
-
 namespace WebKit {
 
 class AsyncTask;

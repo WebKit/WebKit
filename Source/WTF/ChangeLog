@@ -1,3 +1,24 @@
+2015-02-20  Antti Koivisto  <antti@apple.com>
+
+        Move WorkQueue from WK2 to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=141797
+
+        Reviewed by Anders Carlsson.
+
+        It may be useful in WebCore.
+
+        Windows implementation is still missing.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformGTK.cmake:
+        * wtf/WorkQueue.cpp: Copied from Source/WebKit2/Platform/WorkQueue.cpp.
+        * wtf/WorkQueue.h: Copied from Source/WebKit2/Platform/WorkQueue.h.
+        * wtf/cocoa: Added.
+        * wtf/cocoa/WorkQueueCocoa.cpp: Copied from Source/WebKit2/Platform/mac/WorkQueueMac.cpp.
+        * wtf/efl/WorkQueueEfl.cpp: Copied from Source/WebKit2/Platform/efl/WorkQueueEfl.cpp.
+        * wtf/gtk/WorkQueueGtk.cpp: Copied from Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp.
+
 2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Enable bmalloc for EFL port 

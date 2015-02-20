@@ -1,3 +1,30 @@
+2015-02-20  Antti Koivisto  <antti@apple.com>
+
+        Move WorkQueue from WK2 to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=141797
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * DatabaseProcess/DatabaseProcess.h:
+        * Platform/IPC/Connection.h:
+        * Platform/WorkQueue.cpp: Removed.
+        * Platform/WorkQueue.h: Removed.
+        * Platform/efl/WorkQueueEfl.cpp: Removed.
+        * Platform/gtk/WorkQueueGtk.cpp: Removed.
+        * Platform/mac/WorkQueueMac.cpp: Removed.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        * UIProcess/Storage/StorageManager.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2][GTK] Fix the build after r180362

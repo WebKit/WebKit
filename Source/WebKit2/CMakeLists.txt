@@ -181,7 +181,6 @@ set(WebKit2_SOURCES
 
     Platform/Logging.cpp
     Platform/Module.cpp
-    Platform/WorkQueue.cpp
 
     Platform/IPC/ArgumentCoders.cpp
     Platform/IPC/ArgumentDecoder.cpp

@@ -33,11 +33,12 @@
 #include "MessageEncoder.h"
 #include "MessageReceiver.h"
 #include "ProcessType.h"
-#include "WorkQueue.h"
 #include <atomic>
 #include <condition_variable>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
 #if OS(DARWIN)

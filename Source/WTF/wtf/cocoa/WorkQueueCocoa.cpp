@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+namespace WTF {
+
 void WorkQueue::dispatch(std::function<void ()> function)
 {
     ref();
@@ -67,6 +69,8 @@ void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
 #if HAVE(QOS_CLASSES)
     attr = dispatch_queue_attr_make_with_qos_class(attr, dispatchQOSClass(qos), 0);
+#else
+    UNUSED_PARAM(qos);
 #endif
     m_dispatchQueue = dispatch_queue_create(name, attr);
     dispatch_set_context(m_dispatchQueue, this);
@@ -75,4 +79,6 @@ void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
 void WorkQueue::platformInvalidate()
 {
     dispatch_release(m_dispatchQueue);
+}
+
 }

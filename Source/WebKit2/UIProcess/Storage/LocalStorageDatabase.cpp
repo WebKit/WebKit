@@ -27,7 +27,6 @@
 #include "LocalStorageDatabase.h"
 
 #include "LocalStorageDatabaseTracker.h"
-#include "WorkQueue.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
@@ -35,6 +34,7 @@
 #include <WebCore/StorageMap.h>
 #include <WebCore/SuddenTermination.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ProcessLauncher.h"
 
-#include "WorkQueue.h"
-#include <wtf/StdLibExtras.h> 
+#include <wtf/StdLibExtras.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 

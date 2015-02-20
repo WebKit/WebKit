@@ -27,11 +27,11 @@
 #include "LocalStorageDatabaseTracker.h"
 
 #include "LocalStorageDetails.h"
-#include "WorkQueue.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextEncoding.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

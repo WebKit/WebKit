@@ -30,7 +30,6 @@ list(APPEND WebKit2_SOURCES
 
     Platform/gtk/LoggingGtk.cpp
     Platform/gtk/ModuleGtk.cpp
-    Platform/gtk/WorkQueueGtk.cpp
 
     Platform/unix/SharedMemoryUnix.cpp
 
@@ -624,7 +623,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     list(APPEND PluginProcessGTK2_SOURCES
         Platform/Logging.cpp
         Platform/Module.cpp
-        Platform/WorkQueue.cpp
 
         Platform/IPC/ArgumentCoders.cpp
         Platform/IPC/ArgumentDecoder.cpp
@@ -643,7 +641,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         Platform/gtk/LoggingGtk.cpp
         Platform/gtk/ModuleGtk.cpp
-        Platform/gtk/WorkQueueGtk.cpp
 
         Platform/unix/SharedMemoryUnix.cpp
 
