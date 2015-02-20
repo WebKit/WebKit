@@ -43,6 +43,7 @@ namespace WebKit {
 WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::Client* client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
+    , m_wasCanceled(false)
 {
 }
 
@@ -147,12 +148,13 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         break;
     }
 
+    Ref<WebPopupMenuProxyMac> protect(*this);
     WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize, data.hideArrows);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
     
-    if (!m_client)
+    if (!m_client || m_wasCanceled)
         return;
     
     m_client->valueChangedForPopupMenu(this, [m_popup indexOfSelectedItem]);
@@ -194,6 +196,12 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
     [m_popup dismissPopUp];
+}
+
+void WebPopupMenuProxyMac::cancelTracking()
+{
+    [[m_popup menu] cancelTracking];
+    m_wasCanceled = true;
 }
 
 } // namespace WebKit

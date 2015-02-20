@@ -1,5 +1,47 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180094. <rdar://problem/19850716>
+
+    2015-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Crash closing a tab when a context or popup menu is open
+            https://bugs.webkit.org/show_bug.cgi?id=141582
+            rdar://problem/17700475
+
+            Reviewed by Anders Carlsson.
+
+            If a context menu or a popup menu is open when a tab is programmatically closed,
+            then we'd crash because both the WebContextMenuProxyMac/WebPopupMenuProxyMac
+            and the WebPageProxy would be deleted while still in use, via messages
+            handled via the nested event tracking runloop.
+
+            Fix by protecting those things while showing the popup. Also programmatically
+            dismiss the popup when closing the WebPageProxy.
+
+            * UIProcess/WebContextMenuProxy.h:
+            (WebKit::WebContextMenuProxy::cancelTracking):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::close):
+            (WebKit::WebPageProxy::showPopupMenu): Clean up some EFL-related confusion that we don't need.
+            Retaining |this| will also retain m_activePopupMenu.
+            (WebKit::WebPageProxy::hidePopupMenu):
+            (WebKit::WebPageProxy::showContextMenu):
+            (WebKit::WebPageProxy::resetState):
+            * UIProcess/WebPopupMenuProxy.h:
+            (WebKit::WebPopupMenuProxy::cancelTracking):
+            * UIProcess/mac/WebContextMenuProxyMac.h:
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            (WebKit::WebContextMenuProxyMac::showContextMenu):
+            (WebKit::WebContextMenuProxyMac::cancelTracking):
+            * UIProcess/mac/WebPopupMenuProxyMac.h: For popups, we need to remember if we were
+            canceled to avoid trying to send events after closing.
+            * UIProcess/mac/WebPopupMenuProxyMac.mm:
+            (WebKit::WebPopupMenuProxyMac::WebPopupMenuProxyMac):
+            (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+            (WebKit::WebPopupMenuProxyMac::cancelTracking):
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r180076. <rdar://problem/19850750>
 
     2015-02-13  Brent Fulgham  <bfulgham@apple.com>

@@ -663,6 +663,14 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+    if (m_activePopupMenu)
+        m_activePopupMenu->cancelTracking();
+
+#if ENABLE(CONTEXT_MENUS)
+    if (m_activeContextMenu)
+        m_activeContextMenu->cancelTracking();
+#endif
+
     m_backForwardList->pageClosed();
     m_pageClient.pageClosed();
 
@@ -3673,7 +3681,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
         m_activePopupMenu->hidePopupMenu();
 #endif
         m_activePopupMenu->invalidate();
-        m_activePopupMenu = 0;
+        m_activePopupMenu = nullptr;
     }
 
     m_activePopupMenu = m_pageClient.createPopupMenuProxy(this);
@@ -3688,14 +3696,10 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
     UNUSED_PARAM(data);
     m_uiPopupMenuClient.showPopupMenu(this, m_activePopupMenu.get(), rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, selectedIndex);
 #else
-    RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
 
-    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
-
-    // Since Efl doesn't use a nested mainloop to show the popup and get the answer, we need to keep the client pointer valid.
-    // FIXME: The above comment doesn't make any sense since this code is compiled out for EFL.
-    protectedActivePopupMenu->invalidate();
-    protectedActivePopupMenu = 0;
+    // Showing a popup menu runs a nested runloop, which can handle messages that cause |this| to get closed.
+    Ref<WebPageProxy> protect(*this);
+    m_activePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
 #endif
 }
 
@@ -3710,12 +3714,15 @@ void WebPageProxy::hidePopupMenu()
     m_activePopupMenu->hidePopupMenu();
 #endif
     m_activePopupMenu->invalidate();
-    m_activePopupMenu = 0;
+    m_activePopupMenu = nullptr;
 }
 
 #if ENABLE(CONTEXT_MENUS)
 void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, IPC::MessageDecoder& decoder)
 {
+    // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
+    Ref<WebPageProxy> protect(*this);
+
     internalShowContextMenu(menuLocation, contextMenuContextData, proposedItems, ContextMenuClientEligibility::EligibleForClient, &decoder);
     
     // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
@@ -4452,7 +4459,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
         editCommandVector[i]->invalidate();
 
-    m_activePopupMenu = 0;
+    m_activePopupMenu = nullptr;
 }
 
 void WebPageProxy::resetStateAfterProcessExited()
