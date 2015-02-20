@@ -1,5 +1,30 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180076. <rdar://problem/19850750>
+
+    2015-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac, iOS] Adjust pagination behavior for Mail.app printing use
+            https://bugs.webkit.org/show_bug.cgi?id=141569
+            <rdar://problem/14912763>
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode): Add new flag.
+            (WebKit::WebPageCreationParameters::decode): Ditto.
+            * Shared/WebPageCreationParameters.h: Ditto.
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::creationParameters): Set new page construction flag.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::paginationQuirkEnabled): Ask for new pagination flag
+            when running as a Mail client.
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage): Set up pagination based on desired settings.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r180062. <rdar://problem/19812938>
 
     2015-02-12  Simon Fraser  <simon.fraser@apple.com>
