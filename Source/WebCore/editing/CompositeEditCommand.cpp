@@ -322,7 +322,6 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
 
 void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    ASSERT(!refChild->hasTagName(bodyTag));
     applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild, shouldAssumeContentIsAlwaysEditable));
 }
 
@@ -330,7 +329,6 @@ void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRef
 {
     ASSERT(insertChild);
     ASSERT(refChild);
-    ASSERT(!refChild->hasTagName(bodyTag));
     ContainerNode* parent = refChild->parentNode();
     ASSERT(parent);
     ASSERT(!parent->isShadowRoot());
