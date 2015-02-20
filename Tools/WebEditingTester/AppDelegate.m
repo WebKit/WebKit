@@ -25,6 +25,7 @@
 
 #import "AppDelegate.h"
 
+#import "EditingOperations.h"
 #import "WK1WebDocumentController.h"
 #import "WK2WebDocumentController.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -92,130 +93,19 @@ static WKWebViewConfiguration *defaultConfiguration()
 - (IBAction)showOperations:(id)sender
 {
     static BOOL initialized = NO;
-    static NSString *operationNames[] = {
-        @"alignCenter:",
-        @"alignJustified:",
-        @"alignLeft:",
-        @"alignRight:",
-        @"capitalizeWord:",
-        @"centerSelectionInVisibleArea:",
-        @"changeCaseOfLetter:",
-        @"checkSpelling:",
-        @"complete:",
-        @"copy:",
-        @"copyFont:",
-        @"cut:",
-        @"delete:",
-        @"deleteBackward:",
-        @"deleteBackwardByDecomposingPreviousCharacter:",
-        @"deleteForward:",
-        @"deleteToBeginningOfLine:",
-        @"deleteToBeginningOfParagraph:",
-        @"deleteToEndOfLine:",
-        @"deleteToEndOfParagraph:",
-        @"deleteToMark:",
-        @"deleteWordBackward:",
-        @"deleteWordForward:",
-        @"ignoreSpelling:",
-        @"indent:",
-        @"insertBacktab:",
-        @"insertLineBreak:",
-        @"insertNewline:",
-        @"insertNewlineIgnoringFieldEditor:",
-        @"insertParagraphSeparator:",
-        @"insertTab:",
-        @"insertTabIgnoringFieldEditor:",
-        @"insertTable:",
-        @"lowercaseWord:",
-        @"moveBackward:",
-        @"moveBackwardAndModifySelection:",
-        @"moveDown:",
-        @"moveDownAndModifySelection:",
-        @"moveForward:",
-        @"moveForwardAndModifySelection:",
-        @"moveLeft:",
-        @"moveLeftAndModifySelection:",
-        @"moveParagraphBackwardAndModifySelection:",
-        @"moveParagraphForwardAndModifySelection:",
-        @"moveRight:",
-        @"moveRightAndModifySelection:",
-        @"moveToBeginningOfDocument:",
-        @"moveToBeginningOfDocumentAndModifySelection:",
-        @"moveToBeginningOfSentence:",
-        @"moveToBeginningOfSentenceAndModifySelection:",
-        @"moveToBeginningOfLine:",
-        @"moveToBeginningOfLineAndModifySelection:",
-        @"moveToBeginningOfParagraph:",
-        @"moveToBeginningOfParagraphAndModifySelection:",
-        @"moveToEndOfDocument:",
-        @"moveToEndOfDocumentAndModifySelection:",
-        @"moveToEndOfSentence:",
-        @"moveToEndOfSentenceAndModifySelection:",
-        @"moveToEndOfLine:",
-        @"moveToEndOfLineAndModifySelection:",
-        @"moveToEndOfParagraph:",
-        @"moveToEndOfParagraphAndModifySelection:",
-        @"moveUp:",
-        @"moveUpAndModifySelection:",
-        @"moveWordBackward:",
-        @"moveWordBackwardAndModifySelection:",
-        @"moveWordForward:",
-        @"moveWordForwardAndModifySelection:",
-        @"moveWordLeft:",
-        @"moveWordLeftAndModifySelection:",
-        @"moveWordRight:",
-        @"moveWordRightAndModifySelection:",
-        @"outline:",
-        @"pageDown:",
-        @"pageDownAndModifySelection:",
-        @"pageUp:",
-        @"pageUpAndModifySelection:",
-        @"paste:",
-        @"pasteAsPlainText:",
-        @"pasteAsRichText:",
-        @"pasteFont:",
-        @"scrollLineDown:",
-        @"scrollLineUp:",
-        @"scrollPageDown:",
-        @"scrollPageUp:",
-        @"selectAll:",
-        @"selectSentence:",
-        @"selectLine:",
-        @"selectParagraph:",
-        @"selectToMark:",
-        @"selectWord:",
-        @"setMark:",
-        @"showGuessPanel:",
-        @"startSpeaking:",
-        @"stopSpeaking:",
-        @"subscript:",
-        @"superscript:",
-        @"swapWithMark:",
-        @"takeFindStringFromSelection:",
-        @"toggleContinuousSpellChecking:",
-        @"toggleSmartInsertDelete:",
-        @"transpose:",
-        @"transposeWords:",
-        @"underline:",
-        @"unscript:",
-        @"uppercaseWord:",
-        @"yank:",
-        @"yankAndSelect:",
-        NULL
-    };
 
     if (!initialized) {
         NSFont *font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+        NSArray *operations = editingOperations();
         
         float maxWidth = 0;
-        int i;
-        for (i = 0; operationNames[i]; ++i)
-            maxWidth = MAX(maxWidth, [operationNames[i] sizeWithAttributes:attributes].width);
+        for (NSString *operationName in operations)
+            maxWidth = MAX(maxWidth, [operationName sizeWithAttributes:attributes].width);
 
         maxWidth += 24;
         
-        int columnHeight = (i + 2) / 3;
+        unsigned long columnHeight = (operations.count + 2) / 3;
         
         NSView *superview = [_operationsPanel contentView];
         
@@ -224,7 +114,7 @@ static WKWebViewConfiguration *defaultConfiguration()
         float firstY = NSMaxY([superview frame]) - 1;
         float y = firstY;
         float x = 0;
-        for (i = 0; operationNames[i]; ++i) {
+        for (NSString *operationName in operations) {
             y -= 16;
             if (y < 0) {
                 y = firstY - 16;
@@ -234,8 +124,8 @@ static WKWebViewConfiguration *defaultConfiguration()
             [button setBezelStyle:NSRoundedBezelStyle];
             [button.cell setControlSize:NSMiniControlSize];
             [button setFont:font];
-            [button setTitle:operationNames[i]];
-            [button setAction:NSSelectorFromString(operationNames[i])];
+            [button setTitle:operationName];
+            [button setAction:NSSelectorFromString(operationName)];
             [superview addSubview:button];
         }
         

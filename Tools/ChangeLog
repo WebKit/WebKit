@@ -1,3 +1,19 @@
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
+        [WebEditingTester] Factor out list of editing operations
+        https://bugs.webkit.org/show_bug.cgi?id=141826
+
+        Reviewed by Sam Weinig.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate showOperations:]):
+        * WebEditingTester/EditingOperations.h: Added.
+        * WebEditingTester/EditingOperations.m: Added.
+        (editingOperations):
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+        Move EditingOperations array to its own file, and make it an NSArray
+        instead of a C array. Adjust accordingly in showOperations:.
+
 2015-02-20  Michael Saboff  <msaboff@apple.com>
 
         DFG JIT needs to check for stack overflow at the start of Program and Eval execution
