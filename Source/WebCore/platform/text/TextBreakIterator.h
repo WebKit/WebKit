@@ -31,6 +31,13 @@ class TextBreakIterator;
 
 // Note: The returned iterator is good only until you get another iterator, with the exception of acquireLineBreakIterator.
 
+enum LineBreakIteratorMode {
+    LineBreakIteratorModeUAX14,
+    LineBreakIteratorModeUAX14Loose,
+    LineBreakIteratorModeUAX14Normal,
+    LineBreakIteratorModeUAX14Strict,
+};
+
 // This is similar to character break iterator in most cases, but is subject to
 // platform UI conventions. One notable example where this can be different
 // from character break iterator is Thai prepend characters, see bug 24342.
@@ -40,8 +47,10 @@ TextBreakIterator* cursorMovementIterator(StringView);
 TextBreakIterator* wordBreakIterator(StringView);
 TextBreakIterator* sentenceBreakIterator(StringView);
 
-TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
+TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength, LineBreakIteratorMode, bool isCJK);
 void releaseLineBreakIterator(TextBreakIterator*);
+TextBreakIterator* openLineBreakIterator(const AtomicString& locale, LineBreakIteratorMode, bool isCJK);
+void closeLineBreakIterator(TextBreakIterator*&);
 
 int textBreakFirst(TextBreakIterator*);
 int textBreakLast(TextBreakIterator*);
@@ -55,24 +64,30 @@ bool isWordTextBreak(TextBreakIterator*);
 
 const int TextBreakDone = -1;
 
+bool isCJKLocale(const AtomicString&);
+
 class LazyLineBreakIterator {
 public:
     LazyLineBreakIterator()
-        : m_iterator(0)
-        , m_cachedPriorContext(0)
+        : m_iterator(nullptr)
+        , m_cachedPriorContext(nullptr)
+        , m_mode(LineBreakIteratorModeUAX14)
         , m_cachedPriorContextLength(0)
+        , m_isCJK(false)
     {
         resetPriorContext();
     }
 
-    LazyLineBreakIterator(String string, const AtomicString& locale = AtomicString())
+    LazyLineBreakIterator(String string, const AtomicString& locale = AtomicString(), LineBreakIteratorMode mode = LineBreakIteratorModeUAX14)
         : m_string(string)
         , m_locale(locale)
-        , m_iterator(0)
-        , m_cachedPriorContext(0)
+        , m_iterator(nullptr)
+        , m_cachedPriorContext(nullptr)
+        , m_mode(mode)
         , m_cachedPriorContextLength(0)
     {
         resetPriorContext();
+        m_isCJK = isCJKLocale(locale);
     }
 
     ~LazyLineBreakIterator()
@@ -82,35 +97,41 @@ public:
     }
 
     String string() const { return m_string; }
+    bool isLooseCJKMode() const { return m_isCJK && m_mode == LineBreakIteratorModeUAX14Loose; }
 
     UChar lastCharacter() const
     {
         COMPILE_ASSERT(WTF_ARRAY_LENGTH(m_priorContext) == 2, TextBreakIterator_unexpected_prior_context_length);
         return m_priorContext[1];
     }
+
     UChar secondToLastCharacter() const
     {
         COMPILE_ASSERT(WTF_ARRAY_LENGTH(m_priorContext) == 2, TextBreakIterator_unexpected_prior_context_length);
         return m_priorContext[0];
     }
+
     void setPriorContext(UChar last, UChar secondToLast)
     {
         COMPILE_ASSERT(WTF_ARRAY_LENGTH(m_priorContext) == 2, TextBreakIterator_unexpected_prior_context_length);
         m_priorContext[0] = secondToLast;
         m_priorContext[1] = last;
     }
+
     void updatePriorContext(UChar last)
     {
         COMPILE_ASSERT(WTF_ARRAY_LENGTH(m_priorContext) == 2, TextBreakIterator_unexpected_prior_context_length);
         m_priorContext[0] = m_priorContext[1];
         m_priorContext[1] = last;
     }
+
     void resetPriorContext()
     {
         COMPILE_ASSERT(WTF_ARRAY_LENGTH(m_priorContext) == 2, TextBreakIterator_unexpected_prior_context_length);
         m_priorContext[0] = 0;
         m_priorContext[1] = 0;
     }
+
     unsigned priorContextLength() const
     {
         unsigned priorContextLength = 0;
@@ -122,6 +143,7 @@ public:
         }
         return priorContextLength;
     }
+
     // Obtain text break iterator, possibly previously cached, where this iterator is (or has been)
     // initialized to use the previously stored string as the primary breaking context and using
     // previously stored prior context if non-empty.
@@ -130,23 +152,26 @@ public:
         ASSERT(priorContextLength <= priorContextCapacity);
         const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
         if (!m_iterator) {
-            m_iterator = acquireLineBreakIterator(m_string, m_locale, priorContext, priorContextLength);
+            m_iterator = acquireLineBreakIterator(m_string, m_locale, priorContext, priorContextLength, m_mode, m_isCJK);
             m_cachedPriorContext = priorContext;
             m_cachedPriorContextLength = priorContextLength;
         } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
-            this->resetStringAndReleaseIterator(m_string, m_locale);
+            resetStringAndReleaseIterator(m_string, m_locale, m_mode);
             return this->get(priorContextLength);
         }
         return m_iterator;
     }
-    void resetStringAndReleaseIterator(String string, const AtomicString& locale)
+
+    void resetStringAndReleaseIterator(String string, const AtomicString& locale, LineBreakIteratorMode mode)
     {
         if (m_iterator)
             releaseLineBreakIterator(m_iterator);
         m_string = string;
         m_locale = locale;
-        m_iterator = 0;
-        m_cachedPriorContext = 0;
+        m_iterator = nullptr;
+        m_cachedPriorContext = nullptr;
+        m_mode = mode;
+        m_isCJK = isCJKLocale(locale);
         m_cachedPriorContextLength = 0;
     }
 
@@ -155,9 +180,11 @@ private:
     String m_string;
     AtomicString m_locale;
     TextBreakIterator* m_iterator;
-    UChar m_priorContext[priorContextCapacity];
     const UChar* m_cachedPriorContext;
+    LineBreakIteratorMode m_mode;
     unsigned m_cachedPriorContextLength;
+    UChar m_priorContext[priorContextCapacity];
+    bool m_isCJK;
 };
 
 // Iterates over "extended grapheme clusters", as defined in UAX #29.
