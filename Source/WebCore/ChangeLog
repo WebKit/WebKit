@@ -1,5 +1,45 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180063.
+
+    2015-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Crashes under RenderLayer::hitTestLayer under determinePrimarySnapshottedPlugIn()
+            https://bugs.webkit.org/show_bug.cgi?id=141551
+
+            Reviewed by Zalan Bujtas.
+
+            It's possible for a layout to dirty the parent frame's state, via the calls to
+            ownerElement()->scheduleSetNeedsStyleRecalc() that RenderLayerCompositor does when
+            iframes toggle their compositing mode.
+
+            That could cause FrameView::updateLayoutAndStyleIfNeededRecursive() to fail to 
+            leave all the frames in a clean state. Later on, we could enter hit testing,
+            which calls document().updateLayout() on each frame's document. Document::updateLayout()
+            does layout on all ancestor documents, so in the middle of hit testing, we could
+            layout a subframe (dirtying an ancestor frame), then layout another frame, which
+            would forcing that ancestor to be laid out while we're hit testing it, thus
+            corrupting the RenderLayer tree while it's being iterated over.
+
+            Fix by having FrameView::updateLayoutAndStyleIfNeededRecursive() do a second
+            layout after laying out subframes, which most of the time will be a no-op.
+
+            Also add a stronger assertion, that this frame and all subframes are clean
+            at the end of FrameView::updateLayoutAndStyleIfNeededRecursive() for the
+            main frame.
+
+            Various existing frames tests hit the new assertion if the code change is removed,
+            so this is covered by existing tests.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::needsStyleRecalcOrLayout):
+            (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+            * page/FrameView.h:
+            * rendering/RenderWidget.cpp:
+            (WebCore::RenderWidget::willBeDestroyed):
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180062.
 
     2015-02-12  Simon Fraser  <simon.fraser@apple.com>
