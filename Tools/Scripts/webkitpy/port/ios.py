@@ -202,9 +202,7 @@ class IOSSimulatorPort(Port):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
     def setup_test_run(self):
-        self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
         device_udid = self.testing_device.udid
-        Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
         self._executive.run_command([
             'open', '-a', os.path.join(self.developer_dir, 'Applications', 'iOS Simulator.app'),
             '--args', '-CurrentDeviceUDID', device_udid])
@@ -240,6 +238,13 @@ class IOSSimulatorPort(Port):
             _log.error('The iOS Simulator runtime with identifier "{0}" cannot be used because it is unavailable.'.format(self.simulator_runtime.identifier))
             return False
         testing_device = self.testing_device  # May create a new simulator device
+
+        # testing_device will fail to boot if it is already booted. We assume that if testing_device
+        # is booted that it was booted by the iOS Simulator app (as opposed to simctl). So, quit the
+        # iOS Simulator app to shutdown testing_device.
+        self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
+        Simulator.wait_until_device_is_in_state(testing_device.udid, Simulator.DeviceState.SHUTDOWN)
+
         if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
             _log.error('Unable to boot the simulator device with UDID {0}.'.format(testing_device.udid))
             return False

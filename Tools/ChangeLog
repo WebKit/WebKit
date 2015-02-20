@@ -1,3 +1,19 @@
+2015-02-19  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r180239): run-webkit-test fails to boot simulator device that was booted by previous test run
+        https://bugs.webkit.org/show_bug.cgi?id=141815
+        <rdar://problem/19893933>
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where run-webkit-tests would fail to boot the WebKit Tester simulator device if it
+        was booted by iOS Simulator in a previous run of run-webkit-test.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.check_sys_deps): Added logic moved from IOSSimulatorPort.setup_test_run().
+        (IOSSimulatorPort.setup_test_run): Moved logic to quit the iOS Simulator app and wait for the
+        testing device to be in the shutdown state from here to IOSSimulatorPort.check_sys_deps().
+
 2015-02-19  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: do not warn about missing primary header for *SoftLink.cpp files
