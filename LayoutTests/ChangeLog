@@ -1,3 +1,26 @@
+2015-02-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Updating more tests after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=141817
+
+        Reviewed by NOBODY (As per ap's request).
+
+        These tests aren't actually flakey, and simply need updated results.
+
+        Some of the SVG tests were actually flakey, but for a different reason.
+
+        * platform/mac-mavericks/css3/selectors3/html/css3-modsel-161-expected.txt: Added.
+        * platform/mac-mavericks/css3/selectors3/xhtml/css3-modsel-161-expected.txt: Added.
+        * platform/mac-mavericks/css3/selectors3/xml/css3-modsel-161-expected.txt: Added.
+        * platform/mac-mavericks/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt: Added
+        * platform/mac-wk2/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.txt:
+
 2015-02-19  Dean Jackson  <dino@apple.com>
 
         ES6: Implement Array.from()

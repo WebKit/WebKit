@@ -1256,17 +1256,6 @@ webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnl
 webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
-# These tests became flaky, text width gets slightly off.
-webkit.org/b/139968 fast/block/margin-collapse/103.html [ Pass Failure ]
-webkit.org/b/139968 svg/W3C-SVG-1.1-SE/text-intro-05-t.svg [ Pass Failure ]
-webkit.org/b/139968 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
-webkit.org/b/139968 tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
-webkit.org/b/139968 media/controls-after-reload.html [ Pass Failure ]
-webkit.org/b/139968 css3/selectors3/html/css3-modsel-161.html [ Pass Failure ]
-webkit.org/b/139968 css3/selectors3/xhtml/css3-modsel-161.xml [ Pass Failure ]
-webkit.org/b/139968 css3/selectors3/xml/css3-modsel-161.xml [ Pass Failure ]
-webkit.org/b/139968 fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]
 webkit.org/b/140588 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
@@ -1286,6 +1275,7 @@ webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ 
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
+webkit.org/b/139968 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]
