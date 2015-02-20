@@ -79,7 +79,7 @@ const char* EnvironmentVariables::get(const char* name) const
 void EnvironmentVariables::appendValue(const char* name, const char* value, char separator)
 {
     const char* existingValue = get(name);
-    if (!existingValue) {
+    if (!existingValue || !strlen(existingValue)) {
         set(name, value);
         return;
     }

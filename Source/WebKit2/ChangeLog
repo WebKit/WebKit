@@ -1,3 +1,14 @@
+2015-02-19  Remy Demarest  <rdemarest@apple.com>
+
+        Make EnvironmentVariables::appendValue() handle the case where the existing value is an empty string.
+        https://bugs.webkit.org/show_bug.cgi?id=141818.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/Launcher/mac/EnvironmentVariables.cpp:
+        (WebKit::EnvironmentVariables::appendValue): If the existing value is an empty string, replace it rather than
+        append to it.
+
 2015-02-19  Anders Carlsson  <andersca@apple.com>
 
         Make C SPI objects and modern API objects toll-free bridged
