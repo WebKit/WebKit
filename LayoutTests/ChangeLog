@@ -1,3 +1,9 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reactivate media tests to see if updates fixed the problem.
+
+        * platform/win/TestExpectations:
+
 2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Language ranges containing asterisks must be quoted as strings
