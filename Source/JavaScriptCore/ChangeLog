@@ -1,3 +1,21 @@
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/19828630.
+
+    2015-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+            Effectful calls to length should only happen once on the varargs path.
+            rdar://problem/19828518
+
+            Reviewed by Michael Saboff.
+
+            * interpreter/Interpreter.cpp:
+            (JSC::sizeFrameForVarargs):
+            (JSC::loadVarargs):
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+
 2015-02-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r179576, r179648.
