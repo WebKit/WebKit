@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "ScrollElasticityController.h"
+#include "ScrollController.h"
 #include "ScrollbarThemeMac.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include <wtf/RetainPtr.h>
@@ -37,7 +37,7 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollElasticityControllerClient {
+class ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollControllerClient {
 public:
     WEBCORE_EXPORT static PassRefPtr<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeMac();
@@ -50,7 +50,7 @@ private:
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
     virtual void handleWheelEvent(const PlatformWheelEvent&) override;
 
-    // ScrollElasticityController member functions.
+    // ScrollController member functions.
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) override;
     virtual IntSize stretchAmount() override;
@@ -82,7 +82,7 @@ private:
 
     void logExposedUnfilledArea();
 
-    ScrollElasticityController m_scrollElasticityController;
+    ScrollController m_scrollController;
     RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 
     RetainPtr<CALayer> m_scrollLayer;

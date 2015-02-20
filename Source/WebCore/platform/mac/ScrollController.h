@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollElasticityController_h
-#define ScrollElasticityController_h
+#ifndef ScrollController_h
+#define ScrollController_h
 
 #if ENABLE(RUBBER_BANDING)
 
@@ -37,9 +37,9 @@ namespace WebCore {
 
 class PlatformWheelEvent;
 
-class ScrollElasticityControllerClient {
+class ScrollControllerClient {
 protected:
-    virtual ~ScrollElasticityControllerClient() { } 
+    virtual ~ScrollControllerClient() { }
 
 public:
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) = 0;
@@ -63,11 +63,11 @@ public:
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
 };
 
-class ScrollElasticityController {
-    WTF_MAKE_NONCOPYABLE(ScrollElasticityController);
+class ScrollController {
+    WTF_MAKE_NONCOPYABLE(ScrollController);
 
 public:
-    explicit ScrollElasticityController(ScrollElasticityControllerClient*);
+    explicit ScrollController(ScrollControllerClient*);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
     void snapRubberBandTimerFired();
@@ -80,7 +80,7 @@ private:
 
     bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&);
 
-    ScrollElasticityControllerClient* m_client;
+    ScrollControllerClient* m_client;
 
     bool m_inScrollGesture;
     bool m_momentumScrollInProgress;
@@ -104,4 +104,4 @@ private:
 
 #endif // ENABLE(RUBBER_BANDING)
 
-#endif // ScrollElasticityController_h
+#endif // ScrollController_h

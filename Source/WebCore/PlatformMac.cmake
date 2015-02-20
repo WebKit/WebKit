@@ -126,7 +126,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/PurgeableBufferMac.cpp
     platform/mac/SSLKeyGeneratorMac.cpp
     platform/mac/ScrollAnimatorMac.mm
-    platform/mac/ScrollElasticityController.mm
+    platform/mac/ScrollController.mm
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformRepresentationMac.mm

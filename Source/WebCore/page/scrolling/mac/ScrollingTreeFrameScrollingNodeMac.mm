@@ -57,7 +57,7 @@ PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::
 
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeID)
-    , m_scrollElasticityController(this)
+    , m_scrollController(this)
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)
     , m_lastScrollHadUnfilledPixels(false)
@@ -153,7 +153,7 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
         [m_horizontalScrollbarPainter setUsePresentationValue:NO];
     }
 
-    m_scrollElasticityController.handleWheelEvent(wheelEvent);
+    m_scrollController.handleWheelEvent(wheelEvent);
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
 }
@@ -303,7 +303,7 @@ void ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer()
     CFTimeInterval timerInterval = 1.0 / 60.0;
 
     m_snapRubberbandTimer = adoptCF(CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + timerInterval, timerInterval, 0, 0, ^(CFRunLoopTimerRef) {
-        m_scrollElasticityController.snapRubberBandTimerFired();
+        m_scrollController.snapRubberBandTimerFired();
     }));
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_snapRubberbandTimer.get(), kCFRunLoopDefaultMode);
 }

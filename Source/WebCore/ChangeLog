@@ -1,3 +1,47 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Rename ScrollElasticityController to ScrollController
+        https://bugs.webkit.org/show_bug.cgi?id=141842
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * PlatformMac.cmake:
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::isRubberBandInProgress):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        * platform/mac/ScrollController.h: Copied from WebCore/platform/mac/ScrollElasticityController.h.
+        (WebCore::ScrollControllerClient::~ScrollControllerClient):
+        (WebCore::ScrollElasticityControllerClient::~ScrollElasticityControllerClient): Deleted.
+        * platform/mac/ScrollController.mm: Copied from WebCore/platform/mac/ScrollElasticityController.mm.
+        (WebCore::ScrollController::ScrollController):
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::snapRubberBandTimerFired):
+        (WebCore::ScrollController::isRubberBandInProgress):
+        (WebCore::ScrollController::stopSnapRubberbandTimer):
+        (WebCore::ScrollController::snapRubberBand):
+        (WebCore::ScrollController::shouldRubberBandInHorizontalDirection):
+        (WebCore::ScrollElasticityController::ScrollElasticityController): Deleted.
+        (WebCore::ScrollElasticityController::handleWheelEvent): Deleted.
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired): Deleted.
+        (WebCore::ScrollElasticityController::isRubberBandInProgress): Deleted.
+        (WebCore::ScrollElasticityController::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollElasticityController::snapRubberBand): Deleted.
+        (WebCore::ScrollElasticityController::shouldRubberBandInHorizontalDirection): Deleted.
+        * platform/mac/ScrollElasticityController.h: Removed.
+        * platform/mac/ScrollElasticityController.mm: Removed.
+
 2015-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Remove svn:keywords property.

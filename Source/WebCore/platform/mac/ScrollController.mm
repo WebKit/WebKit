@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "ScrollElasticityController.h"
+#include "ScrollController.h"
 
 #include "PlatformWheelEvent.h"
 #include "WebCoreSystemInterface.h"
-#include <sys/time.h>
 #include <sys/sysctl.h>
+#include <sys/time.h>
 
 #if ENABLE(RUBBER_BANDING)
 
@@ -89,7 +89,7 @@ static float scrollWheelMultiplier()
     return multiplier;
 }
 
-ScrollElasticityController::ScrollElasticityController(ScrollElasticityControllerClient* client)
+ScrollController::ScrollController(ScrollControllerClient* client)
     : m_client(client)
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
@@ -100,12 +100,12 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
 {
 }
 
-bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
         // First, check if we should rubber-band at all.
-        if (m_client->pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0)) &&
-            !shouldRubberBandInHorizontalDirection(wheelEvent))
+        if (m_client->pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0))
+            && !shouldRubberBandInHorizontalDirection(wheelEvent))
             return false;
 
         m_inScrollGesture = true;
@@ -190,7 +190,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
         if (isVerticallyStretched) {
             if (!isHorizontallyStretched && m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
                 // Stretching only in the vertical.
-                if (deltaY != 0 && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
+                if (deltaY && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
                     deltaX = 0;
                 else if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                     m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
@@ -201,7 +201,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
         } else if (isHorizontallyStretched) {
             // Stretching only in the horizontal.
             if (m_client->pinnedInDirection(FloatSize(0, deltaY))) {
-                if (deltaX != 0 && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
+                if (deltaX && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
                     deltaY = 0;
                 else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                     m_overflowScrollDelta.setHeight(m_overflowScrollDelta.height() + deltaY);
@@ -224,13 +224,13 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
         }
     }
 
-    if (deltaX != 0 || deltaY != 0) {
+    if (deltaX || deltaY) {
         if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
-            if (deltaY != 0) {
+            if (deltaY) {
                 deltaY *= scrollWheelMultiplier();
                 m_client->immediateScrollBy(FloatSize(0, deltaY));
             }
-            if (deltaX != 0) {
+            if (deltaX) {
                 deltaX *= scrollWheelMultiplier();
                 m_client->immediateScrollBy(FloatSize(deltaX, 0));
             }
@@ -238,7 +238,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
             if (!m_client->allowsHorizontalStretching(wheelEvent)) {
                 deltaX = 0;
                 eventCoalescedDeltaX = 0;
-            } else if ((deltaX != 0) && !isHorizontallyStretched && !m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
+            } else if (deltaX && !isHorizontallyStretched && !m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
                 deltaX *= scrollWheelMultiplier();
 
                 m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
@@ -248,7 +248,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
             if (!m_client->allowsVerticalStretching(wheelEvent)) {
                 deltaY = 0;
                 eventCoalescedDeltaY = 0;
-            } else if ((deltaY != 0) && !isVerticallyStretched && !m_client->pinnedInDirection(FloatSize(0, deltaY))) {
+            } else if (deltaY && !isVerticallyStretched && !m_client->pinnedInDirection(FloatSize(0, deltaY))) {
                 deltaY *= scrollWheelMultiplier();
 
                 m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
@@ -297,7 +297,7 @@ static inline float roundToDevicePixelTowardZero(float num)
     return roundTowardZero(num);
 }
 
-void ScrollElasticityController::snapRubberBandTimerFired()
+void ScrollController::snapRubberBandTimerFired()
 {
     if (!m_momentumScrollInProgress || m_ignoreMomentumScrolls) {
         CFTimeInterval timeDelta = [NSDate timeIntervalSinceReferenceDate] - m_startTime;
@@ -332,7 +332,7 @@ void ScrollElasticityController::snapRubberBandTimerFired()
         }
 
         FloatPoint delta(roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), (float)timeDelta)),
-                         roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), (float)timeDelta)));
+            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), (float)timeDelta)));
 
         if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
             m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_client->stretchAmount());
@@ -357,7 +357,7 @@ void ScrollElasticityController::snapRubberBandTimerFired()
     }
 }
 
-bool ScrollElasticityController::isRubberBandInProgress() const
+bool ScrollController::isRubberBandInProgress() const
 {
     if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimerIsActive)
         return false;
@@ -365,13 +365,13 @@ bool ScrollElasticityController::isRubberBandInProgress() const
     return !m_client->stretchAmount().isZero();
 }
 
-void ScrollElasticityController::stopSnapRubberbandTimer()
+void ScrollController::stopSnapRubberbandTimer()
 {
     m_client->stopSnapRubberbandTimer();
     m_snapRubberbandTimerIsActive = false;
 }
 
-void ScrollElasticityController::snapRubberBand()
+void ScrollController::snapRubberBand()
 {
     CFTimeInterval timeDelta = systemUptime() - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
@@ -391,7 +391,7 @@ void ScrollElasticityController::snapRubberBand()
     m_snapRubberbandTimerIsActive = true;
 }
 
-bool ScrollElasticityController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent)
+bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent)
 {
     if (wheelEvent.deltaX() > 0)
         return m_client->shouldRubberBandInDirection(ScrollLeft);

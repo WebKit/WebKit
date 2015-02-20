@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
-#include "ScrollElasticityController.h"
+#include "ScrollController.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
@@ -43,14 +43,14 @@ OBJC_CLASS WebScrollbarPainterDelegate;
 typedef id ScrollbarPainterController;
 
 #if !ENABLE(RUBBER_BANDING)
-class ScrollElasticityControllerClient { };
+class ScrollControllerClient { };
 #endif
 
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollAnimatorMac : public ScrollAnimator, private ScrollElasticityControllerClient {
+class ScrollAnimatorMac : public ScrollAnimator, private ScrollControllerClient {
 
 public:
     ScrollAnimatorMac(ScrollableArea*);
@@ -139,7 +139,7 @@ private:
     virtual bool isRubberBandInProgress() const override;
 
 #if ENABLE(RUBBER_BANDING)
-    /// ScrollElasticityControllerClient member functions.
+    /// ScrollControllerClient member functions.
     virtual IntSize stretchAmount() override;
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) override;
@@ -159,7 +159,7 @@ private:
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 
-    ScrollElasticityController m_scrollElasticityController;
+    ScrollController m_scrollController;
     Timer m_snapRubberBandTimer;
 #endif
 

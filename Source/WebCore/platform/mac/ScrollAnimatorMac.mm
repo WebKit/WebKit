@@ -644,7 +644,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_initialScrollbarPaintTimer(*this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
     , m_sendContentAreaScrolledTimer(*this, &ScrollAnimatorMac::sendContentAreaScrolledTimerFired)
 #if ENABLE(RUBBER_BANDING)
-    , m_scrollElasticityController(this)
+    , m_scrollController(this)
     , m_snapRubberBandTimer(*this, &ScrollAnimatorMac::snapRubberBandTimerFired)
 #endif
     , m_haveScrolledSincePageLoad(false)
@@ -770,7 +770,7 @@ bool ScrollAnimatorMac::isRubberBandInProgress() const
 #if !ENABLE(RUBBER_BANDING)
     return false;
 #else
-    return m_scrollElasticityController.isRubberBandInProgress();
+    return m_scrollController.isRubberBandInProgress();
 #endif
 }
 
@@ -1098,7 +1098,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             return ScrollAnimator::handleWheelEvent(wheelEvent);
     }
 
-    bool didHandleEvent = m_scrollElasticityController.handleWheelEvent(wheelEvent);
+    bool didHandleEvent = m_scrollController.handleWheelEvent(wheelEvent);
 
     if (didHandleEvent)
         handleWheelEventPhase(wheelEvent.phase());
@@ -1283,7 +1283,7 @@ void ScrollAnimatorMac::stopSnapRubberbandTimer()
 
 void ScrollAnimatorMac::snapRubberBandTimerFired()
 {
-    m_scrollElasticityController.snapRubberBandTimerFired();
+    m_scrollController.snapRubberBandTimerFired();
 }
 #endif
 
