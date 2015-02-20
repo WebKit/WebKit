@@ -1,5 +1,12 @@
 2015-02-20  Filip Pizlo  <fpizlo@apple.com>
 
+        Build fix for gcc.
+
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::create):
+
+2015-02-20  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of JSNameScope::m_type
         https://bugs.webkit.org/show_bug.cgi?id=141851
 

@@ -44,6 +44,7 @@ JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* 
         return JSFunctionNameScope::create(vm, globalObject, currentScope, identifier, value, attributes);
     }
     RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void JSNameScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
