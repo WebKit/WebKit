@@ -224,11 +224,7 @@
 		A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47311151A825B004123FF /* StdLibExtras.h */; };
 		A8A4742C151A825B004123FF /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47313151A825B004123FF /* StringExtras.h */; };
 		A8A4742D151A825B004123FF /* StringHasher.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47314151A825B004123FF /* StringHasher.h */; };
-		A8A4742E151A825B004123FF /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47315151A825B004123FF /* TCPackedCache.h */; };
-		A8A4742F151A825B004123FF /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47316151A825B004123FF /* TCPageMap.h */; };
 		A8A47430151A825B004123FF /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47317151A825B004123FF /* TCSpinLock.h */; };
-		A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47318151A825B004123FF /* TCSystemAlloc.cpp */; };
-		A8A47432151A825B004123FF /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47319151A825B004123FF /* TCSystemAlloc.h */; };
 		A8A47433151A825B004123FF /* TemporaryChange.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4731A151A825B004123FF /* TemporaryChange.h */; };
 		A8A47434151A825B004123FF /* ASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4731C151A825B004123FF /* ASCIIFastPath.h */; };
 		A8A47435151A825B004123FF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4731D151A825B004123FF /* AtomicString.cpp */; };
@@ -523,11 +519,7 @@
 		A8A47311151A825B004123FF /* StdLibExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdLibExtras.h; sourceTree = "<group>"; };
 		A8A47313151A825B004123FF /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtras.h; sourceTree = "<group>"; };
 		A8A47314151A825B004123FF /* StringHasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHasher.h; sourceTree = "<group>"; };
-		A8A47315151A825B004123FF /* TCPackedCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPackedCache.h; sourceTree = "<group>"; };
-		A8A47316151A825B004123FF /* TCPageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPageMap.h; sourceTree = "<group>"; };
 		A8A47317151A825B004123FF /* TCSpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSpinLock.h; sourceTree = "<group>"; };
-		A8A47318151A825B004123FF /* TCSystemAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCSystemAlloc.cpp; sourceTree = "<group>"; };
-		A8A47319151A825B004123FF /* TCSystemAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSystemAlloc.h; sourceTree = "<group>"; };
 		A8A4731A151A825B004123FF /* TemporaryChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryChange.h; sourceTree = "<group>"; };
 		A8A4731C151A825B004123FF /* ASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASCIIFastPath.h; sourceTree = "<group>"; };
 		A8A4731D151A825B004123FF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicString.cpp; sourceTree = "<group>"; };
@@ -880,11 +872,7 @@
 				A8A47314151A825B004123FF /* StringHasher.h */,
 				0FDDBFA51666DFA300C55FEF /* StringPrintStream.cpp */,
 				0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */,
-				A8A47315151A825B004123FF /* TCPackedCache.h */,
-				A8A47316151A825B004123FF /* TCPageMap.h */,
 				A8A47317151A825B004123FF /* TCSpinLock.h */,
-				A8A47318151A825B004123FF /* TCSystemAlloc.cpp */,
-				A8A47319151A825B004123FF /* TCSystemAlloc.h */,
 				A8A4731A151A825B004123FF /* TemporaryChange.h */,
 				A8A4732F151A825B004123FF /* ThreadFunctionInvocation.h */,
 				A8A47330151A825B004123FF /* ThreadIdentifierDataPthreads.cpp */,
@@ -1214,11 +1202,8 @@
 				0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */,
 				1AFDE6531953B23D00C48FFA /* Optional.h in Headers */,
 				A8A473B8151A825B004123FF /* strtod.h in Headers */,
-				A8A4742E151A825B004123FF /* TCPackedCache.h in Headers */,
-				A8A4742F151A825B004123FF /* TCPageMap.h in Headers */,
 				A8A47430151A825B004123FF /* TCSpinLock.h in Headers */,
 				E15556F618A0CC18006F48FB /* CryptographicUtilities.h in Headers */,
-				A8A47432151A825B004123FF /* TCSystemAlloc.h in Headers */,
 				83FBA93219DF459700F30ADB /* TypeCasts.h in Headers */,
 				1A6EB1E0187D0BD30030126F /* StringView.h in Headers */,
 				A8A47433151A825B004123FF /* TemporaryChange.h in Headers */,
@@ -1414,7 +1399,6 @@
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
-				A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */,
 				A8A47448151A825B004123FF /* ThreadIdentifierDataPthreads.cpp in Sources */,
 				1ACADD841884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,

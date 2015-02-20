@@ -201,9 +201,6 @@
     <ClCompile Include="..\wtf\StringPrintStream.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\TCSystemAlloc.cpp">
-      <Filter>wtf</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\Threading.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
@@ -633,16 +630,7 @@
     <ClInclude Include="..\wtf\StringPrintStream.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\TCPackedCache.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\TCPageMap.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\TCSpinLock.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\TCSystemAlloc.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\TemporaryChange.h">

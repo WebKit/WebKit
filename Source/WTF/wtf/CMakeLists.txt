@@ -97,8 +97,6 @@ set(WTF_HEADERS
     StringExtras.h
     StringHasher.h
     StringPrintStream.h
-    TCPackedCache.h
-    TCPageMap.h
     TCSpinLock.h
     ThreadIdentifierDataPthreads.h
     ThreadSafeRefCounted.h
