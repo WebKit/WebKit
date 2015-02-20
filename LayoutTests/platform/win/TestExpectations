@@ -687,6 +687,7 @@ http/tests/misc/frame-default-enc-same-domain.html [ Skip ]
 
 # Sensitive to load timing or PHP behavior
 webkit.org/b/44873 http/tests/css/css-image-loading.html [ Skip ]
+http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ] # Flaky
 
 # Assertion failure in replaySavedEvents http://webkit.org/b/21796
 webkit.org/b/21796 fast/events/dragging-mouse-moves.html [ Skip ]
@@ -1769,6 +1770,7 @@ webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 
 # Missing glyph symbol is not rendered properly
 webkit.org/b/140257 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+svg/custom/vg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 
 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html	[ ImageOnlyFailure ]
@@ -2170,10 +2172,6 @@ webkit.org/b/51596 [ Release ] http/tests/xmlhttprequest/basic-auth-nopassword.h
 webkit.org/b/51596 [ Debug ] http/tests/xmlhttprequest/basic-auth-nopassword.html [ Skip ]
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html [ Skip ] # Timeout or failure
 
-# <rdar://problem/5961006> LayoutTests that send an OPTIONS request don't work on Windows due to Apache 1.3
-#http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
-#http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
-
 # Mixed content tests failing on Windows
 webkit.org/b/29213 http/tests/security/mixedContent [ Skip ]
 
@@ -2212,6 +2210,7 @@ http/tests/navigation/no-referrer-subframe.html [ Failure ] # Easy
 http/tests/navigation/no-referrer-target-blank.html [ Failure ] # Easy
 http/tests/navigation/post-goback-same-url.html [ Failure ] # Easy
 http/tests/navigation/restore-form-state-https.html [ Failure ]
+http/tests/navigation/target-blank-opener.html [ Skip ] # Timeout
 http/tests/security/contentTypeOptions/nosniff-script-blocked.html [ Failure ]
 http/tests/security/cross-frame-access-call.html [ Failure ]
 http/tests/security/cross-frame-access-get.html [ Failure ]
@@ -2319,6 +2318,8 @@ webkit.org/b/140946 js/sort-stability.html [ Failure ]
 
 # The following fails due to DOM exception 18.
 js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
+
+webkit.org/b/141848 js/regress-141098.html [ Failure ]
 ################################################################################
 #################        End JavaScript Issues           #######################
 ################################################################################
