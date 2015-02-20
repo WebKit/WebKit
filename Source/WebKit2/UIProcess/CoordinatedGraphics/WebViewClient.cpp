@@ -33,6 +33,7 @@
 #include "WKAPICast.h"
 #include "WKBase.h"
 #include "WKRetainPtr.h"
+#include "WebView.h"
 #include "WebViewportAttributes.h"
 
 #if ENABLE(TOUCH_EVENTS)

@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 #include "WebPopupItemEfl.h"
 #include "WebPopupMenuListenerEfl.h"
 

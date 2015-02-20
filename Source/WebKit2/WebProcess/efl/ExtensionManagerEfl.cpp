@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ExtensionManagerEfl.h"
 
+#include "InjectedBundle.h"
 #include "Module.h"
 #include "WKBundleAPICast.h"
 #include "ewk_extension.h"

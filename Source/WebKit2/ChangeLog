@@ -1,3 +1,24 @@
+2015-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2][EFL] Fix the build after r180362
+        https://bugs.webkit.org/show_bug.cgi?id=141836
+
+        Reviewed by Carlos Garcia Campos.
+
+        As r180409, EFL port needs to add missing includes for several features,
+        and needs to have a specific implementation of toAPI/toImple for EFL port.
+
+        * UIProcess/API/C/WKBatteryManager.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        * UIProcess/CoordinatedGraphics/WebViewClient.cpp:
+        * UIProcess/efl/WebUIPopupMenuClient.cpp:
+        * UIProcess/efl/WebViewEfl.cpp:
+        * WebProcess/efl/ExtensionManagerEfl.cpp:
+
 2015-02-20  Antti Koivisto  <antti@apple.com>
 
         Move WorkQueue from WK2 to WTF

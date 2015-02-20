@@ -74,6 +74,10 @@
 #include "WebContextMenuItem.h"
 #endif
 
+#if ENABLE(VIBRATION)
+#include "WebVibrationProxy.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 

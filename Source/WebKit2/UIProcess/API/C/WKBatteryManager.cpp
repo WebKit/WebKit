@@ -31,6 +31,7 @@
 
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManagerProxy.h"
+#include "WebBatteryStatus.h"
 #endif
 
 using namespace WebKit;

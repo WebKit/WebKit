@@ -28,6 +28,7 @@
 
 #include "CoordinatedGraphicsScene.h"
 #include "DownloadManagerEfl.h"
+#include "DownloadProxy.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
 #include "NativeWebMouseEvent.h"

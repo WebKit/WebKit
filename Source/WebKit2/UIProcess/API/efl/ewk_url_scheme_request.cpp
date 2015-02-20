@@ -26,9 +26,11 @@
 #include "config.h"
 #include "ewk_url_scheme_request.h"
 
+#include "APIData.h"
 #include "WKData.h"
 #include "WKString.h"
 #include "WKURL.h"
+#include "WebPageProxy.h"
 #include "WebSoupCustomProtocolRequestManager.h"
 
 #include "ewk_url_scheme_request_private.h"

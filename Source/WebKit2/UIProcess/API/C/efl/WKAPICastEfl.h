@@ -104,6 +104,18 @@ inline WKTouchPointState toAPI(WebPlatformTouchPoint::TouchPointState state)
 }
 #endif
 
+template<>
+inline WKPopupMenuListenerRef toAPI(WebPopupMenuListenerEfl* popup)
+{
+    return static_cast<WKPopupMenuListenerRef>(static_cast<void*>(popup));
+}
+
+template<>
+inline WebPopupMenuListenerEfl* toImpl(WKPopupMenuListenerRef popupRef)
+{
+    return static_cast<WebPopupMenuListenerEfl*>(static_cast<void*>(const_cast<OpaqueWKPopupMenuListener*>(popupRef)));
+}
+
 }
 
 #endif // WKAPICastEfl_h
