@@ -1,5 +1,35 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r179776. <rdar://problem/19850771>
+
+    2015-02-06  Zalan Bujtas  <zalan@apple.com>
+
+            ASSERT repaintContainer->hasLayer() in WebCore::RenderObject::repaintUsingContainer
+            https://bugs.webkit.org/show_bug.cgi?id=140750
+
+            Reviewed by Simon Fraser.
+
+            There's a short period of time when RenderObject::layer() still returns a valid pointer
+            even though we already cleared the hasLayer() flag.
+            Do not use the layer as repaint container in such cases.
+
+            * compositing/repaint-container-assertion-when-toggling-compositing-expected.txt: Added.
+            * compositing/repaint-container-assertion-when-toggling-compositing.html: Added.
+
+    2015-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Invalid cast in WebCore::SVGAnimateElement::calculateAnimatedValue.
+            https://bugs.webkit.org/show_bug.cgi?id=135171.
+
+            Reviewed by Dean Jackson.
+
+            * svg/animations/animate-montion-invalid-attribute-expected.svg: Added.
+            * svg/animations/animate-montion-invalid-attribute.svg: Added.
+            Make sure that adding the same attribute to <animateMotion> and <animate>, which both
+            animate the same target element, will be ignored and we won't crash.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r178224. <rdar://problem/19861714>
 
     2015-01-09  Joseph Pecoraro  <pecoraro@apple.com>
