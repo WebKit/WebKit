@@ -41,6 +41,8 @@ class WebCoreAVCFResourceLoader;
 
 class MediaPlayerPrivateAVFoundationCF : public MediaPlayerPrivateAVFoundation {
 public:
+    // Engine support
+    explicit MediaPlayerPrivateAVFoundationCF(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundationCF();
 
     virtual void tracksChanged() override;
@@ -58,10 +60,6 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
 private:
-    MediaPlayerPrivateAVFoundationCF(MediaPlayer*);
-
-    // Engine support
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

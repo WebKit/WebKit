@@ -4692,7 +4692,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
 #endif
 
-    m_player.clear();
+    m_player = nullptr;
 
     stopPeriodicTimers();
     m_loadTimer.stop();
@@ -4739,7 +4739,7 @@ void HTMLMediaElement::stop()
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already have cleared the player
     // if the media was not fully loaded. This handles all other cases.
-    m_player.clear();
+    m_player = nullptr;
 
     updateSleepDisabling();
 }
@@ -5406,7 +5406,7 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();
 #endif
-    m_player = MediaPlayer::create(*this);
+    m_player = std::make_unique<MediaPlayer>(static_cast<MediaPlayerClient&>(*this));
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {

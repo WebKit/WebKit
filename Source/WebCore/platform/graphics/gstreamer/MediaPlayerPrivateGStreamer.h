@@ -62,7 +62,9 @@ class VideoTrackPrivateGStreamer;
 
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
 public:
+    explicit MediaPlayerPrivateGStreamer(MediaPlayer*);
     ~MediaPlayerPrivateGStreamer();
+
     static void registerMediaEngine(MediaEngineRegistrar);
     gboolean handleMessage(GstMessage*);
     void handlePluginInstallerResult(GstInstallPluginsReturn);
@@ -136,10 +138,6 @@ public:
 #endif
 
 private:
-    MediaPlayerPrivateGStreamer(MediaPlayer*);
-
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
-
     static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 

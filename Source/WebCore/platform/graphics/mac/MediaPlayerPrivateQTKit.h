@@ -50,6 +50,7 @@ namespace WebCore {
     
 class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
 public:
+    explicit MediaPlayerPrivateQTKit(MediaPlayer*);
     ~MediaPlayerPrivateQTKit();
     WEBCORE_EXPORT static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -63,10 +64,7 @@ public:
     void layerHostChanged(PlatformLayer* rootLayer);
 
 private:
-    MediaPlayerPrivateQTKit(MediaPlayer*);
-
     // engine support
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 

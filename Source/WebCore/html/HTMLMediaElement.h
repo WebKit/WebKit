@@ -805,7 +805,7 @@ private:
     MediaPlayer::VideoGravity m_videoFullscreenGravity;
 #endif
 
-    OwnPtr<MediaPlayer> m_player;
+    std::unique_ptr<MediaPlayer> m_player;
 
     MediaPlayer::Preload m_preload;
 

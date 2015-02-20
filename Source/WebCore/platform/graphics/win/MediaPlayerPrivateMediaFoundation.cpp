@@ -65,15 +65,11 @@ MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation()
     endSession();
 }
 
-PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaFoundation::create(MediaPlayer* player)
-{
-    return adoptPtr(new MediaPlayerPrivateMediaFoundation(player));
-}
-
 void MediaPlayerPrivateMediaFoundation::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, 0);
+        registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaFoundation>(player); },
+            getSupportedTypes, supportsType, 0, 0, 0, 0);
 }
 
 bool MediaPlayerPrivateMediaFoundation::isAvailable() 

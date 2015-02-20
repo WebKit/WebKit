@@ -50,13 +50,12 @@ class MediaSourcePrivateAVFObjC;
 
 class MediaPlayerPrivateMediaSourceAVFObjC : public MediaPlayerPrivateInterface {
 public:
-    MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
+    explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
     // MediaPlayer Factory Methods
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

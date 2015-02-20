@@ -35,11 +35,10 @@ namespace WebCore {
 
 class MediaPlayerPrivateMediaFoundation : public MediaPlayerPrivateInterface {
 public:
-    MediaPlayerPrivateMediaFoundation(MediaPlayer*);
+    explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();

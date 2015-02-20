@@ -46,7 +46,6 @@ class GenericCueData;
 class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface, public AVFInbandTrackParent
 {
 public:
-
     virtual void repaint();
     virtual void metadataLoaded();
     virtual void playabilityKnown();
@@ -144,7 +143,7 @@ public:
 #endif
 
 protected:
-    MediaPlayerPrivateAVFoundation(MediaPlayer*);
+    explicit MediaPlayerPrivateAVFoundation(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundation();
 
     WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }

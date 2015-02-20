@@ -1,3 +1,58 @@
+2015-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr instead of PassOwnPtr|OwnPtr in MediaPlayerFoo classes
+        https://bugs.webkit.org/show_bug.cgi?id=137765
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to use std::unique_ptr|std::make_unique<>, this patch changes use of OwnPtr|PassOwnPtr
+        with std::unique_ptr<>|std::make_unique<>. To remove all create() factory function, lambdas is
+        used in registerMediaEngine().
+
+        No new tests, no behavior changes.
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::NullMediaPlayerPrivate):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::createNullMediaPlayer): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::create): Deleted.
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::create): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::create): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::create): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamer::create): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateQTKit::create): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateMediaFoundation::create): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::registerMediaEngine):
+        (WebCore::MockMediaPlayerMediaSource::create): Deleted.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+
 2015-02-19  David Kilzer  <ddkilzer@apple.com>
 
         Rename SOFT_LINK_FUNCTION_{DECL,IMPL}() to SOFT_LINK_FUNCTION_{HEADER,SOURCE}()
