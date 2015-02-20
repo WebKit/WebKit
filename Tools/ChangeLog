@@ -1,5 +1,44 @@
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
+        [WebEditingTester] Add a custom protocol for loading canned content
+        https://bugs.webkit.org/show_bug.cgi?id=141830
+
+        Reviewed by Enrica Casucci.
+
+        Add a canned:// protocol handler, which can be used to emulate behaviors
+        in WebKit client apps (like Mail) that use custom protocol handlers,
+        which can have important effects on editing (mostly, the URLs are only
+        valid inside of the client application, but not when copied/dragged out).
+
+        For now, we only support two canned files:
+
+            canned://dice is a PNG of dice (stolen from LayoutTests/)
+            canned://text is the string "canned text" served as text/html
+
+        In the future we could support things like very large (generated) files,
+        progressive loading, etc. to further simulate conditions in other apps.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate applicationDidFinishLaunching:]):
+        Register the protocol with CFNetwork, and the scheme with WebKit2.
+
+        * WebEditingTester/Canned Content/dice.png: Added.
+        * WebEditingTester/CannedContent.h: Added.
+        * WebEditingTester/CannedContent.m: Added.
+        (-[CannedContent initWithRequest:cachedResponse:client:]):
+        (+[CannedContent canonicalRequestForRequest:]):
+        (+[CannedContent canInitWithRequest:]):
+        We only want to handle canned:// URLs.
+
+        (-[CannedContent startLoading]):
+        For now, immediately load the two files we know about.
+        Otherwise, immediately fail the load.
+
+        (-[CannedContent stopLoading]):
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
         [WebEditingTester] Implement an open panel
         https://bugs.webkit.org/show_bug.cgi?id=141829
 

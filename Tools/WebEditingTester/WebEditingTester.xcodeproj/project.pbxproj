@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2D4FFA111A97079D0006360B /* EditingOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FFA101A97079D0006360B /* EditingOperations.m */; };
+		2D6B05BF1A972E8C00613256 /* CannedContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6B05BE1A972E8C00613256 /* CannedContent.m */; };
+		2D6B05C21A97365300613256 /* dice.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D6B05C11A97365300613256 /* dice.png */; };
 		C53E7D0D1A9546E600818F19 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C53E7D0B1A9546E600818F19 /* MainMenu.xib */; };
 		C53E7D0E1A9546E600818F19 /* WebDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = C53E7D0C1A9546E600818F19 /* WebDocument.xib */; };
 		C558CDB31A92D6900059A907 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C558CDB21A92D6900059A907 /* AppDelegate.m */; };
@@ -22,6 +24,9 @@
 /* Begin PBXFileReference section */
 		2D4FFA0F1A97079D0006360B /* EditingOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingOperations.h; sourceTree = "<group>"; };
 		2D4FFA101A97079D0006360B /* EditingOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingOperations.m; sourceTree = "<group>"; };
+		2D6B05BD1A972E8C00613256 /* CannedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CannedContent.h; sourceTree = "<group>"; };
+		2D6B05BE1A972E8C00613256 /* CannedContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CannedContent.m; sourceTree = "<group>"; };
+		2D6B05C11A97365300613256 /* dice.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dice.png; sourceTree = "<group>"; };
 		C53E7D0B1A9546E600818F19 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		C53E7D0C1A9546E600818F19 /* WebDocument.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebDocument.xib; sourceTree = "<group>"; };
 		C558CDAC1A92D6900059A907 /* WebEditingTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebEditingTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,11 +57,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D6B05C01A9734D700613256 /* Canned Content */ = {
+			isa = PBXGroup;
+			children = (
+				2D6B05C11A97365300613256 /* dice.png */,
+			);
+			path = "Canned Content";
+			sourceTree = "<group>";
+		};
 		C558CDA31A92D6900059A907 = {
 			isa = PBXGroup;
 			children = (
 				C558CDAE1A92D6900059A907 /* WebEditingTester */,
 				C59F9B9A1A93C9030041A959 /* Resources */,
+				2D6B05C01A9734D700613256 /* Canned Content */,
 				C558CDAF1A92D6900059A907 /* Supporting Files */,
 				C558CDD51A93C8830059A907 /* Frameworks */,
 				C558CDAD1A92D6900059A907 /* Products */,
@@ -84,6 +98,8 @@
 				C558CDB71A92D6900059A907 /* WebDocumentController.m */,
 				2D4FFA0F1A97079D0006360B /* EditingOperations.h */,
 				2D4FFA101A97079D0006360B /* EditingOperations.m */,
+				2D6B05BD1A972E8C00613256 /* CannedContent.h */,
+				2D6B05BE1A972E8C00613256 /* CannedContent.m */,
 			);
 			name = WebEditingTester;
 			sourceTree = "<group>";
@@ -174,6 +190,7 @@
 			files = (
 				C53E7D0E1A9546E600818F19 /* WebDocument.xib in Resources */,
 				C53E7D0D1A9546E600818F19 /* MainMenu.xib in Resources */,
+				2D6B05C21A97365300613256 /* dice.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +201,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D6B05BF1A972E8C00613256 /* CannedContent.m in Sources */,
 				C558CDB81A92D6900059A907 /* WebDocumentController.m in Sources */,
 				C59F9BA01A93CB630041A959 /* WK2WebDocumentController.m in Sources */,
 				2D4FFA111A97079D0006360B /* EditingOperations.m in Sources */,

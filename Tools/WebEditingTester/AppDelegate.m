@@ -25,9 +25,11 @@
 
 #import "AppDelegate.h"
 
+#import "CannedContent.h"
 #import "EditingOperations.h"
 #import "WK1WebDocumentController.h"
 #import "WK2WebDocumentController.h"
+#import <WebKit/WKBrowsingContextController.h>
 
 static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
 
@@ -46,6 +48,9 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [NSURLProtocol registerClass:[CannedContent class]];
+    [WKBrowsingContextController registerSchemeForCustomProtocol:@"canned"];
+
     [self newEditor:self];
     [self _updateNewWindowKeyEquivalents];
 }
