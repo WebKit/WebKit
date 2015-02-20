@@ -725,7 +725,7 @@ public:
     
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
-    void getTextDecorationColors(int decorations, Color& underline, Color& overline, Color& linethrough, bool quirksMode = false, bool firstlineStyle = false);
+    void getTextDecorationColors(int decorations, Color& underline, Color& overline, Color& linethrough, bool firstlineStyle = false);
 
     // Return the RenderLayerModelObject in the container chain which is responsible for painting this object, or 0
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint'
