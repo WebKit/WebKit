@@ -162,6 +162,8 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.borderFit() == BorderFitLines)
         return false;
+    if (style.lineBreak() != LineBreakAuto)
+        return false;
     const RenderText& textRenderer = toRenderText(*flow.firstChild());
     if (flow.containsFloats()) {
         // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
@@ -283,7 +285,7 @@ Vector<Run, 4> createLineRuns(unsigned lineStart, LineWidth& lineWidth, LazyLine
         if (!style.collapseWhitespace && isWhitespace(text[wordStart], style.preserveNewline))
             wordEnd = wordStart + 1;
         else
-            wordEnd = nextBreakablePosition<CharacterType, false>(lineBreakIterator, text, textLength, wordStart + 1);
+            wordEnd = nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, text, textLength, wordStart + 1);
 
         bool wordIsPrecededByWhitespace = style.collapseWhitespace && wordStart > lineStart && isWhitespace(text[wordStart - 1], style.preserveNewline);
         if (wordIsPrecededByWhitespace)

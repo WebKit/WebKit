@@ -35,10 +35,12 @@ static const unsigned asciiLineBreakTableColumnCount = (asciiLineBreakTableLastC
 
 extern const unsigned char asciiLineBreakTable[][asciiLineBreakTableColumnCount];
 
-int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator&, int pos);
-int nextBreakablePosition(LazyLineBreakIterator&, int pos);
+enum class NBSPBehavior {
+    IgnoreNBSP,
+    TreatNBSPAsBreak,
+};
 
-template<bool treatNoBreakSpaceAsBreak>
+template<NBSPBehavior nbspBehavior>
 static inline bool isBreakableSpace(UChar ch)
 {
     switch (ch) {
@@ -47,7 +49,7 @@ static inline bool isBreakableSpace(UChar ch)
     case '\t':
         return true;
     case noBreakSpace:
-        return treatNoBreakSpaceAsBreak;
+        return nbspBehavior == NBSPBehavior::TreatNBSPAsBreak;
     default:
         return false;
     }
@@ -71,16 +73,17 @@ inline bool shouldBreakAfter(UChar lastCh, UChar ch, UChar nextCh)
     return false;
 }
 
-template<bool treatNoBreakSpaceAsBreak>
+template<NBSPBehavior nbspBehavior>
 inline bool needsLineBreakIterator(UChar ch)
 {
-    if (treatNoBreakSpaceAsBreak)
+    if (nbspBehavior == NBSPBehavior::TreatNBSPAsBreak)
         return ch > asciiLineBreakTableLastChar;
     return ch > asciiLineBreakTableLastChar && ch != noBreakSpace;
 }
 
-template<typename CharacterType, bool treatNoBreakSpaceAsBreak>
-inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* str, unsigned length, int pos)
+// When in non-loose mode, we can use the ASCII shortcut table.
+template<typename CharacterType, NBSPBehavior nbspBehavior>
+inline int nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* str, unsigned length, int pos)
 {
     int len = static_cast<int>(length);
     int nextBreak = -1;
@@ -91,10 +94,12 @@ inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const
     for (int i = pos; i < len; i++) {
         CharacterType ch = str[i];
 
-        if (isBreakableSpace<treatNoBreakSpaceAsBreak>(ch) || shouldBreakAfter(lastLastCh, lastCh, ch))
+        // Non-loose mode, so use ASCII shortcut (shouldBreakAfter) if not breakable space.
+        if (isBreakableSpace<nbspBehavior>(ch) || shouldBreakAfter(lastLastCh, lastCh, ch))
             return i;
 
-        if (needsLineBreakIterator<treatNoBreakSpaceAsBreak>(ch) || needsLineBreakIterator<treatNoBreakSpaceAsBreak>(lastCh)) {
+        // Non-loose mode, so conditionally use break iterator.
+        if (needsLineBreakIterator<nbspBehavior>(ch) || needsLineBreakIterator<nbspBehavior>(lastCh)) {
             if (nextBreak < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
@@ -106,7 +111,7 @@ inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const
                     }
                 }
             }
-            if (i == nextBreak && !isBreakableSpace<treatNoBreakSpaceAsBreak>(lastCh))
+            if (i == nextBreak && !isBreakableSpace<nbspBehavior>(lastCh))
                 return i;
         }
 
@@ -117,25 +122,88 @@ inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const
     return len;
 }
 
-inline int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, int pos)
+// When in loose mode, we can't use the ASCII shortcut table since loose mode allows "$100" to break after '$' in content marked as CJK.
+// N.B. It should be possible to combine the following with the non-loose version above by adding a LooseBehavior template parameter;
+// however, when doing this, a 10% performance regression appeared on chromium-win (https://bugs.webkit.org/show_bug.cgi?id=89235#c112).
+template<typename CharacterType, NBSPBehavior nbspBehavior>
+static inline int nextBreakablePositionLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* str, unsigned length, int pos)
 {
-    String string = lazyBreakIterator.string();
-    if (string.is8Bit())
-        return nextBreakablePosition<LChar, false>(lazyBreakIterator, string.characters8(), string.length(), pos);
-    return nextBreakablePosition<UChar, false>(lazyBreakIterator, string.characters16(), string.length(), pos);
+    int len = static_cast<int>(length);
+    int nextBreak = -1;
+
+    CharacterType lastCh = pos > 0 ? str[pos - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
+    unsigned priorContextLength = lazyBreakIterator.priorContextLength();
+    for (int i = pos; i < len; i++) {
+        CharacterType ch = str[i];
+
+        // Always loose mode, so don't use ASCII shortcut (shouldBreakAfter).
+        if (isBreakableSpace<nbspBehavior>(ch))
+            return i;
+
+        // Always use line break iterator in loose mode.
+        if (nextBreak < i) {
+            // Don't break if positioned at start of primary context and there is no prior context.
+            if (i || priorContextLength) {
+                TextBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
+                if (breakIterator) {
+                    nextBreak = textBreakFollowing(breakIterator, i - 1 + priorContextLength);
+                    if (nextBreak >= 0)
+                        nextBreak -= priorContextLength;
+                }
+            }
+        }
+        if (i == nextBreak && !isBreakableSpace<nbspBehavior>(lastCh))
+            return i;
+
+        lastCh = ch;
+    }
+
+    return len;
 }
 
 inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
 {
     String string = lazyBreakIterator.string();
     if (string.is8Bit())
-        return nextBreakablePosition<LChar, true>(lazyBreakIterator, string.characters8(), string.length(), pos);
-    return nextBreakablePosition<UChar, true>(lazyBreakIterator, string.characters16(), string.length(), pos);
+        return nextBreakablePositionNonLoosely<LChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePositionNonLoosely<UChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters16(), string.length(), pos);
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, int pos, int& nextBreakable, bool breakNBSP)
+inline int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, int pos)
 {
-    if (pos > nextBreakable) {
+    String string = lazyBreakIterator.string();
+    if (string.is8Bit())
+        return nextBreakablePositionNonLoosely<LChar, NBSPBehavior::IgnoreNBSP>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePositionNonLoosely<UChar, NBSPBehavior::IgnoreNBSP>(lazyBreakIterator, string.characters16(), string.length(), pos);
+}
+
+inline int nextBreakablePositionLoose(LazyLineBreakIterator& lazyBreakIterator, int pos)
+{
+    String string = lazyBreakIterator.string();
+    if (string.is8Bit())
+        return nextBreakablePositionLoosely<LChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePositionLoosely<UChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters16(), string.length(), pos);
+}
+
+inline int nextBreakablePositionIgnoringNBSPLoose(LazyLineBreakIterator& lazyBreakIterator, int pos)
+{
+    String string = lazyBreakIterator.string();
+    if (string.is8Bit())
+        return nextBreakablePositionLoosely<LChar, NBSPBehavior::IgnoreNBSP>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePositionLoosely<UChar, NBSPBehavior::IgnoreNBSP>(lazyBreakIterator, string.characters16(), string.length(), pos);
+}
+
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, int pos, int& nextBreakable, bool breakNBSP, bool isLooseMode)
+{
+    if (pos <= nextBreakable)
+        return pos == nextBreakable;
+
+    if (isLooseMode) {
+        if (breakNBSP)
+            nextBreakable = nextBreakablePositionLoose(lazyBreakIterator, pos);
+        else
+            nextBreakable = nextBreakablePositionIgnoringNBSPLoose(lazyBreakIterator, pos);
+    } else {
         if (breakNBSP)
             nextBreakable = nextBreakablePosition(lazyBreakIterator, pos);
         else
