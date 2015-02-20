@@ -1,5 +1,39 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180115. <rdar://problem/19850758>
+
+    2015-02-14  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION: Page opens with enlarged font after visiting PDF, navigating back, 
+            then doing a process swap
+            https://bugs.webkit.org/show_bug.cgi?id=141584
+            -and corresponding-
+            rdar://problem/18167729
+
+            Reviewed by Tim Horton.
+
+            This patch keeps the plugin zoom/scale factors separate from page zoom/scale 
+            factors in the UI process since they are used for slightly different purposes for 
+            plugins (i.e., PDFs) than they are for normal pages. Keeping track of the right 
+            factor for the right type of document will ensure that we don’t use the wrong one.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::pageZoomFactor):
+            (WebKit::WebPageProxy::pageScaleFactor):
+            (WebKit::WebPageProxy::pluginScaleFactorDidChange):
+            (WebKit::WebPageProxy::pluginZoomFactorDidChange):
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            (WebKit::WebPageProxy::pageZoomFactorDidChange): Deleted.
+            * UIProcess/WebPageProxy.h:
+            (WebKit::WebPageProxy::pageZoomFactor): Deleted.
+            (WebKit::WebPageProxy::pageScaleFactor): Deleted.
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::setPageScaleFactor):
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r180094. <rdar://problem/19850716>
 
     2015-02-13  Simon Fraser  <simon.fraser@apple.com>

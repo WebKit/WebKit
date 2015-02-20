@@ -291,6 +291,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
+    , m_pluginZoomFactor(1)
+    , m_pluginScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
     , m_topContentInset(0)
@@ -2007,6 +2009,24 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
     m_process->send(Messages::WebPage::SetPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor), m_pageID); 
 }
 
+double WebPageProxy::pageZoomFactor() const
+{
+    // Zoom factor for non-PDF pages persists across page loads. We maintain a separate member variable for PDF
+    // zoom which ensures that we don't use the PDF zoom for a normal page.
+    if (m_mainFrame && m_mainFrame->isDisplayingPDFDocument())
+        return m_pluginZoomFactor;
+    return m_pageZoomFactor;
+}
+
+double WebPageProxy::pageScaleFactor() const
+{
+    // PDF documents use zoom and scale factors to size themselves appropriately in the window. We store them
+    // separately but decide which to return based on the main frame.
+    if (m_mainFrame && m_mainFrame->isDisplayingPDFDocument())
+        return m_pluginScaleFactor;
+    return m_pageScaleFactor;
+}
+
 void WebPageProxy::scalePage(double scale, const IntPoint& origin)
 {
     if (!isValid())
@@ -2265,9 +2285,14 @@ void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
     m_pageScaleFactor = scaleFactor;
 }
 
-void WebPageProxy::pageZoomFactorDidChange(double zoomFactor)
+void WebPageProxy::pluginScaleFactorDidChange(double pluginScaleFactor)
 {
-    m_pageZoomFactor = zoomFactor;
+    m_pluginScaleFactor = pluginScaleFactor;
+}
+
+void WebPageProxy::pluginZoomFactorDidChange(double pluginZoomFactor)
+{
+    m_pluginZoomFactor = pluginZoomFactor;
 }
 
 void WebPageProxy::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
@@ -2663,8 +2688,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // WebPageProxy's cache of the value can get out of sync (e.g. in the case where a
     // plugin is handling page scaling itself) so we should reset it to the default
     // for standard main frame loads.
-    if (frame->isMainFrame() && static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard)
+    if (frame->isMainFrame() && static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard) {
         m_pageScaleFactor = 1;
+        m_pluginScaleFactor = 1;
+    }
 
     m_pageLoadState.commitChanges();
     m_loaderClient->didCommitLoadForFrame(this, frame, navigationID, userData.get());

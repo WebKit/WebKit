@@ -480,8 +480,8 @@ void PluginView::topContentInsetDidChange()
 void PluginView::setPageScaleFactor(double scaleFactor, IntPoint)
 {
     m_pageScaleFactor = scaleFactor;
-    m_webPage->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
-    m_webPage->send(Messages::WebPageProxy::PageZoomFactorDidChange(scaleFactor));
+    m_webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
+    m_webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
     pageScaleFactorDidChange();
 }
 
