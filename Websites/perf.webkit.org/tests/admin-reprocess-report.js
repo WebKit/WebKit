@@ -28,7 +28,7 @@ describe("/admin/reprocess-report", function () {
                     queryAndFetchAll('SELECT * FROM reports', [], function (reportRows) {
                         assert.equal(reportRows.length, 1);
                         assert.equal(reportRows[0]['report_build_number'], 1986);
-                        queryAndFetchAll('DELETE FROM builds; SELECT * FROM builds', [], function (buildRows) {
+                        queryAndFetchAll('UPDATE reports SET report_build = NULL; DELETE FROM builds; SELECT * FROM builds', [], function (buildRows) {
                             assert.equal(buildRows.length, 0);
                             var reportId = reportRows[0]['report_id'];
                             httpGet('/admin/reprocess-report?report=' + reportId, function (response) {
@@ -54,13 +54,16 @@ describe("/admin/reprocess-report", function () {
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
                 queryAndFetchAll('SELECT * FROM reports', [], function (originalReprotRows) {
                     assert.equal(originalReprotRows.length, 1);
-                    queryAndFetchAll('DELETE FROM builds', [], function () {
+                    queryAndFetchAll('UPDATE reports SET report_build = NULL; DELETE FROM builds', [], function () {
                         httpGet('/admin/reprocess-report?report=' + originalReprotRows[0]['report_id'], function (response) {
                             assert.equal(response.statusCode, 200);
                             assert.equal(JSON.parse(response.responseText)['status'], 'OK');
                             queryAndFetchAll('SELECT * FROM reports', [], function (reportRows) {
                                 originalReprotRows[0]['report_committed_at'] = null;
                                 reportRows[0]['report_committed_at'] = null;
+                                assert.notEqual(originalReprotRows[0]['report_build'], reportRows[0]['report_build']);
+                                originalReprotRows[0]['report_build'] = null;
+                                reportRows[0]['report_build'] = null;
                                 assert.deepEqual(reportRows, originalReprotRows);
                                 notifyDone();
                             });

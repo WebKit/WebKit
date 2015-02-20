@@ -1,3 +1,10 @@
+2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed test fixes after r179037, r179591, and r179763.
+
+        * tests/admin-regenerate-manifest.js:
+        * tests/admin-reprocess-report.js:
+
 2015-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Relationship between A/B testing results are unclear
