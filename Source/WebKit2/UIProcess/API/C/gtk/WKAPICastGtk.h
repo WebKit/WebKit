@@ -37,6 +37,18 @@ namespace WebKit {
 
 WK_ADD_API_MAPPING(WKViewRef, WebKitWebViewBase)
 
+template<>
+inline WKViewRef toAPI<>(WebKitWebViewBase* view)
+{
+    return reinterpret_cast<WKViewRef>(static_cast<void*>(view));
+}
+
+template<>
+inline WebKitWebViewBase* toImpl<>(WKViewRef view)
+{
+    return static_cast<WebKitWebViewBase*>(static_cast<void*>(const_cast<typename std::remove_const<typename std::remove_pointer<WKViewRef>::type>::type*>(view)));
+}
+
 }
 
 #endif // WKAPICastGtk_h

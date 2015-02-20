@@ -27,7 +27,7 @@
 #include "WebInspectorClientGtk.h"
 
 #include "WKAPICast.h"
-#include "WKSharedAPICast.h"
+#include "WebInspectorProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

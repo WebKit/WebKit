@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebSoupCustomProtocolRequestManagerClient.h"
 
+#include "WebSoupCustomProtocolRequestManager.h"
+
 namespace WebKit {
 
 bool WebSoupCustomProtocolRequestManagerClient::startLoading(WebSoupCustomProtocolRequestManager* soupRequestManager, uint64_t customProtocolID, const WebCore::ResourceRequest& request)

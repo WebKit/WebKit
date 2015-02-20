@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitFormClient.h"
 
+#include "APIDictionary.h"
+#include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBasePrivate.h"

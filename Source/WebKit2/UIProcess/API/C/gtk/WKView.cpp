@@ -31,6 +31,8 @@
 #include "WKAPICast.h"
 #include "WKViewPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebPageGroup.h"
+#include "WebProcessPool.h"
 
 using namespace WebKit;
 using namespace WebCore;
