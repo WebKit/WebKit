@@ -293,6 +293,10 @@ public:
 
     void computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const;
     
+    // Used to calculate the underline offset for TextUnderlinePositionUnder.
+    void maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, TextDecoration) const;
+    void minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, TextDecoration) const;
+
 private:
     virtual bool isInlineFlowBox() const override final { return true; }
     void boxModelObject() const = delete;
@@ -312,9 +316,6 @@ protected:
     InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
     InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
 
-    // Maximum logicalBottom among all children of an InlineFlowBox. Used to
-    // calculate the offset for TextUnderlinePositionUnder.
-    void computeMaxLogicalBottom(float& maxLogicalBottom) const;
 private:
     unsigned m_includeLogicalLeftEdge : 1;
     unsigned m_includeLogicalRightEdge : 1;
