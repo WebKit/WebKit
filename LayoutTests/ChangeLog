@@ -1,3 +1,12 @@
+2015-02-20  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK+ Gardening 20th February
+        https://bugs.webkit.org/show_bug.cgi?id=141840
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt: Rebaselined after r177770 (This revision adds a new comment line and so it modifies the test stack trace lines number).
+        * platform/gtk/tables/mozilla/bugs/bug157890-expected.txt: Added. Rebaselined after r177773.
+
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reactivate media tests to see if updates fixed the problem.
