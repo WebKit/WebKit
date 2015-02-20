@@ -105,12 +105,6 @@ using namespace WebKit;
 {
     if (![_immediateActionRecognizer animationController])
         [self _cancelImmediateAction];
-
-    if (_currentActionContext) {
-        _hasActivatedActionContext = YES;
-        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
-            [self _cancelImmediateAction];
-    }
 }
 
 - (void)_clearImmediateActionState
@@ -191,6 +185,12 @@ using namespace WebKit;
     if (_state != ImmediateActionState::Ready) {
         [self _updateImmediateActionItem];
         [self _cancelImmediateActionIfNeeded];
+    }
+
+    if (_currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            [self _cancelImmediateAction];
     }
 }
 
