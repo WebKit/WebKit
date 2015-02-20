@@ -1,5 +1,25 @@
 2015-02-20  Anders Carlsson  <andersca@apple.com>
 
+        API::String should just be a simple wrapper for WTF strings
+        https://bugs.webkit.org/show_bug.cgi?id=141852
+
+        Reviewed by Beth Dakin.
+
+        Expose a StringView member function on API::String. Move all the WKString API implementations to WKString.cpp.
+
+        * Shared/API/APIString.h:
+        * Shared/API/c/WKString.cpp:
+        (WKStringIsEmpty):
+        (WKStringGetLength):
+        (WKStringGetCharacters):
+        (WKStringGetMaximumUTF8CStringSize):
+        (WKStringGetUTF8CString):
+        (WKStringIsEqual):
+        (WKStringIsEqualToUTF8CString):
+        (WKStringIsEqualToUTF8CStringIgnoringCase):
+
+2015-02-20  Anders Carlsson  <andersca@apple.com>
+
         API::String::string() needs to return an isolated string copy
         https://bugs.webkit.org/show_bug.cgi?id=141846
 

@@ -47,43 +47,69 @@ WKStringRef WKStringCreateWithUTF8CString(const char* string)
 
 bool WKStringIsEmpty(WKStringRef stringRef)
 {
-    return toImpl(stringRef)->isEmpty();
+    return toImpl(stringRef)->stringView().isEmpty();
 }
 
 size_t WKStringGetLength(WKStringRef stringRef)
 {
-    return toImpl(stringRef)->length();
+    return toImpl(stringRef)->stringView().length();
 }
 
 size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t bufferLength)
 {
-    COMPILE_ASSERT(sizeof(WKChar) == sizeof(UChar), WKStringGetCharacters_sizeof_WKChar_matches_UChar);
-    return (toImpl(stringRef)->getCharacters(static_cast<UChar*>(buffer), bufferLength));
+    static_assert(sizeof(WKChar) == sizeof(UChar), "Size of WKChar must match size of UChar");
+
+    unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
+    auto substring = toImpl(stringRef)->stringView().substring(0, unsignedBufferLength);
+
+    substring.getCharactersWithUpconvert(static_cast<UChar*>(buffer));
+    return substring.length();
 }
 
 size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
 {
-    return toImpl(stringRef)->maximumUTF8CStringSize();
+    return toImpl(stringRef)->stringView().length() * 3 + 1;
 }
 
 size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
 {
-    return toImpl(stringRef)->getUTF8CString(buffer, bufferSize);
+    if (!bufferSize)
+        return 0;
+
+    auto stringView = toImpl(stringRef)->stringView();
+
+    char* p = buffer;
+    WTF::Unicode::ConversionResult result;
+
+    if (stringView.is8Bit()) {
+        const LChar* characters = stringView.characters8();
+        result = WTF::Unicode::convertLatin1ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1);
+    } else {
+        const UChar* characters = stringView.characters16();
+        result = WTF::Unicode::convertUTF16ToUTF8(&characters, characters + stringView.length(), &p, p + bufferSize - 1, /* strict */ true);
+    }
+
+    if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::targetExhausted)
+        return 0;
+
+    *p++ = '\0';
+    return p - buffer;
 }
 
 bool WKStringIsEqual(WKStringRef aRef, WKStringRef bRef)
 {
-    return toImpl(aRef)->equal(toImpl(bRef));
+    return toImpl(aRef)->stringView() == toImpl(bRef)->stringView();
 }
 
 bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
 {
-    return toImpl(aRef)->equalToUTF8String(b);
+    return toImpl(aRef)->stringView() == WTF::String::fromUTF8(b);
 }
 
 bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
 {
-    return toImpl(aRef)->equalToUTF8StringIgnoringCase(b);
+    // FIXME: Instead of copying the string here, we should add a version of equalIgnoringCase that takes StringViews.
+    return equalIgnoringCase(toImpl(aRef)->string(), WTF::String::fromUTF8(b));
 }
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
