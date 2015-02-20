@@ -1,3 +1,21 @@
+2015-02-20  Michael Saboff  <msaboff@apple.com>
+
+        Layout Test js/regress-141098.html is failing on 32-bit Machines
+        https://bugs.webkit.org/show_bug.cgi?id=141848
+
+        Reviewed by Geoffrey Garen.
+
+        It appears that different control flow paths in probeAndRecurse() allowed the second time
+        through the test to recurse deeper before getting to the point of overflowing the stack.
+        Restructured the test so that the exact same control flow in probeAndRecurse() is used
+        both times we call it, including probing the depth of the stack.  Now we pass a flag that
+        indicates whether or not we should try ever expanding eval strings or reuse the most
+        recent eval string.
+
+        * js/script-tests/regress-141098.js:
+        (testEval):
+        (probeAndRecurse):
+
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         Skip failing JSC stress test to get bots green.

@@ -1,5 +1,3 @@
-//@ skip
-
 description("Regression test for https://webkit.org/b/141098. Make sure eval() properly handles running out of stack space. This test should run without crashing.");
 
 // The tiering up to test higher levels of optimization will only test the DFG
@@ -12,9 +10,9 @@ function testEval(maxIterations)
     var result;
     var count = 1;
 
-    if (!maxIterations) {
+    if (!maxIterations)
         var result = eval(lastEvalString);
-    } else {
+    else {
         for (var iter = 0; iter < maxIterations; count *= 4, iter++) {
             var evalString = "\"dummy\".valueOf(";
 
@@ -26,7 +24,8 @@ function testEval(maxIterations)
 
             evalString +=  ");";
 
-            lastEvalString = evalString;
+            if (maxIterations > 1)
+                lastEvalString = evalString;
             result = eval(evalString);
         }
     }
@@ -34,33 +33,30 @@ function testEval(maxIterations)
     return result;
 }
 
-function probeAndRecurse(depth)
+function probeAndRecurse(depth, reuseEvalString)
 {
     var result;
 
     // Probe stack depth
-    if (depth > 0) {
-        try {
-            result = probeAndRecurse(depth+1);
+    try {
+        result = probeAndRecurse(depth+1, reuseEvalString);
 
-            if (!result) {
-                try {
-                    testEval(1);
-                } catch (e) {
-                    return -49;
-                }
-            } else
-                return result + 1
-        } catch (e) {
-            // We exceeded stack space, now return up the stack until we can execute a simple eval.
-            // Then run an eval test to exceed stack.
-            return -49;
-        }
-    } else if (depth != 0)
-        return probeAndRecurse(depth+1);
+        if (!result) {
+            try {
+                testEval(1);
+            } catch (e) {
+                return -49;
+            }
+        } else
+            return result + 1
+    } catch (e) {
+        // We exceeded stack space, now return up the stack until we can execute a simple eval.
+        // Then run an eval test to exceed stack.
+        return -49;
+    }
 
     try {
-        testEval((depth > 0) ? 20 : 0);
+        testEval(reuseEvalString ? 0 : 20);
     } catch (e) {
         testPassed("Exception: " + e);
     }
@@ -68,7 +64,7 @@ function probeAndRecurse(depth)
     return 1;
 }
 
-var depth = probeAndRecurse(1);
+var depth = probeAndRecurse(0, false);
 
 // Tier up the eval'ed code.
 // When run with run-jsc-stress-tests and it's agressive options, this low of a count will
@@ -76,4 +72,4 @@ var depth = probeAndRecurse(1);
 for (var i = 0; i < 200; i++)
     testEval(0);
 
-probeAndRecurse(-depth);
+probeAndRecurse(0, true);
