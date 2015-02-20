@@ -793,7 +793,7 @@ media/media-source/ [ Skip ]
 webkit.org/b/64731 http/tests/media/media-source/ [ Skip ]
 
 # These tests are for an obsolete version of the EME spec.
-fast/events/constructors/media-key-event-constructor.html [ WontFix ]
+fast/events/constructors/media-key-event-constructor.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-can-play-type-webm.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-events.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Skip ] # [ WontFix ]
@@ -948,7 +948,6 @@ media/video-display-toggle.html [ Failure ]
 media/video-layer-crash.html [ Failure ]
 media/video-load-preload-metadata.html [ Failure ]
 media/video-pause-immediately.html [ Failure ]
-media/video-src-blob.html [ Failure ]
 
 # Timeouts
 media/audio-constructor-preload.html [ Skip ] # Timeout
@@ -2674,6 +2673,7 @@ fast/history/history-length.html [ Skip ]
 fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
+webkit.org/b/140871 fast/history/page-cache-clearing.html [ Failure ]
 
 fast/html/marquee-scrollamount.html [ Failure ]
 

@@ -1,3 +1,14 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test results gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/frames/frame-scrolling-attribute-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-columns-child-expected.png: Added.
+        * platform/win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+
 2015-02-20  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK+ Gardening 20th February
