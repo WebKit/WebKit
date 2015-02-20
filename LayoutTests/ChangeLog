@@ -1,5 +1,56 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180128. <rdar://problem/19850739>
+
+    2015-02-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Crash when accessing an item in SVGLengthList and then replacing it with a previous item in the list.
+            https://bugs.webkit.org/show_bug.cgi?id=141552.
+
+            Reviewed by Darin Adler.
+
+            * svg/dom/SVGLengthList-basics-expected.txt:
+            * svg/dom/SVGLengthList-basics.xhtml: Add a new test case to this test. Have a
+            reference to an SVGLength in an SVGLengthList and then replace this SVGLength
+            with another one which comes before it in the SVGLengthList.
+
+    2015-02-14  Benjamin Poulain  <benjamin@webkit.org>
+
+            Add the initial matching implementation for attribute selectors with case-insensitive value
+            https://bugs.webkit.org/show_bug.cgi?id=141615
+
+            Reviewed by Andreas Kling.
+
+            This covers the basics. I will add some more cases as I do the follow up patches.
+
+            I avoided the problem of non-ASCII characters, this will need its own follow up
+            patch that fixes all attribute matching.
+
+            * fast/css/case-insensitive-attribute-selector-specificity-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-specificity.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-1-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-1.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-2-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-2.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-3-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-html-3.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-1-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-1.xhtml: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-2-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-2.xhtml: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-3-expected.html: Added.
+            * fast/css/case-insensitive-attribute-selector-styling-xhtml-3.xhtml: Added.
+            * fast/selectors/case-insensitive-attribute-bascis-expected.txt: Added.
+            * fast/selectors/case-insensitive-attribute-bascis.html: Added.
+            * fast/selectors/case-insensitive-attribute-matching-style-attribute-expected.txt: Added.
+            * fast/selectors/case-insensitive-attribute-matching-style-attribute.html: Added.
+            * fast/selectors/case-insensitive-attribute-style-update-expected.txt: Added.
+            * fast/selectors/case-insensitive-attribute-style-update.html: Added.
+            * fast/selectors/case-insensitive-attribute-with-case-sensitive-name-expected.txt: Added.
+            * fast/selectors/case-insensitive-attribute-with-case-sensitive-name.html: Added.
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r179936. <rdar://problem/19812932>
 
     2015-02-11  Sam Weinig  <sam@webkit.org>

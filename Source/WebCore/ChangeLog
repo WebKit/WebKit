@@ -1,5 +1,33 @@
 2015-02-19  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180128. <rdar://problem/19850739>
+
+    2015-02-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Crash when accessing an item in SVGLengthList and then replacing it with a previous item in the list.
+            https://bugs.webkit.org/show_bug.cgi?id=141552.
+
+            Reviewed by Darin Adler.
+
+            Tests: LayoutTests/svg/dom/SVGLengthList-basics.xhtml: This test is modified to
+            include a new test case.
+
+            * svg/properties/SVGListPropertyTearOff.h: Commit the removal of the replacing item
+            before trying to detach the wrapper of the item which going to be replaced.
+
+    2015-02-15  David Kilzer  <ddkilzer@apple.com>
+
+            CoreText only needs to be soft-linked on Windows
+
+            More work towards the Maverick Debug build fix:
+
+            REGRESSION (r180082): WebCore Debug builds fail on Mavericks due to weak export symbols
+            <http://webkit.org/b/141607>
+
+            * page/CaptionUserPreferencesMediaAF.cpp:
+
+2015-02-19  Dana Burkart  <dburkart@apple.com>
+
         Merged r180076. <rdar://problem/19850750>
 
     2015-02-13  Brent Fulgham  <bfulgham@apple.com>
