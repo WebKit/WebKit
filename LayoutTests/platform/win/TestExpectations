@@ -709,6 +709,12 @@ fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 ######################            Media tests             ######################
 ################################################################################
+# Deactivate all media tests on Apple Windows due to <rdar://problem/18681688> generating 
+# spam logging output that causes tests to fail. Will re-enable once this is fixed. 
+media [ Skip ] 
+fast/media [ Skip ] 
+http/tests/media [ Skip ] 
+
 # Web Audio is not supported on Windows
 media/W3C/audio [ Skip ]
 
@@ -719,29 +725,29 @@ webkit.org/b/48910 http/tests/media/video-cancel-load.html [ Skip ]  # Crashing
 webkit.org/b/58654 media/video-controls-in-media-document.html [ Skip ]
 
 # disable until 25220 is fixed: Loading a .ogv file into Safari downloads the file instead of playing it in a media document, even if XiphQT is installed (25220)
-webkit.org/b/25220 media/video-click-dblckick-standalone.html [ WontFix ]
-webkit.org/b/25220 media/video-document-types.html [ WontFix ]
+webkit.org/b/25220 media/video-click-dblckick-standalone.html [ Skip ] # WontFix
+webkit.org/b/25220 media/video-document-types.html [ Skip ] # WontFix
 # This test requires ogg codecs
-media/media-can-play-ogg.html [ WontFix ]
+media/media-can-play-ogg.html [ Skip ] # WontFix
 # This test requires flac codec
-media/media-can-play-flac-audio.html [ WontFix ]
+media/media-can-play-flac-audio.html [ Skip ] # WontFix
 
 webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ] # [ Crash Failure Pass ]
 webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Skip ]
-media/video-empty-source.html [ Failure ]
+#media/video-empty-source.html [ Failure ]
 
 # Needs to pass cookies to the media player
 webkit.org/b/33954 http/tests/media/video-cookie.html [ Skip ]
-webkit.org/b/34447 [ Release ] http/tests/media/video-referer.html [ Failure ]
+#webkit.org/b/34447 [ Release ] http/tests/media/video-referer.html [ Failure ]
 webkit.org/b/34447 [ Debug ] http/tests/media/video-referer.html [ Skip ] # Crashing
 
 # DumpRenderTree requires testRunner.setViewModeMediaFeature()
-fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
-fast/media/media-query-list-02.html [ Failure ]
-fast/media/media-query-list-03.html [ Failure ]
-fast/media/media-query-list-04.html [ Failure ]
-fast/media/media-query-list-05.html [ Failure ]
-fast/media/media-query-list-06.html [ Failure ]
+#fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
+#fast/media/media-query-list-02.html [ Failure ]
+#fast/media/media-query-list-03.html [ Failure ]
+#fast/media/media-query-list-04.html [ Failure ]
+#fast/media/media-query-list-05.html [ Failure ]
+#fast/media/media-query-list-06.html [ Failure ]
 
 webkit.org/b/38376 media/media-document-audio-size.html [ Skip ]
 
@@ -751,12 +757,12 @@ fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 http/tests/media/media-stream [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
-webkit.org/b/45021 media/context-menu-actions.html
+#webkit.org/b/45021 media/context-menu-actions.html
 
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html [ Skip ]
 
-webkit.org/b/45603 [ Release ] http/tests/media/video-served-as-text.html [ Failure ]
+#webkit.org/b/45603 [ Release ] http/tests/media/video-served-as-text.html [ Failure ]
 webkit.org/b/45603 [ Debug ] http/tests/media/video-served-as-text.html [ Skip ] # Crashing
 webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Skip ]
 
@@ -799,7 +805,7 @@ media/encrypted-media/encrypted-media-events.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ Skip ] # [ WontFix ]
 
-webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html
+webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html [ Skip ]
@@ -808,7 +814,7 @@ http/tests/security/video-cross-origin-readback.html [ Skip ]
 fast/forms/file/file-input-capture.html [ Skip ]
 
 # Requires testRunner.setMediaType() and implementation
-fast/media/print-restores-previous-mediatype.html
+fast/media/print-restores-previous-mediatype.html [ Skip ]
 
 # The following are already skipped on Mac because of a QuickTime problem
 webkit.org/b/38000 http/tests/media/video-play-stall-seek.html [ Skip ]
@@ -816,8 +822,8 @@ webkit.org/b/38000 http/tests/media/video-play-stall.html [ Skip ]
 webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Skip ]
 
 # Flaky media/video tests
-webkit.org/b/95806 media/video-source-error-no-candidate.html [ Pass Failure ]
-webkit.org/b/95806 media/video-source-moved.html [ Pass Failure ]
+#webkit.org/b/95806 media/video-source-error-no-candidate.html [ Pass Failure ]
+#webkit.org/b/95806 media/video-source-moved.html [ Pass Failure ]
 webkit.org/b/25465 media/video-zoom-controls.html [ Skip ] # Crashing
 
 # Resolution media query is not yet enabled.
@@ -833,7 +839,7 @@ http/tests/media/video-useragent.html [ Skip ]
 webkit.org/b/103442 media/video-size.html [ Skip ] # Crash
 webkit.org/b/103442 media/W3C/video/readyState/readyState_during_loadedmetadata.html [ Skip ] # Crash
 # This test requires generation of progress events during loading
-webkit.org/b/97026 media/progress-events-generated-correctly.html [ Failure ]
+#webkit.org/b/97026 media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/97132 media/track/track-cue-rendering-vertical.html [ Skip ] # Crashing
 
@@ -874,8 +880,8 @@ media/audio-delete-while-slider-thumb-clicked.html [ Skip ] # Timeout
 media/track/track-in-band-legacy-api.html [ Skip ]
 media/track/track-in-band-mode.html [ Skip ]
 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Skip ]
-fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
-fast/media/mq-transform-03.html [ Pass ImageOnlyFailure ]
+#fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
+#fast/media/mq-transform-03.html [ Pass ImageOnlyFailure ]
 
 # The following tests fail due to the new CSS/JS-based media controls.
 # They need to be rebaselined.
@@ -884,7 +890,7 @@ webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Skip ] #
 webkit.org/b/122021 media/video-controls-toggling.html [ Skip ] #  [ Timeout ]
 
 # The following tests also seem affected by r156730
-webkit.org/b/122166 media/track/audio-track.html [ Failure ]
+#webkit.org/b/122166 media/track/audio-track.html [ Failure ]
 webkit.org/b/122166 media/track/video-track.html [ Skip ] # Crashing
 webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Skip ] #  [ Timeout ]
 webkit.org/b/122166 media/media-controls-invalid-url.html [ Skip ] # Crashing
@@ -898,15 +904,15 @@ media/video-canvas-drawing-output.html [ Skip ] #  [ Timeout ]
 # CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
 # FAIL: Timed out waiting for notifyDone to be called
 
-fast/media/mq-compound-query-01.html [ Pass Timeout ]
-fast/media/mq-simple-neg-query-01.html [ Pass Timeout ]
-fast/media/mq-simple-neg-query-03.html [ Pass Timeout ]
-fast/media/update-media-query-css-parser.html [ Pass Timeout ]
+#fast/media/mq-compound-query-01.html [ Pass Timeout ]
+#fast/media/mq-simple-neg-query-01.html [ Pass Timeout ]
+#fast/media/mq-simple-neg-query-03.html [ Pass Timeout ]
+#fast/media/update-media-query-css-parser.html [ Pass Timeout ]
 
 # Remove these expected failures when the Windows test bots are upgraded to support
 # WAV files with AVCF:
 webkit.org/b/128943 media/audio-constructor.html [ Skip ] #  [ Timeout ]
-webkit.org/b/128943 media/media-can-play-wav-audio.html [ Failure ]
+#webkit.org/b/128943 media/media-can-play-wav-audio.html [ Failure ]
 webkit.org/b/128943 media/media-load-event.html [ Skip ] #  [ Timeout ]
 
 # DataCue.value not enabled
@@ -914,10 +920,10 @@ http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 media/track/track-datacue-value.html [ Skip ]
 
 # HLS problems
-http/tests/media/hls/hls-audio-tracks-has-audio.html [ Failure ]
-http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
-http/tests/media/hls/hls-audio-tracks.html [ Failure ]
-http/tests/media/hls/video-controls-live-stream.html [ Failure ]
+#http/tests/media/hls/hls-audio-tracks-has-audio.html [ Failure ]
+#http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
+#http/tests/media/hls/hls-audio-tracks.html [ Failure ]
+#http/tests/media/hls/video-controls-live-stream.html [ Failure ]
 
 # Crashing
 media/media-controller.html [ Skip ] # Crashing
@@ -936,18 +942,18 @@ media/video-remove-insert-repaints.html [ Skip ] # Crashing
 media/video-volume-slider.html [ Skip ] # Crashing
 media/video-volume-slider-drag.html [ Skip ] # Crashing
 
-media/controls-strict.html [ Failure ]
-media/controls-styling.html [ Failure ]
-media/media-controls-timeline-updates.html [ Failure ]
-media/sources-fallback-codecs.html [ Failure ]
-media/track/track-disabled.html [ Failure ]
-media/video-controls-audiotracks-trackmenu.html [ Failure ]
-media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
-media/video-controls-rendering.html [ Failure ]
-media/video-display-toggle.html [ Failure ]
-media/video-layer-crash.html [ Failure ]
-media/video-load-preload-metadata.html [ Failure ]
-media/video-pause-immediately.html [ Failure ]
+#media/controls-strict.html [ Failure ]
+#media/controls-styling.html [ Failure ]
+#media/media-controls-timeline-updates.html [ Failure ]
+#media/sources-fallback-codecs.html [ Failure ]
+#media/track/track-disabled.html [ Failure ]
+#media/video-controls-audiotracks-trackmenu.html [ Failure ]
+#media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
+#media/video-controls-rendering.html [ Failure ]
+#media/video-display-toggle.html [ Failure ]
+#media/video-layer-crash.html [ Failure ]
+#media/video-load-preload-metadata.html [ Failure ]
+#media/video-pause-immediately.html [ Failure ]
 
 # Timeouts
 media/audio-constructor-preload.html [ Skip ] # Timeout
@@ -1028,39 +1034,39 @@ http/tests/media/video-buffered-range-contains-currentTime.html [ Skip ] # Timeo
 http/tests/media/video-play-waiting.html [ Skip ] # Timeout
 
 # Extra whitespace in the output
-media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 
 # Extra whitespace, plus 'probably' result instead of ""
-media/W3C/video/canPlayType/canPlayType_codecs_order_3.html [ Failure ]
+#media/W3C/video/canPlayType/canPlayType_codecs_order_3.html [ Failure ]
 
-media/audio-mpeg-supported.html [ Failure ]
+#media/audio-mpeg-supported.html [ Failure ]
 
 # Received an extra RUN(video.play()) event. Normal for Windows?
 media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 
 # DOM security problem
-media/video-canvas-source.html [ Failure ]
+#media/video-canvas-source.html [ Failure ]
 
 # Parser is saying "line 0" for blocking message, but expect another value (e.g., 10)
-media/video-controls-no-scripting.html [ Failure ]
+#media/video-controls-no-scripting.html [ Failure ]
 
 # relativeURL/current Source is wrong:
-media/video-source-type-params.html [ Failure ]
+#media/video-source-type-params.html [ Failure ]
 
 # Problems loading content
-http/tests/media/media-document-referer.html [ Failure ]
-http/tests/media/video-accept-encoding.html [ Failure ]
-http/tests/media/video-auth.html [ Failure ]
-[ Release ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
-[ Debug ] http/tests/media/video-throttled-load-metadata.html [ Skip ] # Debug assertion
+#http/tests/media/media-document-referer.html [ Failure ]
+#http/tests/media/video-accept-encoding.html [ Failure ]
+#http/tests/media/video-auth.html [ Failure ]
+#[ Release ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
+#[ Debug ] http/tests/media/video-throttled-load-metadata.html [ Skip ] # Debug assertion
 
 # Screen obscured by opaque layer:
-media/video-frame-accurate-seek.html [ Failure ]
+#media/video-frame-accurate-seek.html [ Failure ]
 
 ################################################################################
 ############################   End Media Failures   ############################
