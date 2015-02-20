@@ -274,10 +274,10 @@ namespace WebCore {
     \
     macro(securitypolicyviolation) \
     \
-    /* ENABLE(IOS_AIRPLAY) */ \
+    /* ENABLE(WIRELESS_PLAYBACK_TARGET) */ \
     macro(webkitcurrentplaybacktargetiswirelesschanged) \
     macro(webkitplaybacktargetavailabilitychanged) \
-    /* End of ENABLE(IOS_AIRPLAY) */ \
+    /* End of ENABLE(WIRELESS_PLAYBACK_TARGET) */ \
     \
     /* ENABLE(IOS_GESTURE_EVENTS) */ \
     macro(gesturestart) \
@@ -297,7 +297,7 @@ namespace WebCore {
     \
     /* PLATFORM(IOS) */ \
     macro(webkitpresentationmodechanged) \
-    /* End of ENABLE(IOS_AIRPLAY) */ \
+    /* End of ENABLE(WIRELESS_PLAYBACK_TARGET) */ \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

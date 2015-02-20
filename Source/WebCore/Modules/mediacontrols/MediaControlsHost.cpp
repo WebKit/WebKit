@@ -218,7 +218,7 @@ bool MediaControlsHost::userGestureRequired() const
 
 String MediaControlsHost::externalDeviceDisplayName() const
 {
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MediaPlayer* player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"\" because player is NULL");
@@ -239,7 +239,7 @@ String MediaControlsHost::externalDeviceType() const
     DEPRECATED_DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
     String type = none;
     
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     DEPRECATED_DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
     DEPRECATED_DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
     

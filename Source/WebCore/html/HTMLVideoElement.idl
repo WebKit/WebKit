@@ -51,7 +51,7 @@ enum VideoPresentationMode {
     [RaisesException] void webkitEnterFullScreen();
     void webkitExitFullScreen();
 
-    [Conditional=IOS_AIRPLAY] attribute boolean webkitWirelessVideoPlaybackDisabled;
+    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
 
     // The number of frames that have been decoded and made available for
     // playback.

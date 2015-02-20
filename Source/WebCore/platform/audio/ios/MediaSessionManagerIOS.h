@@ -55,7 +55,7 @@ private:
     
     virtual void resetRestrictions() override;
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool hasWirelessTargetsAvailable() override;
     virtual void configureWireLessTargetMonitoring() override;
 #endif

@@ -81,7 +81,7 @@ public:
 
     virtual void configureWireLessTargetMonitoring() { }
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool hasWirelessTargetsAvailable() { return false; }
 #endif
 

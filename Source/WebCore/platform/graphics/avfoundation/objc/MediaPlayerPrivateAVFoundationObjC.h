@@ -121,7 +121,7 @@ public:
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
 #endif
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessDidChange();
 #endif
     
@@ -268,7 +268,7 @@ private:
     void updateVideoTracks();
 #endif
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetWireless() const override;
     virtual String wirelessPlaybackTargetName() const override;
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
@@ -363,7 +363,7 @@ private:
     bool m_haveBeenAskedToCreateLayer;
     bool m_cachedCanPlayFastForward;
     bool m_cachedCanPlayFastReverse;
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback;
 #endif
 };

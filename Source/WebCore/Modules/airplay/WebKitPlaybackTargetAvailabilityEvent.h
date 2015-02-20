@@ -26,7 +26,7 @@
 #ifndef WebKitPlaybackTargetAvailabilityEvent_h
 #define WebKitPlaybackTargetAvailabilityEvent_h
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "Event.h"
 
@@ -73,6 +73,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(IOS_AIRPLAY)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #endif // WebKitPlaybackTargetAvailabilityEvent_h

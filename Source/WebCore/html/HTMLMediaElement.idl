@@ -137,8 +137,8 @@
     [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 #endif
 
-    [Conditional=IOS_AIRPLAY] void webkitShowPlaybackTargetPicker();
-    [Conditional=IOS_AIRPLAY] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
-    [Conditional=IOS_AIRPLAY] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
-    [Conditional=IOS_AIRPLAY] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
+    [Conditional=WIRELESS_PLAYBACK_TARGET] void webkitShowPlaybackTargetPicker();
+    [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
+    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
+    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
 };

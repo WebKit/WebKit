@@ -473,7 +473,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_shouldBufferData(true)
     , m_cachedIsReadyForDisplay(false)
     , m_haveBeenAskedToCreateLayer(false)
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_allowsWirelessVideoPlayback(true)
 #endif
 {
@@ -543,7 +543,7 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
             [m_avPlayer.get() removeTimeObserver:m_timeObserver.get()];
         m_timeObserver = nil;
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive"];
 #endif
         m_avPlayer = nil;
@@ -924,7 +924,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer = adoptNS([allocAVPlayerInstance() init]);
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
     updateDisableExternalPlayback();
 #endif
@@ -933,7 +933,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:NO];
 #endif
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
 #endif
 
@@ -1131,7 +1131,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
         syncTextTrackBounds();
         [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
     }
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateDisableExternalPlayback();
 #endif
 }
@@ -2673,7 +2673,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     return m_languageOfPrimaryAudioTrack;
 }
 
-#if ENABLE(IOS_AIRPLAY) && PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
     if (!m_avPlayer)
@@ -2971,7 +2971,7 @@ void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)
     rateChanged();
 }
     
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange()
 {
     playbackTargetIsWirelessChanged();
@@ -3158,7 +3158,7 @@ NSArray* assetTrackMetadataKeyNames()
         // A value changed for an AVPlayer.
         if ([keyPath isEqualToString:@"rate"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::rateDidChange, m_callback, [newValue doubleValue]);
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         else if ([keyPath isEqualToString:@"externalPlaybackActive"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
 #endif

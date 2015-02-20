@@ -1,3 +1,66 @@
+2015-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] cleanup AirPlay code
+        https://bugs.webkit.org/show_bug.cgi?id=141811
+
+        Reviewed by Jer Noble.
+
+        * Configurations/FeatureDefines.xcconfig: IOS_AIRPLAY -> WIRELESS_PLAYBACK_TARGET.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp: Ditto.
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h:
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl:
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::externalDeviceDisplayName): Ditto.
+        (WebCore::MediaControlsHost::externalDeviceType):
+
+        * dom/EventNames.h: Ditto.
+        * dom/EventNames.in:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Ditto.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Ditto.
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::restrictionName): Ditto.
+        (WebCore::HTMLMediaSession::applyMediaPlayerRestrictions): Ditto.
+        * html/HTMLMediaSession.h:
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Ditto.
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+
+        * page/Settings.in: Ditto.
+
+        * platform/audio/MediaSessionManager.h:
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Ditto.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::showPlaybackTargetPicker): Deleted.
+        (WebCore::MediaPlayer::hasWirelessPlaybackTargets): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::showPlaybackTargetPicker): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::hasWirelessPlaybackTargets): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): IOS_AIRPLAY -> WIRELESS_PLAYBACK_TARGET.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer): Ditto.
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Ditto.
+
 2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Language ranges containing asterisks must be quoted as strings

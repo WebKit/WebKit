@@ -1,3 +1,12 @@
+2015-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] cleanup AirPlay code
+        https://bugs.webkit.org/show_bug.cgi?id=141811
+
+        Reviewed by Jer Noble.
+
+        * Configurations/FeatureDefines.xcconfig: IOS_AIRPLAY -> WIRELESS_PLAYBACK_TARGET.
+
 2015-02-18  Timothy Horton  <timothy_horton@apple.com>
 
         Adopt WebCore::IOSurface in ImageBuffer

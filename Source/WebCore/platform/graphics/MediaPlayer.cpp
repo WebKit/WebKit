@@ -807,7 +807,7 @@ void MediaPlayer::exitFullscreen()
 }
 #endif
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaPlayer::isCurrentPlaybackTargetWireless() const
 {
     return m_private->isCurrentPlaybackTargetWireless();
@@ -821,16 +821,6 @@ String MediaPlayer::wirelessPlaybackTargetName() const
 MediaPlayer::WirelessPlaybackTargetType MediaPlayer::wirelessPlaybackTargetType() const
 {
     return m_private->wirelessPlaybackTargetType();
-}
-
-void MediaPlayer::showPlaybackTargetPicker()
-{
-    m_private->showPlaybackTargetPicker();
-}
-
-bool MediaPlayer::hasWirelessPlaybackTargets() const
-{
-    return m_private->hasWirelessPlaybackTargets();
 }
 
 bool MediaPlayer::wirelessVideoPlaybackDisabled() const

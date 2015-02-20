@@ -59,7 +59,7 @@ public:
     virtual void configureInbandTracks();
     virtual void setCurrentTextTrack(InbandTextTrackPrivateAVF*) { }
     virtual InbandTextTrackPrivateAVF* currentTextTrack() const = 0;
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessChanged();
 #endif
     

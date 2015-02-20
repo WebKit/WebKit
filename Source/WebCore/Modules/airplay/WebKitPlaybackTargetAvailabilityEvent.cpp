@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 namespace WebCore {
 
@@ -56,4 +56,4 @@ WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(con
 
 } // namespace WebCore
 
-#endif // ENABLE(IOS_AIRPLAY)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

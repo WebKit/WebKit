@@ -203,7 +203,7 @@ mediaSourceEnabled initial=true, conditional=MEDIA_SOURCE
 # FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.
 allowMultiElementImplicitSubmission initial=false
 
-mediaPlaybackAllowsAirPlay initial=true, conditional=IOS_AIRPLAY
+mediaPlaybackAllowsAirPlay initial=true, conditional=WIRELESS_PLAYBACK_TARGET
 
 shouldConvertPositionStyleOnCopy initial=false
 

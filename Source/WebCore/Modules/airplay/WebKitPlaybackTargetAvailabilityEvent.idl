@@ -25,7 +25,7 @@
  */
 
 [
-    Conditional=IOS_AIRPLAY,
+    Conditional=WIRELESS_PLAYBACK_TARGET,
     ConstructorTemplate=Event
 ] interface WebKitPlaybackTargetAvailabilityEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString availability;

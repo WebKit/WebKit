@@ -48,7 +48,7 @@ public:
     bool fullscreenPermitted(const HTMLMediaElement&) const;
     bool pageAllowsDataLoading(const HTMLMediaElement&) const;
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
 
     bool currentPlaybackTargetIsWireless(const HTMLMediaElement&) const;
@@ -74,7 +74,7 @@ public:
         RequireUserGestureForFullscreen = 1 << 2,
         RequirePageConsentToLoadMedia = 1 << 3,
         RequirePageConsentToResumeMedia = 1 << 4,
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
         WirelessVideoPlaybackDisabled =  1 << 6,
 #endif

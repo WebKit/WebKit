@@ -159,7 +159,7 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
 }
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {
     return [m_objcObserver hasWirelessTargetsAvailable];
