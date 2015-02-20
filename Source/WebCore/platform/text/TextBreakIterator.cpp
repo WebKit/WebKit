@@ -405,6 +405,10 @@ static const char* uax14AssignmentsAfter =
     "$WJ = [:LineBreak = Word_Joiner:];"
     "$XX = [:LineBreak = Unknown:];"
     "$ZW = [:LineBreak = ZWSpace:];"
+    "$ZWJ = \\u200D;"
+    "$EmojiForModsAndSeqs = [\\U0001F466-\\U0001F469];"
+    "$EmojiForModsOnly = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6B4-\\U0001F6B6 \\U0001F6C0];"
+    "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];"
     "$dictionary = [:LineBreak = Complex_Context:];"
     "$ALPlus = [$AL $AI $SA $SG $XX];"
     "$ALcm = $ALPlus $CM*;"
@@ -481,6 +485,7 @@ static const char* uax14Forward =
     "$LB4NonBreaks [$SP $ZW];"
     "$CAN_CM $CM* [$SP $ZW];"
     "$CM+ [$SP $ZW];"
+    "[$EmojiForModsAndSeqs $EmojiMods] $ZWJ $EmojiForModsAndSeqs;"
     "$CAN_CM $CM+;"
     "$CM+;"
     "$CAN_CM $CM* $WJcm;"
@@ -547,7 +552,8 @@ static const char* uax14Forward =
     "$IScm ($ALcm | $HLcm);"
     "($ALcm | $HLcm | $NUcm) $OPcm;"
     "$CM+ $OPcm;"
-    "$CPcm ($ALcm | $HLcm | $NUcm);";
+    "$CPcm ($ALcm | $HLcm | $NUcm);"
+    "[$EmojiForModsAndSeqs $EmojiForModsOnly] $EmojiMods;";
 
 static const char* uax14Reverse =
     "!!reverse;"
@@ -585,6 +591,7 @@ static const char* uax14Reverse =
     "$LF $CR;"
     "[$SP $ZW] [$LB4NonBreaks-$CM];"
     "[$SP $ZW] $CM+ $CAN_CM;"
+    "$EmojiForModsAndSeqs $ZWJ [$EmojiForModsAndSeqs $EmojiMods];"
     "$CM+ $CAN_CM;"
     "$CM* $WJ $CM* $CAN_CM;"
     "$CM* $WJ [$LB8NonBreaks-$CM];"
@@ -641,7 +648,8 @@ static const char* uax14Reverse =
     "$CM* ($ALPlus | $HL) $CM* ($ALPlus | $HL);"
     "$CM* ($ALPlus | $HL) $CM* $IS;"
     "$CM* $OP $CM* ($ALPlus | $HL | $NU);"
-    "$CM* ($ALPlus | $HL | $NU) $CM* $CP;";
+    "$CM* ($ALPlus | $HL | $NU) $CM* $CP;"
+    "$EmojiMods [$EmojiForModsAndSeqs $EmojiForModsOnly];";
 
 static const char* uax14SafeForward =
     "!!safe_forward;"
