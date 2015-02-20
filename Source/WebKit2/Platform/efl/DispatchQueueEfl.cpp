@@ -28,6 +28,7 @@
 
 #include <DispatchQueueWorkItemEfl.h>
 #include <sys/timerfd.h>
+#include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Threading.h>

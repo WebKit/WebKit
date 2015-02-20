@@ -1,5 +1,11 @@
 2015-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        EFL URTBF
+
+        * Platform/efl/DispatchQueueEfl.cpp:
+
+2015-02-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r180410, WorkQueue.h is in WTF now.
 
         * Platform/efl/DispatchQueueWorkItemEfl.h:

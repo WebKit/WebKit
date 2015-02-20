@@ -1,6 +1,7 @@
 list(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
     efl/RunLoopEfl.cpp
+    efl/WorkQueueEfl.cpp
 
     gobject/GMainLoopSource.cpp
     gobject/GRefPtr.cpp
