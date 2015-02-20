@@ -2513,6 +2513,33 @@ bool FrameView::layoutPending() const
     return m_layoutTimer.isActive();
 }
 
+bool FrameView::needsStyleRecalcOrLayout(bool includeSubframes) const
+{
+    if (frame().document() && frame().document()->childNeedsStyleRecalc())
+        return true;
+    
+    if (needsLayout())
+        return true;
+
+    if (!includeSubframes)
+        return false;
+
+    // Find child frames via the Widget tree, as updateLayoutAndStyleIfNeededRecursive() does.
+    Vector<Ref<FrameView>, 16> childViews;
+    childViews.reserveInitialCapacity(children().size());
+    for (auto& widget : children()) {
+        if (widget->isFrameView())
+            childViews.uncheckedAppend(toFrameView(*widget));
+    }
+
+    for (unsigned i = 0; i < childViews.size(); ++i) {
+        if (childViews[i]->needsStyleRecalcOrLayout())
+            return true;
+    }
+
+    return false;
+}
+
 bool FrameView::needsLayout() const
 {
     // This can return true in cases where the document does not have a body yet.
@@ -3839,10 +3866,12 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     for (unsigned i = 0; i < childViews.size(); ++i)
         childViews[i]->updateLayoutAndStyleIfNeededRecursive();
 
-    // When frame flattening is on, child frame can mark parent frame dirty. In such case, child frame
-    // needs to call layout on parent frame recursively.
-    // This assert ensures that parent frames are clean, when child frames finished updating layout and style.
-    ASSERT(!needsLayout());
+    // A child frame may have dirtied us during its layout.
+    frame().document()->updateStyleIfNeeded();
+    if (needsLayout())
+        layout();
+
+    ASSERT(!frame().isMainFrame() || !needsStyleRecalcOrLayout());
 }
 
 bool FrameView::qualifiesAsVisuallyNonEmpty() const

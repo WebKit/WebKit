@@ -119,6 +119,8 @@ public:
     void setNeedsLayout();
     void setViewportConstrainedObjectsNeedLayout();
 
+    bool needsStyleRecalcOrLayout(bool includeSubframes = true) const;
+
     bool needsFullRepaint() const { return m_needsFullRepaint; }
 
     bool renderedCharactersExceed(unsigned threshold);
