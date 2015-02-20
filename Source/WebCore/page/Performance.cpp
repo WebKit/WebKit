@@ -228,6 +228,9 @@ void Performance::webkitClearMeasures(const String& measureName)
 
 double Performance::now() const
 {
+    if (!frame())
+        return 0;
+
     return 1000.0 * m_frame->document()->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime());
 }
 
