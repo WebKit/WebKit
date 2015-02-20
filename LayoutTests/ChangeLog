@@ -1,5 +1,12 @@
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
+        Skip failing JSC stress test to get bots green.
+        https://bugs.webkit.org/show_bug.cgi?id=141848
+
+        * js/script-tests/regress-141098.js:
+
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Document some failures due to a JSC regression.
         https://bugs.webkit.org/show_bug.cgi?id=141848
 
