@@ -183,11 +183,20 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
         if (result != NSFileHandlingPanelOKButton)
             return;
 
-        WebDocumentController *controller = [[_openingDocumentController alloc] init];
-        [controller.window makeKeyAndOrderFront:nil];
-        [_webDocuments addObject:controller];
-        [controller loadHTMLString:[NSString stringWithContentsOfURL:panel.URLs.lastObject encoding:NSUTF8StringEncoding error:nil]];
+        NSURL *URL = panel.URLs.lastObject;
+        [self application:[NSApplication sharedApplication] openFile:URL.path];
+        _openingDocumentController = nil;
     }];
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+    Class controllerClass = _openingDocumentController ? _openingDocumentController : self._defaultWebDocumentControllerClass;
+    WebDocumentController *controller = [[controllerClass alloc] init];
+    [controller.window makeKeyAndOrderFront:nil];
+    [_webDocuments addObject:controller];
+    [controller loadHTMLString:[NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:nil]];
+    return YES;
 }
 
 - (void)_updateNewWindowKeyEquivalents

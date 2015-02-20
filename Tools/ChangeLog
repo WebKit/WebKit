@@ -1,5 +1,23 @@
 2015-02-20  Timothy Horton  <timothy_horton@apple.com>
 
+        [WebEditingTester] Allow dropping HTML files on the app
+        https://bugs.webkit.org/show_bug.cgi?id=141834
+
+        Reviewed by Simon Fraser.
+
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate openDocument:]):
+        (-[WebEditingAppDelegate application:openFile:]):
+        Implement application:openFile:, factoring file loading code out of openDocument.
+
+        * WebEditingTester/Info.plist:
+        Register as an editor for HTML files.
+
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+        Enrica is not an organization.
+
+2015-02-20  Timothy Horton  <timothy_horton@apple.com>
+
         [WebEditingTester] Expand "WK" to "WebKit" in a few places
         https://bugs.webkit.org/show_bug.cgi?id=141833
 
