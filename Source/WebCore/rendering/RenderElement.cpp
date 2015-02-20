@@ -1374,4 +1374,22 @@ void RenderElement::addControlStatesForRenderer(const RenderObject* o, ControlSt
     controlStatesRendererMap().add(o, states);
 }
 
+const RenderElement* RenderElement::enclosingRendererWithTextDecoration(TextDecoration textDecoration, bool firstLine) const
+{
+    const RenderElement* current = this;
+    do {
+        if (current->isRenderBlock())
+            return current;
+        if (!current->isRenderInline() || current->isRubyText())
+            return nullptr;
+        
+        const RenderStyle& styleToUse = firstLine ? current->firstLineStyle() : current->style();
+        if (styleToUse.textDecoration() & textDecoration)
+            return current;
+        current = current->parent();
+    } while (current && (!current->element() || (!isHTMLAnchorElement(*current->element()) && !current->element()->hasTagName(HTMLNames::fontTag))));
+
+    return current;
+}
+
 }

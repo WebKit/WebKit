@@ -161,6 +161,8 @@ public:
 
     bool isCSSAnimating() const { return m_isCSSAnimating; }
     void setIsCSSAnimating(bool b) { m_isCSSAnimating = b; }
+    
+    const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
 
 protected:
     enum BaseTypeFlags {

@@ -1,5 +1,54 @@
 2015-02-20  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180150. <rdar://problem/19894685>
+
+    2015-02-12  David Hyatt  <hyatt@apple.com>
+
+            text-underline-position:under has multiple correctness issues
+            https://bugs.webkit.org/show_bug.cgi?id=141528
+
+            Reviewed by Dean Jackson.
+
+            Added a bunch of new tests in fast/text
+
+            * rendering/InlineFlowBox.cpp:
+            (WebCore::InlineFlowBox::maxLogicalBottomForTextDecorationLine):
+            (WebCore::InlineFlowBox::minLogicalTopForTextDecorationLine):
+            (WebCore::InlineFlowBox::computeMaxLogicalBottom): Deleted.
+            * rendering/InlineFlowBox.h:
+            These functions have been re-written to take an enclosing renderer that specified the
+            decoration. This way they can properly limit the bottom/top computation to only line boxes
+            that are contained inside the renderer.
+
+            * rendering/InlineTextBox.cpp:
+            (WebCore::InlineTextBox::paintDecoration):
+            Tweak the call to get the decoration colors now that quirks mode has been removed.
+
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::enclosingRendererWithTextDecoration):
+            * rendering/RenderElement.h:
+            New function that finds the enclosing renderer that specified a text decoration. For now
+            this is only used in the "under" position computation, but soon we'll be using it
+            everywhere.
+
+            * rendering/RenderObject.cpp:
+            (WebCore::RenderObject::getTextDecorationColors):
+            * rendering/RenderObject.h:
+            Remove the quirks mode argument, since we were always passing true anyway (making the argument dead).
+
+            * rendering/RootInlineBox.cpp:
+            (WebCore::RootInlineBox::maxLogicalBottom): Deleted.
+            * rendering/RootInlineBox.h:
+            Get rid of these functions and just have InlineTextBoxStyle's computeUnderLineOffset function call
+            the InlineFlowBox functions directly.
+
+            * style/InlineTextBoxStyle.cpp:
+            (WebCore::computeUnderlineOffset):
+            Re-written to fetch the enclosingRendererWithTextDecoration so that it can be passed to the logical top/bottom
+            computation to limit which line boxes get included.
+
+2015-02-20  Dana Burkart  <dburkart@apple.com>
+
         Merged r180147. <rdar://problem/19850657>
 
     2015-02-16  Brent Fulgham  <bfulgham@apple.com>
