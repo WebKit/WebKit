@@ -31,6 +31,7 @@
 
 #include "Executable.h"
 #include "JSGlobalObject.h"
+#include "Options.h"
 #include "SourceCode.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +45,7 @@ namespace JSC {
     public:
         EvalExecutable* tryGet(bool inStrictContext, const String& evalSource, JSScope* scope)
         {
-            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scope->begin()->isVariableObject())
+            if (!inStrictContext && evalSource.length() < Options::maximumEvalCacheableSourceLength() && scope->begin()->isVariableObject())
                 return m_cacheMap.get(evalSource.impl()).get();
             return 0;
         }
@@ -55,7 +56,7 @@ namespace JSC {
             if (!evalExecutable)
                 return 0;
 
-            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scope->begin()->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
+            if (!inStrictContext && evalSource.length() < Options::maximumEvalCacheableSourceLength() && scope->begin()->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
                 m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
             
             return evalExecutable;
@@ -71,7 +72,6 @@ namespace JSC {
         }
 
     private:
-        static const unsigned maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;
 
         typedef HashMap<RefPtr<StringImpl>, WriteBarrier<EvalExecutable>> EvalCacheMap;
