@@ -27,6 +27,7 @@
 #include "RenderTextLineBoxes.h"
 #include "SimpleLineLayout.h"
 #include "Text.h"
+#include "TextBreakIterator.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -253,6 +254,7 @@ inline RenderStyle& RenderText::firstLineStyle() const
 
 void applyTextTransform(const RenderStyle&, String&, UChar);
 void makeCapitalized(String*, UChar previous);
+LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
     
 inline RenderText* Text::renderer() const
 {

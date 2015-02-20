@@ -1494,3 +1494,8 @@ webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failur
 
 # Passing Media Source tests
 [ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebuffer-mode.html [ Pass ]
+
+# Verified passing, so override generic skip
+webkit.org/b/89235 css3/line-break [ Pass ]
+webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
+webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
