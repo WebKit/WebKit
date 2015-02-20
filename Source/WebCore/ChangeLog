@@ -1,5 +1,36 @@
 2015-02-20  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180278. <rdar://problem/19878813>
+
+    2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Justified ruby can cause lines to grow beyond their container
+            https://bugs.webkit.org/show_bug.cgi?id=141732
+
+            Reviewed by David Hyatt.
+
+            After we re-layout RenderRubyRuns, this can change the environment upon which
+            ruby's overhang calculation is sensitive to. Before this patch, we would recalculate
+            the overhang after the RenderRubyRun gets relaid out. However, doing such causes the
+            effective width of the RenderRubyRun to change, which causes out subsequent
+            justification calculations to be off.
+
+            Therefore, we have a cycle; the amount of ruby overhang can change the justification
+            in a line, and the layout of the line affects the ruby overhang calculation. Instead
+            of performing a layout in a loop until it converges, this patch simply observes that
+            having a flush right edge is more valuable than having a perfectly correct overhang.
+            It therefore simply removes the secondary overhang calculation.
+
+            Test: fast/text/ruby-justification-flush.html
+
+            * rendering/RenderBlockFlow.h:
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::RenderBlockFlow::updateRubyForJustifiedText):
+            (WebCore::RenderBlockFlow::computeExpansionForJustifiedText):
+            (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+
+2015-02-20  Dana Burkart  <dburkart@apple.com>
+
         Merged r180150. <rdar://problem/19894685>
 
     2015-02-12  David Hyatt  <hyatt@apple.com>
