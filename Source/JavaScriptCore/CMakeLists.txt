@@ -463,6 +463,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCallee.cpp
+    runtime/JSCatchScope.cpp
     runtime/JSCell.cpp
     runtime/JSConsole.cpp
     runtime/JSDataView.cpp
@@ -470,6 +471,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSDateMath.cpp
     runtime/JSEnvironmentRecord.cpp
     runtime/JSFunction.cpp
+    runtime/JSFunctionNameScope.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectFunctions.cpp
     runtime/JSLock.cpp

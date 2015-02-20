@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1290,7 +1290,7 @@ LLINT_SLOW_PATH_DECL(slow_path_push_name_scope)
     int scopeReg = pc[1].u.operand;
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
     JSNameScope::Type type = static_cast<JSNameScope::Type>(pc[5].u.operand);
-    JSNameScope* scope = JSNameScope::create(exec, currentScope, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), pc[4].u.operand, type);
+    JSNameScope* scope = JSNameScope::create(vm, exec->lexicalGlobalObject(), currentScope, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), pc[4].u.operand, type);
     exec->uncheckedR(scopeReg) = scope;
     LLINT_END();
 }

@@ -197,7 +197,8 @@ protected:
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
     WriteBarrier<Structure> m_lexicalEnvironmentStructure;
-    WriteBarrier<Structure> m_nameScopeStructure;
+    WriteBarrier<Structure> m_catchScopeStructure;
+    WriteBarrier<Structure> m_functionNameScopeStructure;
     WriteBarrier<Structure> m_argumentsStructure;
         
     // Lists the actual structures used for having these particular indexing shapes.
@@ -408,7 +409,8 @@ public:
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
     Structure* activationStructure() const { return m_lexicalEnvironmentStructure.get(); }
-    Structure* nameScopeStructure() const { return m_nameScopeStructure.get(); }
+    Structure* catchScopeStructure() const { return m_catchScopeStructure.get(); }
+    Structure* functionNameScopeStructure() const { return m_functionNameScopeStructure.get(); }
     Structure* argumentsStructure() const { return m_argumentsStructure.get(); }
     Structure* originalArrayStructureForIndexingType(IndexingType indexingType) const
     {

@@ -65,10 +65,12 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
+#include "JSCatchScope.h"
 #include "JSConsole.h"
 #include "JSDataView.h"
 #include "JSDataViewPrototype.h"
 #include "JSFunction.h"
+#include "JSFunctionNameScope.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
@@ -77,7 +79,6 @@
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
-#include "JSNameScope.h"
 #include "JSONObject.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
@@ -265,7 +266,8 @@ void JSGlobalObject::init(VM& vm)
     m_typedArrays[toIndex(TypeFloat64)].structure.set(vm, this, JSFloat64Array::createStructure(vm, this, m_typedArrays[toIndex(TypeFloat64)].prototype.get()));
     m_typedArrays[toIndex(TypeDataView)].structure.set(vm, this, JSDataView::createStructure(vm, this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
     
-    m_nameScopeStructure.set(vm, this, JSNameScope::createStructure(vm, this, jsNull()));
+    m_catchScopeStructure.set(vm, this, JSCatchScope::createStructure(vm, this, jsNull()));
+    m_functionNameScopeStructure.set(vm, this, JSFunctionNameScope::createStructure(vm, this, jsNull()));
     m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
     m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this));
@@ -676,7 +678,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
     visitor.append(&thisObject->m_lexicalEnvironmentStructure);
-    visitor.append(&thisObject->m_nameScopeStructure);
+    visitor.append(&thisObject->m_catchScopeStructure);
+    visitor.append(&thisObject->m_functionNameScopeStructure);
     visitor.append(&thisObject->m_argumentsStructure);
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
         visitor.append(&thisObject->m_originalArrayStructureForIndexingShape[i]);

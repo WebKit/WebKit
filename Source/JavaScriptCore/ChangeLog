@@ -1,3 +1,57 @@
+2015-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of JSNameScope::m_type
+        https://bugs.webkit.org/show_bug.cgi?id=141851
+
+        Reviewed by Geoffrey Garen.
+        
+        This is a big step towards getting rid of JSEnvironmentRecord::m_registers. To do it we need
+        to ensure that subclasses of JSEnvironmentRecord never have additional C++ fields, so that
+        JSEnvironmentRecord can always place "registers" right after the end of itself.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isCatchScope):
+        (JSC::DebuggerScope::isFunctionNameScope):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSCatchScope.cpp: Added.
+        * runtime/JSCatchScope.h: Added.
+        (JSC::JSCatchScope::JSCatchScope):
+        (JSC::JSCatchScope::create):
+        (JSC::JSCatchScope::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::addNameScopeIfNeeded):
+        * runtime/JSFunctionNameScope.cpp: Added.
+        * runtime/JSFunctionNameScope.h: Added.
+        (JSC::JSFunctionNameScope::JSFunctionNameScope):
+        (JSC::JSFunctionNameScope::create):
+        (JSC::JSFunctionNameScope::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::catchScopeStructure):
+        (JSC::JSGlobalObject::functionNameScopeStructure):
+        (JSC::JSGlobalObject::nameScopeStructure): Deleted.
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::create):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::JSNameScope):
+        (JSC::JSNameScope::createStructure): Deleted.
+        (JSC::JSNameScope::isFunctionNameScope): Deleted.
+        (JSC::JSNameScope::isCatchScope): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::isCatchScopeObject):
+        (JSC::JSObject::isFunctionNameScopeObject):
+        * runtime/JSObject.h:
+
 2015-02-20  Mark Lam  <mark.lam@apple.com>
 
         [JSObjCClassInfo reallocateConstructorAndOrPrototype] should also reallocate super class prototype chain.

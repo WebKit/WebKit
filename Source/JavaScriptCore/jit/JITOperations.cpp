@@ -1278,7 +1278,7 @@ void JIT_OPERATION operationPushNameScope(ExecState* exec, int32_t dst, Identifi
     // This should be changed to pass in the new scope.
     JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
     JSNameScope::Type scopeType = static_cast<JSNameScope::Type>(type);
-    JSNameScope* scope = JSNameScope::create(exec, currentScope, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
+    JSNameScope* scope = JSNameScope::create(vm, exec->lexicalGlobalObject(), currentScope, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
 
     // FIXME: This won't work if this operation is called from the DFG or FTL.
     // This should be changed to return the new scope.

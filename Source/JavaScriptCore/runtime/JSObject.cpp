@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2006, 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -34,7 +34,9 @@
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
+#include "JSCatchScope.h"
 #include "JSFunction.h"
+#include "JSFunctionNameScope.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
 #include "NativeErrorConstructor.h"
@@ -1618,6 +1620,16 @@ JSString* JSObject::toString(ExecState* exec) const
 JSValue JSObject::toThis(JSCell* cell, ExecState*, ECMAMode)
 {
     return jsCast<JSObject*>(cell);
+}
+
+bool JSObject::isCatchScopeObject() const
+{
+    return inherits(JSCatchScope::info());
+}
+
+bool JSObject::isFunctionNameScopeObject() const
+{
+    return inherits(JSFunctionNameScope::info());
 }
 
 void JSObject::seal(VM& vm)

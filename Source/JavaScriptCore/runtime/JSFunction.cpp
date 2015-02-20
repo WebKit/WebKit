@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -35,8 +35,8 @@
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunctionInlines.h"
+#include "JSFunctionNameScope.h" 
 #include "JSGlobalObject.h"
-#include "JSNameScope.h" 
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
@@ -116,7 +116,7 @@ void JSFunction::addNameScopeIfNeeded(VM& vm)
         return;
     if (!functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode()))
         return;
-    setScope(vm, JSNameScope::create(vm, scope()->globalObject(), executable->name(), this, ReadOnly | DontDelete, scope(), JSNameScope::FunctionNameScope));
+    setScope(vm, JSFunctionNameScope::create(vm, scope()->globalObject(), scope(), executable->name(), this, ReadOnly | DontDelete));
 }
 
 JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)

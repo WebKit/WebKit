@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2012, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,23 @@
 
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSCatchScope.h"
+#include "JSFunctionNameScope.h"
 
 namespace JSC {
 
 const ClassInfo JSNameScope::s_info = { "NameScope", &Base::s_info, 0, CREATE_METHOD_TABLE(JSNameScope) };
+
+JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, const Identifier& identifier, JSValue value, unsigned attributes, Type type)
+{
+    switch (type) {
+    case CatchScope:
+        return JSCatchScope::create(vm, globalObject, currentScope, identifier, value, attributes);
+    case FunctionNameScope:
+        return JSFunctionNameScope::create(vm, globalObject, currentScope, identifier, value, attributes);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 void JSNameScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

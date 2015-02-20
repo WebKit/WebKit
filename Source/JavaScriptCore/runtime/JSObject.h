@@ -593,6 +593,8 @@ public:
     bool isVariableObject() const;
     bool isStaticScopeObject() const;
     bool isNameScopeObject() const;
+    bool isCatchScopeObject() const;
+    bool isFunctionNameScopeObject() const;
     bool isActivationObject() const;
     bool isErrorInstance() const;
     bool isWithScope() const;
@@ -1130,7 +1132,6 @@ inline bool JSObject::isStaticScopeObject() const
     JSType type = this->type();
     return type == NameScopeObjectType || type == ActivationObjectType;
 }
-
 
 inline bool JSObject::isNameScopeObject() const
 {

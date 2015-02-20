@@ -157,12 +157,12 @@ void DebuggerScope::invalidateChain()
 
 bool DebuggerScope::isCatchScope() const
 {
-    return m_scope->isNameScopeObject() && reinterpret_cast<JSNameScope*>(m_scope.get())->isCatchScope();
+    return m_scope->isCatchScopeObject();
 }
 
 bool DebuggerScope::isFunctionNameScope() const
 {
-    return m_scope->isNameScopeObject() && reinterpret_cast<JSNameScope*>(m_scope.get())->isFunctionNameScope();
+    return m_scope->isFunctionNameScopeObject();
 }
 
 bool DebuggerScope::isWithScope() const

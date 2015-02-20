@@ -591,6 +591,10 @@
 		0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD8A32B17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */; };
 		0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD949821A97DB9600E28966 /* JSCatchScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD9497E1A97DB9600E28966 /* JSCatchScope.cpp */; };
+		0FD949831A97DB9600E28966 /* JSCatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD9497F1A97DB9600E28966 /* JSCatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD949841A97DB9600E28966 /* JSFunctionNameScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD949801A97DB9600E28966 /* JSFunctionNameScope.cpp */; };
+		0FD949851A97DB9600E28966 /* JSFunctionNameScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD949811A97DB9600E28966 /* JSFunctionNameScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */; };
@@ -2281,6 +2285,10 @@
 		0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLDeferredCompilationCallback.h; path = dfg/DFGToFTLDeferredCompilationCallback.h; sourceTree = "<group>"; };
 		0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGToFTLForOSREntryDeferredCompilationCallback.cpp; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp; sourceTree = "<group>"; };
 		0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLForOSREntryDeferredCompilationCallback.h; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h; sourceTree = "<group>"; };
+		0FD9497E1A97DB9600E28966 /* JSCatchScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCatchScope.cpp; sourceTree = "<group>"; };
+		0FD9497F1A97DB9600E28966 /* JSCatchScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCatchScope.h; sourceTree = "<group>"; };
+		0FD949801A97DB9600E28966 /* JSFunctionNameScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFunctionNameScope.cpp; sourceTree = "<group>"; };
+		0FD949811A97DB9600E28966 /* JSFunctionNameScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFunctionNameScope.h; sourceTree = "<group>"; };
 		0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviatedTypes.h; path = ftl/FTLAbbreviatedTypes.h; sourceTree = "<group>"; };
 		0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLValueFromBlock.h; path = ftl/FTLValueFromBlock.h; sourceTree = "<group>"; };
 		0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGWorklist.cpp; path = dfg/DFGWorklist.cpp; sourceTree = "<group>"; };
@@ -4340,6 +4348,8 @@
 				86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */,
 				657CF45619BF6662004ACBF2 /* JSCallee.cpp */,
 				657CF45719BF6662004ACBF2 /* JSCallee.h */,
+				0FD9497E1A97DB9600E28966 /* JSCatchScope.cpp */,
+				0FD9497F1A97DB9600E28966 /* JSCatchScope.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				0F97496F1687ADE200A4FF6A /* JSCellInlines.h */,
@@ -4364,6 +4374,8 @@
 				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
 				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				A72028B91797603D0098028C /* JSFunctionInlines.h */,
+				0FD949801A97DB9600E28966 /* JSFunctionNameScope.cpp */,
+				0FD949811A97DB9600E28966 /* JSFunctionNameScope.h */,
 				0F2B66C317B6B5AB00A7AE3F /* JSGenericTypedArrayView.h */,
 				0F2B66C417B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h */,
 				0F2B66C517B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructorInlines.h */,
@@ -5662,6 +5674,7 @@
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
+				0FD949851A97DB9600E28966 /* JSFunctionNameScope.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
 				0F4CED5F18CEA7AB00802FE0 /* PolymorphicGetByIdList.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
@@ -6013,6 +6026,7 @@
 				0F2B9CE719D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
+				0FD949831A97DB9600E28966 /* JSCatchScope.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
 				86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */,
@@ -7108,6 +7122,7 @@
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				86E3C616167BABEE006D760A /* JSContext.mm in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
+				0FD949821A97DB9600E28966 /* JSCatchScope.cpp in Sources */,
 				A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */,
 				0F2B66EB17B6B5AB00A7AE3F /* JSDataView.cpp in Sources */,
 				0F2B66ED17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp in Sources */,
@@ -7185,6 +7200,7 @@
 				0F4680D214BBD16500BFE272 /* LLIntData.cpp in Sources */,
 				0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */,
 				0F4680A814BA7FAB00BFE272 /* LLIntExceptions.cpp in Sources */,
+				0FD949841A97DB9600E28966 /* JSFunctionNameScope.cpp in Sources */,
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
 				0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */,

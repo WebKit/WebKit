@@ -1089,7 +1089,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     } else {
         for (JSScope* node = scope; ; node = node->next()) {
             RELEASE_ASSERT(node);
-            if (node->isVariableObject() && !node->isNameScopeObject()) {
+            if (node->isVariableObject()) {
+                ASSERT(!node->isNameScopeObject());
                 variableObject = node;
                 break;
             }
