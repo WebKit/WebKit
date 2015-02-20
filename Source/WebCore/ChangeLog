@@ -1,3 +1,24 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] REGRESSION: Scroll snap points broken after r180018
+        https://bugs.webkit.org/show_bug.cgi?id=141821
+        <rdar://problem/19898333>
+
+        Reviewed by Simon Fraser.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::platformNotifySnapIfNecessary): Added stub.
+        (WebCore::EventHandler::handleWheelEvent): Call new 'platformNotifySnapIfNecessary' method
+        to catch the 'ended wheel' gesture.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformNotifySnapIfNecessary): Added. If the wheel event signifies
+        the end of a wheel/swipe gesture, let the snap logic decide if it should do anything
+        (i.e., trigger an animation)
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::processWheelEventForScrollSnap): Added.
+        * platform/ScrollAnimator.h:
+
 2015-02-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] cleanup AirPlay code

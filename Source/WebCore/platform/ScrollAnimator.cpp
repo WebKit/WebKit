@@ -80,6 +80,16 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     notifyPositionChanged(delta);
 }
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+void ScrollAnimator::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
+{
+    if (m_verticalScrollSnapAnimator)
+        m_verticalScrollSnapAnimator->handleWheelEvent(wheelEvent);
+    if (m_horizontalScrollSnapAnimator)
+        m_horizontalScrollSnapAnimator->handleWheelEvent(wheelEvent);
+}
+#endif
+
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)

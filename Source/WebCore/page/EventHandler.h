@@ -201,6 +201,10 @@ public:
     bool platformCompleteWheelEvent(const PlatformWheelEvent&, Element* eventTarget, ContainerNode* scrollableContainer, ScrollableArea*);
     bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, ContainerNode* scrollableContainer);
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    void platformNotifySnapIfNecessary(const PlatformWheelEvent&, ScrollableArea&);
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     typedef Vector<RefPtr<Touch>> TouchArray;
     typedef HashMap<EventTarget*, TouchArray*> EventTargetTouchMap;

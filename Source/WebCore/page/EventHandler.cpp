@@ -81,7 +81,6 @@
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
-#include "ScrollAnimator.h"
 #include "ScrollLatchingState.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -2607,6 +2606,12 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     return true;
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+void EventHandler::platformNotifySnapIfNecessary(const PlatformWheelEvent&, ScrollableArea&)
+{
+}
+#endif
+
 #endif
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
@@ -2670,6 +2675,11 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                 clearLatchedState();
                 scrollableArea->setScrolledProgrammatically(false);
             }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+            if (scrollableArea)
+                platformNotifySnapIfNecessary(adjustedEvent, *scrollableArea);
+#endif
             return true;
         }
     }

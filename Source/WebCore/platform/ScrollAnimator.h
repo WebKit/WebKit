@@ -116,6 +116,7 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    void processWheelEventForScrollSnap(const PlatformWheelEvent&);
     void updateScrollAnimatorsAndTimers();
     virtual LayoutUnit scrollOffsetInAxis(ScrollEventAxis) override;
     virtual void immediateScrollInAxis(ScrollEventAxis, float delta) override;
