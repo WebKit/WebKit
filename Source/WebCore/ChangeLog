@@ -1,3 +1,9 @@
+2015-02-20  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/19450275> Media player updates.
+
+        Merge r179808, r180013, r180024, r180231, r180347.
+
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r180364.

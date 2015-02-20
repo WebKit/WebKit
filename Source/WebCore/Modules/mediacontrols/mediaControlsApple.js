@@ -956,7 +956,10 @@ Controller.prototype = {
             return;
 
         this.updateTimelineMetricsIfNeeded();
+        this.drawTimelineBackground();
+    },
 
+    drawTimelineBackground: function() {
         var background = 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(2, 2, 2)"/><stop offset="1" stop-color="rgb(23, 23, 23)"/></linearGradient><g style="fill:url(#gradient)">'
 
         var duration = this.video.duration;
@@ -1010,13 +1013,17 @@ Controller.prototype = {
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
 
-            this.hideControls();
             this.resetHideControlsTimer();
         }
     },
 
     showControls: function()
     {
+        this.setNeedsTimelineMetricsUpdate();
+
+        this.updateTime();
+        this.updateProgress(true);
+
         this.controls.panel.classList.add(this.ClassNames.show);
         this.controls.panel.classList.remove(this.ClassNames.hidden);
 
@@ -1030,7 +1037,7 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.isAudio() && !this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden);
+        return !this.isAudio() && this.controls.panel.classList.contains(this.ClassNames.hidden);
     },
 
     removeControls: function()
