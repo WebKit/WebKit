@@ -481,6 +481,14 @@ public:
         return hasExitSite(node->origin.semantic, exitKind);
     }
     
+    bool usesArguments(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_profiledBlock->usesArguments();
+        
+        return baselineCodeBlockForInlineCallFrame(inlineCallFrame)->usesArguments();
+    }
+    
     VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
