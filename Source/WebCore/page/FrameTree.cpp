@@ -356,6 +356,68 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
     return nullptr;
 }
 
+Frame* FrameTree::firstRenderedChild() const
+{
+    Frame* child = firstChild();
+    if (!child)
+        return nullptr;
+    
+    if (child->ownerRenderer())
+        return child;
+
+    while ((child = child->tree().nextSibling())) {
+        if (child->ownerRenderer())
+            return child;
+    }
+    
+    return nullptr;
+}
+
+Frame* FrameTree::nextRenderedSibling() const
+{
+    Frame* sibling = &m_thisFrame;
+
+    while ((sibling = sibling->tree().nextSibling())) {
+        if (sibling->ownerRenderer())
+            return sibling;
+    }
+    
+    return nullptr;
+}
+
+Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
+{
+    Frame* child = firstRenderedChild();
+    if (child) {
+        ASSERT(!stayWithin || child->tree().isDescendantOf(stayWithin));
+        return child;
+    }
+
+    if (&m_thisFrame == stayWithin)
+        return nullptr;
+
+    Frame* sibling = nextRenderedSibling();
+    if (sibling) {
+        ASSERT(!stayWithin || sibling->tree().isDescendantOf(stayWithin));
+        return sibling;
+    }
+
+    Frame* frame = &m_thisFrame;
+    while (!sibling && (!stayWithin || frame->tree().parent() != stayWithin)) {
+        frame = frame->tree().parent();
+        if (!frame)
+            return nullptr;
+        sibling = frame->tree().nextRenderedSibling();
+    }
+
+    if (frame) {
+        ASSERT(!stayWithin || !sibling || sibling->tree().isDescendantOf(stayWithin));
+        return sibling;
+    }
+
+    return nullptr;
+}
+
 Frame* FrameTree::traverseNextWithWrap(bool wrap) const
 {
     if (Frame* result = traverseNext())
@@ -426,7 +488,9 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
     printIndent(indent);
     printf("  frameView=%p\n", view);
     printIndent(indent);
-    printf("  document=%p\n", frame.document());
+    printf("  ownerRenderer=%p\n", frame.ownerRenderer());
+    printIndent(indent);
+    printf("  document=%p (needs style recalc %d)\n", frame.document(), frame.document() ? frame.document()->childNeedsStyleRecalc() : false);
     printIndent(indent);
     printf("  uri=%s\n\n", frame.document()->documentURI().utf8().data());
 

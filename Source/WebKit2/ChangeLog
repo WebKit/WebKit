@@ -1,5 +1,23 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180062.
+
+    2015-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+            determinePrimarySnapshottedPlugIn() should only traverse visible Frames
+            https://bugs.webkit.org/show_bug.cgi?id=141547
+            Part of rdar://problem/18445733.
+
+            Reviewed by Anders Carlsson.
+
+            Use FrameTree::traverseNextRendered() to avoid doing things in unrendered frames
+            which are not guaranteed to have been laid out.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r179955.
 
     2015-02-11  Tim Horton  <timothy_horton@apple.com>
