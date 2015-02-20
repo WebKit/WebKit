@@ -1,5 +1,25 @@
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r180147
+
+    2015-02-16  Brent Fulgham  <bfulgham@apple.com>
+
+            FEGaussianBlur::calculateUnscaledKernelSize does unspeakable things with signed and unsigned values
+            https://bugs.webkit.org/show_bug.cgi?id=141596
+            <rdar://problem/19837103>
+
+            Reviewed by Zalan Bujtas.
+
+            No new tests. Covered by css3/filters/huge-blur-value.html
+
+            Avoid overflowing the signed integer values by not converting from unsigned
+            until the maximum size has been clamped to the expected max.
+
+            * platform/graphics/filters/FEGaussianBlur.cpp:
+            (WebCore::FEGaussianBlur::calculateUnscaledKernelSize):
+
+2015-02-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180191.
 
     2015-02-16  Enrica Casucci  <enrica@apple.com>
