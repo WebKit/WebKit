@@ -1,3 +1,9 @@
+2015-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r180410.
+
+        * wtf/PlatformEfl.cmake: Add WEBKIT2/Platform/efl path in order to include DispatchQueueEfl.h.
+
 2015-02-20  Antti Koivisto  <antti@apple.com>
 
         Move WorkQueue from WK2 to WTF
