@@ -199,7 +199,7 @@ function initializeDatabase(client, callback) {
 
     var firstError;
     var queue = new TaskQueue();
-    commaSeparatedSqlStatements.split(/;\s*/).forEach(function (statement) {
+    commaSeparatedSqlStatements.split(/;\s*(?=CREATE|DROP)/).forEach(function (statement) {
         queue.addTask(function (error, callback) {
             client.query(statement, function (error) {
                 if (error && !firstError)

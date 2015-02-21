@@ -35,9 +35,11 @@ CREATE TABLE platforms (
 
 CREATE TABLE repositories (
     repository_id serial PRIMARY KEY,
+    repository_parent integer REFERENCES repositories ON DELETE CASCADE,
     repository_name varchar(64) NOT NULL,
     repository_url varchar(1024),
-    repository_blame_url varchar(1024));
+    repository_blame_url varchar(1024),
+    CONSTRAINT repository_name_must_be_unique UNIQUE(repository_parent, repository_name));
 
 CREATE TABLE bug_trackers (
     tracker_id serial PRIMARY KEY,
@@ -121,6 +123,7 @@ CREATE TABLE test_configurations (
     config_platform integer NOT NULL REFERENCES platforms ON DELETE CASCADE,
     config_type test_configuration_type NOT NULL,
     config_is_in_dashboard boolean NOT NULL DEFAULT FALSE,
+    config_runs_last_modified timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     CONSTRAINT configuration_must_be_unique UNIQUE(config_metric, config_platform, config_type));
 CREATE INDEX config_platform_index ON test_configurations(config_platform);
 
@@ -143,6 +146,20 @@ CREATE TABLE run_iterations (
     iteration_value double precision,
     iteration_relative_time float,
     PRIMARY KEY (iteration_run, iteration_order));
+
+CREATE OR REPLACE FUNCTION update_config_last_modified() RETURNS TRIGGER AS $update_config_last_modified$
+    BEGIN
+        IF TG_OP != 'DELETE' THEN
+            UPDATE test_configurations SET config_runs_last_modified = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE config_id = NEW.run_config;
+        ELSE
+            UPDATE test_configurations SET config_runs_last_modified = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE config_id = OLD.run_config;
+        END IF;
+        RETURN NULL;
+    END;
+$update_config_last_modified$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_config_last_modified AFTER INSERT OR UPDATE OR DELETE ON test_runs
+    FOR EACH ROW EXECUTE PROCEDURE update_config_last_modified();
 
 CREATE TABLE reports (
     report_id serial PRIMARY KEY,

@@ -349,27 +349,41 @@ App.Pane = Ember.Object.extend({
         else if (!this._isValidId(metricId))
             this.set('failure', metricId ? 'Invalid metric id:' + metricId : 'Metric id was not specified');
         else {
-            var self = this;
+            var store = this.get('store');
+            var updateChartData = this._updateChartData.bind(this);
+            var handleErrors = this._handleFetchErrors.bind(this, platformId, metricId);
+            var useCache = true;
+            App.Manifest.fetchRunsWithPlatformAndMetric(store, platformId, metricId, null, useCache).then(function (result) {
+                    updateChartData(result);
+                    if (!result.shouldRefetch)
+                        return;
 
-            App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(function (result) {
-                self.set('platform', result.platform);
-                self.set('metric', result.metric);
-                self.set('chartData', result.data);
-                self._updateMovingAverageAndEnvelope();
-            }, function (result) {
-                if (!result || typeof(result) === "string")
-                    self.set('failure', 'Failed to fetch the JSON with an error: ' + result);
-                else if (!result.platform)
-                    self.set('failure', 'Could not find the platform "' + platformId + '"');
-                else if (!result.metric)
-                    self.set('failure', 'Could not find the metric "' + metricId + '"');
-                else
-                    self.set('failure', 'An internal error');
-            });
-
+                    useCache = false;
+                    App.Manifest.fetchRunsWithPlatformAndMetric(store, platformId, metricId, null, useCache)
+                        .then(updateChartData, handleErrors);
+                }, handleErrors);
             this.fetchAnalyticRanges();
         }
     }.observes('platformId', 'metricId').on('init'),
+    _updateChartData: function (result)
+    {
+        this.set('platform', result.platform);
+        this.set('metric', result.metric);
+        this.set('chartData', result.data);
+        this._updateMovingAverageAndEnvelope();
+    },
+    _handleFetchErrors: function (platformId, metricId, result)
+    {
+        console.log(platformId, metricId, result)
+        if (!result || typeof(result) === "string")
+            this.set('failure', 'Failed to fetch the JSON with an error: ' + result);
+        else if (!result.platform)
+            this.set('failure', 'Could not find the platform "' + platformId + '"');
+        else if (!result.metric)
+            this.set('failure', 'Could not find the metric "' + metricId + '"');
+        else
+            this.set('failure', 'An internal error');
+    },
     fetchAnalyticRanges: function ()
     {
         var platformId = this.get('platformId');

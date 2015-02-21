@@ -687,4 +687,73 @@ describe("/api/report", function () {
             });
         });
     });
+
+    var reportsUpdatingDifferentTests = [
+        [{
+            "buildNumber": "123",
+            "buildTime": "2013-02-28T10:12:03",
+            "builderName": "someBuilder",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {"test1": {"metrics": {"Time": {"current": 3}}}}
+        }],
+        [{
+            "buildNumber": "124",
+            "buildTime": "2013-02-28T11:31:21",
+            "builderName": "someBuilder",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {"test2": {"metrics": {"Time": {"current": 3}}}}
+        }],
+        [{
+            "buildNumber": "125",
+            "buildTime": "2013-02-28T12:45:34",
+            "builderName": "someBuilder",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {"test1": {"metrics": {"Time": {"current": 3}}}}
+        }],
+    ];
+
+    function fetchTestConfig(testName, metricName, callback) {
+         queryAndFetchAll('SELECT * FROM tests, test_metrics, test_configurations WHERE test_id = metric_test AND metric_id = config_metric'
+            + ' AND test_name = $1 AND metric_name = $2', [testName, metricName], function (runRows) {
+                assert.equal(runRows.length, 1);
+                callback(runRows[0]);
+            });
+    }
+
+    it("should update the last modified date of test configurations with new runs", function () {
+        addBuilder(reportsUpdatingDifferentTests[0], function () {
+            postJSON('/api/report/', reportsUpdatingDifferentTests[0], function (response) {
+                assert.equal(response.statusCode, 200);
+                fetchTestConfig('test1', 'Time', function (originalConfig) {
+                    postJSON('/api/report/', reportsUpdatingDifferentTests[2], function (response) {
+                        assert.equal(response.statusCode, 200);
+                        fetchTestConfig('test1', 'Time', function (config) {
+                            assert.notEqual(+originalConfig['config_runs_last_modified'], +config['config_runs_last_modified']);
+                            notifyDone();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it("should update the last modified date of unrelated test configurations", function () {
+        addBuilder(reportsUpdatingDifferentTests[0], function () {
+            postJSON('/api/report/', reportsUpdatingDifferentTests[0], function (response) {
+                assert.equal(response.statusCode, 200);
+                fetchTestConfig('test1', 'Time', function (originalConfig) {
+                    postJSON('/api/report/', reportsUpdatingDifferentTests[1], function (response) {
+                        assert.equal(response.statusCode, 200);
+                        fetchTestConfig('test1', 'Time', function (config) {
+                            assert.equal(+originalConfig['config_runs_last_modified'], +config['config_runs_last_modified']);
+                            notifyDone();
+                        });
+                    });
+                });
+            });
+        });
+    });
 });

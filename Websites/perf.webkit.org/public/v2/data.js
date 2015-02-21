@@ -325,27 +325,35 @@ RunsData.prototype.timeSeriesByBuildTime = function ()
 
 // FIXME: We need to devise a way to fetch runs in multiple chunks so that
 // we don't have to fetch the entire time series to just show the last 3 days.
-RunsData.fetchRuns = function (platformId, metricId, testGroupId)
+RunsData.fetchRuns = function (platformId, metricId, testGroupId, useCache)
 {
-    var filename = platformId + '-' + metricId + '.json';
+    var url = useCache ? '../data/' : '../api/runs/';
 
+    url += platformId + '-' + metricId + '.json';
     if (testGroupId)
-        filename += '?testGroup=' + testGroupId;
+        url += '?testGroup=' + testGroupId;
 
     return new Ember.RSVP.Promise(function (resolve, reject) {
-        $.getJSON('../api/runs/' + filename, function (data) {
-            if (data.status != 'OK') {
-                reject(data.status);
+        $.getJSON(url, function (response) {
+            if (response.status != 'OK') {
+                reject(response.status);
                 return;
             }
-            delete data.status;
+            delete response.status;
 
+            var data = response.configurations;
             for (var config in data)
                 data[config] = new RunsData(data[config]);
+            
+            if (response.lastModified)
+                response.lastModified = new Date(response.lastModified);
 
-            resolve(data);
+            resolve(response);
         }).fail(function (xhr, status, error) {
-            reject(xhr.status + (error ? ', ' + error : ''));
+            if (xhr.status == 404 && useCache)
+                resolve(null);
+            else
+                reject(xhr.status + (error ? ', ' + error : ''));
         })
     });
 }

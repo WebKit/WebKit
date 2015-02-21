@@ -37,7 +37,7 @@ function main($path) {
 
     $platform_id = intval($parts[0]);
     $metric_id = intval($parts[1]);
-    $config_rows = $db->query_and_fetch_all('SELECT config_id, config_type, config_platform, config_metric
+    $config_rows = $db->query_and_fetch_all('SELECT *
         FROM test_configurations WHERE config_metric = $1 AND config_platform = $2', array($metric_id, $platform_id));
     if (!$config_rows)
         exit_with_error('ConfigurationNotFound');
@@ -52,7 +52,7 @@ function main($path) {
         header("Cache-Control: maxage=$maxage");
     }
 
-    $generator = new RunsGenerator();
+    $generator = new RunsGenerator($config_rows);
 
     foreach ($config_rows as $config) {
         if ($test_group_id)
@@ -62,15 +62,28 @@ function main($path) {
         $generator->add_runs($config['config_type'], $raw_runs);
     }
 
-    exit_with_success($generator->results());
+    $content = success_json($generator->results());
+    if (!$test_group_id)
+        generate_data_file("$platform_id-$metric_id.json", $content);
+    echo $content;
 }
 
 class RunsGenerator {
-    function __construct() {
+    function __construct($config_rows) {
         $this->results = array();
+        $last_modified_times = array();
+        foreach ($config_rows as $row)
+            array_push($last_modified_times, Database::to_js_time($row['config_runs_last_modified']));
+        $this->last_modified = max($last_modified_times);
+        $this->start_time = microtime(true);
     }
 
-    function &results() { return $this->results; }
+    function results() {
+        return array(
+            'configurations' => &$this->results,
+            'lastModified' => $this->last_modified,
+            'elapsedTime' => microtime(true) - $this->start_time);
+    }
 
     function add_runs($name, $raw_runs) {
         $formatted_runs = array();
@@ -91,7 +104,7 @@ class RunsGenerator {
             'squareSum' => floatval($run['run_square_sum_cache']),
             'revisions' => self::parse_revisions_array($run['revisions']),
             'build' => $run['build_id'],
-            'buildTime' => strtotime($run['build_time']) * 1000,
+            'buildTime' => Database::to_js_time($run['build_time']),
             'buildNumber' => intval($run['build_number']),
             'builder' => $run['build_builder']);
     }
@@ -104,7 +117,7 @@ class RunsGenerator {
             $name_and_revision = explode(',', trim($item, '()'));
             if (!$name_and_revision[0])
                 continue;
-            $time = strtotime(trim($name_and_revision[2], '"')) * 1000;
+            $time = Database::to_js_time(trim($name_and_revision[2], '"'));
             $revisions[trim($name_and_revision[0], '"')] = array(trim($name_and_revision[1], '"'), $time);
         }
         return $revisions;

@@ -12,6 +12,8 @@ class ManifestGenerator {
     }
 
     function generate() {
+        $start_time = microtime(true);
+
         $config_table = $this->db->fetch_table('test_configurations');
         $platform_table = $this->db->fetch_table('platforms');
         $repositories_table = $this->db->fetch_table('repositories');
@@ -34,11 +36,14 @@ class ManifestGenerator {
             'bugTrackers' => $this->bug_trackers($repositories_table),
             'dashboards' => config('dashboards'),
         );
-        return $this->manifest;
+
+        $this->manifest['elapsedTime'] = (microtime(true) - $start_time) * 1000;
+
+        return TRUE;
     }
 
     function store() {
-        return file_put_contents(self::MANIFEST_PATH, json_encode($this->manifest));
+        return generate_data_file('manifest.json', json_encode($this->manifest));
     }
 
     private function tests() {
@@ -77,19 +82,37 @@ class ManifestGenerator {
                 if ($is_dashboard && !$this->db->is_true($config_row['config_is_in_dashboard']))
                     continue;
 
+                $new_last_modified = array_get($config_row, 'config_runs_last_modified', 0);
+                if ($new_last_modified)
+                    $new_last_modified = strtotime($config_row['config_runs_last_modified']) * 1000;
+
                 $platform = &array_ensure_item_has_array($platform_metrics, $config_row['config_platform']);
-                if (!in_array($config_row['config_metric'], $platform))
-                    array_push($platform, $config_row['config_metric']);
+                $metrics = &array_ensure_item_has_array($platform, 'metrics');
+                $last_modified = &array_ensure_item_has_array($platform, 'last_modified');
+
+                $metric_id = $config_row['config_metric'];
+                $index = array_search($metric_id, $metrics);
+                if ($index === FALSE) {
+                    array_push($metrics, $metric_id);
+                    array_push($last_modified, $new_last_modified);
+                } else
+                    $last_modified[$index] = max($last_modified[$index], $new_last_modified);
             }
         }
+        $configurations = array();
+        
         $platforms = array();
         if ($platform_table) {
             foreach ($platform_table as $platform_row) {
                 if ($this->db->is_true($platform_row['platform_hidden']))
                     continue;
                 $id = $platform_row['platform_id'];
-                if (array_key_exists($id, $platform_metrics))
-                    $platforms[$id] = array('name' => $platform_row['platform_name'], 'metrics' => $platform_metrics[$id]);
+                if (array_key_exists($id, $platform_metrics)) {
+                    $platforms[$id] = array(
+                        'name' => $platform_row['platform_name'],
+                        'metrics' => $platform_metrics[$id]['metrics'],
+                        'lastModified' => $platform_metrics[$id]['last_modified']);
+                }
             }
         }
         return $platforms;

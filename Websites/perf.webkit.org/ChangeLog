@@ -1,5 +1,87 @@
 2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Loading the perf dashboard takes multiple seconds
+        https://bugs.webkit.org/show_bug.cgi?id=141860
+
+        Reviewed by Andreas Kling.
+
+        This patch introduces the caches of JSON files returned by /api/ in /data/ directory. It also records
+        the last time test_runs rows associated with the requested platforms and metrics are inserted, updated,
+        or removed in the caches as well as the manifest JSON files ("last modified time"). Because the manifest
+        is regenerated each time a new test result is reported, the front end can compare last modified time in
+        the manifest file with that in a /api/runs JSON cache to detect the stale-ness.
+
+        More concretely, the front end first optimistically fetches the JSON in /data/. If the cache doesn't exit
+        or the last modified time in the cache doesn't match with that in the manifest file, it would fetch it
+        again via /api/runs. In the case the cache did exist, we render the charts based on the cache meanwhile.
+        This dramatically reduces the perceived latency for the page load since charts are drawn immediately using
+        the cache and we would only re-render the charts as new up-to-date JSON comes in.
+
+        This patch also changes the format of runs JSONs by pushing the exiting properties into 'configurations'
+        and adding 'lastModified' and 'elapsedTime' at the top level.
+
+        * init-database.sql: Added config_runs_last_modified to test_configurations table as well as a trigger to
+        auto-update this column upon changes to test_runs table.
+
+        * public/admin/test-configurations.php:
+        (add_run): Regenerate the manifest file to invalidate the /api/runs JSON cache.
+        (delete_run): Ditto.
+
+        * public/api/runs.php:
+        (main): Fetch all columns of test_configurations table including config_runs_last_modified. Also generate
+        the cache in /data/ directory.
+        (RunsGenerator::__construct): Compute the last modified time for this (platform, metric) pair.
+        (RunsGenerator::results): Put the old content in 'configurations' property and include 'lastModified' and
+        'elapsedTime' properties. 'elapsedTime' is added for debugging purposes.
+        (RunsGenerator::add_runs):
+        (RunsGenerator::parse_revisions_array):
+
+        * public/include/db.php:
+        (CONFIG_DIR): Added.
+        (generate_data_file): Added based on ManifestGenerator::store.
+        (Database::to_js_time): Extracted from RunsGenerator::add_runs to share code.
+
+        * public/include/json-header.php:
+        (echo_success): Renamed from success_json. Return the serialized JSON instead of echo'ing it so that we can
+        generate caches in /api/runs/.
+        (exit_with_success):
+
+        * public/include/manifest.php:
+        (ManifestGenerator::generate): Added 'elapsedTime' property for the time taken to generate the manifest.
+        It seems like we're generating it in 200-300ms for now so that's good.
+        (ManifestGenerator::store): Uses generate_data_file.
+        (ManifestGenerator::platforms): Added 'lastModified' array to each platform entry. This array contains the
+        last modified time for each (platform, metric) pair.
+
+        * public/index.html:
+        (fetchTest): Updated per the format change in runs JSON.
+
+        * public/v2/app.js:
+        (App.Pane._fetch): Fetch the cached JSON first. Refetch the uncached version if instructed as such.
+        (App.Pane._updateChartData): Extracted from App.Pane._fetch.
+        (App.Pane._handleFetchErrors): Ditto.
+
+        * public/v2/data.js:
+        (RunsData.fetchRuns): Takes the fourth argument indicating whether we should fetch the cached version or not.
+        The cached JSON is located in /data/ with the same filename. When fetching a cached JSON results in 404,
+        fulfill the promise with null as the result instead of rejecting it. The only client of this function which
+        sets useCache to true is App.Manifest.fetchRunsWithPlatformAndMetric, and it handles this special case.
+
+        * public/v2/manifest.js:
+        (App.DateArrayTransform): Added. Handles the array of last modified dates in platform objects.
+        (App.Platform.lastModifiedTimeForMetric): Added. Returns the last modified date in the manifest JSON.
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Takes "useCache" like RunsData.fetchRuns. Set shouldRefetch
+        to true if response is null (the cache didn't exit) or the cache is out-of-date.
+        (App.Manifest._formatFetchedData): Extracted from App.Manifest.fetchRunsWithPlatformAndMetric.
+
+        * run-tests.js:
+        (initializeDatabase): Avoid splitting function definitions in the middle.
+
+        * tests/api-report.js: Added tests to verify that reporting new test results updates the last modified time
+        in test_configurations.
+
+2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r180333): Analysis tasks can't be associated with bugs
         https://bugs.webkit.org/show_bug.cgi?id=141858
 

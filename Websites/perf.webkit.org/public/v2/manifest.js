@@ -34,7 +34,7 @@ App.Metric = App.NameLabelModel.extend({
     }.property('name', 'test'),
     fullName: function ()
     {
-        return this.get('path').join(' \u220b ') /* &ni; */
+        return this.get('path').join(' \u220b ') /* &in; */
             + ' : ' + this.get('label');
     }.property('path', 'label'),
 });
@@ -54,15 +54,30 @@ App.BugTracker = App.NameLabelModel.extend({
     repositories: DS.hasMany('repository'),
 });
 
+App.DateArrayTransform = DS.Transform.extend({
+    deserialize: function (serialized)
+    {
+        return serialized.map(function (time) { return new Date(time); });
+    }
+});
+
 App.Platform = App.NameLabelModel.extend({
     _metricSet: null,
     _testSet: null,
     metrics: DS.hasMany('metric'),
+    lastModified: DS.attr('dateArray'),
     containsMetric: function (metric)
     {
         if (!this._metricSet)
             this._metricSet = new Ember.Set(this.get('metrics'));
         return this._metricSet.contains(metric);
+    },
+    lastModifiedTimeForMetric: function (metric)
+    {
+        var index = this.get('metrics').indexOf(metric);
+        if (index < 0)
+            return null;
+        return this.get('lastModified').objectAt(index);
     },
     containsTest: function (test)
     {
@@ -279,49 +294,58 @@ App.Manifest = Ember.Controller.extend({
         dashboards.forEach(function (dashboard) { self._dashboardByName[dashboard.get('name')] = dashboard; });
         this._defaultDashboardName = dashboards.length ? dashboards[0].get('name') : null;
     },
-    fetchRunsWithPlatformAndMetric: function (store, platformId, metricId, testGroupId)
+    fetchRunsWithPlatformAndMetric: function (store, platformId, metricId, testGroupId, useCache)
     {
+        Ember.assert("Can't cache results for test groups", !(testGroupId && useCache));
+        var self = this;
         return Ember.RSVP.all([
-            RunsData.fetchRuns(platformId, metricId, testGroupId),
+            RunsData.fetchRuns(platformId, metricId, testGroupId, useCache),
             this.fetch(store),
         ]).then(function (values) {
-            var runs = values[0];
+            var response = values[0];
 
             var platform = App.Manifest.platform(platformId);
             var metric = App.Manifest.metric(metricId);
 
-            var suffix = metric.get('name').match('([A-z][a-z]+|FrameRate)$')[0];
-            var unit = {
-                'FrameRate': 'fps',
-                'Runs': '/s',
-                'Time': 'ms',
-                'Malloc': 'bytes',
-                'Heap': 'bytes',
-                'Allocations': 'bytes'
-            }[suffix];
-            var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
-
-            var useSI = unit == 'bytes';
-            var unitSuffix = unit ? ' ' + unit : '';
-            var deltaFormatterWithoutSign = useSI ? d3.format('.2s') : d3.format('.2g');
             return {
                 platform: platform,
                 metric: metric,
-                data: {
-                    current: runs.current.timeSeriesByCommitTime(),
-                    baseline: runs.baseline ? runs.baseline.timeSeriesByCommitTime() : null,
-                    target: runs.target ? runs.target.timeSeriesByCommitTime() : null,
-                    unit: unit,
-                    formatWithUnit: function (value) { return this.formatter(value) + unitSuffix; },
-                    formatWithDeltaAndUnit: function (value, delta)
-                    {
-                        return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '') + unitSuffix;
-                    },
-                    formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
-                    deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
-                    smallerIsBetter: smallerIsBetter,
-                }
+                data: response ? self._formatFetchedData(metric.get('name'), response.configurations) : null,
+                shouldRefetch: !response || +response.lastModified < +platform.lastModifiedTimeForMetric(metric),
             };
         });
     },
+    _formatFetchedData: function (metricName, configurations)
+    {
+        var suffix = metricName.match('([A-z][a-z]+|FrameRate)$')[0];
+        var unit = {
+            'FrameRate': 'fps',
+            'Runs': '/s',
+            'Time': 'ms',
+            'Malloc': 'bytes',
+            'Heap': 'bytes',
+            'Allocations': 'bytes'
+        }[suffix];
+
+        var smallerIsBetter = unit != 'fps' && unit != '/s'; // Assume smaller is better for unit-less metrics.
+
+        var useSI = unit == 'bytes';
+        var unitSuffix = unit ? ' ' + unit : '';
+        var deltaFormatterWithoutSign = useSI ? d3.format('.2s') : d3.format('.2g');
+
+        return {
+            current: configurations.current.timeSeriesByCommitTime(),
+            baseline: configurations.baseline ? configurations.baseline.timeSeriesByCommitTime() : null,
+            target: configurations.target ? configurations.target.timeSeriesByCommitTime() : null,
+            unit: unit,
+            formatWithUnit: function (value) { return this.formatter(value) + unitSuffix; },
+            formatWithDeltaAndUnit: function (value, delta)
+            {
+                return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '') + unitSuffix;
+            },
+            formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
+            deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
+            smallerIsBetter: smallerIsBetter,
+        };
+    }
 }).create();

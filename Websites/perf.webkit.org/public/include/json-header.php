@@ -13,15 +13,15 @@ function exit_with_error($status, $details = array()) {
     exit(1);
 }
 
-function echo_success($details = array()) {
+function success_json($details = array()) {
     $details['status'] = 'OK';
     merge_additional_details($details);
 
-    echo json_encode($details);
+    return json_encode($details);
 }
 
 function exit_with_success($details = array()) {
-    echo_success($details);
+    echo success_json($details);
     exit(0);
 }
 

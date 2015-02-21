@@ -840,7 +840,8 @@ function fetchTest(repositories, builders, filename, platform, metric, callback)
         return runs;
     }
 
-    $.getJSON('api/runs/' + filename, function (data) {
+    $.getJSON('api/runs/' + filename, function (response) {
+        var data = response.configurations;
         callback(createRunAndResults(data.current), createRunAndResults(data.baseline), createRunAndResults(data.target));
     });
 }

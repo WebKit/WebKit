@@ -29,6 +29,8 @@ function add_run($metric_id, $platform_id, $type, $date, $mean) {
 
     $db->commit_transaction();
     notice("Added a baseline test run.");
+
+    regenerate_manifest();
 }
 
 function delete_run($run_id, $build_id) {
@@ -65,6 +67,8 @@ function delete_run($run_id, $build_id) {
     }
 
     $db->commit_transaction();
+
+    regenerate_manifest();
 }
 
 if ($db) {
