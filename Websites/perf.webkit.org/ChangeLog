@@ -1,5 +1,12 @@
 2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Commit the erroneously reverted change.
+
+        * public/api/runs.php:
+        (RunsGenerator::results): 
+
+2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Loading the perf dashboard takes multiple seconds
         https://bugs.webkit.org/show_bug.cgi?id=141860
 

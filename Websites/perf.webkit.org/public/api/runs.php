@@ -82,7 +82,7 @@ class RunsGenerator {
         return array(
             'configurations' => &$this->results,
             'lastModified' => $this->last_modified,
-            'elapsedTime' => microtime(true) - $this->start_time);
+            'elapsedTime' => (microtime(true) - $this->start_time) * 1000);
     }
 
     function add_runs($name, $raw_runs) {
