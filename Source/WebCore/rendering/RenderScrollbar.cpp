@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-RefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
+RefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
 {
     return adoptRef(new RenderScrollbar(scrollableArea, orientation, ownerElement, owningFrame));
 }
 
-RenderScrollbar::RenderScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
+RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
     : Scrollbar(scrollableArea, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme(), true)
     , m_ownerElement(ownerElement)
     , m_owningFrame(owningFrame)

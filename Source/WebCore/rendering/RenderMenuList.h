@@ -2,7 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -113,7 +113,7 @@ private:
     virtual bool multiple() const override;
     virtual FontSelector* fontSelector() const override;
     virtual HostWindow* hostWindow() const override;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) override;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
 
     virtual bool hasLineIfEmpty() const override { return true; }
 

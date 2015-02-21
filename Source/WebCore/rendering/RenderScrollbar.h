@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ class RenderStyle;
 class RenderScrollbar final : public Scrollbar {
 public:
     friend class Scrollbar;
-    static RefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
+    static RefPtr<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
     virtual ~RenderScrollbar();
 
     RenderBox* owningRenderer() const;
@@ -62,7 +62,7 @@ public:
     PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
 
 private:
-    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame*);
+    RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);
 
     virtual void setParent(ScrollView*) override;
     virtual void setEnabled(bool) override;

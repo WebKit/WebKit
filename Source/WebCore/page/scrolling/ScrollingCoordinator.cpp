@@ -289,7 +289,7 @@ void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
     if (!frameView)
         return;
 
-    frameView->scrollAnimator()->handleWheelEventPhase(phase);
+    frameView->scrollAnimator().handleWheelEventPhase(phase);
 }
 #endif
 

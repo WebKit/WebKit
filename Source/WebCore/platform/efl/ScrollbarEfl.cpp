@@ -28,15 +28,15 @@
 
 namespace WebCore {
 
-PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
+PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
     if (Settings::mockScrollbarsEnabled())
         return adoptRef(new Scrollbar(scrollableArea, orientation, size));
 
     return adoptRef(new ScrollbarEfl(scrollableArea, orientation, size));
 }
+ScrollbarEfl::ScrollbarEfl(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 
-ScrollbarEfl::ScrollbarEfl(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
     : Scrollbar(scrollableArea, orientation, controlSize)
 {
 }

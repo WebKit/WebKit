@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2015 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -336,7 +336,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
         // We save and restore only the scrollOffset as the other scroll values are recalculated.
         m_scrollOffset = element->savedLayerScrollOffset();
         if (!m_scrollOffset.isZero())
-            scrollAnimator()->setCurrentPosition(FloatPoint(m_scrollOffset.width(), m_scrollOffset.height()));
+            scrollAnimator().setCurrentPosition(FloatPoint(m_scrollOffset.width(), m_scrollOffset.height()));
         element->setSavedLayerScrollOffset(IntSize());
     }
 }
@@ -3065,9 +3065,9 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
     bool hasCustomScrollbarStyle = actualRenderer->isBox() && actualRenderer->style().hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, orientation, actualRenderer->element());
+        widget = RenderScrollbar::createCustomScrollbar(*this, orientation, actualRenderer->element());
     else {
-        widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
+        widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
     }
     renderer().view().frameView().addChild(widget.get());
@@ -3084,7 +3084,6 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
         willRemoveScrollbar(scrollbar.get(), orientation);
 
     scrollbar->removeFromParent();
-    scrollbar->disconnectFromScrollableArea();
     scrollbar = nullptr;
 }
 
@@ -3482,8 +3481,8 @@ void RenderLayer::updateScrollInfoAfterLayout()
     // https://bugs.webkit.org/show_bug.cgi?id=135964
     updateSnapOffsets();
 #if PLATFORM(MAC)
-    if (existingScrollAnimator())
-        scrollAnimator()->updateScrollAnimatorsAndTimers();
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->updateScrollAnimatorsAndTimers();
 #endif
 #endif
 }

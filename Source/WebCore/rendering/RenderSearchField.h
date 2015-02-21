@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -80,7 +80,7 @@ private:
     virtual void setTextFromItem(unsigned listIndex) override;
     virtual FontSelector* fontSelector() const override;
     virtual HostWindow* hostWindow() const override;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) override;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
 
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;

@@ -117,7 +117,7 @@ public:
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
 
     // This getter will create a ScrollAnimator if it doesn't already exist.
-    WEBCORE_EXPORT ScrollAnimator* scrollAnimator() const;
+    WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
 
     // This getter will return null if the ScrollAnimator hasn't been created yet.
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }

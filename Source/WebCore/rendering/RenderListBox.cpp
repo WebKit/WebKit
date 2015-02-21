@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011, 2014-2015 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -802,9 +802,9 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, &selectElement());
+        widget = RenderScrollbar::createCustomScrollbar(*this, VerticalScrollbar, &selectElement());
     else {
-        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
+        widget = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
     }
     view().frameView().addChild(widget.get());
@@ -819,8 +819,7 @@ void RenderListBox::destroyScrollbar()
     if (!m_vBar->isCustomScrollbar())
         ScrollableArea::willRemoveScrollbar(m_vBar.get(), VerticalScrollbar);
     m_vBar->removeFromParent();
-    m_vBar->disconnectFromScrollableArea();
-    m_vBar = 0;
+    m_vBar = nullptr;
 }
 
 void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)

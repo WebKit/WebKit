@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile Inc.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -142,7 +142,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
 
     if (!m_scrollbar && visibleItems() < client()->listSize()) {
         // We need a scroll bar
-        m_scrollbar = client()->createScrollbar(this, VerticalScrollbar, SmallScrollbar);
+        m_scrollbar = client()->createScrollbar(*this, VerticalScrollbar, SmallScrollbar);
         m_scrollbar->styleChanged();
     }
 

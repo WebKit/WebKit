@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ class Scrollbar : public Widget,
 
 public:
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
-    WEBCORE_EXPORT static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollableArea*, ScrollbarOrientation orientation, ScrollbarControlSize size);
+    WEBCORE_EXPORT static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual ~Scrollbar();
 
@@ -103,8 +103,7 @@ public:
     static int pageStep(int viewWidthOrHeight) { return pageStep(viewWidthOrHeight, viewWidthOrHeight); }
     static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
-    void disconnectFromScrollableArea() { m_scrollableArea = 0; }
-    ScrollableArea* scrollableArea() const { return m_scrollableArea; }
+    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
     int pressedPos() const { return m_pressedPos; }
 
@@ -159,7 +158,7 @@ public:
     virtual bool supportsUpdateOnSecondaryThread() const override;
 
 protected:
-    Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);
+    Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);
 
     void updateThumb();
     virtual void updateThumbPosition();
@@ -172,7 +171,7 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
 
-    ScrollableArea* m_scrollableArea;
+    ScrollableArea& m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
     ScrollbarTheme* m_theme;

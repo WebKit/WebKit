@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -641,7 +641,7 @@ const PluginView* PDFPlugin::pluginView() const
 
 PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 {
-    RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
+    RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar) {
         m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer addSublayer:m_horizontalScrollbarLayer.get()];
@@ -662,8 +662,7 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
 
     willRemoveScrollbar(scrollbar.get(), orientation);
     scrollbar->removeFromParent();
-    scrollbar->disconnectFromScrollableArea();
-    scrollbar = 0;
+    scrollbar = nullptr;
 
     if (orientation == HorizontalScrollbar) {
         [m_horizontalScrollbarLayer removeFromSuperlayer];

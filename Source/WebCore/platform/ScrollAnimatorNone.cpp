@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -51,9 +52,9 @@ const double kTickTime = 1 / kFrameRate;
 const double kMinimumTimerInterval = .001;
 const double kZoomTicks = 11;
 
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
+PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    if (scrollableArea && scrollableArea->scrollAnimatorEnabled())
+    if (scrollableArea.scrollAnimatorEnabled())
         return adoptPtr(new ScrollAnimatorNone(scrollableArea));
     return adoptPtr(new ScrollAnimator(scrollableArea));
 }
@@ -368,7 +369,7 @@ void ScrollAnimatorNone::PerAxisData::updateVisibleLength(int visibleLength)
     m_visibleLength = visibleLength;
 }
 
-ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
+ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_horizontalData(this, &m_currentPosX, scrollableArea->visibleWidth())
     , m_verticalData(this, &m_currentPosY, scrollableArea->visibleHeight())
@@ -405,7 +406,7 @@ ScrollAnimatorNone::Parameters ScrollAnimatorNone::parametersForScrollGranularit
 
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
-    if (!m_scrollableArea->scrollAnimatorEnabled())
+    if (!m_scrollableArea.scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     // FIXME: get the type passed in. MouseWheel could also be by line, but should still have different
@@ -427,7 +428,7 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     // This is an animatable scroll. Set the animation in motion using the appropriate parameters.
-    float scrollableSize = static_cast<float>(m_scrollableArea->scrollSize(orientation));
+    float scrollableSize = static_cast<float>(m_scrollableArea.scrollSize(orientation));
 
     PerAxisData& data = (orientation == VerticalScrollbar) ? m_verticalData : m_horizontalData;
     bool needToScroll = data.updateDataFromParameters(step, multiplier, scrollableSize, monotonicallyIncreasingTime(), &parameters);
@@ -486,8 +487,8 @@ void ScrollAnimatorNone::didAddHorizontalScrollbar(Scrollbar*)
 
 void ScrollAnimatorNone::updateVisibleLengths()
 {
-    m_horizontalData.updateVisibleLength(scrollableArea()->visibleWidth());
-    m_verticalData.updateVisibleLength(scrollableArea()->visibleHeight());
+    m_horizontalData.updateVisibleLength(scrollableArea().visibleWidth());
+    m_verticalData.updateVisibleLength(scrollableArea().visibleHeight());
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
@@ -532,7 +533,7 @@ void ScrollAnimatorNone::startNextTimer(double delay)
 #else
 void ScrollAnimatorNone::startNextTimer()
 {
-    if (scrollableArea()->scheduleAnimation())
+    if (scrollableArea().scheduleAnimation())
         m_animationActive = true;
 }
 #endif

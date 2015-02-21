@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2008, 2011, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011, 2014-2015 Apple Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -70,12 +70,13 @@ ScrollableArea::~ScrollableArea()
 {
 }
 
-ScrollAnimator* ScrollableArea::scrollAnimator() const
+ScrollAnimator& ScrollableArea::scrollAnimator() const
 {
     if (!m_scrollAnimator)
-        m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea*>(this));
+        m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea&>(*this));
 
-    return m_scrollAnimator.get();
+    ASSERT(m_scrollAnimator);
+    return *m_scrollAnimator.get();
 }
 
 void ScrollableArea::setScrollOrigin(const IntPoint& origin)
@@ -127,26 +128,26 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
         multiplier = -multiplier;
 
     step = adjustScrollStepForFixedContent(step, orientation, granularity);
-    return scrollAnimator()->scroll(orientation, granularity, step, multiplier);
+    return scrollAnimator().scroll(orientation, granularity, step, multiplier);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    scrollAnimator()->scrollToOffsetWithoutAnimation(offset);
+    scrollAnimator().scrollToOffsetWithoutAnimation(offset);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
     if (orientation == HorizontalScrollbar)
-        scrollToOffsetWithoutAnimation(FloatPoint(offset, scrollAnimator()->currentPosition().y()));
+        scrollToOffsetWithoutAnimation(FloatPoint(offset, scrollAnimator().currentPosition().y()));
     else
-        scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), offset));
+        scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator().currentPosition().x(), offset));
 }
 
 void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
 {
     scrollPositionChanged(position);
-    scrollAnimator()->setCurrentPosition(position);
+    scrollAnimator().setCurrentPosition(position);
 }
 
 void ScrollableArea::scrollPositionChanged(const IntPoint& position)
@@ -179,7 +180,7 @@ void ScrollableArea::scrollPositionChanged(const IntPoint& position)
     }
 
     if (scrollPosition() != oldPosition)
-        scrollAnimator()->notifyContentAreaScrolled(scrollPosition() - oldPosition);
+        scrollAnimator().notifyContentAreaScrolled(scrollPosition() - oldPosition);
 }
 
 bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -187,13 +188,13 @@ bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!isScrollableOrRubberbandable())
         return false;
 
-    return scrollAnimator()->handleWheelEvent(wheelEvent);
+    return scrollAnimator().handleWheelEvent(wheelEvent);
 }
 
 #if ENABLE(TOUCH_EVENTS)
 bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
-    return scrollAnimator()->handleTouchEvent(touchEvent);
+    return scrollAnimator().handleTouchEvent(touchEvent);
 }
 #endif
 
@@ -255,12 +256,12 @@ void ScrollableArea::mouseMovedInContentArea() const
 
 void ScrollableArea::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
-    scrollAnimator()->mouseEnteredScrollbar(scrollbar);
+    scrollAnimator().mouseEnteredScrollbar(scrollbar);
 }
 
 void ScrollableArea::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
-    scrollAnimator()->mouseExitedScrollbar(scrollbar);
+    scrollAnimator().mouseExitedScrollbar(scrollbar);
 }
 
 void ScrollableArea::contentAreaDidShow() const
@@ -291,9 +292,9 @@ bool ScrollableArea::scrollbarsCanBeActive() const
 void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
     if (orientation == VerticalScrollbar)
-        scrollAnimator()->didAddVerticalScrollbar(scrollbar);
+        scrollAnimator().didAddVerticalScrollbar(scrollbar);
     else
-        scrollAnimator()->didAddHorizontalScrollbar(scrollbar);
+        scrollAnimator().didAddHorizontalScrollbar(scrollbar);
 
     // <rdar://problem/9797253> AppKit resets the scrollbar's style when you attach a scrollbar
     setScrollbarOverlayStyle(scrollbarOverlayStyle());
@@ -302,9 +303,9 @@ void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation 
 void ScrollableArea::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
     if (orientation == VerticalScrollbar)
-        scrollAnimator()->willRemoveVerticalScrollbar(scrollbar);
+        scrollAnimator().willRemoveVerticalScrollbar(scrollbar);
     else
-        scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
+        scrollAnimator().willRemoveHorizontalScrollbar(scrollbar);
 }
 
 void ScrollableArea::contentsResized()
@@ -365,12 +366,12 @@ void ScrollableArea::invalidateScrollCorner(const IntRect& rect)
 
 void ScrollableArea::verticalScrollbarLayerDidChange()
 {
-    scrollAnimator()->verticalScrollbarLayerDidChange();
+    scrollAnimator().verticalScrollbarLayerDidChange();
 }
 
 void ScrollableArea::horizontalScrollbarLayerDidChange()
 {
-    scrollAnimator()->horizontalScrollbarLayerDidChange();
+    scrollAnimator().horizontalScrollbarLayerDidChange();
 }
 
 bool ScrollableArea::hasLayerForHorizontalScrollbar() const

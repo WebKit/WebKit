@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006, 2015 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -74,7 +74,7 @@ public:
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
 
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) = 0;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) = 0;
 };
 
 }

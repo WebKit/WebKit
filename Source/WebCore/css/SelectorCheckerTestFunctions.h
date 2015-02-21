@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Dhi Aurrahman <diorahman@rockybars.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -358,7 +358,7 @@ ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const SelectorChecker::Ch
 
 ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const SelectorChecker::CheckingContext& context)
 {
-    return context.scrollbar && context.scrollbar->scrollableArea()->isScrollCornerVisible();
+    return context.scrollbar && context.scrollbar->scrollableArea().isScrollCornerVisible();
 }
 
 #if ENABLE(FULLSCREEN_API)

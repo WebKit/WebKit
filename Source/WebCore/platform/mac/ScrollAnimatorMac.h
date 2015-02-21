@@ -53,7 +53,7 @@ class Scrollbar;
 class ScrollAnimatorMac : public ScrollAnimator, private ScrollControllerClient {
 
 public:
-    ScrollAnimatorMac(ScrollableArea*);
+    ScrollAnimatorMac(ScrollableArea&);
     virtual ~ScrollAnimatorMac();
 
     void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);

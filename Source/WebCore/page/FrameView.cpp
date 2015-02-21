@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2008, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2013-2015 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -542,17 +542,17 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     // Try the <body> element first as a scrollbar source.
     HTMLElement* body = doc ? doc->bodyOrFrameset() : nullptr;
     if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(SCROLLBAR))
-        return RenderScrollbar::createCustomScrollbar(this, orientation, body);
+        return RenderScrollbar::createCustomScrollbar(*this, orientation, body);
     
     // If the <body> didn't have a custom style, then the root element might.
     Element* docElement = doc ? doc->documentElement() : nullptr;
     if (docElement && docElement->renderer() && docElement->renderer()->style().hasPseudoStyle(SCROLLBAR))
-        return RenderScrollbar::createCustomScrollbar(this, orientation, docElement);
+        return RenderScrollbar::createCustomScrollbar(*this, orientation, docElement);
         
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
     RenderWidget* frameRenderer = frame().ownerRenderer();
     if (frameRenderer && frameRenderer->style().hasPseudoStyle(SCROLLBAR))
-        return RenderScrollbar::createCustomScrollbar(this, orientation, 0, &frame());
+        return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, &frame());
     
     // Nobody set a custom style, so we just use a native scrollbar.
     return ScrollView::createScrollbar(orientation);
@@ -2081,7 +2081,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
         if (frame().page()->settings().acceleratedCompositingForFixedPositionEnabled())
             updateCompositingLayersAfterScrolling();
         IntPoint newPosition = scrollPosition();
-        scrollAnimator()->setCurrentPosition(scrollPosition());
+        scrollAnimator().setCurrentPosition(scrollPosition());
         scrollPositionChanged(oldPosition, newPosition);
     }
     if (visibleContentSizeDidChange) {

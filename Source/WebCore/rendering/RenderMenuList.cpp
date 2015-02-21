@@ -2,7 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -575,7 +575,7 @@ HostWindow* RenderMenuList::hostWindow() const
     return view().frameView().hostWindow();
 }
 
-PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);

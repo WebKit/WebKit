@@ -1,3 +1,16 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Scrollbars and ScrollAnimators must always have a ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=141855
+
+        Reviewed by Simon Fraser.
+        
+        Change users of the scrollAnimator() method to expect a reference instead of a pointer.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar):
+        (WebKit::PDFPlugin::destroyScrollbar):
+
 2015-02-20  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix after r180465.

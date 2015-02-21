@@ -45,7 +45,7 @@ public:
     virtual void invalidate() override;
 
 protected:
-    ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
+    ScrollbarEfl(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual void setParent(ScrollView*) override;
 };

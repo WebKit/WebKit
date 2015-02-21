@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,11 +96,8 @@ void AccessibilityScrollbar::setValue(float value)
     if (!m_scrollbar)
         return;
     
-    if (!m_scrollbar->scrollableArea())
-        return;
-
     float newValue = value * m_scrollbar->maximum();
-    m_scrollbar->scrollableArea()->scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
+    m_scrollbar->scrollableArea().scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
 }
     
 } // namespace WebCore

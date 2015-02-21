@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2010, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -56,7 +57,7 @@ class ScrollAnimator {
 #endif
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
+    static PassOwnPtr<ScrollAnimator> create(ScrollableArea&);
 
     virtual ~ScrollAnimator();
 
@@ -68,7 +69,7 @@ public:
 
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
-    ScrollableArea* scrollableArea() const { return m_scrollableArea; }
+    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
@@ -125,7 +126,7 @@ public:
 #endif
 
 protected:
-    explicit ScrollAnimator(ScrollableArea*);
+    explicit ScrollAnimator(ScrollableArea&);
 
     virtual void notifyPositionChanged(const FloatSize& delta);
 
@@ -135,7 +136,7 @@ protected:
     void verticalScrollSnapTimerFired();
 #endif
 
-    ScrollableArea* m_scrollableArea;
+    ScrollableArea& m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)

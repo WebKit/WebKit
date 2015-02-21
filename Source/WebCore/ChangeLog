@@ -1,3 +1,125 @@
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Scrollbars and ScrollAnimators must always have a ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=141855
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+        
+        Change users of the scrollAnimator() method to expect a reference instead of a pointer. Also get rid of
+        a number of unnecessary nullptr checks.
+
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::setValue):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::scrollbarMatchesCornerPresentPseudoClass):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::setFixedVisibleContentRect):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::handleWheelEventPhase):
+        * platform/PopupMenuClient.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        (WebCore::ScrollAnimator::updateScrollAnimatorsAndTimers):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::scrollableArea):
+        * platform/ScrollAnimatorNone.cpp:
+        * platform/ScrollAnimatorNone.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::createScrollbar):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollAnimator):
+        (WebCore::ScrollableArea::scroll):
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::notifyScrollPositionChanged):
+        (WebCore::ScrollableArea::scrollPositionChanged):
+        (WebCore::ScrollableArea::handleWheelEvent):
+        (WebCore::ScrollableArea::handleTouchEvent):
+        (WebCore::ScrollableArea::mouseEnteredScrollbar):
+        (WebCore::ScrollableArea::mouseExitedScrollbar):
+        (WebCore::ScrollableArea::didAddScrollbar):
+        (WebCore::ScrollableArea::willRemoveScrollbar):
+        (WebCore::ScrollableArea::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollableArea::horizontalScrollbarLayerDidChange):
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::createNativeScrollbar):
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::scrollbarOverlayStyle):
+        (WebCore::Scrollbar::isScrollableAreaActive):
+        (WebCore::Scrollbar::offsetDidChange):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::moveThumb):
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseEntered):
+        (WebCore::Scrollbar::mouseExited):
+        (WebCore::Scrollbar::mouseUp):
+        (WebCore::Scrollbar::shouldParticipateInHitTesting):
+        (WebCore::Scrollbar::isWindowActive):
+        (WebCore::Scrollbar::invalidateRect):
+        (WebCore::Scrollbar::convertToContainingView):
+        (WebCore::Scrollbar::convertFromContainingView):
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::scrollableArea):
+        (WebCore::Scrollbar::disconnectFromScrollableArea): Deleted.
+        * platform/ios/ScrollAnimatorIOS.mm:
+        (WebCore::ScrollAnimatorIOS::handleTouchEvent):
+        (WebCore::ScrollAnimatorIOS::determineScrollableAreaForTouchSequence):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (-[WebScrollbarPainterDelegate scrollAnimator]):
+        (-[WebScrollbarPainterDelegate layer]):
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollAnimatorMac::immediateScrollTo):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimatorMac::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture):
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching):
+        (WebCore::ScrollAnimatorMac::stretchAmount):
+        (WebCore::ScrollAnimatorMac::canScrollHorizontally):
+        (WebCore::ScrollAnimatorMac::canScrollVertically):
+        (WebCore::ScrollAnimatorMac::absoluteScrollPosition):
+        (WebCore::ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        (WebCore::ScrollAnimatorMac::setVisibleScrollerThumbRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar):
+        (WebCore::RenderListBox::destroyScrollbar):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::createScrollbar):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::createCustomScrollbar):
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::createScrollbar):
+        * rendering/RenderSearchField.h:
+
 2015-02-20  Enrica Casucci  <enrica@apple.com>
 
         [WK2] Add support for font panel on OS X.

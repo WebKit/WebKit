@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc.  All rights reserved.
  * Copyright (c) 2010, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,13 @@
 namespace WebCore {
 
 #if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS)
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
+PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
     return adoptPtr(new ScrollAnimator(scrollableArea));
 }
 #endif
 
-ScrollAnimator::ScrollAnimator(ScrollableArea* scrollableArea)
+ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
     , m_currentPosX(0)
     , m_currentPosY(0)
@@ -61,7 +61,7 @@ ScrollAnimator::~ScrollAnimator()
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {
     float* currentPos = (orientation == HorizontalScrollbar) ? &m_currentPosX : &m_currentPosY;
-    float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_scrollableArea->scrollSize(orientation))), 0.0f);
+    float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_scrollableArea.scrollSize(orientation))), 0.0f);
     float delta = *currentPos - newPos;
     if (*currentPos == newPos)
         return false;
@@ -114,8 +114,8 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         return true;
 #endif
 
-    Scrollbar* horizontalScrollbar = m_scrollableArea->horizontalScrollbar();
-    Scrollbar* verticalScrollbar = m_scrollableArea->verticalScrollbar();
+    Scrollbar* horizontalScrollbar = m_scrollableArea.horizontalScrollbar();
+    Scrollbar* verticalScrollbar = m_scrollableArea.verticalScrollbar();
 
     // Accept the event if we have a scrollbar in that direction and can still
     // scroll any further.
@@ -125,8 +125,8 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
     bool handled = false;
 
     ScrollGranularity granularity = ScrollByPixel;
-    IntSize maxForwardScrollDelta = m_scrollableArea->maximumScrollPosition() - m_scrollableArea->scrollPosition();
-    IntSize maxBackwardScrollDelta = m_scrollableArea->scrollPosition() - m_scrollableArea->minimumScrollPosition();
+    IntSize maxForwardScrollDelta = m_scrollableArea.maximumScrollPosition() - m_scrollableArea.scrollPosition();
+    IntSize maxBackwardScrollDelta = m_scrollableArea.scrollPosition() - m_scrollableArea.minimumScrollPosition();
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
         || (deltaX > 0 && maxBackwardScrollDelta.width() > 0)
         || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
@@ -136,7 +136,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         if (deltaY) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaY < 0;
-                deltaY = Scrollbar::pageStepDelta(m_scrollableArea->visibleHeight());
+                deltaY = Scrollbar::pageStepDelta(m_scrollableArea.visibleHeight());
                 if (negative)
                     deltaY = -deltaY;
             }
@@ -146,7 +146,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         if (deltaX) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaX < 0;
-                deltaX = Scrollbar::pageStepDelta(m_scrollableArea->visibleWidth());
+                deltaX = Scrollbar::pageStepDelta(m_scrollableArea.visibleWidth());
                 if (negative)
                     deltaX = -deltaX;
             }
@@ -177,22 +177,22 @@ FloatPoint ScrollAnimator::currentPosition() const
 void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 {
     UNUSED_PARAM(delta);
-    m_scrollableArea->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
+    m_scrollableArea.setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
 void ScrollAnimator::updateScrollAnimatorsAndTimers()
 {
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
-    if (m_scrollableArea->horizontalSnapOffsets()) {
-        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
+    if (m_scrollableArea.horizontalSnapOffsets()) {
+        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea.horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
         m_horizontalScrollSnapTimer = std::make_unique<Timer>(*this, &ScrollAnimator::horizontalScrollSnapTimerFired);
     } else if (m_horizontalScrollSnapAnimator) {
         m_horizontalScrollSnapAnimator = nullptr;
         m_horizontalScrollSnapTimer = nullptr;
     }
-    if (m_scrollableArea->verticalSnapOffsets()) {
-        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->verticalSnapOffsets(), ScrollEventAxis::Vertical);
+    if (m_scrollableArea.verticalSnapOffsets()) {
+        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea.verticalSnapOffsets(), ScrollEventAxis::Vertical);
         m_verticalScrollSnapTimer = std::make_unique<Timer>(*this, &ScrollAnimator::verticalScrollSnapTimerFired);
     } else if (m_verticalScrollSnapAnimator) {
         m_verticalScrollSnapAnimator = nullptr;

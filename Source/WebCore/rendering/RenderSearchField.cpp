@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2010, 2015 Apple Inc. All rights reserved.
  *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -342,7 +342,7 @@ HostWindow* RenderSearchField::hostWindow() const
     return view().frameView().hostWindow();
 }
 
-PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
