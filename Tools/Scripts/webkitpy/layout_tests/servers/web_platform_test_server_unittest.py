@@ -31,20 +31,21 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.port import Port
 from webkitpy.tool.mocktool import MockOptions
 
+from webkitpy.layout_tests.servers.http_server_base import ServerError
 from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
 
 
 class TestWebPlatformTestServer(unittest.TestCase):
-    def test_start_cmd(self):
-
-        port = Port(MockHost(), "test")
+    def test_previously_spawned_instance(self):
+        host = MockHost()
+        port = Port(host, "test")
         server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir", "/mock/output_dir/pid.txt")
+        server._check_that_all_ports_are_available = lambda: True
+        server._is_server_running_on_all_ports = lambda: True
 
-        server._prepare_config()
-        server._wsout = None
-        server._spawn_process()
-        time.sleep(1)
-        server._stop_running_server()
+        host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
+        server.start()
+        server.stop()
 
     def test_import_web_platform_test_modules(self):
         fs = FileSystem()
@@ -67,3 +68,29 @@ class TestWebPlatformTestServer(unittest.TestCase):
             self.fail(e)
         self.assertEqual(pathname, fs.join(tools_dir, "scripts"))
         sys.path.pop(0)
+
+    def test_corrupted_subserver_files(self):
+        host = MockHost()
+        port = Port(host, "test")
+        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir", "/mock/output_dir/pid.txt")
+        server._check_that_all_ports_are_available = lambda: True
+        server._is_server_running_on_all_ports = lambda: True
+
+        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "0")
+        server.stop()
+        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+
+        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[0,")
+        server.start()
+        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+        server.stop()
+
+        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80 }]")
+        server.start()
+        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+        server.stop()
+
+        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80, 'pid': {} }]")
+        server.start()
+        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+        server.stop()

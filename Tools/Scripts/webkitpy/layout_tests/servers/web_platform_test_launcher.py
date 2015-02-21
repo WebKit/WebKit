@@ -2,24 +2,13 @@
 # http://www.w3.org/Consortium/Legal/2008/03-bsd-license.html
 
 import imp
+import json
 import logging
 import os
 import sys
 
 logger = logging.getLogger('web-platform-test-launcher')
 logging.basicConfig(level=logging.DEBUG)
-
-
-def create_wpt_empty_file_if_needed(relative_path):
-    file_path = os.path.join(os.getcwd(), os.path.sep.join(relative_path))
-    if not os.path.isfile(file_path):
-        logger.warning(file_path + ' is not present, creating it as empty file')
-        open(file_path, 'a').close()
-
-#FIXME: Handle empty files at importer/auto-installer level.
-create_wpt_empty_file_if_needed(['tools', '__init__.py'])
-create_wpt_empty_file_if_needed(['tools', 'scripts', '__init__.py'])
-create_wpt_empty_file_if_needed(['tools', 'webdriver', 'webdriver', '__init__.py'])
 
 try:
     sys.path.insert(0, os.getcwd())
@@ -38,12 +27,18 @@ def main(argv, stdout, stderr):
     config = WebPlatformTestServer.load_config("config.default.json", "config.json")
     WebPlatformTestServer.setup_logger(config["log_level"])
     ssl_env = WebPlatformTestServer.get_ssl_environment(config)
+    logged_servers = []
     with WebPlatformTestServer.get_ssl_environment(config) as ssl_env:
         config_, started_servers = WebPlatformTestServer.start(config, ssl_env)
 
         for protocol, servers in started_servers.items():
             for port, process in servers:
+                logged_servers.append({"protocol": protocol, "port": port, "pid": process.proc.pid})
                 logger.info("%s, port:%d, pid:%d" % (protocol, port, process.proc.pid))
+
+    # Write pids in a file in case abrupt shutdown is needed
+    with open(argv[0], "wb") as servers_file:
+        json.dump(logged_servers, servers_file)
 
     sys.stdin.read(1)
 

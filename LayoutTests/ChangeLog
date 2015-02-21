@@ -1,3 +1,12 @@
+2015-02-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Tests don't work on some bots: Failed to stop wptwk
+        https://bugs.webkit.org/show_bug.cgi?id=141235
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Marking web-platform-tests as failed or passed until wpt server proves to be stable.
+
 2015-02-21  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky media tests due to various CoreMedia issues.

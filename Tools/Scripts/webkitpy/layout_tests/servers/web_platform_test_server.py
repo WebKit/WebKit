@@ -64,6 +64,8 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._pid_file = pidfile
         if not self._pid_file:
             self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
+        self._servers_file = self._filesystem.join(self._runtime_path, '%s_servers.json' % (self._name))
+
         self._stdout_data = None
         self._stderr_data = None
         self._filesystem = port_obj.host.filesystem
@@ -73,7 +75,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._resources_files_to_copy = ['testharness.js', 'testharness.css', 'testharnessreport.js']
 
         current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
-        self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py")]
+        self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]
         self._doc_root_path = port_obj.path_from_webkit_base("LayoutTests", self._doc_root)
 
     def _install_modules(self):
@@ -128,17 +130,37 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         return self._process.pid
 
+    def _stop_running_subservers(self):
+        if self._filesystem.exists(self._servers_file):
+            try:
+                json_data = self._filesystem.read_text_file(self._servers_file)
+                started_servers = json.loads(json_data)
+                for server in started_servers:
+                    if self._executive.check_running_pid(server['pid']):
+                        _log.warning('Killing server process (protocol: %s , port: %d, pid: %d).' % (server['protocol'], server['port'], server['pid']))
+                        self._executive.kill_process(server['pid'])
+            finally:
+                self._filesystem.remove(self._servers_file)
+
+    def stop(self):
+        super(WebPlatformTestServer, self).stop()
+        # In case of orphaned pid, kill the running subservers if any still alive.
+        self._stop_running_subservers()
+
     def _stop_running_server(self):
         _log.debug('Stopping %s server' % (self._name))
         self._clean_webkit_test_files()
-        if self._pid and not self._executive.check_running_pid(self._pid):
-            self._filesystem.remove(self._pid_file)
-            return
+
         if self._process:
             (self._stdout_data, self._stderr_data) = self._process.communicate(input='\n')
         if self._wsout:
             self._wsout.close()
             self._wsout = None
-        if self._executive.check_running_pid(self._pid):
-            raise http_server_base.ServerError('Failed to stop %s: please go to web platform test server log file to get the PID list' % (self._name))
-        self._filesystem.remove(self._pid_file)
+
+        if self._pid and self._executive.check_running_pid(self._pid):
+            _log.warning('Cannot stop %s server normally.' % (self._name))
+            _log.warning('Killing server launcher process (pid: %d).' % (self._pid))
+            self._executive.kill_process(self._pid)
+
+        self._remove_pid_file()
+        self._stop_running_subservers()

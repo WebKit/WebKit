@@ -237,8 +237,9 @@ imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/tools [ Skip ]
 
 # W3C domparsing test suite
-# Bug 141235: Tests marked as Skip until being able to relaunch wpt server properly
-imported/w3c/web-platform-tests [ Skip ]
+# Tests marked as pass or fail until wpt server proves to be stable enough
+imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html [ Pass Failure ]
+imported/w3c/web-platform-tests/domparsing/insert-adjacent.html [ Pass Failure ]
 
 # Imported W3C canvas failed tests
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.null.html [ Failure ]
