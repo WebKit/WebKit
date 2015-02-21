@@ -35,7 +35,6 @@
 #import "BlockExceptions.h"
 #import "CDMSessionAVFoundationObjC.h"
 #import "Cookie.h"
-#import "CoreMediaSoftLink.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
 #import "FloatConversion.h"
@@ -145,8 +144,12 @@ typedef AVMetadataItem AVMetadataItemType;
 typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
 typedef AVMediaSelectionOption AVMediaSelectionOptionType;
 
+#pragma mark - Soft Linking
+
+// Soft-linking headers must be included last since they #define functions, constants, etc.
+#import "CoreMediaSoftLink.h"
+
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
 
@@ -195,8 +198,6 @@ SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferPixelFormatTypeKey, NSString *)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
-
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
 #define AVPlayer getAVPlayerClass()
 #define AVPlayerItem getAVPlayerItemClass()
@@ -283,11 +284,8 @@ SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceID3, NSString*)
 
 #if PLATFORM(IOS)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
-
 #define AVURLAssetBoundNetworkInterfaceName getAVURLAssetBoundNetworkInterfaceName()
 #endif
-
-#define kCMTimeZero getkCMTimeZero()
 
 using namespace WebCore;
 
@@ -1754,7 +1752,7 @@ void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLo
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
 {
-    return AVFoundationLibrary() && CoreMediaLibrary();
+    return AVFoundationLibrary() && isCoreMediaFrameworkAvailable();
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaTime& timeValue) const

@@ -293,17 +293,54 @@
 
 // See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
 
+#define SOFT_LINK_FRAMEWORK_HEADER(functionNamespace, framework) \
+    namespace functionNamespace { \
+    extern void* framework##Library(bool isOptional = false); \
+    bool is##framework##FrameworkAvailable(); \
+    inline bool is##framework##FrameworkAvailable() { \
+        return framework##Library(true) != nullptr; \
+    } \
+    }
+
 #define SOFT_LINK_FRAMEWORK_SOURCE(functionNamespace, framework) \
     namespace functionNamespace { \
-    static void* framework##Library() \
+    void* framework##Library(bool isOptional = false); \
+    void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
-            ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         }); \
+        ASSERT_WITH_MESSAGE_UNUSED(isOptional, isOptional || frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
+    } \
+    }
+
+#define SOFT_LINK_CONSTANT_HEADER(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern const variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    const variableType get_##framework##_##variableName(); \
+    }
+
+#define SOFT_LINK_CONSTANT_SOURCE(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern const variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    const variableType get_##framework##_##variableName(); \
+    const variableType get_##framework##_##variableName() \
+    { \
+        static variableType constant##framework##variableName; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            void* constant = dlsym(framework##Library(), #variableName); \
+            ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
+            constant##framework##variableName = *static_cast<variableType*>(constant); \
+        }); \
+        return constant##framework##variableName; \
     } \
     }
 

@@ -71,10 +71,9 @@
 #include <wtf/text/StringView.h>
 #include <wtf/StringPrintStream.h>
 
-// The softlink header files must be included after the AVCF and CoreMedia header files.
+// Soft-linking headers must be included last since they #define functions, constants, etc.
 #include "AVFoundationCFSoftLinking.h"
 #include "CoreMediaSoftLink.h"
-#include "CoreMediaSoftLinking.h"
 
 // We don't bother softlinking against libdispatch since it's already been loaded by AAS.
 #ifdef DEBUG_ALL
@@ -940,7 +939,7 @@ bool MediaPlayerPrivateAVFoundationCF::supportsKeySystem(const String& keySystem
 
 bool MediaPlayerPrivateAVFoundationCF::isAvailable()
 {
-    return AVFoundationCFLibrary() && CoreMediaLibrary();
+    return AVFoundationCFLibrary() && isCoreMediaFrameworkAvailable();
 }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)

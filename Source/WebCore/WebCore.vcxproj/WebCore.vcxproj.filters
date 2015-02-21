@@ -8691,9 +8691,6 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\avfoundation\cf\CoreMediaSoftLinking.h">
-      <Filter>platform\graphics\avfoundation\cf</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>

@@ -1,3 +1,59 @@
+2015-02-21  David Kilzer  <ddkilzer@apple.com>
+
+        Add SOFT_LINK_CONSTANT_SOURCE() cross-platform macro and start using it
+        <http://webkit.org/b/141816>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        - Remove CoreMediaSoftLinking.h.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        - Add kCMTimeZero constant.
+        * platform/cf/CoreMediaSoftLink.h:
+        - Add SOFT_LINK_FRAMEWORK_HEADER() macro for CoreMedia.
+        - Add kCMTimeZero constant.
+
+        * platform/graphics/avfoundation/cf/CoreMediaSoftLinking.h: Remove.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        - Remove reference to CoreMediaSoftLinking.h and update comment.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::isAvailable):
+        - Switch to using new method to check if a framework is
+          available.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        - Remove all local soft-linking macros for CoreMedia.
+          CoreMediaSoftLink.h handles everything now.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isAvailable):
+        - Switch to using new method to check if a framework is
+          available.
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_FRAMEWORK_HEADER): Add.  Defines
+        is_Name_FrameworkAvailable() macro.
+        (SOFT_LINK_FRAMEWORK_SOURCE): Update to make it work with
+        optional framework checks without a separate macro.
+        (SOFT_LINK_CONSTANT_HEADER): Add.
+        (SOFT_LINK_CONSTANT_SOURCE): Add.
+        - Support soft-links to constants.
+
+        * platform/win/SoftLinking.h:
+        (SOFT_LINK_FRAMEWORK_HELPER): Add.  Copied from
+        SOFT_LINK_LIBRARY_HELPER, with addition of namespace and
+        non-static function.
+        (SOFT_LINK_FRAMEWORK): Add.  Copied from SOFT_LINK_LIBRARY.
+        (SOFT_LINK_DEBUG_FRAMEWORK): Add.  Copied from
+        SOFT_LINK_DEBUG_LIBRARY.
+        (SOFT_LINK_FRAMEWORK_HEADER): Add.  Defines
+        is_Name_FrameworkAvailable() macro.
+        (SOFT_LINK_FRAMEWORK_SOURCE): Redefine in terms of
+        SOFT_LINK_FRAMEWORK/SOFT_LINK_DEBUG_FRAMEWORK.
+        (SOFT_LINK_CONSTANT_HEADER): Add.
+        (SOFT_LINK_CONSTANT_SOURCE): Add.
+        - Support soft-links to constants.
+
 2015-02-20  David Kilzer  <ddkilzer@apple.com>
 
         Make namespace configurable for SOFT_LINK_*_{HEADER,SOURCE}() macros

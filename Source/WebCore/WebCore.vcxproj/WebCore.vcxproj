@@ -20002,7 +20002,6 @@
     <ClInclude Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h" />
-    <ClInclude Include="..\platform\graphics\avfoundation\cf\CoreMediaSoftLinking.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.h" />
     <ClInclude Include="..\platform\network\AuthenticationChallengeBase.h" />
     <ClInclude Include="..\platform\network\AuthenticationClient.h" />

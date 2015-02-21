@@ -32,6 +32,8 @@
 #include "SoftLinking.h"
 #include <CoreMedia/CoreMedia.h>
 
+SOFT_LINK_FRAMEWORK_HEADER(WebCore, CoreMedia)
+
 SOFT_LINK_FUNCTION_HEADER(WebCore, CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
 #define CMTimeCompare softLink_CoreMedia_CMTimeCompare
 SOFT_LINK_FUNCTION_HEADER(WebCore, CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
@@ -42,6 +44,9 @@ SOFT_LINK_FUNCTION_HEADER(WebCore, CoreMedia, CMTimeMakeWithSeconds, CMTime, (Fl
 #define CMTimeMakeWithSeconds softLink_CoreMedia_CMTimeMakeWithSeconds
 SOFT_LINK_FUNCTION_HEADER(WebCore, CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 #define CMTimeRangeGetEnd softLink_CoreMedia_CMTimeRangeGetEnd
+
+SOFT_LINK_CONSTANT_HEADER(WebCore, CoreMedia, kCMTimeZero, CMTime);
+#define kCMTimeZero get_CoreMedia_kCMTimeZero()
 
 #if PLATFORM(COCOA)
 

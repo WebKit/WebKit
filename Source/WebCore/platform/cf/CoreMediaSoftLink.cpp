@@ -39,6 +39,8 @@ SOFT_LINK_FUNCTION_SOURCE(WebCore, CoreMedia, CMTimeMake, CMTime, (int64_t value
 SOFT_LINK_FUNCTION_SOURCE(WebCore, CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK_FUNCTION_SOURCE(WebCore, CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 
+SOFT_LINK_CONSTANT_SOURCE(WebCore, CoreMedia, kCMTimeZero, CMTime);
+
 #if PLATFORM(COCOA)
 SOFT_LINK_FUNCTION_SOURCE(WebCore, CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ());
 SOFT_LINK_FUNCTION_SOURCE(WebCore, CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
