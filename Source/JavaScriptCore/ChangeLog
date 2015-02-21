@@ -1,3 +1,26 @@
+2015-02-20  Mark Lam  <mark.lam@apple.com>
+
+        Refactor JSWrapperMap.mm to defer creation of the ObjC JSValue until the latest possible moment.
+        <https://webkit.org/b/141856>
+
+        Reviewed by Geoffrey Garen.
+
+        1. Make JSObjCClassInfo's -constructor and -wrapperForObject return a
+           JSC::JSObject* just like -prototype.
+        2. Defer the creation of the ObjC JSValue from JSC::JSObject* until
+           the latest moment when it is needed.  This allows us to not have to
+           keep converting back to a JSC::JSObject* in intermediate code.
+
+        * API/JSWrapperMap.mm:
+        (makeWrapper):
+        (objectWithCustomBrand):
+        (constructorWithCustomBrand):
+        (allocateConstructorForCustomClass):
+        (-[JSObjCClassInfo allocateConstructorAndPrototype]):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (-[JSObjCClassInfo constructor]):
+        (-[JSWrapperMap jsWrapperForObject:]):
+
 2015-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         Build fix for gcc.
