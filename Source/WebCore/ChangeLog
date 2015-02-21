@@ -1,5 +1,13 @@
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Gtk] Unreviewed build fix.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone): Forget to update two
+        uses of ScrollableArea.
+
+2015-02-20  Brent Fulgham  <bfulgham@apple.com>
+
         Scrollbars and ScrollAnimators must always have a ScrollableArea
         https://bugs.webkit.org/show_bug.cgi?id=141855
 
