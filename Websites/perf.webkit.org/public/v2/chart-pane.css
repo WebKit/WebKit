@@ -212,10 +212,6 @@
     height: 15rem;
 }
 
-.analysis-chart-pane .details {
-    overflow: scroll;
-}
-
 .analysis-chart-pane table {
     margin: 0.5rem;
 }
@@ -240,7 +236,7 @@
 .chart-pane .details-table,
 .chart-pane .commits-viewer {
     font-size: 0.8rem;
-    width: 100%;
+    width: auto;
     table-layout: fixed;
     border-collapse: collapse;
 }

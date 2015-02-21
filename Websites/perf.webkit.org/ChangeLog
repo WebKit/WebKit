@@ -1,5 +1,18 @@
 2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r180333): Analysis tasks can't be associated with bugs
+        https://bugs.webkit.org/show_bug.cgi?id=141858
+
+        Reviewed by Andreas Kling.
+
+        Added back the erroneously removed table to associate bugs. Also moved "details-table-container" div outside
+        of the chart-details partial template as it needs to wrap associate bugs in analysis task pages.
+
+        * public/v2/chart-pane.css:
+        * public/v2/index.html:
+
+2015-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Selecting revisions for A/B testing is hard
         https://bugs.webkit.org/show_bug.cgi?id=141824
 

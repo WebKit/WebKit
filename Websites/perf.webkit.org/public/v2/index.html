@@ -197,7 +197,9 @@
                                 selection=overviewSelection}}
                         {{/if}}
                         </div>
-                        {{partial "chart-details"}}
+                        <div class="details-table-container">
+                            {{partial "chart-details"}}
+                        </div>
                     </div>
                 </div>
 
@@ -247,7 +249,6 @@
 
     <script type="text/x-handlebars" data-template-name="chart-details">
     {{#if details}}
-    <div class="details-table-container">
         <table class="details-table">
             <tbody class="bugs">
             {{#each details.bugTrackers}}
@@ -311,7 +312,6 @@
                 {{commits-viewer repository=repository revisionInfo=this caption=name}}
             {{/each}}
         </div>
-    </div>
     {{/if}}
     </script>
 
@@ -545,7 +545,23 @@
                         rangeRoute="analysisTask"}}
                 </div>
                 <div class="details">
-                    {{partial "chart-details"}}
+                    <div class="details-table-container">
+                        <table class="analysis-bugs">
+                            <tbody>
+                                {{#each bugTrackers}}
+                                    <tr>
+                                        <th>{{label}}</th>
+                                        <td>
+                                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
+                                                {{input type=text value=editedBugNumber}}
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                        {{partial "chart-details"}}
+                    </div>
                 </div>
             </section>
         {{/if}}
