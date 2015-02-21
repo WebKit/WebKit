@@ -22,12 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SoftLinking_h
+#define SoftLinking_h
+
 #import <wtf/Assertions.h>
 #import <dlfcn.h>
 
 #if PLATFORM(IOS)
 #import <objc/runtime.h>
 #endif
+
+#pragma mark - Soft-link macros for use within a single source file
 
 #define SOFT_LINK_LIBRARY(lib) \
     static void* lib##Library() \
@@ -107,36 +112,6 @@
     inline resultType functionName parameterDeclarations \
     { \
         return softLink##functionName parameterNames; \
-    }
-
-#define SOFT_LINK_FUNCTION_HEADER(functionName, resultType, parameterDeclarations, parameterNames) \
-    WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations; \
-    WTF_EXTERN_C_END \
-    namespace WebCore { \
-    extern resultType (*softLink##functionName) parameterDeclarations; \
-    } \
-    inline resultType softLink_##functionName parameterDeclarations \
-    { \
-        return WebCore::softLink##functionName parameterNames; \
-    }
-
-#define SOFT_LINK_FUNCTION_SOURCE(framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations; \
-    WTF_EXTERN_C_END \
-    namespace WebCore { \
-    static resultType init##functionName parameterDeclarations; \
-    resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
-    static resultType init##functionName parameterDeclarations \
-    { \
-        static dispatch_once_t once; \
-        dispatch_once(&once, ^{ \
-            softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
-            ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
-        }); \
-        return softLink##functionName parameterNames; \
-    } \
     }
 
 #define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
@@ -313,3 +288,53 @@
         get##name = name##Function; \
         return true; \
     }
+
+#pragma mark - Soft-link macros for sharing across multiple source files
+
+// See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
+
+#define SOFT_LINK_FRAMEWORK_SOURCE(functionNamespace, framework) \
+    namespace functionNamespace { \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        }); \
+        return frameworkLibrary; \
+    } \
+    }
+
+#define SOFT_LINK_FUNCTION_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    extern resultType (*softLink##framework##functionName) parameterDeclarations; \
+    inline resultType softLink_##framework##_##functionName parameterDeclarations \
+    { \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#define SOFT_LINK_FUNCTION_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    static resultType init##framework##functionName parameterDeclarations; \
+    resultType (*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
+    static resultType init##framework##functionName parameterDeclarations \
+    { \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+            ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
+        }); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#endif // SoftLinking_h

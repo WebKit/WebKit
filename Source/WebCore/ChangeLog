@@ -1,3 +1,48 @@
+2015-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        Make namespace configurable for SOFT_LINK_*_{HEADER,SOURCE}() macros
+        <http://webkit.org/b/141849>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does the following:
+        - Add namespace argument to the SOFT_LINK_*_{HEADER,SOURCE}()
+          macros for reuse in other projects.
+        - Adds SOFT_LINK_FRAMEWORK_SOURCE() macro in preparation for Bug
+          141816.
+        - Adds back framework argument to SOFT_LINK_FUNCTION_HEADER()
+          and includes framework name in generated function names.  This
+          adds more entropy to the names in case there are two functions
+          with the same name in different frameworks.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        - Add FIXME about USE(COREMEDIA).
+        - Switch from SOFT_LINK_FRAMEWORK() to
+          SOFT_LINK_FRAMEWORK_SOURCE().
+        * platform/cf/CoreMediaSoftLink.h:
+        - Add FIXME about USE(COREMEDIA).
+        - Add back framework argument to SOFT_LINK_FUNCTION_HEADER()
+          macros.
+
+        * platform/mac/SoftLinking.h:
+        - Add missing header guards.
+        - Add pragmas for different macro groups.
+        (SOFT_LINK_FRAMEWORK_SOURCE): Add.
+        (SOFT_LINK_FUNCTION_HEADER): Move. Add back framework argument.
+        (SOFT_LINK_FUNCTION_SOURCE): Move.
+        - Add framework name to generated function names.
+        - Incorporates namespace so that it doesn't have to be listed in
+          the *SoftLink.{cpp,h} file.
+
+        * platform/win/SoftLinking.h:
+        - Add pragmas for different macro groups.
+        (SOFT_LINK_FRAMEWORK_SOURCE): Add.
+        (SOFT_LINK_FUNCTION_HEADER): Move. Add back framework argument.
+        (SOFT_LINK_FUNCTION_SOURCE): Move.
+        - Add framework name to generated function names.
+        - Incorporates namespace so that it doesn't have to be listed in
+          the *SoftLink.{cpp,h} file.
+
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Gtk] Unreviewed build fix.

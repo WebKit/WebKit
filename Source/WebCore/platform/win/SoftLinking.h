@@ -28,11 +28,7 @@
 #include <windows.h>
 #include <wtf/Assertions.h>
 
-#ifdef DEBUG_ALL
-#define SOFT_LINK_FRAMEWORK(framework) SOFT_LINK_DEBUG_LIBRARY(framework)
-#else
-#define SOFT_LINK_FRAMEWORK(framework) SOFT_LINK_LIBRARY(framework)
-#endif
+#pragma mark - Soft-link helper macros
 
 #define SOFT_LINK_LIBRARY_HELPER(lib, suffix) \
     static HMODULE lib##Library() \
@@ -44,6 +40,8 @@
 #define SOFT_LINK_GETPROCADDRESS GetProcAddress
 #define SOFT_LINK_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L".dll")
 #define SOFT_LINK_DEBUG_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L"_debug.dll")
+
+#pragma mark - Soft-link macros for use within a single source file
 
 #define SOFT_LINK(library, functionName, resultType, callingConvention, parameterDeclarations, parameterNames) \
     static resultType callingConvention init##functionName parameterDeclarations; \
@@ -116,27 +114,6 @@
         return softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_HEADER(functionName, resultType, parameterDeclarations, parameterNames) \
-    namespace WebCore { \
-    extern resultType(__cdecl*softLink##functionName) parameterDeclarations; \
-    } \
-    inline resultType softLink_##functionName parameterDeclarations \
-    { \
-        return WebCore::softLink##functionName parameterNames; \
-    }
-
-#define SOFT_LINK_FUNCTION_SOURCE(library, functionName, resultType, parameterDeclarations, parameterNames) \
-    namespace WebCore { \
-    static resultType __cdecl init##functionName parameterDeclarations; \
-    resultType(__cdecl*softLink##functionName) parameterDeclarations = init##functionName; \
-    static resultType __cdecl init##functionName parameterDeclarations \
-    { \
-        softLink##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        ASSERT(softLink##functionName); \
-        return softLink##functionName parameterNames; \
-    } \
-    }
-
 #define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
     typedef resultType (callingConvention *functionName##PtrType) parameterDeclarations; \
     static functionName##PtrType functionName##Ptr() \
@@ -193,5 +170,42 @@
             return 0; \
         return *ptr; \
     } \
+
+#pragma mark - Soft-link macros for sharing across multiple source files
+
+// See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
+
+#ifdef DEBUG_ALL
+#define SOFT_LINK_FRAMEWORK_SOURCE(functionNamespace, framework) \
+    namespace functionNamespace { \
+    SOFT_LINK_DEBUG_LIBRARY(framework) \
+    }
+#else
+#define SOFT_LINK_FRAMEWORK_SOURCE(functionNamespace, framework) \
+    namespace functionNamespace { \
+    SOFT_LINK_LIBRARY(framework) \
+    }
+#endif
+
+#define SOFT_LINK_FUNCTION_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    namespace functionNamespace { \
+    extern resultType(__cdecl*softLink##framework##functionName) parameterDeclarations; \
+    inline resultType softLink_##framework##_##functionName parameterDeclarations \
+    { \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#define SOFT_LINK_FUNCTION_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    namespace functionNamespace { \
+    static resultType __cdecl init##framework##functionName parameterDeclarations; \
+    resultType(__cdecl*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
+    static resultType __cdecl init##framework##functionName parameterDeclarations \
+    { \
+        softLink##framework##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #functionName)); \
+        ASSERT(softLink##framework##functionName); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
 
 #endif // SoftLinking_h
