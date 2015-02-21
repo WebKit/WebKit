@@ -884,6 +884,24 @@ void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategor
     process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_pageID);
 }
 
+void WebPageProxy::editorStateChanged(const EditorState& editorState)
+{
+    bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
+    
+    m_editorState = editorState;
+    
+    // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
+    if (couldChangeSecureInputState && !editorState.selectionIsNone)
+        m_pageClient.updateSecureInputState();
+    
+    if (editorState.shouldIgnoreCompositionSelectionChange)
+        return;
+    
+    // We always need to notify the client on iOS to make sure the selection is redrawn,
+    // even during composition to support phrase boundary gesture.
+    notifyRevealedSelection();
+}
+
 #if USE(QUICK_LOOK)
     
 void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)

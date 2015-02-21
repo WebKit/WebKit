@@ -27,6 +27,8 @@
 #import "Editor.h"
 
 #import "BlockExceptions.h"
+#import "CSSPrimitiveValueMappings.h"
+#import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DOMRangeInternal.h"
@@ -679,6 +681,16 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         if (shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
             pasteAsPlainText(text, false);
     }
+}
+
+void Editor::applyFontStyles(const String& fontFamily, double fontSize, unsigned fontTraits)
+{
+    Ref<MutableStyleProperties> style = MutableStyleProperties::create();
+    style->setProperty(CSSPropertyFontFamily, cssValuePool().createFontFamilyValue(fontFamily));
+    style->setProperty(CSSPropertyFontStyle, (fontTraits & NSFontItalicTrait) ? CSSValueItalic : CSSValueNormal);
+    style->setProperty(CSSPropertyFontWeight, cssValuePool().createValue(fontTraits & NSFontBoldTrait ? FontWeightBold : FontWeightNormal));
+    style->setProperty(CSSPropertyFontSize, cssValuePool().createValue(fontSize, CSSPrimitiveValue::CSS_PX));
+    applyStyleToSelection(style.ptr(), EditActionSetFont);
 }
 
 } // namespace WebCore

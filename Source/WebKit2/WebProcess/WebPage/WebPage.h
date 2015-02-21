@@ -872,6 +872,7 @@ private:
 
     void platformInitialize();
     void platformDetach();
+    void platformEditorState(WebCore::Frame&, EditorState& result) const;
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::MessageDecoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
@@ -1082,6 +1083,7 @@ private:
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
+    void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
 
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);

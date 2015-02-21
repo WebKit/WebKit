@@ -117,7 +117,20 @@ void WebPage::platformDetach()
 {
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
+
+void WebPage::platformEditorState(Frame& frame, EditorState& result) const
+{
+    if (frame.selection().selection().isNone())
+        return;
     
+    const Font* font = frame.editor().fontForSelection(result.selectionHasMultipleFonts);
+    NSFont *nsFont = font ? font->getNSFont() : nil;
+    if (nsFont) {
+        result.fontName = nsFont.fontName;
+        result.fontSize = nsFont.pointSize;
+    }
+}
+
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
     if (!m_page)
@@ -1157,6 +1170,12 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
             return;
         }
     }
+}
+
+void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTraits)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().applyFontStyles(fontFamily, fontSize, fontTraits);
 }
 
 } // namespace WebKit

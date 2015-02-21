@@ -76,6 +76,15 @@ void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
     notImplemented();
 }
 
+void WebPageProxy::editorStateChanged(const EditorState& editorState)
+{
+    m_editorState = editorState;
+    
+    if (editorState.shouldIgnoreCompositionSelectionChange)
+        return;
+    m_pageClient.updateTextInputState();
+}
+
 #if PLUGIN_ARCHITECTURE(X11)
 typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
 static PluginWindowMap& pluginWindowMap()

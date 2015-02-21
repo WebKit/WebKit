@@ -83,6 +83,15 @@ void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
     notImplemented();
 }
 
+void WebPageProxy::editorStateChanged(const EditorState& editorState)
+{
+    m_editorState = editorState;
+    
+    if (editorState.shouldIgnoreCompositionSelectionChange)
+        return;
+    m_pageClient.updateTextInputState();
+}
+
 void WebPageProxy::setThemePath(const String& themePath)
 {
     if (!isValid())

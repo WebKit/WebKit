@@ -531,6 +531,11 @@ PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
     return [m_wkView _takeViewSnapshot];
 }
 
+void PageClientImpl::selectionDidChange()
+{
+    [m_wkView _selectionChanged];
+}
+
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
     [m_wkView _wheelEventWasNotHandledByWebCore:event.nativeEvent()];

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "EditorState.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WebPageAccessibilityObject.h"
@@ -65,6 +66,11 @@ void WebPage::platformInitialize()
 
 void WebPage::platformDetach()
 {
+}
+
+void WebPage::platformEditorState(Frame& frame, EditorState& result) const
+{
+    result.cursorRect = frame.selection().absoluteCaretBounds();
 }
 
 #if HAVE(ACCESSIBILITY)

@@ -3758,50 +3758,6 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
     count = m_backForwardList->forwardListCount();
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
-{
-#if PLATFORM(COCOA)
-    bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
-#endif
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    bool closedComposition = !editorState.shouldIgnoreCompositionSelectionChange && !editorState.hasComposition && (m_editorState.hasComposition || m_temporarilyClosedComposition);
-    m_temporarilyClosedComposition = editorState.shouldIgnoreCompositionSelectionChange && (m_temporarilyClosedComposition || m_editorState.hasComposition) && !editorState.hasComposition;
-    bool editabilityChanged = m_editorState.isContentEditable != editorState.isContentEditable;
-#endif
-
-    m_editorState = editorState;
-
-#if PLATFORM(COCOA)
-    // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
-    if (couldChangeSecureInputState && !editorState.selectionIsNone)
-        m_pageClient.updateSecureInputState();
-#endif
-
-    if (editorState.shouldIgnoreCompositionSelectionChange)
-        return;
-
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    if (closedComposition)
-        m_pageClient.notifyInputContextAboutDiscardedComposition();
-    if (editabilityChanged) {
-        // This is only needed in sync code path, because AppKit automatically refreshes input context for async clients (<rdar://problem/18604360>).
-        m_pageClient.notifyApplicationAboutInputContextChange();
-    }
-    if (editorState.hasComposition) {
-        // Abandon the current inline input session if selection changed for any other reason but an input method changing the composition.
-        // FIXME: This logic should be in WebCore, no need to round-trip to UI process to cancel the composition.
-        cancelComposition();
-        m_pageClient.notifyInputContextAboutDiscardedComposition();
-    }
-#elif PLATFORM(IOS)
-    // We always need to notify the client on iOS to make sure the selection is redrawn,
-    // even during composition to support phrase boundary gesture.
-    notifyRevealedSelection();
-#elif PLATFORM(EFL) || PLATFORM(GTK)
-    m_pageClient.updateTextInputState();
-#endif
-}
-
 void WebPageProxy::compositionWasCanceled(const EditorState& editorState)
 {
 #if PLATFORM(COCOA)

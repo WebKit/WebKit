@@ -166,6 +166,7 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(MAC)
     PerformDictionaryLookupOfCurrentSelection()
+    SetFont(String fontFamily, double fontSize, uint64_t fontTraits)
 #endif
 
     PreferencesDidChange(struct WebKit::WebPreferencesStore store)

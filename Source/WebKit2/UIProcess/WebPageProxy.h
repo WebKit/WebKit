@@ -538,6 +538,7 @@ public:
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives, bool registerUndoGroup);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, std::function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>);
+    void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
 
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
     bool insertText(const String& text, const EditingRange& replacementRange);

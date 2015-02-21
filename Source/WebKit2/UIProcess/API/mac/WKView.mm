@@ -737,6 +737,26 @@ WEBCORE_COMMAND(yankAndSelect)
     return _data->_page->readSelectionFromPasteboard([pasteboard name]);
 }
 
+// Font panel support.
+
+- (void)_selectionChanged
+{
+    const EditorState& editorState = _data->_page->editorState();
+    if (editorState.selectionIsNone || !editorState.isContentEditable)
+        return;
+    NSFont *font = [NSFont fontWithName:editorState.fontName size:editorState.fontSize];
+    [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:editorState.selectionHasMultipleFonts];
+}
+
+- (void)changeFont:(id)sender
+{
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFont *font = [fontManager convertFont:[fontManager selectedFont]];
+    if (!font)
+        return;
+    _data->_page->setFont([font familyName], [font pointSize], [[font fontDescriptor] symbolicTraits]);
+}
+
 /*
 
 When possible, editing-related methods should be implemented in WebCore with the
@@ -745,7 +765,6 @@ individual methods here with Mac-specific code.
 
 Editing-related methods still unimplemented that are implemented in WebKit1:
 
-- (void)changeFont:(id)sender;
 - (void)complete:(id)sender;
 - (void)copyFont:(id)sender;
 - (void)makeBaseWritingDirectionLeftToRight:(id)sender;

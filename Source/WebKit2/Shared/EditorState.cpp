@@ -42,6 +42,12 @@ void EditorState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isInPlugin;
     encoder << hasComposition;
 
+#if PLATFORM(MAC)
+    encoder << fontName;
+    encoder << fontSize;
+    encoder << selectionHasMultipleFonts;
+#endif
+
 #if PLATFORM(IOS)
     encoder << isReplaceAllowed;
     encoder << hasContent;
@@ -89,6 +95,17 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
 
     if (!decoder.decode(result.hasComposition))
         return false;
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(result.fontName))
+        return false;
+
+    if (!decoder.decode(result.fontSize))
+        return false;
+
+    if (!decoder.decode(result.selectionHasMultipleFonts))
+        return false;
+#endif
 
 #if PLATFORM(IOS)
     if (!decoder.decode(result.isReplaceAllowed))

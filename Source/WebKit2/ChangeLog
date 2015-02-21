@@ -1,3 +1,54 @@
+2015-02-20  Enrica Casucci  <enrica@apple.com>
+
+        [WK2] Add support for font panel on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=141777
+
+        Reviewed by Tim Horton.
+
+        This patch adds the necessary hooks to WKView to support
+        the font panel. It also includes refactoring of WebPage::editorState
+        and WebPageProxy::editorStateChanged to separate the different platform
+        specific tasks.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _selectionChanged]):
+        (-[WKView changeFont:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::selectionDidChange):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setFont):
+        (WebKit::WebPageProxy::editorStateChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState):
+        (WebKit::WebPage::setFont):
+
 2015-02-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add more detailed diagnostic logging for measuring network cache efficacy

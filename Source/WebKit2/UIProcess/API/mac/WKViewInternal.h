@@ -87,6 +87,7 @@ struct WebPageConfiguration;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 - (void)_setTextIndicator:(PassRefPtr<WebCore::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut;
 - (void)_setTextIndicatorAnimationProgress:(float)progress;
+- (void)_selectionChanged;
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;
