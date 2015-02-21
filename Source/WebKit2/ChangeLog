@@ -1,3 +1,10 @@
+2015-02-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed build fix after r180449.
+
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_get_selected_files):
+
 2015-02-20  Enrica Casucci  <enrica@apple.com>
 
         [WK2] Add support for font panel on OS X.
