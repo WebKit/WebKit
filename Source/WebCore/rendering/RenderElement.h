@@ -164,6 +164,9 @@ public:
     void setRenderBoxNeedsLazyRepaint(bool b) { m_renderBoxNeedsLazyRepaint = b; }
     bool renderBoxNeedsLazyRepaint() const { return m_renderBoxNeedsLazyRepaint; }
 
+    
+    const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,

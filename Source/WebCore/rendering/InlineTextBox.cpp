@@ -946,9 +946,9 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
-    renderer().getTextDecorationColors(decoration, underline, overline, linethrough, true);
+    renderer().getTextDecorationColors(decoration, underline, overline, linethrough);
     if (isFirstLine())
-        renderer().getTextDecorationColors(decoration, underline, overline, linethrough, true, true);
+        renderer().getTextDecorationColors(decoration, underline, overline, linethrough, true);
     
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = renderer().document().printing();
