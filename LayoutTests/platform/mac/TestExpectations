@@ -1290,3 +1290,5 @@ fast/forms/focus-selection-textarea.html [ Pass Failure ]
 webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
 
 webkit.org/b/141601 inspector/css/stylesheet-with-mutations.html [ Skip ]
+
+webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash ]

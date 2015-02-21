@@ -1,3 +1,22 @@
+2015-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky media tests due to various CoreMedia issues.
+        https://bugs.webkit.org/show_bug.cgi?id=141534
+
+        * platform/mac/TestExpectations: Added media/video-load-networkState.html.
+
+2015-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Array.from test fix.
+
+        Unreviewed.
+
+        Remove document.querySelectorAll use, as there is no DOM when running js tests
+        in run-javascriptcore-tests.
+
+        * js/array-from-expected.txt:
+        * js/script-tests/array-from.js:
+
 2015-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Invalid assert in CompositeEditCommand::insertNodeAfter/insertNodeBefore
