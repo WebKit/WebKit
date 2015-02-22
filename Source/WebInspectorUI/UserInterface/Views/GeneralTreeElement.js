@@ -206,6 +206,11 @@ WebInspector.GeneralTreeElement.prototype = {
         if (this._status === x)
             return;
 
+        if (!this._statusElement) {
+            this._statusElement = document.createElement("div");
+            this._statusElement.className = WebInspector.GeneralTreeElement.StatusElementStyleClassName;
+        }
+
         this._status = x || "";
         this._updateStatusElement();
     },
@@ -236,7 +241,6 @@ WebInspector.GeneralTreeElement.prototype = {
     {
         this._createElementsIfNeeded();
         this._updateTitleElements();
-        this._updateStatusElement();
 
         this._listItemNode.classList.add(WebInspector.GeneralTreeElement.StyleClassName);
 
@@ -253,7 +257,6 @@ WebInspector.GeneralTreeElement.prototype = {
 
         this._listItemNode.appendChild(this._disclosureButton);
         this._listItemNode.appendChild(this._iconElement);
-        this._listItemNode.appendChild(this._statusElement);
         this._listItemNode.appendChild(this._titlesElement);
 
         if (this.oncontextmenu && typeof this.oncontextmenu === "function") {
@@ -265,6 +268,8 @@ WebInspector.GeneralTreeElement.prototype = {
             this._boundContextMenuEventHandler = function(event) { this.treeOutline.oncontextmenu(event, this); }.bind(this);
             this._listItemNode.addEventListener("contextmenu", this._boundContextMenuEventHandler, true);
         }
+
+        this._updateStatusElement();
     },
 
     ondetach: function()
@@ -313,9 +318,6 @@ WebInspector.GeneralTreeElement.prototype = {
 
         this._iconElement = document.createElement("img");
         this._iconElement.className = WebInspector.GeneralTreeElement.IconElementStyleClassName;
-
-        this._statusElement = document.createElement("div");
-        this._statusElement.className = WebInspector.GeneralTreeElement.StatusElementStyleClassName;
 
         this._titlesElement = document.createElement("div");
         this._titlesElement.className = WebInspector.GeneralTreeElement.TitlesElementStyleClassName;
@@ -385,8 +387,11 @@ WebInspector.GeneralTreeElement.prototype = {
 
     _updateStatusElement: function()
     {
-        if (!this._createdElements)
+        if (!this._statusElement)
             return;
+
+        if (!this._statusElement.parentNode && this._listItemNode)
+            this._listItemNode.insertBefore(this._statusElement, this._titlesElement);
 
         if (this._status instanceof Node) {
             this._statusElement.removeChildren();

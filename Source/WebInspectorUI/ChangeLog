@@ -1,5 +1,25 @@
 2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Lazily Create GeneralTreeElement Status Elements
+        https://bugs.webkit.org/show_bug.cgi?id=141873
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.set status):
+        (WebInspector.GeneralTreeElement.prototype.onattach):
+        (WebInspector.GeneralTreeElement.prototype._createElementsIfNeeded):
+        (WebInspector.GeneralTreeElement.prototype._updateStatusElement):
+        Lazily create and attach the status element container if
+        "this.status" is actually used by a GeneralTreeElement subclass.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+        Set to the empty string instead of null to avoid inadvertently
+        creating status elements for no reason.
+
+2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Give ObjectPreviewView a showTitle/showPreview toggle
         https://bugs.webkit.org/show_bug.cgi?id=141874
 

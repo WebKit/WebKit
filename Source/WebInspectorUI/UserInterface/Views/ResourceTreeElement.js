@@ -169,7 +169,7 @@ WebInspector.ResourceTreeElement.prototype = {
             if (this._resource.isMainResource() && frame && frame.isMainFrame() && this instanceof WebInspector.FrameTreeElement)
                 this.updateStatusForMainFrame();
             else
-                this.status = null;
+                this.status = "";
         } else {
             var spinner = new WebInspector.IndeterminateProgressSpinner;
             this.status = spinner.element;
