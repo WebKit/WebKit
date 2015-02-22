@@ -88,13 +88,13 @@
 
 .console-user-command-result.console-log-level::before {
     content: url(../Images/UserInputResult.svg);
-    margin-top: 1px; /* align with 11px Menlo */
+    margin-left: 1px;
 }
 
 .console-message, .console-user-command {
     position: relative;
-    padding: 2px 12px 2px 18px;
-    min-height: 16px;
+    padding: 4px 12px 2px 20px;
+    min-height: 21px;
 }
 
 .console-item::before {
@@ -102,7 +102,8 @@
 
     position: absolute;
     left: 4px;
-    width: 10px;
+    height: 12px;
+    width: 12px;
 }
 
 .console-message .bubble {
@@ -207,7 +208,16 @@
 
 .console-user-command::before {
     content: url(../Images/UserInputPromptPrevious.svg);
-    margin-top: 1px; /* align with 11px Menlo */
+}
+
+:matches(.console-warning-level, .console-error-level, .console-log-level).console-message {
+ /* Move non-monospace log/warning/error text up a bit. */
+    padding: 3px 12px 3px 20px;
+}
+
+:matches(.console-warning-level, .console-error-level, .console-log-level)::before {
+ /* Re-center log/warning/error icons. */
+    padding-top: 1px;
 }
 
 .console-user-command > .console-message-text {
@@ -426,9 +436,13 @@
 .outline-disclosure li {
     padding: 0 0 0 14px;
     margin-top: 0;
-    margin-bottom: 2px;
+    margin-bottom: 0;
     margin-left: -2px;
     word-wrap: break-word;
+}
+
+.outline-disclosure .expanded li {
+    margin-bottom: 2px;
 }
 
 .outline-disclosure li.parent {

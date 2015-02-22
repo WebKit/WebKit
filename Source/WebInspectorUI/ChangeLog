@@ -1,3 +1,34 @@
+2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make Console UI icons / lines slightly larger
+        https://bugs.webkit.org/show_bug.cgi?id=141876
+
+        Reviewed by Timothy Hatcher.
+
+        In preparation for a new ObjectTree design with larger icons,
+        increase the size of existing output in the Console / Log
+        so they don't look so small in comparison. This:
+
+          - bumps minimum height of lines from 16px to 21px
+          - 10x10 icons to be 12x12
+          - recenters icons to match console prompt
+          - realigns icons with console log / object output
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-user-command-result.console-log-level::before):
+        (.console-message, .console-user-command):
+        (.console-item::before):
+        (.console-user-command::before):
+        (:matches(.console-warning-level, .console-error-level, .console-log-level).console-message):
+        (:matches(.console-warning-level, .console-error-level, .console-log-level)::before):
+        (.outline-disclosure li):
+        (.outline-disclosure .expanded li):
+        Fix a case breaking single-line message height.
+        Only add padding to expanded trees, not collapsed trees.
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .console-prompt::before):
+
 2015-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generate Previews more often for RemoteObject interaction
