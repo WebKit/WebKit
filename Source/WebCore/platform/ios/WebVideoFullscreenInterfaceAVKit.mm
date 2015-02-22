@@ -31,7 +31,6 @@
 #import "WebVideoFullscreenInterfaceAVKit.h"
 
 #import "AVKitSPI.h"
-#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "GeometryUtilities.h"
 #import "WebCoreSystemInterface.h"
@@ -47,6 +46,9 @@
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
+
+// Soft-linking headers must be included last since they #define functions, constants, etc.
+#import "CoreMediaSoftLink.h"
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -64,7 +66,6 @@ SOFT_LINK_CLASS(UIKit, UIView)
 SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
 
-SOFT_LINK_FRAMEWORK(CoreMedia)
 SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
 SOFT_LINK(CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
 SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))

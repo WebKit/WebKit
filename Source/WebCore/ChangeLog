@@ -1,5 +1,46 @@
 2015-02-21  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Fix build failure after including CoreMediaSoftLink.h in WebVideoFullscreenInterfaceAVKit.mm
+        <http://webkit.org/b/141816>
+
+        Attempt to fix the following build failure:
+
+            WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:68:1: error: call to 'CoreMediaLibrary' is ambiguous
+            SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            In file included from WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:34:
+            In file included from WebCore/platform/cf/CoreMediaSoftLink.h:32:
+            WebCore/platform/mac/SoftLinking.h:107:79: note: expanded from macro 'SOFT_LINK'
+            <scratch space>:58:1: note: expanded from here
+            CoreMediaLibrary
+            ^~~~~~~~~~~~~~~~
+            In file included from WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:34:
+            WebCore/platform/cf/CoreMediaSoftLink.h:35:1: note: candidate function
+            SOFT_LINK_FRAMEWORK_HEADER(WebCore, CoreMedia)
+            ^
+            In file included from WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:34:
+            In file included from WebCore/platform/cf/CoreMediaSoftLink.h:32:
+            WebCore/platform/mac/SoftLinking.h:298:18: note: expanded from macro 'SOFT_LINK_FRAMEWORK_HEADER'
+            <scratch space>:42:1: note: expanded from here
+            CoreMediaLibrary
+            ^
+            WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:67:1: note: candidate function
+            SOFT_LINK_FRAMEWORK(CoreMedia)
+            ^
+            In file included from WebCore/platform/ios/WebVideoFullscreenInterfaceAVKit.mm:34:
+            In file included from WebCore/platform/cf/CoreMediaSoftLink.h:32:
+            WebCore/platform/mac/SoftLinking.h:46:18: note: expanded from macro 'SOFT_LINK_FRAMEWORK'
+            <scratch space>:51:1: note: expanded from here
+            CoreMediaLibrary
+            ^
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Remove the
+        SOFT_LINK_FRAMEWORK(CoreMedia) macro since the remaining
+        SOFT_LINK() and SOFT_LINK_CONSTANT() macros can use the
+        CoreMediaLibrary() method exposed by CoreMediaSoftLink.h.
+
+2015-02-21  David Kilzer  <ddkilzer@apple.com>
+
         Add SOFT_LINK_CONSTANT_SOURCE() cross-platform macro and start using it
         <http://webkit.org/b/141816>
 
