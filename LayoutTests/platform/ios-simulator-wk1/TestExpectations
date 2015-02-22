@@ -1383,10 +1383,8 @@ transitions/cubic-bezier-overflow-transform.html
 
 # Misc tests that time out:
 editing/execCommand/enabling-and-selection-2.html
-fast/events/autoscroll-should-not-stop-on-keypress.html
 fast/forms/image/image-error-event-modifies-type-crash.html
 fast/images/animated-gif-iframe-webkit-transform.html
-fast/images/animated-gif-window-resizing.html
 fast/images/animated-gif-zooming.html
 fast/loader/recursive-before-unload-crash.html
 security/block-test-no-port.html

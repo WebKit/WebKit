@@ -1567,7 +1567,7 @@ fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
 fast/events/data-transfer-files-attribute-identity.html [ Failure ]
 fast/events/dblclick-addEventListener.html [ Failure ]
-fast/events/dispatch-message-string-data.html [ Failure ]
+fast/events/dispatch-message-string-data.html [ Slow ]
 fast/events/document-elementFromPoint.html [ Failure ]
 fast/events/dont-loose-last-event.html [ Failure ]
 fast/events/event-attribute.html [ Failure ]
@@ -2342,9 +2342,12 @@ fast/xsl/sort-locale.xml [ Failure ]
 fast/events/touch/emulate-touch-events.html
 fast/events/touch/emulated-touch-iframe.html
 
-# LayoutTests/fast tests that time out:
+# iOS does not support window resizing or window.resizeTo().
+fast/dynamic/window-resize-scrollbars-test.html [ Skip ]
+fast/images/animated-gif-window-resizing.html [ Skip ]
+
+# LayoutTests/fast tests that timeout:
 fast/events/reveal-link-when-focused.html
-fast/dynamic/window-resize-scrollbars-test.html # Need to remove existing result
 fast/forms/validation-message-appearance.html
 fast/forms/validation-message-clone.html
 fast/dom/DeviceOrientation/add-listener-from-callback.html
@@ -2365,6 +2368,7 @@ fast/dom/Window/open-window-min-size.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/dynamic/paused-event-dispatch.html
 fast/events/anchor-image-scrolled-x-y.html
+fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
 fast/events/constructors/media-key-event-constructor.html
 fast/events/input-image-scrolled-x-y.html
 fast/events/mouse-cursor-image-set.html
@@ -2626,4 +2630,6 @@ platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
 webkit.org/b/138970 fast/css/line-height-text-autosizing.html [ Pass ]
 
 # Skipped for mac as well:
+webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
+webkit.org/b/141601 inspector/css/stylesheet-with-mutations.html [ Skip ]
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]

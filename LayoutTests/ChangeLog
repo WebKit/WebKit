@@ -1,5 +1,46 @@
 2015-02-22  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening: Clean up timeout test for ios-simulator-{wk1,wk2}
+
+        Changes for WK1 results:
+        * inspector/css/stylesheet-with-mutations.html
+        - Skip for both WK1 and WK2.  Already marked as Skip on mac.
+        * fast/events/dispatch-message-string-data.html
+        - Marked as Slow for both WK1 and WK2.  Previously marked as
+          Skip via override on WK2 and marked as Failure on both.
+
+        Changes for WK2:
+        * inspector/css/selector-dynamic-specificity.html
+        - Skip on WK1 and WK2.  Already marked as Skip on mac and win.
+          Updated bug number for win TestExpectations.
+        * inspector/css/stylesheet-with-mutations.html
+        - See above.
+        * fast/dynamic/window-resize-scrollbars-test.html
+        - Skip on WK1 and WK2 since iOS does not support window
+          resizing and test always times out.  Remove old test results.
+        * fast/images/animated-gif-window-resizing.html
+        - Skip on WK1 and WK2 since iOS does not support window
+          resizing and test always times out. Previously skipped on WK1
+          only.
+        * fast/events/autoscroll-should-not-stop-on-keypress.html
+        - Skip on WK1 and WK2 due to always timing out.  Previously
+          skipped on WK1 only.
+        * http/tests/cache/history-navigation-no-resource-revalidation.html
+        - Skip on WK2 due to always timing out.  Does not timeout on
+          WK1.
+        * http/tests/navigation/target-blank-opener-post.html
+        - Ditto.
+        * svg/animations/use-animate-width-and-height.html
+        - Ditto.
+
+        * platform/ios-sim-deprecated/fast/dynamic/window-resize-scrollbars-test-expected.txt: Removed.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
+2015-02-22  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Gardening: Add missing results for WK2 tests
 
         In all cases, WK1 and WK2 results were the same.

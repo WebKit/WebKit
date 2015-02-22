@@ -392,6 +392,7 @@ svg/animations/svgstring-animation-fallback-to-discrete.html
 svg/animations/svgtransform-animation-1.html
 svg/animations/svgtransform-animation-discrete.html
 svg/animations/use-animate-transform-and-position.html
+svg/animations/use-animate-width-and-height.html [ Skip ]
 svg/custom/gradient-attr-update.svg
 svg/custom/hit-test-path-stroke.svg
 svg/custom/hit-test-path.svg
@@ -858,7 +859,6 @@ fast/events/access-key-self-destruct.html [ Failure ]
 fast/events/anchor-empty-focus.html [ Failure ]
 fast/events/arrow-keys-on-body.html [ Failure ]
 fast/events/attribute-listener-deletion-crash.html [ Failure ]
-fast/events/autoscroll-should-not-stop-on-keypress.html [ Failure ]
 fast/events/mosuedrag-on-canvas-should-not-start-selection.html [ Failure ]
 fast/events/mouse-focus-imagemap.html [ Failure ]
 fast/events/mouse-relative-position.html [ Failure ]
@@ -1358,7 +1358,6 @@ fast/dom/remove-body-during-body-replacement2.html
 fast/encoding/mailto-always-utf-8.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/clipboard-dataTransferItemList.html
-fast/events/dispatch-message-string-data.html
 fast/events/event-view-toString.html
 fast/events/focus-change-crash2.html
 fast/events/frame-detached-in-mousedown.html
@@ -2330,6 +2329,10 @@ transitions/interrupt-transform-transition.html
 
 # Crashes when running all tests, but not by itself.
 webkit.org/b/141436 fast/loader/subframe-navigate-during-main-frame-load.html [ Crash Pass ]
+
+# FIXME: Broken tests that use window.open (do not timeout on WK1)
+http/tests/cache/history-navigation-no-resource-revalidation.html [ Skip ]
+http/tests/navigation/target-blank-opener-post.html [ Skip ]
 
 # Unskip otherwise globally-skipped test
 fast/replaced/pdf-as-object-and-embed.html [ Pass ]

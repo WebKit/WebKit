@@ -2267,7 +2267,7 @@ http/tests/xmlhttprequest/web-apps/013.html
 ################################################################################
 # Some inspector tests timing out after r173992. Skip them.
 webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
-webkit.org/b/137157 inspector/css/selector-dynamic-specificity.html [ Skip ]
+webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener.html [ Skip ]
 webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
