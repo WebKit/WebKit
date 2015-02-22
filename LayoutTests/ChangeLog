@@ -1,3 +1,15 @@
+2015-02-22  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening: Add missing results for WK1 tests
+
+        * platform/ios-simulator/fast/css/css2-system-fonts-expected.txt: Rename from LayoutTests/platform/ios-simulator-wk2/fast/css/css2-system-fonts-expected.txt.
+        - Platform-specific results are the same for WK1 and WK2.
+          Regressed in r179196: shared ios-simulator results should not
+          have been removed.
+        * platform/ios-simulator/fast/css/focus-ring-exists-for-search-field-expected.txt: Add.
+        - Platform-specific results were missing for both WK1 and WK2.
+          Regressed in r179796: no ios-simulator results landed.
+
 2015-02-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Tests don't work on some bots: Failed to stop wptwk
