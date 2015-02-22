@@ -1,3 +1,23 @@
+2015-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generate Previews more often for RemoteObject interaction
+        https://bugs.webkit.org/show_bug.cgi?id=141875
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/PropertyDescriptor.js:
+        (WebInspector.PropertyDescriptor.fromPayload):
+        Fix InternalPropertyDescriptor ingestion. There was no ".internal"
+        property on these objects, so take a flag.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype._getPropertyDescriptors):
+        Fix InternalPropertyDescriptor ingestion by specifying during
+        importing the internal properties. Also, get previews.
+
+        (WebInspector.RemoteObject.prototype.callFunction):
+        Always get previews when using callFunctionOn.
+
 2015-02-20  Ronald Jett  <rjett@apple.com>
 
         Web Inspector: Add a setting for clearing the console on page reload

@@ -196,7 +196,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    getProperties: function(objectId, ownProperties, ownAndGetterProperties)
+    getProperties: function(objectId, ownProperties, ownAndGetterProperties, generatePreview)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -224,7 +224,7 @@ InjectedScript.prototype = {
             if ("set" in descriptor)
                 descriptor.set = this._wrapObject(descriptor.set, objectGroupName);
             if ("value" in descriptor)
-                descriptor.value = this._wrapObject(descriptor.value, objectGroupName);
+                descriptor.value = this._wrapObject(descriptor.value, objectGroupName, false, generatePreview);
             if (!("configurable" in descriptor))
                 descriptor.configurable = false;
             if (!("enumerable" in descriptor))
@@ -234,7 +234,7 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
-    getInternalProperties: function(objectId)
+    getInternalProperties: function(objectId, generatePreview)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -254,7 +254,7 @@ InjectedScript.prototype = {
         for (var i = 0; i < descriptors.length; ++i) {
             var descriptor = descriptors[i];
             if ("value" in descriptor)
-                descriptor.value = this._wrapObject(descriptor.value, objectGroupName);
+                descriptor.value = this._wrapObject(descriptor.value, objectGroupName, false, generatePreview);
         }
 
         return descriptors;
@@ -319,7 +319,7 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview);
     },
 
-    callFunctionOn: function(objectId, expression, args, returnByValue)
+    callFunctionOn: function(objectId, expression, args, returnByValue, generatePreview)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -346,7 +346,7 @@ InjectedScript.prototype = {
 
             return {
                 wasThrown: false,
-                result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, returnByValue)
+                result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, returnByValue, generatePreview)
             };
         } catch (e) {
             return this._createThrownValue(e, objectGroup);

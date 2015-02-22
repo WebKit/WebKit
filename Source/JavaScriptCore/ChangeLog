@@ -1,3 +1,26 @@
+2015-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generate Previews more often for RemoteObject interaction
+        https://bugs.webkit.org/show_bug.cgi?id=141875
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Runtime.json:
+        Add generatePreview to getProperties.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        * inspector/InjectedScript.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        Plumb the generatePreview boolean through to the injected script.
+
+        * inspector/InjectedScriptSource.js:
+        Add generatePreview for getProperties.
+        Fix callFunctionOn to generatePreviews if asked.
+
 2015-02-20  Mark Lam  <mark.lam@apple.com>
 
         Refactor JSWrapperMap.mm to defer creation of the ObjC JSValue until the latest possible moment.

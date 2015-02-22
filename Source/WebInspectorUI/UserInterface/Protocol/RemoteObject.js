@@ -174,12 +174,15 @@ WebInspector.RemoteObject.prototype = {
                 return;
             }
 
-            if (internalProperties)
-                properties = properties.concat(internalProperties);
-
             var descriptors = properties.map(function(payload) {
                 return WebInspector.PropertyDescriptor.fromPayload(payload);
             });
+
+            if (internalProperties) {
+                descriptors = descriptors.concat(internalProperties.map(function(payload) {
+                    return WebInspector.PropertyDescriptor.fromPayload(payload, true);
+                }));
+            }
 
             callback(descriptors);
         }
@@ -208,7 +211,7 @@ WebInspector.RemoteObject.prototype = {
             return;
         }
 
-        RuntimeAgent.getProperties(this._objectId, ownProperties, ownAndGetterProperties, remoteObjectBinder);
+        RuntimeAgent.getProperties(this._objectId, ownProperties, ownAndGetterProperties, true, remoteObjectBinder);
     },
 
     // FIXME: Phase out these functions. They return RemoteObjectProperty instead of PropertyDescriptors.
@@ -388,7 +391,7 @@ WebInspector.RemoteObject.prototype = {
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, true, mycallback);
     },
 
     callFunctionJSON: function(functionDeclaration, args, callback)

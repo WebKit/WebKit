@@ -48,8 +48,8 @@ WebInspector.PropertyDescriptor = function(descriptor, isOwnProperty, wasThrown,
     this._internal = isInternalProperty || false;
 };
 
-// Runtime.PropertyDescriptor or Runtime.InternalPropertyDescriptor.
-WebInspector.PropertyDescriptor.fromPayload = function(payload)
+// Runtime.PropertyDescriptor or Runtime.InternalPropertyDescriptor (second argument).
+WebInspector.PropertyDescriptor.fromPayload = function(payload, internal)
 {
     if (payload.value)
         payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
@@ -58,13 +58,13 @@ WebInspector.PropertyDescriptor.fromPayload = function(payload)
     if (payload.set)
         payload.set = WebInspector.RemoteObject.fromPayload(payload.set);
 
-    if (payload.internal) {
+    if (internal) {
         console.assert(payload.value);
         payload.writable = payload.configurable = payload.enumerable = false;
         payload.isOwn = true;
     }
 
-    return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, payload.internal);
+    return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, internal);
 };
 
 WebInspector.PropertyDescriptor.prototype = {
