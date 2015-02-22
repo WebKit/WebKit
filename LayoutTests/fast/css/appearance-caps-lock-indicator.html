@@ -1,6 +1,5 @@
 <p>
-    Test that the CSS parser does not accept <tt>caps-lock-indicator</tt> as a <tt>-webkit-appearance</tt>
-    value.
+    Test that the CSS parser accepts <tt>caps-lock-indicator</tt> as a <tt>-webkit-appearance</tt> value.
 </p>
 <p id="result">FAIL: Test did not run</p>
 <div id="target" style="display: none; -webkit-appearance: caps-lock-indicator;"></div>
@@ -9,5 +8,5 @@
         testRunner.dumpAsText();
 
     var appearance = document.getElementById("target").style.webkitAppearance;
-    document.getElementById("result").innerText = appearance === "" ? "PASS" : "FAIL: parsed as " + appearance;
+    document.getElementById("result").innerText = appearance === "caps-lock-indicator" ? "PASS" : "FAIL: parsed as " + appearance;
 </script>

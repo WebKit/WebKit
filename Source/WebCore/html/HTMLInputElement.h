@@ -147,6 +147,7 @@ public:
     virtual TextControlInnerTextElement* innerTextElement() const override final;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
+    HTMLElement* capsLockIndicatorElement() const;
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
     HTMLElement* sliderThumbElement() const;
@@ -316,6 +317,8 @@ public:
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
 #endif
+
+    void capsLockStateMayHaveChanged();
 
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);

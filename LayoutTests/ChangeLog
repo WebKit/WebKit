@@ -1,3 +1,19 @@
+2015-02-21  Sam Weinig  <sam@webkit.org>
+
+        Convert the caps lock indicator to be implemented using the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=141868
+
+        Reviewed by Dan Bernstein.
+
+        * fast/css/appearance-caps-lock-indicator-expected.txt:
+        * fast/css/appearance-caps-lock-indicator.html:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/validation-message-appearance-expected.txt:
+
 2015-02-22  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Gardening: Clean up timeout test for ios-simulator-{wk1,wk2}

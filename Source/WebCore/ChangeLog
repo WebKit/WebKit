@@ -1,3 +1,87 @@
+2015-02-21  Sam Weinig  <sam@webkit.org>
+
+        Convert the caps lock indicator to be implemented using the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=141868
+
+        Reviewed by Dan Bernstein.
+
+        - Re-adds 'caps-lock-indicator' as a valid -webkit-appearance value. It was removed
+          in r74099 to work around a site bug, that should not be a problem anymore.
+        - Converts the caps lock indicator to be implemented as part of the shadow DOM rather
+          than a paint time effect. This gives the proper overflow behavior (it now clips) and
+          behaves correctly in RTL.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        Make 'caps-lock-indicator' a valid -webkit-appearance value.
+
+        * css/CSSValueKeywords.in:
+        Remove comment that indicated that caps-lock-indicator was not a valid
+        -webkit-appearance value.
+
+        * css/html.css:
+        (input::-webkit-caps-lock-indicator):
+        Add new default style for the new -webkit-caps-lock-indicator pseudo-element. The
+        trick employed here is to use a content: image to both implement the painting of
+        the caps lock indicator, and to get the sizing right (shrink-to-fit, height: 100%).
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::capsLockIndicatorElement):
+        (WebCore::HTMLInputElement::capsLockStateMayHaveChanged):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::capsLockStateMayHaveChanged):
+        * html/InputType.h:
+        (WebCore::InputType::capsLockIndicatorElement):
+        Pipe notification of changes in the caps locks state to the <input> element
+        rather than the RenderTextControlSingleLine. Also add an accessor for the caps
+        lock indicator element in the shadow DOM.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        (WebCore::TextFieldInputType::shouldHaveCapsLockIndicator):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::capsLockIndicatorElement):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        (WebCore::TextFieldInputType::shouldDrawCapsLockIndicator):
+        (WebCore::TextFieldInputType::capsLockStateMayHaveChanged):
+        * html/TextFieldInputType.h:
+        Add a new element to the text field shadow DOM to act as the caps lock indicator.
+        Give it a pseudo-element ID of -webkit-caps-lock-indicator so it can be referenced
+        from CSS. The element is always in the DOM for a password field. It toggles between
+        display: none and display: block depending on the state of the caps lock key.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::capsLockStateMayHaveChanged):
+        Pipe notification of changes in the caps locks state to the <input> element
+        rather than the RenderTextControlSingleLine.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::paint): Deleted.
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged): Deleted.
+        * rendering/RenderTextControlSingleLine.h:
+        Remove logic for drawing the caps lock indicator.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintMeter):
+        (WebCore::RenderTheme::adjustCapsLockIndicatorStyle):
+        (WebCore::RenderTheme::paintCapsLockIndicator):
+        (WebCore::RenderTheme::shouldHaveCapsLockIndicator):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintCapsLockIndicator): Deleted.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::shouldHaveCapsLockIndicator):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldHaveCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintCapsLockIndicator): Deleted.
+        Now that the caps lock indicator is implemented like other aspects of form controls,
+        the theme code can be converted to be similar as well.
+
 2015-02-21  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build failure after including CoreMediaSoftLink.h in WebVideoFullscreenInterfaceAVKit.mm

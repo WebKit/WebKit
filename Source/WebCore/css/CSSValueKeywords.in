@@ -745,7 +745,6 @@ rating-level-indicator
 image-controls-button
 #endif
 textarea
-// An appearance value that should not be accepted by the parser:
 caps-lock-indicator
 
 //

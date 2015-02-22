@@ -30,6 +30,8 @@ layer at (0,0) size 800x382
             RenderBlock {DIV} at (147,1) size 14x11
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,43) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 140x13
         RenderBR {BR} at (149,43) size 1x18
         RenderTextControl {INPUT} at (2,66) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (149,66) size 5x18
@@ -51,6 +53,8 @@ layer at (0,0) size 800x382
             RenderBlock {DIV} at (147,1) size 14x11
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,89) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 140x13
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,160) size 784x110
         RenderText {#text} at (0,0) size 546x18
@@ -76,6 +80,8 @@ layer at (0,0) size 800x382
             RenderBlock {DIV} at (147,1) size 14x11
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,43) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 140x13
         RenderBR {BR} at (149,43) size 1x18
         RenderTextControl {INPUT} at (2,66) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (149,66) size 5x18
@@ -97,6 +103,8 @@ layer at (0,0) size 800x382
             RenderBlock {DIV} at (147,1) size 14x11
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,89) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 140x13
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,286) size 784x64
         RenderText {#text} at (0,0) size 237x18
@@ -141,7 +149,7 @@ layer at (501,73) size 139x13 scrollWidth 294
     RenderText {#text} at (0,0) size 293x13
       text run at (0,0) width 293: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,96) size 139x13 scrollWidth 341
-  RenderBlock {DIV} at (3,3) size 140x13
+  RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (0,0) size 340x13
       text run at (0,0) width 340: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,119) size 139x13 scrollX 153 scrollWidth 293
@@ -165,7 +173,7 @@ layer at (501,119) size 139x13 scrollX 153 scrollWidth 293
     RenderText {#text} at (-153,0) size 294x13
       text run at (-153,0) width 293: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,142) size 139x13 scrollX 200 scrollWidth 339
-  RenderBlock {DIV} at (3,3) size 140x13
+  RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-200,0) size 341x13
       text run at (-200,0) width 340 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,199) size 139x13 scrollWidth 293
@@ -189,7 +197,7 @@ layer at (501,199) size 139x13 scrollWidth 294
     RenderText {#text} at (0,0) size 293x13
       text run at (0,0) width 293: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,222) size 139x13 scrollWidth 341
-  RenderBlock {DIV} at (3,3) size 140x13
+  RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (0,0) size 340x13
       text run at (0,0) width 340: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,245) size 139x13 scrollX 153 scrollWidth 293
@@ -213,7 +221,7 @@ layer at (501,245) size 139x13 scrollX 153 scrollWidth 293
     RenderText {#text} at (-153,0) size 294x13
       text run at (-153,0) width 293: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,268) size 139x13 scrollX 200 scrollWidth 339
-  RenderBlock {DIV} at (3,3) size 140x13
+  RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-200,0) size 341x13
       text run at (-200,0) width 340 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (259,325) size 139x13 scrollWidth 293

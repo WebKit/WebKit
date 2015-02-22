@@ -489,6 +489,10 @@ void InputType::blur()
     element().defaultBlur();
 }
 
+void InputType::capsLockStateMayHaveChanged()
+{
+}
+
 void InputType::createShadowSubtree()
 {
 }

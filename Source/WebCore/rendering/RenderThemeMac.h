@@ -81,8 +81,6 @@ public:
     virtual int popupInternalPaddingBottom(RenderStyle&) const override;
     virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const override;
 
-    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) override;
-
     virtual bool popsMenuByArrowKeys() const override { return true; }
 
 #if ENABLE(METER_ELEMENT)
@@ -165,6 +163,7 @@ protected:
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const override;
+    virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
 
     virtual bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) override;
 

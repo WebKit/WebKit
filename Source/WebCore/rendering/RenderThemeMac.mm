@@ -827,17 +827,6 @@ void RenderThemeMac::adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*
 {
 }
 
-bool RenderThemeMac::paintCapsLockIndicator(const RenderObject&, const PaintInfo& paintInfo, const IntRect& r)
-{
-    if (paintInfo.context->paintingDisabled())
-        return true;
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawCapsLockIndicator(localContext.cgContext(), r);
-
-    return false;
-}
-
 bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
@@ -1898,6 +1887,11 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, Element*) const
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
     return true;
+}
+
+bool RenderThemeMac::shouldHaveCapsLockIndicator(HTMLInputElement& element) const
+{
+    return element.isPasswordField();
 }
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const

@@ -188,9 +188,6 @@ public:
 
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
-    // Method for painting the caps lock indicator
-    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) { return 0; };
-
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const;
     // Returns the duration of the animation for the progress bar.
@@ -232,6 +229,7 @@ public:
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
     virtual bool shouldHaveSpinButton(HTMLInputElement&) const;
+    virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const;
 
     // Functions for <select> elements.
     virtual bool delegatesMenuListRendering() const { return false; }
@@ -313,6 +311,9 @@ protected:
     virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
+
+    virtual void adjustCapsLockIndicatorStyle(StyleResolver&, RenderStyle&, Element*) const;
+    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

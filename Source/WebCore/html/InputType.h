@@ -215,6 +215,8 @@ public:
 
     virtual void blur();
 
+    virtual void capsLockStateMayHaveChanged();
+
     // Shadow tree handling
 
     virtual void createShadowSubtree();
@@ -224,6 +226,7 @@ public:
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
     virtual TextControlInnerTextElement* innerTextElement() const { return nullptr; }
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
+    virtual HTMLElement* capsLockIndicatorElement() const { return nullptr; }
     virtual HTMLElement* resultsButtonElement() const { return nullptr; }
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }

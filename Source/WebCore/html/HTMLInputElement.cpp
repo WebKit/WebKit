@@ -199,6 +199,11 @@ HTMLElement* HTMLInputElement::innerSpinButtonElement() const
     return m_inputType->innerSpinButtonElement();
 }
 
+HTMLElement* HTMLInputElement::capsLockIndicatorElement() const
+{
+    return m_inputType->capsLockIndicatorElement();
+}
+
 HTMLElement* HTMLInputElement::resultsButtonElement() const
 {
     return m_inputType->resultsButtonElement();
@@ -1900,5 +1905,10 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     return true;
 }
 #endif
+
+void HTMLInputElement::capsLockStateMayHaveChanged()
+{
+    m_inputType->capsLockStateMayHaveChanged();
+}
 
 } // namespace

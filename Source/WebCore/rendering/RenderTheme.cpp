@@ -250,6 +250,8 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case ImageControlsButtonPart:
         break;
 #endif
+    case CapsLockIndicatorPart:
+        return adjustCapsLockIndicatorStyle(styleResolver, style, e);
     default:
         break;
     }
@@ -386,6 +388,8 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case ImageControlsButtonPart:
         return paintImageControlsButton(o, paintInfo, integralSnappedRect);
 #endif
+    case CapsLockIndicatorPart:
+        return paintCapsLockIndicator(o, paintInfo, integralSnappedRect);
     default:
         break;
     }
@@ -960,8 +964,16 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
 {
     return true;
 }
-
 #endif
+
+void RenderTheme::adjustCapsLockIndicatorStyle(StyleResolver&, RenderStyle&, Element*) const
+{
+}
+
+bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&)
+{
+    return false;
+}
 
 #if ENABLE(DATALIST_ELEMENT)
 LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
@@ -1074,6 +1086,11 @@ IntRect RenderTheme::progressBarRectForBounds(const RenderObject&, const IntRect
 bool RenderTheme::shouldHaveSpinButton(HTMLInputElement& inputElement) const
 {
     return inputElement.isSteppable() && !inputElement.isRangeControl();
+}
+
+bool RenderTheme::shouldHaveCapsLockIndicator(HTMLInputElement&) const
+{
+    return false;
 }
 
 void RenderTheme::adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const

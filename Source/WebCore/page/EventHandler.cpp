@@ -3645,10 +3645,8 @@ void EventHandler::capsLockStateMayHaveChanged()
 {
     Document* document = m_frame.document();
     if (auto* element = document->focusedElement()) {
-        if (auto* renderer = element->renderer()) {
-            if (is<RenderTextControlSingleLine>(*renderer))
-                downcast<RenderTextControlSingleLine>(*renderer).capsLockStateMayHaveChanged();
-        }
+        if (is<HTMLInputElement>(*element))
+            downcast<HTMLInputElement>(*element).capsLockStateMayHaveChanged();
     }
 }
 

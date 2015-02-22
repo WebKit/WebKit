@@ -104,6 +104,7 @@ protected:
 
     virtual bool shouldShowPlaceholderWhenFocused() const override;
     virtual bool shouldHaveSpinButton(HTMLInputElement&) const override;
+    virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
 
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() override;

@@ -55,7 +55,6 @@ using namespace HTMLNames;
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, Ref<RenderStyle>&& style)
     : RenderTextControl(element, WTF::move(style))
-    , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextLogicalHeight(-1)
 {
 }
@@ -67,25 +66,6 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
 inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
 {
     return inputElement().innerSpinButtonElement();
-}
-
-void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    RenderTextControl::paint(paintInfo, paintOffset);
-
-    if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
-        LayoutRect contentsRect = contentBoxRect();
-
-        // Center in the block progression direction.
-        if (isHorizontalWritingMode())
-            contentsRect.setY((height() - contentsRect.height()) / 2);
-        else
-            contentsRect.setX((width() - contentsRect.width()) / 2);
-
-        // Convert the rect into the coords used for painting the content
-        contentsRect.moveBy(paintOffset + location());
-        theme().paintCapsLockIndicator(*this, paintInfo, snappedIntRect(contentsRect));
-    }
 }
 
 LayoutUnit RenderTextControlSingleLine::computeLogicalHeightLimit() const
@@ -275,25 +255,6 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
     if (HTMLElement* placeholder = inputElement().placeholderElement())
         placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
     setHasOverflowClip(false);
-}
-
-void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
-{
-    // Only draw the caps lock indicator if these things are true:
-    // 1) The field is a password field
-    // 2) The frame is active
-    // 3) The element is focused
-    // 4) The caps lock is on
-    bool shouldDrawCapsLockIndicator =
-        inputElement().isPasswordField()
-        && frame().selection().isFocusedAndActive()
-        && document().focusedElement() == &inputElement()
-        && PlatformKeyboardEvent::currentCapsLockState();
-
-    if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
-        m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;
-        repaint();
-    }
 }
 
 bool RenderTextControlSingleLine::hasControlClip() const

@@ -43,6 +43,7 @@
 #include "KeyboardEvent.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -202,9 +203,9 @@ void TextFieldInputType::forwardEvent(Event* event)
                     }
                 }
 
-                renderTextControl.capsLockStateMayHaveChanged();
+                capsLockStateMayHaveChanged();
             } else if (event->type() == eventNames().focusEvent)
-                renderTextControl.capsLockStateMayHaveChanged();
+                capsLockStateMayHaveChanged();
 
             element().forwardEvent(event);
         }
@@ -240,6 +241,13 @@ bool TextFieldInputType::shouldHaveSpinButton() const
     return theme->shouldHaveSpinButton(element());
 }
 
+bool TextFieldInputType::shouldHaveCapsLockIndicator() const
+{
+    Document& document = element().document();
+    RefPtr<RenderTheme> theme = document.page() ? &document.page()->theme() : RenderTheme::defaultTheme();
+    return theme->shouldHaveCapsLockIndicator(element());
+}
+
 void TextFieldInputType::createShadowSubtree()
 {
     ASSERT(element().shadowRoot());
@@ -250,7 +258,8 @@ void TextFieldInputType::createShadowSubtree()
 
     Document& document = element().document();
     bool shouldHaveSpinButton = this->shouldHaveSpinButton();
-    bool createsContainer = shouldHaveSpinButton || needsContainer();
+    bool shouldHaveCapsLockIndicator = this->shouldHaveCapsLockIndicator();
+    bool createsContainer = shouldHaveSpinButton || shouldHaveCapsLockIndicator || needsContainer();
 
     m_innerText = TextControlInnerTextElement::create(document);
     if (!createsContainer) {
@@ -273,6 +282,16 @@ void TextFieldInputType::createShadowSubtree()
     if (shouldHaveSpinButton) {
         m_innerSpinButton = SpinButtonElement::create(document, *this);
         m_container->appendChild(m_innerSpinButton, IGNORE_EXCEPTION);
+    }
+
+    if (shouldHaveCapsLockIndicator) {
+        m_capsLockIndicator = HTMLDivElement::create(document);
+        m_capsLockIndicator->setPseudo(AtomicString("-webkit-caps-lock-indicator", AtomicString::ConstructFromLiteral));
+
+        bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
+        m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
+
+        m_container->appendChild(m_capsLockIndicator, IGNORE_EXCEPTION);
     }
 }
 
@@ -297,6 +316,11 @@ HTMLElement* TextFieldInputType::innerSpinButtonElement() const
     return m_innerSpinButton.get();
 }
 
+HTMLElement* TextFieldInputType::capsLockIndicatorElement() const
+{
+    return m_capsLockIndicator.get();
+}
+
 HTMLElement* TextFieldInputType::placeholderElement() const
 {
     return m_placeholder.get();
@@ -305,13 +329,14 @@ HTMLElement* TextFieldInputType::placeholderElement() const
 void TextFieldInputType::destroyShadowSubtree()
 {
     InputType::destroyShadowSubtree();
-    m_innerText.clear();
-    m_placeholder.clear();
-    m_innerBlock.clear();
+    m_innerText = nullptr;
+    m_placeholder = nullptr;
+    m_innerBlock = nullptr;
     if (m_innerSpinButton)
         m_innerSpinButton->removeSpinButtonOwner();
-    m_innerSpinButton.clear();
-    m_container.clear();
+    m_innerSpinButton = nullptr;
+    m_capsLockIndicator = nullptr;
+    m_container = nullptr;
 }
 
 void TextFieldInputType::attributeChanged()
@@ -512,6 +537,30 @@ bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents()
 bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents()
 {
     return shouldSpinButtonRespondToMouseEvents() && element().focused();
+}
+
+bool TextFieldInputType::shouldDrawCapsLockIndicator() const
+{
+    if (element().document().focusedElement() != &element())
+        return false;
+
+    Frame* frame = element().document().frame();
+    if (!frame)
+        return false;
+
+    if (!frame->selection().isFocusedAndActive())
+        return false;
+
+    return PlatformKeyboardEvent::currentCapsLockState();
+}
+
+void TextFieldInputType::capsLockStateMayHaveChanged()
+{
+    if (!m_capsLockIndicator)
+        return;
+
+    bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
+    m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
 }
 
 } // namespace WebCore

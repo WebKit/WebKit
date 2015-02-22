@@ -52,10 +52,10 @@ protected:
     virtual HTMLElement* innerBlockElement() const override final;
     virtual TextControlInnerTextElement* innerTextElement() const override final;
     virtual HTMLElement* innerSpinButtonElement() const override final;
+    virtual HTMLElement* capsLockIndicatorElement() const override final;
 
 protected:
     virtual bool needsContainer() const;
-    virtual bool shouldHaveSpinButton() const final;
     virtual void createShadowSubtree() override;
     virtual void destroyShadowSubtree() override;
     virtual void attributeChanged() override final;
@@ -95,6 +95,7 @@ private:
     virtual void updatePlaceholderText() override final;
     virtual bool appendFormData(FormDataList&, bool multipart) const override final;
     virtual void subtreeHasChanged() override final;
+    virtual void capsLockStateMayHaveChanged() override final;
 
     // SpinButtonElement::SpinButtonOwner functions.
     virtual void focusAndSelectSpinButtonOwner() override final;
@@ -103,11 +104,16 @@ private:
     virtual void spinButtonStepDown() override final;
     virtual void spinButtonStepUp() override final;
 
+    bool shouldHaveSpinButton() const;
+    bool shouldHaveCapsLockIndicator() const;
+    bool shouldDrawCapsLockIndicator() const;
+
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
     RefPtr<TextControlInnerTextElement> m_innerText;
     RefPtr<HTMLElement> m_placeholder;
     RefPtr<SpinButtonElement> m_innerSpinButton;
+    RefPtr<HTMLElement> m_capsLockIndicator;
 };
 
 } // namespace WebCore

@@ -1079,6 +1079,11 @@ bool RenderThemeIOS::shouldHaveSpinButton(HTMLInputElement&) const
     return false;
 }
 
+bool RenderThemeIOS::shouldHaveCapsLockIndicator(HTMLInputElement&) const
+{
+    return false;
+}
+
 static FontWeight fromCTFontWeight(float fontWeight)
 {
     if (fontWeight <= -0.8)

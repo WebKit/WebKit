@@ -83,6 +83,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,214) size 65x18
           text run at (0,214) width 65: "password "
         RenderTextControl {INPUT} at (66,214) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 131x13
+            RenderBlock {DIV} at (0,0) size 131x13
         RenderText {#text} at (204,214) size 5x18
           text run at (204,214) width 5: " "
         RenderBR {BR} at (208,228) size 1x0
@@ -101,6 +103,6 @@ layer at (41,54) size 130x13
 layer at (63,220) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13
 layer at (77,243) size 130x13
-  RenderBlock {DIV} at (3,3) size 131x13
+  RenderBlock {DIV} at (0,0) size 131x13
 layer at (66,266) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13

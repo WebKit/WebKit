@@ -38,8 +38,6 @@ public:
     virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
     Ref<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
 
-    void capsLockStateMayHaveChanged();
-
 protected:
     virtual void centerContainerIfNeeded(RenderBox*) const { }
     virtual LayoutUnit computeLogicalHeightLimit() const;
@@ -55,7 +53,6 @@ private:
     virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
     virtual bool isTextField() const override final { return true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override;
     virtual void layout() override;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -83,7 +80,6 @@ private:
 
     HTMLElement* innerSpinButtonElement() const;
 
-    bool m_shouldDrawCapsLockIndicator;
     LayoutUnit m_desiredInnerTextLogicalHeight;
 };
 
