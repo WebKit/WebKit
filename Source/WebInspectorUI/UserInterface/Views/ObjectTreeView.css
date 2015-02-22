@@ -55,6 +55,10 @@
     background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
 }
 
+.object-tree.expanded .object-preview {
+    font-style: normal;
+}
+
 .object-tree.lossless-preview > :matches(.title, .object-preview)::before {
     background: none;
     width: 0px;

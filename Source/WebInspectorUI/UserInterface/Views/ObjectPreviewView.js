@@ -34,7 +34,15 @@ WebInspector.ObjectPreviewView = function(preview, mode)
 
     this._element = document.createElement("span");
     this._element.className = "object-preview";
-    this._lossless = this._appendPreview(this._element, this._preview);
+
+    this._previewElement = this._element.appendChild(document.createElement("span"));
+    this._previewElement.className = "preview";
+    this._lossless = this._appendPreview(this._previewElement, this._preview);
+
+    this._titleElement = this._element.appendChild(document.createElement("span"));
+    this._titleElement.className = "title";
+    this._titleElement.textContent = preview.description || "";
+    this._titleElement.hidden = true;
 
     if (this._lossless)
         this._element.classList.add("lossless");
@@ -69,6 +77,18 @@ WebInspector.ObjectPreviewView.prototype = {
     get lossless()
     {
         return this._lossless;
+    },
+
+    showTitle: function()
+    {
+        this._titleElement.hidden = false;
+        this._previewElement.hidden = true;
+    },
+
+    showPreview: function()
+    {
+        this._titleElement.hidden = true;
+        this._previewElement.hidden = false;
     },
 
     // Private

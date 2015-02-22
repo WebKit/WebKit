@@ -1,5 +1,31 @@
 2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Give ObjectPreviewView a showTitle/showPreview toggle
+        https://bugs.webkit.org/show_bug.cgi?id=141874
+
+        Reviewed by Timothy Hatcher.
+
+        Refactor ObjectTree/ObjectPreview a bit to make it easier
+        to use expanding/collapsing previews in other places.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView):
+        (WebInspector.ObjectPreviewView.prototype.showTitle):
+        (WebInspector.ObjectPreviewView.prototype.showPreview):
+        Maintain both a titleElement and previewElement. Show only
+        one at a time based on showTitle/showPreview APIs.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree.expanded .object-preview):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        (WebInspector.ObjectTreeView.prototype.expand):
+        (WebInspector.ObjectTreeView.prototype.collapse):
+        If we have a preview, let PreviewView handle toggling
+        between a title and preview display.
+
+2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Make Console UI icons / lines slightly larger
         https://bugs.webkit.org/show_bug.cgi?id=141876
 
