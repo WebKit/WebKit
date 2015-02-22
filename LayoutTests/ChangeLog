@@ -1,5 +1,17 @@
 2015-02-22  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening: Add missing results for WK2 tests
+
+        In all cases, WK1 and WK2 results were the same.
+
+        * platform/ios-simulator/fast/block/positioning/vertical-rl/001-expected.txt: Rename from LayoutTests/platform/ios-sim-deprecated/fast/block/positioning/vertical-rl/001-expected.txt.
+        * platform/ios-simulator/fast/body-propagation/background-color/001-xhtml-expected.txt: Rename from LayoutTests/platform/ios-sim-deprecated/fast/body-propagation/background-color/001-xhtml-expected.txt.
+        * platform/ios-simulator/fast/body-propagation/background-image/001-xhtml-expected.txt: Rename from LayoutTests/platform/ios-sim-deprecated/fast/body-propagation/background-image/001-xhtml-expected.txt.
+        * platform/ios-simulator/fast/body-propagation/overflow/001-xhtml-expected.txt: Rename from LayoutTests/platform/ios-sim-deprecated/fast/body-propagation/overflow/001-xhtml-expected.txt.
+        * platform/ios-simulator/fast/repaint/body-background-image-expected.txt: Rename from LayoutTests/platform/ios-sim-deprecated/fast/repaint/body-background-image-expected.txt.
+
+2015-02-22  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Gardening: Add missing results for WK1 tests
 
         * platform/ios-simulator/fast/css/css2-system-fonts-expected.txt: Rename from LayoutTests/platform/ios-simulator-wk2/fast/css/css2-system-fonts-expected.txt.

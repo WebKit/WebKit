@@ -6,13 +6,13 @@ layer at (0,0) size 800x544
       RenderBlock {P} at (0,248) size 784x40
         RenderText {#text} at (0,0) size 103x19
           text run at (0,0) width 103: "Repaint test for "
-        RenderInline {I} at (0,0) size 761x39
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (102,0) size 307x19
-              text run at (102,0) width 307: "http://bugs.webkit.org/show_bug.cgi?id=15157"
-          RenderText {#text} at (408,0) size 761x39
-            text run at (408,0) width 5: " "
-            text run at (412,0) width 349: "Image defined in background-position: top center gets"
+        RenderInline {I} at (0,0) size 760x39
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (102,0) size 306x19
+              text run at (102,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=15157"
+          RenderText {#text} at (407,0) size 760x39
+            text run at (407,0) width 5: " "
+            text run at (411,0) width 349: "Image defined in background-position: top center gets"
             text run at (0,20) width 149: "unexpectedly truncated"
         RenderText {#text} at (148,20) size 5x19
           text run at (148,20) width 5: "."
