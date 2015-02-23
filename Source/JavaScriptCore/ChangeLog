@@ -1,3 +1,11 @@
+2015-02-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove unused activationCount and allTheThingsCount variable declarations.
+
+        Rubber stamped by Mark Lam and Michael Saboff.
+
+        * runtime/JSLexicalEnvironment.h:
+
 2015-02-23  Saam Barati  <saambarati1@gmail.com>
 
         Adjust the ranges of basic block statements in JSC's control flow profiler to be mutually exclusive

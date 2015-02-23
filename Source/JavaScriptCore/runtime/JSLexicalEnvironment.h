@@ -105,9 +105,6 @@ private:
     WriteBarrier<Unknown>* storage(); // captureCount() number of registers.
 };
 
-extern int activationCount;
-extern int allTheThingsCount;
-
 inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, CallFrame* callFrame, Register* registers, JSScope* currentScope, CodeBlock* codeBlock)
     : Base(
         vm,
