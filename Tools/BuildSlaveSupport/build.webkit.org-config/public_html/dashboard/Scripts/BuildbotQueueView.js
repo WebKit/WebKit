@@ -87,21 +87,23 @@ BuildbotQueueView.prototype = {
             return;
 
         var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
-        if (!latestRecordedOpenSourceRevisionNumber)
+        if (!latestRecordedOpenSourceRevisionNumber || webkitTrac.oldestRecordedRevisionNumber > latestProductiveIteration.openSourceRevision) {
+            webkitTrac.loadMoreHistoricalData();
             return;
+        }
 
-        var totalRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestProductiveIteration.openSourceRevision;
-        if (totalRevisionsBehind < 0)
-            totalRevisionsBehind = 0;
+        // FIXME: To be 100% correct, we should also filter out changes that are ignored by
+        // the queue, see _should_file_trigger_build in wkbuild.py.
+        var totalRevisionsBehind = webkitTrac.commitsOnBranch(queue.branch.openSource, function(commit) { return commit.revisionNumber > latestProductiveIteration.openSourceRevision; }).length;
 
         if (latestProductiveIteration.internalRevision) {
             var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
-            if (!latestRecordedInternalRevisionNumber)
+            if (!latestRecordedInternalRevisionNumber || internalTrac.oldestRecordedRevisionNumber > latestProductiveIteration.internalRevision) {
+                internalTrac.loadMoreHistoricalData();
                 return;
+            }
 
-            var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestProductiveIteration.internalRevision;
-            if (internalRevisionsBehind > 0)
-                totalRevisionsBehind += internalRevisionsBehind;
+            totalRevisionsBehind += internalTrac.commitsOnBranch(queue.branch.internal, function(commit) { return commit.revisionNumber > latestProductiveIteration.internalRevision; }).length;
         }
 
         if (!totalRevisionsBehind)
@@ -115,7 +117,7 @@ BuildbotQueueView.prototype = {
         new PopoverTracker(messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
     },
 
-    _popoverLinesForCommitRange: function(trac, firstRevisionNumber, lastRevisionNumber)
+    _popoverLinesForCommitRange: function(trac, branch, firstRevisionNumber, lastRevisionNumber)
     {
         function lineForCommit(trac, commit)
         {
@@ -142,22 +144,14 @@ BuildbotQueueView.prototype = {
             return result;
         }
 
-        // This function only adds lines about commits that the trac object knows about.
-        // Alternatively, it could add links without info and/or trigger loading additional
-        // data, but this probably doesn't matter for Dashboard use.
-        var result = [];
-        for (var i = trac.recordedCommits.length - 1; i >= 0; --i) {
-            var commit = trac.recordedCommits[i];
-            if (commit.revisionNumber > lastRevisionNumber)
-                continue;
+        console.assert(trac.oldestRecordedRevisionNumber >= firstRevisionNumber);
 
-            if (commit.revisionNumber < firstRevisionNumber)
-                break;
-
-            result.push(lineForCommit(trac, commit));
-        }
-
-        return result;
+        // FIXME: To be 100% correct, we should also filter out changes that are ignored by
+        // the queue, see _should_file_trigger_build in wkbuild.py.
+        var commits = trac.commitsOnBranch(branch, function(commit) { return commit.revisionNumber >= firstRevisionNumber && commit.revisionNumber <= lastRevisionNumber; });
+        return commits.map(function(commit) {
+            return lineForCommit(trac, commit);
+        }, this).reverse();
     },
 
     _presentPopoverForPendingCommits: function(element, popover, queue)
@@ -169,13 +163,13 @@ BuildbotQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, latestProductiveIteration.openSourceRevision + 1, webkitTrac.latestRecordedRevisionNumber);
+        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, queue.branch.openSource, latestProductiveIteration.openSourceRevision + 1, webkitTrac.latestRecordedRevisionNumber);
         for (var i = 0; i != linesForOpenSource.length; ++i)
             content.appendChild(linesForOpenSource[i]);
 
         var linesForInternal = [];
         if (latestProductiveIteration.internalRevision && internalTrac.latestRecordedRevisionNumber)
-            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, latestProductiveIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
+            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, queue.branch.internal, latestProductiveIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
 
         if (linesForOpenSource.length && linesForInternal.length)
             this._addDividerToPopover(content);
@@ -195,7 +189,8 @@ BuildbotQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.firstRevision, context.lastRevision);
+        // FIXME: Nothing guarantees that Trac has historical data for these revisions.
+        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.branch, context.firstRevision, context.lastRevision);
         if (!linesForCommits.length)
             return false;
 
@@ -215,7 +210,7 @@ BuildbotQueueView.prototype = {
         return true;
     },
 
-    _revisionPopoverContentForIteration: function(iteration, previousIteration, internal)
+    _revisionContentWithPopoverForIteration: function(iteration, previousIteration, internal)
     {
         var content = document.createElement("span");
         content.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
@@ -224,6 +219,7 @@ BuildbotQueueView.prototype = {
         if (previousIteration) {
             var context = {
                 trac: internal ? internalTrac : webkitTrac,
+                branch: internal ? iteration.queue.branch.internal : iteration.queue.branch.openSource,
                 firstRevision: (internal ? previousIteration.internalRevision : previousIteration.openSourceRevision) + 1,
                 lastRevision: internal ? iteration.internalRevision : iteration.openSourceRevision
             };
@@ -272,12 +268,12 @@ BuildbotQueueView.prototype = {
     {
         console.assert(iteration.openSourceRevision);
 
-        var openSourceContent = this._revisionPopoverContentForIteration(iteration, previousDisplayedIteration);
+        var openSourceContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration);
 
         if (!iteration.internalRevision)
             return openSourceContent;
 
-        var internalContent = this._revisionPopoverContentForIteration(iteration, previousDisplayedIteration, true);
+        var internalContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, true);
 
         var fragment = document.createDocumentFragment();
         fragment.appendChild(openSourceContent);

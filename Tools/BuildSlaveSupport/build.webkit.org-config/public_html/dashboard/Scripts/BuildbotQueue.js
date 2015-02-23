@@ -33,7 +33,7 @@ BuildbotQueue = function(buildbot, id, info)
     this.buildbot = buildbot;
     this.id = id;
 
-    this.branch = info.branch || null;
+    this.branch = info.branch || { openSource: "trunk", internal: "trunk" };
     this.platform = info.platform.name || "unknown";
     this.debug = info.debug || false;
     this.builder = info.builder || false;

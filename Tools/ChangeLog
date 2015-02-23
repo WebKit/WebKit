@@ -1,3 +1,30 @@
+2015-02-23  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard should filter out commits to other branches
+        https://bugs.webkit.org/show_bug.cgi?id=140362
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits):
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange):
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration):
+        (BuildbotQueueView.prototype.revisionContentForIteration):
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Deleted.
+        (BuildbotQueueView.prototype._popoverLinesForCommitRange): Deleted.
+        (BuildbotQueueView.prototype._revisionPopoverContentForIteration): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype.get oldestRecordedRevisionNumber):
+        (Trac.prototype.commitsOnBranch):
+        (Trac.prototype._xmlTimelineURL):
+        (Trac.prototype._convertCommitInfoElementToObject):
+        (Trac.prototype._update):
+        (Trac.prototype.startPeriodicUpdates):
+        (Trac.prototype.loadMoreHistoricalData):
+        (Trac.prototype.update): Deleted.
+
 2015-02-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Tests don't work on some bots: Failed to stop wptwk
