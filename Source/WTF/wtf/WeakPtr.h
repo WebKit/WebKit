@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +41,7 @@ namespace WTF {
 template<typename T> class WeakPtr;
 template<typename T> class WeakPtrFactory;
 
+// Note: WeakReference is an implementation detail, and should not be used directly.
 template<typename T>
 class WeakReference : public ThreadSafeRefCounted<WeakReference<T>> {
     WTF_MAKE_NONCOPYABLE(WeakReference<T>);
@@ -100,6 +102,8 @@ public:
     template<typename U> WeakPtr& operator=(const WeakPtr<U>& o) { m_ref = o.m_ref.copyRef(); return *this; }
 
     T* operator->() const { return m_ref->get(); }
+
+    void forget() { m_ref = WeakReference<T>::create(nullptr); }
 
 private:
     friend class WeakPtrFactory<T>;

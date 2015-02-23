@@ -1,3 +1,13 @@
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        WTF::WeakPtr should have a 'forget' method.
+        https://bugs.webkit.org/show_bug.cgi?id=141923
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST): Added 'Forget' tests case.
+
 2015-02-23  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard CrashOnly queues should not show two green bubbles
