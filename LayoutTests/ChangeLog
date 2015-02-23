@@ -1,3 +1,9 @@
+2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Add new failure tests related to attachment, editing, and compositing.
+
+        * platform/efl/TestExpectations:
+
 2015-02-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark sub-pixel and disk cache tests to failure.
