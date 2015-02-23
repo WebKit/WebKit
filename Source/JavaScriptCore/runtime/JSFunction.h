@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -75,8 +75,6 @@ public:
     JS_EXPORT_PRIVATE String name(ExecState*);
     JS_EXPORT_PRIVATE String displayName(ExecState*);
     const String calculatedDisplayName(ExecState*);
-
-    void addNameScopeIfNeeded(VM&);
 
     ExecutableBase* executable() const { return m_executable.get(); }
 

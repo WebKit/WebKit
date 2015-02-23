@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,9 @@
 #include "CodeBlock.h"
 #include "DFGDriver.h"
 #include "JIT.h"
-#include "LLIntEntrypoint.h"
 #include "JSCInlines.h"
+#include "JSFunctionNameScope.h"
+#include "LLIntEntrypoint.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
 #include "TypeProfiler.h"
@@ -198,9 +199,9 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
-    CodeSpecializationKind kind, JSFunction* function, JSScope** scope, JSObject*& exception)
+    CodeSpecializationKind kind, JSFunction* function, JSScope* scope, JSObject*& exception)
 {
-    VM* vm = (*scope)->vm();
+    VM* vm = scope->vm();
 
     ASSERT(vm->heap.isDeferred());
     ASSERT(startColumn() != UINT_MAX);
@@ -212,7 +213,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(!executable->m_evalCodeBlock);
         RELEASE_ASSERT(!function);
         return adoptRef(new EvalCodeBlock(
-            executable, executable->m_unlinkedEvalCodeBlock.get(), *scope,
+            executable, executable->m_unlinkedEvalCodeBlock.get(), scope,
             executable->source().provider()));
     }
     
@@ -222,7 +223,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(!executable->m_programCodeBlock);
         RELEASE_ASSERT(!function);
         return adoptRef(new ProgramCodeBlock(
-            executable, executable->m_unlinkedProgramCodeBlock.get(), *scope,
+            executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
             executable->source().provider(), executable->source().startColumn()));
     }
     
@@ -230,7 +231,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     RELEASE_ASSERT(function);
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
-    JSGlobalObject* globalObject = (*scope)->globalObject();
+    JSGlobalObject* globalObject = scope->globalObject();
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
@@ -247,10 +248,13 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
 
     // Parsing reveals whether our function uses features that require a separate function name object in the scope chain.
     // Be sure to add this scope before linking the bytecode because this scope will change the resolution depth of non-local variables.
-    if (!executable->m_didParseForTheFirstTime) {
-        executable->m_didParseForTheFirstTime = true;
-        function->addNameScopeIfNeeded(*vm);
-        *scope = function->scope();
+    if (functionNameIsInScope(executable->name(), executable->functionMode())
+        && functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode())) {
+        // We shouldn't have to do this. But we do, because bytecode linking requires a real scope
+        // chain.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141885
+        scope = JSFunctionNameScope::create(
+            *vm, scope->globalObject(), scope, executable->name(), function, ReadOnly | DontDelete);
     }
     
     SourceProvider* provider = executable->source().provider();
@@ -258,7 +262,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     unsigned startColumn = executable->source().startColumn();
 
     return adoptRef(new FunctionCodeBlock(
-        executable, unlinkedCodeBlock, *scope, provider, sourceOffset, startColumn));
+        executable, unlinkedCodeBlock, scope, provider, sourceOffset, startColumn));
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newReplacementCodeBlockFor(
@@ -314,7 +318,7 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 }
 
 JSObject* ScriptExecutable::prepareForExecutionImpl(
-    ExecState* exec, JSFunction* function, JSScope** scope, CodeSpecializationKind kind)
+    ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind)
 {
     VM& vm = exec->vm();
     DeferGC deferGC(vm.heap);
@@ -392,7 +396,6 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
     , m_bodyIncludesBraces(bodyIncludesBraces)
-    , m_didParseForTheFirstTime(false)
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());

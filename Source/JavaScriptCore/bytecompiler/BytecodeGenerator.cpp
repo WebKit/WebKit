@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -208,6 +208,19 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     emitOpcode(op_enter);
 
     allocateAndEmitScope();
+    
+    if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())
+        && functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode())) {
+        // When we do this, we should make our local scope stack know about the function name symbol
+        // table. Currently this works because bytecode linking creates a phony name scope.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141885
+        // Also, we could create the scope once per JSFunction instance that needs it. That wouldn't
+        // be any more correct, but it would be more performant.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141887
+        RegisterID calleeRegister;
+        calleeRegister.setIndex(JSStack::Callee);
+        emitPushFunctionNameScope(m_scopeRegister, functionNode->ident(), &calleeRegister, ReadOnly | DontDelete);
+    }
 
     if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
         m_lexicalEnvironmentRegister = addVar();

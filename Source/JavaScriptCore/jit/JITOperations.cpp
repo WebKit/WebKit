@@ -695,7 +695,7 @@ inline char* linkFor(
         codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, registers);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, scope, kind);
         if (error) {
             throwStackOverflowError(exec);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
@@ -753,7 +753,7 @@ inline char* virtualForWithFunction(
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, function, &scope, kind);
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, function, scope, kind);
         if (error) {
             exec->vm().throwException(exec, error);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());

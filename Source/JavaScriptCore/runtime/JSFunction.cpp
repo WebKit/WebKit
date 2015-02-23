@@ -35,7 +35,6 @@
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunctionInlines.h"
-#include "JSFunctionNameScope.h" 
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
@@ -107,16 +106,6 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
     m_executable.set(vm, this, executable);
     putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
-}
-
-void JSFunction::addNameScopeIfNeeded(VM& vm)
-{
-    FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_executable.get());
-    if (!functionNameIsInScope(executable->name(), executable->functionMode()))
-        return;
-    if (!functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode()))
-        return;
-    setScope(vm, JSFunctionNameScope::create(vm, scope()->globalObject(), scope(), executable->name(), this, ReadOnly | DontDelete));
 }
 
 JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)

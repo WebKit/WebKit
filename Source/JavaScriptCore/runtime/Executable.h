@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -397,10 +397,10 @@ public:
     }
 
     void installCode(CodeBlock*);
-    PassRefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope**, JSObject*& exception);
+    PassRefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
     PassRefPtr<CodeBlock> newReplacementCodeBlockFor(CodeSpecializationKind);
     
-    JSObject* prepareForExecution(ExecState* exec, JSFunction* function, JSScope** scope, CodeSpecializationKind kind)
+    JSObject* prepareForExecution(ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind)
     {
         if (hasJITCodeFor(kind))
             return 0;
@@ -410,7 +410,7 @@ public:
     template <typename Functor> void forEachCodeBlock(Functor&&);
 
 private:
-    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope**, CodeSpecializationKind);
+    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind);
 
 protected:
     void finishCreation(VM& vm)
@@ -662,7 +662,6 @@ private:
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     bool m_bodyIncludesBraces;
-    bool m_didParseForTheFirstTime;
     RefPtr<TypeSet> m_returnStatementTypeSet;
 };
 

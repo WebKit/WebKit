@@ -1,5 +1,48 @@
 2015-02-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Function name scope is only created on the function instance that triggered parsing rather than on every function instance that needs it
+        https://bugs.webkit.org/show_bug.cgi?id=141881
+
+        Reviewed by Michael Saboff.
+        
+        Previously we only created the function name scope in a way that made it visible to the
+        function that triggered parsing/linking of the executable/codeBlock, and to the linker for
+        that code block. This was sort of the bare minimum for the feature to appear to work right to
+        synthetic tests.
+
+        There are two valid "times" to create the function name scope. Either it's created for each
+        JSFunction instance that needs a name scope, or it's created for each execution of such a
+        JSFunction. This change chooses the latter, because it happens to be the easiest to implement
+        with what we have right now. I opened a bug for optimizing this if we ever need to:
+        https://bugs.webkit.org/show_bug.cgi?id=141887.
+        
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::addNameScopeIfNeeded): Deleted.
+        * runtime/JSFunction.h:
+        * tests/stress/function-name-scope.js: Added.
+        (check.verify):
+        (check):
+
+2015-02-22  Filip Pizlo  <fpizlo@apple.com>
+
         Crash in DFGFrozenValue
         https://bugs.webkit.org/show_bug.cgi?id=141883
 

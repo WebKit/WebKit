@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2011, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2011, 2013, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -78,7 +78,7 @@ static inline bool isNumericCompareFunction(ExecState* exec, JSValue function, C
     FunctionExecutable* executable = callData.js.functionExecutable;
     JSScope* scope = callData.js.scope;
 
-    JSObject* error = executable->prepareForExecution(exec, jsCast<JSFunction*>(function), &scope, CodeForCall);
+    JSObject* error = executable->prepareForExecution(exec, jsCast<JSFunction*>(function), scope, CodeForCall);
     if (error)
         return false;
 
