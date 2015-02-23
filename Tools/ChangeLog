@@ -1,3 +1,20 @@
+2015-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] run-webkit-tests --leaks is broken because IOSSimulatorPort has no is_snowleopard attribute
+        <http://webkit.org/b/141884>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks): Remove
+        snowleopard, lion and older leaks.  Add known leak for
+        mavericks, but check Port.operating_system before calling
+        Port.is_mavericks.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.is_snowleopard): Delete.
+        (MacPort.is_lion): Delete.
+        (MacPort.is_mavericks): Add.
+
 2015-02-23  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard should filter out commits to other branches

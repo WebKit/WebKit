@@ -111,12 +111,8 @@ class MacPort(ApplePort):
         return 'mac'
 
     # Belongs on a Platform object.
-    def is_snowleopard(self):
-        return self._version == "snowleopard"
-
-    # Belongs on a Platform object.
-    def is_lion(self):
-        return self._version == "lion"
+    def is_mavericks(self):
+        return self._version == 'mavericks'
 
     def default_child_processes(self):
         if self._version == "snowleopard":

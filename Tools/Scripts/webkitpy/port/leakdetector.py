@@ -53,25 +53,10 @@ class LeakDetector(object):
         return []
 
     def _callstacks_to_exclude_from_leaks(self):
-        callstacks = [
-            "Flash_EnforceLocalSecurity",  # leaks in Flash plug-in code, rdar://problem/4449747
-            "ScanFromString", # <http://code.google.com/p/angleproject/issues/detail?id=249> leak in ANGLE
-        ]
-        if self._port.is_snowleopard():
+        callstacks = []
+        if self._port.operating_system == 'mac' and self._port.is_mavericks():
             callstacks += [
-                "readMakerNoteProps",  # <rdar://problem/7156432> leak in ImageIO
-                "QTKitMovieControllerView completeUISetup",  # <rdar://problem/7155156> leak in QTKit
-                "getVMInitArgs",  # <rdar://problem/7714444> leak in Java
-                "Java_java_lang_System_initProperties",  # <rdar://problem/7714465> leak in Java
-                "glrCompExecuteKernel",  # <rdar://problem/7815391> leak in graphics driver while using OpenGL
-                "NSNumberFormatter getObjectValue:forString:errorDescription:",  # <rdar://problem/7149350> Leak in NSNumberFormatter
-            ]
-        elif self._port.is_lion():
-            callstacks += [
-                "FigByteFlumeCustomURLCreateWithURL", # <rdar://problem/10461926> leak in CoreMedia
-                "PDFPage\(PDFPageInternal\) pageLayoutIfAvail", # <rdar://problem/10462055> leak in PDFKit
-                "SecTransformExecute", # <rdar://problem/10470667> leak in Security.framework
-                "_NSCopyStyleRefForFocusRingStyleClip", # <rdar://problem/10462031> leak in AppKit
+                'AVAssetResourceLoader _poseAuthenticationChallengeWithKey:data:requestDictionary:fallbackHandler:',  # <rdar://problem/19699887> leak in AVFoundation
             ]
         return callstacks
 
