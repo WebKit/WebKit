@@ -91,7 +91,7 @@ Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(intptr_t 
         BasicBlockRange range;
         range.m_hasExecuted = std::get<0>(functionRange);
         range.m_startOffset = static_cast<int>(std::get<1>(functionRange));
-        range.m_endOffset = static_cast<int>(std::get<2>(functionRange) + 1);
+        range.m_endOffset = static_cast<int>(std::get<2>(functionRange));
         result.append(range);
     }
 

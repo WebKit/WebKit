@@ -1,3 +1,102 @@
+2015-02-23  Saam Barati  <saambarati1@gmail.com>
+
+        Adjust the ranges of basic block statements in JSC's control flow profiler to be mutually exclusive
+        https://bugs.webkit.org/show_bug.cgi?id=141095
+
+        Reviewed by Mark Lam.
+
+        Suppose the control flow of a program forms basic block A with successor block
+        B. A's end offset will be the *same* as B's start offset in the current architecture 
+        of the control flow profiler. This makes reasoning about the text offsets of
+        the control flow profiler unsound. To make reasoning about offsets sound, all 
+        basic block ranges should be mutually exclusive.  All calls to emitProfileControlFlow 
+        now pass in the *start* of a basic block as the text offset argument. This simplifies 
+        all calls to emitProfileControlFlow because the previous implementation had a
+        lot of edge cases for getting the desired basic block text boundaries.
+
+        This patch also ensures that the basic block boundary of a block statement 
+        is the exactly the block's open and close brace offsets (inclusive). For example,
+        in if/for/while statements. This also has the consequence that for statements 
+        like "if (cond) foo();", the whitespace preceding "foo()" is not part of 
+        the "foo()" basic block, but instead is part of the "if (cond) " basic block. 
+        This is okay because these text offsets aren't meant to be human readable.
+        Instead, they reflect the text offsets of JSC's AST nodes. The Web Inspector 
+        is the only client of this API and user of these text offsets and it is 
+        not negatively effected by this new behavior.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        When computing basic block boundaries in CodeBlock, we ensure that every
+        block's end offset is one less than its successor's start offset to
+        maintain that boundaries' ranges should be mutually exclusive.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        Because the control flow profiler needs to know which functions
+        have executed, we can't lazily create functions. This was a bug 
+        from before that was hidden because the Type Profiler was always 
+        enabled when the control flow profiler was enabled when profiling 
+        was turned on from the Web Inspector. But, JSC allows for Control 
+        Flow profiling to be turned on without Type Profiling, so we need 
+        to ensure the Control Flow profiler has all the data it needs.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConditionalNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        * jsc.cpp:
+        (functionHasBasicBlockExecuted):
+        We now assert that the substring argument is indeed a substring
+        of the function argument's text because subtle bugs could be
+        introduced otherwise.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::setStartOffset):
+        * parser/Nodes.h:
+        (JSC::Node::setStartOffset):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        For the various function call AST nodes, their m_position member 
+        variable is now the start of the entire function call expression 
+        and not at the start of the open paren of the arguments list.
+
+        * runtime/BasicBlockLocation.cpp:
+        (JSC::BasicBlockLocation::getExecutedRanges):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::getBasicBlocksForSourceID):
+        Function ranges inserted as gaps should follow the same criteria
+        that the bytecode generator uses to ensure that basic blocks
+        start and end offsets are mutually exclusive.
+
+        * tests/controlFlowProfiler/brace-location.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        (testIf):
+        (testForRegular):
+        (testForIn):
+        (testForOf):
+        (testWhile):
+        (testIfNoBraces):
+        (testForRegularNoBraces):
+        (testForInNoBraces):
+        (testForOfNoBraces):
+        (testWhileNoBraces):
+        * tests/controlFlowProfiler/conditional-expression.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        (testConditionalBasic):
+        (testConditionalFunctionCall):
+        * tests/controlFlowProfiler/driver/driver.js:
+        (checkBasicBlock):
+
 2015-02-23  Matthew Mirman  <mmirman@apple.com>
 
         r9 is volatile on ARMv7 for iOS 3 and up. 

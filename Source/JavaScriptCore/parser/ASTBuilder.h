@@ -713,6 +713,11 @@ public:
     {
         node->setStartOffset(offset);
     }
+
+    void setStartOffset(Node* node, int offset)
+    {
+        node->setStartOffset(offset);
+    }
     
 private:
     struct Scope {

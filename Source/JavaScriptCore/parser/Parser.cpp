@@ -1115,21 +1115,24 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
 {
     ASSERT(match(OPENBRACE));
     JSTokenLocation location(tokenLocation());
+    int startOffset = m_token.m_data.offset;
     int start = tokenLine();
     next();
     if (match(CLOSEBRACE)) {
-        unsigned endOffset = m_lexer->currentOffset();
+        int endOffset = m_token.m_data.offset;
         next();
         TreeStatement result = context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line);
+        context.setStartOffset(result, startOffset);
         context.setEndOffset(result, endOffset);
         return result;
     }
     TreeSourceElements subtree = parseSourceElements(context, DontCheckForStrictMode);
     failIfFalse(subtree, "Cannot parse the body of the block statement");
     matchOrFail(CLOSEBRACE, "Expected a closing '}' at the end of a block statement");
-    unsigned endOffset = m_lexer->currentOffset();
+    int endOffset = m_token.m_data.offset;
     next();
     TreeStatement result = context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line);
+    context.setStartOffset(result, startOffset);
     context.setEndOffset(result, endOffset);
     return result;
 }
@@ -1143,9 +1146,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     int nonTrivialExpressionCount = 0;
     failIfStackOverflow();
     TreeStatement result = 0;
+    bool shouldSetEndOffset = true;
     switch (m_token.m_type) {
     case OPENBRACE:
         result = parseBlockStatement(context);
+        shouldSetEndOffset = false;
         break;
     case VAR:
         result = parseVarDeclaration(context);
@@ -1228,7 +1233,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         break;
     }
 
-    if (result)
+    if (result && shouldSetEndOffset)
         context.setEndOffset(result, m_lastTokenEndPosition.offset);
     return result;
 }
@@ -2312,6 +2317,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     TreeExpression base = 0;
     JSTextPosition expressionStart = tokenStartPosition();
     int newCount = 0;
+    JSTokenLocation startLocation = tokenLocation();
     JSTokenLocation location;
     while (match(NEW)) {
         next();
@@ -2350,7 +2356,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 TreeArguments arguments = parseArguments(context, AllowSpread);
                 failIfFalse(arguments, "Cannot parse call arguments");
-                base = context.makeFunctionCallNode(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
+                base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             }
             m_nonLHSCount = nonLHSCount;
             break;

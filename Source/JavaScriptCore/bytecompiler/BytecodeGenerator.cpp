@@ -338,7 +338,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
 
-    bool canLazilyCreateFunctions = !functionNode->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks && !m_vm->typeProfiler();
+    bool canLazilyCreateFunctions = !functionNode->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks && !m_vm->typeProfiler() && !m_vm->controlFlowProfiler();
     m_firstLazyFunction = codeBlock->m_numVars;
     if (!shouldCaptureAllTheThings) {
         for (size_t i = 0; i < functionStack.size(); ++i) {

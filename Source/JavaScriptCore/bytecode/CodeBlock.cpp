@@ -4052,7 +4052,7 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruct
         if (i + 1 < offsetsLength) {
             size_t endIdx = bytecodeOffsets[i + 1];
             RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[endIdx].u.opcode) == op_profile_control_flow);
-            basicBlockEndOffset = instructions[endIdx + 1].u.operand;
+            basicBlockEndOffset = instructions[endIdx + 1].u.operand - 1;
         } else {
             basicBlockEndOffset = m_sourceOffset + m_ownerExecutable->source().length() - 1; // Offset before the closing brace.
             basicBlockStartOffset = std::min(basicBlockStartOffset, basicBlockEndOffset); // Some start offsets may be at the closing brace, ensure it is the offset before.

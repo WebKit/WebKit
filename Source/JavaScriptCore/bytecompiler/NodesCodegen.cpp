@@ -1444,12 +1444,12 @@ RegisterID* ConditionalNode::emitBytecode(BytecodeGenerator& generator, Register
     generator.emitJump(afterElse.get());
 
     generator.emitLabel(beforeElse.get());
-    generator.emitProfileControlFlow(m_expr2->startOffset());
+    generator.emitProfileControlFlow(m_expr1->endOffset() + 1);
     generator.emitNode(newDst.get(), m_expr2);
 
     generator.emitLabel(afterElse.get());
 
-    generator.emitProfileControlFlow(m_expr2->endOffset());
+    generator.emitProfileControlFlow(m_expr2->endOffset() + 1);
 
     return newDst.get();
 }
@@ -1897,12 +1897,13 @@ void IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(beforeElse.get());
 
     if (m_elseBlock) {
-        generator.emitProfileControlFlow(m_ifBlock->endOffset());
+        generator.emitProfileControlFlow(m_ifBlock->endOffset() + (m_ifBlock->isBlock() ? 1 : 0));
         generator.emitNode(dst, m_elseBlock);
     }
 
     generator.emitLabel(afterElse.get());
-    generator.emitProfileControlFlow(m_elseBlock ? m_elseBlock->endOffset() : m_ifBlock->endOffset());
+    StatementNode* endingBlock = m_elseBlock ? m_elseBlock : m_ifBlock;
+    generator.emitProfileControlFlow(endingBlock->endOffset() + (endingBlock->isBlock() ? 1 : 0));
 }
 
 // ------------------------------ DoWhileNode ----------------------------------
@@ -1948,7 +1949,7 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitLabel(scope->breakTarget());
 
-    generator.emitProfileControlFlow(endOffset());
+    generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));
 }
 
 // ------------------------------ ForNode --------------------------------------
@@ -1983,7 +1984,7 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitJump(topOfLoop.get());
 
     generator.emitLabel(scope->breakTarget());
-    generator.emitProfileControlFlow(endOffset());
+    generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));
 }
 
 // ------------------------------ ForInNode ------------------------------------
@@ -2100,6 +2101,8 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
     generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
 
+    int profilerStartOffset = m_statement->startOffset();
+    int profilerEndOffset = m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0);
     // Indexed property loop.
     {
         LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
@@ -2121,13 +2124,13 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         generator.emitToIndexString(propertyName.get(), i.get());
         this->emitLoopHeader(generator, propertyName.get());
 
-        generator.emitProfileControlFlow(m_statement->startOffset());
+        generator.emitProfileControlFlow(profilerStartOffset);
 
         generator.pushIndexedForInScope(local.get(), i.get());
         generator.emitNode(dst, m_statement);
         generator.popIndexedForInScope(local.get());
 
-        generator.emitProfileControlFlow(m_statement->endOffset());
+        generator.emitProfileControlFlow(profilerEndOffset);
 
         generator.emitLabel(scope->continueTarget());
         generator.emitInc(i.get());
@@ -2159,13 +2162,13 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
         this->emitLoopHeader(generator, propertyName.get());
 
-        generator.emitProfileControlFlow(m_statement->startOffset());
+        generator.emitProfileControlFlow(profilerStartOffset);
 
         generator.pushStructureForInScope(local.get(), i.get(), propertyName.get(), structureEnumerator.get());
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
 
-        generator.emitProfileControlFlow(m_statement->endOffset());
+        generator.emitProfileControlFlow(profilerEndOffset);
 
         generator.emitLabel(scope->continueTarget());
         generator.emitInc(i.get());
@@ -2196,7 +2199,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
         this->emitLoopHeader(generator, propertyName.get());
 
-        generator.emitProfileControlFlow(m_statement->startOffset());
+        generator.emitProfileControlFlow(profilerStartOffset);
 
         generator.emitNode(dst, m_statement);
 
@@ -2217,7 +2220,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     generator.emitLabel(end.get());
-    generator.emitProfileControlFlow(m_statement->endOffset());
+    generator.emitProfileControlFlow(profilerEndOffset);
 }
 
 void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -2285,7 +2288,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitNode(dst, m_statement);
     };
     generator.emitEnumeration(this, m_expr, extractor);
-    generator.emitProfileControlFlow(m_statement->endOffset());
+    generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));
 }
 
 // ------------------------------ ContinueNode ---------------------------------
@@ -2631,7 +2634,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         }
 
         generator.emitPushCatchScope(generator.scopeRegister(), m_exceptionIdent, exceptionRegister.get(), DontDelete);
-        generator.emitProfileControlFlow(m_tryBlock->endOffset());
+        generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
         generator.emitNode(dst, m_catchBlock);
         generator.emitPopScope(generator.scopeRegister());
         generator.emitLabel(catchEndLabel.get());
@@ -2644,12 +2647,12 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         RefPtr<Label> finallyEndLabel = generator.newLabel();
 
-        int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() : m_tryBlock->endOffset();
+        int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() + 1 : m_tryBlock->endOffset() + 1;
 
         // Normal path: run the finally code, and jump to the end.
         generator.emitProfileControlFlow(finallyStartOffset);
         generator.emitNode(dst, m_finallyBlock);
-        generator.emitProfileControlFlow(m_finallyBlock->endOffset());
+        generator.emitProfileControlFlow(m_finallyBlock->endOffset() + 1);
         generator.emitJump(finallyEndLabel.get());
 
         // Uncaught exception path: invoke the finally block, then re-throw the exception.
@@ -2659,9 +2662,9 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitThrow(tempExceptionRegister.get());
 
         generator.emitLabel(finallyEndLabel.get());
-        generator.emitProfileControlFlow(m_finallyBlock->endOffset());
+        generator.emitProfileControlFlow(m_finallyBlock->endOffset() + 1);
     } else
-        generator.emitProfileControlFlow(m_catchBlock->endOffset());
+        generator.emitProfileControlFlow(m_catchBlock->endOffset() + 1);
 
 }
 

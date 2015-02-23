@@ -132,6 +132,7 @@ namespace JSC {
         int lineStartOffset() const { return m_position.lineStartOffset; }
         const JSTextPosition& position() const { return m_position; }
         void setEndOffset(int offset) { m_endOffset = offset; }
+        void setStartOffset(int offset) { m_position.offset = offset; }
 
     protected:
         JSTextPosition m_position;

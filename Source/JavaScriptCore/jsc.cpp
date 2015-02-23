@@ -1127,6 +1127,7 @@ EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
     RELEASE_ASSERT(exec->argument(1).isString());
     String substring = exec->argument(1).getString(exec);
     String sourceCodeText = executable->source().toString();
+    RELEASE_ASSERT(sourceCodeText.contains(substring));
     int offset = sourceCodeText.find(substring) + executable->source().startOffset();
     
     bool hasExecuted = exec->vm().controlFlowProfiler()->hasBasicBlockAtTextOffsetBeenExecuted(offset, executable->sourceID(), exec->vm());
