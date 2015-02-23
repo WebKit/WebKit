@@ -1,3 +1,10 @@
+2015-02-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a comment to clarify that the test was taken from the bug report, in response to
+        feedback from Michael Saboff and Benjamin Poulain.
+        
+        * tests/stress/regress-141883.js:
+
 2015-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         Function name scope is only created on the function instance that triggered parsing rather than on every function instance that needs it
