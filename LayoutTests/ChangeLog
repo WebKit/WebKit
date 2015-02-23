@@ -1,3 +1,9 @@
+2015-02-22  Sam Weinig  <sam@webkit.org>
+
+        Update results for Mac Yosemite.
+
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+
 2015-02-21  Sam Weinig  <sam@webkit.org>
 
         Convert the caps lock indicator to be implemented using the shadow DOM
