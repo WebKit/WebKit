@@ -1,5 +1,11 @@
 2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed EFL gardening. Mark tests of css3 overflow, border to ImageOnlyFailure.
+
+        * platform/efl/TestExpectations:
+
+2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed EFL gardening. Add new failure tests related to attachment, editing, and compositing.
 
         * platform/efl/TestExpectations:

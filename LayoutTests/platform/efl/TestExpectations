@@ -776,6 +776,9 @@ webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-lay
 webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure Crash ]
 webkit.org/b/125517 compositing/regions/z-index-update.html [ Crash Pass ]
 
+webkit.org/b/141897 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
+webkit.org/b/141897 fast/regions/overflow/overflow-region-inline.html [ ImageOnlyFailure ]
+
 webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ Crash Pass ]
 
 # Regressions in svg/clip-path
@@ -1736,6 +1739,7 @@ webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
+webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
@@ -2103,3 +2107,9 @@ webkit.org/b/141892 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 webkit.org/b/141892 fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html [ Failure ]
 
 webkit.org/b/141895 compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
+
+# Need to have new baseline since r177686.
+webkit.org/b/141896 fast/borders/0px-borders.html [ ImageOnlyFailure ]
+webkit.org/b/141896 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/141896 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
+webkit.org/b/141896 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
