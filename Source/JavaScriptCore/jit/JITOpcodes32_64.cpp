@@ -779,14 +779,14 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    emitLoad(currentInstruction[3].u.operand, regT1, regT0);
-    if (currentInstruction[5].u.operand == JSNameScope::CatchScope) {
-        callOperation(operationPushCatchScope, dst, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand);
+    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
+    if (currentInstruction[4].u.operand == JSNameScope::CatchScope) {
+        callOperation(operationPushCatchScope, dst, jsCast<SymbolTable*>(getConstantOperand(currentInstruction[3].u.operand)), regT1, regT0);
         return;
     }
 
-    RELEASE_ASSERT(currentInstruction[5].u.operand == JSNameScope::FunctionNameScope);
-    callOperation(operationPushFunctionNameScope, dst, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand);
+    RELEASE_ASSERT(currentInstruction[4].u.operand == JSNameScope::FunctionNameScope);
+    callOperation(operationPushFunctionNameScope, dst, jsCast<SymbolTable*>(getConstantOperand(currentInstruction[3].u.operand)), regT1, regT0);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

@@ -717,11 +717,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_ECC, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_ECICC, RegisterID, const Identifier*, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(J_JITOperation_EE, RegisterID);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(V_JITOperation_EZIdJZZ, int, const Identifier*, RegisterID, int32_t, int32_t);
-#else
-        MacroAssembler::Call callOperation(V_JITOperation_EZIdJZ, int, const Identifier*, RegisterID, int32_t);
-#endif
+        MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID);
@@ -754,7 +750,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, GPRReg, size_t);
         MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EZIdJZ, int, const Identifier*, RegisterID, RegisterID, int32_t);
+        MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, RegisterID, int32_t);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,18 +50,16 @@ public:
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetPropertyNames | Base::StructureFlags;
     
-    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SymbolTable* symbolTable = 0)
+    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope)
         : Base(vm, structure, scope)
     {
-        if (symbolTable)
-            m_symbolTable.set(vm, this, symbolTable);
     }
-
-    void finishCreation(VM& vm)
+    
+    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SymbolTable* symbolTable)
+        : Base(vm, structure, scope)
     {
-        Base::finishCreation(vm);
-        if (!m_symbolTable)
-            m_symbolTable.set(vm, this, SymbolTable::create(vm));
+        ASSERT(symbolTable);
+        m_symbolTable.set(vm, this, symbolTable);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);

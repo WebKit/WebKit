@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
+        m_symbolTable.set(vm, this, SymbolTable::create(vm));
     }
     
     SegmentedVector<WriteBarrier<Unknown>, 16> m_registers;

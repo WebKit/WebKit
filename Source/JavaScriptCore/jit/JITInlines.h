@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -460,9 +460,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operati
     return appendCallWithExceptionCheck(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZIdJZZ operation, int op1, const Identifier* identOp2, RegisterID regOp3, int32_t op4, int32_t op5)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZSymtabJ operation, int op1, SymbolTable* symbolTable, RegisterID regOp3)
 {
-    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), regOp3, TrustedImm32(op4), TrustedImm32(op5));
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(symbolTable), regOp3);
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -594,9 +594,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operatio
     return appendCallWithExceptionCheck(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZIdJZ operation, int32_t op1, const Identifier* identOp2, RegisterID regOp3Tag, RegisterID regOp3Payload, int32_t op4)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZSymtabJ operation, int32_t op1, SymbolTable* symbolTable, RegisterID regOp3Tag, RegisterID regOp3Payload)
 {
-    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), EABI_32BIT_DUMMY_ARG regOp3Payload, regOp3Tag, TrustedImm32(op4));
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(symbolTable), EABI_32BIT_DUMMY_ARG regOp3Payload, regOp3Tag);
     return appendCallWithExceptionCheck(operation);
 }
 

@@ -35,13 +35,13 @@ namespace JSC {
 
 const ClassInfo JSNameScope::s_info = { "NameScope", &Base::s_info, 0, CREATE_METHOD_TABLE(JSNameScope) };
 
-JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, const Identifier& identifier, JSValue value, unsigned attributes, Type type)
+JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue value, Type type)
 {
     switch (type) {
     case CatchScope:
-        return JSCatchScope::create(vm, globalObject, currentScope, identifier, value, attributes);
+        return JSCatchScope::create(vm, globalObject, currentScope, symbolTable, value);
     case FunctionNameScope:
-        return JSFunctionNameScope::create(vm, globalObject, currentScope, identifier, value, attributes);
+        return JSFunctionNameScope::create(vm, globalObject, currentScope, symbolTable, value);
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

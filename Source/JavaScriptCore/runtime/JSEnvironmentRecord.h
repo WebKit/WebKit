@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ protected:
         Structure* structure,
         Register* registers,
         JSScope* scope,
-        SymbolTable* symbolTable = 0)
+        SymbolTable* symbolTable)
         : Base(vm, structure, scope, symbolTable)
         , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
     {

@@ -253,8 +253,10 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         // We shouldn't have to do this. But we do, because bytecode linking requires a real scope
         // chain.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141885
+        SymbolTable* symbolTable =
+            SymbolTable::createNameScopeTable(*vm, executable->name(), ReadOnly | DontDelete);
         scope = JSFunctionNameScope::create(
-            *vm, scope->globalObject(), scope, executable->name(), function, ReadOnly | DontDelete);
+            *vm, scope->globalObject(), scope, symbolTable, function);
     }
     
     SourceProvider* provider = executable->source().provider();

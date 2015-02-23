@@ -37,15 +37,15 @@ public:
 private:
     friend class JSNameScope;
     
-    JSFunctionNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next)
-        : Base(vm, globalObject->catchScopeStructure(), next)
+    JSFunctionNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next, SymbolTable* symbolTable)
+        : Base(vm, globalObject->catchScopeStructure(), next, symbolTable)
     {
     }
     
 public:
-    static JSFunctionNameScope* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, const Identifier& identifier, JSValue value, unsigned attributes)
+    static JSFunctionNameScope* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue value)
     {
-        return Base::create<JSFunctionNameScope>(vm, globalObject, currentScope, identifier, value, attributes);
+        return Base::create<JSFunctionNameScope>(vm, globalObject, currentScope, symbolTable, value);
     }
     
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)

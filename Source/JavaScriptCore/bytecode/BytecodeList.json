@@ -109,7 +109,7 @@
             { "name" : "op_put_to_scope", "length" : 7 },
             { "name" : "op_push_with_scope", "length" : 3 },
             { "name" : "op_pop_scope", "length" : 2 },
-            { "name" : "op_push_name_scope", "length" : 6 },
+            { "name" : "op_push_name_scope", "length" : 5 },
             { "name" : "op_catch", "length" : 2 },
             { "name" : "op_throw", "length" : 2 },
             { "name" : "op_throw_static_error", "length" : 3 },

@@ -42,14 +42,14 @@ public:
     };
 
     template<typename T>
-    static T* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, const Identifier& identifier, JSValue value, unsigned attributes)
+    static T* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue value)
     {
-        T* scopeObject = new (NotNull, allocateCell<T>(vm.heap)) T(vm, globalObject, currentScope);
-        scopeObject->finishCreation(vm, identifier, value, attributes);
+        T* scopeObject = new (NotNull, allocateCell<T>(vm.heap)) T(vm, globalObject, currentScope, symbolTable);
+        scopeObject->finishCreation(vm, value);
         return scopeObject;
     }
     
-    static JSNameScope* create(VM&, JSGlobalObject*, JSScope* currentScope, const Identifier&, JSValue, unsigned attributes, Type);
+    static JSNameScope* create(VM&, JSGlobalObject*, JSScope* currentScope, SymbolTable*, JSValue, Type);
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static JSValue toThis(JSCell*, ExecState*, ECMAMode);
@@ -61,22 +61,16 @@ public:
     JSValue value() const { return m_registerStore.get(); }
 
 protected:
-    void finishCreation(VM& vm, const Identifier& identifier, JSValue value, unsigned attributes)
+    void finishCreation(VM& vm, JSValue value)
     {
         Base::finishCreation(vm);
         m_registerStore.set(vm, this, value);
-        symbolTable()->add(identifier.impl(), SymbolTableEntry(-1, attributes));
     }
 
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
-    JSNameScope(VM& vm, Structure* structure, JSScope* next)
-        : Base(
-            vm,
-            structure,
-            reinterpret_cast<Register*>(&m_registerStore + 1),
-            next
-        )
+    JSNameScope(VM& vm, Structure* structure, JSScope* next, SymbolTable* symbolTable)
+        : Base(vm, structure, reinterpret_cast<Register*>(&m_registerStore + 1), next, symbolTable)
     {
     }
 

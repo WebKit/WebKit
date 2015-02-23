@@ -2394,9 +2394,8 @@ void BytecodeGenerator::emitPushFunctionNameScope(RegisterID* dst, const Identif
 {
     emitOpcode(op_push_name_scope);
     instructions().append(dst->index());
-    instructions().append(addConstant(property));
     instructions().append(value->index());
-    instructions().append(attributes);
+    instructions().append(addConstantValue(SymbolTable::createNameScopeTable(*vm(), property, attributes))->index());
     instructions().append(JSNameScope::FunctionNameScope);
 }
 
@@ -2409,9 +2408,8 @@ void BytecodeGenerator::emitPushCatchScope(RegisterID* dst, const Identifier& pr
 
     emitOpcode(op_push_name_scope);
     instructions().append(dst->index());
-    instructions().append(addConstant(property));
     instructions().append(value->index());
-    instructions().append(attributes);
+    instructions().append(addConstantValue(SymbolTable::createNameScopeTable(*vm(), property, attributes))->index());
     instructions().append(JSNameScope::CatchScope);
 }
 

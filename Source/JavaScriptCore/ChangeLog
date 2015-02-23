@@ -1,5 +1,64 @@
 2015-02-23  Filip Pizlo  <fpizlo@apple.com>
 
+        Scopes should always be created with a previously-created symbol table rather than creating one on the fly
+        https://bugs.webkit.org/show_bug.cgi?id=141915
+
+        Reviewed by Mark Lam.
+        
+        The main effect of this change is that pushing name scopes no longer requires creating symbol
+        tables on the fly.
+        
+        This also makes it so that JSEnvironmentRecords must always have an a priori symbol table.
+        
+        JSSegmentedVariableObject still does a hack where it creates a blank symbol table on-demand.
+        This is needed because that's what JSGlobalObject and all of its many subclasses want. That's
+        harmless; I mainly needed a prior symbol tables for JSEnvironmentRecords anyway.
+
+        * bytecode/BytecodeList.json:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOperations.cpp:
+        (JSC::pushNameScope):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/JSCatchScope.h:
+        (JSC::JSCatchScope::JSCatchScope):
+        (JSC::JSCatchScope::create):
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::JSEnvironmentRecord):
+        * runtime/JSFunctionNameScope.h:
+        (JSC::JSFunctionNameScope::JSFunctionNameScope):
+        (JSC::JSFunctionNameScope::create):
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::create):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::finishCreation):
+        (JSC::JSNameScope::JSNameScope):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::finishCreation): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::createNameScopeTable):
+
+2015-02-23  Filip Pizlo  <fpizlo@apple.com>
+
         Add a comment to clarify that the test was taken from the bug report, in response to
         feedback from Michael Saboff and Benjamin Poulain.
         

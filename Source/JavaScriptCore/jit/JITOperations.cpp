@@ -44,6 +44,8 @@
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSCInlines.h"
+#include "JSCatchScope.h"
+#include "JSFunctionNameScope.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
@@ -58,6 +60,24 @@
 #include <wtf/InlineASM.h>
 
 namespace JSC {
+
+template<typename ScopeType>
+void pushNameScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    ASSERT(!JITCode::isOptimizingJIT(exec->codeBlock()->jitType()));
+
+    // FIXME: This won't work if this operation is called from the DFG or FTL.
+    // This should be changed to pass in the new scope.
+    JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
+    JSNameScope* scope = ScopeType::create(vm, exec->lexicalGlobalObject(), currentScope, symbolTable, JSValue::decode(encodedValue));
+
+    // FIXME: This won't work if this operation is called from the DFG or FTL.
+    // This should be changed to return the new scope.
+    exec->uncheckedR(dst) = scope;
+}
 
 extern "C" {
 
@@ -1269,33 +1289,15 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
 }
 #endif
 
-void JIT_OPERATION operationPushNameScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes, int32_t type)
+void JIT_OPERATION operationPushCatchScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    // FIXME: This won't work if this operation is called from the DFG or FTL.
-    // This should be changed to pass in the new scope.
-    JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
-    JSNameScope::Type scopeType = static_cast<JSNameScope::Type>(type);
-    JSNameScope* scope = JSNameScope::create(vm, exec->lexicalGlobalObject(), currentScope, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
-
-    // FIXME: This won't work if this operation is called from the DFG or FTL.
-    // This should be changed to return the new scope.
-    exec->uncheckedR(dst) = scope;
+    pushNameScope<JSCatchScope>(exec, dst, symbolTable, encodedValue);
 }
 
-#if USE(JSVALUE32_64)
-void JIT_OPERATION operationPushCatchScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
+void JIT_OPERATION operationPushFunctionNameScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
 {
-    operationPushNameScope(exec, dst, identifier, encodedValue, attibutes, JSNameScope::CatchScope);
+    pushNameScope<JSFunctionNameScope>(exec, dst, symbolTable, encodedValue);
 }
-
-void JIT_OPERATION operationPushFunctionNameScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
-{
-    operationPushNameScope(exec, dst, identifier, encodedValue, attibutes, JSNameScope::FunctionNameScope);
-}
-#endif
 
 void JIT_OPERATION operationPushWithScope(ExecState* exec, int32_t dst, EncodedJSValue encodedValue)
 {

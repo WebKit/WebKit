@@ -347,6 +347,14 @@ public:
         symbolTable->finishCreation(vm);
         return symbolTable;
     }
+    
+    static SymbolTable* createNameScopeTable(VM& vm, const Identifier& ident, unsigned attributes)
+    {
+        SymbolTable* result = create(vm);
+        result->add(ident.impl(), SymbolTableEntry(-1, attributes));
+        return result;
+    }
+    
     static const bool needsDestruction = true;
     static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
