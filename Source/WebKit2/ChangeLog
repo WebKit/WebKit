@@ -1,3 +1,16 @@
+2015-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Replace another straight-up cast with a toImpl call
+        https://bugs.webkit.org/show_bug.cgi?id=141914
+        rdar://problem/19913016
+
+        Reviewed by Andreas Kling.
+
+        This fixes a problem where Mail would not display message bodies.
+
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage):
+
 2015-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         Scrollbars and ScrollAnimators must always have a ScrollableArea
