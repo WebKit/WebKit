@@ -191,14 +191,18 @@ BuildbotQueueView.prototype = {
 
         // FIXME: Nothing guarantees that Trac has historical data for these revisions.
         var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.branch, context.firstRevision, context.lastRevision);
-        if (!linesForCommits.length)
-            return false;
 
         var line = document.createElement("div");
         line.className = "title";
-        line.textContent = "commits since previous result";
-        content.appendChild(line);
-        this._addDividerToPopover(content);
+
+        if (linesForCommits.length) {
+            line.textContent = "commits since previous result";
+            content.appendChild(line);
+            this._addDividerToPopover(content);
+        } else {
+            line.textContent = "no commits to " + context.branch + " since previous result";
+            content.appendChild(line);
+        }
 
         for (var i = 0; i != linesForCommits.length; ++i)
             content.appendChild(linesForCommits[i]);
