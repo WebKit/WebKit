@@ -1,3 +1,13 @@
+2015-02-23  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: BasicBlockAnnotator ranges should be inclusive of both the start and end offset
+        https://bugs.webkit.org/show_bug.cgi?id=141334
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.addStyleToTextRange):
+
 2015-02-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Lazily Create GeneralTreeElement Status Elements

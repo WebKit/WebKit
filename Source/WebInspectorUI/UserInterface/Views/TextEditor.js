@@ -461,7 +461,8 @@ WebInspector.TextEditor.prototype = {
 
     addStyleToTextRange: function(startPosition, endPosition, styleClassName)
     {
-        return this._codeMirror.getDoc().markText(startPosition, endPosition, {className: styleClassName});
+        endPosition.ch += 1;
+        return this._codeMirror.getDoc().markText(startPosition, endPosition, {className: styleClassName, inclusiveLeft: true, inclusiveRight: true});
     },
 
     revealPosition: function(position, textRangeToSelect, forceUnformatted, noHighlight)
