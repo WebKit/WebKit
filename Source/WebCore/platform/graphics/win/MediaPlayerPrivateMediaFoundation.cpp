@@ -241,7 +241,6 @@ bool MediaPlayerPrivateMediaFoundation::endSession()
 {
     if (m_mediaSession) {
         m_mediaSession->Shutdown();
-        m_mediaSession->Release();
         m_mediaSession = nullptr;
     }
 

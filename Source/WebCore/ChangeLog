@@ -1,3 +1,16 @@
+2015-02-23  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when media player is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=141248
+
+        Reviewed by Darin Adler.
+
+        A COM smart pointer is both released, and set to null.
+        This means that the COM Release method is called twice, causing a crash.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::endSession):
+
 2015-02-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove old FIXME in RenderGrid::placeItemsOnGrid()
