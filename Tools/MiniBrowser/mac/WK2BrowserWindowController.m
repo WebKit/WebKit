@@ -407,6 +407,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
 }
 
+- (IBAction)fetchWebsiteData:(id)sender
+{
+    [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
+        NSLog(@"did fetch website data %@.", websiteDataRecords);
+    }];
+}
+
 - (IBAction)clearWebsiteData:(id)sender
 {
     [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll modifiedSince:[NSDate distantPast] completionHandler:^{

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7096" systemVersion="14D42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7504.2" systemVersion="14D89" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7504.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -457,6 +457,12 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="77P-rp-OVT"/>
+                            <menuItem title="Fetch Website Data" id="bFf-Dl-CTv">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="fetchWebsiteData:" target="-1" id="pVk-bR-Z4t"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Clear Website Data" id="bfj-13-wQ4">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

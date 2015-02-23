@@ -27,17 +27,19 @@
 #define APIWebsiteDataRecord_h
 
 #include "APIObject.h"
+#include "WebsiteDataRecord.h"
 
 namespace API {
 
 class WebsiteDataRecord final : public ObjectImpl<Object::Type::WebsiteDataRecord> {
 public:
-    static Ref<WebsiteDataRecord> create();
+    static Ref<WebsiteDataRecord> create(WebKit::WebsiteDataRecord&&);
     virtual ~WebsiteDataRecord();
 
 private:
-    WebsiteDataRecord();
+    explicit WebsiteDataRecord(WebKit::WebsiteDataRecord&&);
 
+    const WebKit::WebsiteDataRecord m_websiteDataRecord;
 };
 
 }

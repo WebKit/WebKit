@@ -28,6 +28,10 @@
 
 #if WK_API_ENABLED
 
+#import "APIArray.h"
+#import "APIWebsiteDataRecord.h"
+#import "WKNSArray.h"
+
 @implementation _WKWebsiteDataStore
 
 + (instancetype)defaultDataStore
@@ -76,6 +80,23 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
     using namespace std::chrono;
 
     return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
+}
+
+- (void)fetchDataRecordsOfTypes:(WKWebsiteDataTypes)websiteDataTypes completionHandler:(void (^)(NSArray *))completionHandler
+{
+    auto completionHandlerCopy = Block_copy(completionHandler);
+
+    _websiteDataStore->websiteDataStore().fetchData(toWebsiteDataTypes(websiteDataTypes), [completionHandlerCopy](Vector<WebKit::WebsiteDataRecord> websiteDataRecords) {
+        Vector<RefPtr<API::Object>> elements;
+        elements.reserveInitialCapacity(websiteDataRecords.size());
+
+        for (auto& websiteDataRecord : websiteDataRecords)
+            elements.uncheckedAppend(API::WebsiteDataRecord::create(WTF::move(websiteDataRecord)));
+
+        completionHandlerCopy(wrapper(*API::Array::create(WTF::move(elements))));
+
+        Block_release(completionHandlerCopy);
+    });
 }
 
 - (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler

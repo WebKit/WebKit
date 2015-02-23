@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include "APIWebsiteDataRecord.h"
 #include "StorageManager.h"
 #include "WebProcessPool.h"
 #include <wtf/RunLoop.h>
@@ -125,6 +126,14 @@ static ProcessAccessType computeWebProcessAccessType(WebsiteDataTypes dataTypes,
         processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
 
     return processAccessType;
+}
+
+void WebsiteDataStore::fetchData(WebsiteDataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+{
+    // FIXME: Actually fetch data.
+    RunLoop::main().dispatch([completionHandler] {
+        completionHandler({ });
+    });
 }
 
 void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
