@@ -97,8 +97,6 @@ private:
     bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
     bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
 
-    static EncodedJSValue argumentsGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
-
     static size_t allocationSize(SymbolTable*);
     static size_t storageOffset();
 

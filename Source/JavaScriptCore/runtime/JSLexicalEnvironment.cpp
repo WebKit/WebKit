@@ -197,23 +197,4 @@ JSValue JSLexicalEnvironment::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode
     return exec->globalThisValue();
 }
 
-EncodedJSValue JSLexicalEnvironment::argumentsGetter(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
-{
-    JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(slotBase);
-    CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(lexicalEnvironment->m_registers));
-    return JSValue::encode(jsUndefined());
-
-    VirtualRegister argumentsRegister = callFrame->codeBlock()->argumentsRegister();
-    if (JSValue arguments = callFrame->uncheckedR(argumentsRegister.offset()).jsValue())
-        return JSValue::encode(arguments);
-    int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister).offset();
-
-    JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame, lexicalEnvironment));
-    callFrame->uncheckedR(argumentsRegister.offset()) = arguments;
-    callFrame->uncheckedR(realArgumentsRegister) = arguments;
-    
-    ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(Arguments::info()));
-    return JSValue::encode(callFrame->uncheckedR(realArgumentsRegister).jsValue());
-}
-
 } // namespace JSC
