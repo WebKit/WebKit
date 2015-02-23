@@ -39,9 +39,9 @@ public:
     virtual ~WebDiagnosticLoggingClient();
 
 private:
-    virtual void logDiagnosticMessage(const String& message, const String& description) override;
-    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
-    virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) override;
+    virtual void logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample) override;
+    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
+    virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, WebCore::ShouldSample) override;
 
     WebPage& m_page;
 };

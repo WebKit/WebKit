@@ -30,9 +30,9 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DidDeleteWebsiteData(uint64_t callbackID)
 
     # Diagnostic messages logging
-    LogDiagnosticMessage(uint64_t pageID, String message, String description)
-    LogDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result)
-    LogDiagnosticMessageWithValue(uint64_t pageID, String message, String description, String value)
+    LogDiagnosticMessage(uint64_t pageID, String message, String description, bool shouldSample)
+    LogDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result, bool shouldSample)
+    LogDiagnosticMessageWithValue(uint64_t pageID, String message, String description, String value, bool shouldSample)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

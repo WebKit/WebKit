@@ -41,34 +41,34 @@ WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient()
 {
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, const String& description)
+void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample shouldSample)
 {
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(&m_page, message, description);
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description, shouldSample == WebCore::ShouldSample::Yes));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result, WebCore::ShouldSample shouldSample)
 {
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithResult(&m_page, message, description, result);
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result, shouldSample == WebCore::ShouldSample::Yes));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, WebCore::ShouldSample shouldSample)
 {
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, value);
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, shouldSample == WebCore::ShouldSample::Yes));
 }
 
 } // namespace WebKit

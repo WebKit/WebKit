@@ -1,3 +1,44 @@
+2015-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for diagnostic logging messages sampling
+        https://bugs.webkit.org/show_bug.cgi?id=141823
+        <rdar://problem/19899030>
+
+        Reviewed by Andreas Kling.
+
+        Add support for diagnostic logging messages sampling to decrease the
+        impact of diagnostic logging on CPU usage, while still getting useful
+        overall results. This patch adds a ShouldSample argument to
+        logDiagnosticMessage*() functions and logs 5% of the messages when
+        sampling. Sampling is turned on for keys that are known to be verbose
+        (e.g. per resource load logging).
+
+        On the page load test I am tracking, CPU usage caused by diagnostic
+        logging went down to 0.3% of UIProcess from 2.8% with this change.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::logCanCachePageDecision):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::logResourceRevalidationReason):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::logMemoryCacheResourceRequest):
+        * page/DiagnosticLoggingClient.h:
+
 2015-02-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Drawing an SVG image into a canvas using drawImage() ignores globalAlpha.

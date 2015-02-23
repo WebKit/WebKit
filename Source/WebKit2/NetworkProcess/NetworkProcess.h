@@ -33,7 +33,7 @@
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
-#include <WebCore/DiagnosticLoggingResultType.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -77,9 +77,9 @@ public:
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
     // Diagnostic messages logging.
-    void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description);
-    void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType);
-    void logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, const String& value);
+    void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, const String& value, WebCore::ShouldSample);
 
 private:
     NetworkProcess();

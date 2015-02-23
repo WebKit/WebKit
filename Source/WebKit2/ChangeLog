@@ -1,3 +1,51 @@
+2015-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for diagnostic logging messages sampling
+        https://bugs.webkit.org/show_bug.cgi?id=141823
+        <rdar://problem/19899030>
+
+        Reviewed by Andreas Kling.
+
+        Add support for diagnostic logging messages sampling to decrease the
+        impact of diagnostic logging on CPU usage, while still getting useful
+        overall results. This patch adds a ShouldSample argument to
+        logDiagnosticMessage*() functions and logs 5% of the messages when
+        sampling. Sampling is turned on for keys that are known to be verbose
+        (e.g. per resource load logging).
+
+        On the page load test I am tracking, CPU usage caused by diagnostic
+        logging went down to 0.3% of UIProcess from 2.8% with this change.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::logDiagnosticMessage):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithValue):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/NetworkCacheStatisticsCocoa.mm:
+        (WebKit::NetworkCacheStatistics::recordNotUsingCacheForRequest):
+        (WebKit::NetworkCacheStatistics::recordRetrievalFailure):
+        (WebKit::NetworkCacheStatistics::recordRetrievedCachedEntry):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::logDiagnosticMessage):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithValue):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::shouldLogDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithResult):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithValue):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessage):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::willStartUserTriggeredZooming):
+
 2015-02-23  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out _WKWebsiteDataRecord class
