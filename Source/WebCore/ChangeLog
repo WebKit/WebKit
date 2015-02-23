@@ -1,3 +1,49 @@
+2015-02-22  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r180183, r180187.
+
+    2015-02-16  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Build fix: declare undeclared identifier 'credential'.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedCredential):
+
+    2015-02-16  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Unable to play .mp4 file over http with basic http authentication
+        https://bugs.webkit.org/show_bug.cgi?id=141503
+        rdar://problem/15799844
+
+        Reviewed by Alexey Proskuryakov.
+
+        On iOS, CFNetwork is used for authentication, so the NSURLAuthenticationChallenge
+        provided by AVAssetResourceLoader needs to be shoehorned into a AuthenticationChallenge
+        object by way of CFURLAuthChallengeRef.
+
+        Create a new class, WebCoreNSURLAuthenticationChallengeClient, whose sole purpose
+        is to take AuthenticationChallengeClient callbacks and pass them along to a
+        NSURLAuthenticationChallenge sender.
+
+        Create a NSURLAuthenticationChallenge out of the CF version through an SPI, and add
+        that SPI to a new header. Drive-by fix: take two of our existing SPI calls and move
+        them into that same header.
+
+        * WebCore.xcodeproj/project.pbxproj: Add CFNSURLConnectionSPI.h to project.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::create): Factory.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::WebCoreNSURLAuthenticationChallengeClient): Simple constructor.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedCredential): Pass to m_challenge.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedRequestToContinueWithoutCredential): Ditto.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedCancellation): Ditto.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedRequestToPerformDefaultHandling): Ditto.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::receivedChallengeRejection): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge):
+            Create an AuthenticationChallenge out of the nsChallenge and client and pass it up
+            to the HTMLMediaElement.
+        * platform/network/mac/AuthenticationMac.mm:
+        * platform/spi/cocoa/CFNSURLConnectionSPI.h: Added.
+
 2015-02-20  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180278

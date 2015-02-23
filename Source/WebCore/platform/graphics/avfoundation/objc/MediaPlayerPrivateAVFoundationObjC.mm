@@ -90,6 +90,11 @@
 #import <VideoToolbox/VideoToolbox.h>
 #endif
 
+#if USE(CFNETWORK)
+#include "AuthenticationMac.h"
+#include "CFNSURLConnectionSPI.h"
+#endif
+
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
     typedef RefPtr<WebCore::MediaSelectionOptionAVFObjC> value_type;
@@ -381,6 +386,58 @@ static dispatch_queue_t globalPullDelegateQueue()
     });
     return globalQueue;
 }
+#endif
+
+#if USE(CFNETWORK)
+class WebCoreNSURLAuthenticationChallengeClient : public RefCounted<WebCoreNSURLAuthenticationChallengeClient>, public AuthenticationClient {
+public:
+    static RefPtr<WebCoreNSURLAuthenticationChallengeClient> create(NSURLAuthenticationChallenge *challenge)
+    {
+        return adoptRef(new WebCoreNSURLAuthenticationChallengeClient(challenge));
+    }
+
+    using RefCounted<WebCoreNSURLAuthenticationChallengeClient>::ref;
+    using RefCounted<WebCoreNSURLAuthenticationChallengeClient>::deref;
+
+private:
+    WebCoreNSURLAuthenticationChallengeClient(NSURLAuthenticationChallenge *challenge)
+        : m_challenge(challenge)
+    {
+        ASSERT(m_challenge);
+    }
+
+    virtual void refAuthenticationClient() override { ref(); }
+    virtual void derefAuthenticationClient() override { deref(); }
+
+    virtual void receivedCredential(const AuthenticationChallenge&, const Credential& credential)
+    {
+        [[m_challenge sender] useCredential:mac(credential) forAuthenticationChallenge:m_challenge.get()];
+    }
+
+    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
+    {
+        [[m_challenge sender] continueWithoutCredentialForAuthenticationChallenge:m_challenge.get()];
+    }
+
+    virtual void receivedCancellation(const AuthenticationChallenge&)
+    {
+        [[m_challenge sender] cancelAuthenticationChallenge:m_challenge.get()];
+    }
+
+    virtual void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
+    {
+        if ([[m_challenge sender] respondsToSelector:@selector(performDefaultHandlingForAuthenticationChallenge:)])
+            [[m_challenge sender] performDefaultHandlingForAuthenticationChallenge:m_challenge.get()];
+    }
+
+    virtual void receivedChallengeRejection(const AuthenticationChallenge&)
+    {
+        if ([[m_challenge sender] respondsToSelector:@selector(rejectProtectionSpaceAndContinueWithChallenge:)])
+            [[m_challenge sender] rejectProtectionSpaceAndContinueWithChallenge:m_challenge.get()];
+    }
+
+    RetainPtr<NSURLAuthenticationChallenge> m_challenge;
+};
 #endif
 
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
@@ -1577,14 +1634,14 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge* nsChallenge)
 {
 #if USE(CFNETWORK)
-    UNUSED_PARAM(nsChallenge);
-    // FIXME: <rdar://problem/15799844>
-    return false;
+    RefPtr<WebCoreNSURLAuthenticationChallengeClient> client = WebCoreNSURLAuthenticationChallengeClient::create(nsChallenge);
+    RetainPtr<CFURLAuthChallengeRef> cfChallenge = adoptCF([nsChallenge _createCFAuthChallenge]);
+    AuthenticationChallenge challenge(cfChallenge.get(), client.get());
 #else
     AuthenticationChallenge challenge(nsChallenge);
+#endif
 
     return player()->shouldWaitForResponseToAuthenticationChallenge(challenge);
-#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
