@@ -145,6 +145,7 @@ public:
         Vibration,
         ViewportAttributes,
         VisitedLinkProvider,
+        WebsiteDataRecord,
         WebsiteDataStore,
 
         // Bundle types

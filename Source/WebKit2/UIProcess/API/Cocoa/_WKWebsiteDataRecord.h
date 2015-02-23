@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,19 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit/_WKWebsiteDataRecord.h>
+#import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface _WKWebsiteDataStore : NSObject
+typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
+    WKWebsiteDataTypeCookies = 1 << 0,
+    WKWebsiteDataTypeDiskCache = 1 << 1,
+    WKWebsiteDataTypeMemoryCache = 1 << 2,
 
-// Returns the shared default data store.
-+ (instancetype)defaultDataStore;
+    WKWebsiteDataTypeLocalStorage = 1 << 3,
+    WKWebsiteDataTypeAll = NSUIntegerMax,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-// Returns a new non-persistent data store.
-+ (instancetype)nonPersistentDataStore;
-
-@property (readonly, getter=isNonPersistent) BOOL nonPersistent;
-
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface _WKWebsiteDataRecord : NSObject
 @end
 
-#endif // WK_API_ENABLED
+#endif

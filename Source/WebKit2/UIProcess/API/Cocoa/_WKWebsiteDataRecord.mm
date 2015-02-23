@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "_WKWebsiteDataRecordInternal.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit/_WKWebsiteDataRecord.h>
+@implementation _WKWebsiteDataRecord
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface _WKWebsiteDataStore : NSObject
+- (void)dealloc
+{
+    _websiteDataRecord->API::WebsiteDataRecord::~WebsiteDataRecord();
 
-// Returns the shared default data store.
-+ (instancetype)defaultDataStore;
+    [super dealloc];
+}
 
-// Returns a new non-persistent data store.
-+ (instancetype)nonPersistentDataStore;
+#pragma mark WKObject protocol implementation
 
-@property (readonly, getter=isNonPersistent) BOOL nonPersistent;
-
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (API::Object&)_apiObject
+{
+    return *_websiteDataRecord;
+}
 
 @end
 
-#endif // WK_API_ENABLED
+#endif
