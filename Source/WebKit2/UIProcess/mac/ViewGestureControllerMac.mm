@@ -772,7 +772,7 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    if (m_currentSwipeSnapshot)
+    if (m_currentSwipeSnapshot && m_currentSwipeSnapshot->surface())
         m_currentSwipeSnapshot->surface()->setIsVolatile(true);
     m_currentSwipeSnapshot = nullptr;
 #endif

@@ -1,3 +1,16 @@
+2015-02-23  Timothy Horton  <timothy_horton@apple.com>
+
+        Reproducible crash in ViewGestureController::removeSwipeSnapshot()
+        https://bugs.webkit.org/show_bug.cgi?id=141917
+        <rdar://problem/19918590>
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        If the snapshot was purged and we're showing a white snapshot, we won't
+        be able to mark the (null) snapshot surface as volatile. Add a null check.
+
 2015-02-23  Anders Carlsson  <andersca@apple.com>
 
         Replace another straight-up cast with a toImpl call
