@@ -554,8 +554,14 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!deviceSize.isExpressibleAsIntSize())
         return;
 
-    if (deviceSize.width() * deviceSize.height() > MaxCanvasArea)
+    if (deviceSize.width() * deviceSize.height() > MaxCanvasArea) {
+        StringBuilder stringBuilder;
+        stringBuilder.append("Canvas area exceeds the maximum limit (width * height > ");
+        stringBuilder.appendNumber(MaxCanvasArea);
+        stringBuilder.append(").");
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
         return;
+    }
 
     IntSize bufferSize(deviceSize.width(), deviceSize.height());
     if (!bufferSize.width() || !bufferSize.height())
