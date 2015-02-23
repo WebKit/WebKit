@@ -360,10 +360,10 @@ namespace WebCore {
         void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 
         void setPaintingDisabled(bool paintingDisabled) { m_state.paintingDisabled = paintingDisabled; }
-        WEBCORE_EXPORT bool paintingDisabled() const { return m_state.paintingDisabled; }
+        bool paintingDisabled() const { return m_state.paintingDisabled; }
 
         void setUpdatingControlTints(bool);
-        WEBCORE_EXPORT bool updatingControlTints() const { return m_updatingControlTints; }
+        bool updatingControlTints() const { return m_updatingControlTints; }
 
         WEBCORE_EXPORT void beginTransparencyLayer(float opacity);
         WEBCORE_EXPORT void endTransparencyLayer();
