@@ -97,7 +97,7 @@ void ScrollingStateNode::appendChild(PassRefPtr<ScrollingStateNode> childNode)
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = adoptPtr(new Vector<RefPtr<ScrollingStateNode>>);
+        m_children = std::make_unique<Vector<RefPtr<ScrollingStateNode>>>();
 
     m_children->append(childNode);
 }

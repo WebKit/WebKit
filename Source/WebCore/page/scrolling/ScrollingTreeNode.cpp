@@ -49,7 +49,7 @@ void ScrollingTreeNode::appendChild(PassRefPtr<ScrollingTreeNode> childNode)
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = adoptPtr(new ScrollingTreeChildrenVector);
+        m_children = std::make_unique<ScrollingTreeChildrenVector>();
 
     m_children->append(childNode);
 }

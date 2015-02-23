@@ -33,8 +33,6 @@
 #include "ScrollingCoordinator.h"
 #include <wtf/Functional.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 

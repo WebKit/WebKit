@@ -1,3 +1,30 @@
+2015-02-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move std::unique_ptr<>|make_unique<> to WebCore/page/scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=137877
+
+        Reviewed by Sam Weinig.
+
+        Clean up unnecessary OwnPtr.h|PassOwnPtr.h includes as well as
+        change OwnPtr with std::unique_ptr<>|make_unique<>.
+
+        No new tests, no behavior changes.
+
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::appendChild):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::appendChild):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2015-02-22  Dean Jackson  <dino@apple.com>
 
         Print a console warning when HTMLCanvasElement exceeds the maximum size

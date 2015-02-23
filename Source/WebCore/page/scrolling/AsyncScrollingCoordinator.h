@@ -32,7 +32,6 @@
 
 #include "ScrollingTree.h"
 #include "Timer.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -71,7 +71,7 @@ protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
-    OwnPtr<ScrollingTreeChildrenVector> m_children;
+    std::unique_ptr<ScrollingTreeChildrenVector> m_children;
 
 private:
     ScrollingTree& m_scrollingTree;
