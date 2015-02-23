@@ -808,8 +808,6 @@ void RenderGrid::placeItemsOnGrid()
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
-        // FIXME: We never re-resolve positions if the grid is grown during auto-placement which may lead auto / <integer>
-        // positions to not match the author's intent. The specification is unclear on what should be done in this case.
         std::unique_ptr<GridSpan> rowPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForRows);
         std::unique_ptr<GridSpan> columnPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForColumns);
         if (!rowPositions || !columnPositions) {
