@@ -1,3 +1,18 @@
+2015-02-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Occasional crash in MediaPlayer::setPrivateBrowsingMode
+        https://bugs.webkit.org/show_bug.cgi?id=141910
+
+        Reviewed by Jer Noble.
+
+        No new tests, I was unable to reproduce the crash.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::stopPeriodicTimers): Use EveryDelayedAction instead of -1.
+        (WebCore::HTMLMediaElement::stop): Call clearMediaPlayer instead of just setting m_player
+            to NULL.
+        * html/HTMLMediaElement.h: Define EveryDelayedAction.
+
 2015-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Redundant track language notifications

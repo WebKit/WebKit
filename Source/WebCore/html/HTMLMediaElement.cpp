@@ -4630,7 +4630,7 @@ void HTMLMediaElement::userCancelledLoad()
     // If the media data fetching process is aborted by the user:
 
     // 1 - The user agent should cancel the fetching process.
-    clearMediaPlayer(-1);
+    clearMediaPlayer(EveryDelayedAction);
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
@@ -4737,9 +4737,10 @@ void HTMLMediaElement::stop()
     m_asyncEventQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
-    // the media player now. Note that userCancelledLoad will already have cleared the player
-    // if the media was not fully loaded. This handles all other cases.
-    m_player = nullptr;
+    // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
+    // if the media was not fully loaded, but we need the same cleanup if the file was completely
+    // loaded and calling it again won't cause any problems.
+    clearMediaPlayer(EveryDelayedAction);
 
     updateSleepDisabling();
 }

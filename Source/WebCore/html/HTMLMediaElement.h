@@ -137,6 +137,8 @@ public:
         ConfigureTextTracks = 1 << 1,
         TextTrackChangesNotification = 1 << 2,
         ConfigureTextTrackDisplay = 1 << 3,
+
+        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay,
     };
     void scheduleDelayedAction(DelayedActionType);
     
