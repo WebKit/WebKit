@@ -996,13 +996,6 @@ void GraphicsContext::setMiterLimit(float limit)
     CGContextSetMiterLimit(platformContext(), limit);
 }
 
-void GraphicsContext::setAlpha(float alpha)
-{
-    if (paintingDisabled())
-        return;
-    CGContextSetAlpha(platformContext(), alpha);
-}
-
 void GraphicsContext::clearRect(const FloatRect& r)
 {
     if (paintingDisabled())
@@ -1479,6 +1472,13 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool enable)
     if (paintingDisabled())
         return;
     CGContextSetShouldSmoothFonts(platformContext(), enable);
+}
+
+void GraphicsContext::setPlatformAlpha(float alpha)
+{
+    if (paintingDisabled())
+        return;
+    CGContextSetAlpha(platformContext(), alpha);
 }
 
 void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode, BlendMode blendMode)
