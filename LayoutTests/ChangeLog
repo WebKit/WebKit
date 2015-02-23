@@ -1,3 +1,9 @@
+2015-02-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Mark sub-pixel and disk cache tests to failure.
+
+        * platform/efl/TestExpectations:
+
 2015-02-22  Dean Jackson  <dino@apple.com>
 
         Print a console warning when HTMLCanvasElement exceeds the maximum size

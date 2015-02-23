@@ -2085,3 +2085,12 @@ webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/141627 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 webkit.org/b/141628 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+
+# Disk cache isn't supported by EFL port yet.
+webkit.org/b/141891 http/tests/cache/disk-cache-disable.html [ Failure ]
+webkit.org/b/141891 http/tests/cache/disk-cache-redirect-to-data.html [ Failure ]
+webkit.org/b/141891 http/tests/cache/disk-cache-validation.html [ Failure ]
+
+webkit.org/b/141892 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
+webkit.org/b/141892 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
+webkit.org/b/141892 fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html [ Failure ]
