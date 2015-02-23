@@ -82,6 +82,7 @@ BuildbotTesterQueueView.prototype = {
                 } else if (queue.crashesOnly && !layoutTestResults.crashCount) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
+                    limit = 0;
                 } else if (queue.crashesOnly && layoutTestResults.crashCount) {
                     var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.crashCount === 1 ? "crash found" : "crashes found", layoutTestResults.crashCount, url);

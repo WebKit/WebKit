@@ -1,5 +1,16 @@
 2015-02-23  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard CrashOnly queues should not show two green bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=141920
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        Do the same thing as we do for regular green bubbles.
+
+2015-02-23  Alexey Proskuryakov  <ap@apple.com>
+
         Bot watcher's dashboard doesn't show a popover for commit history when all commits were to another branch
         https://bugs.webkit.org/show_bug.cgi?id=141925
 
