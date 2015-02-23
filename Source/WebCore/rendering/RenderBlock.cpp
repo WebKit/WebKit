@@ -759,7 +759,7 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     RenderObject* nextSibling = child->nextSibling();
 
     if (auto* childFlowThread = child->flowThreadContainingBlock())
-        toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
+        childFlowThread->removeFlowChildInfo(child);
 
     parent->removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
     child->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
