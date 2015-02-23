@@ -61,18 +61,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// These values come from the WhatWG spec.
+// These values come from the WhatWG/W3C HTML spec.
 static const int DefaultWidth = 300;
 static const int DefaultHeight = 150;
 
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
-// in exchange for a smaller maximum canvas size. The maximum canvas size is in CSS pixels.
-#if PLATFORM(IOS)
-static const float MaxCanvasArea = 4580 * 1145; // 20 MB assuming 4 bytes per pixel
-#else
-static const float MaxCanvasArea = 32768 * 8192;
-#endif
+// in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
+static const float MaxCanvasArea = 16384 * 16384;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
