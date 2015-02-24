@@ -1,3 +1,18 @@
+2015-02-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Use Ahem in grid-item-order-in-content-sized-columns-resolution.html
+        https://bugs.webkit.org/show_bug.cgi?id=141970
+
+        Reviewed by Sergio Villar Senin.
+
+        Without using Ahem we were having different results depending on the
+        platform.
+
+        * fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution-expected.txt:
+          Update results to the new values.
+        * fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution.html:
+          Use Ahem.
+
 2015-02-24  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Gardening: Mark svg/canvas/canvas-global-alpha-svg.html as ImageOnlyFailure
