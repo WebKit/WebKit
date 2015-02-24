@@ -53,6 +53,7 @@
             { "name" : "op_is_number", "length" : 3 },
             { "name" : "op_is_string", "length" : 3 },
             { "name" : "op_is_object", "length" : 3 },
+            { "name" : "op_is_object_or_null", "length" : 3 },
             { "name" : "op_is_function", "length" : 3 },
             { "name" : "op_in", "length" : 4 },
             { "name" : "op_init_global_const_nop", "length" : 5 },

@@ -1,3 +1,140 @@
+2015-02-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Constructor returning null should construct an object instead of null
+        https://bugs.webkit.org/show_bug.cgi?id=141640
+
+        Reviewed by Geoffrey Garen.
+
+        When constructor code doesn't return object, constructor should return `this` object instead.
+        Since we used `op_is_object` for this check and `op_is_object` is intended to be used for `typeof`,
+        it allows `null` as an object.
+        This patch fixes it by introducing an new bytecode `op_is_object_or_null` for `typeof` use cases.
+        Instead, constructor uses simplified `is_object`.
+
+        As a result, `op_is_object` becomes fairly simple. So we introduce optimization for `op_is_object`.
+
+        1. LLInt and baseline JIT support `op_is_object` as a fast path.
+        2. DFG abstract interpreter support `op_is_object`. And recognize its speculated type and read-write effects.
+        3. DFG introduces inlined asm for `op_is_object` rather than calling a C++ function.
+        4. FTL lowers DFG's IsObject into LLVM IR.
+
+        And at the same time, this patch fixes isString / isObject predicate used for `op_is_object` and others
+        in LLInt, JIT, DFG and FTL.
+        Before introducing ES6 Symbol, JSCell is only used for object and string in user observable area.
+        So in many places, when the cell is not object, we recognize it as a string, and vice versa.
+        However, now ES6 Symbol is implemented as a JSCell, this assumption is broken.
+        So this patch stop using !isString as isObject.
+        To check whether a cell is an object, instead of seeing that structure ID of a cell is not stringStructure,
+        we examine typeInfo in JSCell.
+
+        * JavaScriptCore.order:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitReturn):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+        IsObject operation only touches JSCell typeInfoType.
+        And this value would not be changed through structure transition.
+        As a result, IsObject can report that it doesn't read any information.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        Just like IsString, IsObject is also fixed up.
+
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringToUntypedEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentToNotStringVarEquality):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateNotStringVar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        (JSC::DFG::SpeculativeJIT::branchIsObject):
+        (JSC::DFG::SpeculativeJIT::branchNotObject):
+        (JSC::DFG::SpeculativeJIT::branchIsString):
+        (JSC::DFG::SpeculativeJIT::branchNotString):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileToString):
+        (JSC::FTL::LowerDFGToLLVM::compileIsObject):
+        (JSC::FTL::LowerDFGToLLVM::compileIsObjectOrNull):
+        (JSC::FTL::LowerDFGToLLVM::speculateTruthyObject):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isObject):
+        (JSC::FTL::LowerDFGToLLVM::isNotObject):
+        (JSC::FTL::LowerDFGToLLVM::isNotString):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitJumpIfCellObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_to_primitive):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::compileOpStrictEq):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Operations.cpp:
+        (JSC::jsIsObjectTypeOrNull):
+        (JSC::jsIsObjectType): Deleted.
+        * runtime/Operations.h:
+
 2015-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable font loading events until our implementation gets updated to match the latest spec

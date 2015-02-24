@@ -983,11 +983,10 @@ _llint_op_typeof:
     dispatch(3)
 
 
-_llint_op_is_object:
+_llint_op_is_object_or_null:
     traceExecution()
-    callSlowPath(_slow_path_is_object)
+    callSlowPath(_slow_path_is_object_or_null)
     dispatch(3)
-
 
 _llint_op_is_function:
     traceExecution()

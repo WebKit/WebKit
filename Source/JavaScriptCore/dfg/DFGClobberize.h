@@ -137,6 +137,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsBoolean:
     case IsNumber:
     case IsString:
+    case IsObject:
     case LogicalNot:
     case CheckInBounds:
     case DoubleRep:
@@ -340,9 +341,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(AllocationProfileWatchpointLoc, MiscFields), node);
         return;
         
-    case IsObject:
+    case IsObjectOrNull:
         read(MiscFields);
-        def(HeapLocation(IsObjectLoc, MiscFields, node->child1()), node);
+        def(HeapLocation(IsObjectOrNullLoc, MiscFields, node->child1()), node);
         return;
         
     case IsFunction:

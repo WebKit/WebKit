@@ -102,7 +102,7 @@ EncodedJSValue JIT_OPERATION operationGetInlinedArgumentByVal(ExecState*, int32_
 EncodedJSValue JIT_OPERATION operationGetArgumentByVal(ExecState*, int32_t, int32_t) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewFunctionNoCheck(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
-size_t JIT_OPERATION operationIsObject(ExecState*, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationIsObjectOrNull(ExecState*, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationIsFunction(EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationTypeOf(ExecState*, JSCell*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState*) WTF_INTERNAL;

@@ -60,10 +60,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("InvalidationPointLoc");
         return;
         
-    case IsObjectLoc:
-        out.print("IsObjectLoc");
+    case IsObjectOrNullLoc:
+        out.print("IsObjectOrNullLoc");
         return;
-        
+
     case IsFunctionLoc:
         out.print("IsFunctionLoc");
         return;

@@ -952,10 +952,10 @@ macro strictEq(equalityOperation, slowPath)
     loadConstantOrVariable2Reg(t0, t2, t0)
     bineq t2, t3, .slow
     bib t2, LowestTag, .slow
-    bineq t2, CellTag, .notString
-    bbneq JSCell::m_type[t0], StringType, .notString
-    bbeq JSCell::m_type[t1], StringType, .slow
-.notString:
+    bineq t2, CellTag, .notStringOrSymbol
+    bbaeq JSCell::m_type[t0], ObjectType, .notStringOrSymbol
+    bbb JSCell::m_type[t1], ObjectType, .slow
+.notStringOrSymbol:
     loadi 4[PC], t2
     equalityOperation(t0, t1, t0)
     storei BooleanTag, TagOffset[cfr, t2, 8]
@@ -1329,6 +1329,21 @@ _llint_op_is_string:
     storei t1, PayloadOffset[cfr, t2, 8]
     dispatch(3)
 .opIsStringNotCell:
+    storep 0, PayloadOffset[cfr, t2, 8]
+    dispatch(3)
+
+
+_llint_op_is_object:
+    traceExecution()
+    loadi 8[PC], t1
+    loadi 4[PC], t2
+    loadConstantOrVariable(t1, t0, t3)
+    storei BooleanTag, TagOffset[cfr, t2, 8]
+    bineq t0, CellTag, .opIsObjectNotCell
+    cbaeq JSCell::m_type[t3], ObjectType, t1
+    storei t1, PayloadOffset[cfr, t2, 8]
+    dispatch(3)
+.opIsObjectNotCell:
     storep 0, PayloadOffset[cfr, t2, 8]
     dispatch(3)
 
@@ -1976,7 +1991,7 @@ _llint_op_to_primitive:
     loadi 4[PC], t3
     loadConstantOrVariable(t2, t1, t0)
     bineq t1, CellTag, .opToPrimitiveIsImm
-    bbneq JSCell::m_type[t0], StringType, .opToPrimitiveSlowCase
+    bbaeq JSCell::m_type[t0], ObjectType, .opToPrimitiveSlowCase
 .opToPrimitiveIsImm:
     storei t1, TagOffset[cfr, t3, 8]
     storei t0, PayloadOffset[cfr, t3, 8]

@@ -800,6 +800,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsNumber:
     case IsString:
     case IsObject:
+    case IsObjectOrNull:
     case IsFunction: {
         JSValue child = forNode(node->child1()).value();
         if (child) {
@@ -821,6 +822,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(isJSString(child)));
                 break;
             case IsObject:
+                setConstant(node, jsBoolean(child.isObject()));
+                break;
+            case IsObjectOrNull:
                 if (child.isNull() || !child.isObject()) {
                     setConstant(node, jsBoolean(child.isNull()));
                     break;
