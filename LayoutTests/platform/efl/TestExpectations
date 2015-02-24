@@ -459,6 +459,9 @@ Bug(EFL) editing/selection/move-by-word-visually-mac.html [ Failure ]
 webkit.org/b/141894 fast/attachment/attachment-disabled-rendering.html [ Failure ]
 webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
 
+# EFL port doesn't fully support EME yet.
+webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -571,6 +574,7 @@ webkit.org/b/135197 webgl/1.0.2/conformance/textures/texture-attachment-formats.
 
 webkit.org/b/135498 css3/device-adapt/opera/constrain-009.xhtml [ Crash Timeout ]
 webkit.org/b/135498 css3/device-adapt/opera/constrain-023.xhtml [ Crash Timeout ]
+webkit.org/b/135498 css3/device-adapt/viewport-width-not-affecting-next-page.html [ Failure ]
 
 # Started to timeout after bumping EFL to 1.9
 webkit.org/b/136099 fast/animation/request-animation-frame-during-modal.html [ Crash Timeout ]
@@ -1005,8 +1009,11 @@ webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Tim
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # EFL has accelerated compositing disabled
+webkit.org/b/79766 compositing/backing/replaced-child-no-backing.html [ Failure ]
+webkit.org/b/79766 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
+webkit.org/b/79766 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/preserve-3d-switching.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-to-zero.html [ Failure ]
@@ -1027,7 +1034,6 @@ webkit.org/b/79766 compositing/tiling/huge-layer-resize.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/huge-layer.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/79766 compositing/video/video-poster.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect [ Skip ]
@@ -2119,3 +2125,7 @@ webkit.org/b/141896 fast/borders/0px-borders.html [ ImageOnlyFailure ]
 webkit.org/b/141896 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/141896 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/141896 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
+
+# Need to investigate why these security tests have been failed since r144338.
+webkit.org/b/141958 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
+webkit.org/b/141958 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
