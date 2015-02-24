@@ -858,7 +858,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
                 if (image.get())
                     image->setSpaceSize(geometry.spaceSize());
-                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.phase()), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
             }
         }
     }
@@ -1056,13 +1056,6 @@ void BackgroundImageGeometry::clip(const LayoutRect& clipRect)
     m_destRect.intersect(clipRect);
 }
 
-LayoutSize BackgroundImageGeometry::relativePhase() const
-{
-    LayoutSize phase = m_phase;
-    phase += m_destRect.location() - m_destOrigin;
-    return phase;
-}
-
 bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 {
     if (!isRoot())
@@ -1095,7 +1088,6 @@ void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(Backgroun
     // FIXME: We need a better rounding strategy to round/space out tiles.
     geometry.setTileSize(LayoutSize(snapRectToDevicePixels(LayoutRect(geometry.destRect().location(), geometry.tileSize()), deviceScaleFactor).size()));
     geometry.setSpaceSize(LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), geometry.spaceSize()), deviceScaleFactor).size()));
-    geometry.setDestOrigin(LayoutPoint(roundPointToDevicePixels(geometry.destOrigin(), deviceScaleFactor)));
     geometry.setDestRect(LayoutRect(snapRectToDevicePixels(geometry.destRect(), deviceScaleFactor)));
     FloatSize pixelSnappedPhase = toFloatSize(roundPointToDevicePixels(toLayoutPoint(geometry.phase()), deviceScaleFactor));
     geometry.setPhase(LayoutSize(pixelSnappedPhase));
@@ -1246,8 +1238,6 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         geometry.useFixedAttachment(paintRect.location());
 
     geometry.clip(paintRect);
-    geometry.setDestOrigin(geometry.destRect().location());
-
     pixelSnapBackgroundImageGeometryForPainting(geometry);
     return geometry;
 }

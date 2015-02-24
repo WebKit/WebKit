@@ -1,5 +1,28 @@
 2015-02-24  Zalan Bujtas  <zalan@apple.com>
 
+        Remove unused BackgroundImageGeometry::m_destOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=141980
+
+        Reviewed by Simon Fraser.
+
+        Remove BackgroundImageGeometry::m_destOrigin and its dependencies.
+        They are not used at all.
+
+        No change in functionality.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::BackgroundImageGeometry::relativePhase): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::BackgroundImageGeometry::destOrigin): Deleted.
+        (WebCore::BackgroundImageGeometry::setDestOrigin): Deleted.
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawMaskForRenderer):
+
+2015-02-24  Zalan Bujtas  <zalan@apple.com>
+
         RenderBoxModelObject::calculateBackgroundImageGeometry should return BackgroundImageGeometry.
         https://bugs.webkit.org/show_bug.cgi?id=141979
 

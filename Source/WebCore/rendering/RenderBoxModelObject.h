@@ -71,14 +71,8 @@ public:
         : m_hasNonLocalGeometry(false)
     { }
 
-    LayoutPoint destOrigin() const { return m_destOrigin; }
-    void setDestOrigin(const LayoutPoint& destOrigin) { m_destOrigin = destOrigin; }
-    
     LayoutRect destRect() const { return m_destRect; }
     void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
-    
-    // Returns the phase relative to the destination rectangle.
-    LayoutSize relativePhase() const;
     
     LayoutSize phase() const { return m_phase; }
     void setPhase(const LayoutSize& phase) { m_phase = phase; }
@@ -103,7 +97,6 @@ public:
     
 private:
     LayoutRect m_destRect;
-    LayoutPoint m_destOrigin;
     LayoutSize m_phase;
     LayoutSize m_tileSize;
     LayoutSize m_space;

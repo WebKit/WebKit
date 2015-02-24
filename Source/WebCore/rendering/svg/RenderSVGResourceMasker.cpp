@@ -147,8 +147,8 @@ void RenderSVGResourceMasker::drawMaskForRenderer(RenderElement& renderer, const
 
     FloatRect oneTileRect;
     FloatSize actualTileSize(geometry.tileSize().width() + geometry.spaceSize().width(), geometry.tileSize().height() + geometry.spaceSize().height());
-    oneTileRect.setX(geometry.destRect().x() + fmodf(fmodf(-geometry.relativePhase().width(), actualTileSize.width()) - actualTileSize.width(), actualTileSize.width()));
-    oneTileRect.setY(geometry.destRect().y() + fmodf(fmodf(-geometry.relativePhase().height(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
+    oneTileRect.setX(geometry.destRect().x() + fmodf(fmodf(-geometry.phase().width(), actualTileSize.width()) - actualTileSize.width(), actualTileSize.width()));
+    oneTileRect.setY(geometry.destRect().y() + fmodf(fmodf(-geometry.phase().height(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
     oneTileRect.setSize(geometry.tileSize());
     
     FloatSize intrinsicTileSize = maskerData->maskImage->logicalSize();
