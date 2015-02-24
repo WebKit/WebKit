@@ -1,3 +1,10 @@
+2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Mark webgl tests to crash.
+        Skip khmer-lao-font.html because EFL port doesn't support it.
+
+        * platform/efl/TestExpectations:
+
 2015-02-23  Shivakumar JM  <shiva.jm@samsung.com>
 
         Default value of HTMLSelectElement size IDL attribute should be 0.
