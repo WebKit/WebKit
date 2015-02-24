@@ -1,3 +1,12 @@
+2015-02-24  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK+ Gardening 24th February
+        https://bugs.webkit.org/show_bug.cgi?id=141964
+
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution-expected.txt: Added. Rebaselined after r180107. (This revision updates expectations on mac platform but it doesn't do it in any other platform).
+
 2015-02-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL daily gardening 24th Feb.

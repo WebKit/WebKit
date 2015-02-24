@@ -595,6 +595,13 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
+webkit.org/b/141960 accessibility/roles-exposed.html [ Failure ]
+webkit.org/b/141961 fast/multicol/span/span-as-immediate-columns-child.html [ Failure ]
+webkit.org/b/141962 http/tests/notifications/legacy/notification-request-permission-then-navigate.html [ Failure ]
+webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
+
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -2261,7 +2268,6 @@ webkit.org/b/136159 fast/borders/border-painting-dotted-at-all.html [ ImageOnlyF
 webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
 
-webkit.org/b/136537 css3/flexbox/flex-rounding.html [ Failure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
 webkit.org/b/136672 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
@@ -2274,7 +2280,6 @@ webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
 webkit.org/b/138074 media/video-volume-slider-drag.html [ Failure ]
 
-webkit.org/b/138072 http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html [ Failure ]
 webkit.org/b/138073 http/tests/media/hls/hls-audio-tracks.html [ Failure ]
 
 # Font is clipped incorrectly
