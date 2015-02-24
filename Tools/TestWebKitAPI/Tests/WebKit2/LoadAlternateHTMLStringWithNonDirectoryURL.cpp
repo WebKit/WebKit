@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +45,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     didFinishLoad = true;
 }
 
-TEST(WebKit2, LoadAlternateHTMLStringWithNonDirectoryURL)
+static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
@@ -56,14 +57,27 @@ TEST(WebKit2, LoadAlternateHTMLStringWithNonDirectoryURL)
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> fileURL(AdoptWK, Util::createURLForResource("simple", "html"));
     WKRetainPtr<WKStringRef> alternateHTMLString(AdoptWK, WKStringCreateWithUTF8CString("<html><body><img src='icon.png'></body></html>"));
-    
-    // Call WKPageLoadAlternateHTMLString() with fileURL which does not point to a directory
-    WKPageLoadAlternateHTMLString(webView.page(), alternateHTMLString.get(), fileURL.get(), fileURL.get());
-    
+    WKPageLoadAlternateHTMLString(webView.page(), alternateHTMLString.get(), baseURL, unreachableURL);
+
     // If we can finish loading the html without resulting in an invalid message being sent from the WebProcess, this test passes.
     Util::run(&didFinishLoad);
+}
+
+TEST(WebKit2, LoadAlternateHTMLStringWithNonDirectoryURL)
+{
+    // Call WKPageLoadAlternateHTMLString() with fileURL which does not point to a directory.
+    WKRetainPtr<WKURLRef> fileURL(AdoptWK, Util::createURLForResource("simple", "html"));
+    loadAlternateHTMLString(fileURL.get(), fileURL.get());
+}
+
+TEST(WebKit2, LoadAlternateHTMLStringWithEmptyBaseURL)
+{
+    // Call WKPageLoadAlternateHTMLString() with empty baseURL to make sure this test works
+    // when baseURL does not grant read access to the unreachableURL. We use a separate test
+    // to ensure the previous test does not pollute the result.
+    WKRetainPtr<WKURLRef> unreachableURL(AdoptWK, Util::URLForNonExistentResource());
+    loadAlternateHTMLString(nullptr, unreachableURL.get());
 }
 
 } // namespace TestWebKitAPI
