@@ -1090,7 +1090,7 @@ nested_selector_list:
     ;
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
-lang_range: IDENT | STRING { $$.setTokenType(TokenType::AtomicStringToken); } ;
+lang_range: IDENT | STRING ;
 
 comma_separated_lang_ranges:
     lang_range %prec UNIMPORTANT_TOK {

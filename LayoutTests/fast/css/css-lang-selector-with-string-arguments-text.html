@@ -23,9 +23,32 @@ function parseThenSerializeRule(rule)
     return styleElement.sheet.cssRules[0].cssText;
 }
 
+function expectedSerializedSelector(selector)
+{
+    var args = /\(([^)]+)/.exec(selector);
+    if (!args[1])
+        return;
+
+    args = args[1].split(/\s*,\s*/);
+    var expected = ':lang(';
+    for (var i = 0; i < args.length; ++i) {
+        var arg = args[i];
+        var hasQuotes = arg.indexOf('"') == 0 && arg.lastIndexOf('"') == arg.length - 1;
+        if (!hasQuotes)
+            expected += '"';
+        expected += args[i];
+        if (!hasQuotes)
+            expected += '"';
+        if (i < args.length - 1)
+            expected += ', ';
+    }
+    expected += ')';
+    return expected;
+}
+
 function testSelectorRoundTrip(selector)
 {
-    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + selector + " { }'");
+    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + expectedSerializedSelector(selector) + " { }'");
 }
 
 testSelectorRoundTrip(':lang("a")');
@@ -40,9 +63,9 @@ testSelectorRoundTrip(':lang("")');
 
 debug('');
 
-shouldBe("parseThenSerializeRule(':lang(foo, \"bar\", baz) { }')", "':lang(foo, \"bar\", baz) { }'");
-shouldBe("parseThenSerializeRule(':lang(foo,      \"bar\"     , baz) { }')", "':lang(foo, \"bar\", baz) { }'");
-shouldBe("parseThenSerializeRule(':lang(    foo    ,     \"bar\"    ,     baz    ) { }')", "':lang(foo, \"bar\", baz) { }'");
+shouldBe("parseThenSerializeRule(':lang(foo, \"bar\", baz) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
+shouldBe("parseThenSerializeRule(':lang(foo,      \"bar\"     , baz) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
+shouldBe("parseThenSerializeRule(':lang(    foo    ,     \"bar\"    ,     baz    ) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

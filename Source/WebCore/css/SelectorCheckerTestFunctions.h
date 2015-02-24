@@ -162,7 +162,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<LanguageArgument>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<AtomicString>& argumentList)
 {
     ASSERT(element);
 
@@ -181,8 +181,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<L
     // as specified in www.ietf.org/rfc/rfc4647.txt.
     StringView languageStringView = language.string();
     unsigned languageLength = language.length();
-    for (const LanguageArgument& argument : argumentList) {
-        const AtomicString& range = argument.languageRange;
+    for (const AtomicString& range : argumentList) {
         if (range.isEmpty())
             continue;
 

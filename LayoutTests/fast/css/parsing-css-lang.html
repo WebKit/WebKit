@@ -18,7 +18,10 @@ function testValidLanguageRange(languageRangeString, expectedSerializedLanguageR
     shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
     if (!expectedSerializedLanguageRange)
         expectedSerializedLanguageRange = languageRangeString;
-    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ':lang(' + expectedSerializedLanguageRange.replace(/\\/g, '') + ')');
+    expectedSerializedLanguageRange = expectedSerializedLanguageRange.replace(/\\/g, '');
+    if (expectedSerializedLanguageRange.indexOf('"') != 0)
+        expectedSerializedLanguageRange = '"' + expectedSerializedLanguageRange + '"';
+    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ':lang(' + expectedSerializedLanguageRange + ')');
     styleContainer.innerHTML = '';
 }
 

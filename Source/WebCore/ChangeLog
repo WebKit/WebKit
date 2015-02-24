@@ -1,3 +1,35 @@
+2015-02-24  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Always serialize :lang()'s arguments to strings
+        https://bugs.webkit.org/show_bug.cgi?id=141944
+
+        Reviewed by Benjamin Poulain.
+
+        As specified in [1] :lang()'s arguments are always serialized to strings.
+
+        [1] http://dev.w3.org/csswg/cssom/#serializing-selectors
+
+        Related tests are updated.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setLangArgumentList):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserString::init):
+        (WebCore::CSSParserString::clear):
+        (WebCore::CSSParserString::tokenType): Deleted.
+        (WebCore::CSSParserString::setTokenType): Deleted.
+        * css/CSSSelector.cpp:
+        (WebCore::appendLangArgumentList):
+        (WebCore::CSSSelector::setLangArgumentList):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::langArgumentList):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+
 2015-02-24  Antti Koivisto  <antti@apple.com>
 
        Give TemporaryChange for m_inLoadPendingImages assertion a name so it actually does something.

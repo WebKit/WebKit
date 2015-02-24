@@ -266,14 +266,10 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
 void CSSParserSelector::setLangArgumentList(const Vector<CSSParserString>& stringVector)
 {
     ASSERT_WITH_MESSAGE(!stringVector.isEmpty(), "No CSS Selector takes an empty argument list.");
-    auto argumentList = std::make_unique<Vector<LanguageArgument>>();
+    auto argumentList = std::make_unique<Vector<AtomicString>>();
     argumentList->reserveInitialCapacity(stringVector.size());
-    for (const CSSParserString& string : stringVector) {
-        LanguageArgument languageArgument;
-        languageArgument.languageRange = string;
-        languageArgument.tokenType = string.tokenType();
+    for (const AtomicString& languageArgument : stringVector)
         argumentList->append(languageArgument);
-    }
     m_selector->setLangArgumentList(WTF::move(argumentList));
 }
 #endif
