@@ -1,3 +1,37 @@
+2015-02-24  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Reading ReadableStream ready and closed attributes should not always create a new promise
+        https://bugs.webkit.org/show_bug.cgi?id=141650
+
+        Reviewed by Benjamin Poulain.
+
+        The JSPromiseDeferred objects returned by JSReadableStream::ready and JSReadableStream::closed should be stored somewhere.
+        This patch stores them as private slots in JSReadableStream.
+        This is close to the description in https://streams.spec.whatwg.org/#rs-internal-slots.
+
+        An alternative would be to have these objects as JSReadableStream class members, thus modifying the binding generator.
+        That may be the cleanest solution, especially if other APIs express the same need.
+        Another alternative is to store DeferredWrapper in ReadableStream objects.
+        But it is currently preferred to keep DeferredWrapper in bindings/js code.
+
+        Added new constructor for DeferredWrapper to use these stored values.
+        Updated ready and closed methods to use that new constructor.
+        Changes are covered by new test in streams/readablestream-constructor.html.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredWrapper::DeferredWrapper):
+        * bindings/js/JSDOMPromise.h:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::closedPromiseSlotName):
+        (WebCore::getOrCreatePromiseDeferredFromObject):
+        (WebCore::readyPromiseSlotName):
+        (WebCore::JSReadableStream::ready):
+        (WebCore::JSReadableStream::closed):
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::setInternalSlotToObject):
+        (WebCore::getInternalSlotFromObject):
+        * bindings/js/ReadableStreamJSSource.h:
+
 2015-02-24  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Always serialize :lang()'s arguments to strings

@@ -39,6 +39,7 @@ namespace WebCore {
 class DeferredWrapper {
 public:
     DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*);
+    DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*, JSC::JSPromiseDeferred*);
 
     template<class ResolveResultType>
     void resolve(const ResolveResultType&);

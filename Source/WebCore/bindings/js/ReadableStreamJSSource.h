@@ -36,6 +36,7 @@
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSCJSValue.h>
+#include <runtime/PrivateName.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -60,6 +61,9 @@ private:
     // m_error may be an error generated from ReadableStreamJSSource or from JS callbacks.
     JSC::Strong<JSC::Unknown> m_error;
 };
+
+void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);
+JSC::JSValue getInternalSlotFromObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&);
 
 } // namespace WebCore
 

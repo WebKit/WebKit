@@ -38,6 +38,12 @@ DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObjec
 {
 }
 
+DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, JSPromiseDeferred* promiseDeferred)
+    : m_globalObject(exec->vm(), globalObject)
+    , m_deferred(exec->vm(), promiseDeferred)
+{
+}
+
 JSObject* DeferredWrapper::promise() const
 {
     return m_deferred->promise();

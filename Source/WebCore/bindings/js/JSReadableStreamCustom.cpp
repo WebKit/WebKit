@@ -36,6 +36,7 @@
 #include "JSDOMPromise.h"
 #include "ReadableStream.h"
 #include "ReadableStreamJSSource.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 
@@ -47,9 +48,28 @@ JSValue JSReadableStream::read(ExecState* exec)
     return exec->vm().throwException(exec, error);
 }
 
+static JSPromiseDeferred* getOrCreatePromiseDeferredFromObject(ExecState* exec, JSValue thisObject, JSGlobalObject* globalObject, PrivateName &name)
+{
+    JSValue slot = getInternalSlotFromObject(exec, thisObject, name);
+    JSPromiseDeferred* promiseDeferred = slot ? jsDynamicCast<JSPromiseDeferred*>(slot) : nullptr;
+
+    if (!promiseDeferred) {
+        promiseDeferred = JSPromiseDeferred::create(exec, globalObject);
+        setInternalSlotToObject(exec, thisObject, name, promiseDeferred);
+    }
+    return promiseDeferred;
+}
+
+static JSC::PrivateName& readyPromiseSlotName()
+{
+    static NeverDestroyed<JSC::PrivateName> readyPromiseSlotName("readyPromise");
+    return readyPromiseSlotName;
+}
+
 JSValue JSReadableStream::ready(ExecState* exec) const
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), readyPromiseSlotName());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](RefPtr<ReadableStream> stream) mutable {
         wrapper.resolve(stream.get());
     };
@@ -58,9 +78,16 @@ JSValue JSReadableStream::ready(ExecState* exec) const
     return wrapper.promise();
 }
 
+static JSC::PrivateName& closedPromiseSlotName()
+{
+    static NeverDestroyed<JSC::PrivateName> closedPromiseSlotName("closedPromise");
+    return closedPromiseSlotName;
+}
+
 JSValue JSReadableStream::closed(ExecState* exec) const
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](RefPtr<ReadableStream> stream) mutable {
         wrapper.resolve(stream.get());
     };

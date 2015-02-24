@@ -1,3 +1,13 @@
+2015-02-24  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Reading ReadableStream ready and closed attributes should not always create a new promise
+        https://bugs.webkit.org/show_bug.cgi?id=141650
+
+        Reviewed by Benjamin Poulain.
+
+        * streams/readablestream-constructor-expected.txt:
+        * streams/readablestream-constructor.html: Added test to ensure ready and closed always return the same promise object.
+
 2015-02-24  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Always serialize :lang()'s arguments to strings

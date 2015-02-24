@@ -58,4 +58,17 @@ test(function() {
     assert_equals(typeof rs.closed.then, 'function', 'closed property is thenable');
 }, 'ReadableStream instances have the correct methods and properties');
 
+test(function() {
+    rs = new ReadableStream();
+    readyPromise = rs.ready;
+    closedPromise = rs.closed;
+
+    assert_equals(readyPromise, rs.ready);
+    assert_equals(closedPromise, rs.closed);
+
+    // We check ReadableStream properties here as ready and closed promises are persistent and need to be stored in some way that is not observable.
+    assert_array_equals(Object.keys(rs), ['closed', 'ready']);
+    assert_array_equals(Object.getOwnPropertyNames(rs), ['closed', 'ready']);
+}, 'ReadableStream ready and closed should always return the same promise object');
+
 </script>

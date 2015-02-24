@@ -32,13 +32,34 @@
 #if ENABLE(STREAMS_API)
 #include "ReadableStreamJSSource.h"
 
+#include "JSDOMPromise.h"
 #include "JSReadableStream.h"
 #include <runtime/Error.h>
 #include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSString.h>
+#include <runtime/StructureInlines.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+void setInternalSlotToObject(ExecState* exec, JSValue objectValue, PrivateName& name, JSValue value)
+{
+    JSObject* object = objectValue.toObject(exec);
+    PutPropertySlot propertySlot(objectValue);
+    object->put(object, exec, Identifier::from(name), value, propertySlot);
+}
+
+JSValue getInternalSlotFromObject(ExecState* exec, JSValue objectValue, PrivateName& name)
+{
+    JSObject* object = objectValue.toObject(exec);
+    PropertySlot propertySlot(objectValue);
+
+    PropertyName propertyName = Identifier::from(name);
+    if (!object->getOwnPropertySlot(object, exec, propertyName, propertySlot))
+        return JSValue();
+    return propertySlot.getValue(exec, propertyName);
+}
 
 Ref<ReadableStreamJSSource> ReadableStreamJSSource::create(JSC::ExecState* exec)
 {
