@@ -1,3 +1,17 @@
+2015-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening: Clean up some failing WK2 tests
+
+        * platform/ios-simulator/TestExpectations:
+        - svg/as-image/svg-image-with-data-uri-from-canvas.html: Mark as
+          ImageOnlyFailure since it has the same difference of 0.02% on
+          every run.
+
+        * platform/ios-simulator/fast/attachment/attachment-disabled-rendering-expected.txt: Add.
+        * platform/ios-simulator/fast/attachment/attachment-rendering-expected.txt: Add.
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Update.
+        - Add or update platform-specific results.
+
 2015-02-24  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK+ Gardening 24th February
