@@ -29,6 +29,7 @@
 #include "AsyncTask.h"
 #include "FixedVector.h"
 #include "LargeChunk.h"
+#include "LargeObject.h"
 #include "MediumChunk.h"
 #include "Range.h"
 #include "SegregatedFreeList.h"
@@ -51,19 +52,19 @@ public:
 
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
-    Range allocateLargeRange(size_t);
-    Range allocateLargeRange(size_t alignment, size_t, size_t unalignedSize);
+    LargeObject allocateLargeRange(size_t);
+    LargeObject allocateLargeRange(size_t alignment, size_t, size_t unalignedSize);
 
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<StaticMutex>&, MediumPage*);
-    void deallocateLargeRange(std::unique_lock<StaticMutex>&, Range);
+    void deallocateLargeRange(std::unique_lock<StaticMutex>&, LargeObject&);
 
 private:
     void grow();
 
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
-    SegregatedFreeList m_largeRanges;
+    SegregatedFreeList m_largeObjects;
 #if BOS(DARWIN)
     Zone m_zone;
 #endif
@@ -85,26 +86,26 @@ inline MediumPage* VMHeap::allocateMediumPage()
     return m_mediumPages.pop();
 }
 
-inline Range VMHeap::allocateLargeRange(size_t size)
+inline LargeObject VMHeap::allocateLargeRange(size_t size)
 {
-    Range range = m_largeRanges.take(size);
-    if (!range) {
+    LargeObject largeObject = m_largeObjects.take(size);
+    if (!largeObject) {
         grow();
-        range = m_largeRanges.take(size);
-        BASSERT(range);
+        largeObject = m_largeObjects.take(size);
+        BASSERT(largeObject);
     }
-    return range;
+    return largeObject;
 }
 
-inline Range VMHeap::allocateLargeRange(size_t alignment, size_t size, size_t unalignedSize)
+inline LargeObject VMHeap::allocateLargeRange(size_t alignment, size_t size, size_t unalignedSize)
 {
-    Range range = m_largeRanges.take(alignment, size, unalignedSize);
-    if (!range) {
+    LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize);
+    if (!largeObject) {
         grow();
-        range = m_largeRanges.take(alignment, size, unalignedSize);
-        BASSERT(range);
+        largeObject = m_largeObjects.take(alignment, size, unalignedSize);
+        BASSERT(largeObject);
     }
-    return range;
+    return largeObject;
 }
 
 inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, SmallPage* page)
@@ -125,27 +126,20 @@ inline void VMHeap::deallocateMediumPage(std::unique_lock<StaticMutex>& lock, Me
     m_mediumPages.push(page);
 }
 
-inline void VMHeap::deallocateLargeRange(std::unique_lock<StaticMutex>& lock, Range range)
+inline void VMHeap::deallocateLargeRange(std::unique_lock<StaticMutex>& lock, LargeObject& largeObject)
 {
-    BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-    EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
-    
     // Temporarily mark this range as allocated to prevent clients from merging
     // with it and then reallocating it while we're messing with its physical pages.
-    beginTag->setFree(false);
-    endTag->setFree(false);
+    largeObject.setFree(false);
 
     lock.unlock();
-    vmDeallocatePhysicalPagesSloppy(range.begin(), range.size());
+    vmDeallocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
     lock.lock();
 
-    beginTag->setFree(true);
-    endTag->setFree(true);
+    largeObject.setFree(true);
+    largeObject.setHasPhysicalPages(false);
 
-    beginTag->setHasPhysicalPages(false);
-    endTag->setHasPhysicalPages(false);
-
-    m_largeRanges.insert(range);
+    m_largeObjects.insert(largeObject);
 }
 
 } // namespace bmalloc

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "Deallocator.h"
 #include "Heap.h"
 #include "LargeChunk.h"
+#include "LargeObject.h"
 #include "PerProcess.h"
 #include "Sizes.h"
 #include <algorithm>
@@ -116,8 +117,8 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case Large: {
-        BeginTag* beginTag = LargeChunk::beginTag(object);
-        oldSize = beginTag->size();
+        LargeObject largeObject(object);
+        oldSize = largeObject.size();
         break;
     }
     case XLarge: {

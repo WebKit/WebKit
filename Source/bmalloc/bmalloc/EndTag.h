@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +32,19 @@ namespace bmalloc {
 
 class EndTag : public BoundaryTag {
 public:
-    EndTag& operator=(const BeginTag&);
+    void init(BeginTag*);
 };
 
-inline EndTag& EndTag::operator=(const BeginTag& other)
+inline void EndTag::init(BeginTag* other)
 {
-    std::memcpy(this, &other, sizeof(BoundaryTag));
+    // To save space, an object can have only one tag, representing both
+    // its begin and its end. In that case, we must avoid initializing the
+    // end tag, since there is no end tag.
+    if (static_cast<BoundaryTag*>(this) == static_cast<BoundaryTag*>(other))
+        return;
+
+    std::memcpy(this, other, sizeof(BoundaryTag));
     setEnd(true);
-    return *this;
 }
 
 } // namespace bmalloc

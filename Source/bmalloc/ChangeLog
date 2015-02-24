@@ -1,3 +1,98 @@
+2015-02-24  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Added a little more abstraction for large objects
+        https://bugs.webkit.org/show_bug.cgi?id=141978
+
+        Reviewed by Sam Weinig.
+
+        Previously, each client needed to manage the boundary tags of
+        a large object using free functions. This patch introduces a LargeObject
+        class that does things a little more automatically.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Use the new LargeObject class.
+
+        * bmalloc/BeginTag.h:
+        (bmalloc::BeginTag::isInFreeList): Deleted. Moved this logic into the
+        LargeObject class.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::isSentinel):
+        (bmalloc::BoundaryTag::compactBegin):
+        (bmalloc::BoundaryTag::setRange):
+        (bmalloc::BoundaryTag::initSentinel): Added an explicit API for sentinels,
+        which we used to create and test for implicitly.
+
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::BoundaryTag::init):
+        (bmalloc::validate): Deleted.
+        (bmalloc::validatePrev): Deleted.
+        (bmalloc::validateNext): Deleted.
+        (bmalloc::BoundaryTag::mergeLeft): Deleted.
+        (bmalloc::BoundaryTag::mergeRight): Deleted.
+        (bmalloc::BoundaryTag::merge): Deleted.
+        (bmalloc::BoundaryTag::deallocate): Deleted.
+        (bmalloc::BoundaryTag::split): Deleted.
+        (bmalloc::BoundaryTag::allocate): Deleted. Moved this logic into the
+        LargeObject class.
+
+        * bmalloc/EndTag.h:
+        (bmalloc::EndTag::init):
+        (bmalloc::EndTag::operator=): Deleted. Re-reading this code, I found
+        special behavior in the assignment operator to be a surprising API.
+        So, I replaced the assignment operation with an explicit initializing
+        function.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavengeLargeRanges):
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::findXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h: No behavior changes here -- just adopting the
+        LargeObject interface.
+
+        * bmalloc/LargeObject.h: Added.
+        (bmalloc::LargeObject::operator!):
+        (bmalloc::LargeObject::begin):
+        (bmalloc::LargeObject::size):
+        (bmalloc::LargeObject::range):
+        (bmalloc::LargeObject::LargeObject):
+        (bmalloc::LargeObject::setFree):
+        (bmalloc::LargeObject::isFree):
+        (bmalloc::LargeObject::hasPhysicalPages):
+        (bmalloc::LargeObject::setHasPhysicalPages):
+        (bmalloc::LargeObject::isValidAndFree):
+        (bmalloc::LargeObject::merge):
+        (bmalloc::LargeObject::split):
+        (bmalloc::LargeObject::validateSelf):
+        (bmalloc::LargeObject::validate): Moved this code into a class, out of
+        BoundaryTag free functions.
+
+        New to the class are these features:
+
+            (1) Every reference to an object is validated upon creation and use.
+
+            (2) There's an explicit API for "This is a reference to an object
+            that might be stale (the DoNotValidate API)".
+
+            (3) The begin and end tags are kept in sync automatically.
+
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h: Adopt the LargeObject interface.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeRange):
+        (bmalloc::VMHeap::deallocateLargeRange): Adopt the LargeObject interface.
+
 2015-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc should implement malloc introspection (to stop false-positive leaks when MallocStackLogging is off)

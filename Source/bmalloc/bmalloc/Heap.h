@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,9 +81,8 @@ private:
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
-    void* allocateLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
-    void allocateLarge(std::lock_guard<StaticMutex>&, const Range&, size_t, Range& leftover);
-    Range allocateLargeChunk();
+    void* allocateLarge(std::lock_guard<StaticMutex>&, LargeObject&, size_t);
+    void deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject&);
 
     void splitLarge(BeginTag*, size_t, EndTag*&, Range&);
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
@@ -104,8 +103,8 @@ private:
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
 
-    SegregatedFreeList m_largeRanges;
-    Vector<Range> m_xLargeRanges;
+    SegregatedFreeList m_largeObjects;
+    Vector<Range> m_xLargeObjects;
 
     bool m_isAllocatingPages;
 
