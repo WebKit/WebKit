@@ -182,9 +182,6 @@ TEST(WTF_WeakPtr, Forget)
     EXPECT_EQ(weakPtr7.get(), &dummy2);
     weakPtr7 = nullptr;
     EXPECT_NULL(weakPtr7.get());
-
-    int doNotCopyMe = 152;
-    weakPtr7 = &doNotCopyMe;
 }
     
 } // namespace TestWebKitAPI
