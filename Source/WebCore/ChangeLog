@@ -1,5 +1,46 @@
 2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Remove unnecessary PlatformTimeRanges::create()
+        https://bugs.webkit.org/show_bug.cgi?id=141901
+
+        Reviewed by Filip Pizlo.
+
+        PlatformTimeRanges::create() functions have just created an instance of PlatformTimeRanges.
+        This functionality can be replaced with std::make_unique<> use directly.
+
+        No new tests, no behavior changes.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::buffered):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::bufferedAccountingForEndOfStream):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::buffered):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekable):
+        * platform/graphics/PlatformTimeRanges.cpp:
+        (WebCore::PlatformTimeRanges::create): Deleted.
+        * platform/graphics/PlatformTimeRanges.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::buffered):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::buffered):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::buffered):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::buffered):
+
+2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Partial clean up OwnPtr and PassOwnPtr in WebCore/platform
         https://bugs.webkit.org/show_bug.cgi?id=141888
 

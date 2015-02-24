@@ -675,7 +675,7 @@ static bool timeRangeIsValidAndNotEmpty(CMTime start, CMTime duration)
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges() const
 {
-    auto timeRanges = PlatformTimeRanges::create();
+    auto timeRanges = std::make_unique<PlatformTimeRanges>();
 
     if (!avPlayerItem(m_avfWrapper))
         return timeRanges;

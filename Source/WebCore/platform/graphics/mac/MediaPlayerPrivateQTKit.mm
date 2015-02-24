@@ -814,7 +814,7 @@ void MediaPlayerPrivateQTKit::setPreservesPitch(bool preservesPitch)
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateQTKit::buffered() const
 {
-    auto timeRanges = PlatformTimeRanges::create();
+    auto timeRanges = std::make_unique<PlatformTimeRanges>();
     MediaTime loaded = maxMediaTimeLoaded();
     if (loaded > MediaTime::zeroTime())
         timeRanges->add(MediaTime::zeroTime(), loaded);

@@ -174,7 +174,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaFoundation::readyState() const
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaFoundation::buffered() const
 { 
     notImplemented();
-    return PlatformTimeRanges::create();
+    return Pstd::make_unique<PlatformTimeRanges>();
 }
 
 bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const

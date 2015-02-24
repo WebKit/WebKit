@@ -385,7 +385,7 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundation::buffered() c
     if (!m_cachedLoadedTimeRanges)
         m_cachedLoadedTimeRanges = platformBufferedTimeRanges();
 
-    return PlatformTimeRanges::create(*m_cachedLoadedTimeRanges);
+    return std::make_unique<PlatformTimeRanges>(*m_cachedLoadedTimeRanges);
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const

@@ -1889,7 +1889,7 @@ void SourceBuffer::monitorBufferingRate()
 std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStream() const
 {
     // FIXME: Revisit this method once the spec bug <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26436> is resolved.
-    std::unique_ptr<PlatformTimeRanges> virtualRanges = PlatformTimeRanges::create(m_buffered->ranges());
+    auto virtualRanges = std::make_unique<PlatformTimeRanges>(m_buffered->ranges());
     if (m_source->isEnded()) {
         MediaTime start = virtualRanges->maximumBufferedTime();
         MediaTime end = m_source->duration();

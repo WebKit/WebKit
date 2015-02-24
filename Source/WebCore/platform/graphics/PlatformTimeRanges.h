@@ -40,10 +40,6 @@ namespace WebCore {
 
 class PlatformTimeRanges {
 public:
-    static std::unique_ptr<PlatformTimeRanges> create();
-    static std::unique_ptr<PlatformTimeRanges> create(const MediaTime& start, const MediaTime& end);
-    static std::unique_ptr<PlatformTimeRanges> create(const PlatformTimeRanges&);
-
     explicit PlatformTimeRanges() { }
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
     PlatformTimeRanges(const PlatformTimeRanges&);

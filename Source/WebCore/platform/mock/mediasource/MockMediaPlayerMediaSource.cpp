@@ -167,7 +167,7 @@ std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
     if (m_mediaSourcePrivate)
         return m_mediaSourcePrivate->buffered();
 
-    return PlatformTimeRanges::create();
+    return std::make_unique<PlatformTimeRanges>();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const

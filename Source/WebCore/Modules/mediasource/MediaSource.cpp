@@ -147,7 +147,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
     if (activeRanges.isEmpty())
-        return PlatformTimeRanges::create();
+        return std::make_unique<PlatformTimeRanges>();
 
     // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
     // 3. Let highest end time be the largest range end time in the active ranges.
@@ -160,7 +160,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 
     // Return an empty range if all ranges are empty.
     if (!highestEndTime)
-        return PlatformTimeRanges::create();
+        return std::make_unique<PlatformTimeRanges>();
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
     PlatformTimeRanges intersectionRanges(MediaTime::zeroTime(), highestEndTime);
@@ -178,7 +178,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
         intersectionRanges.intersectWith(sourceRanges);
     }
 
-    return PlatformTimeRanges::create(intersectionRanges);
+    return std::make_unique<PlatformTimeRanges>(intersectionRanges);
 }
 
 void MediaSource::seekToTime(const MediaTime& time)

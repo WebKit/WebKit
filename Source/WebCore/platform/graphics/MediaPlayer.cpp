@@ -124,7 +124,7 @@ public:
 
     virtual double maxTimeSeekableDouble() const { return 0; }
     virtual double minTimeSeekable() const { return 0; }
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const { return PlatformTimeRanges::create(); }
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const { return std::make_unique<PlatformTimeRanges>(); }
 
     virtual unsigned long long totalBytes() const { return 0; }
     virtual bool didLoadingProgress() const { return false; }

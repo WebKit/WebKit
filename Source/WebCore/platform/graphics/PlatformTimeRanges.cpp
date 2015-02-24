@@ -30,21 +30,6 @@
 #include <wtf/PrintStream.h>
 
 namespace WebCore {
-
-std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create()
-{
-    return std::make_unique<PlatformTimeRanges>();
-}
-
-std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create(const MediaTime& start, const MediaTime& end)
-{
-    return std::make_unique<PlatformTimeRanges>(start, end);
-}
-
-std::unique_ptr<PlatformTimeRanges> PlatformTimeRanges::create(const PlatformTimeRanges& other)
-{
-    return std::make_unique<PlatformTimeRanges>(other);
-}
     
 PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& end)
 {

@@ -1338,7 +1338,7 @@ double MediaPlayerPrivateAVFoundationObjC::rate() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
-    auto timeRanges = PlatformTimeRanges::create();
+    auto timeRanges = std::make_unique<PlatformTimeRanges>();
 
     if (!m_avPlayerItem)
         return timeRanges;
