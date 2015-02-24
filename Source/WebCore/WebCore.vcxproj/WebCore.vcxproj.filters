@@ -384,6 +384,9 @@
     <ClCompile Include="..\Modules\geolocation\Geolocation.cpp">
       <Filter>Modules\geolocation</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\geolocation\GeoNotifier.cpp">
+      <Filter>Modules\geolocation</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\geolocation\GeolocationController.cpp">
       <Filter>Modules\geolocation</Filter>
     </ClCompile>

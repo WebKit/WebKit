@@ -30,18 +30,18 @@
 
 #if ENABLE(GEOLOCATION)
 
+#include "Coordinates.h"
 #include "Document.h"
 #include "Frame.h"
-#include "Geoposition.h"
-#include "Page.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/Ref.h>
-
-#include "Coordinates.h"
+#include "GeoNotifier.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
+#include "Geoposition.h"
+#include "Page.h"
 #include "PositionError.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -75,105 +75,6 @@ static PassRefPtr<PositionError> createPositionError(GeolocationError* error)
     return PositionError::create(code, error->message());
 }
 
-Geolocation::GeoNotifier::GeoNotifier(Geolocation* geolocation, PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
-    : m_geolocation(geolocation)
-    , m_successCallback(successCallback)
-    , m_errorCallback(errorCallback)
-    , m_options(options)
-    , m_timer(*this, &Geolocation::GeoNotifier::timerFired)
-    , m_useCachedPosition(false)
-{
-    ASSERT(m_geolocation);
-    ASSERT(m_successCallback);
-    // If no options were supplied from JS, we should have created a default set
-    // of options in JSGeolocationCustom.cpp.
-    ASSERT(m_options);
-}
-
-void Geolocation::GeoNotifier::setFatalError(PassRefPtr<PositionError> error)
-{
-    // If a fatal error has already been set, stick with it. This makes sure that
-    // when permission is denied, this is the error reported, as required by the
-    // spec.
-    if (m_fatalError)
-        return;
-
-    m_fatalError = error;
-    // An existing timer may not have a zero timeout.
-    m_timer.stop();
-    m_timer.startOneShot(0);
-}
-
-void Geolocation::GeoNotifier::setUseCachedPosition()
-{
-    m_useCachedPosition = true;
-    m_timer.startOneShot(0);
-}
-
-bool Geolocation::GeoNotifier::hasZeroTimeout() const
-{
-    return m_options->hasTimeout() && m_options->timeout() == 0;
-}
-
-void Geolocation::GeoNotifier::runSuccessCallback(Geoposition* position)
-{
-    // If we are here and the Geolocation permission is not approved, something has
-    // gone horribly wrong.
-    if (!m_geolocation->isAllowed())
-        CRASH();
-
-    m_successCallback->handleEvent(position);
-}
-
-void Geolocation::GeoNotifier::runErrorCallback(PositionError* error)
-{
-    if (m_errorCallback)
-        m_errorCallback->handleEvent(error);
-}
-
-void Geolocation::GeoNotifier::startTimerIfNeeded()
-{
-    if (m_options->hasTimeout())
-        m_timer.startOneShot(m_options->timeout() / 1000.0);
-}
-
-void Geolocation::GeoNotifier::stopTimer()
-{
-    m_timer.stop();
-}
-
-void Geolocation::GeoNotifier::timerFired()
-{
-    m_timer.stop();
-
-    // Protect this GeoNotifier object, since it
-    // could be deleted by a call to clearWatch in a callback.
-    Ref<GeoNotifier> protect(*this);
-
-    // Test for fatal error first. This is required for the case where the Frame is
-    // disconnected and requests are cancelled.
-    if (m_fatalError) {
-        runErrorCallback(m_fatalError.get());
-        // This will cause this notifier to be deleted.
-        m_geolocation->fatalErrorOccurred(this);
-        return;
-    }
-
-    if (m_useCachedPosition) {
-        // Clear the cached position flag in case this is a watch request, which
-        // will continue to run.
-        m_useCachedPosition = false;
-        m_geolocation->requestUsesCachedPosition(this);
-        return;
-    }
-
-    if (m_errorCallback) {
-        RefPtr<PositionError> error = PositionError::create(PositionError::TIMEOUT, ASCIILiteral("Timeout expired"));
-        m_errorCallback->handleEvent(error.get());
-    }
-    m_geolocation->requestTimedOut(this);
-}
-
 bool Geolocation::Watchers::add(int id, PassRefPtr<GeoNotifier> prpNotifier)
 {
     ASSERT(id > 0);
@@ -185,7 +86,7 @@ bool Geolocation::Watchers::add(int id, PassRefPtr<GeoNotifier> prpNotifier)
     return true;
 }
 
-Geolocation::GeoNotifier* Geolocation::Watchers::find(int id)
+GeoNotifier* Geolocation::Watchers::find(int id)
 {
     ASSERT(id > 0);
     return m_idToNotifierMap.get(id);
@@ -408,7 +309,7 @@ void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallbac
     if (!frame())
         return;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, successCallback, errorCallback, options);
     startRequest(notifier.get());
 
     m_oneShots.add(notifier);
@@ -419,7 +320,7 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     if (!frame())
         return 0;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, successCallback, errorCallback, options);
     startRequest(notifier.get());
 
     int watchID;
@@ -450,7 +351,7 @@ void Geolocation::startRequest(GeoNotifier *notifier)
         notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(failedToStartServiceErrorMessage)));
 }
 
-void Geolocation::fatalErrorOccurred(Geolocation::GeoNotifier* notifier)
+void Geolocation::fatalErrorOccurred(GeoNotifier* notifier)
 {
     // This request has failed fatally. Remove it from our lists.
     m_oneShots.remove(notifier);

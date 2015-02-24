@@ -805,6 +805,7 @@ set(WebCore_SOURCES
     Modules/gamepad/deprecated/NavigatorGamepad.cpp
 
     Modules/geolocation/Coordinates.cpp
+    Modules/geolocation/GeoNotifier.cpp
     Modules/geolocation/Geolocation.cpp
     Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp

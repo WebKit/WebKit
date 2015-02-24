@@ -1,3 +1,13 @@
+2015-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Move GeoNotifier class to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=141918
+
+        Reviewed by Andreas Kling.
+
+        Move GeoNotifier class to its own file to make Geolocation class less
+        crowded.
+
 2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unnecessary PlatformTimeRanges::create()

@@ -42,6 +42,7 @@ namespace WebCore {
 
 class Document;
 class Frame;
+class GeoNotifier;
 class GeolocationController;
 class GeolocationError;
 class GeolocationPosition;
@@ -50,6 +51,8 @@ class ScriptExecutionContext;
 
 class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
 {
+friend class GeoNotifier;
+
 public:
     static Ref<Geolocation> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~Geolocation();
@@ -82,36 +85,6 @@ private:
     bool isDenied() const { return m_allowGeolocation == No; }
 
     Page* page() const;
-
-    class GeoNotifier : public RefCounted<GeoNotifier> {
-    public:
-        static Ref<GeoNotifier> create(Geolocation* geolocation, PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(*new GeoNotifier(geolocation, positionCallback, positionErrorCallback, options)); }
-
-        PositionOptions* options() const { return m_options.get(); };
-        void setFatalError(PassRefPtr<PositionError>);
-
-        bool useCachedPosition() const { return m_useCachedPosition; }
-        void setUseCachedPosition();
-
-        void runSuccessCallback(Geoposition*);
-        void runErrorCallback(PositionError*);
-
-        void startTimerIfNeeded();
-        void stopTimer();
-        void timerFired();
-        bool hasZeroTimeout() const;
-
-    private:
-        GeoNotifier(Geolocation*, PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
-
-        RefPtr<Geolocation> m_geolocation;
-        RefPtr<PositionCallback> m_successCallback;
-        RefPtr<PositionErrorCallback> m_errorCallback;
-        RefPtr<PositionOptions> m_options;
-        Timer m_timer;
-        RefPtr<PositionError> m_fatalError;
-        bool m_useCachedPosition;
-    };
 
     typedef Vector<RefPtr<GeoNotifier>> GeoNotifierVector;
     typedef HashSet<RefPtr<GeoNotifier>> GeoNotifierSet;

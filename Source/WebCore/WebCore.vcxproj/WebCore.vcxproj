@@ -6805,6 +6805,7 @@
     <ClCompile Include="..\Modules\gamepad\GamepadEvent.cpp" />
     <ClCompile Include="..\Modules\gamepad\NavigatorGamepad.cpp" />
     <ClCompile Include="..\Modules\geolocation\Coordinates.cpp" />
+    <ClCompile Include="..\Modules\geolocation\GeoNotifier.cpp" />
     <ClCompile Include="..\Modules\geolocation\Geolocation.cpp" />
     <ClCompile Include="..\Modules\geolocation\GeolocationController.cpp" />
     <ClCompile Include="..\Modules\geolocation\NavigatorGeolocation.cpp" />
