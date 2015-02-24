@@ -35,7 +35,6 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/gobject/GMutexLocker.h>
 #include <wtf/gobject/GThreadSafeMainLoopSource.h>
 

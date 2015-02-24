@@ -228,7 +228,7 @@ private:
     URL m_url;
     bool m_preservesPitch;
 #if ENABLE(WEB_AUDIO)
-    OwnPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
+    std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;

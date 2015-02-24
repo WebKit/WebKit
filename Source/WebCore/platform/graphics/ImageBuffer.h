@@ -37,7 +37,6 @@
 #include "PlatformLayer.h"
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 

@@ -213,7 +213,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_totalBytes(0)
     , m_preservesPitch(false)
 #if ENABLE(WEB_AUDIO)
-    , m_audioSourceProvider(AudioSourceProviderGStreamer::create())
+    , m_audioSourceProvider(std::make_unique<AudioSourceProviderGStreamer>())
 #endif
     , m_requestedState(GST_STATE_VOID_PENDING)
     , m_missingPlugins(false)
@@ -268,10 +268,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
         g_signal_handlers_disconnect_by_func(videoSinkPad.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
     }
-
-#if ENABLE(WEB_AUDIO)
-    m_audioSourceProvider.release();
-#endif
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)

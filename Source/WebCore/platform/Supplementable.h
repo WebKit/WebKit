@@ -29,7 +29,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
-#include <wtf/OwnPtr.h>
 
 #if !ASSERT_DISABLED
 #include <wtf/Threading.h>

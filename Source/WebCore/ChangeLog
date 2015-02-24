@@ -1,3 +1,28 @@
+2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Partial clean up OwnPtr and PassOwnPtr in WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=141888
+
+        Reviewed by Filip Pizlo.
+
+        Use std::unique_ptr<> and std::make_unique<>. Besides this patch removes
+        unnecessary OwnPtr.h|PasSOwnPtr.h includes.
+
+        No new tests, no behavior changes.
+
+        * platform/SharedBuffer.h:
+        * platform/Supplementable.h:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        (WebCore::AudioSourceProviderGStreamer::create): Deleted.
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/TiledBackingStoreBackend.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        * platform/gtk/GamepadsGtk.cpp:
+
 2015-02-23  Shivakumar JM  <shiva.jm@samsung.com>
 
         Default value of HTMLSelectElement size IDL attribute should be 0.

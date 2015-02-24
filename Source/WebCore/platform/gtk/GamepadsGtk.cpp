@@ -34,7 +34,6 @@
 #include <gio/gunixinputstream.h>
 #include <gudev/gudev.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -105,7 +104,7 @@ private:
     static void onUEventCallback(GUdevClient*, gchar* action, GUdevDevice*, gpointer data);
     static gboolean isGamepadDevice(GUdevDevice*);
 
-    Vector<OwnPtr<GamepadDeviceGtk> > m_slots;
+    Vector<std::unique_ptr<GamepadDeviceGtk> > m_slots;
     HashMap<String, GamepadDeviceGtk*> m_deviceMap;
 
     GRefPtr<GUdevClient> m_gudevClient;

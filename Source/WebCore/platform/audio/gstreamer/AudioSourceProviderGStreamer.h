@@ -26,7 +26,6 @@
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 typedef struct _GstAdapter GstAdapter;
 typedef struct _GstAppSink GstAppSink;
@@ -36,7 +35,6 @@ namespace WebCore {
 class AudioSourceProviderGStreamer : public AudioSourceProvider {
     WTF_MAKE_NONCOPYABLE(AudioSourceProviderGStreamer);
 public:
-    static PassOwnPtr<AudioSourceProviderGStreamer> create() { return adoptPtr(new AudioSourceProviderGStreamer()); }
     AudioSourceProviderGStreamer();
     ~AudioSourceProviderGStreamer();
 
