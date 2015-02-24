@@ -1,5 +1,17 @@
 2015-02-23  Brent Fulgham  <bfulgham@apple.com>
 
+        WTF::WeakPtr should rename 'forgot' to 'clear' and support nullptr assignment
+        https://bugs.webkit.org/show_bug.cgi?id=141935
+
+        Reviewed by Myles C. Maxfield.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::operator=): Added 'nullptr_t' overload.
+        (WTF::WeakPtr::clear): Renamed from 'forget'
+        (WTF::WeakPtr::forget): Deleted.
+
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
         WTF::WeakPtr should have a 'forget' method
         https://bugs.webkit.org/show_bug.cgi?id=141923
 

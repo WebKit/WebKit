@@ -100,10 +100,11 @@ public:
 
     WeakPtr& operator=(const WeakPtr& o) { m_ref = o.m_ref.copyRef(); return *this; }
     template<typename U> WeakPtr& operator=(const WeakPtr<U>& o) { m_ref = o.m_ref.copyRef(); return *this; }
+    WeakPtr& operator=(std::nullptr_t) { m_ref = WeakReference<T>::create(nullptr); return *this; }
 
     T* operator->() const { return m_ref->get(); }
 
-    void forget() { m_ref = WeakReference<T>::create(nullptr); }
+    void clear() { m_ref = WeakReference<T>::create(nullptr); }
 
 private:
     friend class WeakPtrFactory<T>;
