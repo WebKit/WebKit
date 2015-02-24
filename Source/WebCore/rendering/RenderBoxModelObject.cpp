@@ -842,7 +842,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // no progressive loading of the background image
     if (!baseBgColorOnly && (shouldPaintBackgroundImage || bgLayer->hasMaskImage())) {
-        BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, backgroundObject);
+        BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, *bgLayer, scrolledPaintRect, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
 
         if (!geometry.destRect().isEmpty()) {
@@ -959,10 +959,10 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     return positioningAreaSize;
 }
 
-LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, const LayoutSize& positioningAreaSize) const
+LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLayer, const LayoutSize& positioningAreaSize) const
 {
-    StyleImage* image = fillLayer->image();
-    EFillSizeType type = fillLayer->size().type;
+    StyleImage* image = fillLayer.image();
+    EFillSizeType type = fillLayer.size().type;
 
     LayoutSize imageIntrinsicSize;
     if (image) {
@@ -975,8 +975,8 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
         case SizeLength: {
             LayoutSize tileSize = positioningAreaSize;
 
-            Length layerWidth = fillLayer->size().size.width();
-            Length layerHeight = fillLayer->size().size.height();
+            Length layerWidth = fillLayer.size().size.width();
+            Length layerHeight = fillLayer.size().size.height();
 
             if (layerWidth.isFixed())
                 tileSize.setWidth(layerWidth.value());
@@ -1093,7 +1093,7 @@ void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(Backgroun
     geometry.setPhase(LayoutSize(pixelSnappedPhase));
 }
 
-BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,
+BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer& fillLayer, const LayoutRect& paintRect,
     RenderElement* backgroundObject) const
 {
     BackgroundImageGeometry geometry;
@@ -1103,19 +1103,19 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     // Determine the background positioning area and set destRect to the background painting area.
     // destRect will be adjusted later if the background is non-repeating.
     // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
-    bool fixedAttachment = fillLayer->attachment() == FixedBackgroundAttachment;
+    bool fixedAttachment = fillLayer.attachment() == FixedBackgroundAttachment;
     if (!fixedAttachment) {
         geometry.setDestRect(paintRect);
 
         LayoutUnit right = 0;
         LayoutUnit bottom = 0;
         // Scroll and Local.
-        if (fillLayer->origin() != BorderFillBox) {
+        if (fillLayer.origin() != BorderFillBox) {
             left = borderLeft();
             right = borderRight();
             top = borderTop();
             bottom = borderBottom();
-            if (fillLayer->origin() == ContentFillBox) {
+            if (fillLayer.origin() == ContentFillBox) {
                 left += paddingLeft();
                 right += paddingRight();
                 top += paddingTop();
@@ -1160,20 +1160,20 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
 
     auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
     LayoutSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
-    if (StyleImage* layerImage = fillLayer->image())
+    if (StyleImage* layerImage = fillLayer.image())
         layerImage->setContainerSizeForRenderer(clientForBackgroundImage, fillTileSize, style().effectiveZoom());
     
     geometry.setTileSize(fillTileSize);
 
-    EFillRepeat backgroundRepeatX = fillLayer->repeatX();
-    EFillRepeat backgroundRepeatY = fillLayer->repeatY();
+    EFillRepeat backgroundRepeatX = fillLayer.repeatX();
+    EFillRepeat backgroundRepeatY = fillLayer.repeatY();
     LayoutUnit availableWidth = positioningAreaSize.width() - geometry.tileSize().width();
     LayoutUnit availableHeight = positioningAreaSize.height() - geometry.tileSize().height();
 
-    LayoutUnit computedXPosition = minimumValueForLength(fillLayer->xPosition(), availableWidth, false);
+    LayoutUnit computedXPosition = minimumValueForLength(fillLayer.xPosition(), availableWidth, false);
     if (backgroundRepeatX == RoundFill && positioningAreaSize.width() > 0 && fillTileSize.width() > 0) {
         int numTiles = std::max(1, roundToInt(positioningAreaSize.width() / fillTileSize.width()));
-        if (fillLayer->size().size.height().isAuto() && backgroundRepeatY != RoundFill)
+        if (fillLayer.size().size.height().isAuto() && backgroundRepeatY != RoundFill)
             fillTileSize.setHeight(fillTileSize.height() * positioningAreaSize.width() / (numTiles * fillTileSize.width()));
 
         fillTileSize.setWidth(positioningAreaSize.width() / numTiles);
@@ -1182,10 +1182,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         geometry.setSpaceSize(LayoutSize());
     }
 
-    LayoutUnit computedYPosition = minimumValueForLength(fillLayer->yPosition(), availableHeight, false);
+    LayoutUnit computedYPosition = minimumValueForLength(fillLayer.yPosition(), availableHeight, false);
     if (backgroundRepeatY == RoundFill && positioningAreaSize.height() > 0 && fillTileSize.height() > 0) {
         int numTiles = std::max(1, roundToInt(positioningAreaSize.height() / fillTileSize.height()));
-        if (fillLayer->size().size.width().isAuto() && backgroundRepeatX != RoundFill)
+        if (fillLayer.size().size.width().isAuto() && backgroundRepeatX != RoundFill)
             fillTileSize.setWidth(fillTileSize.width() * positioningAreaSize.height() / (numTiles * fillTileSize.height()));
 
         fillTileSize.setHeight(positioningAreaSize.height() / numTiles);
@@ -1209,7 +1209,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             backgroundRepeatX = NoRepeatFill;
     }
     if (backgroundRepeatX == NoRepeatFill) {
-        LayoutUnit xOffset = fillLayer->backgroundXOrigin() == RightEdge ? availableWidth - computedXPosition : computedXPosition;
+        LayoutUnit xOffset = fillLayer.backgroundXOrigin() == RightEdge ? availableWidth - computedXPosition : computedXPosition;
         geometry.setNoRepeatX(left + xOffset);
         geometry.setSpaceSize(LayoutSize(0, geometry.spaceSize().height()));
     }
@@ -1229,7 +1229,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             backgroundRepeatY = NoRepeatFill;
     }
     if (backgroundRepeatY == NoRepeatFill) {
-        LayoutUnit yOffset = fillLayer->backgroundYOrigin() == BottomEdge ? availableHeight - computedYPosition : computedYPosition;
+        LayoutUnit yOffset = fillLayer.backgroundYOrigin() == BottomEdge ? availableHeight - computedYPosition : computedYPosition;
         geometry.setNoRepeatY(top + yOffset);
         geometry.setSpaceSize(LayoutSize(geometry.spaceSize().width(), 0));
     }
@@ -1244,9 +1244,8 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
 
 void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const
 {
-    const FillLayer* backgroundLayer = style().backgroundLayers();
     LayoutRect paintRect(destRect);
-    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintContainer, backgroundLayer, paintRect);
+    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintContainer, *style().backgroundLayers(), paintRect);
     phase = geometry.phase();
     tileSize = geometry.tileSize();
     destRect = geometry.destRect();
