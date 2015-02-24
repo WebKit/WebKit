@@ -73,7 +73,6 @@ showsURLsInToolTips initial=false
 showsToolTipOverTruncatedText initial=false
 forceFTPDirectoryListings initial=false
 developerExtrasEnabled initial=false
-javaScriptExperimentsEnabled initial=false
 scriptMarkupEnabled initial=true
 needsSiteSpecificQuirks initial=false
 domTimersThrottlingEnabled initial=true
@@ -87,6 +86,7 @@ canvasUsesAcceleratedDrawing initial=false
 acceleratedDrawingEnabled initial=false
 acceleratedFiltersEnabled initial=false
 useLegacyTextAlignPositionedElementBehavior initial=false
+javaScriptRuntimeFlags type=JSC::RuntimeFlags
 
 # FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
 # they can't use by. Leaving enabled for now to not change existing behavior.

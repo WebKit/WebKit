@@ -267,6 +267,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setAllowFileAccessFromFileURLs(allowFileAccessFromFileURLs);
 }
 
+- (_WKJavaScriptRuntimeFlags)_javaScriptRuntimeFlags
+{
+    return _preferences->javaScriptRuntimeFlags();
+}
+
+- (void)_setJavaScriptRuntimeFlags:(_WKJavaScriptRuntimeFlags)javaScriptRuntimeFlags
+{
+    _preferences->setJavaScriptRuntimeFlags(javaScriptRuntimeFlags);
+}
+
 - (BOOL)_isStandalone
 {
     return _preferences->standalone();
