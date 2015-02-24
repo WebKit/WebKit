@@ -455,10 +455,10 @@ SLOW_PATH_DECL(slow_path_typeof)
     RETURN(jsTypeStringForValue(exec, OP_C(2).jsValue()));
 }
 
-SLOW_PATH_DECL(slow_path_is_object_or_null)
+SLOW_PATH_DECL(slow_path_is_object)
 {
     BEGIN();
-    RETURN(jsBoolean(jsIsObjectTypeOrNull(exec, OP_C(2).jsValue())));
+    RETURN(jsBoolean(jsIsObjectType(exec, OP_C(2).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_is_function)

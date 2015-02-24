@@ -1206,21 +1206,6 @@ _llint_op_is_string:
     dispatch(3)
 
 
-_llint_op_is_object:
-    traceExecution()
-    loadisFromInstruction(2, t1)
-    loadisFromInstruction(1, t2)
-    loadConstantOrVariable(t1, t0)
-    btqnz t0, tagMask, .opIsObjectNotCell
-    cbaeq JSCell::m_type[t0], ObjectType, t1
-    orq ValueFalse, t1
-    storeq t1, [cfr, t2, 8]
-    dispatch(3)
-.opIsObjectNotCell:
-    storeq ValueFalse, [cfr, t2, 8]
-    dispatch(3)
-
-
 macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
@@ -1849,7 +1834,7 @@ _llint_op_to_primitive:
     loadisFromInstruction(1, t3)
     loadConstantOrVariable(t2, t0)
     btqnz t0, tagMask, .opToPrimitiveIsImm
-    bbaeq JSCell::m_type[t0], ObjectType, .opToPrimitiveSlowCase
+    bbneq JSCell::m_type[t0], StringType, .opToPrimitiveSlowCase
 .opToPrimitiveIsImm:
     storeq t0, [cfr, t3, 8]
     dispatch(3)

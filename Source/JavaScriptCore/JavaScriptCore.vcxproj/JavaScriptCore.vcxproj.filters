@@ -2862,9 +2862,6 @@
     <ClInclude Include="..\runtime\Reject.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\RuntimeFlags.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\SamplingCounter.h">
       <Filter>runtime</Filter>
     </ClInclude>

@@ -1096,7 +1096,7 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
             }
             if (value == "object") {
                 rewindUnaryOp();
-                emitOpcode(op_is_object_or_null);
+                emitOpcode(op_is_object);
                 instructions().append(dst->index());
                 instructions().append(srcIndex);
                 return dst;
@@ -1941,6 +1941,15 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(src->index());
 
         size_t begin = instructions().size();
+        emitOpcode(op_jtrue);
+        instructions().append(isObjectRegister->index());
+        instructions().append(isObjectLabel->bind(begin, instructions().size()));
+
+        emitOpcode(op_is_function);
+        instructions().append(isObjectRegister->index());
+        instructions().append(src->index());
+
+        begin = instructions().size();
         emitOpcode(op_jtrue);
         instructions().append(isObjectRegister->index());
         instructions().append(isObjectLabel->bind(begin, instructions().size()));

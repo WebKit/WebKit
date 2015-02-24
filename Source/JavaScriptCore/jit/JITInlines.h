@@ -685,11 +685,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
     jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfCellObject(RegisterID cellReg)
-{
-    return branch8(AboveOrEqual, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-}
-
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfCellNotObject(RegisterID cellReg)
 {
     return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));

@@ -349,14 +349,14 @@ bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->developerExtrasEnabled();
 }
 
-void WKPreferencesSetJavaScriptRuntimeFlags(WKPreferencesRef preferencesRef, WKJavaScriptRuntimeFlagSet javaScriptRuntimeFlagSet)
+void WKPreferencesSetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setJavaScriptRuntimeFlags(javaScriptRuntimeFlagSet);
+    toImpl(preferencesRef)->setJavaScriptExperimentsEnabled(enabled);
 }
 
-WKJavaScriptRuntimeFlagSet WKPreferencesGetJavaScriptRuntimeFlags(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->javaScriptRuntimeFlags();
+    return toImpl(preferencesRef)->javaScriptExperimentsEnabled();
 }
 
 void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable)

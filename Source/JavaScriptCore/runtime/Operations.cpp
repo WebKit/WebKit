@@ -85,7 +85,7 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
     return jsTypeStringForValue(callFrame->vm(), callFrame->lexicalGlobalObject(), v);
 }
 
-bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
+bool jsIsObjectType(CallFrame* callFrame, JSValue v)
 {
     if (!v.isCell())
         return v.isNull();

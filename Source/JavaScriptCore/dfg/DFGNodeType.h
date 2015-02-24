@@ -250,7 +250,6 @@ namespace JSC { namespace DFG {
     macro(IsNumber, NodeResultBoolean) \
     macro(IsString, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
-    macro(IsObjectOrNull, NodeResultBoolean) \
     macro(IsFunction, NodeResultBoolean) \
     macro(TypeOf, NodeResultJS) \
     macro(LogicalNot, NodeResultBoolean) \

@@ -156,7 +156,6 @@ inline CapabilityLevel canCompile(Node* node)
     case IsNumber:
     case IsString:
     case IsObject:
-    case IsObjectOrNull:
     case IsFunction:
     case CheckHasInstance:
     case InstanceOf:

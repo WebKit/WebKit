@@ -1089,16 +1089,6 @@ private:
             }
             break;
 
-        case IsObject:
-            if (node->child1()->shouldSpeculateObject()) {
-                m_insertionSet.insertNode(
-                    m_indexInBlock, SpecNone, Phantom, node->origin,
-                    Edge(node->child1().node(), ObjectUse));
-                m_graph.convertToConstant(node, jsBoolean(true));
-                observeUseKindOnNode<ObjectUse>(node);
-            }
-            break;
-
         case GetEnumerableLength: {
             fixEdge<CellUse>(node->child1());
             break;
@@ -1240,7 +1230,7 @@ private:
         case IsUndefined:
         case IsBoolean:
         case IsNumber:
-        case IsObjectOrNull:
+        case IsObject:
         case IsFunction:
         case CreateArguments:
         case PhantomArguments:

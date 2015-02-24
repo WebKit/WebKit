@@ -226,25 +226,6 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_is_object(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-
-    emitGetVirtualRegister(value, regT0);
-    Jump isNotCell = emitJumpIfNotJSCell(regT0);
-
-    compare8(AboveOrEqual, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType), regT0);
-    emitTagAsBoolImmediate(regT0);
-    Jump done = jump();
-
-    isNotCell.link(this);
-    move(TrustedImm32(ValueFalse), regT0);
-
-    done.link(this);
-    emitPutVirtualRegister(dst);
-}
-
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
     int arguments = currentInstruction[1].u.operand;
@@ -279,7 +260,9 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
     emitGetVirtualRegister(src, regT0);
     
     Jump isImm = emitJumpIfNotJSCell(regT0);
-    addSlowCase(emitJumpIfCellObject(regT0));
+    addSlowCase(branchStructure(NotEqual, 
+        Address(regT0, JSCell::structureIDOffset()), 
+        m_vm->stringStructure.get()));
     isImm.link(this);
 
     if (dst != src)

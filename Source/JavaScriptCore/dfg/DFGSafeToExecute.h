@@ -210,7 +210,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case IsNumber:
     case IsString:
     case IsObject:
-    case IsObjectOrNull:
     case IsFunction:
     case TypeOf:
     case LogicalNot:

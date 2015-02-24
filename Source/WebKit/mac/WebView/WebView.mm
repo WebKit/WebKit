@@ -2234,7 +2234,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
 
     settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
-    settings.setJavaScriptRuntimeFlags(JSC::RuntimeFlags([preferences javaScriptRuntimeFlags]));
+    settings.setJavaScriptExperimentsEnabled([preferences javaScriptExperimentsEnabled]);
     settings.setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
 
     settings.setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);

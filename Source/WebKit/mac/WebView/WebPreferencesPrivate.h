@@ -52,11 +52,6 @@ typedef enum {
     WebBlockAllStorage
 } WebStorageBlockingPolicy;
 
-typedef enum {
-    WebKitJavaScriptRuntimeFlagsSymbolEnabled = 1u << 0,
-    WebKitJavaScriptRuntimeFlagsAllEnabled = WebKitJavaScriptRuntimeFlagsSymbolEnabled
-} WebKitJavaScriptRuntimeFlags;
-
 extern NSString *WebPreferencesChangedNotification;
 extern NSString *WebPreferencesRemovedNotification;
 extern NSString *WebPreferencesChangedInternalNotification;
@@ -72,8 +67,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)developerExtrasEnabled;
 - (void)setDeveloperExtrasEnabled:(BOOL)flag;
 
-- (WebKitJavaScriptRuntimeFlags)javaScriptRuntimeFlags;
-- (void)setJavaScriptRuntimeFlags:(WebKitJavaScriptRuntimeFlags)flags;
+- (BOOL)javaScriptExperimentsEnabled;
+- (void)setJavaScriptExperimentsEnabled:(BOOL)flag;
 
 - (BOOL)authorAndUserStylesEnabled;
 - (void)setAuthorAndUserStylesEnabled:(BOOL)flag;

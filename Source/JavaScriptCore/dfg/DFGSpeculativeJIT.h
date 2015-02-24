@@ -2191,10 +2191,6 @@ public:
     JITCompiler::Jump branchNotCell(JSValueRegs);
     JITCompiler::Jump branchIsOther(JSValueRegs, GPRReg tempGPR);
     JITCompiler::Jump branchNotOther(JSValueRegs, GPRReg tempGPR);
-    JITCompiler::Jump branchIsObject(GPRReg cellGPR);
-    JITCompiler::Jump branchNotObject(GPRReg cellGPR);
-    JITCompiler::Jump branchIsString(GPRReg cellGPR);
-    JITCompiler::Jump branchNotString(GPRReg cellGPR);
     
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

@@ -808,9 +808,9 @@ JSCell* JIT_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSScope* scop
     return JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope);
 }
 
-size_t JIT_OPERATION operationIsObjectOrNull(ExecState* exec, EncodedJSValue value)
+size_t JIT_OPERATION operationIsObject(ExecState* exec, EncodedJSValue value)
 {
-    return jsIsObjectTypeOrNull(exec, JSValue::decode(value));
+    return jsIsObjectType(exec, JSValue::decode(value));
 }
 
 size_t JIT_OPERATION operationIsFunction(EncodedJSValue value)

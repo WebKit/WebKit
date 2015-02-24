@@ -331,24 +331,6 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emit_op_is_object(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-
-    emitLoad(value, regT1, regT0);
-    Jump isNotCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-
-    compare8(AboveOrEqual, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType), regT0);
-    Jump done = jump();
-
-    isNotCell.link(this);
-    move(TrustedImm32(0), regT0);
-
-    done.link(this);
-    emitStoreBool(dst, regT0);
-}
-
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
     VirtualRegister arguments = VirtualRegister(currentInstruction[1].u.operand);
@@ -369,7 +351,7 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
 
     Jump isImm = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    addSlowCase(emitJumpIfCellObject(regT0));
+    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
     isImm.link(this);
 
     if (dst != src)
@@ -642,12 +624,12 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(branch32(NotEqual, regT1, regT3));
     addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
-    // Jump to a slow case if both are strings or symbols (non object).
+    // Jump to a slow case if both are strings.
     Jump notCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    Jump firstIsObject = emitJumpIfCellObject(regT0);
-    addSlowCase(emitJumpIfCellNotObject(regT2));
+    Jump firstNotString = branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get()));
+    addSlowCase(branchPtr(Equal, Address(regT2, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
     notCell.link(this);
-    firstIsObject.link(this);
+    firstNotString.link(this);
 
     // Simply compare the payloads.
     if (type == OpStrictEq)

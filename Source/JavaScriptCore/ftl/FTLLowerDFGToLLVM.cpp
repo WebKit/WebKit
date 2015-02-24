@@ -761,9 +761,6 @@ private:
         case IsObject:
             compileIsObject();
             break;
-        case IsObjectOrNull:
-            compileIsObjectOrNull();
-            break;
         case IsFunction:
             compileIsFunction();
             break;
@@ -3099,7 +3096,9 @@ private:
             ValueFromBlock simpleResult = m_out.anchor(value);
             LValue isStringPredicate;
             if (m_node->child1()->prediction() & SpecString) {
-                isStringPredicate = isString(value);
+                isStringPredicate = m_out.equal(
+                    m_out.load32(value, m_heaps.JSCell_structureID),
+                    m_out.constInt32(vm().stringStructure->id()));
             } else
                 isStringPredicate = m_out.booleanFalse;
             m_out.branch(isStringPredicate, unsure(continuation), unsure(notString));
@@ -4205,29 +4204,11 @@ private:
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
     }
-
+    
     void compileIsObject()
     {
-        LValue value = lowJSValue(m_node->child1());
-
-        LBasicBlock isCellCase = FTL_NEW_BLOCK(m_out, ("IsObject cell case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsObject continuation"));
-
-        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
-
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isObject(value));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
-    }
-
-    void compileIsObjectOrNull()
-    {
         LValue pointerResult = vmCall(
-            m_out.operation(operationIsObjectOrNull), m_callFrame, lowJSValue(m_node->child1()));
+            m_out.operation(operationIsObject), m_callFrame, lowJSValue(m_node->child1()));
         setBoolean(m_out.notNull(pointerResult));
     }
     
@@ -5149,7 +5130,10 @@ private:
             return;
         }
         
-        FTL_TYPE_CHECK(jsValueValue(cell), edge, filter, isNotObject(cell));
+        LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, filter,
+            m_out.equal(structureID, m_out.constInt32(vm().stringStructure->id())));
         speculate(
             BadType, jsValueValue(cell), edge.node(),
             m_out.testNonZero8(
@@ -5459,7 +5443,10 @@ private:
             break;
         case CellCaseSpeculatesObject:
             FTL_TYPE_CHECK(
-                jsValueValue(value), edge, (~SpecCell) | SpecObject, isNotObject(value));
+                jsValueValue(value), edge, (~SpecCell) | SpecObject,
+                m_out.equal(
+                    m_out.load32(value, m_heaps.JSCell_structureID),
+                    m_out.constInt32(vm().stringStructure->id())));
             break;
         }
         
@@ -6285,23 +6272,14 @@ private:
     
     LValue isObject(LValue cell)
     {
-        return m_out.aboveOrEqual(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt8(ObjectType));
-    }
-
-    LValue isNotObject(LValue cell)
-    {
-        return m_out.below(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt8(ObjectType));
-    }
-
-    LValue isNotString(LValue cell)
-    {
         return m_out.notEqual(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().stringStructure->id()));
+    }
+    
+    LValue isNotString(LValue cell)
+    {
+        return isObject(cell);
     }
     
     LValue isString(LValue cell)
@@ -6309,6 +6287,11 @@ private:
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().stringStructure->id()));
+    }
+    
+    LValue isNotObject(LValue cell)
+    {
+        return isString(cell);
     }
     
     LValue isArrayType(LValue cell, ArrayMode arrayMode)
@@ -6507,7 +6490,11 @@ private:
     
     void speculateNonNullObject(Edge edge, LValue cell)
     {
-        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecObject, 
+            m_out.equal(
+                m_out.load32(cell, m_heaps.JSCell_structureID),
+                m_out.constInt32(vm().stringStructure->id())));
         if (masqueradesAsUndefinedWatchpointIsStillValid())
             return;
         
