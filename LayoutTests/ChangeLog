@@ -1,5 +1,14 @@
 2015-02-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        Unreviewed GTK+ gardening.
+
+        This was introduced in r180555, but the test has been generalized in
+        r180562 and we don't need a particular expectation anymore.
+
+        * platform/gtk/fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution-expected.txt: Removed.
+
+2015-02-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [CSS Grid Layout] Support "sparse" in auto-placed items locked to a row/column
         https://bugs.webkit.org/show_bug.cgi?id=141748
 
