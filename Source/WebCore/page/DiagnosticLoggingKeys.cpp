@@ -383,6 +383,11 @@ String DiagnosticLoggingKeys::unsupportedHTTPMethodKey()
     return ASCIILiteral("unsupportedHTTPMethod");
 }
 
+String DiagnosticLoggingKeys::unsuspendableDOMObjectKey()
+{
+    return ASCIILiteral("unsuspendableDOMObject");
+}
+
 String DiagnosticLoggingKeys::unusableCachedEntryKey()
 {
     return ASCIILiteral("unusableCachedEntry");
