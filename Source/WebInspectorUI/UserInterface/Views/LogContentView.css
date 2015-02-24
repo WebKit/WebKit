@@ -289,37 +289,6 @@
     display: none;
 }
 
-.console-object-preview {
-    font-style: italic;
-}
-
-.console-object-preview-lossless,
-.console-formatted-array .console-object-preview,
-.expanded .console-object-preview {
-    font-style: normal;
-}
-
-.console-object-preview .name {
- /* Match ObjectPropertiesSection name styles */
-    color: rgb(136, 19, 145);
-}
-
-.expanded .console-object-preview > .console-object-preview-body {
-    display: none;
-}
-
-.console-object-preview > .console-object-preview-name.console-object-preview-name-Object {
-    display: none;
-}
-
-.console-object-preview-body .console-object-preview-name.console-object-preview-name-Object { 
-    display: none;
-}
-
-.expanded .console-object-preview > .console-object-preview-name.console-object-preview-name-Object {
-    display: inline;
-}
-
 .console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap {
     position: relative;
     display: inline-block;
