@@ -1,3 +1,9 @@
+2015-02-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix after r180585.
+
+        * CMakeLists.txt:
+
 2015-02-24  Anders Carlsson  <andersca@apple.com>
 
         Pass _WKWebsiteDataRecord objects to the fetchData completion handler
