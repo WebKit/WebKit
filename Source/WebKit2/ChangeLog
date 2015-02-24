@@ -1,3 +1,9 @@
+2015-02-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after 180575.
+
+        * CMakeLists.txt:
+
 2015-02-24  Anders Carlsson  <andersca@apple.com>
 
         Implement more of the data fetching API
