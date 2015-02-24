@@ -301,8 +301,8 @@ private:
     Node* setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         addToGraph(MovHint, OpInfo(operand.offset()), value);
-        
-        DelayedSetLocal delayed = DelayedSetLocal(operand, value);
+
+        DelayedSetLocal delayed(currentCodeOrigin(), operand, value);
         
         if (setMode == NormalSet) {
             m_setLocalQueue.append(delayed);
@@ -383,8 +383,11 @@ private:
         return node;
     }
 
-    Node* setLocal(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setLocal(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
+        CodeOrigin oldSemanticOrigin = m_currentSemanticOrigin;
+        m_currentSemanticOrigin = semanticOrigin;
+
         unsigned local = operand.toLocal();
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
@@ -396,11 +399,13 @@ private:
 
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(local) = node;
+
+        m_currentSemanticOrigin = oldSemanticOrigin;
         return node;
     }
 
@@ -436,8 +441,11 @@ private:
         m_currentBlock->variablesAtTail.argument(argument) = node;
         return node;
     }
-    Node* setArgument(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setArgument(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
+        CodeOrigin oldSemanticOrigin = m_currentSemanticOrigin;
+        m_currentSemanticOrigin = semanticOrigin;
+
         unsigned argument = operand.toArgument();
         ASSERT(argument < m_numArguments);
         
@@ -454,11 +462,13 @@ private:
             variableAccessData->mergeShouldNeverUnbox(true);
         
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = node;
+
+        m_currentSemanticOrigin = oldSemanticOrigin;
         return node;
     }
     
@@ -602,6 +612,13 @@ private:
     {
         return CodeOrigin(m_currentIndex, inlineCallFrame());
     }
+
+    NodeOrigin currentNodeOrigin()
+    {
+        if (m_currentSemanticOrigin.isSet())
+            return NodeOrigin(m_currentSemanticOrigin, currentCodeOrigin());
+        return NodeOrigin(currentCodeOrigin());
+    }
     
     BranchData* branchData(unsigned taken, unsigned notTaken)
     {
@@ -616,7 +633,7 @@ private:
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, NodeOrigin(currentCodeOrigin()), Edge(child1), Edge(child2),
+            SpecNone, op, currentNodeOrigin(), Edge(child1), Edge(child2),
             Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -625,7 +642,7 @@ private:
     Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, NodeOrigin(currentCodeOrigin()), child1, child2, child3);
+            SpecNone, op, currentNodeOrigin(), child1, child2, child3);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
         return result;
@@ -633,7 +650,7 @@ private:
     Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, NodeOrigin(currentCodeOrigin()), info, Edge(child1), Edge(child2),
+            SpecNone, op, currentNodeOrigin(), info, Edge(child1), Edge(child2),
             Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -642,7 +659,7 @@ private:
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, NodeOrigin(currentCodeOrigin()), info1, info2,
+            SpecNone, op, currentNodeOrigin(), info1, info2,
             Edge(child1), Edge(child2), Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -652,7 +669,7 @@ private:
     Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         Node* result = m_graph.addNode(
-            SpecNone, Node::VarArg, op, NodeOrigin(currentCodeOrigin()), info1, info2,
+            SpecNone, Node::VarArg, op, currentNodeOrigin(), info1, info2,
             m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -844,6 +861,8 @@ private:
     BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
+    // The semantic origin of the current node if different from the current Index.
+    CodeOrigin m_currentSemanticOrigin;
 
     FrozenValue* m_constantUndefined;
     FrozenValue* m_constantNull;
@@ -962,12 +981,14 @@ private:
     InlineStackEntry* m_inlineStackTop;
     
     struct DelayedSetLocal {
+        CodeOrigin m_origin;
         VirtualRegister m_operand;
         Node* m_value;
         
         DelayedSetLocal() { }
-        DelayedSetLocal(VirtualRegister operand, Node* value)
-            : m_operand(operand)
+        DelayedSetLocal(const CodeOrigin& origin, VirtualRegister operand, Node* value)
+            : m_origin(origin)
+            , m_operand(operand)
             , m_value(value)
         {
         }
@@ -975,8 +996,8 @@ private:
         Node* execute(ByteCodeParser* parser, SetMode setMode = NormalSet)
         {
             if (m_operand.isArgument())
-                return parser->setArgument(m_operand, m_value, setMode);
-            return parser->setLocal(m_operand, m_value, setMode);
+                return parser->setArgument(m_origin, m_operand, m_value, setMode);
+            return parser->setLocal(m_origin, m_operand, m_value, setMode);
         }
     };
     

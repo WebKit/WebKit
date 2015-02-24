@@ -1,5 +1,32 @@
 2015-02-23  Benjamin Poulain  <bpoulain@apple.com>
 
+        Set the semantic origin of delayed SetLocal to the Bytecode that originated it
+        https://bugs.webkit.org/show_bug.cgi?id=141727
+
+        Reviewed by Filip Pizlo.
+
+        Previously, delayed SetLocals would have the NodeOrigin of the next
+        bytecode. This was because delayed SetLocal are...delayed... and
+        currentCodeOrigin() is the one where the node is emitted.
+
+        This made debugging a little awkward since the OSR exits on SetLocal
+        were reported for the next bytecode. This patch changes the semantic
+        origin to keep the original bytecode.
+
+        From benchmarks, this looks like it could be a tiny bit faster
+        but it likely just noise.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::currentNodeOrigin):
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::DelayedSetLocal):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::execute):
+
+2015-02-23  Benjamin Poulain  <bpoulain@apple.com>
+
         Remove DFGNode::predictHeap()
         https://bugs.webkit.org/show_bug.cgi?id=141864
 
