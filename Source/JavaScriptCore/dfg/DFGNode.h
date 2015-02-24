@@ -1116,14 +1116,7 @@ struct Node {
         ASSERT(hasHeapPrediction());
         return static_cast<SpeculatedType>(m_opInfo2);
     }
-    
-    bool predictHeap(SpeculatedType prediction)
-    {
-        ASSERT(hasHeapPrediction());
-        
-        return mergeSpeculation(m_opInfo2, prediction);
-    }
-    
+
     void setHeapPrediction(SpeculatedType prediction)
     {
         ASSERT(hasHeapPrediction());
