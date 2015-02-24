@@ -1,5 +1,25 @@
 2015-02-24  Dean Jackson  <dino@apple.com>
 
+        Merged r180588.
+
+    2015-02-24  Dean Jackson  <dino@apple.com>
+
+            [ios Media] the inline controls are visible after pressing Done on iPhone
+            https://bugs.webkit.org/show_bug.cgi?id=141987
+            <rdar://problem/19944110>
+
+            Reviewed by Beth Dakin.
+
+            When exiting out of a playing video, we should show the
+            start playback button if we don't allow inline media
+            (such as on iPhone).
+
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.shouldHaveStartPlaybackButton): Test for
+            allowsInline as well.
+
+2015-02-24  Dean Jackson  <dino@apple.com>
+
         Merge r180583.
 
     2015-02-24  Dean Jackson  <dino@apple.com>
