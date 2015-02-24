@@ -1,3 +1,22 @@
+2015-02-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Support "sparse" in auto-placed items locked to a row/column
+        https://bugs.webkit.org/show_bug.cgi?id=141748
+
+        Reviewed by Sergio Villar Senin.
+
+        The first step of grid item placement algorithm has been updated in
+        order to support both "sparse" and "dense" modes. Current code is always
+        doing a "dense" packing in this case.
+
+        See: http://dev.w3.org/csswg/css-grid/#auto-placement-algo
+
+        Test: fast/css-grid-layout/grid-item-auto-placement-fixed-row-column.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid): Add a cursor
+        for each row/column and use it to place items in the right position.
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Layout Test accessibility/roles-exposed.html is failing

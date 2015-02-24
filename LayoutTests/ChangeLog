@@ -1,3 +1,20 @@
+2015-02-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Support "sparse" in auto-placed items locked to a row/column
+        https://bugs.webkit.org/show_bug.cgi?id=141748
+
+        Reviewed by Sergio Villar Senin.
+
+        New test to check "sparse" and "dense" packing mode behavior in
+        auto-placed items locked to a given row (or column).
+
+        * fast/css-grid-layout/grid-item-auto-placement-definite-span.html:
+        Extract some common styles to resources/grid.css.
+        * fast/css-grid-layout/grid-item-auto-placement-fixed-row-column-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-placement-fixed-row-column.html: Added.
+        * fast/css-grid-layout/resources/grid.css: Modified generic CSS file to
+        add common styles.
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Layout Test accessibility/roles-exposed.html is failing

@@ -874,15 +874,27 @@ std::unique_ptr<GridCoordinate> RenderGrid::createEmptyGridAreaAtSpecifiedPositi
 
 void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGridItems)
 {
+    bool isForColumns = autoPlacementMajorAxisDirection() == ForColumns;
+    bool isGridAutoFlowDense = style().isGridAutoFlowAlgorithmDense();
+
+    // Mapping between the major axis tracks (rows or columns) and the last auto-placed item's position inserted on
+    // that track. This is needed to implement "sparse" packing for items locked to a given track.
+    // See http://dev.w3.org/csswg/css-grid/#auto-placement-algo
+    HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> minorAxisCursors;
+
     for (auto& autoGridItem : autoGridItems) {
         std::unique_ptr<GridSpan> majorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *autoGridItem, autoPlacementMajorAxisDirection());
         GridSpan minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *autoGridItem, autoPlacementMinorAxisDirection(), GridResolvedPosition(0));
+        unsigned majorAxisInitialPosition = majorAxisPositions->resolvedInitialPosition.toInt();
 
-        GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisPositions->resolvedInitialPosition.toInt());
+        GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisPositions->resolvedInitialPosition.toInt(), isGridAutoFlowDense ? 0 : minorAxisCursors.get(majorAxisInitialPosition));
         std::unique_ptr<GridCoordinate> emptyGridArea = iterator.nextEmptyGridArea(majorAxisPositions->integerSpan(), minorAxisPositions.integerSpan());
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(*autoGridItem, autoPlacementMajorAxisDirection(), *majorAxisPositions);
         insertItemIntoGrid(*autoGridItem, *emptyGridArea);
+
+        if (!isGridAutoFlowDense)
+            minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.resolvedInitialPosition.toInt() : emptyGridArea->columns.resolvedInitialPosition.toInt());
     }
 }
 
