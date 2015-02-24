@@ -1,3 +1,56 @@
+2015-02-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add support for case-insensitive attribute matching
+        https://bugs.webkit.org/show_bug.cgi?id=141880
+
+        Reviewed by Andreas Kling.
+
+        The value matching now has 3 cases:
+        1) Case-sensitive.
+        2) Case-insensitive.
+        3) Legacy HTML Case-insensitive.
+
+        The information to determine the case is split over 2 source:
+        -To know if explicit case-insensitive is needed, we need to ask the selector
+         for attributeValueMatchingIsCaseInsensitive().
+        -To know if the legacy HTML behavior is needed, we need to test the attribute
+         name filter with HTMLDocument::isCaseSensitiveAttribute().
+
+        I decided to perform all those checks at the fragment creation step.
+        This makes the register requirements and code generation more explicit.
+
+        From there, everything is easy: switch() on the type of matching needed,
+        and generate the code. The new case-insensitive case is a simplified version
+        of the legacy HTML behavior without runtime check for the element type.
+
+        Tests: fast/css/implicitly-case-insensitive-attribute-with-svg.html
+               fast/selectors/case-insensitive-attribute-register-requirement-1.html
+               fast/selectors/case-insensitive-attribute-register-requirement-2.html
+               fast/selectors/querySelector-explicit-case-insensitive-attribute-match-with-svg.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::attributeSelectorCaseSensitivity):
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::AttributeMatchingInfo):
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::attributeCaseSensitivity):
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::canDefaultToCaseSensitiveValueMatch): Deleted.
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        Compute the type of value matching and store it on the AttributeMatchingInfo
+        when creating the fragment.
+
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        (WebCore::SelectorCompiler::attributeValueTestingRequiresExtraRegister):
+        (WebCore::SelectorCompiler::attributeValueTestingRequiresCaseFoldingRegister): Deleted.
+        In general, AttributeCaseSensitivity::CaseInsensitive does not require an extra
+        register. I have made an exception for generateElementAttributeValueExactMatching()
+        for simplicity. I use that register to load the StringImpl of the attribute
+        being tested, that way I can use WTF::equalIgnoringCaseNonNull() directly.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        Matching itself is just function calls. Unlike AttributeCaseSensitivity::HTMLLegacyCaseInsensitive,
+        the behavior is consistent between XML and HTML.
+
 2015-02-23  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix after r180532

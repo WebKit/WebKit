@@ -1,3 +1,29 @@
+2015-02-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add support for case-insensitive attribute matching
+        https://bugs.webkit.org/show_bug.cgi?id=141880
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/case-insensitive-attribute-with-svg-expected.html:
+        * fast/css/case-insensitive-attribute-with-svg.html:
+        * fast/css/implicitly-case-insensitive-attribute-with-svg-expected.html: Copied from LayoutTests/fast/css/case-insensitive-attribute-with-svg-expected.html.
+        * fast/css/implicitly-case-insensitive-attribute-with-svg.html: Copied from LayoutTests/fast/css/case-insensitive-attribute-with-svg.html.
+
+        I renamed the HTML legacy case-insensitive behavior to separate
+        it from the new selector.
+
+        * fast/selectors/querySelector-explicit-case-insensitive-attribute-match-with-svg-expected.txt: Added.
+        * fast/selectors/querySelector-explicit-case-insensitive-attribute-match-with-svg.html: Added.
+        Mixing explicit case-insensitive with implicit.
+
+        * fast/selectors/case-insensitive-attribute-register-requirement-1-expected.txt: Added.
+        * fast/selectors/case-insensitive-attribute-register-requirement-1.html: Added.
+        * fast/selectors/case-insensitive-attribute-register-requirement-2-expected.txt: Added.
+        * fast/selectors/case-insensitive-attribute-register-requirement-2.html: Added.
+        The usual register allocation stress tests.
+
+
 2015-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark webgl tests to crash.
