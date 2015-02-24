@@ -1,3 +1,14 @@
+2015-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable font loading events until our implementation gets updated to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=141938
+
+        Reviewed by Andreas Kling.
+
+        Revert r173531 for now since our implementation is outdated.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         EventHandler references deleted Scrollbar

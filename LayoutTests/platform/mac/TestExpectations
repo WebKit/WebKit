@@ -1082,16 +1082,6 @@ webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failu
 webkit.org/b/139708 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 # --- End media tests ---
 
-# CSS Font Loading is only enabled on Mac, and tests are not run by default
-webkit.org/b/135390 fast/css/fontloader-download-error.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-events.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-loadingdone.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-multiple-faces-download-error.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-multiple-faces.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Pass ]
-webkit.org/b/135390 fast/css/fontloader-page-cache.html [ Pass ]
-webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Pass ]
-
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 # Some inspector tests failing after r173992
