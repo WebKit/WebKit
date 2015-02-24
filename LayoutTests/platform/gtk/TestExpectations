@@ -595,7 +595,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
-webkit.org/b/141960 accessibility/roles-exposed.html [ Failure ]
 webkit.org/b/141961 fast/multicol/span/span-as-immediate-columns-child.html [ Failure ]
 webkit.org/b/141962 http/tests/notifications/legacy/notification-request-permission-then-navigate.html [ Failure ]
 webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]

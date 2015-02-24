@@ -565,7 +565,12 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case SplitterRole:
         return ATK_ROLE_SEPARATOR;
     case ColorWellRole:
+#if PLATFORM(GTK)
+        // ATK_ROLE_COLOR_CHOOSER is defined as a dialog (i.e. it's what appears when you push the button).
+        return ATK_ROLE_PUSH_BUTTON;
+#elif PLATFORM(EFL)
         return ATK_ROLE_COLOR_CHOOSER;
+#endif
     case ListRole:
         return ATK_ROLE_LIST;
     case ScrollBarRole:
