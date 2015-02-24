@@ -34,13 +34,22 @@ class InjectedBundle;
 
 class EwkExtension {
 public:
-    explicit EwkExtension(WebKit::InjectedBundle*) { }
+    explicit EwkExtension(WebKit::InjectedBundle*);
     ~EwkExtension() { }
 
     void append(Ewk_Extension_Client* client);
     void remove(Ewk_Extension_Client* client);
 
+    WebKit::InjectedBundle* bundle() const { return m_bundle; }
+
+    static void didCreatePage(WKBundleRef, WKBundlePageRef, const void*);
+    static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void*);
+    static void didReceiveMessage(WKBundleRef, WKStringRef, WKTypeRef, const void* clientInfo);
+    static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef, WKTypeRef, const void*);
+
 private:
+    WebKit::InjectedBundle* m_bundle;
+
     Vector<Ewk_Extension_Client*> m_clients;
 };
 

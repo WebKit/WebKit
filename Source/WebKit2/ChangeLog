@@ -1,3 +1,56 @@
+2015-02-24  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Add message APIs to communicate between ewk_context and extensions
+        https://bugs.webkit.org/show_bug.cgi?id=137660
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Added dependencies for ewk2UnitTestExtensionSample
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::didReceiveMessageFromInjectedBundle):
+        (EwkContext::setMessageFromExtensionCallback):
+        (EwkContext::processReceivedMessageFromInjectedBundle):
+        (ewk_context_message_post_to_extensions):
+        (ewk_context_message_from_extensions_callback_set):
+        (EwkContext::didReceiveSynchronousMessageFromInjectedBundle):
+        Deleted to split synchronouse message APIs from asynchronuous message APIs.
+        ewebkit will not support this until there are requirements.
+        (EwkContext::setMessageFromInjectedBundleCallback): Renamed to setMessageFromExtensionCallback.
+        (ewk_context_message_post_to_injected_bundle): Renamed to ewk_context_message_post_to_extensions.
+        (ewk_context_message_from_injected_bundle_callback_set): Renamed to ewk_context_message_from_injected_bundle_callback_set.
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        Improved test case for ewk_context_new_with_extensions_path using the message APIs.
+        (EWK2UnitTest::EWK2UnitTestBase::EWK2UnitTestBase):
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp:
+        (EWK2UnitTest::EWK2UnitTestEnvironment::extensionSample): Deleted.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h:
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp:
+        Improved test case for ewk_context_new_with_extensions_path using the message APIs.
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp: Ditto.
+        (EWK2ContextTestWithExtension::messageReceivedCallback):
+        (EWK2ContextTestWithExtension::EWK2ContextTestWithExtension):
+        (TEST_F):
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.cpp:
+        (toEwkExtendion):
+        (EwkExtension::EwkExtension):
+        (EwkExtension::didCreatePage):
+        (EwkExtension::willDestroyPage):
+        (EwkExtension::didReceiveMessage):
+        (EwkExtension::didReceiveMessageToPage):
+        (ewk_extension_message_post): Implemented to post message to ewk_context.
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_extension_private.h:
+        (EwkExtension::bundle):
+        * WebProcess/efl/ExtensionManagerEfl.cpp:
+        (WebKit::ExtensionManagerEfl::initialize):
+        Fixed the bug when there are different shared objects in extension path.
+        This is spotted while improving test case.
+
 2015-02-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180547 and r180550.

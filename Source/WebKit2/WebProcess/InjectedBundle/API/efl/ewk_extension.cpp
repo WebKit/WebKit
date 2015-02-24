@@ -26,9 +26,39 @@
 #include "config.h"
 #include "ewk_extension.h"
 
+#include "InjectedBundle.h"
+#include "NotImplemented.h"
+#include "WKBundle.h"
+#include "WKBundleAPICast.h"
+#include "WKRetainPtr.h"
 #include "ewk_extension_private.h"
+#include <WebKit/WKString.h>
+#include <WebKit/WKType.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
+
+static inline EwkExtension* toEwkExtendion(const void* clientInfo)
+{
+    return const_cast<EwkExtension*>(static_cast<const EwkExtension*>(clientInfo));
+}
+
+EwkExtension::EwkExtension(InjectedBundle* bundle)
+    : m_bundle(bundle)
+{
+    WKBundleClientV1 wkBundleClient = {
+        {
+            1, // version
+            this, // clientInfo
+        },
+        didCreatePage,
+        willDestroyPage,
+        0, // didInitializePageGroup
+        didReceiveMessage,
+        didReceiveMessageToPage
+    };
+    WKBundleSetClient(toAPI(bundle), &wkBundleClient.base);
+}
 
 void EwkExtension::append(Ewk_Extension_Client* client)
 {
@@ -38,6 +68,44 @@ void EwkExtension::append(Ewk_Extension_Client* client)
 void EwkExtension::remove(Ewk_Extension_Client* client)
 {
     m_clients.removeFirst(client);
+}
+
+void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef, const void*)
+{
+    notImplemented();
+}
+
+void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef, const void*)
+{
+    notImplemented();
+}
+
+void EwkExtension::didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+{
+    EwkExtension* self = toEwkExtendion(clientInfo);
+    CString name = toImpl(messageName)->string().utf8();
+    Eina_Value* value = nullptr;
+
+    // FIXME: Need to support other types.
+    if (messageBody && WKStringGetTypeID() == WKGetTypeID(messageBody)) {
+        value = eina_value_new(EINA_VALUE_TYPE_STRING);
+        CString body = toImpl(static_cast<WKStringRef>(messageBody))->string().utf8();
+
+        eina_value_set(value, body.data());
+    }
+
+    for (auto& it : self->m_clients) {
+        if (it->message_received)
+            it->message_received(name.data(), value, it->data);
+    }
+
+    if (value)
+        eina_value_free(value);
+}
+
+void EwkExtension::didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef, WKTypeRef, const void*)
+{
+    notImplemented();
 }
 
 Eina_Bool ewk_extension_client_add(Ewk_Extension* extension, Ewk_Extension_Client* client)
@@ -56,6 +124,24 @@ Eina_Bool ewk_extension_client_del(Ewk_Extension* extension, Ewk_Extension_Clien
     EINA_SAFETY_ON_NULL_RETURN_VAL(client, false);
 
     extension->remove(client);
+
+    return true;
+}
+
+Eina_Bool ewk_extension_message_post(Ewk_Extension *extension, const char *name, const Eina_Value *body)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(extension, false);
+
+    const Eina_Value_Type* type = eina_value_type_get(body);
+    if (type != EINA_VALUE_TYPE_STRINGSHARE && type != EINA_VALUE_TYPE_STRING)
+        return false;
+
+    const char* value;
+    eina_value_get(body, &value);
+
+    WKRetainPtr<WKTypeRef> messageBody = adoptWK(WKStringCreateWithUTF8CString(value));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString(name));
+    WKBundlePostMessage(toAPI(extension->bundle()), messageName.get(), messageBody.get());
 
     return true;
 }

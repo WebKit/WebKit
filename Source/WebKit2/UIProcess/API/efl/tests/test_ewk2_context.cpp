@@ -66,6 +66,23 @@ protected:
     }
 };
 
+class EWK2ContextTestWithExtension : public EWK2UnitTestBase {
+public:
+    static void messageReceivedCallback(const char* name, const Eina_Value* body, void* userData)
+    {
+        bool* handled = static_cast<bool*>(userData);
+        ASSERT_STREQ("pong", name);
+
+        *handled = true;
+    }
+
+protected:
+    EWK2ContextTestWithExtension()
+    {
+        m_withExtension = true;
+    }
+};
+
 TEST_F(EWK2ContextTest, ewk_context_default_get)
 {
     Ewk_Context* defaultContext = ewk_context_default_get();
@@ -228,11 +245,22 @@ TEST_F(EWK2ContextTest, ewk_context_new)
     ewk_object_unref(context);
 }
 
-TEST_F(EWK2ContextTest, ewk_context_new_with_extensions_path)
+TEST_F(EWK2ContextTestWithExtension, ewk_context_new_with_extensions_path)
 {
-    Ewk_Context* context = ewk_context_new_with_extensions_path(environment->extensionSample());
-    ASSERT_TRUE(context);
-    ewk_object_unref(context);
+    bool received = false;
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ewk_context_message_from_extensions_callback_set(context, messageReceivedCallback, &received);
+
+    ewk_view_url_set(webView(), environment->defaultTestPageUrl());
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    Eina_Value* body = eina_value_new(EINA_VALUE_TYPE_STRING);
+    eina_value_set(body, "From UIProcess");
+    ewk_context_message_post_to_extensions(context, "ping", body);
+    eina_value_free(body);
+
+    ASSERT_TRUE(waitUntilTrue(received, testTimeoutSeconds));
 }
 
 TEST_F(EWK2ContextTest, ewk_context_additional_plugin_path_set)

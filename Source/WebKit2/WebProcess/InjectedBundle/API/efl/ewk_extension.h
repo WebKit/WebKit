@@ -56,6 +56,14 @@ typedef void *(*Ewk_Extension_Initialize_Function)(Ewk_Extension *extension, voi
 struct EwkExtensionClient {
     int version;
     void *data;
+
+    /**
+     * Callbacks to receive message from ewk_context.
+     *
+     * @param name name of message from ewk_context
+     * @param body body of message from ewk_context
+     */
+    void (*message_received)(const char *name, const Eina_Value *body, void *data);
 };
 typedef struct EwkExtensionClient Ewk_Extension_Client;
 
@@ -79,6 +87,24 @@ EAPI Eina_Bool ewk_extension_client_add(Ewk_Extension *extension, Ewk_Extension_
  * @param client client which contains version, data and callbacks
  */
 EAPI Eina_Bool ewk_extension_client_del(Ewk_Extension *extension, Ewk_Extension_Client *client);
+
+/**
+ * Posts message to ewk_context asynchronously.
+ *
+ * @note body only supports @c EINA_VALUE_TYPE_STRINGSHARE or @c EINA_VALUE_TYPE_STRING,
+ * now.
+ *
+ * @param extension extension to post message
+ * @param name message name
+ * @param body message body
+ *
+ * @return @c EINA_TRUE on success of @c EINA_FALSE on failure or when the type
+ * of @p body is not supported.
+ *
+ * @see ewk_context_message_post_to_extensions
+ * @see ewk_context_message_from_extensions_callback_set
+ */
+EAPI Eina_Bool ewk_extension_message_post(Ewk_Extension *extension, const char *name, const Eina_Value *body);
 
 #ifdef __cplusplus
 }

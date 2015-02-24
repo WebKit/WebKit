@@ -99,10 +99,9 @@ public:
     JSGlobalContextRef jsGlobalContext();
 
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
-    static void didReceiveSynchronousMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo);
     static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo);
-    void setMessageFromInjectedBundleCallback(Ewk_Context_Message_From_Injected_Bundle_Cb, void*);
-    void processReceivedMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
+    void setMessageFromExtensionCallback(Ewk_Context_Message_From_Extension_Cb, void*);
+    void processReceivedMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
 private:
     explicit EwkContext(WKContextRef, const String& extensionsPath = String());
@@ -129,9 +128,9 @@ private:
     String m_extensionsPath;
 
     struct {
-        Ewk_Context_Message_From_Injected_Bundle_Cb callback;
+        Ewk_Context_Message_From_Extension_Cb callback;
         void* userData;
-    } m_callbackForMessageFromInjectedBundle;
+    } m_callbackForMessageFromExtension;
 };
 
 #endif // ewk_context_private_h

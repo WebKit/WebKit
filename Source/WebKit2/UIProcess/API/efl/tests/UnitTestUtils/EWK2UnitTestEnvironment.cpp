@@ -43,11 +43,6 @@ const char* EWK2UnitTestEnvironment::defaultTheme() const
     return DEFAULT_THEME_DIR "/default.edj";
 }
 
-const char* EWK2UnitTestEnvironment::extensionSample() const
-{
-    return TEST_LIB_DIR "/libewk2UnitTestExtensionSample.so";
-}
-
 CString EWK2UnitTestEnvironment::urlForResource(const char* resource)
 {
     return makeString("file://" TEST_RESOURCES_DIR "/", resource).utf8();

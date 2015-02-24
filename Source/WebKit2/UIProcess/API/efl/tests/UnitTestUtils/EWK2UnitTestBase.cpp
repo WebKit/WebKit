@@ -39,6 +39,7 @@ EWK2UnitTestBase::EWK2UnitTestBase()
     , m_webView(0)
     , m_ewkViewClass(ewk2UnitTestBrowserViewSmartClass())
     , m_multipleProcesses(false)
+    , m_withExtension(false)
 {
     ewk_view_smart_class_set(&m_ewkViewClass);
 }
@@ -61,7 +62,12 @@ void EWK2UnitTestBase::SetUp()
 
     Evas_Smart* smart = evas_smart_class_new(&m_ewkViewClass.sc);
 
-    Ewk_Context* newContext = ewk_context_new();
+    Ewk_Context* newContext;
+    if (m_withExtension)
+        newContext = ewk_context_new_with_extensions_path(TEST_LIB_DIR);
+    else
+        newContext = ewk_context_new();
+
     if (m_multipleProcesses)
         ewk_context_process_model_set(newContext, EWK_PROCESS_MODEL_MULTIPLE_SECONDARY);
 

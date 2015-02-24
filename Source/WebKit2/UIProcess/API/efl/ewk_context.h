@@ -139,17 +139,16 @@ typedef void (*Ewk_History_Title_Update_Cb)(const Evas_Object *view, const char 
 typedef void (*Ewk_History_Populate_Visited_Links_Cb)(void *user_data);
 
 /**
- * Callback for didReceiveMessageFromInjectedBundle and didReceiveSynchronousMessageFromInjectedBundle
+ * Callback to receive message from extension.
  *
- * User should allocate new string for return_data before setting it.
- * The return_data string will be freed on WebKit side.
+ * @param name name of message from extension
+ * @param body body of message from extendion
+ * @param user_data user_data will be passsed when receiving message from extension
  *
- * @param name name of message from injected bundle
- * @param body body of message from injected bundle
- * @param return_data return_data string from application
- * @param user_data user_data will be passsed when receiving message from injected bundle
+ * @see ewk_context_message_from_extensions_callback_set
+ * @see ewk_extension_message_post
  */
-typedef void (*Ewk_Context_Message_From_Injected_Bundle_Cb)(const char *name, const char *body, char **return_data, void *user_data);
+typedef void (*Ewk_Context_Message_From_Extension_Cb)(const char *name, const Eina_Value *body, void *user_data);
 
 /**
  * Gets default Ewk_Context instance.
@@ -368,16 +367,22 @@ EAPI Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context *context, cons
 EAPI void ewk_context_resource_cache_clear(Ewk_Context *context);
 
 /**
- * Posts message to injected bundle.
+ * Posts message to extensions asynchronously.
  *
- * @param context context object to post message to injected bundle
+ * @note body only supports @c EINA_VALUE_TYPE_STRINGSHARE or @c EINA_VALUE_TYPE_STRING,
+ * now.
+ *
+ * @param context context object to post message to extensions
  * @param name message name
  * @param body message body
+ *
+ * @return @c EINA_TRUE on success of @c EINA_FALSE on failure or when the type
+ * of @p body is not supported.
  */
-EAPI void ewk_context_message_post_to_injected_bundle(Ewk_Context *context, const char *name, const char *body);
+EAPI Eina_Bool ewk_context_message_post_to_extensions(Ewk_Context *context, const char *name, const Eina_Value *body);
 
 /**
- * Sets callback for received injected bundle message.
+ * Sets callback for received extension message.
  *
  * Client can pass @c NULL for callback to stop listening for messages.
  *
@@ -385,7 +390,7 @@ EAPI void ewk_context_message_post_to_injected_bundle(Ewk_Context *context, cons
  * @param callback callback for received injected bundle message or @c NULL
  * @param user_data user data
  */
-EAPI void ewk_context_message_from_injected_bundle_callback_set(Ewk_Context *context, Ewk_Context_Message_From_Injected_Bundle_Cb callback, void *user_data);
+EAPI void ewk_context_message_from_extensions_callback_set(Ewk_Context *context, Ewk_Context_Message_From_Extension_Cb callback, void *user_data);
 
 /**
  * Sets a process model for @a context.

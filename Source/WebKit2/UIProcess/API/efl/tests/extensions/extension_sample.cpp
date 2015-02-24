@@ -29,8 +29,22 @@
 extern "C" {
 #endif
 
-void ewk_extension_init(Ewk_Extension *)
+static void messageReceived(const char* name, const Eina_Value* body, void* data)
 {
+    Eina_Value* value = eina_value_new(EINA_VALUE_TYPE_STRING);
+    eina_value_set(value, "From extension");
+    ewk_extension_message_post(static_cast<Ewk_Extension*>(data), "pong", value);
+    eina_value_free(value);
+}
+
+void ewk_extension_init(Ewk_Extension* extension)
+{
+    static EwkExtensionClient client;
+    client.version = 1;
+    client.data = (void *)extension;
+    client.message_received = messageReceived;
+
+    ewk_extension_client_add(extension, &client);
 }
 
 #ifdef __cplusplus

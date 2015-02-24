@@ -66,7 +66,7 @@ void ExtensionManagerEfl::initialize(WKBundleRef bundle, WKTypeRef userData)
 
             Ewk_Extension_Initialize_Function initializeFunction = module->functionPointer<Ewk_Extension_Initialize_Function>("ewk_extension_init");
             if (!initializeFunction)
-                return;
+                continue;
 
             initializeFunction(m_extension.get(), nullptr /* reserved for the future */);
             m_extensionModules.append(module.release());
