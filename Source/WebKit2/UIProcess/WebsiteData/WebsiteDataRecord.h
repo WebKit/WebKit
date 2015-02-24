@@ -26,10 +26,25 @@
 #ifndef WebsiteDataRecord_h
 #define WebsiteDataRecord_h
 
+#include "WebsiteDataTypes.h"
+#include <WebCore/SecurityOriginHash.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
 struct WebsiteDataRecord {
-    // FIXME: Fill this in.
+    static String displayNameForOrigin(const WebCore::SecurityOrigin&);
+
+    void add(WebsiteDataTypes, RefPtr<WebCore::SecurityOrigin>&&);
+
+    String displayName;
+    unsigned types;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
 };
 
 }

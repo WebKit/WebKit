@@ -38,6 +38,42 @@ inline _WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
     return (_WKWebsiteDataRecord *)websiteDataRecord.wrapper();
 }
 
+static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
+{
+    using WebsiteDataTypes = WebKit::WebsiteDataTypes;
+
+    int websiteDataTypes = 0;
+
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeCookies)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeCookies;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeDiskCache)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeDiskCache;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeMemoryCache)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMemoryCache;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeLocalStorage)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
+
+    return static_cast<WebsiteDataTypes>(websiteDataTypes);
+}
+
+static inline WKWebsiteDataTypes toWKWebsiteDataTypes(int websiteDataTypes)
+{
+    using WebsiteDataTypes = WebKit::WebsiteDataTypes;
+
+    WKWebsiteDataTypes wkWebsiteDataTypes = 0;
+
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeCookies)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeCookies;
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeDiskCache)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeDiskCache;
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMemoryCache)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeMemoryCache;
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeLocalStorage)
+        wkWebsiteDataTypes |= WKWebsiteDataTypeLocalStorage;
+
+    return wkWebsiteDataTypes;
+}
+
 }
 
 @interface _WKWebsiteDataRecord () <WKObject> {

@@ -40,6 +40,10 @@ typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKWebsiteDataRecord : NSObject
+
+@property (nonatomic, readonly, copy) NSString *displayName;
+
+@property (nonatomic, readonly) WKWebsiteDataTypes dataTypes;
 @end
 
 #endif

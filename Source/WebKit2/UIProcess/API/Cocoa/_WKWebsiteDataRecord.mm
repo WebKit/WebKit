@@ -37,6 +37,37 @@
     [super dealloc];
 }
 
+static NSString *dataTypesToString(WKWebsiteDataTypes dataTypes)
+{
+    auto array = adoptNS([[NSMutableArray alloc] init]);
+
+    if (dataTypes & WKWebsiteDataTypeCookies)
+        [array addObject:@"Cookies"];
+    if (dataTypes & WKWebsiteDataTypeDiskCache)
+        [array addObject:@"Disk Cache"];
+    if (dataTypes & WKWebsiteDataTypeMemoryCache)
+        [array addObject:@"Memory Cache"];
+    if (dataTypes & WKWebsiteDataTypeLocalStorage)
+        [array addObject:@"Local Storage"];
+
+    return [array componentsJoinedByString:@", "];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; displayName = %@; dataTypes = { %@ }>", NSStringFromClass(self.class), self, self.displayName, dataTypesToString(self.dataTypes)];
+}
+
+- (NSString *)displayName
+{
+    return _websiteDataRecord->websiteDataRecord().displayName;
+}
+
+- (WKWebsiteDataTypes)dataTypes
+{
+    return WebKit::toWKWebsiteDataTypes(_websiteDataRecord->websiteDataRecord().types);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

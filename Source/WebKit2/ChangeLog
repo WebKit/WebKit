@@ -1,3 +1,62 @@
+2015-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Pass _WKWebsiteDataRecord objects to the fetchData completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=141984
+
+        Reviewed by Andreas Kling.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Create _WKWebsiteDataRecord objects for WebsiteDataRecord API objects.
+
+        * UIProcess/API/APIWebsiteDataRecord.h:
+        Add WebsiteDataRecord getter.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        Add displayName and dataTypes properties.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        Helper function to convert dataTypes bit-fields to strings.
+
+        (-[_WKWebsiteDataRecord description]):
+        Include the display name and data types in the description.
+
+        (-[_WKWebsiteDataRecord displayName]):
+        Return the display name.
+
+        (-[_WKWebsiteDataRecord dataTypes]):
+        Return the data types.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        Move this here from _WKWebsiteDataStore.mm.
+
+        (WebKit::toWKWebsiteDataTypes):
+        Add new function to convert WebsiteDataTypes to WKWebsiteDataTypes.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (-[_WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        Qualify toWebsiteDataTypes calls.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp: Added.
+        (WebKit::WebsiteDataRecord::displayNameForOrigin):
+        New helper that returns a display name given an origin.
+
+        (WebKit::WebsiteDataRecord::add):
+        Add the origin as well as the type.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        Add new members.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        Loop through the entries and add them to the m_websiteDataRecords hash map, which
+        is keyed off of the display name. Pass the m_websiteDataRecords values to the completion handler.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-02-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more buildfix after r180575.

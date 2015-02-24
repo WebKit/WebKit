@@ -23,27 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIWebsiteDataRecord_h
-#define APIWebsiteDataRecord_h
-
-#include "APIObject.h"
+#include "config.h"
 #include "WebsiteDataRecord.h"
 
-namespace API {
+#include <WebCore/PublicSuffix.h>
+#include <WebCore/SecurityOrigin.h>
 
-class WebsiteDataRecord final : public ObjectImpl<Object::Type::WebsiteDataRecord> {
-public:
-    static Ref<WebsiteDataRecord> create(WebKit::WebsiteDataRecord&&);
-    virtual ~WebsiteDataRecord();
+namespace WebKit {
 
-    const WebKit::WebsiteDataRecord& websiteDataRecord() const { return m_websiteDataRecord; }
+String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& securityOrigin)
+{
+    const auto& protocol = securityOrigin.protocol();
 
-private:
-    explicit WebsiteDataRecord(WebKit::WebsiteDataRecord&&);
+    if (protocol == "file") {
+        // FIXME: Handle this. Return a localized display name.
+        ASSERT_NOT_REACHED();
+    }
 
-    const WebKit::WebsiteDataRecord m_websiteDataRecord;
-};
+    if (protocol == "http" || protocol == "https")
+        return WebCore::topPrivatelyControlledDomain(securityOrigin.host());
 
+    return String();
 }
 
-#endif // APIWebsiteDataRecord_h
+void WebsiteDataRecord::add(WebsiteDataTypes type, RefPtr<WebCore::SecurityOrigin>&& origin)
+{
+    types |= type;
+
+    origins.add(WTF::move(origin));
+}
+
+}

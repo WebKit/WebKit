@@ -133,7 +133,18 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             ASSERT(pendingCallbacks);
             --pendingCallbacks;
 
-            // FIXME: Do something with the website data.
+            for (auto& entry : websiteData.entries) {
+                auto displayName = WebsiteDataRecord::displayNameForOrigin(*entry.origin);
+                if (!displayName)
+                    continue;
+
+                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
+                if (!record.displayName)
+                    record.displayName = WTF::move(displayName);
+
+                record.add(entry.type, WTF::move(entry.origin));
+            }
+
             callIfNeeded();
         }
 
@@ -144,13 +155,21 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
             RefPtr<CallbackAggregator> callbackAggregator(this);
             RunLoop::main().dispatch([callbackAggregator] {
-                // FIXME: Pass data records to the completion handler.
-                callbackAggregator->completionHandler({ });
+
+                WTF::Vector<WebsiteDataRecord> records;
+                records.reserveInitialCapacity(callbackAggregator->m_websiteDataRecords.size());
+
+                for (auto& record : callbackAggregator->m_websiteDataRecords.values())
+                    records.uncheckedAppend(WTF::move(record));
+
+                callbackAggregator->completionHandler(WTF::move(records));
             });
         }
 
         unsigned pendingCallbacks = 0;
         std::function<void (Vector<WebsiteDataRecord>)> completionHandler;
+
+        HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
     };
 
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
