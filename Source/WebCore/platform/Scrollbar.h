@@ -31,6 +31,7 @@
 #include "Timer.h"
 #include "Widget.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -157,6 +158,8 @@ public:
 
     virtual bool supportsUpdateOnSecondaryThread() const override;
 
+    WeakPtr<Scrollbar> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
 protected:
     Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);
 
@@ -204,6 +207,8 @@ protected:
 
 private:
     virtual bool isScrollbar() const override { return true; }
+
+    WeakPtrFactory<Scrollbar> m_weakPtrFactory;
 };
 
 } // namespace WebCore
