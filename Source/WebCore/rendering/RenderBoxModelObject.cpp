@@ -859,7 +859,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
                 if (image.get())
                     image->setSpaceSize(geometry.spaceSize());
-                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
             }
         }
     }
@@ -1036,20 +1036,20 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
 void BackgroundImageGeometry::setNoRepeatX(LayoutUnit xOffset)
 {
     m_destRect.move(std::max<LayoutUnit>(xOffset, 0), 0);
-    m_phase.setX(-std::min<LayoutUnit>(xOffset, 0));
+    m_phase.setWidth(-std::min<LayoutUnit>(xOffset, 0));
     m_destRect.setWidth(m_tileSize.width() + std::min<float>(xOffset, 0));
 }
 void BackgroundImageGeometry::setNoRepeatY(LayoutUnit yOffset)
 {
     m_destRect.move(0, std::max<LayoutUnit>(yOffset, 0));
-    m_phase.setY(-std::min<LayoutUnit>(yOffset, 0));
+    m_phase.setHeight(-std::min<LayoutUnit>(yOffset, 0));
     m_destRect.setHeight(m_tileSize.height() + std::min<float>(yOffset, 0));
 }
 
 void BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
 {
     FloatPoint alignedPoint = attachmentPoint;
-    m_phase.move(std::max<LayoutUnit>(alignedPoint.x() - m_destRect.x(), 0), std::max<LayoutUnit>(alignedPoint.y() - m_destRect.y(), 0));
+    m_phase.expand(std::max<LayoutUnit>(alignedPoint.x() - m_destRect.x(), 0), std::max<LayoutUnit>(alignedPoint.y() - m_destRect.y(), 0));
 }
 
 void BackgroundImageGeometry::clip(const LayoutRect& clipRect)
@@ -1057,9 +1057,9 @@ void BackgroundImageGeometry::clip(const LayoutRect& clipRect)
     m_destRect.intersect(clipRect);
 }
 
-LayoutPoint BackgroundImageGeometry::relativePhase() const
+LayoutSize BackgroundImageGeometry::relativePhase() const
 {
-    LayoutPoint phase = m_phase;
+    LayoutSize phase = m_phase;
     phase += m_destRect.location() - m_destOrigin;
     return phase;
 }
@@ -1098,7 +1098,8 @@ void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(Backgroun
     geometry.setSpaceSize(LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), geometry.spaceSize()), deviceScaleFactor).size()));
     geometry.setDestOrigin(LayoutPoint(roundPointToDevicePixels(geometry.destOrigin(), deviceScaleFactor)));
     geometry.setDestRect(LayoutRect(snapRectToDevicePixels(geometry.destRect(), deviceScaleFactor)));
-    geometry.setPhase(LayoutPoint(roundPointToDevicePixels(geometry.phase(), deviceScaleFactor)));
+    FloatSize pixelSnappedPhase = toFloatSize(roundPointToDevicePixels(toLayoutPoint(geometry.phase()), deviceScaleFactor));
+    geometry.setPhase(LayoutSize(pixelSnappedPhase));
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,
@@ -1250,7 +1251,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     pixelSnapBackgroundImageGeometryForPainting(geometry);
 }
 
-void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatPoint& phase, FloatSize& tileSize) const
+void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const
 {
     const FillLayer* backgroundLayer = style().backgroundLayers();
     BackgroundImageGeometry geometry;

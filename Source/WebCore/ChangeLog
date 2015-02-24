@@ -1,3 +1,43 @@
+2015-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Switch BackgroundImageGeometry's m_phase from LayoutPoint to LayoutSize.
+        https://bugs.webkit.org/show_bug.cgi?id=141972
+
+        Reviewed by Simon Fraser.
+
+        Image geometry's phase represents distance.
+
+        No change in functionality.
+
+        * WebCore.order:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsTilePhase):
+        (WebCore::GraphicsLayer::contentsTilePhase):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computePatternTransformIfNeeded):
+        (WebCore::TextureMapperLayer::setContentsTilePhase):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsTilePhase):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::BackgroundImageGeometry::setNoRepeatX):
+        (WebCore::BackgroundImageGeometry::setNoRepeatY):
+        (WebCore::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::BackgroundImageGeometry::relativePhase):
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::BackgroundImageGeometry::phase):
+        (WebCore::BackgroundImageGeometry::setPhase):
+        (WebCore::BackgroundImageGeometry::setPhaseX):
+        (WebCore::BackgroundImageGeometry::setPhaseY):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawMaskForRenderer):
+
 2015-02-24  Andreas Kling  <akling@apple.com>
 
         [Mac] WebKit abandons overlay scrollbar CALayers.

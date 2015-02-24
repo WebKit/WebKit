@@ -1122,7 +1122,7 @@ void RenderLayerBacking::resetContentsRect()
     }
 
     m_graphicsLayer->setContentsTileSize(IntSize());
-    m_graphicsLayer->setContentsTilePhase(IntPoint());
+    m_graphicsLayer->setContentsTilePhase(IntSize());
 }
 
 void RenderLayerBacking::updateDrawsContent()
@@ -1652,7 +1652,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     }
 
     FloatRect destRect = backgroundBoxForPainting();
-    FloatPoint phase;
+    FloatSize phase;
     FloatSize tileSize;
 
     RefPtr<Image> image = style.backgroundLayers()->image()->cachedImage()->image();

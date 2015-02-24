@@ -102,7 +102,7 @@ public:
     void setOpacity(float);
     void setSolidColor(const Color&);
     void setContentsTileSize(const FloatSize&);
-    void setContentsTilePhase(const FloatPoint&);
+    void setContentsTilePhase(const FloatSize&);
     void setFilters(const FilterOperations&);
 
     bool hasFilters() const
@@ -209,7 +209,7 @@ private:
         float opacity;
         FloatRect contentsRect;
         FloatSize contentsTileSize;
-        FloatPoint contentsTilePhase;
+        FloatSize contentsTilePhase;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
         Color solidColor;

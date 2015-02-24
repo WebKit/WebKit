@@ -139,7 +139,7 @@ struct CoordinatedGraphicsLayerState {
     TransformationMatrix transform;
     TransformationMatrix childrenTransform;
     FloatRect contentsRect;
-    FloatPoint contentsTilePhase;
+    FloatSize contentsTilePhase;
     FloatSize contentsTileSize;
     float opacity;
     Color solidColor;

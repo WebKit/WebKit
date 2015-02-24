@@ -78,19 +78,18 @@ public:
     void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
     
     // Returns the phase relative to the destination rectangle.
-    LayoutPoint relativePhase() const;
+    LayoutSize relativePhase() const;
     
-    LayoutPoint phase() const { return m_phase; }
-    void setPhase(const LayoutPoint& phase) { m_phase = phase; }
-    
+    LayoutSize phase() const { return m_phase; }
+    void setPhase(const LayoutSize& phase) { m_phase = phase; }
+    void setPhaseX(LayoutUnit deltaX) { m_phase.setWidth(deltaX); }
+    void setPhaseY(LayoutUnit deltaY) { m_phase.setHeight(deltaY); }
+
     LayoutSize tileSize() const { return m_tileSize; }
     void setTileSize(const LayoutSize& tileSize) { m_tileSize = tileSize; }
     
     LayoutSize spaceSize() const { return m_space; }
     void setSpaceSize(const LayoutSize& space) { m_space = space; }
-    
-    void setPhaseX(LayoutUnit  x) { m_phase.setX(x); }
-    void setPhaseY(LayoutUnit y) { m_phase.setY(y); }
     
     void setNoRepeatX(LayoutUnit xOffset);
     void setNoRepeatY(LayoutUnit yOffset);
@@ -105,7 +104,7 @@ public:
 private:
     LayoutRect m_destRect;
     LayoutPoint m_destOrigin;
-    LayoutPoint m_phase;
+    LayoutSize m_phase;
     LayoutSize m_tileSize;
     LayoutSize m_space;
     bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
@@ -236,7 +235,7 @@ public:
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
-    void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatPoint& phase, FloatSize& tileSize) const;
+    void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const;
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
 

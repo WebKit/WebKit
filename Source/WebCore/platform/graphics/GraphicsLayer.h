@@ -361,8 +361,8 @@ public:
     virtual void setContentsNeedsDisplay() { };
 
     // The tile phase is relative to the GraphicsLayer bounds.
-    virtual void setContentsTilePhase(const FloatPoint& p) { m_contentsTilePhase = p; }
-    FloatPoint contentsTilePhase() const { return m_contentsTilePhase; }
+    virtual void setContentsTilePhase(const FloatSize& p) { m_contentsTilePhase = p; }
+    FloatSize contentsTilePhase() const { return m_contentsTilePhase; }
 
     virtual void setContentsTileSize(const FloatSize& s) { m_contentsTileSize = s; }
     FloatSize contentsTileSize() const { return m_contentsTileSize; }
@@ -599,7 +599,7 @@ protected:
     FloatRect m_contentsRect;
     FloatRoundedRect m_contentsClippingRect;
     FloatRoundedRect m_masksToBoundsRect;
-    FloatPoint m_contentsTilePhase;
+    FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
 
     int m_repaintCount;
