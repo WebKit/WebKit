@@ -1,3 +1,80 @@
+2015-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Use nullptr in more places in FrameView, RenderView, RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=141974
+
+        Reviewed by Zalan Bujtas.
+
+        0 -> nullptr in FrameView.h/cpp, RenderView.h/cpp, RenderObject.h/cpp.
+        
+        Rename FrameView::m_deferSetNeedsLayouts to FrameView::m_deferSetNeedsLayoutCount
+        to make it more clear that it's a count.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::layerForScrolling):
+        (WebCore::FrameView::layerForHorizontalScrollbar):
+        (WebCore::FrameView::layerForVerticalScrollbar):
+        (WebCore::FrameView::layerForScrollCorner):
+        (WebCore::FrameView::tiledBacking):
+        (WebCore::FrameView::scrollLayerID):
+        (WebCore::FrameView::layerForOverhangAreas):
+        (WebCore::FrameView::setWantsLayerForTopOverHangArea):
+        (WebCore::FrameView::setWantsLayerForBottomOverHangArea):
+        (WebCore::FrameView::hasCompositedContentIncludingDescendants):
+        (WebCore::FrameView::layoutRoot):
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::hostWindow):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::setNeedsLayout):
+        (WebCore::FrameView::enclosingScrollableArea):
+        (WebCore::FrameView::parentFrameView):
+        (WebCore::FrameView::paintControlTints):
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+        (WebCore::FrameView::axObjectCache):
+        * page/FrameView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::nextInPreOrderAfterChildren):
+        (WebCore::RenderObject::previousInPreOrder):
+        (WebCore::RenderObject::firstLeafChild):
+        (WebCore::RenderObject::lastLeafChild):
+        (WebCore::RenderObject::traverseNext):
+        (WebCore::RenderObject::firstLineBlock):
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::showRenderSubTreeAndMark):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::virtualContinuation):
+        (WebCore::RenderObject::node):
+        (WebCore::RenderObject::nonPseudoNode):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::absoluteQuads):
+        (WebCore::RenderObject::absoluteClippedOverflowRect):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::selectionRect):
+        (WebCore::RenderObject::imageChanged):
+        (WebCore::RenderObject::addFocusRingRects):
+        (WebCore::RenderObject::absoluteOutlineBounds):
+        * rendering/RenderView.cpp:
+        (WebCore::SelectionIterator::next):
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::pushMappingToContainer):
+        (WebCore::RenderView::computeRectForRepaint):
+        (WebCore::rendererAfterPosition):
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        (WebCore::RenderView::rootBackgroundIsEntirelyFixed):
+        * rendering/RenderView.h:
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

@@ -107,9 +107,9 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("Rend
 RenderObject::RenderObject(Node& node)
     : CachedImageClient()
     , m_node(node)
-    , m_parent(0)
-    , m_previous(0)
-    , m_next(0)
+    , m_parent(nullptr)
+    , m_previous(nullptr)
+    , m_next(nullptr)
 #ifndef NDEBUG
     , m_hasAXObject(false)
     , m_setNeedsLayoutForbidden(false)
@@ -221,14 +221,14 @@ RenderObject* RenderObject::nextInPreOrder(const RenderObject* stayWithin) const
 RenderObject* RenderObject::nextInPreOrderAfterChildren(const RenderObject* stayWithin) const
 {
     if (this == stayWithin)
-        return 0;
+        return nullptr;
 
     const RenderObject* current = this;
     RenderObject* next;
     while (!(next = current->nextSibling())) {
         current = current->parent();
         if (!current || current == stayWithin)
-            return 0;
+            return nullptr;
     }
     return next;
 }
@@ -247,7 +247,7 @@ RenderObject* RenderObject::previousInPreOrder() const
 RenderObject* RenderObject::previousInPreOrder(const RenderObject* stayWithin) const
 {
     if (this == stayWithin)
-        return 0;
+        return nullptr;
 
     return previousInPreOrder();
 }
@@ -264,7 +264,7 @@ RenderObject* RenderObject::firstLeafChild() const
 {
     RenderObject* r = firstChildSlow();
     while (r) {
-        RenderObject* n = 0;
+        RenderObject* n = nullptr;
         n = r->firstChildSlow();
         if (!n)
             break;
@@ -277,7 +277,7 @@ RenderObject* RenderObject::lastLeafChild() const
 {
     RenderObject* r = lastChildSlow();
     while (r) {
-        RenderObject* n = 0;
+        RenderObject* n = nullptr;
         n = r->lastChildSlow();
         if (!n)
             break;
@@ -296,7 +296,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin) const
         return child;
     }
     if (this == stayWithin)
-        return 0;
+        return nullptr;
     if (nextSibling()) {
         ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
         return nextSibling();
@@ -308,7 +308,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin) const
         ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
         return n->nextSibling();
     }
-    return 0;
+    return nullptr;
 }
 
 // Non-recursive version of the DFS search.
@@ -329,7 +329,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
     }
 
     if (this == stayWithin)
-        return 0;
+        return nullptr;
 
     // Now we traverse other nodes if they exist, otherwise
     // we go to the parent node and try doing the same.
@@ -340,7 +340,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
             currentDepth--;
         }
         if (!n)
-            return 0;
+            return nullptr;
         for (RenderObject* sibling = n->nextSibling(); sibling; sibling = sibling->nextSibling()) {
             overflowType = inclusionFunction(sibling);
             if (overflowType != FixedHeight) {
@@ -354,9 +354,9 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
             n = n->parent();
             currentDepth--;
         } else
-            return 0;
+            return nullptr;
     }
-    return 0;
+    return nullptr;
 }
 
 RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction inclusionFunction) const
@@ -369,7 +369,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
     }
 
     if (this == stayWithin)
-        return 0;
+        return nullptr;
 
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (inclusionFunction(sibling)) {
@@ -392,10 +392,10 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
             if ((!stayWithin || n->parent() != stayWithin))
                 n = n->parent();
             else
-                return 0;
+                return nullptr;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject* renderer)
@@ -523,7 +523,7 @@ static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
 
 RenderBlock* RenderObject::firstLineBlock() const
 {
-    return 0;
+    return nullptr;
 }
 
 static inline bool objectIsRelayoutBoundary(const RenderElement* object)
@@ -1200,7 +1200,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
             return repaintContainer;
         // If we have already found a repaint container then we will repaint into that container only if it is part of the same
         // flow thread. Otherwise we will need to catch the repaint call and send it to the flow thread.
-        RenderFlowThread* repaintContainerFlowThread = repaintContainer ? repaintContainer->flowThreadContainingBlock() : 0;
+        RenderFlowThread* repaintContainerFlowThread = repaintContainer ? repaintContainer->flowThreadContainingBlock() : nullptr;
         if (!repaintContainerFlowThread || repaintContainerFlowThread != parentRenderFlowThread)
             repaintContainer = parentRenderFlowThread;
     }
@@ -1548,7 +1548,7 @@ void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, in
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wundefined-bool-conversion"
 #endif
-    // As this function is intended to be used when debugging, the |this| pointer may be 0.
+    // As this function is intended to be used when debugging, the |this| pointer may be nullptr.
     if (!this)
         return;
 #if COMPILER(CLANG)
@@ -1582,7 +1582,7 @@ void RenderObject::selectionStartEnd(int& spos, int& epos) const
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, MapCoordinatesFlags mode) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
-    mapLocalToContainer(0, transformState, mode | ApplyContainerFlip);
+    mapLocalToContainer(nullptr, transformState, mode | ApplyContainerFlip);
     transformState.flatten();
     
     return transformState.lastPlanarPoint();
@@ -1816,7 +1816,7 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
         // can't get back to the canvas.  Instead we just walk as high up
         // as we can.  If we're in the tree, we'll get the root.  If we
         // aren't we'll get the root of our little subtree (most likely
-        // we'll just return 0).
+        // we'll just return nullptr).
         // FIXME: The definition of view() has changed to not crawl up the render tree.  It might
         // be safe now to use it.
         // FIXME: share code with containingBlockForFixedPosition().

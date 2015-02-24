@@ -710,7 +710,7 @@ private:
 
     FloatRect m_exposedRect;
 
-    unsigned m_deferSetNeedsLayouts;
+    unsigned m_deferSetNeedsLayoutCount;
     bool m_setNeedsLayoutWasDeferred;
 
     RefPtr<Node> m_nodeToDraw;
