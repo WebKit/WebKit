@@ -287,6 +287,7 @@ PassRefPtr<Font> Font::verticalRightOrientationFont() const
         verticalRightPlatformData.setOrientation(Horizontal);
         m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, isCustomFont(), false, true);
     }
+    ASSERT(m_derivedFontData->verticalRightOrientation != this);
     return m_derivedFontData->verticalRightOrientation;
 }
 
@@ -296,6 +297,7 @@ PassRefPtr<Font> Font::uprightOrientationFont() const
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->uprightOrientation)
         m_derivedFontData->uprightOrientation = create(m_platformData, isCustomFont(), false, true);
+    ASSERT(m_derivedFontData->uprightOrientation != this);
     return m_derivedFontData->uprightOrientation;
 }
 
@@ -305,7 +307,7 @@ PassRefPtr<Font> Font::smallCapsFont(const FontDescription& fontDescription) con
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFont(fontDescription, smallCapsFontSizeMultiplier);
-
+    ASSERT(m_derivedFontData->smallCaps != this);
     return m_derivedFontData->smallCaps;
 }
 
@@ -315,7 +317,7 @@ PassRefPtr<Font> Font::emphasisMarkFont(const FontDescription& fontDescription) 
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFont(fontDescription, emphasisMarkFontSizeMultiplier);
-
+    ASSERT(m_derivedFontData->emphasisMark != this);
     return m_derivedFontData->emphasisMark;
 }
 
@@ -327,6 +329,7 @@ PassRefPtr<Font> Font::brokenIdeographFont() const
         m_derivedFontData->brokenIdeograph = create(m_platformData, isCustomFont(), false);
         m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
     }
+    ASSERT(m_derivedFontData->brokenIdeograph != this);
     return m_derivedFontData->brokenIdeograph;
 }
 
@@ -341,6 +344,7 @@ PassRefPtr<Font> Font::nonSyntheticItalicFont() const
 #endif
         m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont());
     }
+    ASSERT(m_derivedFontData->nonSyntheticItalic != this);
     return m_derivedFontData->nonSyntheticItalic;
 }
 

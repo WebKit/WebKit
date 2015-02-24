@@ -339,7 +339,7 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float sc
         scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
-        return FontCache::singleton().fontForPlatformData(scaledFontData);
+        return Font::create(scaledFontData);
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -360,7 +360,7 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float sc
         scaledFontData.m_syntheticBold = (fontTraits & kCTFontBoldTrait) && !(scaledFontTraits & kCTFontTraitBold);
         scaledFontData.m_syntheticOblique = (fontTraits & kCTFontItalicTrait) && !(scaledFontTraits & kCTFontTraitItalic);
 
-        return FontCache::singleton().fontForPlatformData(scaledFontData);
+        return Font::create(scaledFontData);
     }
 
     return nullptr;

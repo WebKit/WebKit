@@ -1,3 +1,31 @@
+2015-02-24  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Break internal reference cycle in WebCore::Font.
+        <https://webkit.org/b/141941>
+        <rdar://problem/19650570>
+
+        Reviewed by Antti Koivisto.
+
+        The Cocoa implementation of Font::platformCreateScaledFont() tried to be smart and use the FontCache.
+        This didn't work out well when scaling a 0pt Font, since scaling 0pt by any factor will return 0pt.
+
+        We'd have a 0pt font, scale it by 0.7 to get a small-caps variant, and then cache that small-caps
+        variant (really "this") in Font::m_derivedData->smallCaps.
+
+        Fix this by having Cocoa Font scaling do exactly what other platforms do: create a new Font every time.
+        This stops us from accumulating tons of abandoned Font objects over time.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::uprightOrientationFont):
+        (WebCore::Font::smallCapsFont):
+        (WebCore::Font::emphasisMarkFont):
+        (WebCore::Font::brokenIdeographFont):
+        (WebCore::Font::nonSyntheticItalicFont): Add assertions to guard against reference cycles inside a Font.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformCreateScaledFont): Always create a new Font when scaling an existing Font to a different size.
+
 2015-02-24  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Reading ReadableStream ready and closed attributes should not always create a new promise
