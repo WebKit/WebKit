@@ -196,8 +196,9 @@ http/tests/cache/disk-cache-disable.html
 # <rdar://problem/14590711> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::Element::detach + 17
 svg/as-image/svg-nested.html
 
-# Difference of 0.02% on top, left border between colors.
+# Difference of less 0.03% on borders between colors.
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
+svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash

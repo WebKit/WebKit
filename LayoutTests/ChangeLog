@@ -1,3 +1,9 @@
+2015-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening: Mark svg/canvas/canvas-global-alpha-svg.html as ImageOnlyFailure
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-02-24  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Reading ReadableStream ready and closed attributes should not always create a new promise
