@@ -311,7 +311,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
             if (Attribute* sizeAttribute = ensureUniqueElementData().findAttributeByName(sizeAttr))
                 sizeAttribute->setValue(attrSize);
         }
-        size = std::max(size, 1);
+        size = std::max(size, 0);
 
         // Ensure that we've determined selectedness of the items at least once prior to changing the size.
         if (oldSize != size)
