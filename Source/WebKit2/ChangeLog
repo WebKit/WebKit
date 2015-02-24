@@ -1,5 +1,12 @@
 2015-02-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more buildfix after r180575.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionDidClose):
+
+2015-02-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after 180575.
 
         * CMakeLists.txt:
