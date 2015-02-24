@@ -35,18 +35,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
-SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin* securityOrigin)
+SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& securityOrigin)
 {
     SecurityOriginData securityOriginData;
 
-    securityOriginData.protocol = securityOrigin->protocol();
-    securityOriginData.host = securityOrigin->host();
-    securityOriginData.port = securityOrigin->port();
+    securityOriginData.protocol = securityOrigin.protocol();
+    securityOriginData.host = securityOrigin.host();
+    securityOriginData.port = securityOrigin.port();
 
     return securityOriginData;
 }
 
-PassRefPtr<SecurityOrigin> SecurityOriginData::securityOrigin() const
+Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
 {
     return SecurityOrigin::create(protocol, host, port);
 }

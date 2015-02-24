@@ -73,7 +73,7 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
         if (!securityOrigin)
             continue;
 
-        results.append(SecurityOriginData::fromSecurityOrigin(securityOrigin.get()));
+        results.append(SecurityOriginData::fromSecurityOrigin(*securityOrigin));
     }
 
     return results;

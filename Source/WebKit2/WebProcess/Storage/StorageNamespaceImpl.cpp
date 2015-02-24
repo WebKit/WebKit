@@ -71,7 +71,7 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOri
 {
     auto& slot = m_storageAreaMaps.add(securityOrigin.get(), nullptr).iterator->value;
     if (!slot)
-        slot = StorageAreaMap::create(this, securityOrigin);
+        slot = StorageAreaMap::create(this, *securityOrigin);
 
     return StorageAreaImpl::create(slot);
 }

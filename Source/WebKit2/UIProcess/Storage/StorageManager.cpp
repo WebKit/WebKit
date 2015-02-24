@@ -624,7 +624,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
     // FIXME: This should be a message check.
     ASSERT(!slot);
 
-    TransientLocalStorageNamespace* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, *topLevelOriginData.securityOrigin());
+    TransientLocalStorageNamespace* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, topLevelOriginData.securityOrigin());
 
     auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);

@@ -66,7 +66,7 @@ WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const
     , m_mainFrameOrigin(mainFrameOrigin.isolatedCopy())
 {
     send(Messages::DatabaseToWebProcessConnection::EstablishIDBConnection(m_serverConnectionIdentifier));
-    send(Messages::DatabaseProcessIDBConnection::EstablishConnection(databaseName, SecurityOriginData::fromSecurityOrigin(&openingOrigin), SecurityOriginData::fromSecurityOrigin(&mainFrameOrigin)));
+    send(Messages::DatabaseProcessIDBConnection::EstablishConnection(databaseName, SecurityOriginData::fromSecurityOrigin(openingOrigin), SecurityOriginData::fromSecurityOrigin(mainFrameOrigin)));
 }
 
 WebIDBServerConnection::~WebIDBServerConnection()
