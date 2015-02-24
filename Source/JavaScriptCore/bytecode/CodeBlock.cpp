@@ -1008,6 +1008,10 @@ void CodeBlock::dumpBytecode(
             printUnaryOp(out, exec, location, it, "is_object");
             break;
         }
+        case op_is_object_or_null: {
+            printUnaryOp(out, exec, location, it, "is_object_or_null");
+            break;
+        }
         case op_is_function: {
             printUnaryOp(out, exec, location, it, "is_function");
             break;

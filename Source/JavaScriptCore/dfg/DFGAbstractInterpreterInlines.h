@@ -800,6 +800,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsNumber:
     case IsString:
     case IsObject:
+    case IsObjectOrNull:
     case IsFunction: {
         JSValue child = forNode(node->child1()).value();
         if (child) {
@@ -821,6 +822,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(isJSString(child)));
                 break;
             case IsObject:
+                setConstant(node, jsBoolean(child.isObject()));
+                break;
+            case IsObjectOrNull:
                 if (child.isNull() || !child.isObject()) {
                     setConstant(node, jsBoolean(child.isNull()));
                     break;
@@ -1178,7 +1182,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString))) {
+        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecCellOther))) {
             m_state.setFoundConstants(true);
             forNode(node) = forNode(node->child1());
             break;
@@ -1186,7 +1190,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         clobberWorld(node->origin.semantic, clobberLimit);
         
-        forNode(node).setType((SpecHeapTop & ~SpecCell) | SpecString);
+        forNode(node).setType((SpecHeapTop & ~SpecCell) | SpecString | SpecCellOther);
         break;
     }
         

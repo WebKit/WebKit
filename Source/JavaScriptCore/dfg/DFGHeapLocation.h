@@ -50,7 +50,7 @@ enum LocationKind {
     InstanceOfLoc,
     InvalidationPointLoc,
     IsFunctionLoc,
-    IsObjectLoc,
+    IsObjectOrNullLoc,
     MyArgumentByValLoc,
     MyArgumentsLengthLoc,
     NamedPropertyLoc,

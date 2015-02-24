@@ -31,7 +31,7 @@ namespace JSC {
 NEVER_INLINE JSValue jsAddSlowCase(CallFrame*, JSValue, JSValue);
 JSValue jsTypeStringForValue(CallFrame*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
-bool jsIsObjectType(CallFrame*, JSValue);
+bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 bool jsIsFunctionType(JSValue);
 
 ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)

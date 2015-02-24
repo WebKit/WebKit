@@ -360,7 +360,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
 
         // If the structure corresponds to something that isn't an object, then give up, since
         // we don't want to be adding properties to strings.
-        if (structure->typeInfo().type() == StringType)
+        if (!structure->typeInfo().isObject())
             return PutByIdStatus(TakesSlowPath);
     
         RefPtr<IntendedStructureChain> chain;
