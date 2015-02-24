@@ -118,14 +118,12 @@
     [object release];
 }
 
-#if PLATFORM(IOS)
 - (void)_webkit_setUnsignedInt:(unsigned)value forKey:(id)key
 {
     NSNumber *object = [[NSNumber alloc] initWithUnsignedInt:value];
     [self setObject:object forKey:key];
     [object release];
 }
-#endif
 
 @end
 

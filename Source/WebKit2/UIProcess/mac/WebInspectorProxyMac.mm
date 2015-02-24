@@ -488,6 +488,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     preferences._logsPageMessagesToSystemConsoleEnabled = YES;
 #endif
     preferences._allowFileAccessFromFileURLs = YES;
+    preferences._javaScriptRuntimeFlags = _WKJavaScriptRuntimeFlagsSymbolEnabled;
     [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool())];
     [configuration _setGroupIdentifier:inspectorPageGroupIdentifier()];
 

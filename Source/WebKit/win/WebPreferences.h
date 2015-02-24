@@ -150,7 +150,13 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptEnabled( 
         /* [in] */ BOOL enabled);
-    
+
+    virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(
+        /* [retval][out] */ unsigned*);
+
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(
+        /* [in] */ unsigned);
+
     virtual HRESULT STDMETHODCALLTYPE javaScriptCanOpenWindowsAutomatically( 
         /* [retval][out] */ BOOL* enabled);
     

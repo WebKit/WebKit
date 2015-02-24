@@ -473,7 +473,7 @@ public:
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPageCacheSupportsPluginsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitJavaScriptExperimentsEnabledPreferenceKey,
+        [NSNumber numberWithUnsignedInt:0], WebKitJavaScriptRuntimeFlagsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDOMTimersThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
@@ -667,7 +667,6 @@ public:
     [self _postPreferencesChangedNotification];
 }
 
-#if PLATFORM(IOS)
 - (unsigned int)_unsignedIntValueForKey:(NSString *)key
 {
     id o = [self _valueForKey:key];
@@ -678,14 +677,17 @@ public:
 {    if ([self _unsignedIntValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
+#if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
+#endif
     [_private->values.get() _webkit_setUnsignedInt:value forKey:_key];
+#if PLATFORM(IOS)
     });
+#endif
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInt:value] forKey:_key];
     [self _postPreferencesChangedNotification];
 }
-#endif
 
 - (float)_floatValueForKey:(NSString *)key
 {
@@ -1184,14 +1186,14 @@ public:
 #endif
 }
 
-- (void)setJavaScriptExperimentsEnabled:(BOOL)flag
+- (WebKitJavaScriptRuntimeFlags)javaScriptRuntimeFlags
 {
-    [self _setBoolValue:flag forKey:WebKitJavaScriptExperimentsEnabledPreferenceKey];
+    return static_cast<WebKitJavaScriptRuntimeFlags>([self _unsignedIntValueForKey:WebKitJavaScriptRuntimeFlagsPreferenceKey]);
 }
 
-- (BOOL)javaScriptExperimentsEnabled
+- (void)setJavaScriptRuntimeFlags:(WebKitJavaScriptRuntimeFlags)flags
 {
-    return [self _boolValueForKey:WebKitJavaScriptExperimentsEnabledPreferenceKey];
+    [self _setUnsignedIntValue:flags forKey:WebKitJavaScriptRuntimeFlagsPreferenceKey];
 }
 
 - (void)setDeveloperExtrasEnabled:(BOOL)flag

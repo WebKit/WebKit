@@ -549,7 +549,7 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetWebAudioEnabled(preferences, true);
     WKPreferencesSetMediaStreamEnabled(preferences, true);
     WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
-    WKPreferencesSetJavaScriptExperimentsEnabled(preferences, true);
+    WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);
     WKPreferencesSetDOMPasteAllowed(preferences, true);

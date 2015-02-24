@@ -1,3 +1,19 @@
+2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r179429): Can't type comments in Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=141859
+
+        Reviewed by Brent Fulgham.
+
+        Drop javaScriptExperimentsEnabled and specify JavaScriptRuntimeFlagsAllEnabled as KJavaScriptRuntimeFlags.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2015-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Crash loading local file with WebPageProxy::loadAlternateHTMLString

@@ -69,6 +69,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
     preferences->setAllowFileAccessFromFileURLs(true);
+    preferences->setJavaScriptRuntimeFlags({
+        JSC::RuntimeFlags::SymbolEnabled
+    });
     RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifier(), false, false);
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), preferences.get(), pageGroup.get(), nullptr, nullptr));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
