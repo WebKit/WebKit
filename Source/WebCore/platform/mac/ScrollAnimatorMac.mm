@@ -315,7 +315,8 @@ enum FeatureToAnimate {
     _startValue = startValue;
     _endValue = endValue;
 
-    [self setAnimationBlockingMode:NSAnimationNonblocking];
+    // FIXME: This is a workaround for <rdar://problem/19899011>.
+    [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
 
     return self;
 }

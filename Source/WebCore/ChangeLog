@@ -1,3 +1,17 @@
+2015-02-24  Andreas Kling  <akling@apple.com>
+
+        [Mac] WebKit abandons overlay scrollbar CALayers.
+        <https://webkit.org/b/141943>
+        <rdar://problem/19932199>
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        Use NSAnimationNonblockingThreaded to ensure that NSAnimations get cleaned up after they finish.
+        The animation was indirectly retaining the overlay scrollbar's CALayer, causing significant
+        amounts of abandoned memory to accumulate over time.
+
 2015-02-24  Anders Carlsson  <andersca@apple.com>
 
         Implement more of the data fetching API
