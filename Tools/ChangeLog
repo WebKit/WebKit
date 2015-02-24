@@ -1,3 +1,17 @@
+2015-02-23  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] fix eo errors
+        https://bugs.webkit.org/show_bug.cgi?id=141909
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix eo errors that occur whenever minibrowser is launched.
+        - elm_obj_entry_text_style_user_push can only be applied for elm_entry
+        - elm_obj_win_resize_object_add's first parameter should be elm_win
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2015-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix after r180535. Removed the test case that wasn't compiling.

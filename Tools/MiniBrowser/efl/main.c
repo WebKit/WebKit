@@ -2157,7 +2157,6 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_size_hint_weight_set(window->search.search_field_count, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->search.search_field_count, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_object_text_set(window->search.search_field_count, "");
-    elm_entry_text_style_user_push(window->search.search_field_count, "DEFAULT='font_size=14'");
     elm_box_pack_end(window->search.search_bar, window->search.search_field_count);
 
     /* Create Search Case Sensitive Option check box */
@@ -2190,7 +2189,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     window->history.history_list = elm_genlist_add(window->elm_window);
     evas_object_size_hint_weight_set(window->history.history_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->history.history_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_win_resize_object_add(window->history.history_list, window->history.history_box);
+    elm_win_resize_object_add(window->elm_window, window->history.history_box);
     elm_box_pack_end(window->history.history_box, window->history.history_list);
     
     /* Create ewk_view */
