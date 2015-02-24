@@ -75,24 +75,6 @@ compositing/visible-rect/animated.html
 compositing/video/video-border-radius.html
 
 # CSS tests that fail:
-css2.1/20110323/border-conflict-element-001d.htm [ ImageOnlyFailure ]
-css2.1/20110323/border-conflict-element-021a.htm [ ImageOnlyFailure ]
-css2.1/20110323/c541-word-sp-001.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-007.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-009.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-010.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-012.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-013.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-014.htm [ ImageOnlyFailure ]
-css2.1/20110323/overflow-applies-to-015.htm [ ImageOnlyFailure ]
-css2.1/20110323/text-indent-014.htm [ ImageOnlyFailure ]
-css2.1/20110323/word-spacing-remove-space-002.htm [ ImageOnlyFailure ]
-css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnlyFailure ]
-css2.1/20110323/word-spacing-remove-space-004.htm [ ImageOnlyFailure ]
-css2.1/20110323/word-spacing-remove-space-005.htm [ ImageOnlyFailure ]
-css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
-css2.1/t0803-c5505-mrgn-03-c-ag.html [ Failure ]
-css2.1/t1605-c545-txttrans-00-b-ag.html [ Failure ]
 css3/blending/blend-mode-simple-composited.html [ Failure ]
 css3/blending/blend-mode-simple.html [ Failure ]
 css3/calc/line-height.html [ Failure ]
@@ -2101,7 +2083,6 @@ platform/ios-simulator/ios/fast/text/data-detectors/phone.html
 # Flaky tests:
 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure Pass ]
 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure Pass ]
-css2.1/20110323/replaced-intrinsic-001.htm [ Failure Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Failure Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Failure Pass ]
 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
@@ -2335,4 +2316,5 @@ http/tests/cache/history-navigation-no-resource-revalidation.html [ Skip ]
 http/tests/navigation/target-blank-opener-post.html [ Skip ]
 
 # Unskip otherwise globally-skipped test
+css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 fast/replaced/pdf-as-object-and-embed.html [ Pass ]

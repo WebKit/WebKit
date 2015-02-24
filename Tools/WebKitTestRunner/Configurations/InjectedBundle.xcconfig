@@ -29,7 +29,7 @@ PRODUCT_NAME = WebKitTestRunnerInjectedBundle;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Resources;
 SKIP_INSTALL = NO;
 
-OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework QuartzCore;
+OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework CoreText -framework QuartzCore;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);

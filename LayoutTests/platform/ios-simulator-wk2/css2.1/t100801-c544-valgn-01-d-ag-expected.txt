@@ -1,59 +1,59 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x298
-  RenderBlock {HTML} at (0,0) size 800x298
-    RenderBody {BODY} at (8,16) size 784x274
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x276
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 317x19
           text run at (0,0) width 317: "There should be a green block with no red below."
-      RenderBlock {DIV} at (15,36) size 90x238 [color=#008000] [bgcolor=#FF0000]
+      RenderBlock {DIV} at (15,36) size 90x240 [color=#008000] [bgcolor=#FF0000]
         RenderBlock {DIV} at (0,0) size 90x33
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 11x18
-            RenderText {#text} at (30,-2) size 11x18
-              text run at (30,-2) width 11: "X"
-          RenderText {#text} at (40,16) size 12x18
-            text run at (40,16) width 12: "X"
-        RenderBlock {DIV} at (0,33) size 90x35
+          RenderInline {SPAN} at (0,0) size 15x15
+            RenderText {#text} at (30,0) size 15x15
+              text run at (30,0) width 15: "X"
+          RenderText {#text} at (45,18) size 15x15
+            text run at (45,18) width 15: "X"
+        RenderBlock {DIV} at (0,33) size 90x36
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 33x34
-            RenderInline {SPAN} at (0,0) size 11x18
-              RenderText {#text} at (30,1) size 11x18
-                text run at (30,1) width 11: "X"
-            RenderText {#text} at (40,3) size 23x34
-              text run at (40,3) width 23: "X"
-        RenderBlock {DIV} at (0,68) size 90x30
+          RenderInline {SPAN} at (0,0) size 45x30
+            RenderInline {SPAN} at (0,0) size 15x15
+              RenderText {#text} at (30,6) size 15x15
+                text run at (30,6) width 15: "X"
+            RenderText {#text} at (45,6) size 30x30
+              text run at (45,6) width 30: "X"
+        RenderBlock {DIV} at (0,69) size 90x30
           RenderImage {IMG} at (0,0) size 30x30
-          RenderText {#text} at (30,4) size 11x18
-            text run at (30,4) width 11: "X"
-        RenderBlock {DIV} at (0,98) size 90x35
+          RenderText {#text} at (30,9) size 15x15
+            text run at (30,9) width 15: "X"
+        RenderBlock {DIV} at (0,99) size 90x36
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 33x34
-            RenderInline {SPAN} at (0,0) size 11x18
-              RenderText {#text} at (30,18) size 11x18
-                text run at (30,18) width 11: "X"
-            RenderText {#text} at (40,3) size 23x34
-              text run at (40,3) width 23: "X"
-        RenderBlock {DIV} at (0,133) size 90x37
+          RenderInline {SPAN} at (0,0) size 45x30
+            RenderInline {SPAN} at (0,0) size 15x15
+              RenderText {#text} at (30,21) size 15x15
+                text run at (30,21) width 15: "X"
+            RenderText {#text} at (45,6) size 30x30
+              text run at (45,6) width 30: "X"
+        RenderBlock {DIV} at (0,135) size 90x36
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 33x34
-            RenderInline {SPAN} at (0,0) size 11x18
-              RenderText {#text} at (30,20) size 11x18
-                text run at (30,20) width 11: "X"
-            RenderText {#text} at (40,3) size 23x34
-              text run at (40,3) width 23: "X"
-        RenderBlock {DIV} at (0,170) size 90x35
+          RenderInline {SPAN} at (0,0) size 45x30
+            RenderInline {SPAN} at (0,0) size 15x15
+              RenderText {#text} at (30,21) size 15x15
+                text run at (30,21) width 15: "X"
+            RenderText {#text} at (45,6) size 30x30
+              text run at (45,6) width 30: "X"
+        RenderBlock {DIV} at (0,171) size 90x36
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 33x34
-            RenderInline {SPAN} at (0,0) size 11x18
-              RenderText {#text} at (30,16) size 11x18
-                text run at (30,16) width 11: "X"
-            RenderText {#text} at (40,3) size 23x34
-              text run at (40,3) width 23: "X"
-        RenderBlock {DIV} at (0,205) size 90x33
+          RenderInline {SPAN} at (0,0) size 45x30
+            RenderInline {SPAN} at (0,0) size 15x15
+              RenderText {#text} at (30,18) size 15x15
+                text run at (30,18) width 15: "X"
+            RenderText {#text} at (45,6) size 30x30
+              text run at (45,6) width 30: "X"
+        RenderBlock {DIV} at (0,207) size 90x33
           RenderImage {IMG} at (0,0) size 30x30
-          RenderInline {SPAN} at (0,0) size 11x18
-            RenderText {#text} at (30,6) size 11x18
-              text run at (30,6) width 11: "X"
-          RenderText {#text} at (40,16) size 12x18
-            text run at (40,16) width 12: "X"
+          RenderInline {SPAN} at (0,0) size 15x15
+            RenderText {#text} at (30,8) size 15x15
+              text run at (30,8) width 15: "X"
+          RenderText {#text} at (45,18) size 15x15
+            text run at (45,18) width 15: "X"

@@ -377,36 +377,13 @@ compositing/geometry/partial-layout-update.html
 fast/dom/HTMLObjectElement/children-changed.html
 fast/events/menu-keydown-on-hidden-element.html
 
+# CSS tests that flake:
+css2.1/20110323/replaced-intrinsic-001.htm [ Failure Pass ]
+
 # CSS tests that fail:
-css2.1/20110323/abspos-containing-block-initial-001.htm [ Failure ]
-css2.1/20110323/abspos-containing-block-initial-007.htm [ Failure ]
-css2.1/20110323/abspos-non-replaced-width-margin-000.htm [ Failure ]
-css2.1/20110323/abspos-replaced-width-margin-000.htm [ Failure ]
-css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
-css2.1/20110323/c543-txt-decor-000.html [ Failure ]
-css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Failure ]
-css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
-css2.1/t1001-abs-pos-cb-01-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-02-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-03-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-04-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-05-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-06-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-07-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-08-b.html [ Failure ]
-css2.1/t1001-abs-pos-cb-09-b.html [ Failure ]
-css2.1/t1205-c566-list-stl-01-c-g.html [ Failure ]
-css2.1/t1508-c527-font-00-b.html [ Failure ]
-css2.1/t1508-c527-font-01-b.html [ Failure ]
-css2.1/t1508-c527-font-02-b.html [ Failure ]
-css2.1/t1508-c527-font-03-b.html [ Failure ]
-css2.1/t1508-c527-font-04-b.html [ Failure ]
-css2.1/t1508-c527-font-05-b.html [ Failure ]
-css2.1/t1508-c527-font-06-b.html [ Failure ]
-css2.1/t1508-c527-font-07-b.html [ Failure ]
-css2.1/t1508-c527-font-08-b.html [ Failure ]
-css2.1/t1508-c527-font-09-b.html [ Failure ]
-css2.1/t1508-c527-font-10-c.html [ Failure ]
+css1/box_properties/acid_test.html [ Failure ]
+css1/box_properties/float_on_text_elements.html [ Failure ]
+css1/formatting_model/floating_elements.html [ Failure ]
 css3/background/background-repeat-round-padding.html [ ImageOnlyFailure ]
 css3/blending/blend-mode-body-child-isolate-html-background-color.html [ ImageOnlyFailure ]
 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
@@ -2494,27 +2471,6 @@ compositing/overflow/textarea-scroll-touch.html
 compositing/overflow/updating-scrolling-content.html
 
 # Failures as of 01/16/2015:
-css1/box_properties/acid_test.html [ Failure ]
-css1/box_properties/float_on_text_elements.html [ Failure ]
-css1/formatting_model/floating_elements.html [ Failure ]
-css2.1/t0803-c5502-mrgn-r-03-c.html [ Failure ]
-css2.1/t0803-c5504-mrgn-l-03-c.html [ Failure ]
-css2.1/t0804-c5507-padn-r-03-f.html [ Failure ]
-css2.1/t0804-c5509-padn-l-03-f-g.html [ Failure ]
-css2.1/t0804-c5510-padn-02-f.html [ Failure ]
-css2.1/t09-c5526c-display-00-e.html [ Failure ]
-css2.1/t0905-c5525-fltcont-00-d-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-00-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-03-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwrap-00-b.html [ Failure ]
-css2.1/t090501-c414-flt-01-b.html [ Failure ]
-css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
-css2.1/t1202-counter-08-b.html [ Failure ]
-css2.1/t1202-counter-13-b.html [ Failure ]
-css2.1/t1202-counter-14-b.html [ Failure ]
-css2.1/t1202-counters-08-b.html [ Failure ]
-css2.1/t1202-counters-13-b.html [ Failure ]
-css2.1/t1202-counters-14-b.html [ Failure ]
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
@@ -2626,6 +2582,13 @@ platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 platform/ios-simulator/ios/fast/text/combining-enclosing-keycap.html
 platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html
 platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
+
+# Kerning, Ligatures, and Printer Fonts caused these tests to fail.
+# The following tests are reftests (and also fail on Mac):
+webkit.org/b/139968 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
+
+webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 ###
 # Mark as passing specific tests in folders that were skipped temporarily above.
