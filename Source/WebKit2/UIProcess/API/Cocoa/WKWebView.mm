@@ -103,6 +103,7 @@
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
+- (BOOL)_isInterruptingDeceleration;
 @end
 
 @interface UIPeripheralHost(UIKitInternal)
@@ -1411,6 +1412,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _didFinishScrolling];
 }
 
+- (void)_scrollViewDidInterruptDecelerating:(UIScrollView *)scrollView
+{
+    if (![self usesStandardContentView])
+        return;
+
+    [_contentView didInterruptScrolling];
+    [self _updateVisibleContentRects];
+}
+
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
@@ -1466,6 +1476,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat scaleFactor = contentZoomScale(self);
 
     BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop]);
+
+    // FIXME: this can be made static after we stop supporting iOS 8.x.
+    if (isStableState && [_scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
+        isStableState = ![_scrollView performSelector:@selector(_isInterruptingDeceleration)];
+
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect

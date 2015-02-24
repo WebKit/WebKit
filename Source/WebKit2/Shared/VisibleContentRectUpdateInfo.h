@@ -101,6 +101,9 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.exposedRect() == b.exposedRect()
         && a.unobscuredRect() == b.unobscuredRect()
         && a.customFixedPositionRect() == b.customFixedPositionRect()
+        && a.horizontalVelocity() == b.horizontalVelocity()
+        && a.verticalVelocity() == b.verticalVelocity()
+        && a.scaleChangeRate() == b.scaleChangeRate()
         && a.inStableState() == b.inStableState();
 }
 
