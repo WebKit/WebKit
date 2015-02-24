@@ -311,7 +311,7 @@ ControllerIOS.prototype = {
 
         buffered /= this.video.duration;
 
-        var ctx = document.getCSSCanvasContext('2d', this.timelineContextName, width, height);
+        var ctx = this.video.ownerDocument.getCSSCanvasContext('2d', this.timelineContextName, width, height);
 
         ctx.clearRect(0, 0, width, height);
 
