@@ -71,14 +71,14 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
     switch (m_storageType) {
     case WebCore::LocalStorage:
         if (SecurityOrigin* topLevelOrigin = storageNamespace->topLevelOrigin())
-            WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateTransientLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(*topLevelOrigin), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+            WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateTransientLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(*topLevelOrigin), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
         else
-            WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+            WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
 
         break;
 
     case WebCore::SessionStorage:
-        WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+        WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
         break;
     }
 

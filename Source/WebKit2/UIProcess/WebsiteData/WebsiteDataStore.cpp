@@ -29,6 +29,7 @@
 #include "APIWebsiteDataRecord.h"
 #include "StorageManager.h"
 #include "WebProcessPool.h"
+#include "WebsiteData.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -99,7 +100,90 @@ enum class ProcessAccessType {
     Launch,
 };
 
-static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+{
+    ProcessAccessType processAccessType = ProcessAccessType::None;
+
+    if (dataTypes & WebsiteDataTypeMemoryCache)
+        return ProcessAccessType::OnlyIfLaunched;
+
+    return processAccessType;
+}
+
+void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+{
+    struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
+        explicit CallbackAggregator(std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+            : completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        ~CallbackAggregator()
+        {
+            ASSERT(!pendingCallbacks);
+        }
+
+        void addPendingCallback()
+        {
+            pendingCallbacks++;
+        }
+
+        void removePendingCallback(WebsiteData websiteData)
+        {
+            ASSERT(pendingCallbacks);
+            --pendingCallbacks;
+
+            // FIXME: Do something with the website data.
+            callIfNeeded();
+        }
+
+        void callIfNeeded()
+        {
+            if (pendingCallbacks)
+                return;
+
+            RefPtr<CallbackAggregator> callbackAggregator(this);
+            RunLoop::main().dispatch([callbackAggregator] {
+                // FIXME: Pass data records to the completion handler.
+                callbackAggregator->completionHandler({ });
+            });
+        }
+
+        unsigned pendingCallbacks = 0;
+        std::function<void (Vector<WebsiteDataRecord>)> completionHandler;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+
+    auto webProcessAccessType = computeWebProcessAccessTypeForDataFetch(dataTypes, isNonPersistent());
+    if (webProcessAccessType != ProcessAccessType::None) {
+        for (auto& process : processes()) {
+            switch (webProcessAccessType) {
+            case ProcessAccessType::OnlyIfLaunched:
+                if (!process->canSendMessage())
+                    continue;
+                break;
+
+            case ProcessAccessType::Launch:
+                // FIXME: Handle this.
+                ASSERT_NOT_REACHED();
+                break;
+
+            case ProcessAccessType::None:
+                ASSERT_NOT_REACHED();
+            }
+
+            callbackAggregator->addPendingCallback();
+            process->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
+                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            });
+        }
+    }
+
+    callbackAggregator->callIfNeeded();
+}
+
+static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
@@ -116,7 +200,7 @@ static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTy
     return processAccessType;
 }
 
-static ProcessAccessType computeWebProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
     UNUSED_PARAM(isNonPersistentStore);
 
@@ -128,13 +212,6 @@ static ProcessAccessType computeWebProcessAccessType(WebsiteDataTypes dataTypes,
     return processAccessType;
 }
 
-void WebsiteDataStore::fetchData(WebsiteDataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
-{
-    // FIXME: Actually fetch data.
-    RunLoop::main().dispatch([completionHandler] {
-        completionHandler({ });
-    });
-}
 
 void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
@@ -169,7 +246,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
 
-    auto networkProcessAccessType = computeNetworkProcessAccessType(dataTypes, isNonPersistent());
+    auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, isNonPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
         HashSet<WebProcessPool*> processPools;
         for (auto& process : processes())
@@ -197,7 +274,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         }
     }
 
-    auto webProcessAccessType = computeWebProcessAccessType(dataTypes, isNonPersistent());
+    auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, isNonPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& process : processes()) {
             switch (webProcessAccessType) {

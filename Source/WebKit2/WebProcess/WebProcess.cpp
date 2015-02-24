@@ -61,6 +61,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
+#include "WebsiteData.h"
 #include "WebsiteDataTypes.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
@@ -1131,6 +1132,18 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 void WebProcess::releasePageCache()
 {
     PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
+}
+
+void WebProcess::fetchWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, uint64_t callbackID)
+{
+    WebsiteData websiteData;
+
+    if (websiteDataTypes & WebsiteDataTypeMemoryCache) {
+        for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID))
+            websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataTypeMemoryCache });
+    }
+
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
 }
 
 void WebProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)

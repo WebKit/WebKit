@@ -562,6 +562,28 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
     }
 }
 
+HashSet<RefPtr<SecurityOrigin>> MemoryCache::originsWithCache(SessionID sessionID) const
+{
+    HashSet<RefPtr<SecurityOrigin>> origins;
+
+    auto it = m_sessionResources.find(sessionID);
+    if (it != m_sessionResources.end()) {
+
+        for (auto& keyValue : *it->value) {
+            auto& resource = *keyValue.value;
+#if ENABLE(CACHE_PARTITIONING)
+            auto& partitionName = keyValue.key.second;
+            if (!partitionName.isEmpty())
+                origins.add(SecurityOrigin::create("http", partitionName, 0));
+            else
+#endif
+            origins.add(SecurityOrigin::create(resource.url()));
+        }
+    }
+
+    return origins;
+}
+
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource& resource)
 {
     m_liveDecodedResources.remove(&resource);

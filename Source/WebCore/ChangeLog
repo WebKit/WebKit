@@ -1,3 +1,15 @@
+2015-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Implement more of the data fetching API
+        https://bugs.webkit.org/show_bug.cgi?id=141975
+
+        Reviewed by Andreas Kling.
+
+        Add API for getting origins in a given session that has cached data.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::originsWithCache):
+
 2015-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Use nullptr in more places in FrameView, RenderView, RenderObject

@@ -148,6 +148,7 @@ public:
     typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
     WEBCORE_EXPORT void removeResourcesWithOrigin(SecurityOrigin&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
+    WEBCORE_EXPORT HashSet<RefPtr<SecurityOrigin>> originsWithCache(SessionID) const;
 
 #if USE(CG)
     // FIXME: Remove the USE(CG) once we either make NativeImagePtr a smart pointer on all platforms or

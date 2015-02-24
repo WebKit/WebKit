@@ -1,3 +1,70 @@
+2015-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Implement more of the data fetching API
+        https://bugs.webkit.org/show_bug.cgi?id=141975
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebsiteData/WebsiteData.cpp: Added.
+        (WebKit::WebsiteData::Entry::encode):
+        (WebKit::WebsiteData::Entry::decode):
+        (WebKit::WebsiteData::encode):
+        (WebKit::WebsiteData::decode):
+        * Shared/WebsiteData/WebsiteData.h: Added.
+        Add a new WebsiteData class that will store website data. Currently it only stores
+        origin + website data type, but in the future it is going to store more things, like 
+        host names that have cookies associated.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Assert that we don't have any pending fetch data callbacks.
+
+        (WebKit::WebProcessProxy::connectionDidClose):
+        Invoke any pending fetch website data callbacks.
+
+        (WebKit::WebProcessProxy::didFetchWebsiteData):
+        Grab the callback and invoke it.
+
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        Set up a pending callback and send a FetchWebsiteData message to the web process.
+
+        * UIProcess/WebProcessProxy.h:
+        Add new member.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add a DidFetchWebsiteData message.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeWebProcessAccessTypeForDataFetch):
+        Return the web process access type for the given set of data types.
+
+        (WebKit::WebsiteDataStore::fetchData):
+        Set up a callback aggregator that will assemble the needed website data into a vector of website data records.
+
+        (WebKit::computeNetworkProcessAccessTypeForDataRemoval):
+        (WebKit::computeWebProcessAccessTypeForDataRemoval):
+        Rename these functions to indicate that they are about data removal.
+
+        (WebKit::WebsiteDataStore::removeData):
+        Append "ForDataRemoval" to function calls.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        Tighten types.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+        For now, just fetch memory cache data.
+
+        * WebProcess/WebProcess.h:
+        Add new members.
+
+        * WebProcess/WebProcess.messages.in:
+        Add FetchWebsiteData message.
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

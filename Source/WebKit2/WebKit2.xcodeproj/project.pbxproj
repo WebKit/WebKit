@@ -254,6 +254,8 @@
 		1A4832CC1A9BC465008B4DFE /* _WKWebsiteDataRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4832CA1A9BC465008B4DFE /* _WKWebsiteDataRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A4832CE1A9BC484008B4DFE /* _WKWebsiteDataRecordInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4832CD1A9BC484008B4DFE /* _WKWebsiteDataRecordInternal.h */; };
 		1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4832CF1A9BD821008B4DFE /* WebsiteDataRecord.h */; };
+		1A4832D61A9CDF96008B4DFE /* WebsiteData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */; };
+		1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4832D51A9CDF96008B4DFE /* WebsiteData.h */; };
 		1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */; };
 		1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */; };
 		1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */; };
@@ -2332,6 +2334,8 @@
 		1A4832CA1A9BC465008B4DFE /* _WKWebsiteDataRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataRecord.h; sourceTree = "<group>"; };
 		1A4832CD1A9BC484008B4DFE /* _WKWebsiteDataRecordInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataRecordInternal.h; sourceTree = "<group>"; };
 		1A4832CF1A9BD821008B4DFE /* WebsiteDataRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataRecord.h; sourceTree = "<group>"; };
+		1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteData.cpp; sourceTree = "<group>"; };
+		1A4832D51A9CDF96008B4DFE /* WebsiteData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteData.h; sourceTree = "<group>"; };
 		1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginModule.cpp; sourceTree = "<group>"; };
 		1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginModule.h; sourceTree = "<group>"; };
 		1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginModuleMac.mm; sourceTree = "<group>"; };
@@ -4877,6 +4881,8 @@
 			isa = PBXGroup;
 			children = (
 				1ABF43791A368050003FB0E6 /* WebsiteDataTypes.h */,
+				1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */,
+				1A4832D51A9CDF96008B4DFE /* WebsiteData.h */,
 			);
 			path = WebsiteData;
 			sourceTree = "<group>";
@@ -7458,6 +7464,7 @@
 			files = (
 				2D7F13101A702FBA009A6FBD /* ProcessType.h in Headers */,
 				37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */,
+				1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */,
 				A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */,
@@ -9486,6 +9493,7 @@
 				31A67E0C165B2A99006CBA66 /* PlugInAutoStartProvider.cpp in Sources */,
 				1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */,
 				1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */,
+				1A4832D61A9CDF96008B4DFE /* WebsiteData.cpp in Sources */,
 				1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */,
 				1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */,
 				7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */,

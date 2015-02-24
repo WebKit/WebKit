@@ -49,6 +49,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxyMessages.h"
 #include "WebUserContentControllerProxy.h"
+#include "WebsiteData.h"
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
@@ -113,6 +114,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
 
 WebProcessProxy::~WebProcessProxy()
 {
+    ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
 
     if (m_webConnection)
@@ -145,6 +147,10 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
 {
     ASSERT(this->connection() == &connection);
+
+    for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
+        callback({ });
+    m_pendingFetchWebsiteDataCallbacks.clear();
 
     for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
         callback();
@@ -597,6 +603,12 @@ void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
     }
 }
 
+void WebProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)
+{
+    auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
+    callback(websiteData);
+}
+
 void WebProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
 {
     auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
@@ -636,6 +648,16 @@ void WebProcessProxy::windowServerConnectionStateChanged()
 {
     for (const auto& page : m_pageMap.values())
         page->viewStateDidChange(ViewState::IsVisuallyIdle);
+}
+
+void WebProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes dataTypes, std::function<void (WebsiteData)> completionHandler)
+{
+    ASSERT(canSendMessage());
+
+    uint64_t callbackID = generateCallbackID();
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+
+    send(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
 }
 
 void WebProcessProxy::deleteWebsiteData(SessionID sessionID, WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)

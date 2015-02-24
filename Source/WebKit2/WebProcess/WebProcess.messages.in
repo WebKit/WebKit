@@ -79,6 +79,7 @@ messages -> WebProcess LegacyReceiver {
 
     ReleasePageCache()
 
+    FetchWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 
     SetProcessSuppressionEnabled(bool flag)
