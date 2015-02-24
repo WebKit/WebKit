@@ -1,3 +1,26 @@
+2015-02-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Our bizarre behavior on Arguments::defineOwnProperty should be deliberate rather than a spaghetti incident
+        https://bugs.webkit.org/show_bug.cgi?id=141951
+
+        Reviewed by Benjamin Poulain.
+        
+        This patch has no behavioral change, but it simplifies a bunch of wrong code. The code is
+        still wrong in exactly the same way, but at least it's obvious what's going on. The wrongness
+        is covered by this bug: https://bugs.webkit.org/show_bug.cgi?id=141952.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyBackingStore): We should only see the arguments token; assert otherwise. This works because if the GC sees the butterfly token it calls the JSObject::copyBackingStore method directly.
+        (JSC::Arguments::defineOwnProperty): Make our bizarre behavior deliberate rather than an accident of a decade of patches.
+        * tests/stress/arguments-bizarre-behavior.js: Added.
+        (foo):
+        * tests/stress/arguments-bizarre-behaviour-disable-enumerability.js: Added. My choice of spellings of the word "behavio[u]r" is almost as consistent as our implementation of arguments.
+        (foo):
+        * tests/stress/arguments-custom-properties-gc.js: Added. I added this test because at first I was unsure if we GCd arguments correctly.
+        (makeBaseArguments):
+        (makeArray):
+        (cons):
+
 2015-02-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180547 and r180550.

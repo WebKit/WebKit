@@ -81,7 +81,7 @@ void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken t
     }
 
     default:
-        return;
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
     
@@ -295,35 +295,33 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
     unsigned i = propertyName.asIndex();
     if (i < thisObject->m_numArguments) {
         RELEASE_ASSERT(i < PropertyName::NotAnIndex);
-        // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
-        PropertySlot slot(thisObject);
-        if (!thisObject->isDeletedArgument(i) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
+        
+        if (thisObject->isArgument(i)) {
+            if (!descriptor.isAccessorDescriptor()) {
+                // If the property is not deleted and we are using a non-accessor descriptor, then
+                // make sure that the aliased argument sees the value.
+                if (descriptor.value())
+                    thisObject->trySetArgument(exec->vm(), i, descriptor.value());
+            
+                // If the property is not deleted and we are using a non-accessor, writable
+                // descriptor, then we are done. The argument continues to be aliased. Note that we
+                // ignore the request to change enumerability. We appear to have always done so, in
+                // cases where the argument was still aliased.
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141952
+                if (descriptor.writable())
+                    return true;
+            }
+            
+            // If the property is a non-deleted argument, then move it into the base object and then
+            // delete it.
             JSValue value = thisObject->tryGetArgument(i);
             ASSERT(value);
             object->putDirectMayBeIndex(exec, propertyName, value);
+            thisObject->tryDeleteArgument(exec->vm(), i);
         }
-        if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
-            return false;
-
-        // From ES 5.1, 10.6 Arguments Object
-        // 5. If the value of isMapped is not undefined, then
-        if (thisObject->isArgument(i)) {
-            // a. If IsAccessorDescriptor(Desc) is true, then
-            if (descriptor.isAccessorDescriptor()) {
-                // i. Call the [[Delete]] internal method of map passing P, and false as the arguments.
-                thisObject->tryDeleteArgument(exec->vm(), i);
-            } else { // b. Else
-                // i. If Desc.[[Value]] is present, then
-                // 1. Call the [[Put]] internal method of map passing P, Desc.[[Value]], and Throw as the arguments.
-                if (descriptor.value())
-                    thisObject->trySetArgument(exec->vm(), i, descriptor.value());
-                // ii. If Desc.[[Writable]] is present and its value is false, then
-                // 1. Call the [[Delete]] internal method of map passing P and false as arguments.
-                if (descriptor.writablePresent() && !descriptor.writable())
-                    thisObject->tryDeleteArgument(exec->vm(), i);
-            }
-        }
-        return true;
+        
+        // Now just let the normal object machinery do its thing.
+        return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
     }
 
     if (propertyName == exec->propertyNames().length && !thisObject->m_overrodeLength) {
