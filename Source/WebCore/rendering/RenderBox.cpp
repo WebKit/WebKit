@@ -1342,8 +1342,7 @@ bool RenderBox::getBackgroundPaintedExtent(LayoutRect& paintedExtent) const
         return true;
     }
 
-    BackgroundImageGeometry geometry;
-    calculateBackgroundImageGeometry(0, style().backgroundLayers(), backgroundRect, geometry);
+    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(0, style().backgroundLayers(), backgroundRect);
     paintedExtent = geometry.destRect();
     return !geometry.hasNonLocalGeometry();
 }
@@ -1555,9 +1554,8 @@ LayoutRect RenderBox::maskClipRect()
     LayoutRect borderBox = borderBoxRect();
     for (const FillLayer* maskLayer = style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->maskImage()) {
-            BackgroundImageGeometry geometry;
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
-            calculateBackgroundImageGeometry(0, maskLayer, borderBox, geometry);
+            BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(0, maskLayer, borderBox);
             result.unite(geometry.destRect());
         }
     }
@@ -1683,8 +1681,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 }
             }
 
-            BackgroundImageGeometry geometry;
-            layerRenderer->calculateBackgroundImageGeometry(nullptr, curLayer, rendererRect, geometry);
+            BackgroundImageGeometry geometry = layerRenderer->calculateBackgroundImageGeometry(nullptr, curLayer, rendererRect);
             if (geometry.hasNonLocalGeometry()) {
                 // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
                 // in order to get the right destRect, just repaint the entire renderer.

@@ -1,5 +1,24 @@
 2015-02-24  Zalan Bujtas  <zalan@apple.com>
 
+        RenderBoxModelObject::calculateBackgroundImageGeometry should return BackgroundImageGeometry.
+        https://bugs.webkit.org/show_bug.cgi?id=141979
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::getBackgroundPaintedExtent):
+        (WebCore::RenderBox::maskClipRect):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage):
+        * rendering/RenderBoxModelObject.h:
+
+2015-02-24  Zalan Bujtas  <zalan@apple.com>
+
         Switch BackgroundImageGeometry's m_phase from LayoutPoint to LayoutSize.
         https://bugs.webkit.org/show_bug.cgi?id=141972
 

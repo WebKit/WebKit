@@ -842,8 +842,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // no progressive loading of the background image
     if (!baseBgColorOnly && (shouldPaintBackgroundImage || bgLayer->hasMaskImage())) {
-        BackgroundImageGeometry geometry;
-        calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, geometry, backgroundObject);
+        BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
 
         if (!geometry.destRect().isEmpty()) {
@@ -1102,9 +1101,10 @@ void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(Backgroun
     geometry.setPhase(LayoutSize(pixelSnappedPhase));
 }
 
-void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,
-    BackgroundImageGeometry& geometry, RenderElement* backgroundObject) const
+BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,
+    RenderElement* backgroundObject) const
 {
+    BackgroundImageGeometry geometry;
     LayoutUnit left = 0;
     LayoutUnit top = 0;
     LayoutSize positioningAreaSize;
@@ -1249,14 +1249,14 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     geometry.setDestOrigin(geometry.destRect().location());
 
     pixelSnapBackgroundImageGeometryForPainting(geometry);
+    return geometry;
 }
 
 void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const
 {
     const FillLayer* backgroundLayer = style().backgroundLayers();
-    BackgroundImageGeometry geometry;
-    LayoutRect paintRect = LayoutRect(destRect);
-    calculateBackgroundImageGeometry(paintContainer, backgroundLayer, paintRect, geometry);
+    LayoutRect paintRect(destRect);
+    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintContainer, backgroundLayer, paintRect);
     phase = geometry.phase();
     tileSize = geometry.tileSize();
     destRect = geometry.destRect();
