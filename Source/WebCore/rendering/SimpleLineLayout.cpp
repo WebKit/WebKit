@@ -164,10 +164,6 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.lineBreak() != LineBreakAuto)
         return false;
-#if ENABLE(CSS_TRAILING_WORD)
-    if (style.trailingWord() != TrailingWord::Auto)
-        return false;
-#endif
 
     // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
     if (flow.containsFloats()) {

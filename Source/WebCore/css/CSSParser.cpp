@@ -1033,12 +1033,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueBreakWord)
             return true;
         break;
-#if ENABLE(CSS_TRAILING_WORD)
-    case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
-        if (valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced)
-            return true;
-        break;
-#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1165,9 +1159,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWordWrap:
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
-#endif
-#if ENABLE(CSS_TRAILING_WORD)
-    case CSSPropertyAppleTrailingWord:
 #endif
         return true;
     default:
@@ -3140,9 +3131,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
 #endif
-#if ENABLE(CSS_TRAILING_WORD)
-    case CSSPropertyAppleTrailingWord:
-#endif
         // These properties should be handled before in isValidKeywordPropertyAndValue().
         ASSERT_NOT_REACHED();
         return false;
@@ -3170,7 +3158,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitScrollSnapCoordinate:
         return parseScrollSnapCoordinate(propId, important);
 #endif
-
     default:
         return parseSVGValue(propId, important);
     }

@@ -1159,10 +1159,6 @@ public:
 #else
     bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return false; }
 #endif
-
-#if ENABLE(CSS_TRAILING_WORD)
-    TrailingWord trailingWord() const { return static_cast<TrailingWord>(rareInheritedData->trailingWord); }
-#endif
         
 // attribute setter methods
 
@@ -1649,10 +1645,6 @@ public:
 
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
-#if ENABLE(CSS_TRAILING_WORD)
-    void setTrailingWord(TrailingWord v) { SET_VAR(rareInheritedData, trailingWord, static_cast<unsigned>(v)); }
-#endif
-
     const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return *m_svgStyle.access(); }
 
@@ -1971,10 +1963,6 @@ public:
     static ScrollSnapPoints initialScrollSnapPointsY();
     static LengthSize initialScrollSnapDestination();
     static Vector<LengthSize> initialScrollSnapCoordinates();
-#endif
-
-#if ENABLE(CSS_TRAILING_WORD)
-    static TrailingWord initialTrailingWord() { return TrailingWord::Auto; }
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)

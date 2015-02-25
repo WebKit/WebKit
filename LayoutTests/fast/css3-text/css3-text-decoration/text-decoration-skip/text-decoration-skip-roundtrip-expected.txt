@@ -64,7 +64,4 @@ PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText i
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

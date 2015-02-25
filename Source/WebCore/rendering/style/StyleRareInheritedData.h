@@ -129,10 +129,6 @@ public:
     unsigned touchCalloutEnabled : 1;
 #endif
 
-#if ENABLE(CSS_TRAILING_WORD)
-    unsigned trailingWord : 1;
-#endif
-
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;
