@@ -63,10 +63,14 @@
 
 namespace WebCore {
 
+#define USE_GPU_STATUS_CHECK ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS))
+
 const int maxActiveContexts = 64;
 int GraphicsContext3D::numActiveContexts = 0;
+#if USE_GPU_STATUS_CHECK
 const int GPUStatusCheckThreshold = 5;
 int GraphicsContext3D::GPUCheckCounter = 0;
+#endif
     
 // FIXME: This class is currently empty on Mac, but will get populated as 
 // the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
@@ -201,7 +205,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         return;
 
     CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS))
+#if USE_GPU_STATUS_CHECK
     GLint abortOnBlacklist = 0;
 #if PLATFORM(MAC)
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
@@ -369,7 +373,7 @@ bool GraphicsContext3D::makeContextCurrent()
 
 void GraphicsContext3D::checkGPUStatusIfNecessary()
 {
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS))
+#if USE_GPU_STATUS_CHECK
     GPUCheckCounter = (GPUCheckCounter + 1) % GPUStatusCheckThreshold;
     if (GPUCheckCounter)
         return;

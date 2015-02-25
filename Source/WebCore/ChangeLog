@@ -1,3 +1,11 @@
+2015-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Mavericks build attempt fix after r180609.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary):
+
 2015-02-19  Roger Fong  <roger_fong@apple.com>
 
         WebGL: Destroy the GLContext if a GPU restart has been detected.
