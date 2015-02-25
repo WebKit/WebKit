@@ -40,7 +40,7 @@ public:
     ~TestInvocation();
 
     WKURLRef url() const;
-    const char* pathOrURL() const { return m_pathOrURL.c_str(); }
+    bool urlContains(const char*) const;
 
     void setIsPixelTest(const std::string& expectedPixelHash);
 
@@ -63,9 +63,12 @@ private:
 
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
 
+    bool shouldLogFrameLoadDelegates();
+    bool shouldLogHistoryClientCallbacks();
+
     WKRetainPtr<WKURLRef> m_url;
-    std::string m_pathOrURL;
-    
+    WTF::String m_urlString;
+
     bool m_dumpPixels;
     std::string m_expectedPixelHash;
 

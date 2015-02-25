@@ -11,6 +11,43 @@
 
 2015-02-25  Brady Eidson  <beidson@apple.com>
 
+        Get rid of TestInvocation::pathOrURL
+        https://bugs.webkit.org/show_bug.cgi?id=142021
+
+        Reviewed by Tim Horton.
+
+        The pathOrURL string is a relative path used as an argument to WebKitTestRunner,
+        but most code that uses it expected an absolute path.
+
+        This gets rid of the member and replaces all uses with a more descriptive "urlContains" method.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::updateWebViewSizeForTest):
+        (WTR::TestController::updateWindowScaleForTest):
+        (WTR::shouldUseFixedLayout):
+        (WTR::TestController::updateLayoutTypeForTest):
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::urlContains):
+        (WTR::TestInvocation::shouldLogFrameLoadDelegates):
+        (WTR::TestInvocation::shouldLogHistoryClientCallbacks):
+        (WTR::TestInvocation::invoke):
+        (WTR::shouldLogFrameLoadDelegates): Deleted.
+        (WTR::shouldLogHistoryClientCallbacks): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::pathOrURL): Deleted.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::shouldMakeViewportFlexible):
+        (WTR::TestController::platformConfigureViewForTest):
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::shouldUseThreadedScrolling):
+        (WTR::TestController::platformConfigureViewForTest):
+
+2015-02-25  Brady Eidson  <beidson@apple.com>
+
         Layout test support for user content filters
         https://bugs.webkit.org/show_bug.cgi?id=142018
 

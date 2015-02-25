@@ -91,7 +91,6 @@ static WKURLRef createWKURL(const char* pathOrURL)
 
 TestInvocation::TestInvocation(const std::string& pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL.c_str()))
-    , m_pathOrURL(pathOrURL)
     , m_dumpPixels(false)
     , m_timeout(0)
     , m_gotInitialResponse(false)
@@ -100,6 +99,16 @@ TestInvocation::TestInvocation(const std::string& pathOrURL)
     , m_error(false)
     , m_webProcessIsUnresponsive(false)
 {
+    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(m_url.get()));
+
+    size_t stringLength = WKStringGetLength(urlString.get());
+
+    Vector<char> urlVector;
+    urlVector.resize(stringLength + 1);
+
+    WKStringGetUTF8CString(urlString.get(), urlVector.data(), stringLength + 1);
+
+    m_urlString = String(urlVector.data(), stringLength);
 }
 
 TestInvocation::~TestInvocation()
@@ -111,20 +120,25 @@ WKURLRef TestInvocation::url() const
     return m_url.get();
 }
 
+bool TestInvocation::urlContains(const char* searchString) const
+{
+    return m_urlString.contains(searchString, false);
+}
+
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
 {
     m_dumpPixels = true;
     m_expectedPixelHash = expectedPixelHash;
 }
 
-static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
+bool TestInvocation::shouldLogFrameLoadDelegates()
 {
-    return strstr(pathOrURL, "loading/");
+    return urlContains("loading/");
 }
 
-static bool shouldLogHistoryClientCallbacks(const char* pathOrURL)
+bool TestInvocation::shouldLogHistoryClientCallbacks()
 {
-    return strstr(pathOrURL, "globalhistory/");
+    return urlContains("globalhistory/");
 }
 
 void TestInvocation::invoke()
@@ -135,7 +149,7 @@ void TestInvocation::invoke()
 
     m_textOutput.clear();
 
-    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks(m_pathOrURL.c_str()));
+    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
     // FIXME: We should clear out visited links here.
 
@@ -143,7 +157,7 @@ void TestInvocation::invoke()
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> dumpFrameLoadDelegatesKey = adoptWK(WKStringCreateWithUTF8CString("DumpFrameLoadDelegates"));
-    WKRetainPtr<WKBooleanRef> dumpFrameLoadDelegatesValue = adoptWK(WKBooleanCreate(shouldLogFrameLoadDelegates(m_pathOrURL.c_str())));
+    WKRetainPtr<WKBooleanRef> dumpFrameLoadDelegatesValue = adoptWK(WKBooleanCreate(shouldLogFrameLoadDelegates()));
     WKDictionarySetItem(beginTestMessageBody.get(), dumpFrameLoadDelegatesKey.get(), dumpFrameLoadDelegatesValue.get());
 
     WKRetainPtr<WKStringRef> dumpPixelsKey = adoptWK(WKStringCreateWithUTF8CString("DumpPixels"));

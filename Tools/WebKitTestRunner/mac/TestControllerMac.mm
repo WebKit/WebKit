@@ -75,9 +75,9 @@ void TestController::platformWillRunTest(const TestInvocation& testInvocation)
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
 }
 
-static bool shouldUseThreadedScrolling(const char* pathOrURL)
+static bool shouldUseThreadedScrolling(const TestInvocation& test)
 {
-    return strstr(pathOrURL, "tiled-drawing/");
+    return test.urlContains("tiled-drawing/");
 }
 
 void TestController::platformResetPreferencesToConsistentValues()
@@ -88,7 +88,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
     auto viewOptions = adoptWK(WKMutableDictionaryCreate());
     auto useThreadedScrollingKey = adoptWK(WKStringCreateWithUTF8CString("ThreadedScrolling"));
-    auto useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(test.pathOrURL())));
+    auto useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(test)));
     WKDictionarySetItem(viewOptions.get(), useThreadedScrollingKey.get(), useThreadedScrollingValue.get());
 
     auto useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
@@ -97,15 +97,10 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
     ensureViewSupportsOptions(viewOptions.get());
 
-    WKURLRef url = test.url();
-    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url));
-
-    char urlCString[16384];
-    WKStringGetUTF8CString(urlString.get(), urlCString, 16384);
-    if (!strstr(urlCString, "usercontentfilter/"))
+    if (!test.urlContains("usercontentfilter/"))
         return;
 
-    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
+    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
     NSURL *filterURL = [(NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
     NSStringEncoding encoding;

@@ -75,9 +75,9 @@ void TestController::platformWillRunTest(const TestInvocation& testInvocation)
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
 }
 
-static bool shouldMakeViewportFlexible(const char* pathOrURL)
+static bool shouldMakeViewportFlexible(const TestInvocation& test)
 {
-    return strstr(pathOrURL, "viewport/");
+    return test.urlContains("viewport/");
 }
 
 void TestController::platformResetPreferencesToConsistentValues()
@@ -89,7 +89,7 @@ void TestController::platformResetPreferencesToConsistentValues()
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    if (shouldMakeViewportFlexible(test.pathOrURL())) {
+    if (shouldMakeViewportFlexible(test)) {
         const unsigned phoneViewHeight = 480;
         const unsigned phoneViewWidth = 320;
 

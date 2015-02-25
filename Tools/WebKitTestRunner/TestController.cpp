@@ -717,7 +717,7 @@ const char* TestController::networkProcessName()
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
-    bool isSVGW3CTest = strstr(test.pathOrURL(), "svg/W3C-SVG-1.1") || strstr(test.pathOrURL(), "svg\\W3C-SVG-1.1");
+    bool isSVGW3CTest = test.urlContains("svg/W3C-SVG-1.1") || test.urlContains("svg\\W3C-SVG-1.1");
 
     unsigned width = viewWidth;
     unsigned height = viewHeight;
@@ -731,33 +731,32 @@ void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 
 void TestController::updateWindowScaleForTest(PlatformWebView* view, const TestInvocation& test)
 {
-    WTF::String localPathOrUrl = String(test.pathOrURL());
-    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("/hidpi-") != notFound;
+    bool needsHighDPIWindow = test.urlContains("/hidpi-");
     view->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
 }
 
 // FIXME: move into relevant platformConfigureViewForTest()?
-static bool shouldUseFixedLayout(const char* pathOrURL)
+static bool shouldUseFixedLayout(const TestInvocation& test)
 {
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (strstr(pathOrURL, "device-adapt/") || strstr(pathOrURL, "device-adapt\\"))
+    if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
         return true;
 #endif
 
 #if USE(TILED_BACKING_STORE) && PLATFORM(EFL)
-    if (strstr(pathOrURL, "sticky/") || strstr(pathOrURL, "sticky\\"))
+    if (test.urlContains("sticky/") || test.urlContains("sticky\\"))
         return true;
 #endif
     return false;
 
-    UNUSED_PARAM(pathOrURL);
+    UNUSED_PARAM(test);
 }
 
 void TestController::updateLayoutTypeForTest(const TestInvocation& test)
 {
     auto viewOptions = adoptWK(WKMutableDictionaryCreate());
     auto useFixedLayoutKey = adoptWK(WKStringCreateWithUTF8CString("UseFixedLayout"));
-    auto useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(test.pathOrURL())));
+    auto useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(test)));
     WKDictionarySetItem(viewOptions.get(), useFixedLayoutKey.get(), useFixedLayoutValue.get());
 
     ensureViewSupportsOptions(viewOptions.get());
