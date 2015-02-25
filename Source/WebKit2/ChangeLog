@@ -1,3 +1,23 @@
+2015-02-24  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][WK2] ASSERTION FAILED: m_sendPort in IPC::Connection::open()
+        https://bugs.webkit.org/show_bug.cgi?id=141934
+
+        Reviewed by Darin Adler.
+
+        Speculative fix for "ASSERTION FAILED: m_sendPort" in
+        IPC::Connection::open(). This assertion seems to indicate we ended
+        up in IPC::Connection::open() with MACH_PORT_NULL as port.
+
+        I found that in XPCServiceInitializerDelegate::getConnectionIdentifier()
+        we return true unconditionally, even though
+        xpc_dictionary_copy_mach_send() can return MACH_PORT_NULL. This patch
+        updates this method to add a check for MACH_PORT_NULL and return false
+        in this case.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getConnectionIdentifier):
+
 2015-02-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180599.
