@@ -67,38 +67,27 @@ class StickyPositionViewportConstraints;
 
 class BackgroundImageGeometry {
 public:
-    BackgroundImageGeometry()
-        : m_hasNonLocalGeometry(false)
-    { }
+    BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tile, const LayoutSize& phase, const LayoutSize& space, bool fixedAttachment)
+        : m_destRect(destinationRect)
+        , m_tileSize(tile)
+        , m_phase(phase)
+        , m_space(space)
+        , m_hasNonLocalGeometry(fixedAttachment)
+    {
+    }
 
     LayoutRect destRect() const { return m_destRect; }
-    void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
-    
     LayoutSize phase() const { return m_phase; }
-    void setPhase(const LayoutSize& phase) { m_phase = phase; }
-    void setPhaseX(LayoutUnit deltaX) { m_phase.setWidth(deltaX); }
-    void setPhaseY(LayoutUnit deltaY) { m_phase.setHeight(deltaY); }
-
     LayoutSize tileSize() const { return m_tileSize; }
-    void setTileSize(const LayoutSize& tileSize) { m_tileSize = tileSize; }
-    
     LayoutSize spaceSize() const { return m_space; }
-    void setSpaceSize(const LayoutSize& space) { m_space = space; }
-    
-    void setNoRepeatX(LayoutUnit xOffset);
-    void setNoRepeatY(LayoutUnit yOffset);
-    
-    void useFixedAttachment(const LayoutPoint& attachmentPoint);
-    
-    void clip(const LayoutRect&);
-    
-    void setHasNonLocalGeometry(bool hasNonLocalGeometry = true) { m_hasNonLocalGeometry = hasNonLocalGeometry; }
     bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
-    
+
+    void clip(const LayoutRect& clipRect) { m_destRect.intersect(clipRect); }
+
 private:
     LayoutRect m_destRect;
-    LayoutSize m_phase;
     LayoutSize m_tileSize;
+    LayoutSize m_phase;
     LayoutSize m_space;
     bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
 };
@@ -328,8 +317,6 @@ private:
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&);
-
-    void pixelSnapBackgroundImageGeometryForPainting(BackgroundImageGeometry&) const;
 };
 
 } // namespace WebCore

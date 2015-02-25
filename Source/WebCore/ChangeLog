@@ -1,3 +1,36 @@
+2015-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup BackgroundImageGeometry class.
+        https://bugs.webkit.org/show_bug.cgi?id=141997
+
+        Reviewed by Simon Fraser.
+
+        This patch attempts to improve RenderBoxModelObject::calculateBackgroundImageGeometry() readability by
+        removing redundant code and making image geometry operations explicit. BackgroundImageGeometry
+        becomes a read only class (with the exception of the clip() method).
+
+        No change in functionality.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BackgroundImageGeometry::BackgroundImageGeometry):
+        (WebCore::BackgroundImageGeometry::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::BackgroundImageGeometry::setNoRepeatX): Deleted.
+        (WebCore::BackgroundImageGeometry::setNoRepeatY): Deleted.
+        (WebCore::BackgroundImageGeometry::useFixedAttachment): Deleted.
+        (WebCore::BackgroundImageGeometry::clip): Deleted.
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::BackgroundImageGeometry::clip):
+        (WebCore::BackgroundImageGeometry::BackgroundImageGeometry): Deleted.
+        (WebCore::BackgroundImageGeometry::setDestRect): Deleted.
+        (WebCore::BackgroundImageGeometry::setPhase): Deleted.
+        (WebCore::BackgroundImageGeometry::setPhaseX): Deleted.
+        (WebCore::BackgroundImageGeometry::setPhaseY): Deleted.
+        (WebCore::BackgroundImageGeometry::setTileSize): Deleted.
+        (WebCore::BackgroundImageGeometry::setSpaceSize): Deleted.
+        (WebCore::BackgroundImageGeometry::setHasNonLocalGeometry): Deleted.
+
 2015-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Horizontal and vertical lines are clipped completely if clip-path is included in the tag but the referenced element is defined later.
