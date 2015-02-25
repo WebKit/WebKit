@@ -1,3 +1,9 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip ARIA 1.1 tests for unsupported feature.
+
+        * platform/win/TestExpectations:
+
 2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks growing beyond limits when they should not

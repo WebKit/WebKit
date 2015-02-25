@@ -1609,6 +1609,12 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/textbox-role-on-contenteditable-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/textbox-role-reports-selection.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/updating-attribute-in-table-causes-crash.html [ Skip ] # Debug assertion
+
+# The ARIA 1.1 'switch' role isn't implemented on Windows.
+webkit.org/b/142016 accessibility/aria-fallback-roles.html [ Skip ]
+webkit.org/b/142016 accessibility/aria-switch-checked.html [ Skip ]
+webkit.org/b/142016 accessibility/aria-switch-text.html [ Skip ]
+webkit.org/b/142016 accessibility/aria-switch-sends-notification.html [ Skip ]
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
