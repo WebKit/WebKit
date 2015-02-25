@@ -1069,6 +1069,11 @@ div[role=status]
       AXSubrole: AXApplicationStatus
       AXRoleDescription: application status
       
+div[role=switch]
+      AXRole: AXCheckBox
+      AXSubrole: AXSwitch
+      AXRoleDescription: switch
+      
 div[role=tablist]
       AXRole: AXTabGroup
       AXSubrole: 

@@ -403,6 +403,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case ListBoxOptionRole:
     case ScrollBarRole:
     case ProgressIndicatorRole:
+    case SwitchRole:
         return false;
     default:
         return true;
@@ -699,6 +700,7 @@ bool AccessibilityNodeObject::isChecked() const
     case MenuItemRole:
     case MenuItemCheckboxRole:
     case MenuItemRadioRole:
+    case SwitchRole:
         validRole = true;
         break;
     default:
@@ -1356,6 +1358,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case MenuItemCheckboxRole:
     case MenuItemRadioRole:
     case RadioButtonRole:
+    case SwitchRole:
     case TabRole:
     case ProgressIndicatorRole:
         useTextUnderElement = true;
@@ -1734,6 +1737,7 @@ String AccessibilityNodeObject::title() const
     case MenuItemCheckboxRole:
     case MenuItemRadioRole:
     case RadioButtonRole:
+    case SwitchRole:
     case TabRole:
         return textUnderElement();
     // SVGRoots should not use the text under itself as a title. That could include the text of objects like <text>.

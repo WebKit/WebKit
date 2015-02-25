@@ -1942,7 +1942,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { AudioRole, NSAccessibilityGroupRole },
         { VideoRole, NSAccessibilityGroupRole },
         { HorizontalRuleRole, NSAccessibilitySplitterRole },
-        { BlockquoteRole, NSAccessibilityGroupRole }
+        { BlockquoteRole, NSAccessibilityGroupRole },
+        { SwitchRole, NSAccessibilityCheckBoxRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2117,6 +2118,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isMediaTimeline())
         return NSAccessibilityTimelineSubrole;
+
+    if (m_object->isSwitch())
+        return NSAccessibilitySwitchSubrole;
     
     return nil;
 }
@@ -2434,7 +2438,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isHeading())
             return [NSNumber numberWithInt:m_object->headingLevel()];
         
-        if (m_object->isCheckboxOrRadio() || m_object->isMenuItem()) {
+        if (m_object->isCheckboxOrRadio() || m_object->isMenuItem() || m_object->isSwitch()) {
             switch (m_object->checkboxOrRadioValue()) {
                 case ButtonStateOff:
                     return [NSNumber numberWithInt:0];

@@ -643,6 +643,9 @@ div[role=spinbutton]
 div[role=status]
       AXRole: AXStatusBar
       
+div[role=switch]
+      AXRole: AXToggleButton
+      
 div[role=tablist]
       AXRole: AXTabGroup
       

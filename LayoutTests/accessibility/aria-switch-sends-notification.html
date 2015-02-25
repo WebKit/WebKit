@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    function runTest() {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        description("This tests that toggling an aria switch sends a notification.");
+
+        var widget = accessibilityController.accessibleElementById("switch");
+        var notificationCount = 0;
+
+        function listener(notification) {
+            if (notification == "CheckedStateChanged")
+                notificationCount++;
+
+            document.getElementById("console").innerText += "Got notification: " + notification + "\n";
+
+            if (notificationCount == 2) {
+                widget.removeNotificationListener(listener);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+        widget.addNotificationListener(listener);
+
+        document.getElementById('switch').setAttribute('aria-checked', 'true');
+        document.getElementById('switch').setAttribute('aria-checked', 'false');
+    };
+</script>
+</head>
+<body>
+
+<div id="switch" role="switch" aria-checked="false">Test Switch</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

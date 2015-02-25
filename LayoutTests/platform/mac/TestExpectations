@@ -31,6 +31,7 @@ webkit.org/b/116637 accessibility/selection-states.html [ Failure ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
+accessibility/aria-switch-sends-notification.html
 accessibility/combo-box-collapsed-selection-changed.html
 accessibility/children-changed-sends-notification.html
 accessibility/menu-list-sends-change-notification.html

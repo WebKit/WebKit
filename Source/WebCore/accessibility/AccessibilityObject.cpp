@@ -779,7 +779,7 @@ bool AccessibilityObject::hasAttributesRequiredForInclusion() const
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
-    return ariaRole == RadioButtonRole || ariaRole == CheckBoxRole || ariaRole == TextFieldRole;
+    return ariaRole == RadioButtonRole || ariaRole == CheckBoxRole || ariaRole == TextFieldRole || ariaRole == SwitchRole;
 }    
     
 bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
@@ -1733,6 +1733,7 @@ const String& AccessibilityObject::actionVerb() const
     case RadioButtonRole:
         return radioButtonAction;
     case CheckBoxRole:
+    case SwitchRole:
         return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
     case LinkRole:
     case WebCoreLinkRole:
@@ -1915,6 +1916,7 @@ static void initializeRoleMap()
         { "slider", SliderRole },
         { "spinbutton", SpinButtonRole },
         { "status", ApplicationStatusRole },
+        { "switch", SwitchRole },
         { "tab", TabRole },
         { "tablist", TabListRole },
         { "tabpanel", TabPanelRole },
@@ -2212,6 +2214,7 @@ bool AccessibilityObject::supportsChecked() const
     case MenuItemCheckboxRole:
     case MenuItemRadioRole:
     case RadioButtonRole:
+    case SwitchRole:
         return true;
     default:
         return false;
@@ -2221,15 +2224,15 @@ bool AccessibilityObject::supportsChecked() const
 AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 {
     // If this is a real checkbox or radio button, AccessibilityRenderObject will handle.
-    // If it's an ARIA checkbox or radio, the aria-checked attribute should be used.
+    // If it's an ARIA checkbox, radio, or switch the aria-checked attribute should be used.
 
     const AtomicString& result = getAttribute(aria_checkedAttr);
     if (equalIgnoringCase(result, "true"))
         return ButtonStateOn;
     if (equalIgnoringCase(result, "mixed")) {
-        // ARIA says that radio and menuitemradio elements must NOT expose button state mixed.
+        // ARIA says that radio, menuitemradio, and switch elements must NOT expose button state mixed.
         AccessibilityRole ariaRole = ariaRoleAttribute();
-        if (ariaRole == RadioButtonRole || ariaRole == MenuItemRadioRole)
+        if (ariaRole == RadioButtonRole || ariaRole == MenuItemRadioRole || ariaRole == SwitchRole)
             return ButtonStateOff;
         return ButtonStateMixed;
     }
