@@ -35,7 +35,7 @@
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
 #include "Vector.h"
-#if BOS(DARWIN)
+#if BPLATFORM(DARWIN)
 #include "Zone.h"
 #endif
 
@@ -65,7 +65,7 @@ private:
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeObjects;
-#if BOS(DARWIN)
+#if BPLATFORM(DARWIN)
     Zone m_zone;
 #endif
 };
