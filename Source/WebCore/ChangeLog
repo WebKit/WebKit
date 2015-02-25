@@ -1,3 +1,16 @@
+2015-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLElement::collectStyleForPresentationAttribute duplicates a lot of code for contentEditableAttr
+        https://bugs.webkit.org/show_bug.cgi?id=142003
+
+        Reviewed by Sam Weinig.
+
+        Utilized contentEditableType to reduce the code duplication.
+
+        * html/HTMLElement.cpp:
+        (WebCore::contentEditableType): Moved and added a version that takes AtomicString.
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute):
+
 2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks growing beyond limits when they should not
