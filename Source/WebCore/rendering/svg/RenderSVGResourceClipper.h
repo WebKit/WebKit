@@ -60,6 +60,9 @@ public:
 
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return clipPathElement().clipPathUnits(); }
 
+protected:
+    virtual bool selfNeedsClientInvalidation() const override { return (everHadLayout() || m_clipper.size()) && selfNeedsLayout(); }
+
 private:
     void element() const = delete;
 
@@ -68,9 +71,10 @@ private:
     bool pathOnlyClipping(GraphicsContext*, const AffineTransform&, const FloatRect&);
     bool drawContentIntoMaskImage(ClipperData*, const FloatRect& objectBoundingBox);
     void calculateClipContentRepaintRect();
+    ClipperData* addRendererToClipper(const RenderObject&);
 
     FloatRect m_clipBoundaries;
-    HashMap<RenderObject*, std::unique_ptr<ClipperData>> m_clipper;
+    HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipper;
 };
 
 }

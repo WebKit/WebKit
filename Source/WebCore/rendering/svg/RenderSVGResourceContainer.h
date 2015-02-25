@@ -55,6 +55,8 @@ protected:
     };
 
     // Used from the invalidateClient/invalidateClients methods from classes, inheriting from us.
+    virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
+
     void markAllClientsForInvalidation(InvalidationMode);
     void markAllClientLayersForInvalidation();
     void markClientForInvalidation(RenderObject&, InvalidationMode);

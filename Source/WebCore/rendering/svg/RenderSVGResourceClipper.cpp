@@ -130,18 +130,14 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
 bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, const FloatRect& objectBoundingBox,
                                                       const FloatRect& repaintRect, GraphicsContext* context)
 {
-    bool missingClipperData = !m_clipper.contains(&renderer);
-    if (missingClipperData)
-        m_clipper.set(&renderer, std::make_unique<ClipperData>());
+    ClipperData* clipperData = addRendererToClipper(renderer);
+    ASSERT(clipperData);
+    bool shouldCreateClipData = !clipperData->clipMaskImage;
 
-    bool shouldCreateClipData = false;
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
-    ClipperData* clipperData = m_clipper.get(&renderer);
-    if (!clipperData->clipMaskImage) {
-        if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox))
-            return true;
-        shouldCreateClipData = true;
-    }
+
+    if (shouldCreateClipData && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox))
+        return true;
 
     AffineTransform absoluteTransform;
     SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
@@ -177,7 +173,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     if (!clipperData->clipMaskImage)
         return false;
 
-    SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage, missingClipperData);
+    SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage, shouldCreateClipData);
     return true;
 }
 
@@ -261,6 +257,13 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
     m_clipBoundaries = clipPathElement().animatedLocalTransform().mapRect(m_clipBoundaries);
 }
 
+ClipperData* RenderSVGResourceClipper::addRendererToClipper(const RenderObject& object)
+{
+    if (!m_clipper.contains(&object))
+        m_clipper.set(&object, std::make_unique<ClipperData>());
+    return m_clipper.get(&object);
+}
+
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
 {
     FloatPoint point = nodeAtPoint;
@@ -294,8 +297,10 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object)
 {
     // Resource was not layouted yet. Give back the boundingBox of the object.
-    if (selfNeedsLayout())
+    if (selfNeedsLayout()) {
+        addRendererToClipper(object);
         return object.objectBoundingBox();
+    }
     
     if (m_clipBoundaries.isEmpty())
         calculateClipContentRepaintRect();

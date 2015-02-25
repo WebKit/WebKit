@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
+  <defs>
+    <style>
+      line, path {
+        stroke: black;
+      }
+    </style>
+    <clipPath id="clip-circle">
+        <circle cx="50%" cy="50%" r="25%"/>
+    </clipPath>
+  </defs>
+  
+  <rect x="0" y="0" width="100%" height="100%" fill="lime"/>
+  <rect x="0" y="0" width="100%" height="100%" fill="white" clip-path="url(#clip-circle)"/>
+
+  <!-- diagonal -->
+  <line x1="170" y1="30" x2="30" y2="170" clip-path="url(#clip-circle)"/>
+  
+  <!-- top and left lines -->
+  <path d="M30 75 L170 75" clip-path="url(#clip-circle)"/>
+  <line x1="75" y1="30" x2="75" y2="170" clip-path="url(#clip-circle)"/>
+
+  <!-- right and bottom lines -->
+  <g clip-path="url(#clip-circle)">
+    <path d="M30 125 L170 125"/>
+    <line x1="125" y1="30" x2="125" y2="170"/>
+  </g>
+  
+  <!-- center lines -->
+  <path d="M30 100 L170 100" clip-path="url(#clip-circle)"/>
+  <line x1="100" y1="30" x2="100" y2="170" clip-path="url(#clip-circle)"/>
+  
+</svg>

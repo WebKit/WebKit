@@ -1,3 +1,42 @@
+2015-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Horizontal and vertical lines are clipped completely if clip-path is included in the tag but the referenced element is defined later.
+        https://bugs.webkit.org/show_bug.cgi?id=141776.
+
+        Reviewed by Dean Jackson.
+
+        Tests: svg/clip-path/clip-path-line-use-before-defined-expected.svg
+               svg/clip-path/clip-path-line-use-before-defined.svg
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext): Ensure the renderer
+        is added to m_clipper if it does not exist. The same renderer might have been 
+        added to m_clipper in resourceBoundingBox().
+        
+        (WebCore::RenderSVGResourceClipper::addRendererToClipper): Add the renderer to
+        m_clipper if it does not exist. Return the associated ClipperData.
+        
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox): If the clipper is
+        referenced before it is defined, add the renderer to m_clipper. While doing the
+        layout() for the clipper, we can check if m_clipper has values or not. If it does
+        have, we are going to mark the clipper for client invalidation which is done by
+        the SVG root.
+        
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::selfNeedsClientInvalidation): Define a 
+        new function selfNeedsClientInvalidation() which controls marking the clipper 
+        for client invalidation. In RenderSVGResourceClipper, override it so it checks
+        m_clipper to force clients validation even if it the first time we do layout
+        for this clipper.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout): Call the virtual function
+        selfNeedsClientInvalidation() to check whether we need to mark the clipper for
+        client invalidation.
+        
+        * svg/SVGElement.cpp: Delete unneeded header file.
+
 2015-02-25  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] WinLauncher is not starting on Vista.
