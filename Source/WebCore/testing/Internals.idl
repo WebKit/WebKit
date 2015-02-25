@@ -320,4 +320,6 @@ enum PageOverlayType {
 
     void setPageMuted(boolean muted);
     boolean isPagePlayingAudio();
+    
+    File createFile(DOMString url);
 };

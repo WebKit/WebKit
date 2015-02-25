@@ -171,6 +171,9 @@
 #include "JSHTMLAnchorElement.cpp"
 #include "JSHTMLAppletElement.cpp"
 #include "JSHTMLAreaElement.cpp"
+#if ENABLE(ATTACHMENT_ELEMENT)
+#include "JSHTMLAttachmentElement.cpp"
+#endif
 #include "JSHTMLAudioElement.cpp"
 #include "JSHTMLBaseElement.cpp"
 #include "JSHTMLBaseFontElement.cpp"

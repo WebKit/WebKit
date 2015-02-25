@@ -32,17 +32,25 @@
 
 namespace WebCore {
 
+class File;
+
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-    
+
+    File* file();
+    void setFile(File*);
+
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
+    virtual ~HTMLAttachmentElement();
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     virtual bool isFocusable() const override { return true; }
     virtual void setFocus(bool shouldBeFocused) override;
+    
+    RefPtr<File> m_file;
 };
 
 } // namespace WebCore

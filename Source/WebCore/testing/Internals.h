@@ -47,6 +47,7 @@ class DOMStringList;
 class DOMWindow;
 class Document;
 class Element;
+class File;
 class Frame;
 class InspectorFrontendChannelDummy;
 class InspectorFrontendClientDummy;
@@ -363,6 +364,8 @@ public:
 
     void setPageMuted(bool);
     bool isPagePlayingAudio();
+
+    RefPtr<File> createFile(const String&);
 
 private:
     explicit Internals(Document*);

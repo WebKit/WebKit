@@ -10,8 +10,19 @@
 description("This tests that attachments have an instance type of HTMLElement.");
 
 var attachment = document.createElement("attachment");
-shouldBeType("attachment", "HTMLElement");
+shouldBeType("attachment", "HTMLAttachmentElement");
 
+var file;
+if (window.internals) {
+    file = window.internals.createFile("resources/test-file.txt");
+}
+
+shouldBeNull("attachment.file");
+
+debug("Setting attachment.file to a file created from resources/test-file.txt")
+attachment.file = file;
+shouldBe("attachment.file", "file");
+shouldBe("attachment.file.name", "'test-file.txt'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

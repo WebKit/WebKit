@@ -48,6 +48,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
+#include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
 #include "FrameLoader.h"
@@ -2514,6 +2515,19 @@ bool Internals::isPagePlayingAudio()
         return false;
 
     return document->page()->isPlayingAudio();
+}
+
+RefPtr<File> Internals::createFile(const String& path)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return nullptr;
+
+    URL url = document->completeURL(path);
+    if (!url.isLocalFile())
+        return nullptr;
+
+    return File::create(url.fileSystemPath());
 }
 
 }

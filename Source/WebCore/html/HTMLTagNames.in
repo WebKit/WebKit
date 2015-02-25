@@ -11,7 +11,7 @@ applet constructorNeedsCreatedByParser
 area
 article interfaceName=HTMLElement
 aside interfaceName=HTMLElement
-attachment JSInterfaceName=HTMLElement, conditional=ATTACHMENT_ELEMENT, settingsConditional=attachmentElementEnabled
+attachment conditional=ATTACHMENT_ELEMENT, settingsConditional=attachmentElementEnabled
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
 b interfaceName=HTMLElement
 base

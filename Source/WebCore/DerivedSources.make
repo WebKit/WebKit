@@ -331,6 +331,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/HTMLAnchorElement.idl \
     $(WebCore)/html/HTMLAppletElement.idl \
     $(WebCore)/html/HTMLAreaElement.idl \
+    $(WebCore)/html/HTMLAttachmentElement.idl \
     $(WebCore)/html/HTMLAudioElement.idl \
     $(WebCore)/html/HTMLBRElement.idl \
     $(WebCore)/html/HTMLBaseElement.idl \

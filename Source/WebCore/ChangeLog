@@ -1,3 +1,36 @@
+2015-02-24  Sam Weinig  <sam@webkit.org>
+
+        [Attachment] Give <attachment> elements an underlying File
+        https://bugs.webkit.org/show_bug.cgi?id=141993
+
+        Reviewed by Tim Horton.
+
+        - Add a JS subclass for attachments so that <attachment>s are
+          instances of HTMLAttachmentElement rather than HTMLElement.
+        - Give HTMLAttachmentElements an underlying File that they
+          are the representation of. Expose it via a new 'file' property.
+        - Expose a new Internals function called window.internals.createFile(url)
+          that allows creating File objects for testing.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/File.h:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::~HTMLAttachmentElement):
+        (WebCore::HTMLAttachmentElement::file):
+        (WebCore::HTMLAttachmentElement::setFile):
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLAttachmentElement.idl: Added.
+        * html/HTMLTagNames.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::createFile):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'switch' role

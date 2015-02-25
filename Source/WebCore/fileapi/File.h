@@ -70,7 +70,7 @@ public:
 #endif
 
 private:
-    explicit File(const String& path);
+    WEBCORE_EXPORT explicit File(const String& path);
     File(const String& path, const String& nameOverride);
 
     File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name);

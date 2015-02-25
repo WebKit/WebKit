@@ -1,3 +1,18 @@
+2015-02-24  Sam Weinig  <sam@webkit.org>
+
+        [Attachment] Give <attachment> elements an underlying File
+        https://bugs.webkit.org/show_bug.cgi?id=141993
+
+        Reviewed by Tim Horton.
+
+        Update attachment-dom.html to test setting and getting the
+        underlying file.
+
+        * fast/attachment/attachment-dom-expected.txt:
+        * fast/attachment/attachment-dom.html:
+        * fast/attachment/resources: Added.
+        * fast/attachment/resources/test-file.txt: Added.
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'switch' role
