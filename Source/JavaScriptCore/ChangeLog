@@ -1,3 +1,16 @@
+2015-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Need to pass RTLD_DEEPBIND to dlopen() to ensure that our LLVMOverrides take effect on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=142006
+
+        Reviewed by Csaba Osztrogonác.
+
+        This fixes hard-to-reproduce concurrency-related crashes when running stress tests with FTL and
+        concurrent JIT enabled.
+
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::initializeLLVMPOSIX):
+
 2015-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         CMake build of libllvmForJSC.so should limit its export list like the Xcode build does

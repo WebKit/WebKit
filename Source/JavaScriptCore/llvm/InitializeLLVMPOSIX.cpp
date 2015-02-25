@@ -48,7 +48,18 @@ void initializeLLVMPOSIX(const char* libraryName)
         || Options::showDFGDisassembly()
         || Options::showDisassembly();
     
-    void* library = dlopen(libraryName, RTLD_NOW);
+    int flags = RTLD_NOW;
+    
+#if OS(LINUX)
+    // We need this to cause our overrides (like __cxa_atexit) to take precedent over the __cxa_atexit that is already
+    // globally exported. Those overrides are necessary to prevent crashes (our __cxa_atexit turns off LLVM's exit-time
+    // destruction, which causes exit-time crashes if the concurrent JIT is still running) and to make LLVM assertion
+    // failures funnel through WebKit's mechanisms. This flag induces behavior that is the default on Darwin. Other OSes
+    // may need their own flags in place of this.
+    flags |= RTLD_DEEPBIND;
+#endif
+    
+    void* library = dlopen(libraryName, flags);
     if (!library) {
         if (verbose)
             dataLog("Failed to load LLVM library at ", libraryName, ": ", dlerror(), "\n");
