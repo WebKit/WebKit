@@ -1,3 +1,13 @@
+2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make Getter/Setter RemoteObject property and ObjectPreview handling consistent
+        https://bugs.webkit.org/show_bug.cgi?id=141587
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * inspector/model/remote-object-get-properties.html:
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Constructor returning null should construct an object instead of null

@@ -171,7 +171,7 @@ WebInspector.ObjectTreeView.prototype = {
 
     update: function()
     {
-        this._object.getOwnPropertyDescriptors(this._updateProperties.bind(this));
+        this._object.getDisplayablePropertyDescriptors(this._updateProperties.bind(this));
     },
 
     // Private

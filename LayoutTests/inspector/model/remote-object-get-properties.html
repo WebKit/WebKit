@@ -87,8 +87,8 @@ function test()
                 }
             });
 
-            remoteObject.getOwnAndGetterPropertyDescriptors(function(properties) {
-                InspectorTest.log("\nOWN AND GETTER PROPERTIES:");
+            remoteObject.getDisplayablePropertyDescriptors(function(properties) {
+                InspectorTest.log("\nDISPLAYABLE PROPERTIES:");
                 for (var property of properties) {
                     InspectorTest.assert(property instanceof WebInspector.PropertyDescriptor);
                     InspectorTest.log("    " + property.name);

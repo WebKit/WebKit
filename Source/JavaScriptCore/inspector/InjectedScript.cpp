@@ -107,12 +107,27 @@ void InjectedScript::getFunctionDetails(ErrorString& errorString, const String& 
     *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTF::move(resultValue));
 }
 
-void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool ownAndGetterProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
+void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getProperties"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(ownProperties);
-    function.appendArgument(ownAndGetterProperties);
+    function.appendArgument(generatePreview);
+
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+    if (!result || result->type() != InspectorValue::Type::Array) {
+        errorString = ASCIILiteral("Internal error");
+        return;
+    }
+
+    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTF::move(result));
+}
+
+void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getDisplayableProperties"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(objectId);
     function.appendArgument(generatePreview);
 
     RefPtr<InspectorValue> result;

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyDescriptor = function(descriptor, isOwnProperty, wasThrown, isInternalProperty)
+WebInspector.PropertyDescriptor = function(descriptor, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
 {
     WebInspector.Object.call(this);
 
@@ -45,6 +45,7 @@ WebInspector.PropertyDescriptor = function(descriptor, isOwnProperty, wasThrown,
 
     this._own = isOwnProperty || false;
     this._wasThrown = wasThrown || false;
+    this._nativeGetterValue = nativeGetter || false;
     this._internal = isInternalProperty || false;
 };
 
@@ -64,7 +65,7 @@ WebInspector.PropertyDescriptor.fromPayload = function(payload, internal)
         payload.isOwn = true;
     }
 
-    return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, internal);
+    return new WebInspector.PropertyDescriptor(payload, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
 };
 
 WebInspector.PropertyDescriptor.prototype = {
@@ -116,6 +117,11 @@ WebInspector.PropertyDescriptor.prototype = {
     get wasThrown()
     {
         return this._wasThrown;
+    },
+
+    get nativeGetter()
+    {
+        return this._nativeGetterValue;
     },
 
     get isInternalProperty()

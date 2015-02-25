@@ -72,9 +72,9 @@ WebInspector.RemoteObject.fromPayload = function(payload)
         // COMPATIBILITY (iOS 8): iOS 7 and 8 did not have type/subtype/description on
         // Runtime.ObjectPreview. Copy them over from the RemoteObject.
         if (!payload.preview.type) {
-            payload.preview.type = obj.type;
-            payload.preview.subtype = obj.subtype;
-            payload.preview.description = obj.description;
+            payload.preview.type = payload.type;
+            payload.preview.subtype = payload.subtype;
+            payload.preview.description = payload.description;
         }
         payload.preview = WebInspector.ObjectPreview.fromPayload(payload.preview);
     }
@@ -147,132 +147,112 @@ WebInspector.RemoteObject.prototype = {
 
     getOwnPropertyDescriptors: function(callback)
     {
-        this._getPropertyDescriptors(true, false, callback);
-    },
-
-    getOwnAndGetterPropertyDescriptors: function(callback)
-    {
-        this._getPropertyDescriptors(false, true, callback);
+        this._getPropertyDescriptors(true, callback);
     },
 
     getAllPropertyDescriptors: function(callback)
     {
-        this._getPropertyDescriptors(false, false, callback);
+        this._getPropertyDescriptors(false, callback);
     },
 
-    _getPropertyDescriptors: function(ownProperties, ownAndGetterProperties, callback)
+    getDisplayablePropertyDescriptors: function(callback)
     {
         if (!this._objectId || this._isSymbol()) {
             callback([]);
             return;
         }
 
-        function remoteObjectBinder(error, properties, internalProperties)
-        {
-            if (error) {
-                callback(null);
-                return;
-            }
-
-            var descriptors = properties.map(function(payload) {
-                return WebInspector.PropertyDescriptor.fromPayload(payload);
-            });
-
-            if (internalProperties) {
-                descriptors = descriptors.concat(internalProperties.map(function(payload) {
-                    return WebInspector.PropertyDescriptor.fromPayload(payload, true);
-                }));
-            }
-
-            callback(descriptors);
-        }
-
-        // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
+        // COMPATIBILITY (iOS 8): RuntimeAgent.getDisplayableProperties did not exist.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (ownAndGetterProperties && !RuntimeAgent.getProperties.supports("ownAndGetterProperties")) {
+        if (!RuntimeAgent.getDisplayableProperties) {
             RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
                     for (var property of allProperties) {
-                        if (property.isOwn || property.get || property.name === "__proto__") {
+                        if (property.isOwn || property.name === "__proto__") {
                             // Own property or getter property in prototype chain.
                             ownOrGetterPropertiesList.push(property);
                         } else if (property.value && property.name !== property.name.toUpperCase()) {
                             var type = property.value.type;
                             if (type && type !== "function" && property.name !== "constructor") {
                                 // Possible native binding getter property converted to a value. Also, no CONSTANT name style and not "constructor".
+                                // There is no way of knowing if this is native or not, so just go with it.
                                 ownOrGetterPropertiesList.push(property);
                             }
                         }
                     }
                 }
-                remoteObjectBinder(error, ownOrGetterPropertiesList);
-            });
+                this._getPropertyDescriptorsResolver(callback, error, ownOrGetterPropertiesList);
+            }.bind(this));
             return;
         }
 
-        RuntimeAgent.getProperties(this._objectId, ownProperties, ownAndGetterProperties, true, remoteObjectBinder);
+        RuntimeAgent.getDisplayableProperties(this._objectId, true, this._getPropertyDescriptorsResolver.bind(this, callback));
+    },
+
+    _getPropertyDescriptors: function(ownProperties, callback)
+    {
+        if (!this._objectId || this._isSymbol()) {
+            callback([]);
+            return;
+        }
+
+
+        RuntimeAgent.getProperties(this._objectId, ownProperties, true, this._getPropertyDescriptorsResolver.bind(this, callback));
+    },
+
+    _getPropertyDescriptorsResolver: function(callback, error, properties, internalProperties)
+    {
+        if (error) {
+            callback(null);
+            return;
+        }
+
+        var descriptors = properties.map(function(payload) {
+            return WebInspector.PropertyDescriptor.fromPayload(payload);
+        });
+
+        if (internalProperties) {
+            descriptors = descriptors.concat(internalProperties.map(function(payload) {
+                return WebInspector.PropertyDescriptor.fromPayload(payload, true);
+            }));
+        }
+
+        callback(descriptors);
     },
 
     // FIXME: Phase out these functions. They return RemoteObjectProperty instead of PropertyDescriptors.
 
-    getOwnProperties: function(callback)
+    deprecatedGetOwnProperties: function(callback)
     {
-        this._getProperties(true, false, callback);
+        this._deprecatedGetProperties(true, callback);
     },
 
-    getOwnAndGetterProperties: function(callback)
+    deprecatedGetAllProperties: function(callback)
     {
-        this._getProperties(false, true, callback);
+        this._deprecatedGetProperties(false, callback);
     },
 
-    getAllProperties: function(callback)
-    {
-        this._getProperties(false, false, callback);
-    },
-
-    _getProperties: function(ownProperties, ownAndGetterProperties, callback)
+    _deprecatedGetProperties: function(ownProperties, callback)
     {
         if (!this._objectId || this._isSymbol()) {
             callback([]);
             return;
         }
 
-        function remoteObjectBinder(error, properties, internalProperties)
-        {
-            if (error) {
-                callback(null);
-                return;
-            }
+        RuntimeAgent.getProperties(this._objectId, ownProperties, this._deprecatedGetPropertiesResolver.bind(this, callback));
+    },
 
-            // FIXME: WebInspector.PropertyDescriptor instead of RemoteObjectProperty.
-            if (internalProperties) {
-                properties = properties.concat(internalProperties.map(function(descriptor) {
-                    descriptor.writable = false;
-                    descriptor.configurable = false;
-                    descriptor.enumerable = false;
-                    descriptor.isOwn = true;
-                    return descriptor;
-                }));
-            }
-
-            var result = [];
-            for (var i = 0; properties && i < properties.length; ++i) {
-                var property = properties[i];
-                if (property.get || property.set) {
-                    if (property.get)
-                        result.push(new WebInspector.RemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get), property));
-                    if (property.set)
-                        result.push(new WebInspector.RemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set), property));
-                } else
-                    result.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
-            }
-            callback(result);
+    deprecatedGetDisplayableProperties: function(callback)
+    {
+        if (!this._objectId || this._isSymbol()) {
+            callback([]);
+            return;
         }
 
         // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (ownAndGetterProperties && !RuntimeAgent.getProperties.supports("ownAndGetterProperties")) {
+        if (!RuntimeAgent.getDisplayableProperties) {
             RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
@@ -289,12 +269,43 @@ WebInspector.RemoteObject.prototype = {
                         }
                     }
                 }
-                remoteObjectBinder(error, ownOrGetterPropertiesList);
-            });
+                this._deprecatedGetPropertiesResolver(callback, error, ownOrGetterPropertiesList);
+            }.bind(this));
             return;
         }
 
-        RuntimeAgent.getProperties(this._objectId, ownProperties, ownAndGetterProperties, remoteObjectBinder);
+        RuntimeAgent.getDisplayableProperties(this._objectId, this._deprecatedGetPropertiesResolver.bind(this, callback));
+    },
+
+    _deprecatedGetPropertiesResolver: function(callback, error, properties, internalProperties)
+    {
+        if (error) {
+            callback(null);
+            return;
+        }
+
+        if (internalProperties) {
+            properties = properties.concat(internalProperties.map(function(descriptor) {
+                descriptor.writable = false;
+                descriptor.configurable = false;
+                descriptor.enumerable = false;
+                descriptor.isOwn = true;
+                return descriptor;
+            }));
+        }
+
+        var result = [];
+        for (var i = 0; properties && i < properties.length; ++i) {
+            var property = properties[i];
+            if (property.get || property.set) {
+                if (property.get)
+                    result.push(new WebInspector.RemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get), property));
+                if (property.set)
+                    result.push(new WebInspector.RemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set), property));
+            } else
+                result.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
+        }
+        callback(result);
     },
 
     setPropertyValue: function(name, value, callback)

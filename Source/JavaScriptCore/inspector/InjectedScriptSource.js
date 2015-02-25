@@ -68,9 +68,9 @@ InjectedScript.primitiveTypes = {
 }
 
 InjectedScript.CollectionMode = {
-    OwnProperties: 1 << 0,    // own properties.
-    GetterProperties: 1 << 1, // getter properties in the prototype chain.
-    AllProperties: 1 << 2,    // all properties in the prototype chain.
+    OwnProperties: 1 << 0,          // own properties.
+    NativeGetterProperties: 1 << 1, // native getter properties in the prototype chain.
+    AllProperties: 1 << 2,          // all properties in the prototype chain.
 }
 
 InjectedScript.prototype = {
@@ -196,7 +196,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    getProperties: function(objectId, ownProperties, ownAndGetterProperties, generatePreview)
+    _getProperties: function(objectId, collectionMode, generatePreview)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -207,12 +207,6 @@ InjectedScript.prototype = {
 
         if (isSymbol(object))
             return false;
-
-        var collectionMode = InjectedScript.CollectionMode.AllProperties;
-        if (ownProperties)
-            collectionMode = InjectedScript.CollectionMode.OwnProperties;
-        else if (ownAndGetterProperties)
-            collectionMode = InjectedScript.CollectionMode.OwnProperties | InjectedScript.CollectionMode.GetterProperties;
 
         var descriptors = this._propertyDescriptors(object, collectionMode);
 
@@ -232,6 +226,18 @@ InjectedScript.prototype = {
         }
 
         return descriptors;
+    },
+
+    getProperties: function(objectId, ownProperties, generatePreview)
+    {
+        var collectionMode = ownProperties ? InjectedScript.CollectionMode.OwnProperties : InjectedScript.CollectionMode.AllProperties;
+        return this._getProperties(objectId, collectionMode, generatePreview);
+    },
+
+    getDisplayableProperties: function(objectId, generatePreview)
+    {
+        var collectionMode = InjectedScript.CollectionMode.OwnProperties | InjectedScript.CollectionMode.NativeGetterProperties;
+        return this._getProperties(objectId, collectionMode, generatePreview);
     },
 
     getInternalProperties: function(objectId, generatePreview)
@@ -564,10 +570,13 @@ InjectedScript.prototype = {
         var nameProcessed = {};
         nameProcessed["__proto__"] = null;
 
-        function createFakeValueDescriptor(name, descriptor, isOwnProperty)
+        function createFakeValueDescriptor(name, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             try {
-                return {name: name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
+                var descriptor = {name: name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
+                if (possibleNativeBindingGetter)
+                    descriptor.nativeGetter = true;
+                return descriptor;
             } catch (e) {
                 var errorDescriptor = {name: name, value: e, wasThrown: true};
                 if (isOwnProperty)
@@ -590,13 +599,10 @@ InjectedScript.prototype = {
                 return;
             }
 
-            // Getter properties.
-            if (collectionMode & InjectedScript.CollectionMode.GetterProperties) {
-                if (descriptor.hasOwnProperty("get") && descriptor.get) {
-                    // Getter property in the prototype chain. Create a fake value descriptor.
-                    descriptors.push(createFakeValueDescriptor(descriptor.name, descriptor, isOwnProperty));
-                    return;
-                }
+            // Native Getter properties.
+            if (collectionMode & InjectedScript.CollectionMode.NativeGetterProperties) {
+                // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
+                // if (descriptor.hasOwnProperty("get") && descriptor.get && isNativeFunction(descriptor.get)) { ... }
 
                 if (possibleNativeBindingGetter) {
                     // Possible getter property in the prototype chain.
@@ -628,7 +634,7 @@ InjectedScript.prototype = {
                     // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
                     // Developers may create such a descriptors, so we should be resilient:
                     // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
-                    var fakeDescriptor = createFakeValueDescriptor(name, descriptor, isOwnProperty);
+                    var fakeDescriptor = createFakeValueDescriptor(name, descriptor, isOwnProperty, true);
                     processDescriptor(fakeDescriptor, isOwnProperty, true);
                     continue;
                 }

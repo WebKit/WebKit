@@ -98,7 +98,7 @@ WebInspector.CallFrame.prototype = {
         }
 
         for (var i = 0; i < this._scopeChain.length; ++i)
-            this._scopeChain[i].object.getAllProperties(propertiesCollected);
+            this._scopeChain[i].object.deprecatedGetAllProperties(propertiesCollected);
     }
 };
 

@@ -403,9 +403,17 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
                     prototypeName = this._sanitizedPrototypeString(resolvedValue);
             }
 
+            var isAPI = mode === WebInspector.ObjectTreeView.Mode.API;
+
             properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
-            for (var propertyDescriptor of properties)
+            for (var propertyDescriptor of properties) {
+                // FIXME: If this is a pure API ObjectTree, we should show the native getters.
+                // For now, just skip native binding getters in API mode, since we likely
+                // already showed them in the Properties section.
+                if (isAPI && propertyDescriptor.nativeGetter)
+                    continue;
                 this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, resolvedValuePropertyPath, mode, prototypeName));
+            }
 
             // FIXME: Re-enable Collection Entries with new UI.
             // if (mode === WebInspector.ObjectTreeView.Mode.Properties) {
@@ -417,6 +425,6 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         if (this._property.name === "__proto__")
             resolvedValue.getOwnPropertyDescriptors(callback.bind(this, WebInspector.ObjectTreeView.Mode.API));
         else
-            resolvedValue.getOwnPropertyDescriptors(callback.bind(this, this._mode));
+            resolvedValue.getDisplayablePropertyDescriptors(callback.bind(this, this._mode));
     },
 };

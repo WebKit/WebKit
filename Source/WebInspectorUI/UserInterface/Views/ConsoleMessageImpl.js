@@ -332,7 +332,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _formatParameterAsArray: function(arr, elem)
     {
         // FIXME: Array previews look poor. Keep doing what we currently do for arrays.
-        arr.getOwnProperties(this._printArray.bind(this, arr, elem));
+        arr.deprecatedGetOwnProperties(this._printArray.bind(this, arr, elem));
     },
 
     _userProvidedColumnNames: function(columnNamesArgument)

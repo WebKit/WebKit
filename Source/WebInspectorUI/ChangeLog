@@ -1,5 +1,45 @@
 2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make Getter/Setter RemoteObject property and ObjectPreview handling consistent
+        https://bugs.webkit.org/show_bug.cgi?id=141587
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.prototype.collectScopeChainVariableNames):
+        * UserInterface/Models/PropertyDescriptor.js:
+        (WebInspector.PropertyDescriptor.prototype.get nativeGetter):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.getOwnPropertyDescriptors):
+        (WebInspector.RemoteObject.prototype.getAllPropertyDescriptors):
+        (WebInspector.RemoteObject.prototype.getDisplayablePropertyDescriptors):
+        (WebInspector.RemoteObject.prototype._getPropertyDescriptors):
+        (WebInspector.RemoteObject.prototype.if):
+        (WebInspector.RemoteObject.prototype.deprecatedGetOwnProperties):
+        (WebInspector.RemoteObject.prototype.deprecatedGetAllProperties):
+        (WebInspector.RemoteObject.prototype._deprecatedGetProperties):
+        (WebInspector.RemoteObject.prototype.getOwnAndGetterPropertyDescriptors): Deleted.
+        (WebInspector.RemoteObject.prototype.callback): Deleted.
+        (WebInspector.RemoteObject.prototype.getOwnProperties): Deleted.
+        (WebInspector.RemoteObject.prototype.getOwnAndGetterProperties): Deleted.
+        (WebInspector.RemoteObject.prototype.getAllProperties): Deleted.
+        (WebInspector.RemoteObject.prototype.set else): Deleted.
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodePrototypesReady):
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype.):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype.update):
+
+2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: New Object Tree View UI
         https://bugs.webkit.org/show_bug.cgi?id=141932
 

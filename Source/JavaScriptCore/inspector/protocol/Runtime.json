@@ -76,7 +76,8 @@
                 { "name": "configurable", "type": "boolean", "description": "True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
                 { "name": "enumerable", "type": "boolean", "description": "True if this property shows up during enumeration of the properties on the corresponding object." },
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
-                { "name": "isOwn", "optional": true, "type": "boolean", "description": "True if the property is owned for the object." }
+                { "name": "isOwn", "optional": true, "type": "boolean", "description": "True if the property is owned for the object." },
+                { "name": "nativeGetter", "optional": true, "type": "boolean", "description": "True if the property value came from a native getter." }
             ]
         },
         {
@@ -237,7 +238,6 @@
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
                 { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the object itself, not to its prototype chain." },
-                { "name": "ownAndGetterProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging to the object itself, and getters in its prototype chain." },
                 { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for property values." }
             ],
             "returns": [
@@ -245,6 +245,18 @@
                 { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
             ],
             "description": "Returns properties of a given object. Object group of the result is inherited from the target object."
+        },
+        {
+            "name": "getDisplayableProperties",
+            "parameters": [
+                { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
+                { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for property values." }
+            ],
+            "returns": [
+                { "name": "properties", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
+                { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
+            ],
+            "description": "Returns displayable properties of a given object. Object group of the result is inherited from the target object. Displayable properties are own properties, internal properties, and native getters in the prototype chain (assumed to be bindings and treated like own properties for the frontend)."
         },
         {
             "name": "getCollectionEntries",

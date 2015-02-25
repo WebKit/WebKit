@@ -52,9 +52,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
         }
 
         if (this.getAllProperties)
-            this.object.getAllProperties(callback.bind(this));
+            this.object.deprecatedGetAllProperties(callback.bind(this));
         else
-            this.object.getOwnAndGetterProperties(callback.bind(this));
+            this.object.deprecatedGetDisplayableProperties(callback.bind(this));
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -171,9 +171,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         };
 
         if (this.property.name === "__proto__")
-            this.property.value.getOwnProperties(callback.bind(this));
+            this.property.value.deprecatedGetOwnProperties(callback.bind(this));
         else
-            this.property.value.getOwnAndGetterProperties(callback.bind(this));
+            this.property.value.deprecatedGetDisplayableProperties(callback.bind(this));
     },
 
     ondblclick: function(event)

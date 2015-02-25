@@ -160,7 +160,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     }
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* const ownProperties, const bool* const ownAndGetterProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
+void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -171,7 +171,25 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
     muteConsole();
 
-    injectedScript.getProperties(errorString, objectId, asBool(ownProperties), asBool(ownAndGetterProperties), asBool(generatePreview), &result);
+    injectedScript.getProperties(errorString, objectId, asBool(ownProperties), asBool(generatePreview), &result);
+    injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), &internalProperties);
+
+    unmuteConsole();
+    setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
+}
+
+void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, const String& objectId, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
+{
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue()) {
+        errorString = ASCIILiteral("Inspected frame has gone");
+        return;
+    }
+
+    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+    muteConsole();
+
+    injectedScript.getDisplayableProperties(errorString, objectId, asBool(generatePreview), &result);
     injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), &internalProperties);
 
     unmuteConsole();

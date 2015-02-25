@@ -1,3 +1,25 @@
+2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make Getter/Setter RemoteObject property and ObjectPreview handling consistent
+        https://bugs.webkit.org/show_bug.cgi?id=141587
+
+        Reviewed by Timothy Hatcher.
+
+        Convert getProperties(ownAndGetterProperties) to getDisplayableProperties().
+        Mark PropertyDescriptors that are presumed to be native getters / bindings
+        separately so that the frontend may display them differently.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json:
+
 2015-02-24  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r179753.  The fix was invalid.

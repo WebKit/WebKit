@@ -175,7 +175,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
             if (this.domNode !== domNode)
                 return;
 
-            object.getOwnProperties(fillSection.bind(this));
+            object.deprecatedGetOwnProperties(fillSection.bind(this));
         }
 
         function fillSection(prototypes)

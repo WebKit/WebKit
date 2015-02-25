@@ -9,7 +9,7 @@ OWN PROPERTIES:
     b
     __proto__
 
-OWN AND GETTER PROPERTIES:
+DISPLAYABLE PROPERTIES:
     a
     b
     __proto__
@@ -40,7 +40,7 @@ OWN PROPERTIES:
     clipboardData
     __proto__
 
-OWN AND GETTER PROPERTIES:
+DISPLAYABLE PROPERTIES:
     clipboardData
     type
     target
@@ -116,12 +116,9 @@ OWN PROPERTIES:
     _foo
     __proto__
 
-OWN AND GETTER PROPERTIES:
+DISPLAYABLE PROPERTIES:
     _bar
     _foo
-    getterProperty
-    foo
-    bar
     __proto__
 
 ALL PROPERTIES:
@@ -154,8 +151,7 @@ description: ClassWithBadGetter
 OWN PROPERTIES:
     __proto__
 
-OWN AND GETTER PROPERTIES:
-    badGetter
+DISPLAYABLE PROPERTIES:
     __proto__
 
 ALL PROPERTIES:
@@ -187,7 +183,7 @@ OWN PROPERTIES:
     prototype
     __proto__
 
-OWN AND GETTER PROPERTIES:
+DISPLAYABLE PROPERTIES:
     arguments
     caller
     length
@@ -235,7 +231,7 @@ OWN PROPERTIES:
     boundThis
     boundArgs
 
-OWN AND GETTER PROPERTIES:
+DISPLAYABLE PROPERTIES:
     name
     length
     arguments
