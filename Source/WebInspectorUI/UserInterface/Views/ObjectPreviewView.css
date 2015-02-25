@@ -25,6 +25,8 @@
 
 .object-preview {
     font-style: italic;
+    font-family: Menlo, monospace;
+    font-size: 11px;
 }
 
 .object-preview.lossless {

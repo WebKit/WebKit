@@ -281,7 +281,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
             formatter = this._formatParameterAsValue;
 
         var span = document.createElement("span");
-        span.className = "console-formatted-" + type;
 
         if (this._isExpandable(output))
             span.classList.add("expandable");
@@ -304,29 +303,13 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _formatParameterAsString: function(output, elem)
     {
         var span = WebInspector.FormattedValue.createLinkifiedElementString(output.description);
-        elem.classList.remove("console-formatted-string");
         elem.appendChild(span);
     },
 
     _formatParameterAsNode: function(object, elem)
     {
-        function printNode(nodeId)
-        {
-            if (!nodeId) {
-                // Sometimes DOM is loaded after the sync message is being formatted, so we get no
-                // nodeId here. So we fall back to object formatting here.
-                this._formatParameterAsObject(object, elem, true);
-                return;
-            }
-            var treeOutline = new WebInspector.DOMTreeOutline(false, false, true);
-            treeOutline.setVisible(true);
-            treeOutline.rootDOMNode = WebInspector.domTreeManager.nodeForId(nodeId);
-            treeOutline.element.classList.add("outline-disclosure");
-            if (!treeOutline.children[0].hasChildren)
-                treeOutline.element.classList.add("single-node");
-            elem.appendChild(treeOutline.element);
-        }
-        object.pushNodeToFrontend(printNode.bind(this));
+        var span = WebInspector.FormattedValue.createElementForNode(object);
+        elem.appendChild(span);
     },
 
     _formatParameterAsArray: function(arr, elem)
@@ -476,7 +459,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         {
             if (index - lastNonEmptyIndex <= 1)
                 return;
-            var span = elem.createChild("span", "console-formatted-undefined");
+            var span = elem.createChild("span", "formatted-undefined");
             span.textContent = WebInspector.UIString("undefined × %d").format(index - lastNonEmptyIndex - 1);
         }
 

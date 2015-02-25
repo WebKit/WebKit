@@ -41,8 +41,7 @@
 }
 
 .console-user-command,
-.console-user-command-result,
-.console-formatted-object {
+.console-user-command-result {
     font-family: Menlo, monospace;
     font-size: 11px;
 }
@@ -287,45 +286,6 @@
 
 .console-group-messages .add-attribute {
     display: none;
-}
-
-.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap {
-    position: relative;
-    display: inline-block;
-    vertical-align: baseline;
-    color: black;
-}
-
-:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .section {
-    position: static;
-}
-
-:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .properties {
-    padding-left: 0 !important;
-}
-
-.console-formatted-number {
-    color: rgb(28, 0, 207);
-}
-
-.console-formatted-string, .console-formatted-regexp {
-    white-space: pre;
-}
-
-.console-formatted-string {
-    color: rgb(196, 26, 22);
-}
-
-.console-formatted-regexp {
-    color: rgb(255, 88, 0);
-}
-
-.console-formatted-symbol {
-    color: rgb(63, 169, 156);
-}
-
-.console-formatted-null, .console-formatted-undefined {
-    color: rgb(128, 128, 128);
 }
 
 .error-message {

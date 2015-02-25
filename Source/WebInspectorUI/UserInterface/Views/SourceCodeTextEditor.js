@@ -1352,7 +1352,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 return;
 
             var wrapper = document.createElement("div");
-            wrapper.className = "body console-formatted-function";
+            wrapper.className = "body formatted-function";
             wrapper.textContent = data.description;
 
             var content = document.createElement("div");
@@ -1395,7 +1395,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForString: function(data)
     {
         var content = document.createElement("div");
-        content.className = "string console-formatted-string";
+        content.className = "string formatted-string";
         content.textContent = "\"" + data.description + "\"";
 
         this._showPopover(content);
@@ -1404,7 +1404,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForRegExp: function(data)
     {
         var content = document.createElement("div");
-        content.className = "regexp console-formatted-regexp";
+        content.className = "regexp formatted-regexp";
         content.textContent = data.description;
 
         this._showPopover(content);
@@ -1413,7 +1413,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForNumber: function(data)
     {
         var content = document.createElement("span");
-        content.className = "number console-formatted-number";
+        content.className = "number formatted-number";
         content.textContent = data.description;
 
         this._showPopover(content);
@@ -1422,7 +1422,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForBoolean: function(data)
     {
         var content = document.createElement("span");
-        content.className = "boolean console-formatted-boolean";
+        content.className = "boolean formatted-boolean";
         content.textContent = data.description;
 
         this._showPopover(content);
@@ -1431,7 +1431,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForNull: function(data)
     {
         var content = document.createElement("span");
-        content.className = "boolean console-formatted-null";
+        content.className = "boolean formatted-null";
         content.textContent = data.description;
 
         this._showPopover(content);
@@ -1440,7 +1440,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _showPopoverForUndefined: function(data)
     {
         var content = document.createElement("span");
-        content.className = "boolean console-formatted-undefined";
+        content.className = "boolean formatted-undefined";
         content.textContent = data.description;
 
         this._showPopover(content);

@@ -221,9 +221,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.property.wasThrown)
             this.valueElement.classList.add("error");
         if (this.property.value.subtype)
-            this.valueElement.classList.add("console-formatted-" + this.property.value.subtype);
+            this.valueElement.classList.add("formatted-" + this.property.value.subtype);
         else if (this.property.value.type)
-            this.valueElement.classList.add("console-formatted-" + this.property.value.type);
+            this.valueElement.classList.add("formatted-" + this.property.value.type);
         if (this.property.value.subtype === "node")
             this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 

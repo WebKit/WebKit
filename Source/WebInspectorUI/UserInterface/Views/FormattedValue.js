@@ -28,12 +28,12 @@ WebInspector.FormattedValue = {};
 WebInspector.FormattedValue.classNameForTypes = function(type, subtype)
 {
     return "formatted-" + (subtype ? subtype : type);
-}
+};
 
 WebInspector.FormattedValue.classNameForObject = function(object)
 {
     return WebInspector.FormattedValue.classNameForTypes(object.type, object.subtype);
-}
+};
 
 WebInspector.FormattedValue.createLinkifiedElementString = function(string)
 {
@@ -43,7 +43,31 @@ WebInspector.FormattedValue.createLinkifiedElementString = function(string)
     span.appendChild(WebInspector.linkifyStringAsFragment(string.replace(/"/g, "\\\"")));
     span.appendChild(document.createTextNode("\""));
     return span;
-}
+};
+
+WebInspector.FormattedValue.createElementForNode = function(object)
+{
+    var span = document.createElement("span");
+    span.className = "formatted-node";
+
+    object.pushNodeToFrontend(function(nodeId) {
+        if (!nodeId) {
+            span.textContent = object.description;
+            return;
+        }
+
+        // FIXME: Extract the styles for a formatted-node outline-disclosure from the LogContentView.
+        var treeOutline = new WebInspector.DOMTreeOutline(false, false, true);
+        treeOutline.setVisible(true);
+        treeOutline.rootDOMNode = WebInspector.domTreeManager.nodeForId(nodeId);
+        treeOutline.element.classList.add("outline-disclosure");
+        if (!treeOutline.children[0].hasChildren)
+            treeOutline.element.classList.add("single-node");
+        span.appendChild(treeOutline.element);
+    });
+
+    return span;
+};
 
 WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subtype, displayString, isPreview, hadException)
 {
@@ -71,19 +95,19 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
     // Everything else, the description/value string.
     span.textContent = displayString;
     return span;
-}
+};
 
 WebInspector.FormattedValue.createElementForRemoteObject = function(object, hadException)
 {
     return WebInspector.FormattedValue.createElementForTypesAndValue(object.type, object.subtype, object.description, false, hadException);
-}
+};
 
 WebInspector.FormattedValue.createElementForObjectPreview = function(objectPreview)
 {
     return WebInspector.FormattedValue.createElementForTypesAndValue(objectPreview.type, objectPreview.subtype, objectPreview.description, true, false);
-}
+};
 
 WebInspector.FormattedValue.createElementForPropertyPreview = function(propertyPreview)
 {
     return WebInspector.FormattedValue.createElementForTypesAndValue(propertyPreview.type, propertyPreview.subtype, propertyPreview.value, true, false);
-}
+};

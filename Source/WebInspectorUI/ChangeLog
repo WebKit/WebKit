@@ -1,5 +1,60 @@
 2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Eliminate console-formatted-* class names in favor of formatted-*
+        https://bugs.webkit.org/show_bug.cgi?id=141948
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForNode):
+        Helper for formatting a node as a DOMTreeOutline.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessageImpl.prototype.appendUndefined):
+        (WebInspector.ConsoleMessageImpl.prototype._printArray):
+        (WebInspector.ConsoleMessageImpl.prototype.): Deleted.
+        * UserInterface/Views/LogContentView.css:
+        (.console-user-command-result):
+        (.console-formatted-object): Deleted.
+        (.console-object-preview): Deleted.
+        (.expanded .console-object-preview): Deleted.
+        (.console-object-preview .name): Deleted.
+        (.expanded .console-object-preview > .console-object-preview-body): Deleted.
+        (.console-object-preview > .console-object-preview-name.console-object-preview-name-Object): Deleted.
+        (.console-object-preview-body .console-object-preview-name.console-object-preview-name-Object): Deleted.
+        (.expanded .console-object-preview > .console-object-preview-name.console-object-preview-name-Object): Deleted.
+        (.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap): Deleted.
+        (:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .section): Deleted.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._leftArrowWasPressed):
+        (WebInspector.LogContentView.prototype._rightArrowWasPressed):
+        Add FIXMEs since this will no longer work with ObjectTree.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree):
+        Copy over the font styles from console-formatted-object.
+
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForString):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForRegExp):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForNumber):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForBoolean):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForNull):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForUndefined):
+        Convert to formatted value class names.
+
+2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Make Getter/Setter RemoteObject property and ObjectPreview handling consistent
         https://bugs.webkit.org/show_bug.cgi?id=141587
 

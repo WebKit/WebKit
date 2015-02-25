@@ -784,6 +784,7 @@ WebInspector.LogContentView.prototype = {
                 else
                     outlineTitle.treeElement.collapse();
             } else {
+                // FIXME: <https://webkit.org/b/141949> Web Inspector: Right/Left arrow no longer works in console to expand/collapse ObjectTrees
                 var outlineSection = currentMessage.querySelector(".console-formatted-object > .section");
                 if (outlineSection)
                     outlineSection._section.collapse();
@@ -815,6 +816,7 @@ WebInspector.LogContentView.prototype = {
                 else
                     outlineTitle.treeElement.expand();
             } else {
+                // FIXME: <https://webkit.org/b/141949> Web Inspector: Right/Left arrow no longer works in console to expand/collapse ObjectTrees
                 var outlineSection = currentMessage.querySelector(".console-formatted-object > .section");
                 if (outlineSection) {
                     outlineSection._section.addEventListener(WebInspector.Section.Event.VisibleContentDidChange, this._propertiesSectionDidUpdateContent, this);
