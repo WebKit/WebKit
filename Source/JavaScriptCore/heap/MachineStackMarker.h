@@ -41,7 +41,7 @@ namespace JSC {
         typedef jmp_buf RegisterState;
 
         MachineThreads();
-        ~MachineThreads();
+        NO_RETURN_DUE_TO_CRASH ~MachineThreads();
 
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent, RegisterState& registers);
 
