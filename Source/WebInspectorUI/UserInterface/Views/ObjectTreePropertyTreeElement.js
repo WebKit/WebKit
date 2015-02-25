@@ -101,23 +101,31 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return null;
     },
 
+    _propertyPathType: function()
+    {
+        if (this._getterValue || this._property.hasValue())
+            return WebInspector.PropertyPath.Type.Value;
+        if (this._property.hasGetter())
+            return WebInspector.PropertyPath.Type.Getter;
+        if (this._property.hasSetter())
+            return WebInspector.PropertyPath.Type.Setter;
+        return WebInspector.PropertyPath.Type.Value;
+    },
+
     _resolvedValuePropertyPath: function()
     {
-        // FIXME: We could make a better path here.
-        // If this getter was not overridden, then <this._propertyPath.lastNonPrototypeObject>[<this._property.name>] is a valid path.
-        // However, we cannot easily determine from here if this getter was overridden or not.
         if (this._getterValue)
-            return new WebInspector.PropertyPath(this._getterValue, WebInspector.PropertyPath.SpecialPathComponent.GetterPropertyName);
+            return this._propertyPath.appendPropertyDescriptor(this._getterValue, this._property, WebInspector.PropertyPath.Type.Value);
 
         if (this._property.hasValue())
-            return this._propertyPath.appendPropertyDescriptor(this._property.value, this._property);
+            return this._propertyPath.appendPropertyDescriptor(this._property.value, this._property, WebInspector.PropertyPath.Type.Value);
 
         return null;
     },
 
     _thisPropertyPath: function()
     {
-        return this._propertyPath.appendPropertyDescriptor(null, this._property);
+        return this._propertyPath.appendPropertyDescriptor(null, this._property, this._propertyPathType());
     },
 
     _updateHasChildren: function()
@@ -374,7 +382,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         if (propertyPath.isFullPathImpossible())
             return WebInspector.UIString("Unable to determine path to property from root");
 
-        return propertyPath.fullPath;
+        return propertyPath.displayPath(this._propertyPathType());
     },
 
     _updateChildren: function()

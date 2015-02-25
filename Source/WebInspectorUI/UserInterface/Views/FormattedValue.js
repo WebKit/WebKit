@@ -82,7 +82,7 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
 
     // String: quoted and replace newlines as nice unicode symbols.
     if (type === "string") {
-        span.textContent = "\"" + displayString.replace(/\n/g, "\u21B5").replace(/"/g, "\\\"") + "\"";
+        span.textContent = doubleQuotedString(displayString.replace(/\n/g, "\u21B5"));
         return span;
     }
 

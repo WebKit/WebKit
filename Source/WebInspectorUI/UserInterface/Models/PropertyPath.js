@@ -50,6 +50,12 @@ WebInspector.PropertyPath.SpecialPathComponent = {
     GetterPropertyName: "@getter",
 };
 
+WebInspector.PropertyPath.Type = {
+    Value: "value",
+    Getter: "getter",
+    Setter: "setter",
+};
+
 WebInspector.PropertyPath.prototype = {
     constructor: WebInspector.PropertyPath,
     __proto__: WebInspector.Object.prototype,
@@ -107,6 +113,35 @@ WebInspector.PropertyPath.prototype = {
         return components.join("");
     },
 
+    get reducedPath()
+    {
+        // The display path for a value should not include __proto__.
+        // The path for "foo.__proto__.bar.__proto__.x" is better shown as "foo.bar.x".
+        // FIXME: We should keep __proto__ if this property was overridden.
+        var components = [];
+
+        var p = this;
+
+        // Include trailing __proto__s.
+        for (; p && p.isPrototype; p = p.parent)
+            components.push(p.pathComponent);
+
+        // Skip other __proto__s.
+        for (; p && p.pathComponent; p = p.parent) {
+            if (p.isPrototype)
+                continue;
+            components.push(p.pathComponent);
+        }
+
+        components.reverse();
+        return components.join("");        
+    },
+
+    displayPath: function(type)
+    {
+        return type === WebInspector.PropertyPath.Type.Value ? this.reducedPath : this.fullPath;
+    },
+
     isRoot: function()
     {
         return !this._parent;
@@ -131,7 +166,7 @@ WebInspector.PropertyPath.prototype = {
     appendPropertyName: function(object, propertyName)
     {
         var isPrototype = propertyName === "__proto__";
-        var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[\"" + propertyName.replace(/"/, "\\\"") + "\"]";
+        var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
         return new WebInspector.PropertyPath(object, component, this, isPrototype);
     },
 
@@ -147,6 +182,18 @@ WebInspector.PropertyPath.prototype = {
         return new WebInspector.PropertyPath(object, component, this);
     },
 
+    appendGetterPropertyName: function(object, propertyName)
+    {
+        var component = ".__lookupGetter__(" + doubleQuotedString(propertyName) + ")";
+        return new WebInspector.PropertyPath(object, component, this);
+    },
+
+    appendSetterPropertyName: function(object, propertyName)
+    {
+        var component = ".__lookupSetter__(" + doubleQuotedString(propertyName) + ")";
+        return new WebInspector.PropertyPath(object, component, this);
+    },
+
     appendArrayIndex: function(object, indexString)
     {
         var component = "[" + indexString + "]";
@@ -159,10 +206,17 @@ WebInspector.PropertyPath.prototype = {
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendPropertyDescriptor: function(object, descriptor)
+    appendPropertyDescriptor: function(object, descriptor, type)
     {
         if (descriptor.isInternalProperty)
             return this.appendInternalPropertyName(object, descriptor.name);
+
+        if (type === WebInspector.PropertyPath.Type.Getter)
+            return this.appendGetterPropertyName(object, descriptor.name);
+        if (type === WebInspector.PropertyPath.Type.Setter)
+            return this.appendSetterPropertyName(object, descriptor.name);
+
+        console.assert(type === WebInspector.PropertyPath.Type.Value);
 
         // FIXME: We don't yet have Symbol descriptors.
 

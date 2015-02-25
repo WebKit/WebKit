@@ -1,3 +1,40 @@
+2015-02-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve PropertyPath display strings for getters / values
+        https://bugs.webkit.org/show_bug.cgi?id=142008
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        (doubleQuotedString):
+        Helper to double quote a string and escape double quotes with-in it.
+
+        * UserInterface/Models/PropertyPath.js:
+        (WebInspector.PropertyPath.prototype.get reducedPath):
+        Compute the path eliminating unnecessary __proto__s. Note we don't
+        property handle the case where a .__proto__.x is override earlier
+        by a .x, but that case is rare.
+
+        (WebInspector.PropertyPath.prototype.displayPath):
+        Helper for choosing fullPath or reducedPath display strings.
+
+        (WebInspector.PropertyPath.prototype.appendPropertyName):
+        (WebInspector.PropertyPath.prototype.appendGetterPropertyName):
+        (WebInspector.PropertyPath.prototype.appendSetterPropertyName):
+        (WebInspector.PropertyPath.prototype.appendPropertyDescriptor):
+        When appending a descriptor, specify if it is for a getter/setter or value.
+        For getters / setters the actual function can be directly fetched via
+        __lookupGetter__/__lookupSetter__. Continue to use the property name for values.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._propertyPathType):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._resolvedValuePropertyPath):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._thisPropertyPath):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype):
+
 2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Eliminate console-formatted-* class names in favor of formatted-*
