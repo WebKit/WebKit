@@ -27,6 +27,9 @@
 		2D6B05BD1A972E8C00613256 /* CannedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CannedContent.h; sourceTree = "<group>"; };
 		2D6B05BE1A972E8C00613256 /* CannedContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CannedContent.m; sourceTree = "<group>"; };
 		2D6B05C11A97365300613256 /* dice.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dice.png; sourceTree = "<group>"; };
+		7CAC3C9C1A9AA23D00A57CD8 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		7CAC3C9D1A9AA23D00A57CD8 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		7CAC3C9E1A9AA23D00A57CD8 /* WebEditingTester.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebEditingTester.xcconfig; sourceTree = "<group>"; };
 		C53E7D0B1A9546E600818F19 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		C53E7D0C1A9546E600818F19 /* WebDocument.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebDocument.xib; sourceTree = "<group>"; };
 		C558CDAC1A92D6900059A907 /* WebEditingTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebEditingTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +68,16 @@
 			path = "Canned Content";
 			sourceTree = "<group>";
 		};
+		7CAC3C9B1A9AA23D00A57CD8 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				7CAC3C9C1A9AA23D00A57CD8 /* Base.xcconfig */,
+				7CAC3C9D1A9AA23D00A57CD8 /* DebugRelease.xcconfig */,
+				7CAC3C9E1A9AA23D00A57CD8 /* WebEditingTester.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
 		C558CDA31A92D6900059A907 = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +87,7 @@
 				C558CDAF1A92D6900059A907 /* Supporting Files */,
 				C558CDD51A93C8830059A907 /* Frameworks */,
 				C558CDAD1A92D6900059A907 /* Products */,
+				7CAC3C9B1A9AA23D00A57CD8 /* Configurations */,
 			);
 			sourceTree = "<group>";
 		};
@@ -215,101 +229,29 @@
 /* Begin XCBuildConfiguration section */
 		C558CDCD1A92D6900059A907 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CAC3C9D1A9AA23D00A57CD8 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		C558CDCE1A92D6900059A907 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CAC3C9D1A9AA23D00A57CD8 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		C558CDD01A92D6900059A907 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CAC3C9E1A9AA23D00A57CD8 /* WebEditingTester.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		C558CDD11A92D6900059A907 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CAC3C9E1A9AA23D00A57CD8 /* WebEditingTester.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};

@@ -1,3 +1,17 @@
+2015-02-24  Sam Weinig  <sam@webkit.org>
+
+        Convert WebEditingTester to use xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=141879
+
+        Reviewed by Darin Adler.
+
+        Add xcconfig files to WebEditingTester based on the ones used by MiniBrowser.
+
+        * WebEditingTester/Configurations: Added.
+        * WebEditingTester/Configurations/Base.xcconfig: Added.
+        * WebEditingTester/Configurations/DebugRelease.xcconfig: Added.
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+
 2015-02-24  Andy Estes  <aestes@apple.com>
 
         Teach MiniBrowser how to disable per-window web processes
