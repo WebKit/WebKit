@@ -566,7 +566,7 @@ void FrameView::setContentsSize(const IntSize& size)
     m_deferSetNeedsLayoutCount++;
 
     ScrollView::setContentsSize(size);
-    ScrollView::contentsResized();
+    contentsResized();
     
     Page* page = frame().page();
     if (!page)
@@ -597,7 +597,7 @@ void FrameView::adjustViewSize()
     const IntRect rect = renderView->documentRect();
     const IntSize& size = rect.size();
     ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !frame().document()->printing(), size == contentsSize());
-    
+
     setContentsSize(size);
 }
 
@@ -1276,7 +1276,6 @@ void FrameView::layout(bool allowSubtree)
             }
 
             LayoutSize oldSize = m_size;
-
             m_size = layoutSize();
 
             if (oldSize != m_size) {
@@ -2290,19 +2289,10 @@ bool FrameView::renderedCharactersExceed(unsigned threshold)
     return countRenderedCharactersInRenderObjectWithThreshold(*m_frame->contentRenderer(), threshold) >= threshold;
 }
 
-void FrameView::contentsResized()
+void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
-    ScrollView::contentsResized();
     setNeedsLayout();
-}
-
-void FrameView::fixedLayoutSizeChanged()
-{
-    // Can be triggered before the view is set, see comment in FrameView::visibleContentsResized().
-    // An ASSERT is triggered when a view schedules a layout before being attached to a frame.
-    if (!frame().view())
-        return;
-    ScrollView::fixedLayoutSizeChanged();
+    ScrollView::availableContentSizeChanged(reason);
 }
 
 bool FrameView::shouldLayoutAfterContentsResized() const
@@ -2310,7 +2300,7 @@ bool FrameView::shouldLayoutAfterContentsResized() const
     return !useFixedLayout() || useCustomFixedPositionLayoutRect();
 }
 
-void FrameView::visibleContentsResized()
+void FrameView::updateContentsSize()
 {
     // We check to make sure the view is attached to a frame() as this method can
     // be triggered before the view is attached by Frame::createView(...) setting
@@ -3493,8 +3483,7 @@ void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
 
     frame().page()->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
 
-    if (forceUpdate)
-        ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
+    ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
 }
 
 void FrameView::notifyPageThatContentAreaWillPaint() const
@@ -4466,7 +4455,7 @@ void FrameView::setCustomFixedPositionLayoutRect(const IntRect& rect)
         return;
     m_useCustomFixedPositionLayoutRect = true;
     m_customFixedPositionLayoutRect = rect;
-    visibleContentsResized();
+    updateContentsSize();
 }
 
 bool FrameView::updateFixedPositionLayoutRect()

@@ -314,6 +314,12 @@ void ScrollableArea::contentsResized()
         scrollAnimator->contentsResized();
 }
 
+void ScrollableArea::availableContentSizeChanged(AvailableSizeChangeReason)
+{
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        scrollAnimator->contentsResized(); // This flashes overlay scrollbars.
+}
+
 bool ScrollableArea::hasOverlayScrollbars() const
 {
     return (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
@@ -477,6 +483,11 @@ bool ScrollableArea::scrolledToLeft() const
 bool ScrollableArea::scrolledToRight() const
 {
     return scrollPosition().x() >= maximumScrollPosition().x();
+}
+
+void ScrollableArea::scrollbarStyleChanged(ScrollbarStyle, bool)
+{
+    availableContentSizeChanged(AvailableSizeChangeReason::ScrollbarsChanged);
 }
 
 IntSize ScrollableArea::totalContentsSize() const

@@ -724,7 +724,7 @@ IntRect PDFPlugin::scrollCornerRect() const
 ScrollableArea* PDFPlugin::enclosingScrollableArea() const
 {
     // FIXME: Walk up the frame tree and look for a scrollable parent frame or RenderLayer.
-    return 0;
+    return nullptr;
 }
 
 IntRect PDFPlugin::scrollableAreaBoundingBox() const
@@ -797,10 +797,9 @@ void PDFPlugin::scrollbarStyleChanged(ScrollbarStyle style, bool forceUpdate)
     IntPoint newScrollOffset = IntPoint(m_scrollOffset).shrunkTo(maximumScrollPosition());
     setScrollOffset(newScrollOffset);
     
+    ScrollableArea::scrollbarStyleChanged(style, forceUpdate);
     // As size of the content area changes, scrollbars may need to appear or to disappear.
     updateScrollbars();
-    
-    ScrollableArea::contentsResized();
 }
 
 void PDFPlugin::addArchiveResource()

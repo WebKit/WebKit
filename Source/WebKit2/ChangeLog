@@ -1,5 +1,33 @@
 2015-02-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Clarify some resizing terminology in ScrollView/FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=141996
+
+        Reviewed by Zalan Bujtas.
+
+        ScrollableArea/ScrollView/FrameView had some confusing terminology around
+        contentsResized/visibleContentsResized/fixedLayoutSizeChanged.
+        
+        Clarify this by distinguishing between:
+        1. Available size changes because of
+            i) non-overlay scrollbar presence
+           ii) ScrollableArea frame change
+        2. Removing fixedLayoutSizeChanged() and just treating it like an
+           available size change.
+           
+        contentsResized() is relegated to simply being a hook that allows Mac to
+        flash overlay scrollbars.
+        
+        The confusingly named visibleContentsResized() is now updateContentsSize(),
+        and is the way that a ScrollableArea tells its subclasss that it should recompute
+        the size of the contents (i.e. do a layout).
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::scrollbarStyleChanged): Call the base class method,
+        which takes care of 
+
+2015-02-24  Simon Fraser  <simon.fraser@apple.com>
+
         Use an enum for scrollbar style
         https://bugs.webkit.org/show_bug.cgi?id=141985
 

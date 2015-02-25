@@ -580,10 +580,9 @@ private:
     WEBCORE_EXPORT void adjustTiledBackingCoverage();
 
     virtual void repaintContentRectangle(const IntRect&) override;
-    virtual void contentsResized() override;
-    virtual void visibleContentsResized() override;
+    virtual void updateContentsSize() override;
+    virtual void availableContentSizeChanged(AvailableSizeChangeReason) override;
     virtual void addedOrRemovedScrollbar() override;
-    virtual void fixedLayoutSizeChanged() override;
 
     virtual void delegatesScrollingDidChange() override;
 
