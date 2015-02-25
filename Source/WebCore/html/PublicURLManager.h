@@ -52,6 +52,8 @@ public:
 
     // ActiveDOMObject interface.
     virtual void stop() override;
+    virtual bool canSuspend() const override;
+
 private:
     virtual const char* activeDOMObjectName() const override { return "PublicURLManager"; }
     

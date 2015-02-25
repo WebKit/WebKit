@@ -1,3 +1,21 @@
+2015-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Make PublicURLManager suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=141977
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test to check that a page using URL.createObjectURL() API
+        can enter the PageCache.
+
+        * fast/history/page-cache-createObjectURL-expected.txt: Added.
+        * fast/history/page-cache-createObjectURL.html: Added.
+
+        * platform/wk2/TestExpectations:
+          The new test is skipped on WK2 because WKTR does not support
+          eventSender.beginDragWithFiles().
+
 2015-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Horizontal and vertical lines are clipped completely if clip-path is included in the tag but the referenced element is defined later.

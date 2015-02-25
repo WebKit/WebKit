@@ -1,0 +1,24 @@
+Tests that a page calling URL.createObjectURL() can use the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS img.width is 0
+PASS img.height is 0
+img.src = blobURL
+pageshow - not from cache
+PASS Image loaded
+PASS img.width is 76
+PASS img.height is 103
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the page cache
+Reuse the previous blobURL
+img2.src = blobURL
+PASS Image2 loaded
+PASS img2.width is 76
+PASS img2.height is 103
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

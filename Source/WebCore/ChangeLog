@@ -1,3 +1,26 @@
+2015-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Make PublicURLManager suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=141977
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Make PublicURLManager suspendable by overriding ActiveDOMObject::canSuspend()
+        and returning true. Nothing prevents suspending the PublicURLManager as its
+        implementation never causes JS to be executed. No implementation for
+        suspend() / resume() needs to be provided for the same reason.
+
+        The fact that PublicURLManager wasn't suspendable was preventing pages using
+        URL.createObjectURL() from entering the PageCache. Baidu.com search results
+        pages are using the API for example.
+
+        Test: fast/history/page-cache-createObjectURL.html
+
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::canSuspend):
+        * html/PublicURLManager.h:
+
 2015-02-25  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup BackgroundImageGeometry class.
