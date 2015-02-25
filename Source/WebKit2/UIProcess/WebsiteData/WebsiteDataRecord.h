@@ -43,7 +43,7 @@ struct WebsiteDataRecord {
     void add(WebsiteDataTypes, RefPtr<WebCore::SecurityOrigin>&&);
 
     String displayName;
-    unsigned types;
+    unsigned types { 0 };
     HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
 };
 

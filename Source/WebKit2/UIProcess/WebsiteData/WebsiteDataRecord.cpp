@@ -40,8 +40,10 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& se
         ASSERT_NOT_REACHED();
     }
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (protocol == "http" || protocol == "https")
         return WebCore::topPrivatelyControlledDomain(securityOrigin.host());
+#endif
 
     return String();
 }
