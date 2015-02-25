@@ -781,11 +781,11 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getProgramCodeBlock(vm(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
 
     if (hasDebugger())
-        debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
 
-    if (error.m_type != ParserError::ErrorNone) {
+    if (error.isValid()) {
         *exception = error.toErrorObject(this, executable->source());
-        return 0;
+        return nullptr;
     }
     
     return unlinkedCodeBlock;
@@ -800,11 +800,11 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm().codeCache()->getEvalCodeBlock(vm(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
 
     if (hasDebugger())
-        debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
 
-    if (error.m_type != ParserError::ErrorNone) {
+    if (error.isValid()) {
         throwVMError(callFrame, error.toErrorObject(this, executable->source()));
-        return 0;
+        return nullptr;
     }
 
     return unlinkedCodeBlock;

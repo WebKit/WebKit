@@ -54,8 +54,8 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
 
     if (!function) {
-        ASSERT(error.m_type != ParserError::ErrorNone);
-        return 0;
+        ASSERT(error.isValid());
+        return nullptr;
     }
 
     function->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
@@ -64,8 +64,8 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
     auto generator(std::make_unique<BytecodeGenerator>(vm, function.get(), result, debuggerMode, profilerMode));
     error = generator->generate();
-    if (error.m_type != ParserError::ErrorNone)
-        return 0;
+    if (error.isValid())
+        return nullptr;
     return result;
 }
 
@@ -137,11 +137,11 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Ide
     UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, name, source, error);
 
     if (exec->lexicalGlobalObject()->hasDebugger())
-        exec->lexicalGlobalObject()->debugger()->sourceParsed(exec, source.provider(), error.m_line, error.m_message);
+        exec->lexicalGlobalObject()->debugger()->sourceParsed(exec, source.provider(), error.line(), error.message());
 
-    if (error.m_type != ParserError::ErrorNone) {
+    if (error.isValid()) {
         *exception = error.toErrorObject(exec->lexicalGlobalObject(), source);
-        return 0;
+        return nullptr;
     }
 
     return executable;
@@ -162,8 +162,8 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(VM& vm, cons
 
     UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(vm, this, source, specializationKind, debuggerMode, profilerMode, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, bodyIncludesBraces, error);
     
-    if (error.m_type != ParserError::ErrorNone)
-        return 0;
+    if (error.isValid())
+        return nullptr;
 
     switch (specializationKind) {
     case CodeForCall:

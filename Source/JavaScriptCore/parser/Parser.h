@@ -972,7 +972,7 @@ std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionPara
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (strictness == JSParseBuiltin) {
             if (!result)
-                WTF::dataLog("Error compiling builtin: ", error.m_message, "\n");
+                WTF::dataLog("Error compiling builtin: ", error.message(), "\n");
             RELEASE_ASSERT(result);
             result->setClosedVariables(parser.closedVariables());
         }

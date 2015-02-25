@@ -93,7 +93,7 @@ void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspec
     ParserError error;
     checkSyntax(vm, JSC::makeSource(expression), error);
 
-    switch (error.m_syntaxErrorType) {
+    switch (error.syntaxErrorType()) {
     case ParserError::SyntaxErrorNone:
         *result = Inspector::Protocol::Runtime::SyntaxErrorType::None;
         break;
@@ -108,9 +108,9 @@ void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspec
         break;
     }
 
-    if (error.m_syntaxErrorType != ParserError::SyntaxErrorNone) {
-        *message = error.m_message;
-        range = buildErrorRangeObject(error.m_token.m_location);
+    if (error.syntaxErrorType() != ParserError::SyntaxErrorNone) {
+        *message = error.message();
+        range = buildErrorRangeObject(error.token().m_location);
     }
 }
 

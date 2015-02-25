@@ -27,9 +27,9 @@
 
 namespace JSC {
     
-struct ParserError;
 class ExecState;
 class JSScope;
+class ParserError;
 class SourceCode;
 class VM;
 

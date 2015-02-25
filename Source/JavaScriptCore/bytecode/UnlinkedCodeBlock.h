@@ -50,7 +50,7 @@ class FunctionBodyNode;
 class FunctionExecutable;
 class FunctionParameters;
 class JSScope;
-struct ParserError;
+class ParserError;
 class ScriptExecutable;
 class SourceCode;
 class SourceProvider;

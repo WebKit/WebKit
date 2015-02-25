@@ -109,9 +109,9 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 
     auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode);
     error = generator->generate();
-    if (error.m_type != ParserError::ErrorNone) {
+    if (error.isValid()) {
         m_sourceCode.remove(addResult.iterator);
-        return 0;
+        return nullptr;
     }
 
     if (!canCache) {
@@ -143,9 +143,9 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     JSTextPosition positionBeforeLastNewline;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error, &positionBeforeLastNewline);
     if (!program) {
-        RELEASE_ASSERT(error.m_type != ParserError::ErrorNone);
+        RELEASE_ASSERT(error.isValid());
         m_sourceCode.remove(addResult.iterator);
-        return 0;
+        return nullptr;
     }
 
     // This function assumes an input string that would result in a single anonymous function expression.

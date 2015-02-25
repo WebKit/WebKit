@@ -468,7 +468,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(vm, m_source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
     if (programNode)
         return 0;
-    ASSERT(error.m_type != ParserError::ErrorNone);
+    ASSERT(error.isValid());
     return error.toErrorObject(lexicalGlobalObject, m_source);
 }
 

@@ -1319,10 +1319,10 @@ static void runInteractive(GlobalObject* globalObject)
             if (!line[0])
                 break;
             add_history(line);
-        } while (error.m_syntaxErrorType == ParserError::SyntaxErrorRecoverable);
+        } while (error.syntaxErrorType() == ParserError::SyntaxErrorRecoverable);
         
-        if (error.m_type != ParserError::ErrorNone) {
-            printf("%s:%d\n", error.m_message.utf8().data(), error.m_line);
+        if (error.isValid()) {
+            printf("%s:%d\n", error.message().utf8().data(), error.line());
             continue;
         }
         

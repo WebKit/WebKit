@@ -42,6 +42,7 @@ class EvalExecutable;
 class FunctionBodyNode;
 class Identifier;
 class JSScope;
+class ParserError;
 class ProgramExecutable;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
@@ -49,7 +50,6 @@ class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
 class UnlinkedProgramCodeBlock;
 class VM;
-struct ParserError;
 class SourceCode;
 class SourceProvider;
 

@@ -1,3 +1,55 @@
+2015-02-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make ParserError immutable by design
+        https://bugs.webkit.org/show_bug.cgi?id=141955
+
+        Reviewed by Geoffrey Garen.
+
+        This patch enforce that no field of ParserError can
+        be modified after the constructor.
+
+        * parser/ParserError.h:
+        Move the attributes to pack the integer + 2 bytes together.
+        This is irrelevant for memory impact, it is to remve a load-store
+        when copying by value.
+
+        Also move the attributes to be private.
+
+        (JSC::ParserError::isValid):
+        To client of the interface cared about the type of the error,
+        the only information needed was: is there an error.
+
+        (JSC::ParserError::ParserError):
+        (JSC::ParserError::syntaxErrorType):
+        (JSC::ParserError::token):
+        (JSC::ParserError::message):
+        (JSC::ParserError::line):
+        (JSC::ParserError::toErrorObject):
+        * API/JSScriptRef.cpp:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        * bytecode/UnlinkedCodeBlock.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::parse):
+        * jsc.cpp:
+        (runInteractive):
+        * parser/Parser.h:
+        (JSC::parse):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/Completion.h:
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+
 2015-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         Need to pass RTLD_DEEPBIND to dlopen() to ensure that our LLVMOverrides take effect on Linux

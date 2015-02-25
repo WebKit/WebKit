@@ -34,7 +34,8 @@
 
 namespace JSC {
 
-struct ParserError {
+class ParserError {
+public:
     enum SyntaxErrorType {
         SyntaxErrorNone,
         SyntaxErrorIrrecoverable,
@@ -50,47 +51,45 @@ struct ParserError {
         SyntaxError
     };
 
-    ErrorType m_type;
-    SyntaxErrorType m_syntaxErrorType;
-    JSToken m_token;
-    String m_message;
-    int m_line;
     ParserError()
         : m_type(ErrorNone)
         , m_syntaxErrorType(SyntaxErrorNone)
-        , m_line(-1)
     {
     }
     
     explicit ParserError(ErrorType type)
         : m_type(type)
         , m_syntaxErrorType(SyntaxErrorNone)
-        , m_line(-1)
     {
     }
 
     ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token)
-        : m_type(type)
+        : m_token(token)
+        , m_type(type)
         , m_syntaxErrorType(syntaxError)
-        , m_token(token)
-        , m_line(-1)
     {
     }
 
     ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, String msg, int line)
-        : m_type(type)
-        , m_syntaxErrorType(syntaxError)
-        , m_token(token)
+        : m_token(token)
         , m_message(msg)
         , m_line(line)
+        , m_type(type)
+        , m_syntaxErrorType(syntaxError)
     {
     }
+
+    bool isValid() const { return m_type != ErrorNone; }
+    SyntaxErrorType syntaxErrorType() const { return m_syntaxErrorType; }
+    const JSToken& token() const { return m_token; }
+    const String& message() const { return m_message; }
+    int line() const { return m_line; }
 
     JSObject* toErrorObject(JSGlobalObject* globalObject, const SourceCode& source)
     {
         switch (m_type) {
         case ErrorNone:
-            return 0;
+            return nullptr;
         case SyntaxError:
             return addErrorInfo(globalObject->globalExec(), createSyntaxError(globalObject, m_message), m_line, source);
         case EvalError:
@@ -103,9 +102,15 @@ struct ParserError {
             return createOutOfMemoryError(globalObject);
         }
         CRASH();
-        return createOutOfMemoryError(globalObject); // Appease Qt bot
+        return nullptr;
     }
-#undef GET_ERROR_CODE
+
+private:
+    JSToken m_token;
+    String m_message;
+    int m_line { -1 };
+    ErrorType m_type;
+    SyntaxErrorType m_syntaxErrorType;
 };
 
 } // namespace JSC
