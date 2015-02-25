@@ -42,6 +42,7 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
 #if PLATFORM(IOS)
+#import "OpenGLESSPI.h"
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
@@ -52,6 +53,7 @@
 #endif
 #include "WebGLLayer.h"
 #include "WebGLObject.h"
+#include "WebGLRenderingContextBase.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <runtime/Int32Array.h>
@@ -63,7 +65,9 @@ namespace WebCore {
 
 const int maxActiveContexts = 64;
 int GraphicsContext3D::numActiveContexts = 0;
-
+const int GPUStatusCheckThreshold = 5;
+int GraphicsContext3D::GPUCheckCounter = 0;
+    
 // FIXME: This class is currently empty on Mac, but will get populated as 
 // the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
 class GraphicsContext3DPrivate {
@@ -145,6 +149,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
+    , m_webglContext(0)
 {
     UNUSED_PARAM(hostWindow);
     UNUSED_PARAM(renderStyle);
@@ -196,6 +201,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         return;
 
     CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS))
+    GLint abortOnBlacklist = 0;
+#if PLATFORM(MAC)
+    CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
+#elif PLATFORM(IOS)
+    CGLSetParameter(m_contextObj, kEAGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
+#endif
+#endif
+
     CGLDestroyPixelFormat(pixelFormatObj);
     
     if (err != kCGLNoError || !m_contextObj) {
@@ -351,6 +365,33 @@ bool GraphicsContext3D::makeContextCurrent()
         return CGLSetCurrentContext(m_contextObj) == kCGLNoError;
 #endif
     return true;
+}
+
+void GraphicsContext3D::checkGPUStatusIfNecessary()
+{
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS))
+    GPUCheckCounter = (GPUCheckCounter + 1) % GPUStatusCheckThreshold;
+    if (GPUCheckCounter)
+        return;
+#if PLATFORM(MAC)
+    GLint restartStatus = 0;
+    CGLGetParameter(platformGraphicsContext3D(), kCGLCPGPURestartStatus, &restartStatus);
+    if (restartStatus == kCGLCPGPURestartStatusCaused || restartStatus == kCGLCPGPURestartStatusBlacklisted) {
+        CGLSetCurrentContext(0);
+        CGLDestroyContext(platformGraphicsContext3D());
+        forceContextLost();
+    }
+#elif PLATFORM(IOS)
+    GLint restartStatus = 0;
+    EAGLContext* currentContext = static_cast<EAGLContext*>(PlatformGraphicsContext3D());
+    [currentContext getParameter:kEAGLCPGPURestartStatus to:&restartStatus];
+    if (restartStatus == kEAGLCPGPURestartStatusCaused || restartStatus == kEAGLCPGPURestartStatusBlacklisted) {
+        [EAGLContext setCurrentContext:0];
+        [static_cast<EAGLContext*>(currentContext) release];
+        forceContextLost();
+    }
+#endif
+#endif
 }
 
 #if PLATFORM(IOS)

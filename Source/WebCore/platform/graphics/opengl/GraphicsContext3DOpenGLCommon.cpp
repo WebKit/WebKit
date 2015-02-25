@@ -48,6 +48,7 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "TemporaryOpenGLSetting.h"
+#include "WebGLRenderingContextBase.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
@@ -74,6 +75,7 @@
 #include "OpenGLShims.h"
 #endif
 #endif
+
 
 namespace WebCore {
 
@@ -683,12 +685,14 @@ void GraphicsContext3D::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count
 {
     makeContextCurrent();
     ::glDrawArrays(mode, first, count);
+    checkGPUStatusIfNecessary();
 }
 
 void GraphicsContext3D::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset)
 {
     makeContextCurrent();
     ::glDrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
+    checkGPUStatusIfNecessary();
 }
 
 void GraphicsContext3D::enable(GC3Denum cap)
@@ -1761,6 +1765,12 @@ void GraphicsContext3D::markLayerComposited()
 bool GraphicsContext3D::layerComposited() const
 {
     return m_layerComposited;
+}
+
+void GraphicsContext3D::forceContextLost()
+{
+    if (m_webglContext)
+        m_webglContext->forceLostContext(WebGLRenderingContextBase::RealLostContext);
 }
 
 void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)

@@ -9498,6 +9498,7 @@
 		6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLTransformFeedback.h; sourceTree = "<group>"; };
 		6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObject.cpp; sourceTree = "<group>"; };
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
+		6FAD4A561A9D0FAE009F7D3C /* OpenGLESSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenGLESSPI.h; path = ios/OpenGLESSPI.h; sourceTree = "<group>"; };
 		7117445614BC34E200EE5FC8 /* SVGTextMetricsBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetricsBuilder.cpp; sourceTree = "<group>"; };
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
@@ -18570,6 +18571,7 @@
 				CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */,
 				CE1252401A16B1B600864480 /* MediaPlayerSPI.h */,
 				CE1252381A166FA000864480 /* QuickLookSPI.h */,
+				6FAD4A561A9D0FAE009F7D3C /* OpenGLESSPI.h */,
 			);
 			name = ios;
 			sourceTree = "<group>";

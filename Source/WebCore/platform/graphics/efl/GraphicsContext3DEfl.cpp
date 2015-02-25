@@ -183,6 +183,10 @@ bool GraphicsContext3D::makeContextCurrent()
     return m_private->makeContextCurrent();
 }
 
+void GraphicsContext3D::checkGPUStatusIfNecessary()
+{
+}
+
 bool GraphicsContext3D::isGLES2Compliant() const
 {
 #if USE(OPENGL_ES_2)

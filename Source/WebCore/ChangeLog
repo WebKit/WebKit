@@ -1,3 +1,28 @@
+2015-02-19  Roger Fong  <roger_fong@apple.com>
+
+        WebGL: Destroy the GLContext if a GPU restart has been detected.
+        https://bugs.webkit.org/show_bug.cgi?id=141567.
+        <rdar://problem/18507496>
+
+        Reviewed by Dean Jackson.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::setWebGLContext): 
+        Keep track of which WebGLRenderingContext is associated with the current GraphicsContext3D.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Helper method to check GPU status.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): 
+        Don’t immediately abort the GPU process when the restart status is kCGLCPGPURestartStatusBlacklisted.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::forceContextLost): 
+        Force the WebGLRenderingContext to be lost.
+        (WebCore::GraphicsContext3D::drawArrays): Check GPU status after calling drawArrays.
+        (WebCore::GraphicsContext3D::drawElements): Check GPU status after calling drawElements.
+        * WebCore.xcodeproj/project.pbxproj: Add SPI header for iOS.
+        * platform/spi/ios/OpenGLESSPI.h: Added.
+
 2015-02-24  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed ios build fix after http://trac.webkit.org/changeset/180602.

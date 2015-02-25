@@ -178,6 +178,10 @@ bool GraphicsContext3D::makeContextCurrent()
     return m_private->makeContextCurrent();
 }
 
+void GraphicsContext3D::checkGPUStatusIfNecessary()
+{
+}
+
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
     return m_private->platformContext();
