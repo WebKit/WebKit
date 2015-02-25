@@ -70,10 +70,10 @@
 
 # FIXME: Change this file to use the Host abstractions rather that os, sys, shutils, etc.
 
+import argparse
 import datetime
 import logging
 import mimetypes
-import optparse
 import os
 import shutil
 import sys
@@ -90,7 +90,7 @@ _log = logging.getLogger(__name__)
 
 
 def main(_argv, _stdout, _stderr):
-    options, args = parse_args()
+    options, args = parse_args(_argv)
     import_dir = args[0]
 
     if not os.path.exists(import_dir):
@@ -118,22 +118,22 @@ def configure_logging():
     return handler
 
 
-def parse_args():
-    parser = optparse.OptionParser(usage='usage: %prog [options] w3c_test_directory')
+def parse_args(args):
+    parser = argparse.ArgumentParser(prog='import-w3c-tests w3c_test_source_directory')
 
-    parser.add_option('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
+    parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
-    parser.add_option('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
+    parser.add_argument('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
         help='Do not change links (testharness js or css e.g.). By default, links are converted to point to WebKit testharness files.')
 
-    parser.add_option('-a', '--all', action='store_true', default=False,
+    parser.add_argument('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
-    parser.add_option('-d', '--dest-dir', dest='destination', default='w3c',
+    parser.add_argument('-d', '--dest-dir', dest='destination', default='w3c',
         help='Import into a specified directory relative to the LayoutTests root. By default, imports into w3c')
-    parser.add_option('-t', '--test-path', action='append', dest='test_paths', default=[],
+    parser.add_argument('-t', '--test-path', action='append', dest='test_paths', default=[],
         help='Import only tests in the supplied subdirectory of the w3c_test_directory. Can be supplied multiple times to give multiple paths')
 
-    options, args = parser.parse_args()
+    options, args = parser.parse_known_args(args)
     if len(args) != 1:
         parser.error('Incorrect number of arguments')
     return options, args
