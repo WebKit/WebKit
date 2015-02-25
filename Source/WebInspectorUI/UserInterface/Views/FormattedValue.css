@@ -34,6 +34,10 @@
     color: rgb(28, 0, 207);
 }
 
+.formatted-boolean {
+    color: rgb(170, 13, 145);
+}
+
 .formatted-string, .formatted-regexp {
     white-space: pre;
 }

@@ -1026,6 +1026,11 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
     }
 });
 
+function isFunctionStringNativeCode(str)
+{
+    return str.endsWith("{\n    [native code]\n}");
+}
+
 function clamp(min, value, max)
 {
     return Math.min(Math.max(min, value), max);

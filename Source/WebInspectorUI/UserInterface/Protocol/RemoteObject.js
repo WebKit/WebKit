@@ -384,14 +384,26 @@ WebInspector.RemoteObject.prototype = {
             callback(0);
     },
 
-    callFunction: function(functionDeclaration, args, callback)
+    callFunction: function(functionDeclaration, args, generatePreview, callback)
     {
         function mycallback(error, result, wasThrown)
         {
-            callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
+            result = result ? WebInspector.RemoteObject.fromPayload(result) : null;
+            callback(error, result, wasThrown);
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, true, mycallback);
+        if (args) {
+            args = args.map(function(arg) {
+                if (arg instanceof WebInspector.RemoteObject) {
+                    if (arg.objectId)
+                        return {objectId: arg.objectId};
+                    return {value: arg.value};
+                }
+                return {value: arg};
+            });
+        }
+
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, generatePreview, mycallback);
     },
 
     callFunctionJSON: function(functionDeclaration, args, callback)
@@ -402,6 +414,18 @@ WebInspector.RemoteObject.prototype = {
         }
 
         RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, true, mycallback);
+    },
+    
+    invokeGetter: function(getterRemoteObject, callback)
+    {
+        console.assert(getterRemoteObject instanceof WebInspector.RemoteObject);
+
+        function backendInvokeGetter(getter)
+        {
+            return getter ? getter.call(this) : undefined;
+        }
+
+        this.callFunction(backendInvokeGetter, [getterRemoteObject], true, callback);
     },
 
     release: function()

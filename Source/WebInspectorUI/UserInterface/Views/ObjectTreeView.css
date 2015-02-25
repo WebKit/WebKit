@@ -27,32 +27,29 @@
     position: relative;
 }
 
-.object-tree > .title {
-    color: black;
-    padding: 0 8px 0 18px;
-    min-height: 18px;
-    white-space: nowrap;
-    background-origin: padding;
-    background-clip: padding;
-}
-
 .object-tree > :matches(.title, .object-preview)::before {
     position: absolute;
-    top: 5px;
-    left: 7px;
 
-    width: 8px;
-    height: 8px;
+    top: 0;
+    left: -2px;
 
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
-    background-size: 8px 8px;
+    width: 13px;
+    height: 13px;
+
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-size: 13px 13px;
     background-repeat: no-repeat;
+    background-position: center;
 
     content: "";
 }
 
+.object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
+    margin-left: 13px;
+}
+
 .object-tree.expanded > :matches(.title, .object-preview)::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
 .object-tree.expanded .object-preview {
@@ -64,7 +61,7 @@
     width: 0px;
 }
 
-.object-tree-outline {
+.object-tree .object-tree-outline {
     display: none;
 }
 
@@ -82,7 +79,6 @@
 }
 
 .object-tree-outline li {
-    margin-left: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -90,34 +86,10 @@
     cursor: default;
 }
 
-.object-tree-outline li.parent {
-    margin-left: 1px;
-}
-
-.object-tree-outline li.parent::before {
-    float: left;
-
-    content: "";
-
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
-    background-size: 8px 8px;
-    background-repeat: no-repeat;
-
-    width: 8px;
-    height: 8px;
-
-    margin-top: 3px;
-    padding-right: 2px;
-}
-
-.object-tree-outline li.parent.expanded::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
-}
-
 .object-tree-outline ol {
     display: none;
     margin: 0;
-    -webkit-padding-start: 12px;
+    -webkit-padding-start: 16px;
     list-style: none;
 }
 
@@ -126,48 +98,15 @@
 }
 
 .object-tree-outline li .empty-message {
-    padding-top: 0;
-    padding-bottom: 0;
     color: rgb(60%, 60%, 60%);
+    margin-left: 7px;
+    font-family: sans-serif;
+    font-size: 12px;
 }
-
-/* Property Colors */
-
-.object-tree-property .name {
-    color: rgb(136, 19, 145);
-}
-
-.object-tree-property .name.not-enumerable {
-    opacity: 0.6;
-}
-
-.object-tree-property .value.error {
-    color: red;
-}
-
 
 /* Console Overrides */
 
-.console-group-messages .object-tree:not(.lossless-preview) {
-    margin: 0 0 0 12px !important;
-}
-
-.console-group-messages .object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
-    padding: 0 8px 0 0;
-}
-
-.console-group-messages .object-tree:not(.lossless-preview) > :matches(.title, .object-preview)::before {
-    top: 2px;
-    left: 1px;
-}
-
-/* FIXME: Transitioning the console over to formatted-object */
-.console-group-messages :matches(.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap) .object-tree,
-.console-group-messages :matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .object-tree {
-    position: static;
-}
-
-.console-group-messages :matches(.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap) .object-tree-outline,
-.console-group-messages :matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .object-tree-outline {
-    padding-left: 0 !important;
+:matches(.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap) .object-tree-outline,
+:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .object-tree-outline {
+    padding-left: 6px !important;
 }

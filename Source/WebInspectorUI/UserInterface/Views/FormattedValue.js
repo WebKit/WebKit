@@ -62,12 +62,9 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
         return span;
     }
 
-    // Function: ellided in previews, collapsed whitespace normally.
+    // Function: ellided in previews.
     if (type === "function") {
-        if (isPreview)
-            span.textContent = "function";
-        else
-            span.textContent = /.*/.exec(displayString)[0].replace(/ +$/g, "");
+        span.textContent = isPreview ? "function" : displayString;
         return span;
     }
 

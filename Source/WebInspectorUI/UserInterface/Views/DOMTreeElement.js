@@ -222,9 +222,9 @@ WebInspector.DOMTreeElement.prototype = {
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
-        function setTooltip(result)
+        function setTooltip(error, result, wasThrown)
         {
-            if (!result || result.type !== "string")
+            if (error || wasThrown || !result || result.type !== "string")
                 return;
 
             try {
@@ -252,7 +252,7 @@ WebInspector.DOMTreeElement.prototype = {
                 return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
             }
 
-            object.callFunction(dimensions, undefined, setTooltip.bind(this));
+            object.callFunction(dimensions, undefined, false, setTooltip.bind(this));
             object.release();
         }
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
