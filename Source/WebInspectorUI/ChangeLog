@@ -1,3 +1,15 @@
+2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not show "{}" after Date description in Object Previews
+        https://bugs.webkit.org/show_bug.cgi?id=141898
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        Only show "{...}" section for Date objects that have user
+        defined properties. Otherwise, Dates do not have properties.
+
 2015-02-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused console-object-preview styles - replaced by ObjectPreviewView

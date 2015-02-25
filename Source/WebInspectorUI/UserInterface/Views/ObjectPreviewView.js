@@ -146,13 +146,19 @@ WebInspector.ObjectPreviewView.prototype = {
 
     _appendPropertyPreviews: function(element, preview)
     {
+        // Do not show empty properties preview for Date previews.
+        var isDate = preview.subtype === "date";
+        var numProperties = preview.propertyPreviews.length;
+        if (!numProperties && isDate)
+            return preview.lossless;
+
         var isArray = preview.subtype === "array";
 
         element.appendChild(document.createTextNode(isArray ? "[" : "{"));
 
         var numberAdded = 0;
         var limit = this._numberOfPropertiesToShowInMode();
-        for (var i = 0; i < preview.propertyPreviews.length && numberAdded < limit; ++i) {
+        for (var i = 0; i < numProperties && numberAdded < limit; ++i) {
             var property = preview.propertyPreviews[i];
 
             // FIXME: Better handle getter/setter accessors. Should we show getters in previews?
