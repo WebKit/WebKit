@@ -1,3 +1,12 @@
+2015-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Bot watcher's dashboard sometimes hits an assertion: data.num_missing === this.layoutTestResults.testsWithMissingResults.length
+        https://bugs.webkit.org/show_bug.cgi?id=141889
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

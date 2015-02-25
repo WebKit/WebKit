@@ -464,7 +464,9 @@ BuildbotIteration.prototype = {
             console.assert(data.num_flaky === this.layoutTestResults.flakyTests.length);
 
             this.layoutTestResults.testsWithMissingResults = collectResults(data.tests, function(info) { return info["report"] === "MISSING" });
-            console.assert(data.num_missing === this.layoutTestResults.testsWithMissingResults.length);
+            // data.num_missing is not always equal to the size of testsWithMissingResults array,
+            // because buildbot counts regressions that had missing pixel results on retry (e.g. "TEXT MISSING").
+            console.assert(data.num_missing >= this.layoutTestResults.testsWithMissingResults.length);
 
             callback();
         }.bind(this),
