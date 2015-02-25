@@ -29,8 +29,10 @@
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStore.h>
 
 enum {
@@ -66,6 +68,13 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
+
+        if ([SettingsController shared].perWindowWebProcessesDisabled) {
+            _WKProcessPoolConfiguration *singleProcessConfiguration = [[_WKProcessPoolConfiguration alloc] init];
+            singleProcessConfiguration.maximumProcessCount = 1;
+            configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:singleProcessConfiguration] autorelease];
+            [singleProcessConfiguration release];
+        }
     }
 
     return configuration;

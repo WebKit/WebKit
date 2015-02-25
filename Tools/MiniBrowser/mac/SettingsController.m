@@ -46,6 +46,8 @@ static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPix
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
+static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
+
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
     WheelEventHandlerRegionOverlayTag
@@ -107,6 +109,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
     [self _addItemWithTitle:@"Show Tiled Scrolling Indicator" action:@selector(toggleShowTiledScrollingIndicator:) indented:YES];
     [self _addItemWithTitle:@"Use UI-Side Compositing" action:@selector(toggleUseUISideCompositing:) indented:YES];
+    [self _addItemWithTitle:@"Disable Per-Window Web Processes" action:@selector(togglePerWindowWebProcessesDisabled:) indented:YES];
 
     NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
     NSMenu *debugOverlaysMenu = [[NSMenu alloc] initWithTitle:@"Debug Overlays"];
@@ -148,6 +151,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSOnState : NSOffState];
+    else if (action == @selector(togglePerWindowWebProcessesDisabled:))
+        [menuItem setState:[self perWindowWebProcessesDisabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleEnableSubPixelCSSOMMetrics:))
         [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleDebugOverlay:))
@@ -202,6 +207,26 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)useUISideCompositing
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseRemoteLayerTreeDrawingAreaPreferenceKey];
+}
+
+- (void)togglePerWindowWebProcessesDisabled:(id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:self.perWindowWebProcessesDisabled ? @"Are you sure you want to switch to per-window web processes?" : @"Are you sure you want to switch to a single web process?"];
+    [alert setInformativeText:@"This requires quitting and relaunching MiniBrowser. I'll do the quitting. You will have to do the relaunching."];
+    [alert addButtonWithTitle:@"Switch and Quit"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    if ([alert runModal] != NSAlertFirstButtonReturn)
+        return;
+
+    [self _toggleBooleanDefault:PerWindowWebProcessesDisabledKey];
+    [NSApp terminate:self];
+}
+
+- (BOOL)perWindowWebProcessesDisabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PerWindowWebProcessesDisabledKey];
 }
 
 - (void)toggleShowLayerBorders:(id)sender
