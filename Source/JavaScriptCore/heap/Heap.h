@@ -119,7 +119,7 @@ public:
 
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
-    MachineThreads& machineThreads() { return m_machineThreads; }
+    static MachineThreads& machineThreads();
 
     const SlotVisitor& slotVisitor() const { return m_slotVisitor; }
 
@@ -355,8 +355,6 @@ private:
     Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>*> m_tempSortingVectors;
     std::unique_ptr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
 
-    MachineThreads m_machineThreads;
-    
     GCThreadSharedData m_sharedData;
     SlotVisitor m_slotVisitor;
     CopyVisitor m_copyVisitor;

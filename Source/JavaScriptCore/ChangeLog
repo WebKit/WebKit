@@ -1,3 +1,65 @@
+2015-02-24  Mark Lam  <mark.lam@apple.com>
+
+        MachineThreads::Thread clean up has a use after free race condition.
+        <https://webkit.org/b/141990>
+
+        Reviewed by Michael Saboff.
+
+        MachineThreads::Thread clean up relies on the clean up mechanism
+        implemented in _pthread_tsd_cleanup_key(), which looks like this:
+
+        void _pthread_tsd_cleanup_key(pthread_t self, pthread_key_t key)
+        {
+            void (*destructor)(void *);
+            if (_pthread_key_get_destructor(key, &destructor)) {
+                void **ptr = &self->tsd[key];
+                void *value = *ptr;
+
+                // At this point, this thread has cached "destructor" and "value"
+                // (which is a MachineThreads*).  If the VM gets destructed (along
+                // with its MachineThreads registry) by another thread, then this
+                // thread will have no way of knowing that the MachineThreads* is
+                // now pointing to freed memory.  Calling the destructor below will
+                // therefore result in a use after free scenario when it tries to
+                // access the MachineThreads' data members.
+
+                if (value) {
+                    *ptr = NULL;
+                    if (destructor) {
+                        destructor(value);
+                    }
+                }
+            }
+        }
+
+        The solution is simply to change MachineThreads from a per VM thread
+        registry to a process global singleton thread registry i.e. the
+        MachineThreads registry is now immortal and we cannot have a use after
+        free scenario since we never free it.
+
+        The cost of this change is that all VM instances will have to scan
+        stacks of all threads ever touched by a VM, and not just those that
+        touched a specific VM.  However, stacks tend to be shallow.  Hence,
+        those additional scans will tend to be cheap.
+
+        Secondly, it is not common for there to be multiple JSC VMs in use
+        concurrently on multiple threads.  Hence, this cost should rarely
+        manifest in real world applications.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::machineThreads):
+        (JSC::Heap::gatherStackRoots):
+        * heap/Heap.h:
+        (JSC::Heap::machineThreads): Deleted.
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        * heap/MachineStackMarker.h:
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+
 2015-02-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] [iOS] Parsing support for -apple-trailing-word

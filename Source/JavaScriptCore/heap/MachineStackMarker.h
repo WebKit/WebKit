@@ -33,18 +33,19 @@ namespace JSC {
     class ConservativeRoots;
     class Heap;
     class JITStubRoutineSet;
+    class VM;
 
     class MachineThreads {
         WTF_MAKE_NONCOPYABLE(MachineThreads);
     public:
         typedef jmp_buf RegisterState;
 
-        MachineThreads(Heap*);
+        MachineThreads();
         ~MachineThreads();
 
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent, RegisterState& registers);
 
-        JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
+        JS_EXPORT_PRIVATE void addCurrentThread(VM*); // Only needs to be called by clients that can use the same heap from multiple threads.
 
     private:
         class Thread;
@@ -60,9 +61,6 @@ namespace JSC {
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
         WTF::ThreadSpecificKey m_threadSpecific;
-#if !ASSERT_DISABLED
-        Heap* m_heap;
-#endif
     };
 
 } // namespace JSC
