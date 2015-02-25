@@ -31,6 +31,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
+    DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
     # Plugin messages.
 #if ENABLE(NETSCAPE_PLUGIN_API)

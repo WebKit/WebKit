@@ -116,6 +116,7 @@ WebProcessProxy::~WebProcessProxy()
 {
     ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
+    ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
 
     if (m_webConnection)
         m_webConnection->invalidate();
@@ -155,6 +156,10 @@ void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
     for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
         callback();
     m_pendingDeleteWebsiteDataCallbacks.clear();
+
+    for (const auto& callback : m_pendingDeleteWebsiteDataForOriginsCallbacks.values())
+        callback();
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
 
     for (auto& page : m_pageMap.values())
         page->connectionDidClose(connection);
@@ -615,6 +620,12 @@ void WebProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
     callback();
 }
 
+void WebProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
+{
+    auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);
+    callback();
+}
+
 void WebProcessProxy::updateTextCheckerState()
 {
     if (canSendMessage())
@@ -668,6 +679,20 @@ void WebProcessProxy::deleteWebsiteData(SessionID sessionID, WebsiteDataTypes da
 
     m_pendingDeleteWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
     send(Messages::WebProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
+}
+
+void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, WebsiteDataTypes dataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
+{
+    ASSERT(canSendMessage());
+
+    uint64_t callbackID = generateCallbackID();
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, WTF::move(completionHandler));
+
+    Vector<SecurityOriginData> originData;
+    for (auto& origin : origins)
+        originData.append(SecurityOriginData::fromSecurityOrigin(*origin));
+
+    send(Messages::WebProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, originData, callbackID), 0);
 }
 
 void WebProcessProxy::requestTermination()

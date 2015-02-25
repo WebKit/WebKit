@@ -1,3 +1,39 @@
+2015-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Add (unused for now) code to delete website data for a set of origins
+        https://bugs.webkit.org/show_bug.cgi?id=142019
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Assert that there are no pending callbacks.
+
+        (WebKit::WebProcessProxy::connectionDidClose):
+        Invoke all the didDeleteWebsiteDataForOrigins callbacks.
+
+        (WebKit::WebProcessProxy::didDeleteWebsiteDataForOrigins):
+        Grab the didDeleteWebsiteDataForOrigins and invoke it.
+
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        Add the pending callback and send a DeleteWebsiteDataForOrigins to the web process.
+
+        * UIProcess/WebProcessProxy.h:
+        Add new members.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add a DidDeleteWebsiteDataForOrigins message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteDataForOrigins):
+        For now, just send back a DidDeleteWebsiteDataForOrigins message.
+
+        * WebProcess/WebProcess.h:
+        Add new members.
+
+        * WebProcess/WebProcess.messages.in:
+        Add a DeleteWebsiteDataForOrigins message.
+
 2015-02-25  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix build warning in WebKit2/UIProcess module.
