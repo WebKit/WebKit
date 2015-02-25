@@ -1,3 +1,10 @@
+2015-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Updating js/dom/global-constructors-attributes.html results for HTMLAttachmentElement.
+
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2015-02-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180599.
