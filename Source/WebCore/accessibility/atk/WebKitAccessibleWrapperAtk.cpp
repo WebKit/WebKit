@@ -524,6 +524,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_PAGE_TAB_LIST;
     case TextFieldRole:
     case TextAreaRole:
+    case SearchFieldRole:
         return ATK_ROLE_ENTRY;
     case StaticTextRole:
         return ATK_ROLE_TEXT;

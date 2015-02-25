@@ -297,6 +297,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case PopUpButtonRole:
     case RadioButtonRole:
     case ScrollBarRole:
+    case SearchFieldRole:
     case SliderRole:
     case StaticTextRole:
     case SwitchRole:
@@ -543,6 +544,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             if (m_object->isPasswordField())
                 traits |= [self _axSecureTextFieldTrait];
             FALLTHROUGH;
+        case SearchFieldRole:
         case TextAreaRole:
             traits |= [self _axTextEntryTrait];
             if (m_object->isFocused())
@@ -648,6 +650,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case DocumentMathRole:
         case HorizontalRuleRole:
         case SwitchRole:
+        case SearchFieldRole:
             return true;
         case StaticTextRole:
         {

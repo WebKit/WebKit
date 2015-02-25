@@ -386,7 +386,7 @@ bool AccessibilityObject::isTextControl() const
     
 bool AccessibilityObject::isARIATextControl() const
 {
-    return ariaRoleAttribute() == TextAreaRole || ariaRoleAttribute() == TextFieldRole;
+    return ariaRoleAttribute() == TextAreaRole || ariaRoleAttribute() == TextFieldRole || ariaRoleAttribute() == SearchFieldRole;
 }
 
 bool AccessibilityObject::isLandmark() const
@@ -779,7 +779,7 @@ bool AccessibilityObject::hasAttributesRequiredForInclusion() const
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
-    return ariaRole == RadioButtonRole || ariaRole == CheckBoxRole || ariaRole == TextFieldRole || ariaRole == SwitchRole;
+    return ariaRole == RadioButtonRole || ariaRole == CheckBoxRole || ariaRole == TextFieldRole || ariaRole == SwitchRole || ariaRole == SearchFieldRole;
 }    
     
 bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
@@ -1912,6 +1912,7 @@ static void initializeRoleMap()
         { "row", RowRole },
         { "scrollbar", ScrollBarRole },
         { "search", LandmarkSearchRole },
+        { "searchbox", SearchFieldRole },
         { "separator", SplitterRole },
         { "slider", SliderRole },
         { "spinbutton", SpinButtonRole },

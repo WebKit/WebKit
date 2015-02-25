@@ -180,6 +180,7 @@ enum AccessibilityRole {
     RulerMarkerRole,
     ScrollAreaRole,
     ScrollBarRole,
+    SearchFieldRole,
     SheetRole,
     SliderRole,
     SliderThumbRole,
