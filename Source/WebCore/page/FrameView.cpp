@@ -3486,7 +3486,7 @@ bool FrameView::shouldSuspendScrollAnimations() const
     return frame().loader().state() != FrameStateComplete;
 }
 
-void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
+void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
 {
     if (!frame().isMainFrame())
         return;

@@ -5024,7 +5024,7 @@ void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThu
 void WebPageProxy::recommendedScrollbarStyleDidChange(int32_t newStyle)
 {
 #if USE(APPKIT)
-    m_pageClient.recommendedScrollbarStyleDidChange(newStyle);
+    m_pageClient.recommendedScrollbarStyleDidChange(static_cast<WebCore::ScrollbarStyle>(newStyle));
 #else
     UNUSED_PARAM(newStyle);
 #endif

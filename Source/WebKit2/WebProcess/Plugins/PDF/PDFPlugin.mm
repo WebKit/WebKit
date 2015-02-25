@@ -788,7 +788,7 @@ IntPoint PDFPlugin::maximumScrollPosition() const
     return maximumOffset;
 }
 
-void PDFPlugin::scrollbarStyleChanged(int, bool forceUpdate)
+void PDFPlugin::scrollbarStyleChanged(ScrollbarStyle style, bool forceUpdate)
 {
     if (!forceUpdate)
         return;

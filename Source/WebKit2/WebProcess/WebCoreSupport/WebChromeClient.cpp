@@ -971,9 +971,9 @@ void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scroller
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));
 }
 
-void WebChromeClient::recommendedScrollbarStyleDidChange(int32_t newStyle)
+void WebChromeClient::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
 {
-    m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(newStyle));
+    m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(static_cast<int32_t>(newStyle)));
 }
 
 Color WebChromeClient::underlayColor() const

@@ -1342,7 +1342,7 @@ void ScrollAnimatorMac::updateScrollerStyle()
 
     // If m_needsScrollerStyleUpdate is true, then the page is restoring from the page cache, and 
     // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
-    scrollableArea().scrollbarStyleChanged(newStyle, !m_needsScrollerStyleUpdate);
+    scrollableArea().scrollbarStyleChanged(newStyle == NSScrollerStyleOverlay ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible, !m_needsScrollerStyleUpdate);
 
     m_needsScrollerStyleUpdate = false;
 }

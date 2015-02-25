@@ -194,7 +194,7 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
     virtual bool shouldSuspendScrollAnimations() const override { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) override;
+    virtual void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
     virtual WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntRect& scrollbarRect) const override;
     virtual WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntRect& parentRect) const override;
     virtual WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const override;

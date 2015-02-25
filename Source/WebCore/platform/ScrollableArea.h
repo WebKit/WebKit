@@ -201,7 +201,7 @@ public:
     WEBCORE_EXPORT IntSize totalContentsSize() const;
 
     virtual bool shouldSuspendScrollAnimations() const { return true; }
-    virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
+    virtual void scrollbarStyleChanged(ScrollbarStyle, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
     
     // Note that this only returns scrollable areas that can actually be scrolled.

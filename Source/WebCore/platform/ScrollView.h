@@ -73,7 +73,7 @@ public:
     virtual int scrollPosition(Scrollbar*) const override;
     WEBCORE_EXPORT virtual void setScrollOffset(const IntPoint&) override;
     virtual bool isScrollCornerVisible() const override;
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) override;
+    virtual void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
     virtual void notifyPageThatContentAreaWillPaint() const;
 

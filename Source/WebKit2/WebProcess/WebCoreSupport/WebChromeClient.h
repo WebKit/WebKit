@@ -274,7 +274,7 @@ private:
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
 
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) override;
-    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) override;
+    virtual void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle newStyle) override;
 
     virtual WebCore::Color underlayColor() const override;
 

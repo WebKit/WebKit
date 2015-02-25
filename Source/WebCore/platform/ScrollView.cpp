@@ -1162,7 +1162,7 @@ bool ScrollView::isScrollCornerVisible() const
     return !scrollCornerRect().isEmpty();
 }
 
-void ScrollView::scrollbarStyleChanged(int, bool forceUpdate)
+void ScrollView::scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate)
 {
     if (!forceUpdate)
         return;

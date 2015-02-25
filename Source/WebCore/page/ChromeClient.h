@@ -386,7 +386,7 @@ public:
     virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
-    virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }
+    virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
 
     enum DialogType {
         AlertDialog = 0,

@@ -1,3 +1,25 @@
+2015-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an enum for scrollbar style
+        https://bugs.webkit.org/show_bug.cgi?id=141985
+
+        Reviewed by Beth Dakin.
+
+        Switch to an enum class for the scrollbar style (normal or overlay).
+
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollbarStyleChanged):
+        * page/FrameView.h:
+        * platform/ScrollTypes.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarStyleChanged):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollbarStyleChanged):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
 2015-02-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180599.

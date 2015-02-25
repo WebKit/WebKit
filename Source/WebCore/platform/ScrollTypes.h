@@ -154,6 +154,11 @@ namespace WebCore {
         ScrollbarButtonsDoubleEnd,
         ScrollbarButtonsDoubleBoth
     };
+
+    enum class ScrollbarStyle {
+        AlwaysVisible,
+        Overlay
+    };
     
     enum ScrollbarOverlayStyle {
         ScrollbarOverlayStyleDefault,

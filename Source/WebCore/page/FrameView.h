@@ -424,7 +424,7 @@ public:
     void flushAnyPendingPostLayoutTasks();
 
     virtual bool shouldSuspendScrollAnimations() const override;
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) override;
+    virtual void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
     RenderBox* embeddedContentBox() const;
     
