@@ -3766,9 +3766,8 @@ private:
 #if ENABLE(FTL_NATIVE_CALL_INLINING)
     void compileNativeCallOrConstruct() 
     {
-        int dummyThisArgument = m_node->op() == NativeCall ? 0 : 1;
         int numPassedArgs = m_node->numChildren() - 1;
-        int numArgs = numPassedArgs + dummyThisArgument;
+        int numArgs = numPassedArgs;
 
         JSFunction* knownFunction = jsCast<JSFunction*>(m_node->cellOperand()->value().asCell());
         NativeFunction function = knownFunction->nativeFunction();
@@ -3789,12 +3788,9 @@ private:
 
         m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
 
-        if (dummyThisArgument) 
-            m_out.storePtr(getUndef(m_out.int64), addressFor(m_execStorage, JSStack::ThisArgument));
-        
         for (int i = 0; i < numPassedArgs; ++i) {
             m_out.storePtr(lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
-                addressFor(m_execStorage, dummyThisArgument ? JSStack::FirstArgument : JSStack::ThisArgument, i * sizeof(Register)));
+                addressFor(m_execStorage, JSStack::ThisArgument, i * sizeof(Register)));
         }
 
         LValue calleeCallFrame = m_out.address(m_execState, m_heaps.CallFrame_callerFrame).value();
@@ -3817,9 +3813,8 @@ private:
 
     void compileCallOrConstruct()
     {
-        int dummyThisArgument = m_node->op() == Call ? 0 : 1;
         int numPassedArgs = m_node->numChildren() - 1;
-        int numArgs = numPassedArgs + dummyThisArgument;
+        int numArgs = numPassedArgs;
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
 
@@ -3834,8 +3829,6 @@ private:
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(jsCallee); // callee -> stack
         arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
-        if (dummyThisArgument)
-            arguments.append(getUndef(m_out.int64));
         for (int i = 0; i < numPassedArgs; ++i)
             arguments.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
         
@@ -3866,6 +3859,7 @@ private:
             break;
         case ConstructVarargs:
             jsArguments = lowJSValue(m_node->child2());
+            thisArg = lowJSValue(m_node->child3());
             break;
         default:
             DFG_CRASH(m_graph, m_node, "bad node type");
@@ -3878,12 +3872,12 @@ private:
         arguments.append(m_out.constInt64(stackmapID));
         arguments.append(m_out.constInt32(sizeOfICFor(m_node)));
         arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(1 + !!jsArguments + !!thisArg));
+        arguments.append(m_out.constInt32(2 + !!jsArguments));
         arguments.append(jsCallee);
         if (jsArguments)
             arguments.append(jsArguments);
-        if (thisArg)
-            arguments.append(thisArg);
+        ASSERT(thisArg);
+        arguments.append(thisArg);
         
         callPreflight();
         

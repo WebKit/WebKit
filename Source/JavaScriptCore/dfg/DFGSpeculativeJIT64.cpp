@@ -626,28 +626,23 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 void SpeculativeJIT::emitCall(Node* node)
 {
     CallLinkInfo::CallType callType;
-    bool isCall;
     bool isVarargs;
     switch (node->op()) {
     case Call:
         callType = CallLinkInfo::Call;
-        isCall = true;
         isVarargs = false;
         break;
     case Construct:
         callType = CallLinkInfo::Construct;
-        isCall = false;
         isVarargs = false;
         break;
     case CallVarargs:
     case CallForwardVarargs:
         callType = CallLinkInfo::CallVarargs;
-        isCall = true;
         isVarargs = true;
         break;
     case ConstructVarargs:
         callType = CallLinkInfo::ConstructVarargs;
-        isCall = false;
         isVarargs = true;
         break;
     default:
@@ -746,27 +741,19 @@ void SpeculativeJIT::emitCall(Node* node)
         // We don't need the arguments array anymore.
         if (node->op() != CallForwardVarargs)
             use(node->child2());
+
+        // Now set up the "this" argument.
+        JSValueOperand thisArgument(this, node->op() == CallForwardVarargs ? node->child2() : node->child3());
+        GPRReg thisArgumentGPR = thisArgument.gpr();
+        thisArgument.use();
         
-        if (isCall) {
-            // Now set up the "this" argument.
-            JSValueOperand thisArgument(this, node->op() == CallForwardVarargs ? node->child2() : node->child3());
-            GPRReg thisArgumentGPR = thisArgument.gpr();
-            thisArgument.use();
-            
-            m_jit.store64(thisArgumentGPR, JITCompiler::calleeArgumentSlot(0));
-        }
+        m_jit.store64(thisArgumentGPR, JITCompiler::calleeArgumentSlot(0));
     } else {
-        // For constructors, the this argument is not passed but we have to make space
-        // for it.
-        int dummyThisArgument = isCall ? 0 : 1;
-    
         // The call instruction's first child is the function; the subsequent children are the
         // arguments.
         int numPassedArgs = node->numChildren() - 1;
-    
-        int numArgs = numPassedArgs + dummyThisArgument;
-    
-        m_jit.store32(MacroAssembler::TrustedImm32(numArgs), JITCompiler::calleeFramePayloadSlot(JSStack::ArgumentCount));
+
+        m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(JSStack::ArgumentCount));
     
         for (int i = 0; i < numPassedArgs; i++) {
             Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -774,7 +761,7 @@ void SpeculativeJIT::emitCall(Node* node)
             GPRReg argGPR = arg.gpr();
             use(argEdge);
         
-            m_jit.store64(argGPR, JITCompiler::calleeArgumentSlot(i + dummyThisArgument));
+            m_jit.store64(argGPR, JITCompiler::calleeArgumentSlot(i));
         }
     }
 

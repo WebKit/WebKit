@@ -453,6 +453,7 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     RefPtr<RegisterID> func = generator.emitNode(m_expr);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     CallArguments callArguments(generator, m_args);
+    generator.emitMove(callArguments.thisRegister(), func.get());
     return generator.emitConstruct(returnValue.get(), func.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
 }
 

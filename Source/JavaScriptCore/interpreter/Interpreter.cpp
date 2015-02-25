@@ -975,7 +975,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         return throwTerminatedExecutionException(callFrame);
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(newCodeBlock, constructor, jsUndefined(), argsCount, args.data());
+    protoCallFrame.init(newCodeBlock, constructor, constructor, argsCount, args.data());
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, constructor);

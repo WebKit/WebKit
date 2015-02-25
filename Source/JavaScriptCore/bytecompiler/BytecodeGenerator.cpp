@@ -1564,19 +1564,12 @@ RegisterID* BytecodeGenerator::emitPutByIndex(RegisterID* base, unsigned index, 
 
 RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
-    RefPtr<RegisterID> func = newTemporary(); 
-
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-    emitOpcode(op_get_callee);
-    instructions().append(func->index());
-    instructions().append(0);
-
     size_t begin = instructions().size();
     m_staticPropertyAnalyzer.createThis(m_thisRegister.index(), begin + 3);
 
     emitOpcode(op_create_this); 
     instructions().append(m_thisRegister.index()); 
-    instructions().append(func->index()); 
+    instructions().append(m_thisRegister.index()); 
     instructions().append(0);
     return dst;
 }
@@ -1881,9 +1874,9 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     return emitCallVarargs(op_call_varargs, dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
 }
 
-RegisterID* BytecodeGenerator::emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+RegisterID* BytecodeGenerator::emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
-    return emitCallVarargs(op_construct_varargs, dst, func, 0, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
+    return emitCallVarargs(op_construct_varargs, dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
 }
     
 RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
@@ -1979,7 +1972,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
                 argumentRegister = uncheckedLocalArgumentsRegister();
             else
                 argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
-            return emitConstructVarargs(dst, func, argumentRegister.get(), newTemporary(), 0, callArguments.profileHookRegister(), divot, divotStart, divotEnd);
+            return emitConstructVarargs(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, callArguments.profileHookRegister(), divot, divotStart, divotEnd);
         }
         
         for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next)

@@ -82,24 +82,8 @@ void JITCode::reconstruct(
     reconstruct(codeBlock, codeOrigin, streamIndex, recoveries);
     
     result = Operands<JSValue>(OperandsLike, recoveries);
-    for (size_t i = result.size(); i--;) {
-        int operand = result.operandForIndex(i);
-        
-        if (codeOrigin == CodeOrigin(0)
-            && operandIsArgument(operand)
-            && !VirtualRegister(operand).toArgument()
-            && codeBlock->codeType() == FunctionCode
-            && codeBlock->specializationKind() == CodeForConstruct) {
-            // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
-            // also never be used. It doesn't matter what we put into the value for this,
-            // but it has to be an actual value that can be grokked by subsequent DFG passes,
-            // so we sanitize it here by turning it into Undefined.
-            result[i] = jsUndefined();
-            continue;
-        }
-        
+    for (size_t i = result.size(); i--;)
         result[i] = recoveries[i].recover(exec);
-    }
 }
 
 #if ENABLE(FTL_JIT)

@@ -1159,17 +1159,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
         Operands<JSValue> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
         for (size_t i = 0; i < mustHandleValues.size(); ++i) {
             int operand = mustHandleValues.operandForIndex(i);
-            if (operandIsArgument(operand)
-                && !VirtualRegister(operand).toArgument()
-                && codeBlock->codeType() == FunctionCode
-                && codeBlock->specializationKind() == CodeForConstruct) {
-                // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
-                // also never be used. It doesn't matter what we put into the value for this,
-                // but it has to be an actual value that can be grokked by subsequent DFG passes,
-                // so we sanitize it here by turning it into Undefined.
-                mustHandleValues[i] = jsUndefined();
-            } else
-                mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
+            mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
         }
 
         RefPtr<CodeBlock> replacementCodeBlock = codeBlock->newReplacement();

@@ -1,3 +1,53 @@
+2015-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use "this" instead of "callee" to get the constructor
+        https://bugs.webkit.org/show_bug.cgi?id=141019
+
+        Reviewed by Filip Pizlo.
+
+        This patch uses "this" register to pass the constructor (newTarget) to op_create_this from
+        op_construct or op_construct_varargs. This will allow future patches that implement ES6 class
+        to pass in the most derived class' constructor through "this" argument.
+
+        BytecodeGenerator's emitConstruct and emitConstructVarargs now passes thisRegister like
+        regular calls and emitCreateThis passes in this register to op_create_this as constructor.
+
+        The rest of the code change removes the code for special casing "this" register not being used
+        in call to construct.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::emitArgumentPhantoms):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLJSCallVarargs.cpp:
+        (JSC::FTL::JSCallVarargs::emit):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITOperations.cpp:
+
 2015-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make Getter/Setter RemoteObject property and ObjectPreview handling consistent

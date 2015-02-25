@@ -185,7 +185,7 @@ private:
     void handleCall(Instruction* pc, NodeType op, CodeSpecializationKind);
     void handleVarargsCall(Instruction* pc, NodeType op, CodeSpecializationKind);
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
-    void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind);
+    void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     unsigned inliningCost(CallVariant, int argumentCountIncludingThis, CodeSpecializationKind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
@@ -694,8 +694,7 @@ private:
         if (parameterSlots > m_parameterSlots)
             m_parameterSlots = parameterSlots;
 
-        int dummyThisArgument = op == Call || op == NativeCall ? 0 : 1;
-        for (int i = 0 + dummyThisArgument; i < argCount; ++i)
+        for (int i = 0; i < argCount; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
 
         return addToGraph(Node::VarArg, op, opInfo, OpInfo(prediction));
@@ -1141,11 +1140,7 @@ void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CodeSpecial
     CallVarargsData* data = m_graph.m_callVarargsData.add();
     data->firstVarArgOffset = firstVarArgOffset;
     
-    Node* thisChild;
-    if (kind == CodeForCall)
-        thisChild = get(VirtualRegister(thisReg));
-    else
-        thisChild = nullptr;
+    Node* thisChild = get(VirtualRegister(thisReg));
     
     Node* call = addToGraph(op, OpInfo(data), OpInfo(prediction), callTarget, get(VirtualRegister(arguments)), thisChild);
     VirtualRegister resultReg(result);
@@ -1175,9 +1170,9 @@ void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, Vi
     addToGraph(CheckCell, OpInfo(m_graph.freeze(calleeCell)), callTargetForCheck, thisArgument);
 }
 
-void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind kind)
+void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis)
 {
-    for (int i = kind == CodeForCall ? 0 : 1; i < argumentCountIncludingThis; ++i)
+    for (int i = 0; i < argumentCountIncludingThis; ++i)
         addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
 }
 
@@ -1447,7 +1442,7 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
         if (handleConstantInternalFunction(resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
             RELEASE_ASSERT(didInsertChecks);
             addToGraph(Phantom, callTargetNode);
-            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, specializationKind);
+            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
             inliningBalance--;
             return true;
         }
@@ -1460,7 +1455,7 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
         if (handleIntrinsic(resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
             RELEASE_ASSERT(didInsertChecks);
             addToGraph(Phantom, callTargetNode);
-            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, specializationKind);
+            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
             inliningBalance--;
             return true;
         }
@@ -1545,7 +1540,7 @@ bool ByteCodeParser::handleInlining(
             callTargetNode, resultOperand, callLinkStatus[0], registerOffset,
             argumentCountIncludingThis, nextOffset, kind, CallerDoesNormalLinking, prediction,
             inliningBalance, [&] (CodeBlock* codeBlock) {
-                emitFunctionChecks(callLinkStatus[0], callTargetNode, specializationKind == CodeForCall ? thisArgument : VirtualRegister());
+                emitFunctionChecks(callLinkStatus[0], callTargetNode, thisArgument);
 
                 // If we have a varargs call, we want to extract the arguments right now.
                 if (InlineCallFrame::isVarargs(kind)) {
@@ -1579,9 +1574,8 @@ bool ByteCodeParser::handleInlining(
                     countVariable->mergeIsProfitableToUnbox(true);
                     Node* setArgumentCount = addToGraph(SetArgument, OpInfo(countVariable));
                     m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
-            
-                    if (specializationKind == CodeForCall)
-                        set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
+
+                    set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
                     for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
                         VariableAccessData* variable = newVariableAccessData(
                             VirtualRegister(remappedArgumentStart + argument), false);
@@ -1762,7 +1756,7 @@ bool ByteCodeParser::handleInlining(
     } else {
         addToGraph(CheckBadCell);
         addToGraph(Phantom, myCallTargetNode);
-        emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, specializationKind);
+        emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
         
         set(VirtualRegister(resultOperand), addToGraph(BottomValue));
     }
@@ -2150,6 +2144,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
             return true;
         }
         
+        // FIXME: Array constructor should use "this" as newTarget.
         for (int i = 1; i < argumentCountIncludingThis; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
         set(VirtualRegister(resultOperand),
@@ -2588,8 +2583,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
-            if (m_inlineStackTop->m_codeBlock->specializationKind() == CodeForConstruct)
-                set(virtualRegisterForArgument(0), undefined, ImmediateNakedSet);
             NEXT_OPCODE(op_enter);
         }
             

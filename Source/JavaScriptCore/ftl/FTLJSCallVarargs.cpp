@@ -69,9 +69,7 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     // - The callee.
     // - The arguments object.
     // - The "this" value, if it's a constructor call.
-    
-    bool isCall = m_node->op() != ConstructVarargs;
-    
+
     CallVarargsData* data = m_node->callVarargsData();
     
     GPRReg calleeGPR = GPRInfo::argumentGPR0;
@@ -91,6 +89,7 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
         break;
     case ConstructVarargs:
         argumentsGPR = GPRInfo::argumentGPR1;
+        thisGPR = GPRInfo::argumentGPR2;
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -110,8 +109,8 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     usedRegisters.set(calleeGPR);
     if (argumentsGPR != InvalidGPRReg)
         usedRegisters.set(argumentsGPR);
-    if (thisGPR != InvalidGPRReg)
-        usedRegisters.set(thisGPR);
+    ASSERT(thisGPR);
+    usedRegisters.set(thisGPR);
     ScratchRegisterAllocator allocator(usedRegisters);
     GPRReg scratchGPR1 = allocator.allocateScratchGPR();
     GPRReg scratchGPR2 = allocator.allocateScratchGPR();
@@ -182,8 +181,7 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     jit.store64(calleeGPR, CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot));
     if (!argumentsOnStack)
         jit.store64(argumentsGPR, CCallHelpers::addressFor(spillSlotsOffset + argumentsSpillSlot));
-    if (isCall)
-        jit.store64(thisGPR, CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot));
+    jit.store64(thisGPR, CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot));
     
     unsigned extraStack = sizeof(CallerFrameAndPC) +
         WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(void*));
@@ -201,18 +199,16 @@ void JSCallVarargs::emit(CCallHelpers& jit, Graph& graph, int32_t spillSlotsOffs
     callWithExceptionCheck(bitwise_cast<void*>(operationSetupVarargsFrame));
     
     jit.move(GPRInfo::returnValueGPR, scratchGPR2);
-    
-    if (isCall)
-        jit.load64(CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot), thisGPR);
+
+    jit.load64(CCallHelpers::addressFor(spillSlotsOffset + thisSpillSlot), thisGPR);
     jit.load64(CCallHelpers::addressFor(spillSlotsOffset + calleeSpillSlot), GPRInfo::regT0);
     
     if (m_node->op() == CallForwardVarargs)
         haveArguments.link(&jit);
     
     jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR2, CCallHelpers::stackPointerRegister);
-    
-    if (isCall)
-        jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
+
+    jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
     
     // Henceforth we make the call. The base FTL call machinery expects the callee in regT0 and for the
     // stack frame to already be set up, which it is.

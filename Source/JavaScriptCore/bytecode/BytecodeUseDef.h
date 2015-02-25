@@ -218,7 +218,7 @@ void computeUsesForBytecodeOffset(
         int argCount = instruction[3].u.operand;
         int registerOffset = -instruction[4].u.operand;
         int lastArg = registerOffset + CallFrame::thisArgumentOffset();
-        for (int i = opcodeID == op_construct ? 1 : 0; i < argCount; i++)
+        for (int i = 0; i < argCount; i++)
             functor(codeBlock, instruction, opcodeID, lastArg + i);
         return;
     }
