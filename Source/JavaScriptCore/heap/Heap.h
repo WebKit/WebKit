@@ -119,7 +119,7 @@ public:
 
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
-    static MachineThreads& machineThreads();
+    JS_EXPORT_PRIVATE static MachineThreads& machineThreads();
 
     const SlotVisitor& slotVisitor() const { return m_slotVisitor; }
 
