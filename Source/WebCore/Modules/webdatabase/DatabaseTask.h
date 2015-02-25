@@ -100,18 +100,13 @@ private:
 
 class DatabaseBackend::DatabaseOpenTask : public DatabaseTask {
 public:
-    static std::unique_ptr<DatabaseOpenTask> create(DatabaseBackend* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, DatabaseError& error, String& errorMessage, bool& success)
-    {
-        return std::unique_ptr<DatabaseOpenTask>(new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, error, errorMessage, success));
-    }
-    
+    DatabaseOpenTask(DatabaseBackend*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
+
 #if PLATFORM(IOS)
     virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:
-    DatabaseOpenTask(DatabaseBackend*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
-
     virtual void doPerformTask();
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const;

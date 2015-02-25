@@ -57,13 +57,10 @@ private:
     class DecodingTask {
         WTF_MAKE_NONCOPYABLE(DecodingTask);
     public:
-        static std::unique_ptr<DecodingTask> create(JSC::ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
-
+        DecodingTask(JSC::ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
         void decode();
         
     private:
-        DecodingTask(JSC::ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
-
         JSC::ArrayBuffer* audioData() { return m_audioData.get(); }
         float sampleRate() const { return m_sampleRate; }
         AudioBufferCallback* successCallback() { return m_successCallback.get(); }

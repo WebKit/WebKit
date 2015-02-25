@@ -58,7 +58,7 @@ void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, float sampleRate, Pa
     if (!audioData)
         return;
 
-    auto decodingTask = DecodingTask::create(audioData, sampleRate, successCallback, errorCallback);
+    auto decodingTask = std::make_unique<DecodingTask>(audioData, sampleRate, successCallback, errorCallback);
     m_queue.append(WTF::move(decodingTask)); // note that ownership of the task is effectively taken by the queue.
 }
 
@@ -85,11 +85,6 @@ void AsyncAudioDecoder::runLoop()
         // See DecodingTask::notifyComplete() for cleanup.
         decodingTask.release()->decode();
     }
-}
-
-std::unique_ptr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
-{
-    return std::unique_ptr<DecodingTask>(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
 }
 
 AsyncAudioDecoder::DecodingTask::DecodingTask(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)

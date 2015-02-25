@@ -1,3 +1,23 @@
+2015-02-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove DecodingTask::create and DatabaseOpenTask::create
+        https://bugs.webkit.org/show_bug.cgi?id=141966
+
+        Reviewed by Anders Carlsson.
+
+        These create() factory functions are redundant. We can use std::make_unique<> directly.
+
+        No new tests, no behavior changes.
+
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::decodeAsync):
+        (WebCore::AsyncAudioDecoder::DecodingTask::create): Deleted.
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::openAndVerifyVersion):
+        * Modules/webdatabase/DatabaseTask.h:
+        (WebCore::DatabaseBackend::DatabaseOpenTask::create): Deleted.
+
 2015-02-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180578.

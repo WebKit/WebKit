@@ -102,7 +102,7 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&
         return false;
 
     bool success = false;
-    auto task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
+    auto task = std::make_unique<DatabaseOpenTask>(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
