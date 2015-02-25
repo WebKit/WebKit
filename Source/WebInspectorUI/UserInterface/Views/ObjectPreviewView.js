@@ -41,8 +41,8 @@ WebInspector.ObjectPreviewView = function(preview, mode)
 
     this._titleElement = this._element.appendChild(document.createElement("span"));
     this._titleElement.className = "title";
-    this._titleElement.textContent = preview.description || "";
     this._titleElement.hidden = true;
+    this._initTitleElement();
 
     if (this._lossless)
         this._element.classList.add("lossless");
@@ -93,6 +93,15 @@ WebInspector.ObjectPreviewView.prototype = {
 
     // Private
 
+    _initTitleElement: function()
+    {
+        // Display null / regexps as simple formatted values even in title.
+        if (this._preview.subtype === "regexp" || this._preview.subtype === "null")
+            this._titleElement.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(this._preview));
+        else
+            this._titleElement.textContent = this._preview.description || "";
+    },
+
     _numberOfPropertiesToShowInMode: function()
     {
         return this._mode === WebInspector.ObjectPreviewView.Mode.Brief ? 3 : Infinity;
@@ -100,20 +109,28 @@ WebInspector.ObjectPreviewView.prototype = {
 
     _appendPreview: function(element, preview)
     {
-        // Class name for non-array object types.
-        if (preview.type === "object" && preview.subtype !== "null" && preview.subtype !== "array" && preview.description !== "Object") {
-            var nameElement = element.appendChild(document.createElement("span"));
-            nameElement.className = "object-preview-name";
-            nameElement.textContent = preview.description + " ";
+        var displayObjectAsValue = false;
+        if (preview.type === "object") {
+            if (preview.subtype === "regexp" || preview.subtype === "null") {
+                // Display null / regexps as simple formatted values.
+                displayObjectAsValue = true;
+            }  else if (preview.subtype !== "array" && preview.description !== "Object") {
+                // Class names for other non-array / non-basic-Object types.
+                var nameElement = element.appendChild(document.createElement("span"));
+                nameElement.className = "object-preview-name";
+                nameElement.textContent = preview.description + " ";
+            }
         }
 
         // Content.
         var bodyElement = element.appendChild(document.createElement("span"));
         bodyElement.className = "object-preview-body";
-        if (preview.collectionEntryPreviews)
-            return this._appendEntryPreviews(bodyElement, preview);
-        if (preview.propertyPreviews)
-            return this._appendPropertyPreviews(bodyElement, preview);
+        if (!displayObjectAsValue) {
+            if (preview.collectionEntryPreviews)
+                return this._appendEntryPreviews(bodyElement, preview);
+            if (preview.propertyPreviews)
+                return this._appendPropertyPreviews(bodyElement, preview);
+        }
         return this._appendValuePreview(bodyElement, preview);
     },
 
@@ -146,11 +163,13 @@ WebInspector.ObjectPreviewView.prototype = {
 
     _appendPropertyPreviews: function(element, preview)
     {
-        // Do not show empty properties preview for Date previews.
-        var isDate = preview.subtype === "date";
-        var numProperties = preview.propertyPreviews.length;
-        if (!numProperties && isDate)
-            return preview.lossless;
+        // Do not show Error properties in previews. They are more useful in full views.
+        if (preview.subtype === "error")
+            return false;
+
+        // Do not show Date properties in previews. If there are any properties, show them in full view.
+        if (preview.subtype === "date")
+            return !preview.propertyPreviews.length;
 
         var isArray = preview.subtype === "array";
 
@@ -158,7 +177,7 @@ WebInspector.ObjectPreviewView.prototype = {
 
         var numberAdded = 0;
         var limit = this._numberOfPropertiesToShowInMode();
-        for (var i = 0; i < numProperties && numberAdded < limit; ++i) {
+        for (var i = 0; i < preview.propertyPreviews.length && numberAdded < limit; ++i) {
             var property = preview.propertyPreviews[i];
 
             // FIXME: Better handle getter/setter accessors. Should we show getters in previews?

@@ -49,7 +49,7 @@ WebInspector.ObjectTreeView = function(object, mode, forceExpanding)
     } else {
         this._titleElement = document.createElement("span");
         this._titleElement.className = "title";
-        this._titleElement.textContent = this._object.description || "";
+        this._titleElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(this._object));
         this._titleElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
         this._element.appendChild(this._titleElement);
     }

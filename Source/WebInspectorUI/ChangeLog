@@ -1,5 +1,32 @@
 2015-02-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve Regex/Error output in Object Tree and Previews
+        https://bugs.webkit.org/show_bug.cgi?id=142010
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView):
+        (WebInspector.ObjectPreviewView.prototype._initTitleElement):
+        Since some object types may be formatted as simple values, ensure they get
+        the formatted style even in the title view.
+
+        (WebInspector.ObjectPreviewView.prototype._appendPreview):
+        Those object types that can be formatted as simple values should skip
+        to the value formatting phase.
+
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        Do not show property previews for error objects. Always assume lossy
+        so that it can be expanded.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        Make a similiar improvement for ObjectTree titles when previews are
+        unavailable. This will make dir(value) show a stylized value in the
+        title of the Object Tree.
+
+2015-02-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve PropertyPath display strings for getters / values
         https://bugs.webkit.org/show_bug.cgi?id=142008
 
