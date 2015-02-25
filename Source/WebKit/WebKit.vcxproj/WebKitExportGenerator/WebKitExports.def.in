@@ -514,3 +514,7 @@ EXPORTS
         symbolWithPointer(?source@ResourceResponseBase@WebCore@@QBE?AW4Source@12@XZ, ?source@ResourceResponseBase@WebCore@@QEBA?AW4Source@12@XZ)
         symbolWithPointer(?toWrapped@JSXMLHttpRequest@WebCore@@SAPAVXMLHttpRequest@2@VJSValue@JSC@@@Z, ?toWrapped@JSXMLHttpRequest@WebCore@@SAPEAVXMLHttpRequest@2@VJSValue@JSC@@@Z)
         ?s_info@JSDOMGlobalObject@WebCore@@1UClassInfo@JSC@@B
+        symbolWithPointer(?fileSystemPath@URL@WebCore@@QBE?AVString@WTF@@XZ, )
+        symbolWithPointer(?isLocalFile@URL@WebCore@@QBE_NXZ, )
+        symbolWithPointer(??0File@WebCore@@AAE@ABVString@WTF@@@Z, )
+        symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVFile@1@@Z, )
