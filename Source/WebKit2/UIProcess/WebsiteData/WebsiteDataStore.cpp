@@ -102,6 +102,8 @@ enum class ProcessAccessType {
 
 static ProcessAccessType computeWebProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
+    UNUSED_PARAM(isNonPersistentStore);
+
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
     if (dataTypes & WebsiteDataTypeMemoryCache)

@@ -1,3 +1,15 @@
+2015-02-25  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebKit2/UIProcess module.
+        https://bugs.webkit.org/show_bug.cgi?id=142014
+
+        Reviewed by Anders Carlsson.
+
+        Fix build warning by using UNUSED_PARAM macro.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeWebProcessAccessTypeForDataFetch):
+
 2015-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify some resizing terminology in ScrollView/FrameView
