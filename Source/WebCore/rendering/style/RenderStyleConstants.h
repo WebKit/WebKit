@@ -644,6 +644,13 @@ enum class ScrollSnapType {
 };
 #endif
 
+#if ENABLE(CSS_TRAILING_WORD)
+enum class TrailingWord {
+    Auto,
+    PartiallyBalanced
+};
+#endif
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

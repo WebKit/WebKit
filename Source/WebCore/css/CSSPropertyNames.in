@@ -641,3 +641,7 @@ user-zoom [SkipBuilder]
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 -webkit-touch-callout [Inherited, NameForMethods=TouchCalloutEnabled, Converter=TouchCallout]
 #endif
+
+#if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
+-apple-trailing-word [Inherited, NameForMethods=TrailingWord]
+#endif
