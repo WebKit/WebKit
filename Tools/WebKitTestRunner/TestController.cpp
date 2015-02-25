@@ -668,6 +668,8 @@ bool TestController::resetStateToConsistentValues()
 
     m_shouldLogHistoryClientCallbacks = false;
 
+    WKPageGroupRemoveAllUserContentFilters(WKPageGetPageGroup(m_mainWebView->page()));
+
     // Reset main page back to about:blank
     m_doneResetting = false;
 

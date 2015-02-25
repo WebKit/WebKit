@@ -521,3 +521,7 @@ webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Ti
 
 ### END OF (7) New WebKit2-only failures in Yosemite
 ########################################
+
+# UserContentFilters are skipped globally, but work on mac-wk2
+http/tests/usercontentfilter [ Pass ]
+

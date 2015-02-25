@@ -485,3 +485,6 @@ webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
 webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirement.html [ Slow ]
+
+# UserContentFilters are Mac-WK2-only for now
+http/tests/usercontentfilter [ Skip ]

@@ -32,7 +32,9 @@
 #import "TestInvocation.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit/WKStringCF.h>
-#import <mach-o/dyld.h> 
+#import <WebKit/WKURLCF.h>
+#import <WebKit/WKUserContentFilterRef.h>
+#import <mach-o/dyld.h>
 
 @interface NSSound (Details)
 + (void)_setAlertType:(NSUInteger)alertType;
@@ -94,6 +96,28 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
 
     ensureViewSupportsOptions(viewOptions.get());
+
+    WKURLRef url = test.url();
+    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url));
+
+    char urlCString[16384];
+    WKStringGetUTF8CString(urlString.get(), urlCString, 16384);
+    if (!strstr(urlCString, "usercontentfilter/"))
+        return;
+
+    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
+    NSURL *filterURL = [(NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
+
+    NSStringEncoding encoding;
+    NSString *contentFilterString = [NSString stringWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
+    if (!contentFilterString)
+        return;
+
+    WKRetainPtr<WKStringRef> name = adoptWK(WKStringCreateWithUTF8CString("TestContentFilter"));
+    WKRetainPtr<WKStringRef> contentFilterStringWK = adoptWK(WKStringCreateWithCFString((CFStringRef)contentFilterString));
+    WKRetainPtr<WKUserContentFilterRef> filter = adoptWK(WKUserContentFilterCreate(name.get(), contentFilterStringWK.get()));
+
+    WKPageGroupAddUserContentFilter(WKPageGetPageGroup(TestController::singleton().mainWebView()->page()), filter.get());
 }
 
 void TestController::platformRunUntil(bool& done, double timeout)
