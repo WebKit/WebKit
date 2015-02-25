@@ -1,5 +1,11 @@
 2015-02-25  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Skip new <attachment> test since it's not working on Windows.
+
+        * platform/win/TestExpectations:
+
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Skip ARIA 1.1 tests for unsupported feature.
 
         * platform/win/TestExpectations:
