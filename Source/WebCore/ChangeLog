@@ -1,3 +1,10 @@
+2015-02-24  Stephanie Lewis  <slewis@apple.com>
+
+        Unreviewed ios build fix after http://trac.webkit.org/changeset/180602.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+
 2015-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Use an enum for scrollbar style
