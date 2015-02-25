@@ -1,3 +1,12 @@
+2015-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        CodeBlock crashes when dumping op_push_name_scope
+        https://bugs.webkit.org/show_bug.cgi?id=141953
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should use argparse instead of optparse
