@@ -1,3 +1,43 @@
+2015-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Tracks growing beyond limits when they should not
+        https://bugs.webkit.org/show_bug.cgi?id=140883
+
+        Reviewed by Darin Adler.
+
+        Our track sizing algorithm implementation incorrectly grew some
+        tracks beyond limits when handling min-content and max-content
+        base sizes. In those cases we should only grow "any affected track
+        that happens to also have an intrinsic max track sizing function"
+        or all of them if there are none.
+
+        The problem was that we're using a vector of indexes pointing to
+        the vector with the list of affected tracks. Those indexes become
+        easily incorrect because the first thing we do in
+        distributeSpaceToTracks() is to sort the vector with the affected
+        tracks by growth potential.
+
+        Instead of that we now pass a vector with pointers to the list of
+        tracks allowed to grow over the limits. The size changes are now
+        directly stored in the GridTracks (it's called plannedSize)
+        instead of in a separate vector, so we don't need to worry about
+        tracks being rearranged (and we also get rid of the ugly vector of
+        indexes pointing to another vector).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridTrack::plannedSize): New member with getter/setter.
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        Pass a setXXX() function instead of a growXXX() one to ForItems().
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        Renamed additionalBreadthSpace to extraSpace which is the term
+        used by specs.
+        (WebCore::RenderGrid::distributeSpaceToTracks): Use GridTrack's
+        plannedSize instead of the old distribution vector.
+        (WebCore::GridTrack::growBaseSize): Deleted.
+        (WebCore::GridTrack::growGrowthLimit): Deleted.
+        * rendering/RenderGrid.h:
+
 2015-02-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'searchbox' role

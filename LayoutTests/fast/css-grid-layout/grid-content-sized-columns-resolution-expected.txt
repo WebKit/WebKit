@@ -42,6 +42,8 @@ PASS window.getComputedStyle(gridMinContentFixedAndAutoAboveLimits, '').getPrope
 PASS window.getComputedStyle(gridMaxContentFixedAndAutoAboveLimits, '').getPropertyValue('-webkit-grid-template-columns') is "65px 85px"
 PASS window.getComputedStyle(gridMinContentFixedAndFixedFixedAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "20px 20px 60px"
 PASS window.getComputedStyle(gridAutoAndFixedFixedAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px 60px"
+PASS window.getComputedStyle(gridMaxContentAndMaxContentFixedAndMaxContent, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px 50px"
+PASS window.getComputedStyle(gridAutoAndMinContentFixedAndMinContent, '').getPropertyValue('-webkit-grid-template-columns') is "55px 30px 65px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
@@ -129,3 +131,9 @@ XXXX XXXX
 XXXXXXXXXX
 XXXX XXXX
 XXXXXXXXXXXXXXX
+X X X
+X X
+XX XX XX XX XX
+XX
+XXXXXXXXXXXXXXX
+XXX XXX
