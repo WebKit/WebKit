@@ -1,3 +1,17 @@
+2015-02-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180578.
+        https://bugs.webkit.org/show_bug.cgi?id=141992
+
+        Broke scrolling in Inspector Console. (Requested by JoePeck on
+        #webkit).
+
+        Reverted changeset:
+
+        "[Mac] WebKit abandons overlay scrollbar CALayers."
+        https://bugs.webkit.org/show_bug.cgi?id=141943
+        http://trac.webkit.org/changeset/180578
+
 2015-02-24  Dean Jackson  <dino@apple.com>
 
         [ios Media] the inline controls are visible after pressing Done on iPhone
