@@ -9,7 +9,7 @@
       <PreprocessorDefinitions>WIN_CAIRO=1;WTF_PLATFORM_WIN_CAIRO=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>cairo.lib;libjpeg.lib;zdll.lib;libpng.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cairo.lib;libjpeg.lib;zdll.lib;libpng.lib;Mfuuid.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(WebKit_Libraries)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

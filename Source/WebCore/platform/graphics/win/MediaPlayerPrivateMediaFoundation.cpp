@@ -32,10 +32,24 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
+#include "SoftLinking.h"
 
 #if USE(MEDIA_FOUNDATION)
 
 #include <wtf/MainThread.h>
+
+SOFT_LINK_LIBRARY(Mf);
+SOFT_LINK_OPTIONAL(Mf, MFCreateSourceResolver, HRESULT, STDAPICALLTYPE, (IMFSourceResolver**));
+SOFT_LINK_OPTIONAL(Mf, MFCreateMediaSession, HRESULT, STDAPICALLTYPE, (IMFAttributes*, IMFMediaSession**));
+SOFT_LINK_OPTIONAL(Mf, MFCreateTopology, HRESULT, STDAPICALLTYPE, (IMFTopology**));
+SOFT_LINK_OPTIONAL(Mf, MFCreateTopologyNode, HRESULT, STDAPICALLTYPE, (MF_TOPOLOGY_TYPE, IMFTopologyNode**));
+SOFT_LINK_OPTIONAL(Mf, MFGetService, HRESULT, STDAPICALLTYPE, (IUnknown*, REFGUID, REFIID, LPVOID*));
+SOFT_LINK_OPTIONAL(Mf, MFCreateAudioRendererActivate, HRESULT, STDAPICALLTYPE, (IMFActivate**));
+SOFT_LINK_OPTIONAL(Mf, MFCreateVideoRendererActivate, HRESULT, STDAPICALLTYPE, (HWND, IMFActivate**));
+
+SOFT_LINK_LIBRARY(Mfplat);
+SOFT_LINK_OPTIONAL(Mfplat, MFStartup, HRESULT, STDAPICALLTYPE, (ULONG, DWORD));
+SOFT_LINK_OPTIONAL(Mfplat, MFShutdown, HRESULT, STDAPICALLTYPE, ());
 
 namespace WebCore {
 
@@ -223,10 +237,13 @@ void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext* context, const In
 
 bool MediaPlayerPrivateMediaFoundation::createSession()
 {
-    if (FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL)))
+    if (!MFStartupPtr() || !MFCreateMediaSessionPtr())
         return false;
 
-    if (FAILED(MFCreateMediaSession(nullptr, &m_mediaSession)))
+    if (FAILED(MFStartupPtr()(MF_VERSION, MFSTARTUP_FULL)))
+        return false;
+
+    if (FAILED(MFCreateMediaSessionPtr()(nullptr, &m_mediaSession)))
         return false;
 
     // Get next event.
@@ -244,7 +261,10 @@ bool MediaPlayerPrivateMediaFoundation::endSession()
         m_mediaSession = nullptr;
     }
 
-    HRESULT hr = MFShutdown();
+    if (!MFShutdownPtr())
+        return false;
+
+    HRESULT hr = MFShutdownPtr()();
     ASSERT(SUCCEEDED(hr));
 
     return true;
@@ -252,7 +272,10 @@ bool MediaPlayerPrivateMediaFoundation::endSession()
 
 bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url)
 {
-    if (FAILED(MFCreateSourceResolver(&m_sourceResolver)))
+    if (!MFCreateSourceResolverPtr())
+        return false;
+
+    if (FAILED(MFCreateSourceResolverPtr()(&m_sourceResolver)))
         return false;
 
     COMPtr<IUnknown> cancelCookie;
@@ -293,6 +316,9 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 {
     COMPtr<IMFMediaEvent> event;
 
+    if (!m_mediaSession)
+        return false;
+
     // Get the event from the event queue.
     HRESULT hr = m_mediaSession->EndGetEvent(asyncResult, &event);
     if (FAILED(hr))
@@ -330,8 +356,11 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 
 bool MediaPlayerPrivateMediaFoundation::createTopologyFromSource()
 {
+    if (!MFCreateTopologyPtr())
+        return false;
+
     // Create a new topology.
-    if (FAILED(MFCreateTopology(&m_topology)))
+    if (FAILED(MFCreateTopologyPtr()(&m_topology)))
         return false;
 
     // Create the presentation descriptor for the media source.
@@ -450,6 +479,9 @@ void MediaPlayerPrivateMediaFoundation::destroyVideoWindow()
 
 bool MediaPlayerPrivateMediaFoundation::createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>& node)
 {
+    if (!MFCreateTopologyNodePtr() || !MFCreateAudioRendererActivatePtr() || !MFCreateVideoRendererActivatePtr())
+        return false;
+
     if (!sourceSD)
         return false;
 
@@ -468,19 +500,19 @@ bool MediaPlayerPrivateMediaFoundation::createOutputNode(COMPtr<IMFStreamDescrip
         return false;
 
     // Create a downstream node.
-    if (FAILED(MFCreateTopologyNode(MF_TOPOLOGY_OUTPUT_NODE, &node)))
+    if (FAILED(MFCreateTopologyNodePtr()(MF_TOPOLOGY_OUTPUT_NODE, &node)))
         return false;
 
     // Create an IMFActivate object for the renderer, based on the media type.
     COMPtr<IMFActivate> rendererActivate;
     if (MFMediaType_Audio == guidMajorType) {
         // Create the audio renderer.
-        if (FAILED(MFCreateAudioRendererActivate(&rendererActivate)))
+        if (FAILED(MFCreateAudioRendererActivatePtr()(&rendererActivate)))
             return false;
         m_hasAudio = true;
     } else if (MFMediaType_Video == guidMajorType) {
         // Create the video renderer.
-        if (FAILED(MFCreateVideoRendererActivate(m_hwndVideo, &rendererActivate)))
+        if (FAILED(MFCreateVideoRendererActivatePtr()(m_hwndVideo, &rendererActivate)))
             return false;
         m_hasVideo = true;
     } else
@@ -495,11 +527,14 @@ bool MediaPlayerPrivateMediaFoundation::createOutputNode(COMPtr<IMFStreamDescrip
 
 bool MediaPlayerPrivateMediaFoundation::createSourceStreamNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>& node)
 {
+    if (!MFCreateTopologyNodePtr())
+        return false;
+
     if (!m_mediaSource || !m_sourcePD || !sourceSD)
         return false;
 
     // Create the source-stream node.
-    HRESULT hr = MFCreateTopologyNode(MF_TOPOLOGY_SOURCESTREAM_NODE, &node);
+    HRESULT hr = MFCreateTopologyNodePtr()(MF_TOPOLOGY_SOURCESTREAM_NODE, &node);
     if (FAILED(hr))
         return false;
 
@@ -533,7 +568,10 @@ void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource()
 
 void MediaPlayerPrivateMediaFoundation::onTopologySet()
 {
-    if (FAILED(MFGetService(m_mediaSession.get(), MR_VIDEO_RENDER_SERVICE, IID_PPV_ARGS(&m_videoDisplay))))
+    if (!MFGetServicePtr())
+        return;
+
+    if (FAILED(MFGetServicePtr()(m_mediaSession.get(), MR_VIDEO_RENDER_SERVICE, IID_PPV_ARGS(&m_videoDisplay))))
         return;
 
     ASSERT(m_videoDisplay);

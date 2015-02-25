@@ -1,3 +1,23 @@
+2015-02-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] WinLauncher is not starting on Vista.
+        https://bugs.webkit.org/show_bug.cgi?id=141905
+
+        Reviewed by Alex Christensen.
+
+        We have to soft link with Media Foundation functions to be able
+        to start on Vista and WinXP.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createTopologyFromSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createOutputNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSourceStreamNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onTopologySet):
+
 2015-02-25  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r180018 ): Holding a rubber-band in place can get stuck

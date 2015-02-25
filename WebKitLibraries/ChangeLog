@@ -1,3 +1,15 @@
+2015-02-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] WinLauncher is not starting on Vista.
+        https://bugs.webkit.org/show_bug.cgi?id=141905
+
+        Reviewed by Alex Christensen.
+
+        We have to soft link with Media Foundation functions to be able
+        to start on Vista and WinXP.
+
+        * win/tools/vsprops/WinCairo.props: Remove Media Foundation input libraries.
+
 2015-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix. Turn on feature flags for items
