@@ -92,7 +92,7 @@ void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentF
 void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->removeAllUserScripts();
+    toImpl(pageGroupRef)->removeAllUserContentFilters();
 #else
     UNUSED_PARAM(pageGroupRef);
 #endif

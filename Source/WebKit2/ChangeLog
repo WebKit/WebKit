@@ -1,3 +1,13 @@
+2015-02-26  Brady Eidson  <beidson@apple.com>
+
+        Make WKPageGroupRemoveAllUserContentFilters actually remove all user content filters
+        https://bugs.webkit.org/show_bug.cgi?id=142047
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupRemoveAllUserContentFilters): Remove all content filters instead of removing all user scripts.
+
 2015-02-25  Anders Carlsson  <andersca@apple.com>
 
         Add (unused for now) code to delete website data for a set of origins
