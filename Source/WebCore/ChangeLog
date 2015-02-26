@@ -1,3 +1,20 @@
+2015-02-26  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Prod libcache to drop caches in memory pressure relief handler.
+        <https://webkit.org/b/142024>
+        <rdar://problem/19966096>
+
+        Reviewed by Antti Koivisto.
+
+        libcache already listens to the OS memory pressure notifications, but we still
+        need to manually request a cleanup when doing an iOS process suspension, or when
+        simulating memory pressure.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory): Call out to libcache's
+        cache_simulate_memory_warning_event() to make sure that nonessential objects
+        being kept alive by NSCaches get dropped when we need the memory.
+
 2015-02-25  Zalan Bujtas  <zalan@apple.com>
 
         Black line across screen on Adobe Illustrator detail page (non-retina only)

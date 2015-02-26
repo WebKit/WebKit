@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,11 @@
 #import "WebCoreThread.h"
 #endif
 
+extern "C" void cache_simulate_memory_warning_event(uint64_t);
+
 namespace WebCore {
 
-void MemoryPressureHandler::platformReleaseMemory(bool)
+void MemoryPressureHandler::platformReleaseMemory(bool critical)
 {
     {
         ReliefLogger log("Drain LayerPools");
@@ -58,6 +60,17 @@ void MemoryPressureHandler::platformReleaseMemory(bool)
         ReliefLogger log("Drain IOSurfacePool");
         IOSurfacePool::sharedPool().discardAllSurfaces();
     }
+#endif
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (critical && !isUnderMemoryPressure()) {
+        // libcache listens to OS memory notifications, but for process suspension
+        // or memory pressure simulation, we need to prod it manually:
+        ReliefLogger log("Purging libcache caches");
+        cache_simulate_memory_warning_event(DISPATCH_MEMORYPRESSURE_CRITICAL);
+    }
+#else
+    UNUSED_PARAM(critical);
 #endif
 
 #if PLATFORM(IOS)
