@@ -75,8 +75,20 @@ public:
     RenderTableCell* previousCell() const;
 
     RenderTableRow* row() const { return toRenderTableRow(parent()); }
-    RenderTableSection* section() const { return toRenderTableSection(parent()->parent()); }
-    RenderTable* table() const { return toRenderTable(parent()->parent()->parent()); }
+    RenderTableSection* section() const
+    {
+        RenderTableRow* row = this->row();
+        if (!row)
+            return nullptr;
+        return toRenderTableSection(row->parent());
+    }
+    RenderTable* table() const
+    {
+        RenderTableSection* section = this->section();
+        if (!section)
+            return nullptr;
+        return toRenderTable(section->parent());
+    }
 
     unsigned rowIndex() const
     {
