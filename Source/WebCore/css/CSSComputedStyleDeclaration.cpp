@@ -3037,6 +3037,11 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return scrollSnapCoordinates(*style, style->scrollSnapCoordinates());
 #endif
 
+#if ENABLE(CSS_TRAILING_WORD)
+        case CSSPropertyAppleTrailingWord:
+            return cssValuePool().createValue(style->trailingWord());
+#endif
+
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:

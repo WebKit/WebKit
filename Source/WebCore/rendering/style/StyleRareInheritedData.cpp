@@ -116,6 +116,9 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if PLATFORM(IOS)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
 #endif
+#if ENABLE(CSS_TRAILING_WORD)
+    , trailingWord(static_cast<unsigned>(RenderStyle::initialTrailingWord()))
+#endif
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -193,6 +196,9 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , m_rubyPosition(o.m_rubyPosition)
 #if PLATFORM(IOS)
     , touchCalloutEnabled(o.touchCalloutEnabled)
+#endif
+#if ENABLE(CSS_TRAILING_WORD)
+    , trailingWord(o.trailingWord)
 #endif
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
@@ -317,6 +323,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_rubyPosition == o.m_rubyPosition
         && m_lineSnap == o.m_lineSnap
         && m_lineAlign == o.m_lineAlign
+#if ENABLE(CSS_TRAILING_WORD)
+        && trailingWord == o.trailingWord
+#endif
         && StyleImage::imagesEquivalent(listStyleImage.get(), o.listStyleImage.get());
 }
 

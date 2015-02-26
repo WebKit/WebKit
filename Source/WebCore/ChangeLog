@@ -1,3 +1,48 @@
+2015-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] [iOS] Parsing support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=141939
+
+        Reviewed by Andreas Kling.
+
+        This patch implements initial parsing support for the -apple-trailing-word CSS property.
+        This property has two possible (mutually exclusive) values: auto and
+        -apple-partially-balanced. This property is inherited.
+
+        The work for this property is behind the ENABLE(CSS_TRAILING_WORD) preprocessor define.
+
+        This is an internal property that will allow us to control line breaking behavior for
+        short paragraphs.
+
+        Note that, because of the implementation of cssValueKeywordID() in CSSParser.cpp,
+        the new value must be implemented as -webkit-partially-balanced. Using the -apple-
+        prefix will work, but if you getComputedStyle(), it will return the -webkit- prefixed
+        version.
+
+        Test: platform/mac/fast/text/trailing-word-parse.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Turn internal representation into a
+        CSS value.
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Updated for new keyword property / value
+        pair.
+        (WebCore::isKeywordPropertyID): New property is a keyword property.
+        (WebCore::CSSParser::parseValue): Use the keyword property codepath.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Convert to and from the internal
+        representation and CSS values.
+        (WebCore::CSSPrimitiveValue::operator TrailingWord):
+        * css/CSSPropertyNames.in: New property.
+        * css/CSSValueKeywords.in: New value.
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor): Can't use SimpleLineLayout for this.
+        * rendering/style/RenderStyle.h: Getter, setter and initial value.
+        * rendering/style/RenderStyleConstants.h: Internal data type.
+        * rendering/style/StyleRareInheritedData.h: One bit to control this style property.
+        * rendering/style/StyleRareInheritedData.cpp: Update constructors and operators.
+
 2015-02-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix a accidental deletion from r178674.

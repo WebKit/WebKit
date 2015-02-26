@@ -5258,6 +5258,40 @@ template<> inline CSSPrimitiveValue::operator ScrollSnapType() const
 }
 #endif
 
+#if ENABLE(CSS_TRAILING_WORD)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TrailingWord e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (e) {
+    case TrailingWord::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case TrailingWord::PartiallyBalanced:
+        m_value.valueID = CSSValueWebkitPartiallyBalanced;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TrailingWord() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return TrailingWord::Auto;
+    case CSSValueWebkitPartiallyBalanced:
+        return TrailingWord::PartiallyBalanced;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return TrailingWord::Auto;
+}
+#endif
+
 }
 
 #endif
