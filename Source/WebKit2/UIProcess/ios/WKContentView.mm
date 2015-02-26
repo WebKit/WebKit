@@ -372,6 +372,11 @@ private:
     [self _didEndScrollingOrZooming];
 }
 
+- (void)didInterruptScrolling
+{
+    _historicalKinematicData.clear();
+}
+
 - (void)willStartZoomOrScroll
 {
     [self _willStartScrollingOrZooming];

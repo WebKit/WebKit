@@ -1,3 +1,53 @@
+2015-02-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180539.
+
+    2015-02-23  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS WK2] The WebProcess keep scrolling pages based on the last velocity after scrolling has been interrupted
+            https://bugs.webkit.org/show_bug.cgi?id=141933
+            rdar://problem/18746673
+            rdar://problem/19711490
+
+            Reviewed by Simon Fraser.
+
+            The bug happened like this:
+            1) The user scroll the page. WKContentView tracks the velocity and send
+               the update rect + velocity to the WebProcess.
+            2) The user interupts the scrolling but does not commit to either scrolling
+               again or cancelling the scrolling.
+               Since we were not notified of this state, the WebProcess still believed
+               the velocity is stable.
+            3) With any paint update, the WebProcess would account for the last velocity
+               and try to guess the best repaint area. This would drift endlessly out
+               of the view since the view is not really moving.
+
+            This patch fixes the issue by adding special handling for interrupted scrolling.
+
+            Kudos to Kurt Revis for providing us the required APIs.
+
+            * Shared/VisibleContentRectUpdateInfo.h:
+            (WebKit::operator==):
+            We can no longer filter VisibleContentRectUpdateInfo ignoring the velocity.
+
+            Typically, UIScrollView would call -scrollViewDidScroll: before being interrupted.
+            If we filter based on the VisibleContentRectUpdateInfo, we have two identical
+            states differing only by the velocity. If we filter the second update, the WebProcess
+            would never know the velocity should be zero.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _scrollViewDidInterruptDecelerating:]):
+            We get this callback when scrolling is interrupted. We just need to clear
+            the velocity and re-send a new update for the current state.
+
+            (-[WKWebView _updateVisibleContentRects]):
+            Do not consider an interrupted scroll as a stable state. We don't know if scrolling
+            will resume or will stop.
+
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView didInterruptScrolling]):
+
 2015-02-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r180062.
