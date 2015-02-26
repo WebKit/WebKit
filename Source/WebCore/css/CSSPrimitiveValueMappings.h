@@ -4585,9 +4585,23 @@ enum LengthConversion {
     CalculatedConversion = 1 << 4
 };
 
+inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+{
+    ASSERT(isFontRelativeLength());
+    // This matches the implementation in CSSPrimitiveValue::computeLengthDouble().
+    switch (m_primitiveUnitType) {
+    case CSS_EMS:
+    case CSS_EXS:
+    case CSS_CHS:
+        return lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    default:
+        return false;
+    }
+}
+
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if ((supported & (FixedIntegerConversion | FixedFloatConversion)) && isFontRelativeLength() && (!conversionData.style() || !conversionData.rootStyle()))
+    if (isFontRelativeLength() && convertingToLengthRequiresNonNullStyle(supported) && !conversionData.style())
         return Length(Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(conversionData);

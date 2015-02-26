@@ -1,3 +1,13 @@
+2015-02-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: !length.isUndefined() in WebCore::GridLength::GridLength
+        https://bugs.webkit.org/show_bug.cgi?id=141645
+
+        Reviewed by Chris Dumez.
+
+        * fast/css-grid-layout/grid-with-relative-font-length-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-with-relative-font-length-crash.html: Added.
+
 2015-02-25  Zalan Bujtas  <zalan@apple.com>
 
         Black line across screen on Adobe Illustrator detail page (non-retina only)

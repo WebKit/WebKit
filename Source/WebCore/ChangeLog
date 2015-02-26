@@ -1,3 +1,38 @@
+2015-02-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: !length.isUndefined() in WebCore::GridLength::GridLength
+        https://bugs.webkit.org/show_bug.cgi?id=141645
+
+        Reviewed by Chris Dumez.
+
+        This bug has been here since r110484 but was uncovered by
+        r180140. The problem r110484 was trying to fix was that
+        CSSPrimitiveValue::convertToLength<Length> ended up calling
+        CSSPrimitiveValue::computeLengthDouble() which was apparently
+        dereferencing conversionData.style() and
+        conversionData.rootStyle() pointers without checking them. That's
+        why that fix added this condition to convertToLength():
+
+        isFontRelativeLength() && (!conversionData.style() || !conversionData.rootStyle())
+
+        which is not correct, because for the 4 possible font relative
+        length types, 3 of them just use the style() pointer and the other
+        one just uses rootStyle() which BTW could be NULL. This erroneous
+        condition makes that function to return Length(Undefined) more
+        often than it should.
+
+        From now on it only returns Length(Undefined) if the style()
+        pointer is NULL and the font relative length type is one in the
+        set (CSS_EMS, CSS_EXS, CSS_CHS);
+
+        Test: fast/css-grid-layout/grid-with-relative-font-length-crash.html
+
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle):
+        (WebCore::CSSPrimitiveValue::convertToLength):
+
+
 2015-02-26  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Prod libcache to drop caches in memory pressure relief handler.

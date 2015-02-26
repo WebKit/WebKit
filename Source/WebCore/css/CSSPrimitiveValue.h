@@ -291,6 +291,8 @@ public:
     // Converts to a Length, mapping various unit types appropriately.
     template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
+    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
+
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
 
