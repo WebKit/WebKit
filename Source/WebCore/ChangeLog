@@ -1,3 +1,11 @@
+2015-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix a accidental deletion from r178674.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        Return the fake WebGL context.
+
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Cleanup RenderSVGResourceClipper class.
