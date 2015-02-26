@@ -1,3 +1,34 @@
+2015-02-26  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: free up a bit in BoundaryTag
+        https://bugs.webkit.org/show_bug.cgi?id=142048
+
+        Reviewed by Brady Eidson.
+
+        We were wasting a bit by accident, and I need one now.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::rightShift): Deleted. Not needed, now that I've simplified
+        the math.
+
+        * bmalloc/BoundaryTag.h: Since each boundary tag bucket is 1024 bytes
+        long, the maximum offset into a bucket is 1023.
+
+        You need 5 bits to count up to 1024, but only 4 to count up to 1023.
+        
+        Math is hard.
+
+        (bmalloc::BoundaryTag::compactBegin): Switched to division because it
+        is simpler, and easier to match up with our ASSERT. The compiler will
+        turn division by constant power of two into a shift for us.
+
+        (bmalloc::BoundaryTag::setRange): Added an ASSERT for compactBegin
+        because we do encode it, so we should ASSERT that encoding did not
+        lose information.
+
+        * bmalloc/Sizes.h: Shifting is no longer used since we use division
+        instead.
+
 2015-02-24  Stephanie Lewis  <slewis@apple.com>
 
         Rolling out http://trac.webkit.org/changeset/180430 as it causes the PLT to crash.
