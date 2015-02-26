@@ -1211,7 +1211,6 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
 # Kerning, Ligatures, and Printer Fonts caused these tests to fail
 # The following tests are reftests
-webkit.org/b/139968 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]

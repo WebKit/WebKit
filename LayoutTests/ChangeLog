@@ -1,3 +1,13 @@
+2015-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update css3/flexbox/csswg/flexbox_direction-row-reverse.html after r177774
+
+        Unreviewed.
+
+        * css3/flexbox/csswg/flexbox_direction-row-reverse-expected.html:
+        * css3/flexbox/csswg/flexbox_direction-row-reverse.html:
+        * platform/mac/TestExpectations:
+
 2015-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip timing-out test after r180646.
