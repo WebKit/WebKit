@@ -258,7 +258,6 @@ endif ()
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
 # Optimize binary size for release builds by removing dead sections on unix/gcc.
-# Push of rbp is needed after JSC JIT uses CStack.
 if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffunction-sections -fdata-sections")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffunction-sections -fdata-sections -fno-rtti")
