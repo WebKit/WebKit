@@ -1,3 +1,62 @@
+2015-02-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180452
+
+    2015-02-20  Mark Lam  <mark.lam@apple.com>
+
+            [JSObjCClassInfo reallocateConstructorAndOrPrototype] should also reallocate super class prototype chain.
+            <https://webkit.org/b/141809>
+
+            Reviewed by Geoffrey Garen.
+
+            A ObjC class that implement the JSExport protocol will have a JS prototype
+            chain and constructor automatically synthesized for its JS wrapper object.
+            However, if there are no more instances of that ObjC class reachable by a
+            JS GC root scan, then its synthesized prototype chain and constructors may
+            be released by the GC.  If a new instance of that ObjC class is subsequently
+            instantiated, then [JSObjCClassInfo reallocateConstructorAndOrPrototype]
+            should re-construct the prototype chain and constructor (if they were
+            previously released).  However, the current implementation only
+            re-constructs the immediate prototype, but not every other prototype
+            object upstream in the prototype chain.
+
+            To fix this, we do the following:
+            1. We no longer allocate the JSObjCClassInfo's prototype and constructor
+               eagerly.  Hence, -initWithContext:forClass: will no longer call
+               -allocateConstructorAndPrototypeWithSuperClassInfo:.
+            2. Instead, we'll always access the prototype and constructor thru
+               accessor methods.  The accessor methods will call
+               -allocateConstructorAndPrototype: if needed.
+            3. -allocateConstructorAndPrototype: will fetch the needed superClassInfo
+               from the JSWrapperMap itself.  This makes it so that we no longer
+               need to pass the superClassInfo all over.
+            4. -allocateConstructorAndPrototype: will get the super class prototype
+               by invoking -prototype: on the superClassInfo, thereby allowing the
+               super class to allocate its prototype and constructor if needed and
+               fixing the issue in this bug.
+
+            5. Also removed the GC warning comments, and ensured that needed JS
+               objects are kept alive by having a local var pointing to it from the
+               stack (which makes a GC root).
+
+            * API/JSWrapperMap.mm:
+            (-[JSObjCClassInfo initWithContext:forClass:]):
+            (-[JSObjCClassInfo allocateConstructorAndPrototype]):
+            (-[JSObjCClassInfo wrapperForObject:]):
+            (-[JSObjCClassInfo constructor]):
+            (-[JSObjCClassInfo prototype]):
+            (-[JSWrapperMap classInfoForClass:]):
+            (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]): Deleted.
+            (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]): Deleted.
+            (-[JSObjCClassInfo reallocateConstructorAndOrPrototype]): Deleted.
+            * API/tests/Regress141809.h: Added.
+            * API/tests/Regress141809.mm: Added.
+            (-[TestClassB name]):
+            (-[TestClassC name]):
+            (runRegress141809):
+            * API/tests/testapi.mm:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-02-25  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for r180247 and r180249.
