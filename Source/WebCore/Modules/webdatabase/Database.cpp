@@ -164,7 +164,7 @@ void Database::scheduleTransaction()
         transaction = m_transactionQueue.takeFirst();
 
     if (transaction && databaseContext()->databaseThread()) {
-        auto task = DatabaseTransactionTask::create(transaction);
+        auto task = std::make_unique<DatabaseTransactionTask>(transaction);
         LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
         databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
@@ -195,7 +195,7 @@ void Database::scheduleTransactionStep(SQLTransactionBackend* transaction)
     if (!databaseContext()->databaseThread())
         return;
 
-    auto task = DatabaseTransactionTask::create(transaction);
+    auto task = std::make_unique<DatabaseTransactionTask>(transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
     databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
 }
@@ -248,7 +248,7 @@ void Database::markAsDeletedAndClose()
         return;
     }
 
-    auto task = DatabaseCloseTask::create(this, &synchronizer);
+    auto task = std::make_unique<DatabaseCloseTask>(this, &synchronizer);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 }
@@ -259,7 +259,8 @@ void Database::closeImmediately()
     DatabaseThread* databaseThread = databaseContext()->databaseThread();
     if (databaseThread && !databaseThread->terminationRequested() && opened()) {
         logErrorMessage("forcibly closing database");
-        databaseThread->scheduleImmediateTask(DatabaseCloseTask::create(this, 0));
+        auto task = std::make_unique<DatabaseCloseTask>(this, nullptr);
+        databaseThread->scheduleImmediateTask(WTF::move(task));
     }
 }
 
@@ -345,7 +346,7 @@ Vector<String> Database::tableNames()
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
         return result;
 
-    auto task = DatabaseTableNamesTask::create(this, &synchronizer, result);
+    auto task = std::make_unique<DatabaseTableNamesTask>(this, &synchronizer, result);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 

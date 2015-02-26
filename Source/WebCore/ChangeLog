@@ -1,3 +1,25 @@
+2015-02-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove unnecessary DatabaseFooTask::create
+        https://bugs.webkit.org/show_bug.cgi?id=142002
+
+        Reviewed by Darin Adler.
+
+        DatabaseFooTask::create can be replaced with std::make_unique<>.
+
+        No new tests, no behavior changes.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::closeImmediately):
+        (WebCore::Database::tableNames):
+        * Modules/webdatabase/DatabaseTask.h:
+        (WebCore::DatabaseBackend::DatabaseCloseTask::create): Deleted.
+        (WebCore::DatabaseBackend::DatabaseTransactionTask::create): Deleted.
+        (WebCore::DatabaseBackend::DatabaseTableNamesTask::create): Deleted.
+
 2015-02-25  Dean Jackson  <dino@apple.com>
 
         [iOS Media] incorrect front padding on time values

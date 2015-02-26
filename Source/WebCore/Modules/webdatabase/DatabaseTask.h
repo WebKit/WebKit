@@ -120,18 +120,13 @@ private:
 
 class DatabaseBackend::DatabaseCloseTask : public DatabaseTask {
 public:
-    static std::unique_ptr<DatabaseCloseTask> create(DatabaseBackend* db, DatabaseTaskSynchronizer* synchronizer)
-    {
-        return std::unique_ptr<DatabaseCloseTask>(new DatabaseCloseTask(db, synchronizer));
-    }
+    DatabaseCloseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
 
 #if PLATFORM(IOS)
     virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:
-    DatabaseCloseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
-
     virtual void doPerformTask();
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const;
@@ -140,13 +135,8 @@ private:
 
 class DatabaseBackend::DatabaseTransactionTask : public DatabaseTask {
 public:
+    explicit DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend>);
     virtual ~DatabaseTransactionTask();
-
-    // Transaction task is never synchronous, so no 'synchronizer' parameter.
-    static std::unique_ptr<DatabaseTransactionTask> create(PassRefPtr<SQLTransactionBackend> transaction)
-    {
-        return std::unique_ptr<DatabaseTransactionTask>(new DatabaseTransactionTask(transaction));
-    }
 
 #if PLATFORM(IOS)
     virtual bool shouldPerformWhilePaused() const override;
@@ -155,8 +145,6 @@ public:
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
 private:
-    explicit DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend>);
-
     virtual void doPerformTask();
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const;
@@ -168,18 +156,13 @@ private:
 
 class DatabaseBackend::DatabaseTableNamesTask : public DatabaseTask {
 public:
-    static std::unique_ptr<DatabaseTableNamesTask> create(DatabaseBackend* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
-    {
-        return std::unique_ptr<DatabaseTableNamesTask>(new DatabaseTableNamesTask(db, synchronizer, names));
-    }
+    DatabaseTableNamesTask(DatabaseBackend*, DatabaseTaskSynchronizer*, Vector<String>& names);
 
 #if PLATFORM(IOS)
     virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:
-    DatabaseTableNamesTask(DatabaseBackend*, DatabaseTaskSynchronizer*, Vector<String>& names);
-
     virtual void doPerformTask();
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const;
