@@ -11,6 +11,9 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir)..\win;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\private;..\..\..\Source\ThirdParty\gtest\include;$(WebKit_Libraries)\include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>TestWebKitAPIPrefix.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>TestWebKitAPIPrefix.h</ForcedIncludeFiles>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

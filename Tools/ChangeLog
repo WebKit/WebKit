@@ -1,3 +1,15 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed WinCairo build fix after r180653.
+
+        TestWebKitAPI should know about proper WEBCORE_EXPORT definitions.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommon.props:
+        * TestWebKitAPI/win/TestWebKitAPIPrefix.cpp: Added.
+        * TestWebKitAPI/win/TestWebKitAPIPrefix.h: Added.
+
 2015-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use WEBCORE_EXPORT instead of Definition file
