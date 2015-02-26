@@ -1,3 +1,13 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(GEOLOCATION) build after r180533
+        https://bugs.webkit.org/show_bug.cgi?id=142053
+
+        Reviewed by Chris Dumez.
+
+        * Modules/geolocation/GeoNotifier.cpp:
+        * Modules/geolocation/GeoNotifier.h:
+
 2015-02-26  Dean Jackson  <dino@apple.com>
 
         [iOS Media] incorrect front padding on time values

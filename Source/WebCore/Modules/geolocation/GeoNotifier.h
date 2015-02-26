@@ -27,6 +27,8 @@
 #ifndef GeoNotifier_h
 #define GeoNotifier_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -75,5 +77,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif // GeoNotifier_h

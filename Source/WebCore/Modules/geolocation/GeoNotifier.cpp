@@ -28,6 +28,8 @@
 #include "config.h"
 #include "GeoNotifier.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include "Geolocation.h"
 
 namespace WebCore {
@@ -131,3 +133,5 @@ void GeoNotifier::timerFired()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
