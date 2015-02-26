@@ -766,7 +766,7 @@ RenderRegion* RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion(L
 bool RenderMultiColumnFlowThread::isPageLogicalHeightKnown() const
 {
     if (RenderMultiColumnSet* columnSet = lastMultiColumnSet())
-        return columnSet->computedColumnHeight();
+        return columnSet->columnHeightComputed();
     return false;
 }
 

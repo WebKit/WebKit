@@ -1,5 +1,22 @@
 2015-02-25  Dana Burkart  <dburkart@apple.com>
 
+        Merged r180364. <rdar://problem/19720096>
+
+    2015-02-19  David Hyatt  <hyatt@apple.com>
+
+            Columns are splitting unsplittable content.
+            https://bugs.webkit.org/show_bug.cgi?id=141807
+            <rdar://problem/18387659>
+
+            Reviewed by Dean Jackson.
+
+            * fast/multicol/inline-table-dynamic-movement-expected.html: Added.
+            * fast/multicol/inline-table-dynamic-movement.html: Added.
+            * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+            * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+
+2015-02-25  Dana Burkart  <dburkart@apple.com>
+
         Merged r180174. <rdar://problem/19947808>
 
     2015-02-16  Zalan Bujtas  <zalan@apple.com>
