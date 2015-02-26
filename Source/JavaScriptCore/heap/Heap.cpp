@@ -311,6 +311,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_objectSpace(this)
     , m_storageSpace(this)
     , m_extraMemoryUsage(0)
+    , m_machineThreads(this)
     , m_sharedData(vm)
     , m_slotVisitor(m_sharedData)
     , m_copyVisitor(m_sharedData)
@@ -348,18 +349,6 @@ Heap::~Heap()
 {
 }
 
-MachineThreads& Heap::machineThreads()
-{
-    static std::once_flag initializeMachineThreadsOnceFlag;
-    static MachineThreads* machineThreads = nullptr;
-
-    std::call_once(initializeMachineThreadsOnceFlag, [] {
-        machineThreads = new MachineThreads();
-    });
-
-    return *machineThreads;
-}
-    
 bool Heap::isPagedOut(double deadline)
 {
     return m_objectSpace.isPagedOut(deadline) || m_storageSpace.isPagedOut(deadline);
@@ -598,7 +587,7 @@ void Heap::gatherStackRoots(ConservativeRoots& roots, void** dummy, MachineThrea
 {
     GCPHASE(GatherStackRoots);
     m_jitStubRoutines.clearMarks();
-    machineThreads().gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks, dummy, registers);
+    m_machineThreads.gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks, dummy, registers);
 }
 
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)

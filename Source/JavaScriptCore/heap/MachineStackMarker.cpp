@@ -115,16 +115,27 @@ public:
     void* stackBase;
 };
 
-MachineThreads::MachineThreads()
+MachineThreads::MachineThreads(Heap* heap)
     : m_registeredThreads(0)
     , m_threadSpecific(0)
+#if !ASSERT_DISABLED
+    , m_heap(heap)
+#endif
 {
+    UNUSED_PARAM(heap);
     threadSpecificKeyCreate(&m_threadSpecific, removeThread);
 }
 
-NO_RETURN_DUE_TO_CRASH MachineThreads::~MachineThreads()
+MachineThreads::~MachineThreads()
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    threadSpecificKeyDelete(m_threadSpecific);
+
+    MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
+    for (Thread* t = m_registeredThreads; t;) {
+        Thread* next = t->next;
+        delete t;
+        t = next;
+    }
 }
 
 static inline PlatformThread getCurrentPlatformThread()
@@ -149,9 +160,9 @@ static inline bool equalThread(const PlatformThread& first, const PlatformThread
 #endif
 }
 
-void MachineThreads::addCurrentThread(VM* vm)
+void MachineThreads::addCurrentThread()
 {
-    ASSERT_UNUSED(vm, !vm->hasExclusiveThread() || vm->exclusiveThread() == std::this_thread::get_id());
+    ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
 
     if (threadSpecificGet(m_threadSpecific)) {
         ASSERT(threadSpecificGet(m_threadSpecific) == this);

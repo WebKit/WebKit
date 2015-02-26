@@ -144,7 +144,7 @@ void JSLock::didAcquireLock()
     m_entryAtomicStringTable = threadData.setCurrentAtomicStringTable(m_vm->atomicStringTable());
     ASSERT(m_entryAtomicStringTable);
 
-    m_vm->heap.machineThreads().addCurrentThread(m_vm);
+    m_vm->heap.machineThreads().addCurrentThread();
 }
 
 void JSLock::unlock()
