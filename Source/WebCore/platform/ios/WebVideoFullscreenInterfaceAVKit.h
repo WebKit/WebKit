@@ -63,6 +63,7 @@ class WebVideoFullscreenInterfaceAVKit
 
 protected:
     void setupFullscreenInternal(PlatformLayer&, IntRect initialRect, UIView *);
+    void beginSession();
     void enterFullscreenOptimized();
     void enterFullscreenStandard();
     void exitFullscreenInternal(IntRect finalRect);
@@ -81,8 +82,6 @@ protected:
     RetainPtr<UIView> m_parentView;
     RetainPtr<UIWindow> m_parentWindow;
 
-    WebAVPlayerController *playerController();
-    
     void doEnterFullscreen();
         
 public:
@@ -91,6 +90,7 @@ public:
     void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
     
+    virtual void resetMediaState() override; 
     virtual void setDuration(double) override;
     virtual void setCurrentTime(double currentTime, double anchorTime) override;
     virtual void setRate(bool isPlaying, float playbackRate) override;

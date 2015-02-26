@@ -22,6 +22,7 @@
 
 #if PLATFORM(IOS)
 messages -> WebVideoFullscreenManagerProxy {
+    ResetMediaState()
     SetCurrentTime(double currentTime, double hostTime)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);

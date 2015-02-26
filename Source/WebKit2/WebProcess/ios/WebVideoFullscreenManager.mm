@@ -114,6 +114,11 @@ void WebVideoFullscreenManager::exitFullscreenForNode(Node* node)
     m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(clientRectForNode(node)), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::resetMediaState()
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ResetMediaState(), m_page->pageID());
+}
+    
 void WebVideoFullscreenManager::setDuration(double duration)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetDuration(duration), m_page->pageID());

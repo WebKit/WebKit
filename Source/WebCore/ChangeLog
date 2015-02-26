@@ -1,3 +1,56 @@
+2015-02-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r179480
+
+    2015-02-02  Jeremy Jones  <jeremyj@apple.com>
+
+            Prevent crash when accessing WebAVPlayerController.delegate.
+            https://bugs.webkit.org/show_bug.cgi?id=140893
+
+            Reviewed by Darin Adler.
+
+            This patch aims to prevent a null delegate access during invalidation by adding null checks before accessing the delegate, by making explicit the recreation of m_playerController, and by consolidating and correcting the teardown sequence.
+
+            * WebCore.exp.in:
+            * platform/ios/WebVideoFullscreenInterface.h: add resetMediaState()
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h: ditto.
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (-[WebAVPlayerController playerViewController:shouldExitFullScreenWithReason:]): Check for null before accessing delegate.
+            (-[WebAVPlayerController play:]): ditto.
+            (-[WebAVPlayerController pause:]): ditto.
+            (-[WebAVPlayerController togglePlayback:]): ditto.
+            (-[WebAVPlayerController setPlaying:]): ditto.
+            (-[WebAVPlayerController beginScrubbing:]): ditto.
+            (-[WebAVPlayerController endScrubbing:]): ditto.
+            (-[WebAVPlayerController seekToTime:]): ditto.
+            (-[WebAVPlayerController beginScanningForward:]): ditto.
+            (-[WebAVPlayerController endScanningForward:]): ditto.
+            (-[WebAVPlayerController beginScanningBackward:]): ditto.
+            (-[WebAVPlayerController endScanningBackward:]): ditto.
+            (-[WebAVPlayerController seekToBeginning:]): ditto.
+            (-[WebAVPlayerController seekToEnd:]): ditto.
+            (-[WebAVPlayerController setCurrentAudioMediaSelectionOption:]): ditto.
+            (-[WebAVPlayerController setCurrentLegibleMediaSelectionOption:]): ditto.
+            (-[WebAVPlayerController layoutSublayersOfLayer:]): ditto.
+            (WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit): initialize m_playerController
+            (WebVideoFullscreenInterfaceAVKit::resetMediaState): Added.
+            (WebVideoFullscreenInterfaceAVKit::setDuration): remove playerController()
+            (WebVideoFullscreenInterfaceAVKit::setCurrentTime): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setRate): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setVideoDimensions): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setSeekableRanges): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setExternalPlayback): ditto.
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): ditto.
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard): ditto.
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal): consolidated cleanup code from invalidate()
+            (WebVideoFullscreenInterfaceAVKit::invalidate): consolidate cleanup code.
+            (WebVideoFullscreenInterfaceAVKit::playerController): Deleted.
+            * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+            (WebVideoFullscreenModelVideoElement::setVideoElement): call resetMediaState()
+
 2015-02-25  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r180274.
