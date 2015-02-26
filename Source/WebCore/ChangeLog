@@ -1,3 +1,64 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use WEBCORE_EXPORT instead of Definition file
+        https://bugs.webkit.org/show_bug.cgi?id=141734
+
+        Reviewed by Alex Christensen.
+
+        No change in functionality.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Correct bad Precompiled header
+        settings on certain files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Automatically updated
+        by Visual Studio.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters: Ditto.
+        * WebCore.vcxproj/WebCoreTestSupportCommon.props: Added.
+        * WebCore.vcxproj/WebCoreTestSupportDebug.props: Added.
+        * WebCore.vcxproj/WebCoreTestSupportDebugWinCairo.props: Added.
+        * WebCore.vcxproj/WebCoreTestSupportProduction.props: Added.
+        * WebCore.vcxproj/WebCoreTestSupportRelease.props: Added.
+        * WebCore.vcxproj/WebCoreTestSupportReleaseWinCairo.props: Added.
+        * WebCorePrefix.h: Provide proper export definitions for Windows.
+        * bindings/js/JSCustomXPathNSResolver.cpp: Add missing #include
+        needed by the new export style.
+        * bindings/js/JSDOMWindowBase.h: Export class since DRT needs
+        access to parts of it.
+        * bindings/js/ScriptCachedFrameData.cpp: Add missing #include
+        needed by the new export style.
+        * bindings/scripts/CodeGeneratorJS.pm: Use different export macro
+        when generating WebCoreTestSupport files, so that we don't confuse
+        the linker when WebCore.lib and WebCoreTestSupport.lib try to
+        both export WEBCORE_EXPORT symbols.
+        (ExportLabelForClass):
+        (GenerateHeader):
+        * bridge/jsc/BridgeJSC.cpp: Add missing #include needed by the new
+        export style.
+        * css/CSSParser.cpp: Ditto.
+        * dom/Document.cpp: Ditto.
+        * html/HTMLImageLoader.cpp: Ditto.
+        * inspector/CommandLineAPIModule.cpp: Ditto.
+        * inspector/PageDebuggerAgent.cpp: Ditto.
+        * inspector/PageRuntimeAgent.cpp: Ditto.
+        * inspector/WorkerRuntimeAgent.cpp: Ditto.
+        * page/DOMWindow.cpp: Ditto.
+        * page/DOMWindow.h: Export the destructor, as it is needed by
+        DumpRenderTree (on Windows).
+        * page/Page.cpp: Add missing #include needed by the new export style.
+        * platform/Logging.h: Remove conflicting export declaration.
+        * platform/PlatformExportMacros.h: Update for Windows use.
+        * testing/Internals.cpp: Add missing #include needed by the new export style.
+        * testing/Internals.h: Use WEBCORE_TESTSUPPORT_EXPORT for things that
+        are supposed to be exported by WebCoreTestSupport, not WebCore.
+        * testing/js/WebCoreTestSupport.cpp: Add missing #include needed by
+        new export style.
+        * testing/js/WebCoreTestSupportPrefix.cpp: Added.
+        * testing/js/WebCoreTestSupportPrefix.h: Added.
+        * xml/XMLHttpRequest.h: Export the destructor.
+        * xml/XSLStyleSheetLibxslt.cpp: Add missing #include needed by the new
+        export style.
+        * xml/XSLTProcessorLibxslt.cpp: Ditto.
+
 2015-02-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unnecessary DatabaseFooTask::create

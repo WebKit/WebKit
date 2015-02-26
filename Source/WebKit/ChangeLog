@@ -1,3 +1,15 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use WEBCORE_EXPORT instead of Definition file
+        https://bugs.webkit.org/show_bug.cgi?id=141734
+
+        Reviewed by Alex Christensen.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Visual studio automatic
+        file cleanup.
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Don't use the export definition
+        file any longer.
+
 2015-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/19949665> Some queues fail to build because of WebKitPluginHost.app symlink

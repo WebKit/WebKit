@@ -89,6 +89,7 @@
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
+#include <JavaScriptCore/Profile.h>
 #include <bitset>
 #include <limits.h>
 #include <wtf/HexNumber.h>

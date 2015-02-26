@@ -43,6 +43,7 @@
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <profiler/Profile.h>
 
 using namespace Inspector;
 

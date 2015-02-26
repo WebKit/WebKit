@@ -4827,9 +4827,6 @@
     <ClCompile Include="..\platform\graphics\FontGenericFamilies.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\FontGlyphs.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\FontFeatureSettings.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -7228,6 +7225,18 @@
     <ClCompile Include="..\platform\graphics\Font.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\cf\CoreMediaSoftLink.cpp">
+      <Filter>platform\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\FontCascadeFonts.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\HTMLAttachmentElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderAttachment.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -8828,9 +8837,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\spi\cg\CoreGraphicsSPI.h">
       <Filter>platform\spi\cg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\spi\cf\CoreMediaSPI.h">
-      <Filter>platform\spi\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h">
       <Filter>platform\sql</Filter>
@@ -12208,9 +12214,6 @@
     <ClInclude Include="..\platform\graphics\FontGenericFamilies.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontGlyphs.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\FontFeatureSettings.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -15178,6 +15181,21 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\Font.h">
       <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FontCascadeFonts.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\streams\ReadableStreamSource.h">
+      <Filter>Modules\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\streams\ReadableStream.h">
+      <Filter>Modules\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\HTMLAttachmentElement.h">
+      <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderAttachment.h">
+      <Filter>rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

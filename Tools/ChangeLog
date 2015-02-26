@@ -1,3 +1,21 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use WEBCORE_EXPORT instead of Definition file
+        https://bugs.webkit.org/show_bug.cgi?id=141734
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        Use a precompiled header so we can define our export macros properly.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj.filters:
+        Visual studio automatic update stuff.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeCommon.props:
+        Set up Precompiled Header use for project..
+        * DumpRenderTree/win/DumpRenderTreePrefix.cpp: Added.
+        * DumpRenderTree/DumpRenderTreePrefix.h: Update with proper export
+        declarations for building DumpRenderTree as a client of
+        WebCore/WebKit.
+
 2015-02-25  Mark Lam  <mark.lam@apple.com>
 
         ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack.

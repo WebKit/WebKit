@@ -219,6 +219,23 @@ sub SkipIncludeHeader
     return $typesWithoutHeader{$type};
 }
 
+my %testSupportClasses = (
+    "JSInternals" => 1,
+    "JSInternalSettings" => 1,
+    "JSInternalSettingsGenerated" => 1,
+    "JSMallocStatistics" => 1,
+    "JSMemoryInfo" => 1,
+    "JSTypeConversions" => 1,
+);
+
+sub ExportLabelForClass
+{
+    my $class = shift;
+
+    return "WEBCORE_TESTSUPPORT_EXPORT" if $testSupportClasses{$class};
+    return "WEBCORE_EXPORT"
+}
+
 sub AddIncludesForType
 {
     my $type = shift;
@@ -800,8 +817,10 @@ sub GenerateHeader
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
     AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($interface, "Event");
 
+    my $exportLabel = ExportLabelForClass($className);
+
     # Class declaration
-    push(@headerContent, "class WEBCORE_EXPORT $className : public $parentClassName {\n");
+    push(@headerContent, "class $exportLabel $className : public $parentClassName {\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
@@ -1154,7 +1173,7 @@ sub GenerateHeader
         if ($implType eq "Node" or $implType eq "NodeList") {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         } else {
-            push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+            push(@headerContent, "$exportLabel JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         }
         push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(exec, globalObject, &impl); }\n");
     }

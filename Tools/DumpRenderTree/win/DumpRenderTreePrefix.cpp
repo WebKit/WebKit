@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,5 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0502
-#endif
-
-#ifndef WINVER
-#define WINVER 0x0502
-#endif
-
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-
-// Needed for limit defines, like INTMAX_MAX, which is used by the std C++ library
-#ifndef __STDC_LIMIT_MACROS
-#define __STDC_LIMIT_MACROS
-#endif
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <WebKit/WebKit.h>
-#include "config.h"
-
-// WebKit.dll is expected to export the symbols in WebCore that have been marked
-// as WEBCORE_EXPORT
-#undef WEBCORE_EXPORT
-#define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
-
+ */
+#include "DumpRenderTreePrefix.h"

@@ -41,7 +41,7 @@ public:
     virtual ULONG STDMETHODCALLTYPE Release();
 
     void setDictionary(CFMutableDictionaryRef dictionary);
-    CFMutableDictionaryRef dictionary() const;
+    WEBKIT_API CFMutableDictionaryRef dictionary() const;
 
 private:
     CFDictionaryPropertyBag();

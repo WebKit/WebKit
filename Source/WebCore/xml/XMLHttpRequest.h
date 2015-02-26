@@ -53,7 +53,7 @@ class XMLHttpRequest final : public ScriptWrappable, public RefCounted<XMLHttpRe
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
-    ~XMLHttpRequest();
+    WEBCORE_EXPORT ~XMLHttpRequest();
 
     // These exact numeric values are important because JS expects them.
     enum State {

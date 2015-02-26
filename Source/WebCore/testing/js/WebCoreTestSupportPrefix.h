@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2013 Apple Inc.
+ * Copyright (C) 2015 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,16 +54,19 @@
 #endif
 
 #undef WEBCORE_EXPORT
-#define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
+#define WEBCORE_EXPORT WTF_IMPORT_DECLARATION
+#define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT_DECLARATION
 
 #else
 
 #include <pthread.h>
 
+#define WEBCORE_TESTSUPPORT_EXPORT WEBCORE_EXPORT
+
 #endif // OS(WINDOWS)
 
-#include <sys/types.h>
 #include <fcntl.h>
+#include <sys/types.h>
 #if defined(__APPLE__)
 #include <regex.h>
 #endif
@@ -92,8 +95,8 @@
 #endif
 #include <sys/stat.h>
 #if defined(__APPLE__)
-#include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
 #endif
 
 #include <CoreFoundation/CoreFoundation.h>

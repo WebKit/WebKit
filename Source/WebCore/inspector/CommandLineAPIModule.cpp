@@ -27,6 +27,7 @@
 #include "CommandLineAPIModule.h"
 
 #include "CommandLineAPIModuleSource.h"
+#include "DOMWrapperWorld.h"
 #include "JSCommandLineAPIHost.h"
 #include "WebInjectedScriptManager.h"
 #include <inspector/InjectedScript.h>

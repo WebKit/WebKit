@@ -76,13 +76,11 @@ namespace WebCore {
     M(Services) \
 
 #define DECLARE_LOG_CHANNEL(name) \
-    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+    WEBCORE_EXPORT extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
 
 WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
-
-    WEBCORE_EXPORT extern WTFLogChannel LogNotYetImplemented;
 
     String logLevelString();
     bool isLogChannelEnabled(const String& name);

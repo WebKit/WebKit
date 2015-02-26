@@ -100,7 +100,7 @@ namespace WebCore {
         , public Supplementable<DOMWindow> {
     public:
         static Ref<DOMWindow> create(Document* document) { return adoptRef(*new DOMWindow(document)); }
-        virtual ~DOMWindow();
+        WEBCORE_EXPORT virtual ~DOMWindow();
 
         // In some rare cases, we'll re-used a DOMWindow for a new Document. For example,
         // when a script calls window.open("..."), the browser gives JavaScript a window

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2015 Apple Inc. All rights reserved.
  * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #include "config.h"
 #include "BridgeJSC.h"
 
+#include "DOMWindow.h"
 #include "JSDOMWindowBase.h"
 #include "runtime_object.h"
 #include "runtime_root.h"

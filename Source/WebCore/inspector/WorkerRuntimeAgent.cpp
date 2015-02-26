@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WorkerRuntimeAgent.h"
 
+#include "DOMWindow.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowBase.h"
 #include "ScriptState.h"

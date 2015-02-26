@@ -34,7 +34,7 @@ namespace WebCore {
 
     class JSDOMWindowBasePrivate;
 
-    class JSDOMWindowBase : public JSDOMGlobalObject {
+    class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     protected:
         JSDOMWindowBase(JSC::VM&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
@@ -71,7 +71,7 @@ namespace WebCore {
 
         JSDOMWindowShell* shell() const;
 
-        WEBCORE_EXPORT static JSC::VM& commonVM();
+        static JSC::VM& commonVM();
         static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
     protected:

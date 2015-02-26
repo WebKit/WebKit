@@ -3,8 +3,8 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(WebKit_Libraries)\tools\vsprops\FeatureDefines.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
-    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
-    <Import Project="WebCoreCommon.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+    <Import Project="WebCoreTestSupportCommon.props" />
     <Import Project="WebCoreCG.props" />
     <Import Project="WebCoreCFNetwork.props" />
     <Import Project="WebCoreIncludeCommon.props" />

@@ -39,6 +39,7 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include <heap/StrongInlines.h>
+#include <profiler/Profile.h>
 #include <runtime/JSLock.h>
 #include "ScriptController.h"
 

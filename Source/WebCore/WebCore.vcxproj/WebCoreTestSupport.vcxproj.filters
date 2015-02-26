@@ -45,6 +45,9 @@
     <ClCompile Include="..\testing\MockPageOverlayClient.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\testing\js\WebCoreTestSupportPrefix.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.h">
@@ -91,6 +94,9 @@
       <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="..\testing\MockPageOverlayClient.h">
+      <Filter>testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\testing\js\WebCoreTestSupportPrefix.h">
       <Filter>testing</Filter>
     </ClInclude>
   </ItemGroup>

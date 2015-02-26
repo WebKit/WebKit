@@ -32,6 +32,7 @@
 #include "JSDocument.h"
 #include "JSInternals.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/Profile.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/IdentifierInlines.h>
 

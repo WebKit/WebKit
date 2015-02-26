@@ -106,6 +106,7 @@
       <Filter>Support</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JavaScriptThreading.cpp" />
+    <ClCompile Include="..\..\win\DumpRenderTreePrefix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AccessibilityController.h">

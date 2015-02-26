@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebKitCOMAPI_h
-#define WebKitCOMAPI_h
-
-#include <unknwn.h>
-
-#ifndef WEBKIT_API
-#ifdef WEBKIT_EXPORTS
-#define WEBKIT_API __declspec(dllexport)
-#else
-#define WEBKIT_API __declspec(dllimport)
-#endif
-#endif
-
-extern "C" {
-
-// Callers should use this API instead of CoCreateInstance to instantiate WebKit COM classes.
-// This bypasses CoCreateInstance entirely, so registry keys and isolated COM manifests aren't needed.
-HRESULT WEBKIT_API WebKitCreateInstance(REFCLSID, IUnknown* pUnkOuter, REFIID, void** ppvObject);
-
-}
-
-#endif // !defined(WebKitCOMAPI_h)
+#include "WebCoreTestSupportPrefix.h"

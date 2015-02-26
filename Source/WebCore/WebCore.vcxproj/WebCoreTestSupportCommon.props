@@ -9,8 +9,8 @@
     <ClCompile>
       <PreprocessorDefinitions>DISABLE_3D_RENDERING;WEBCORE_CONTEXT_MENUS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>WebCorePrefix.h</PrecompiledHeaderFile>
-      <ForcedIncludeFiles>WebCorePrefix.h;ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>WebCoreTestSupportPrefix.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>WebCoreTestSupportPrefix.h;ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>

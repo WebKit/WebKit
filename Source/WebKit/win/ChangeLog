@@ -1,3 +1,20 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use WEBCORE_EXPORT instead of Definition file
+        https://bugs.webkit.org/show_bug.cgi?id=141734
+
+        Reviewed by Alex Christensen.
+
+        * CFDictionaryPropertyBag.h: Add required export macros.
+        * Interfaces/WebKit.idl: Ditto.
+        * WebCoreStatistics.cpp: Add missing #include (required
+        now that we are exporting more symbols.)
+        * WebKitCOMAPI.h: Add required export macros.
+        * WebKitDLL.h: Ditto.
+        * WebKitPrefix.h: Ditto.
+        * WebView.cpp: Add missing #include required using new
+        due to new export mechanism.
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

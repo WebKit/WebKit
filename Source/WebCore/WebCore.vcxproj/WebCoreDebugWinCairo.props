@@ -10,6 +10,7 @@
     <Import Project="WebCoreCommon.props" />
     <Import Project="WebCoreCairo.props" />
     <Import Project="WebCoreCURL.props" />
+    <Import Project="WebCoreIncludeCommon.props" />
   </ImportGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>

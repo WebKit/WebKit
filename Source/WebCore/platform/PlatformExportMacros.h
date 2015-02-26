@@ -35,16 +35,17 @@
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-// FIXME: Get rid of WebKitExports.def.in and make this work on Windows.
 #if !PLATFORM(WIN)
 #define WEBCORE_EXPORT WTF_EXPORT
+#define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT
 #else
-#define WEBCORE_EXPORT
+// Windows must set this per-project
 #endif
 
 #else // !USE(EXPORT_MACROS)
 
 #define WEBCORE_EXPORT
+#define WEBCORE_TESTSUPPORT_EXPORT
 
 #endif // USE(EXPORT_MACROS)
 

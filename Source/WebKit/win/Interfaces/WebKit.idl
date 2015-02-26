@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 cpp_quote("/*")
-cpp_quote(" * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.")
+cpp_quote(" * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2015 Apple Inc. All rights reserved.")
 cpp_quote(" *")
 cpp_quote(" * Redistribution and use in source and binary forms, with or without")
 cpp_quote(" * modification, are permitted provided that the following conditions")
@@ -47,6 +47,11 @@ cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
 cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
 cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 cpp_quote(" */")
+cpp_quote("#ifdef WEBKIT_EXPORTS")
+cpp_quote("#define WEBKIT_API __declspec(dllexport)")
+cpp_quote("#else")
+cpp_quote("#define WEBKIT_API __declspec(dllimport)")
+cpp_quote("#endif")
 
 #include "autoversion.h"
 
@@ -143,7 +148,7 @@ import "AccessibleApplication.idl";
 
 #define __TYPELIB_VERSION__ __BUILD_NUMBER_MAJOR__##.##__BUILD_NUMBER_MINOR__
 
-cpp_quote("void shutDownWebKit();")
+cpp_quote("void WEBKIT_API shutDownWebKit();")
 
 [
     uuid(2a748656-625d-4207-b29f-40c95bfeb3a9),
