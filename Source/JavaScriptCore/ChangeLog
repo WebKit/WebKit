@@ -1,3 +1,13 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add calleeSaveRegisters() implementation for ARM Traditional
+        https://bugs.webkit.org/show_bug.cgi?id=141903
+
+        Reviewed by Darin Adler.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::calleeSaveRegisters):
+
 2015-02-25  Michael Saboff  <msaboff@apple.com>
 
         Web Inspector: CRASH when debugger pauses inside a Promise handler
