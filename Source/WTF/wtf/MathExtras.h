@@ -102,21 +102,6 @@ inline bool isinf(double x) { return !finite(x) && !isnand(x); }
 
 #endif
 
-#if OS(OPENBSD)
-
-namespace std {
-
-#ifndef isfinite
-inline bool isfinite(double x) { return finite(x); }
-#endif
-#ifndef signbit
-inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x; return p->dbl_sign; }
-#endif
-
-} // namespace std
-
-#endif
-
 #if COMPILER(MSVC)
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
