@@ -1,3 +1,10 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Unreviewed gardening, comment out old expectations
+        of WebGL tests to really skip them as we expected.
+
+        * platform/efl/TestExpectations:
+
 2015-02-26  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: !length.isUndefined() in WebCore::GridLength::GridLength
