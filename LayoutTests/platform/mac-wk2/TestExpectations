@@ -62,7 +62,6 @@ editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-paste-continuous-disabled.html
-fast/dom/Window/window-postmessage-clone.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/events/5056619.html
 fast/events/autoscroll-in-textfield.html
@@ -87,7 +86,6 @@ fast/events/mouse-click-events.html
 fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
-fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/right-click-focus.html
 fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/standalone-image-drag-to-editable.html
@@ -100,14 +98,11 @@ fast/forms/file/input-file-value.html
 fast/forms/listbox-typeahead-cyrillic.html
 fast/forms/listbox-typeahead-greek.html
 fast/forms/select-type-ahead-non-latin.html
-fast/forms/file/input-file-write-files.html
 fast/history/window-open.html
 fast/lists/drag-into-marker.html
 fast/repaint/japanese-rl-selection-repaint.html
 fast/repaint/repaint-across-writing-mode-boundary.html
-http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
-http/tests/local/fileapi/send-sliced-dragged-file.html
 http/tests/misc/bubble-drag-events.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html

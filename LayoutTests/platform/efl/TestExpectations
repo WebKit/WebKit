@@ -347,7 +347,6 @@ webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events.h
 webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Failure ]
 webkit.org/b/86623 fast/events/ondragenter.html
 webkit.org/b/86623 fast/events/ondrop-text-html.html
-webkit.org/b/86623 fast/events/only-valid-drop-targets-receive-file-drop.html [ Timeout ]
 webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 webkit.org/b/86623 fast/events/standalone-image-drag-to-editable.html
 webkit.org/b/86623 fast/forms/drag-into-textarea.html
@@ -926,49 +925,6 @@ Bug(EFL) fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 # EFL's EventSender does not implement gesture-related callbacks
 Bug(EFL) fast/events/touch/gesture
 Bug(EFL) fast/events/touch/page-scaled-touch-gesture-click.html
-
-# EventSender.beginDragWithFiles is not implemented
-webkit.org/b/84333 fast/dom/Window/window-postmessage-clone-frames.html [ Timeout ]
-webkit.org/b/84333 fast/dom/Window/window-postmessage-clone.html [ Timeout ]
-webkit.org/b/84333 fast/events/drag-file-crash.html [ Failure ]
-webkit.org/b/84333 fast/events/drag-to-navigate.html [ Timeout ]
-webkit.org/b/84333 fast/events/drop-handler-should-not-stop-navigate.html [ Timeout ]
-webkit.org/b/84333 fast/events/drop-with-file-paths.html [ Timeout ]
-webkit.org/b/84333 fast/events/dropzone-004.html [ Failure ]
-webkit.org/b/84333 fast/events/file-input-hidden-in-ondrop.html [ Timeout ]
-webkit.org/b/84333 fast/events/input-element-display-none-in-dragleave-crash.html [ Timeout ]
-webkit.org/b/84333 fast/events/prevent-drag-to-navigate.html [ Timeout ]
-webkit.org/b/84333 fast/files/apply-blob-url-to-img.html [ Timeout ]
-webkit.org/b/84333 fast/files/apply-blob-url-to-xhr.html [ Timeout ]
-webkit.org/b/84333 fast/files/file-list-test.html [ Failure ]
-webkit.org/b/84333 fast/files/file-reader-abort.html [ Timeout ]
-webkit.org/b/84333 fast/files/file-reader-directory-crash.html [ Timeout ]
-webkit.org/b/84333 fast/files/null-origin-string.html [ Timeout ]
-webkit.org/b/84333 fast/files/read-blob-async.html [ Timeout ]
-webkit.org/b/84333 fast/files/read-file-async.html [ Timeout ]
-webkit.org/b/84333 fast/files/workers/worker-apply-blob-url-to-xhr.html [ Timeout ]
-webkit.org/b/84333 fast/files/workers/worker-read-blob-async.html [ Timeout ]
-webkit.org/b/84333 fast/files/workers/worker-read-blob-sync.html [ Timeout ]
-webkit.org/b/84333 fast/files/workers/worker-read-file-async.html [ Timeout ]
-webkit.org/b/84333 fast/files/workers/worker-read-file-sync.html [ Timeout ]
-webkit.org/b/84333 fast/forms/file/file-input-change-event.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/file-input-reset.html [ ImageOnlyFailure ]
-webkit.org/b/84333 fast/forms/file/get-file-upload.html [ Timeout ]
-webkit.org/b/84333 fast/forms/file/input-file-directory-upload.html [ Timeout ]
-webkit.org/b/84333 fast/forms/file/input-file-re-render.html [ Timeout ]
-webkit.org/b/84333 fast/forms/file/input-file-write-files.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/recover-file-input-in-unposted-form.html [ Timeout ]
-webkit.org/b/84333 fast/forms/file/selected-files-from-history-state.html [ Timeout ]
-webkit.org/b/84333 http/tests/local/blob/send-hybrid-blob.html [ Timeout ]
-webkit.org/b/84333 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-constructed-from-form.html [ Timeout ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-empty-file-filename.html [ Timeout ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/upload-events.html [ Timeout ]
-webkit.org/b/84333 http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
 
 # EFL port needs Pasteboard implementation.
 webkit.org/b/84338 editing/deleting/paste-with-transparent-background-color.html [ Failure ]
@@ -1606,9 +1562,6 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure
 
 # testRunner.setUseDeferredFrameLoading() is not implemented in WK2. Skipped so it does not generate PNG results.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
-
-# WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
-webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Timeout ]
 
 # The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]

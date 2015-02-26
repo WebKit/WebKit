@@ -609,6 +609,7 @@ platform/mac/fast/events/objc-event-api.html
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone-frames.html
+fast/dom/Window/window-postmessage-clone.html
 fast/events/data-transfer-files-attribute-identity.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
@@ -617,6 +618,7 @@ fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
 fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
+fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/prevent-drag-to-navigate.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
@@ -637,14 +639,18 @@ fast/files/workers/worker-read-file-sync.html
 fast/forms/file/file-input-change-event.html
 fast/forms/file/file-input-reset.html
 fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-directory-upload.html
 fast/forms/file/input-file-re-render.html
+fast/forms/file/input-file-write-files.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 fast/forms/file/selected-files-from-history-state.html
 fast/history/page-cache-createObjectURL.html
 fast/workers/worker-copy-shared-blob-url.html
+http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/fileapi/file-last-modified-after-delete.html
 http/tests/local/fileapi/file-last-modified.html
 http/tests/local/fileapi/send-dragged-file.html
+http/tests/local/fileapi/send-sliced-dragged-file.html
 http/tests/local/fileapi/upload-zip-bundle-as-blob.html
 http/tests/local/formdata/form-data-with-unknown-file-extension.html
 http/tests/local/formdata/send-form-data-constructed-from-form.html

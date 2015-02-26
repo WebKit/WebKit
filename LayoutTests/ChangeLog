@@ -1,5 +1,17 @@
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] Unreviewed gardening, skip failing tests related to missing
+        EventSender.beginDragWithFiles implementation in wk2/TestExpectations.
+
+        There is no good reason to wait for 30 seconds timeout, let's skip them everywhere.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Unreviewed gardening, skip fast/workers tests to unbreak the buildbot.
         https://bugs.webkit.org/show_bug.cgi?id=142041
 
