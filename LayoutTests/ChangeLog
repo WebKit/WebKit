@@ -1,3 +1,9 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip timing-out test after r180646.
+
+        * platform/win/TestExpectations:
+
 2015-02-25  Chris Dumez  <cdumez@apple.com>
 
         Make PublicURLManager suspendable
