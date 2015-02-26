@@ -1,3 +1,25 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make build logs more legible by reducing noise
+        https://bugs.webkit.org/show_bug.cgi?id=142034
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modify batch files, makefiles, and DOS commands to remove
+        uninteresting/unhelpful output.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcxproj/JavaScriptCorePreBuild.cmd:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPreBuild.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPostBuild.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPreBuild.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiPostBuild.cmd:
+        * JavaScriptCore.vcxproj/testapi/testapiPreBuild.cmd:
+
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add calleeSaveRegisters() implementation for ARM Traditional

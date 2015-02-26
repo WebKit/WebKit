@@ -1,3 +1,15 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make build logs more legible by reducing noise
+        https://bugs.webkit.org/show_bug.cgi?id=142034
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modify batch files, makefiles, and DOS commands to remove
+        uninteresting/unhelpful output.
+
+        * win/tools/vsprops/common.props:
+
 2015-02-25  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] WinLauncher is not starting on Vista.

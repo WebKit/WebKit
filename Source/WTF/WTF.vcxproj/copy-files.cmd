@@ -8,6 +8,7 @@ set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean
 
+echo Copying WTF headers...
 for %%d in (
     wtf
     wtf\cf
@@ -19,8 +20,8 @@ for %%d in (
     wtf\unicode\icu
     wtf\win
 ) do (
-    mkdir "%PrivateHeadersDirectory%\%%d" 2>NUL
-    xcopy /y /d ..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
+    mkdir "%PrivateHeadersDirectory%\%%d" >NUL 2>NUL
+    xcopy /y /d ..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL 2>NUL
 )
 
 echo Copying other files...
@@ -31,7 +32,7 @@ for %%f in (
     wtf\text\StringImpl.cpp
     wtf\text\WTFString.cpp
 ) do (
-    echo F | xcopy /y /d ..\%%f "%PrivateHeadersDirectory%\%%f" >NUL
+    echo F | xcopy /y /d ..\%%f "%PrivateHeadersDirectory%\%%f" >NUL 2>NUL
 )
 
 goto :EOF
@@ -41,4 +42,3 @@ goto :EOF
 echo Deleting copied files...
 if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
 endlocal
-

@@ -1,3 +1,19 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make build logs more legible by reducing noise
+        https://bugs.webkit.org/show_bug.cgi?id=142034
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modify batch files, makefiles, and DOS commands to remove
+        uninteresting/unhelpful output.
+
+        * WebKit.vcxproj/Interfaces/InterfacesPostBuild.cmd:
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPreBuild.cmd:
+
 2015-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use WEBCORE_EXPORT instead of Definition file

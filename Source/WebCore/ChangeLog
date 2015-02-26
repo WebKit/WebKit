@@ -1,3 +1,18 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make build logs more legible by reducing noise
+        https://bugs.webkit.org/show_bug.cgi?id=142034
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modify batch files, makefiles, and DOS commands to remove
+        uninteresting/unhelpful output.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        * WebCore.vcxproj/WebCorePreBuild.cmd:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd:
+
 2015-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [FreeType] REGRESSION(r180563): Introduced crashes
