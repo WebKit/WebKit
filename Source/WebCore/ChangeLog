@@ -1,3 +1,35 @@
+2015-02-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180274.
+
+    2015-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] pause video when a tab moves to the background on some devices
+            https://bugs.webkit.org/show_bug.cgi?id=141753
+            <rdar://problem/19814562>
+
+            Reviewed by Jer Noble.
+
+            Test: media/video-background-tab-playback.html
+
+            * platform/audio/MediaSession.cpp:
+            (WebCore::MediaSession::clientDataBufferingTimerFired): Pause video when the element becomes
+                hidden if the BackgroundTabPlaybackRestricted is set.
+
+            * platform/audio/MediaSessionManager.cpp:
+            (WebCore::MediaSessionManager::applicationWillEnterBackground): Rename BackgroundPlaybackNotPermitted
+                 to BackgroundProcessPlaybackRestricted.
+            (WebCore::MediaSessionManager::applicationWillEnterForeground): Ditto.
+            * platform/audio/MediaSessionManager.h:
+
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::resetRestrictions): Set BackgroundTabPlaybackRestricted on
+                devices with restricted memory. BackgroundPlaybackNotPermitted -> BackgroundProcessPlaybackRestricted.
+
+            * testing/Internals.cpp:
+            (WebCore::Internals::setMediaSessionRestrictions): Add support for BackgroundTabPlaybackRestricted.
+                BackgroundPlaybackNotPermitted -> BackgroundProcessPlaybackRestricted.
+
 2015-02-24  Dean Jackson  <dino@apple.com>
 
         Merged r180588.

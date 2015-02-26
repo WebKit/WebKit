@@ -1,3 +1,20 @@
+2015-02-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180274.
+
+    2015-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] pause video when a tab moves to the background on some devices
+            https://bugs.webkit.org/show_bug.cgi?id=141753
+            <rdar://problem/19814562>
+
+            Reviewed by Jer Noble.
+
+            * media/video-background-playback-expected.txt: BackgroundPlaybackNotPermitted -> BackgroundProcessPlaybackRestricted.
+            * media/video-background-playback.html: Ditto.
+            * media/video-background-tab-playback-expected.txt: Added.
+            * media/video-background-tab-playback.html: Added.
+
 2015-02-20  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180278

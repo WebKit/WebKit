@@ -2334,8 +2334,10 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
         restrictions += MediaSessionManager::MetadataPreloadingNotPermitted;
     if (equalIgnoringCase(restrictionsString, "AutoPreloadingNotPermitted"))
         restrictions += MediaSessionManager::AutoPreloadingNotPermitted;
-    if (equalIgnoringCase(restrictionsString, "BackgroundPlaybackNotPermitted"))
-        restrictions += MediaSessionManager::BackgroundPlaybackNotPermitted;
+    if (equalIgnoringCase(restrictionsString, "BackgroundProcessPlaybackRestricted"))
+        restrictions += MediaSessionManager::BackgroundProcessPlaybackRestricted;
+    if (equalIgnoringCase(restrictionsString, "BackgroundTabPlaybackRestricted"))
+        restrictions += MediaSessionManager::BackgroundTabPlaybackRestricted;
 
     MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }

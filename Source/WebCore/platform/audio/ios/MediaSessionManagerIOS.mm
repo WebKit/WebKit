@@ -32,6 +32,7 @@
 #import "MediaPlayer.h"
 #import "MediaSession.h"
 #import "SoftLinking.h"
+#import "SystemMemory.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -127,6 +128,8 @@ MediaSessionManageriOS::~MediaSessionManageriOS()
 
 void MediaSessionManageriOS::resetRestrictions()
 {
+    static const size_t systemMemoryRequiredForVideoInBackgroundTabs = 1024 * 1024 * 1024;
+
     LOG(Media, "MediaSessionManageriOS::resetRestrictions");
 
     MediaSessionManager::resetRestrictions();
@@ -135,14 +138,19 @@ void MediaSessionManageriOS::resetRestrictions()
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
         addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);
 
+    if (systemTotalMemory() < systemMemoryRequiredForVideoInBackgroundTabs) {
+        LOG(Media, "MediaSessionManageriOS::resetRestrictions - restricting video in background tabs because system memory = %zul", systemTotalMemory());
+        addRestriction(MediaSession::Video, BackgroundTabPlaybackRestricted);
+    }
+
     addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
-    addRestriction(MediaSession::Video, BackgroundPlaybackNotPermitted);
+    addRestriction(MediaSession::Video, BackgroundProcessPlaybackRestricted);
 
     removeRestriction(MediaSession::Audio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(MediaSession::Audio, BackgroundPlaybackNotPermitted);
+    removeRestriction(MediaSession::Audio, BackgroundProcessPlaybackRestricted);
 
     removeRestriction(MediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(MediaSession::WebAudio, BackgroundPlaybackNotPermitted);
+    removeRestriction(MediaSession::WebAudio, BackgroundProcessPlaybackRestricted);
 
     removeRestriction(MediaSession::Audio, MetadataPreloadingNotPermitted);
     removeRestriction(MediaSession::Video, MetadataPreloadingNotPermitted);

@@ -78,7 +78,7 @@
                 audio = elements[1];
                 audio.src = findMediaFile("audio", "content/silence");
 
-                run("internals.setMediaSessionRestrictions('video', 'BackgroundPlaybackNotPermitted')");
+                run("internals.setMediaSessionRestrictions('video', 'BackgroundProcessPlaybackRestricted')");
                 state = "foreground";
                 consoleWrite("");
             }

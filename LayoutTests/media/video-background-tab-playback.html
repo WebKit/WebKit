@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var state = 0;
+
+            function checkState()
+            {
+                consoleWrite("<br>** 100ms timer fired...");
+                switch (state) {
+                case "background":
+                    testExpected("video.paused", true);
+                    state = "foreground";
+                    consoleWrite("<br>** Simulate switch back to foreground, video should remain paused.");
+                    run("internals.applicationWillEnterForeground()");
+                    setTimeout(checkState, 100);
+                    consoleWrite("");
+                    break;
+                case "foreground":
+                    testExpected("video.paused", true);
+                    consoleWrite("");
+                    testRunner.resetPageVisibility();
+                    endTest();
+                    break;
+                }
+            }
+
+            function playing(evt)
+            {
+                consoleWrite("<br>** Simulate switching the tab to background, video should pause.");
+                run("testRunner.setPageVisibility('hidden')");
+                setTimeout(checkState, 100);
+                state = "background";
+                consoleWrite("");
+            }
+
+            function canplaythrough(evt)
+            {
+                consoleWrite("");
+                run("video.play()");
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('playing', playing);
+
+                run("internals.setMediaSessionRestrictions('video', 'BackgroundTabPlaybackRestricted')");
+                state = "foreground";
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+        <p>Test tab with &lt;video&gt; moving to background when playback is not allowed in background.</p>
+    </body>
+</html>
