@@ -1,3 +1,9 @@
+2015-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make Windows green again after r180654.
+
+        * platform/win/TestExpectations:
+
 2015-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update fast/regions/region-overflow-break.html after r177774

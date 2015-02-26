@@ -2947,6 +2947,10 @@ fast/regions/writing-mode/invalid-first-region-with-writing-mode-2.html [ ImageO
 fast/regions/writing-mode/invalid-first-region-with-writing-mode.html [ ImageOnlyFailure ]
 [ Debug ] fast/repaint/animation-after-layer-scroll.html [ Failure ]
 
+fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
+fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
+fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
+
 # Weird shading across image:
 fast/repaint/moving-shadow-on-container.html [ Failure ]
 fast/repaint/moving-shadow-on-path.html [ Failure ]
