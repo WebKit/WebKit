@@ -147,8 +147,10 @@ DebuggerScope* DebuggerCallFrame::scope()
         CodeBlock* codeBlock = m_callFrame->codeBlock();
         if (codeBlock && codeBlock->scopeRegister().isValid())
             scope = m_callFrame->scope(codeBlock->scopeRegister().offset());
+        else if (JSCallee* callee = jsDynamicCast<JSCallee*>(m_callFrame->callee()))
+            scope = callee->scope();
         else
-            scope = jsCast<JSCallee*>(m_callFrame->callee())->scope();
+            scope = m_callFrame->lexicalGlobalObject();
 
         m_scope.set(vm, DebuggerScope::create(vm, scope));
     }
