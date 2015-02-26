@@ -247,8 +247,8 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [m_liveSwipeViewClippingView setClipsToBounds:YES];
 
     [m_liveSwipeView.superview insertSubview:m_transitionContainerView.get() belowSubview:m_liveSwipeView];
-    [m_liveSwipeViewClippingView addSubview:m_liveSwipeView];
     [m_transitionContainerView addSubview:m_liveSwipeViewClippingView.get()];
+    [m_liveSwipeViewClippingView addSubview:m_liveSwipeView];
 
     RetainPtr<UIViewController> targettedViewController = adoptNS([[UIViewController alloc] init]);
     [targettedViewController setView:m_liveSwipeViewClippingView.get()];

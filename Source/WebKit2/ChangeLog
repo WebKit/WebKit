@@ -1,5 +1,20 @@
 2015-02-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179904
+
+    2015-02-10  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/19770264> Starting a navigation gesture dismisses the keyboard
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture): Reordered the view hierarchy changes,
+            such that m_liveSwipeView will not momentarily move out of the window, because that causes
+            the window’s first responder to be set to nil (if it was a descendant of m_liveSwipView).
+
+2015-02-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179480
 
     2015-02-02  Jeremy Jones  <jeremyj@apple.com>
