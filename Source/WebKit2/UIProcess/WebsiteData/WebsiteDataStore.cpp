@@ -233,7 +233,6 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(WebsiteDataTy
     return processAccessType;
 }
 
-
 void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
     struct CallbackAggregator : public RefCounted<CallbackAggregator> {
@@ -326,6 +325,75 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         m_storageManager->deleteLocalStorageOriginsModifiedSince(modifiedSince, [callbackAggregator] {
             callbackAggregator->removePendingCallback();
         });
+    }
+
+    // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
+    callbackAggregator->callIfNeeded();
+}
+
+void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<WebsiteDataRecord>& dataRecords, std::function<void ()> completionHandler)
+{
+    struct CallbackAggregator : public RefCounted<CallbackAggregator> {
+        explicit CallbackAggregator (std::function<void ()> completionHandler)
+            : completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        void addPendingCallback()
+        {
+            pendingCallbacks++;
+        }
+
+        void removePendingCallback()
+        {
+            ASSERT(pendingCallbacks);
+            --pendingCallbacks;
+
+            callIfNeeded();
+        }
+
+        void callIfNeeded()
+        {
+            if (!pendingCallbacks)
+                RunLoop::main().dispatch(WTF::move(completionHandler));
+        }
+
+        unsigned pendingCallbacks = 0;
+        std::function<void ()> completionHandler;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+
+    auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, isNonPersistent());
+    if (webProcessAccessType != ProcessAccessType::None) {
+        for (auto& process : processes()) {
+            switch (webProcessAccessType) {
+            case ProcessAccessType::OnlyIfLaunched:
+                if (!process->canSendMessage())
+                    continue;
+                break;
+
+            case ProcessAccessType::Launch:
+                // FIXME: Handle this.
+                ASSERT_NOT_REACHED();
+                break;
+
+            case ProcessAccessType::None:
+                ASSERT_NOT_REACHED();
+            }
+
+            callbackAggregator->addPendingCallback();
+            Vector<RefPtr<WebCore::SecurityOrigin>> origins;
+
+            for (const auto& dataRecord : dataRecords) {
+                for (auto& origin : dataRecord.origins)
+                    origins.append(origin);
+            }
+
+            process->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        }
     }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.

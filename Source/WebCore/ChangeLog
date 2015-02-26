@@ -1,3 +1,14 @@
+2015-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Add API to remove all website data for the given data records
+        https://bugs.webkit.org/show_bug.cgi?id=142060
+
+        Reviewed by Beth Dakin.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeResourcesWithOrigins):
+        New function that removes all resources that match the set of origins in a given session.
+
 2015-02-26  Chris Dumez  <cdumez@apple.com>
 
         Rename DatabaseManager::manager() to DatabaseManager::singleton()

@@ -147,6 +147,7 @@ public:
 
     typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
     WEBCORE_EXPORT void removeResourcesWithOrigin(SecurityOrigin&);
+    WEBCORE_EXPORT void removeResourcesWithOrigins(SessionID, const HashSet<RefPtr<SecurityOrigin>>&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
     WEBCORE_EXPORT HashSet<RefPtr<SecurityOrigin>> originsWithCache(SessionID) const;
 

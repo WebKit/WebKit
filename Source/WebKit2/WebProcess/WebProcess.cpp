@@ -1160,9 +1160,15 @@ void WebProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataType
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDeleteWebsiteData(callbackID), 0);
 }
 
-void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, uint64_t websiteDataTypes, const Vector<WebKit::SecurityOriginData>& origins, uint64_t callbackID)
+void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, uint64_t websiteDataTypes, const Vector<WebKit::SecurityOriginData>& originDatas, uint64_t callbackID)
 {
-    // FIXME: Actually delete something here.
+    if (websiteDataTypes & WebsiteDataTypeMemoryCache) {
+        HashSet<RefPtr<SecurityOrigin>> origins;
+        for (auto& originData : originDatas)
+            origins.add(originData.securityOrigin());
+
+        MemoryCache::singleton().removeResourcesWithOrigins(sessionID, origins);
+    }
 
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
 }

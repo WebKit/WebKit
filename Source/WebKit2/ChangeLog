@@ -1,3 +1,32 @@
+2015-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Add API to remove all website data for the given data records
+        https://bugs.webkit.org/show_bug.cgi?id=142060
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        Add new method declaration.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataRecords):
+        Add a helper function that converts an NSArray of _WKWebsiteDataRecords to a Vector of WebsiteDataRecords.
+
+        (-[_WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:]):
+        Call through to the underlying WebsiteDataStore.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        Figure out which processes to call deleteWebsiteDataForOrigins for and do so. Add a callback aggregator so we can
+        call the completion handler at the right time.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Add new members.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteDataForOrigins):
+        Use the newly added MemoryCache member function to delete all resources matching the set of origins.
+
 2015-02-26  Chris Dumez  <cdumez@apple.com>
 
         Rename DatabaseManager::manager() to DatabaseManager::singleton()

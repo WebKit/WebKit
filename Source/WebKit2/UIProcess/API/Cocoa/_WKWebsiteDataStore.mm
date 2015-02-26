@@ -90,6 +90,26 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
     });
 }
 
+static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecords)
+{
+    Vector<WebKit::WebsiteDataRecord> result;
+
+    for (_WKWebsiteDataRecord *dataRecord in dataRecords)
+        result.append(dataRecord->_websiteDataRecord->websiteDataRecord());
+
+    return result;
+}
+
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)())completionHandler
+{
+    auto completionHandlerCopy = Block_copy(completionHandler);
+
+    _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(websiteDataTypes), toWebsiteDataRecords(dataRecords), [completionHandlerCopy] {
+        completionHandlerCopy();
+        Block_release(completionHandlerCopy);
+    });
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
