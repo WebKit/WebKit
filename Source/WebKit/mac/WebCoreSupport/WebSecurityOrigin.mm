@@ -179,17 +179,17 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseManager::manager().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseManager::singleton().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseManager::manager().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseManager::singleton().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseManager::manager().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
+    DatabaseManager::singleton().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
 }
 
 @end

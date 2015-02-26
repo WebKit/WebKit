@@ -51,8 +51,9 @@ class ScriptExecutionContext;
 
 class DatabaseManager {
     WTF_MAKE_NONCOPYABLE(DatabaseManager); WTF_MAKE_FAST_ALLOCATED;
+    friend class WTF::NeverDestroyed<DatabaseManager>;
 public:
-    WEBCORE_EXPORT static DatabaseManager& manager();
+    WEBCORE_EXPORT static DatabaseManager& singleton();
 
     WEBCORE_EXPORT void initialize(const String& databasePath);
     WEBCORE_EXPORT void setClient(DatabaseManagerClient*);
@@ -121,7 +122,7 @@ private:
     };
 
     DatabaseManager();
-    ~DatabaseManager() { }
+    ~DatabaseManager() = delete;
 
     // This gets a DatabaseContext for the specified ScriptExecutionContext if
     // it already exist previously. Otherwise, it returns 0.

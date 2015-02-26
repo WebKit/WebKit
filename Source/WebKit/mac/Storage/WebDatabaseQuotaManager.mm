@@ -49,12 +49,12 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseManager::manager().usageForOrigin([_origin _core]);
+    return DatabaseManager::singleton().usageForOrigin([_origin _core]);
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseManager::manager().quotaForOrigin([_origin _core]);
+    return DatabaseManager::singleton().quotaForOrigin([_origin _core]);
 }
 
 // If the quota is set to a value lower than the current usage, that quota will
@@ -62,7 +62,7 @@ using namespace WebCore;
 // prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseManager::manager().setQuota([_origin _core], quota);
+    DatabaseManager::singleton().setQuota([_origin _core], quota);
 }
 
 @end

@@ -1,3 +1,34 @@
+2015-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Rename DatabaseManager::manager() to DatabaseManager::singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=142054
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename DatabaseManager::manager() to DatabaseManager::singleton() as
+        per coding style and use WTF::NeverDestroyed.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager init]):
+        (-[WebDatabaseManager origins]):
+        (-[WebDatabaseManager databasesWithOrigin:]):
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]):
+        (-[WebDatabaseManager deleteAllDatabases]):
+        (-[WebDatabaseManager deleteOrigin:]):
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]):
+        * Storage/WebDatabaseQuotaManager.mm:
+        (-[WebDatabaseQuotaManager usage]):
+        (-[WebDatabaseQuotaManager quota]):
+        (-[WebDatabaseQuotaManager setQuota:]):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin usage]):
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] [iOS] Parsing support for -apple-trailing-word

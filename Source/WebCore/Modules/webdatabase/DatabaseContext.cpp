@@ -110,9 +110,10 @@ DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
 
     // For debug accounting only. We must do this before we register the
     // instance. The assertions assume this.
-    DatabaseManager::manager().didConstructDatabaseContext();
+    auto& databaseManager = DatabaseManager::singleton();
+    databaseManager.didConstructDatabaseContext();
 
-    DatabaseManager::manager().registerDatabaseContext(this);
+    databaseManager.registerDatabaseContext(this);
 }
 
 DatabaseContext::~DatabaseContext()
@@ -122,7 +123,7 @@ DatabaseContext::~DatabaseContext()
 
     // For debug accounting only. We must call this last. The assertions assume
     // this.
-    DatabaseManager::manager().didDestructDatabaseContext();
+    DatabaseManager::singleton().didDestructDatabaseContext();
 }
 
 // This is called if the associated ScriptExecutionContext is destroyed while
@@ -185,7 +186,7 @@ void DatabaseContext::setPaused(bool paused)
 bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
 {
     if (m_isRegistered) {
-        DatabaseManager::manager().unregisterDatabaseContext(this);
+        DatabaseManager::singleton().unregisterDatabaseContext(this);
         m_isRegistered = false;
     }
 
@@ -231,7 +232,7 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
     ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
     // FIXME: This needs a real implementation; this is a temporary solution for testing.
     const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    DatabaseManager::manager().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
+    DatabaseManager::singleton().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
 }
 
 SecurityOrigin* DatabaseContext::securityOrigin() const

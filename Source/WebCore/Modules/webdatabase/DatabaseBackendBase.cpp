@@ -229,7 +229,7 @@ DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseContext> databaseCon
         hashSet->add(this);
     }
 
-    m_filename = DatabaseManager::manager().fullPathForDatabase(securityOrigin(), m_name);
+    m_filename = DatabaseManager::singleton().fullPathForDatabase(securityOrigin(), m_name);
 }
 
 DatabaseBackendBase::~DatabaseBackendBase()

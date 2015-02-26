@@ -488,7 +488,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         doc->setReadyState(Document::Complete);
 
         // FIXME: Should the DatabaseManager watch for something like ActiveDOMObject::stop() rather than being special-cased here?
-        DatabaseManager::manager().stopDatabases(doc, 0);
+        DatabaseManager::singleton().stopDatabases(doc, 0);
     }
 
     // FIXME: This will cancel redirection timer, which really needs to be restarted when restoring the frame from b/f cache.

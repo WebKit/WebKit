@@ -126,7 +126,7 @@ HRESULT WebSecurityOrigin::usage(/* [retval][out] */ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseManager::manager().usageForOrigin(m_securityOrigin.get());
+    *result = DatabaseManager::singleton().usageForOrigin(m_securityOrigin.get());
 
     return S_OK;
 }
@@ -136,13 +136,13 @@ HRESULT WebSecurityOrigin::quota(/* [retval][out] */ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseManager::manager().quotaForOrigin(m_securityOrigin.get());
+    *result = DatabaseManager::singleton().quotaForOrigin(m_securityOrigin.get());
     return S_OK;
 }
         
 HRESULT WebSecurityOrigin::setQuota(/* [in] */ unsigned long long quota) 
 {
-    DatabaseManager::manager().setQuota(m_securityOrigin.get(), quota);
+    DatabaseManager::singleton().setQuota(m_securityOrigin.get(), quota);
 
     return S_OK;
 }

@@ -689,7 +689,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
-    DatabaseManager& dbManager = DatabaseManager::manager();
+    DatabaseManager& dbManager = DatabaseManager::singleton();
     uint64_t currentQuota = dbManager.quotaForOrigin(origin);
     uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
     uint64_t newQuota = 0;

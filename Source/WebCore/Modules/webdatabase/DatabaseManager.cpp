@@ -41,6 +41,7 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -57,15 +58,10 @@ DatabaseManager::ProposedDatabase::~ProposedDatabase()
     m_manager.removeProposedDatabase(this);
 }
 
-DatabaseManager& DatabaseManager::manager()
+DatabaseManager& DatabaseManager::singleton()
 {
-    static DatabaseManager* dbManager = 0;
-    // FIXME: The following is vulnerable to a race between threads. Need to
-    // implement a thread safe on-first-use static initializer.
-    if (!dbManager)
-        dbManager = new DatabaseManager();
-
-    return *dbManager;
+    static NeverDestroyed<DatabaseManager> instance;
+    return instance;
 }
 
 DatabaseManager::DatabaseManager()

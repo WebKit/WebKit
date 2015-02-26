@@ -53,8 +53,9 @@ WebDatabaseManager::WebDatabaseManager(WebProcess* process)
 
 void WebDatabaseManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    DatabaseManager::manager().initialize(parameters.webSQLDatabaseDirectory);
-    DatabaseManager::manager().setClient(this);
+    auto& databaseManager = DatabaseManager::singleton();
+    databaseManager.initialize(parameters.webSQLDatabaseDirectory);
+    databaseManager.setClient(this);
 }
 
 void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
@@ -63,8 +64,9 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
     // to get both the origins and the Vector of DatabaseDetails for each origin in one
     // shot.  That would avoid taking the numerous locks this requires.
 
+    auto& databaseManager = DatabaseManager::singleton();
     Vector<RefPtr<SecurityOrigin>> origins;
-    DatabaseManager::manager().origins(origins);
+    databaseManager.origins(origins);
 
     Vector<OriginAndDatabases> originAndDatabasesVector;
     originAndDatabasesVector.reserveInitialCapacity(origins.size());
@@ -73,13 +75,13 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
         OriginAndDatabases originAndDatabases;
 
         Vector<String> nameVector;
-        if (!DatabaseManager::manager().databaseNamesForOrigin(origins[i].get(), nameVector))
+        if (!databaseManager.databaseNamesForOrigin(origins[i].get(), nameVector))
             continue;
 
         Vector<DatabaseDetails> detailsVector;
         detailsVector.reserveInitialCapacity(nameVector.size());
         for (size_t j = 0; j < nameVector.size(); j++) {
-            DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(nameVector[j], origins[i].get());
+            DatabaseDetails details = databaseManager.detailsForNameAndOrigin(nameVector[j], origins[i].get());
             if (details.name().isNull())
                 continue;
 
@@ -90,8 +92,8 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
             continue;
 
         originAndDatabases.originIdentifier = origins[i]->databaseIdentifier();
-        originAndDatabases.originQuota = DatabaseManager::manager().quotaForOrigin(origins[i].get());
-        originAndDatabases.originUsage = DatabaseManager::manager().usageForOrigin(origins[i].get());
+        originAndDatabases.originQuota = databaseManager.quotaForOrigin(origins[i].get());
+        originAndDatabases.originUsage = databaseManager.usageForOrigin(origins[i].get());
         originAndDatabases.databases.swap(detailsVector); 
         originAndDatabasesVector.append(originAndDatabases);
     }
@@ -102,7 +104,7 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
 void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
 {
     Vector<RefPtr<SecurityOrigin>> origins;
-    DatabaseManager::manager().origins(origins);
+    DatabaseManager::singleton().origins(origins);
 
     size_t numOrigins = origins.size();
 
@@ -118,7 +120,7 @@ void WebDatabaseManager::deleteDatabaseWithNameForOrigin(const String& databaseI
     if (!origin)
         return;
 
-    DatabaseManager::manager().deleteDatabase(origin.get(), databaseIdentifier);
+    DatabaseManager::singleton().deleteDatabase(origin.get(), databaseIdentifier);
 }
 
 void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier) const
@@ -127,12 +129,12 @@ void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier
     if (!origin)
         return;
 
-    DatabaseManager::manager().deleteOrigin(origin.get());
+    DatabaseManager::singleton().deleteOrigin(origin.get());
 }
 
 void WebDatabaseManager::deleteAllDatabases() const
 {
-    DatabaseManager::manager().deleteAllDatabases();
+    DatabaseManager::singleton().deleteAllDatabases();
 }
 
 void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const
@@ -145,7 +147,7 @@ void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsig
     if (!origin)
         return;
 
-    DatabaseManager::manager().setQuota(origin.get(), quota);
+    DatabaseManager::singleton().setQuota(origin.get(), quota);
 }
 
 void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)

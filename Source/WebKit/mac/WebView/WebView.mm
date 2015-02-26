@@ -2363,7 +2363,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setQTKitEnabled([preferences isQTKitEnabled]);
 #endif // PLATFORM(MAC)
 
-    DatabaseManager::manager().setIsAvailable([preferences databasesEnabled]);
+    DatabaseManager::singleton().setIsAvailable([preferences databasesEnabled]);
 
 #if ENABLE(MEDIA_SOURCE)
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);

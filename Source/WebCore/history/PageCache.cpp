@@ -153,7 +153,7 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
     }
-    if (DatabaseManager::manager().hasOpenDatabases(frame.document())) {
+    if (DatabaseManager::singleton().hasOpenDatabases(frame.document())) {
         PCLOG("   -Frame has open database handles");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::hasOpenDatabasesKey());
         rejectReasons |= 1 << HasDatabaseHandles;
@@ -319,7 +319,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame.page()->settings().pageCacheSupportsPlugins())
         && !(frame.isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
-        && !DatabaseManager::manager().hasOpenDatabases(document)
+        && !DatabaseManager::singleton().hasOpenDatabases(document)
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()

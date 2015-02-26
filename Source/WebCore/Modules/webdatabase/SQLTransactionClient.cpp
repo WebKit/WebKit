@@ -49,9 +49,10 @@ void SQLTransactionClient::didCommitWriteTransaction(DatabaseBackendBase* databa
 bool SQLTransactionClient::didExceedQuota(DatabaseBackendBase* database)
 {
     ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
-    unsigned long long currentQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
+    auto& databaseManager = DatabaseManager::singleton();
+    unsigned long long currentQuota = databaseManager.quotaForOrigin(database->securityOrigin());
     database->databaseContext()->databaseExceededQuota(database->stringIdentifier(), database->details());
-    unsigned long long newQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
+    unsigned long long newQuota = databaseManager.quotaForOrigin(database->securityOrigin());
     return (newQuota > currentQuota);
 }
 

@@ -1,3 +1,35 @@
+2015-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Rename DatabaseManager::manager() to DatabaseManager::singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=142054
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename DatabaseManager::manager() to DatabaseManager::singleton() as
+        per coding style and use WTF::NeverDestroyed.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::DatabaseContext):
+        (WebCore::DatabaseContext::~DatabaseContext):
+        (WebCore::DatabaseContext::stopDatabases):
+        (WebCore::DatabaseContext::databaseExceededQuota):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::singleton):
+        (WebCore::DatabaseManager::manager): Deleted.
+        * Modules/webdatabase/DatabaseManager.h:
+        (WebCore::DatabaseManager::~DatabaseManager): Deleted.
+        * Modules/webdatabase/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didExceedQuota):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(GEOLOCATION) build after r180533

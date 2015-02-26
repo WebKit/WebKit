@@ -201,7 +201,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::sharedWebDatabaseManager(
 {
     if (!s_sharedWebDatabaseManager) {
         s_sharedWebDatabaseManager.adoptRef(WebDatabaseManager::createInstance());
-        DatabaseManager::manager().setClient(s_sharedWebDatabaseManager.get());
+        DatabaseManager::singleton().setClient(s_sharedWebDatabaseManager.get());
     }
 
     return s_sharedWebDatabaseManager.copyRefTo(result);
@@ -219,7 +219,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins(
         return E_FAIL;
 
     Vector<RefPtr<SecurityOrigin> > origins;
-    DatabaseManager::manager().origins(origins);
+    DatabaseManager::singleton().origins(origins);
         COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin> > > > enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin> > >::adopt(origins));
 
     *result = enumVariant.leakRef();
@@ -243,7 +243,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
         return E_FAIL;
 
     Vector<String> databaseNames;
-    DatabaseManager::manager().databaseNamesForOrigin(webSecurityOrigin->securityOrigin(), databaseNames);
+    DatabaseManager::singleton().databaseNamesForOrigin(webSecurityOrigin->securityOrigin(), databaseNames);
 
     COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
 
@@ -268,7 +268,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabase(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
+    DatabaseDetails details = DatabaseManager::singleton().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
         webSecurityOrigin->securityOrigin());
 
     if (details.name().isNull())
@@ -283,7 +283,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::manager().deleteAllDatabases();
+    DatabaseManager::singleton().deleteAllDatabases();
 
     return S_OK;
 }
@@ -301,7 +301,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteOrigin(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseManager::manager().deleteOrigin(webSecurityOrigin->securityOrigin());
+    DatabaseManager::singleton().deleteOrigin(webSecurityOrigin->securityOrigin());
 
     return S_OK;
 }
@@ -323,7 +323,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabase(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseManager::manager().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
+    DatabaseManager::singleton().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
 
     return S_OK;
 }
@@ -380,7 +380,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::setQuota(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::manager().setQuota(SecurityOrigin::createFromString(origin).ptr(), quota);
+    DatabaseManager::singleton().setQuota(SecurityOrigin::createFromString(origin).ptr(), quota);
 
     return S_OK;
 }
@@ -421,7 +421,7 @@ void WebKitInitializeWebDatabasesIfNecessary()
     if (initialized)
         return;
 
-    WebCore::DatabaseManager::manager().initialize(databasesDirectory());
+    WebCore::DatabaseManager::singleton().initialize(databasesDirectory());
 
     initialized = true;
 }
