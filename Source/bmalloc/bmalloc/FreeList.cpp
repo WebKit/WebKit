@@ -107,4 +107,28 @@ LargeObject FreeList::take(size_t alignment, size_t size, size_t unalignedSize)
     return first;
 }
 
+void FreeList::removeInvalidAndDuplicateEntries()
+{
+    for (size_t i = m_vector.size(); i-- > 0; ) {
+        LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
+        if (!largeObject.isValidAndFree(m_vector[i].size())) {
+            m_vector.pop(i);
+            continue;
+        }
+        
+        largeObject.setMarked(false);
+    }
+
+    for (size_t i = m_vector.size(); i-- > 0; ) {
+        LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
+        if (largeObject.isMarked()) {
+            m_vector.pop(i);
+            continue;
+        }
+
+        largeObject.setMarked(true);
+    }
+}
+
+
 } // namespace bmalloc

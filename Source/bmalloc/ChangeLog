@@ -1,3 +1,49 @@
+2015-02-26  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Large object free list can grow infinitely
+        https://bugs.webkit.org/show_bug.cgi?id=142055
+
+        Reviewed by Andreas Kling.
+
+        By design, we don't eagerly remove large objects from the free list.
+        This creates two simple pathologies:
+
+            (1) If you free and then allocate the same object repeatedly, it will
+            duplicate itself in the free list repeatedly. Since it is never
+            invalid at the time of allocation, it will never be removed.
+
+            (2) If you split and then merge the same object repeatedly, it will
+            duplicate its split sibling in the free list repeatedly. If its
+            sibling is in a separate free list size class, it will never be
+            consulted at the time of allocation, so it will never be removed.
+
+        So, a simple "while (1) { free(malloc(x)); }" causes infinite memory
+        use in the free list.
+
+        The solution in this patch is a simple helper to remove garbage from the
+        free list if it grows too large. This pathology is not common, so the
+        cost is OK.
+
+        Long-term, perhaps we should rethink the laziness of these free lists.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::isMarked):
+        (bmalloc::BoundaryTag::setMarked): New bit, used by free list GC.
+
+        * bmalloc/FreeList.cpp:
+        (bmalloc::FreeList::removeInvalidAndDuplicateEntries): The GC algorithm.
+
+        * bmalloc/FreeList.h:
+        (bmalloc::FreeList::FreeList):
+        (bmalloc::FreeList::push): Invoke the GC if we're getting huge.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::isMarked):
+        (bmalloc::LargeObject::setMarked):
+        (bmalloc::LargeObject::validateSelf): Expose the new bit.
+
+        * bmalloc/Sizes.h: New constant to control GC frequency.
+
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r180693.

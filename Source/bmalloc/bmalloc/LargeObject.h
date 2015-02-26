@@ -55,6 +55,9 @@ public:
     bool hasPhysicalPages() const;
     void setHasPhysicalPages(bool) const;
     
+    bool isMarked() const;
+    void setMarked(bool) const;
+    
     bool isValidAndFree(size_t) const;
 
     LargeObject merge() const;
@@ -124,6 +127,19 @@ inline void LargeObject::setHasPhysicalPages(bool hasPhysicalPages) const
     validate();
     m_beginTag->setHasPhysicalPages(hasPhysicalPages);
     m_endTag->setHasPhysicalPages(hasPhysicalPages);
+}
+
+inline bool LargeObject::isMarked() const
+{
+    validate();
+    return m_beginTag->isMarked();
+}
+
+inline void LargeObject::setMarked(bool isMarked) const
+{
+    validate();
+    m_beginTag->setMarked(isMarked);
+    m_endTag->setMarked(isMarked);
 }
 
 inline bool LargeObject::isValidAndFree(size_t expectedSize) const
@@ -223,6 +239,7 @@ inline void LargeObject::validateSelf() const
     BASSERT(m_beginTag->size() == m_endTag->size());
     BASSERT(m_beginTag->isFree() == m_endTag->isFree());
     BASSERT(m_beginTag->hasPhysicalPages() == m_endTag->hasPhysicalPages());
+    BASSERT(m_beginTag->isMarked() == m_endTag->isMarked());
 }
 
 inline void LargeObject::validate() const
