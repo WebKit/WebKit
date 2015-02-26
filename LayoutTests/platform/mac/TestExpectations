@@ -1227,7 +1227,6 @@ webkit.org/b/139968 fast/multicol/newmulticol/breaks-3-columns-3.html [ ImageOnl
 webkit.org/b/139968 fast/regions/last-region-border-radius.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/table/td-width-fifty-percent-regression.html [ ImageOnlyFailure ]

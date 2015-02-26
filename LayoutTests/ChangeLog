@@ -1,5 +1,14 @@
 2015-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update fast/regions/region-overflow-break.html after r177774
+
+        Unreviewed.
+
+        * fast/regions/region-overflow-break-expected.html:
+        * platform/mac/TestExpectations:
+
+2015-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update 3 more tests after r177774
 
         Unreviewed.
