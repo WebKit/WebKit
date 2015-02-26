@@ -1159,7 +1159,8 @@ webkit.org/b/23925 editing/selection/extend-selection-bidi.html [ Failure ]
 # <rdar://5508270> Intermittently time out
 [ Release ] editing/selection/5057506-2.html [ Pass Timeout ]
 [ Debug ] editing/selection/5057506-2.html [ Skip ] # Crashing
-editing/selection/5057506.html [ Failure Timeout ]
+[ Release ] editing/selection/5057506.html [ Failure Timeout ]
+[ Debug ] editing/selection/5057506.html [ Skip ] # Debug Assertion
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 editing/selection/drag-in-iframe.html [ Skip ]
 # These test fail due to 'notifyDone' not being executed.
@@ -2445,22 +2446,30 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ Skip ] # Crashing
 [ Debug ] editing/pasteboard/undoable-fragment-removes.html [ Skip ] # Crashing
 [ Debug ] editing/pasteboard/unrendered-br.html [ Skip ] # Crashing
+[ Debug ] editing/pasteboard/copy-image-with-alt-text.html [ Skip ] # Debug Assertion
 [ Debug ] editing/selection/5007143-2.html [ Skip ] # Crashing
 [ Debug ] editing/selection/5007143.html [ Skip ] # Crashing
 [ Debug ] editing/selection/6476.html [ Skip ] # Crashing
+[ Debug ] editing/selection/7152-1.html [ Skip ] # Debug Assertion
 [ Debug ] editing/selection/focus_editable_html.html [ Skip ] # Crashing
+[ Debug ] editing/selection/getRangeAt.html [ Skip ] # Debug Assertion
 [ Debug ] editing/selection/select-all-textarea.html [ Skip ] # Crashing
+[ Debug ] editing/selection/select-all-user-select-none.html [ Skip ] # Debug Assertion
 [ Debug ] fast/dom/adopt-node-crash.html [ Skip ] # Crashing
 [ Debug ] fast/dom/adopt-node-prevented.html [ Skip ] # Crashing
 [ Debug ] fast/dom/allowed-children.html [ Skip ] # Crashing
+[ Debug ] fast/dom/anchor-backslash.html [ Skip ] # Debug Assertion
 [ Debug ] fast/dom/htmlallcollection-detached-node-children.html [ Skip ] # Crashing
 [ Debug ] fast/dom/htmlallcollection-reachable.html [ Skip ] # Crashing
+[ Debug ] fast/dom/htmlcollection-children-mutation.html [ Skip ] # Debug Assertion
 [ Debug ] fast/dom/HTMLAnchorElement/get-href-attribute-port.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLAnchorElement/remove-rel-attribute.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-hash.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLAnchorElement/set-href-attribute-host.html [ Skip ] # Debug Assertion
 [ Debug ] fast/dom/HTMLDocument/document-all.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLDocument/document-open-return-value.html [ Skip ] # Crashing
 [ Debug ] fast/dom/HTMLDocument/document-plugins.html [ Skip ] # Crashing
+[ Debug ] fast/dom/HTMLDocument/document-special-properties.html [ Skip ] # Debug Assertion
 [ Debug ] fast/dom/htmlcollection-backwards-subtree-iteration.html [ Skip ] # Crashing
 [ Debug ] fast/events/autoscroll-in-textarea.html [ Skip ]
 [ Debug ] fast/events/autoscroll-in-textfield.html [ Skip ]
@@ -2474,61 +2483,72 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/events/before-unload-adopt-within-subframes.html [ Skip ] # Crashing
 [ Debug ] fast/events/before-unload-forbidden-navigation.html [ Skip ] # Crashing
 [ Debug ] fast/events/before-unload-in-multiple-subframes.html [ Skip ] # Crashing
+[ Debug ] fast/events/before-unload-in-subframe.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/change-overflow-on-overflow-change.html [ Skip ]
 [ Debug ] fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
 [ Debug ] fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Skip ] # Crashing
 [ Debug ] fast/events/clear-drag-state.html [ Skip ] # Crashing
 [ Debug ] fast/events/clear-edit-drag-state.html [ Skip ] # Crashing
 [ Debug ] fast/events/click-count.html [ Skip ] # Crashing
+[ Debug ] fast/events/click-focus-anchor.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/drag-parent-node.html [ Skip ]
 [ Debug ] fast/events/drag-selects-image.html [ Skip ]
 [ Debug ] fast/events/drag-text-with-clear.html [ Skip ] # Crashing
 [ Debug ] fast/events/dropzone-001.html [ Skip ] # Crashing
 [ Debug ] fast/events/dropzone-002.html [ Skip ] # Crashing
 [ Debug ] fast/events/dropzone-003.html [ Skip ] # Crashing
+[ Debug ] fast/events/dropzone-005.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/gc-freeze-with-attribute-listeners.html [ Skip ]
 [ Debug ] fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 [ Debug ] fast/events/iframe-object-onload.html [ Skip ] # Crashing
 [ Debug ] fast/events/iframe-onmousemove.html [ Skip ] # Crashing
 [ Debug ] fast/events/imagemap-norender-crash.html [ Skip ] # Crashing
 [ Debug ] fast/events/ime-composition-events-001.html [ Skip ] # Crashing
+[ Debug ] fast/events/init-event-after-dispatch.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/keydown-keypress-focus-change.html [ Skip ] # Crashing
+[ Debug ] fast/events/keydown-keypress-preventDefault.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/keypress-insert-tab.html [ Skip ]
 [ Debug ] fast/events/keypress-removed-node.html [ Skip ]
 [ Debug ] fast/events/label-focus.html [ Skip ] # Crashing
 [ Debug ] fast/events/media-element-focus-tab.html [ Skip ] # Crashing
 [ Debug ] fast/events/media-focus-in-standalone-media-document.html [ Skip ] # Crashing
 [ Debug ] fast/events/menu-keydown-on-hidden-element.html [ Skip ] # Crashing
+[ Debug ] fast/events/message-channel-gc-2.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/mousedown_in_scrollbar.html [ Skip ]
 [ Debug ] fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Skip ]
 [ Debug ] fast/events/mouseenter-mouseleave-capture.html [ Skip ] # Crashing
 [ Debug ] fast/events/mouseenter-mouseleave.html [ Skip ] # Crashing
 [ Debug ] fast/events/mouseenterleave-on-subframe.html [ Skip ] # Crashing
 [ Debug ] fast/events/mousemove-after-drag-over-scrollbar.html [ Skip ] # Crashing
+[ Debug ] fast/events/mouseout-dead-node.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/onblur-remove.html [ Skip ]
 [ Debug ] fast/events/onchange-click-hang.html [ Skip ]
 [ Debug ] fast/events/onchange-passwordfield.html [ Skip ] # Crashing
 [ Debug ] fast/events/onchange-range-slider.html [ Skip ] # Crashing
 [ Debug ] fast/events/onchange-searchfield.html [ Skip ] # Crashing
 [ Debug ] fast/events/onchange-select-popup.html [ Skip ] # Crashing
+[ Debug ] fast/events/onchange-setvalue.html [ Skip ] # Debug Assertion
 [ Debug ] fast/events/page-scaled-mouse-click.html [ Skip ]
 [ Debug ] fast/events/page-visibility-null-view.html [ Skip ]
 [ Debug ] fast/events/pagehide-timeout.html [ Skip ] # Crashing
 [ Debug ] fast/events/pagehide-xhr-open.html [ Skip ] # Crashing
 [ Debug ] fast/events/pageshow-pagehide-on-back-cached.html [ Skip ] # Crashing
 [ Debug ] fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Skip ] # Crashing
+[ Debug ] fast/events/pageshow-pagehide.html [ Skip ] # Debug Assertion
 [ Debug ] fast/forms/autofocus-input-css-style-change.html [ Skip ]
 [ Debug ] fast/forms/autofocus-keygen.html [ Skip ]
 [ Debug ] fast/forms/autofocus-opera-001.html [ Skip ] # Crashing
 [ Debug ] fast/forms/autofocus-opera-002.html [ Skip ] # Crashing
 [ Debug ] fast/forms/autofocus-opera-003.html [ Skip ] # Crashing
 [ Debug ] fast/forms/autofocus-opera-004.html [ Skip ] # Crashing
+[ Debug ] fast/forms/autofocus-opera-005.html [ Skip ] # Debug Assertion
 [ Debug ] fast/forms/number/number-stepup-stepdown-from-renderer.html [ Skip ]
 [ Debug ] fast/forms/number/number-type-update-by-change-event.html [ Skip ]
 [ Debug ] fast/forms/number/number-validity-badinput.html [ Skip ] # Crashing
 [ Debug ] fast/forms/number/number-validation-message.html [ Skip ] # Crashing
 [ Debug ] fast/forms/number/number-validity-rangeoverflow.html [ Skip ] # Crashing
 [ Debug ] fast/forms/number/number-validity-stepmismatch.html [ Skip ] # Crashing
+[ Debug ] fast/forms/number/number-validity-typemismatch.html [ Skip ] # Debug Assertion
 [ Debug ] fast/frames/flattening/iframe-flattening-simple.html [ Skip ]
 [ Debug ] fast/frames/flattening/iframe-tiny.html [ Skip ] # Crashing
 [ Debug ] fast/frames/flattening/scrollable-flexbox-inside-iframe-with-zero-height-and-needs-full-repaint-crash.html [ Skip ] # Crashing
@@ -2542,18 +2562,22 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/frames/frame-length-fractional.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-limit.html [ Skip ] # Crashing
 [ Debug ] fast/frames/frame-name-reset.html [ Skip ] # Crashing
+[ Debug ] fast/frames/frame-programmatic-noresize.html [ Skip ] # Debug Assertion
 [ Debug ] fast/frames/iframe-with-frameborder.html [ Skip ]
 [ Debug ] fast/frames/inline-object-inside-frameset.html [ Skip ]
 [ Debug ] fast/frames/invalid-frameset-compute-edge.html [ Skip ] # Crashing
 [ Debug ] fast/frames/invalid-frameset.html [ Skip ] # Crashing
 [ Debug ] fast/frames/invalid.html [ Skip ] # Crashing
 [ Debug ] fast/frames/javascript-url-as-framesrc-crash.html [ Skip ] # Crashing
+[ Debug ] fast/frames/javascript-url-for-deleted-frame.html [ Skip ] # Debug Assertion
+[ Debug ] fast/frames/srcdoc/reloading-a-srcdoc-document-loads-it-again.html [ Skip ] # Debug Assertion
 [ Debug ] fast/history/form-submit-in-frame.html [ Skip ]
 [ Debug ] fast/history/forward-during-load.html [ Skip ]
 [ Debug ] fast/history/gesture-before-onload-form-submit.html [ Skip ] # Crashing
 [ Debug ] fast/history/gesture-before-onload-location-href.html [ Skip ] # Crashing
 [ Debug ] fast/history/go-back-to-changed-name.html [ Skip ] # Crashing
 [ Debug ] fast/history/history-back-forward-within-subframe-hash.html [ Skip ] # Crashing
+[ Debug ] fast/history/history-back-twice-with-subframes-assert.html [ Skip ] # Debug Assertion
 [ Debug ] fast/images/animated-gif-webkit-transform.html [ Skip ]
 [ Debug ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ]
 [ Debug ] fast/line-grid/line-align-left-edges.html [ Skip ]
@@ -2562,16 +2586,19 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/line-grid/line-grid-contains-value.html [ Skip ] # Crashing
 [ Debug ] fast/line-grid/line-grid-floating.html [ Skip ] # Crashing
 [ Debug ] fast/line-grid/line-grid-inside-columns.html [ Skip ] # Crashing
+[ Debug ] fast/line-grid/line-grid-into-columns.html [ Skip ] # Debug Assertion
 [ Debug ] fast/loader/empty-embed-src-attribute.html [ Skip ]
 [ Debug ] fast/loader/external-script-URL-location.html [ Skip ]
 [ Debug ] fast/loader/file-URL-with-port-number.html [ Skip ] # Crashing
 [ Debug ] fast/loader/font-face-empty.html [ Skip ] # Crashing
+[ Debug ] fast/loader/for-window-event-onload-scripts.html [ Skip ] # Debug Assertion
 [ Debug ] fast/overflow/setting-scrollTop-after-hide-show.html [ Skip ] # Crashing
 [ Debug ] fast/overflow/scrollbar-click-retains-focus.html [ Skip ]
 [ Debug ] fast/overflow/scrollbar-position-update.html [ Skip ]
 [ Debug ] fast/overflow/scrollbar-restored.html [ Skip ] # Crashing
 [ Debug ] fast/overflow/start-end-overflow-hidden-horizontal-writing-mode-tb.html [ Skip ] # Crashing
 [ Debug ] fast/overflow/start-end-overflow-hidden-vertical-writing-mode-rl.html [ Skip ] # Crashing
+[ Debug ] fast/overflow/table-overflow-float.html [ Skip ] # Debug Assertion
 [ Debug ] fast/regions/subtree-with-vert-lr.html [ Skip ]
 [ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Skip ]
 [ Debug ] fast/regions/subtree-with-vert-rl.html [ Skip ]
@@ -2584,42 +2611,51 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] fast/repaint/fixed-right-in-page-scale.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/fixed-scale.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/fixed-scroll-simple.html [ Skip ] # Crashing
+[ Debug ] fast/repaint/fixed-table-cell.html [ Skip ] # Debug Assertion
 [ Debug ] fast/repaint/text-selection-rect-in-overflow.html [ Skip ]
 [ Debug ] fast/repaint/text-shadow-horizontal.html [ Skip ]
 [ Debug ] fast/repaint/text-shadow.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/textarea-set-disabled.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/trailing-floats-root-line-box-overflow.html [ Skip ] # Crashing
 [ Debug ] fast/repaint/transform-absolute-child.html [ Skip ] # Crashing
+[ Debug ] fast/repaint/transform-absolute-in-positioned-container.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/incremental/slow-utf8-css.html [ Skip ]
 [ Debug ] http/tests/incremental/slow-utf8-html.pl [ Skip ] # Crashing
 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Skip ] # Crashing
 [ Debug ] http/tests/inspector-protocol/access-inspected-object.html [ Skip ] # Crashing
+[ Debug ] http/tests/inspector-protocol/loading-iframe-document-node.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/loading/preload-css-test.html [ Skip ]
 [ Debug ] http/tests/loading/preload-slow-loading.php [ Skip ] # Crashing
 [ Debug ] http/tests/loading/redirect-with-no-location-crash.html [ Skip ] # Crashing
+[ Debug ] http/tests/loading/remove-child-triggers-parser.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/local/link-stylesheet-preferred.html [ Skip ] # Crashing
 [ Debug ] http/tests/local/style-access-before-stylesheet-loaded.html [ Skip ] # Crashing
 [ Debug ] http/tests/local/stylesheet-and-script-load-order-http.html [ Skip ] # Crashing
+[ Debug ] http/tests/local/stylesheet-and-script-load-order-media-print.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/misc/javascript-url-stop-loaders.html [ Skip ]
 [ Debug ] http/tests/misc/last-modified-parsing.html [ Skip ] # Crashing
 [ Debug ] http/tests/misc/location-origin.html [ Skip ] # Crashing
 [ Debug ] http/tests/misc/location-replace-crossdomain.html [ Skip ] # Crashing
+[ Debug ] http/tests/misc/location-test-xsl-style-sheet.xml [ Skip ] # Debug Assertion
 [ Debug ] http/tests/navigation/location-assign-adds-history-item.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/storage-prototype.html [ Skip ]
 [ Debug ] http/tests/security/isolatedWorld/string-prototype.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/top-properties.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/userGestureEvents.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/isolatedWorld/window-properties.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/isolatedWorld/window-setTimeout-function.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Skip ]
 [ Debug ] http/tests/security/originHeader/origin-header-for-data.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/originHeader/origin-header-for-empty.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/originHeader/origin-header-for-get.html [ Skip ] # Crashing
 [ Debug ] http/tests/security/originHeader/origin-header-for-post.html [ Skip ] # Crashing
+[ Debug ] http/tests/security/postMessage/data-url-sends-null-origin.html [ Skip ] # Debug Assertion
 [ Debug ] http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 [ Debug ] http/tests/webgl/1.0.2/texImage2DHTML.html [ Skip ]
 [ Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Skip ] # Crashing
@@ -2628,6 +2664,7 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 [ Debug ] platform/win/fast/forms/file/drag-and-drop-files.html [ Skip ] # Crashing
 [ Debug ] platform/win/fast/text/uniscribe-item-boundary-crash.html [ Skip ] # Crashing
 [ Debug ] platform/win/inverted-colors/non-composited.html [ Skip ] # Crashing
+[ Debug ] platform/win/plugins/draws-gradient.html [ Skip ] # Debug Assertion
 [ Debug ] transforms/3d/general/perspective-non-layer.html [ Skip ]
 
 # These don't seem to be running.

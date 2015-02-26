@@ -1,3 +1,9 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More Debug assertion updates.
+
+        * platform/win/TestExpectations:
+
 2015-02-26  Filip Pizlo  <fpizlo@apple.com>
 
         Various array access corner cases should take OSR exit feedback
