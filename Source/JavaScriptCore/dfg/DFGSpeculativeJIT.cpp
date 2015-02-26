@@ -4113,12 +4113,12 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
     
     // Two really lame checks.
     speculationCheck(
-        Uncountable, JSValueSource(), 0,
+        ExoticObjectMode, JSValueSource(), 0,
         m_jit.branch32(
             MacroAssembler::AboveOrEqual, propertyReg,
             MacroAssembler::Address(baseReg, Arguments::offsetOfNumArguments())));
     speculationCheck(
-        Uncountable, JSValueSource(), 0,
+        ExoticObjectMode, JSValueSource(), 0,
         m_jit.branchTestPtr(
             MacroAssembler::NonZero,
             MacroAssembler::Address(
@@ -4168,7 +4168,7 @@ void SpeculativeJIT::compileGetArgumentsLength(Node* node)
     ASSERT(ArrayMode(Array::Arguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
     
     speculationCheck(
-        Uncountable, JSValueSource(), 0,
+        ExoticObjectMode, JSValueSource(), 0,
         m_jit.branchTest8(
             MacroAssembler::NonZero,
             MacroAssembler::Address(baseReg, Arguments::offsetOfOverrodeLength())));

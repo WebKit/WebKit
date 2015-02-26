@@ -919,18 +919,25 @@ private:
         case GetByIdFlush: {
             if (!node->child1()->shouldSpeculateCell())
                 break;
-            StringImpl* impl = m_graph.identifiers()[node->identifierNumber()];
-            if (impl == vm().propertyNames->length.impl()) {
-                attemptToMakeGetArrayLength(node);
-                break;
-            }
-            if (impl == vm().propertyNames->byteLength.impl()) {
-                attemptToMakeGetTypedArrayByteLength(node);
-                break;
-            }
-            if (impl == vm().propertyNames->byteOffset.impl()) {
-                attemptToMakeGetTypedArrayByteOffset(node);
-                break;
+
+            // If we hadn't exited because of BadCache, BadIndexingType, or ExoticObjectMode, then
+            // leave this as a GetById.
+            if (!m_graph.hasExitSite(node->origin.semantic, BadCache)
+                && !m_graph.hasExitSite(node->origin.semantic, BadIndexingType)
+                && !m_graph.hasExitSite(node->origin.semantic, ExoticObjectMode)) {
+                StringImpl* impl = m_graph.identifiers()[node->identifierNumber()];
+                if (impl == vm().propertyNames->length.impl()) {
+                    attemptToMakeGetArrayLength(node);
+                    break;
+                }
+                if (impl == vm().propertyNames->byteLength.impl()) {
+                    attemptToMakeGetTypedArrayByteLength(node);
+                    break;
+                }
+                if (impl == vm().propertyNames->byteOffset.impl()) {
+                    attemptToMakeGetTypedArrayByteOffset(node);
+                    break;
+                }
             }
             fixEdge<CellUse>(node->child1());
             break;

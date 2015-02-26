@@ -1,3 +1,24 @@
+2015-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Various array access corner cases should take OSR exit feedback
+        https://bugs.webkit.org/show_bug.cgi?id=142056
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/arguments-out-of-bounds-expected.txt: Added.
+        * js/regress/arguments-out-of-bounds.html: Added.
+        * js/regress/exit-length-on-plain-object-expected.txt: Added.
+        * js/regress/exit-length-on-plain-object.html: Added.
+        * js/regress/script-tests/arguments-out-of-bounds.js: Added.
+        (foo):
+        (bar):
+        * js/regress/script-tests/exit-length-on-plain-object.js: Added.
+        (foo):
+        * js/regress/script-tests/string-out-of-bounds.js: Added.
+        (bar):
+        * js/regress/string-out-of-bounds-expected.txt: Added.
+        * js/regress/string-out-of-bounds.html: Added.
+
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r180602, r180608, r180613, r180617, r180671.

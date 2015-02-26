@@ -1,3 +1,35 @@
+2015-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Various array access corner cases should take OSR exit feedback
+        https://bugs.webkit.org/show_bug.cgi?id=142056
+
+        Reviewed by Geoffrey Garen.
+        
+        Two major changes here:
+        
+        - Don't keep converting GetById into GetArrayLength if we exited due to any kind of array
+          type check.
+        
+        - Use a generic form of GetByVal/PutByVal if we exited due to any kind of exotic checks,
+          like the Arguments safety checks. We use the "ExoticObjectMode" for out-of-bounds on
+          arguments for now, since it's a convenient way of forcing out-of-bounds to be handled by
+          the Generic array mode.
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        * tests/stress/array-length-array-storage-plain-object.js: Added.
+        (foo):
+        * tests/stress/array-length-plain-object.js: Added.
+        (foo):
+
 2015-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SSA stack accesses shouldn't speak of VariableAccessDatas

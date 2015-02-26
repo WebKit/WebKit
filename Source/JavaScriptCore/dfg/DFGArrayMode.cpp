@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,6 +145,10 @@ ArrayMode ArrayMode::refine(
     }
     
     if (!isInt32Speculation(index))
+        return ArrayMode(Array::Generic);
+    
+    // If we had exited because of an exotic object behavior, then don't try to specialize.
+    if (graph.hasExitSite(node->origin.semantic, ExoticObjectMode))
         return ArrayMode(Array::Generic);
     
     // Note: our profiling currently doesn't give us good information in case we have
