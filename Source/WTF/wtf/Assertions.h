@@ -356,21 +356,7 @@ while (0)
 #define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #endif
 
-/* UNREACHABLE_FOR_PLATFORM */
-
-#if COMPILER(CLANG)
-// This would be a macro except that its use of #pragma works best around
-// a function. Hence it uses macro naming convention.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-static inline void UNREACHABLE_FOR_PLATFORM()
-{
-    CRASH();
-}
-#pragma clang diagnostic pop
-#else
-#define UNREACHABLE_FOR_PLATFORM() ASSERT_NOT_REACHED()
-#endif
+/* RELEASE_ASSERT */
 
 #if ASSERT_DISABLED
 #define RELEASE_ASSERT(assertion) (UNLIKELY(!(assertion)) ? (CRASH()) : (void)0)
@@ -381,5 +367,22 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) ASSERT_WITH_MESSAGE(assertion, __VA_ARGS__)
 #define RELEASE_ASSERT_NOT_REACHED() ASSERT_NOT_REACHED()
 #endif
+
+/* UNREACHABLE_FOR_PLATFORM */
+
+#if COMPILER(CLANG)
+// This would be a macro except that its use of #pragma works best around
+// a function. Hence it uses macro naming convention.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+static inline void UNREACHABLE_FOR_PLATFORM()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#pragma clang diagnostic pop
+#else
+#define UNREACHABLE_FOR_PLATFORM() RELEASE_ASSERT_NOT_REACHED()
+#endif
+
 
 #endif /* WTF_Assertions_h */

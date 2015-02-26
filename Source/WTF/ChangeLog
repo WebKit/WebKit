@@ -1,3 +1,13 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        UNREACHABLE_FOR_PLATFORM() should be release assert
+        https://bugs.webkit.org/show_bug.cgi?id=141904
+
+        Reviewed by Darin Adler.
+
+        * wtf/Assertions.h:
+        (UNREACHABLE_FOR_PLATFORM):
+
 2015-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         Enable concurrent JIT on GTK
