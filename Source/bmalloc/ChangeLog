@@ -1,5 +1,13 @@
 2015-02-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Mac build.
+
+        Unreviewed.
+
+        * bmalloc.xcodeproj/project.pbxproj: Make FreeList.h available.
+
+2015-02-26  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Refactored SegregatedFreeList and BoundaryTag::init
         https://bugs.webkit.org/show_bug.cgi?id=142049
 
