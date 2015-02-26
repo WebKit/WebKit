@@ -1,3 +1,38 @@
+2015-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG abstract heaps should respect the difference between heap and stack
+        https://bugs.webkit.org/show_bug.cgi?id=142022
+
+        Reviewed by Geoffrey Garen.
+        
+        We will soon (https://bugs.webkit.org/show_bug.cgi?id=141174) be in a world where a "world
+        clobbering" operation cannot write to our stack, but may be able to read from it. This
+        means that we need to change the DFG abstract heap hierarchy to have a notion of Heap that
+        subsumes all that World previously subsumed, and a new notion of Stack that is a subtype
+        of World and a sibling of Heap.
+
+        So, henceforth "clobbering the world" means reading World and writing Heap.
+        
+        This makes a bunch of changes to make this work, including changing the implementation of
+        disjointness in AbstractHeap to make it support a more general hierarchy. I was expecting
+        a slow-down, but I measured the heck out of this and found no perf difference.
+
+        * dfg/DFGAbstractHeap.cpp:
+        (JSC::DFG::AbstractHeap::dump):
+        * dfg/DFGAbstractHeap.h:
+        (JSC::DFG::AbstractHeap::supertype):
+        (JSC::DFG::AbstractHeap::isStrictSubtypeOf):
+        (JSC::DFG::AbstractHeap::isSubtypeOf):
+        (JSC::DFG::AbstractHeap::overlaps):
+        (JSC::DFG::AbstractHeap::isDisjoint):
+        * dfg/DFGClobberize.cpp:
+        (JSC::DFG::clobbersHeap):
+        (JSC::DFG::clobbersWorld): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2015-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r180595): construct varargs fails in FTL

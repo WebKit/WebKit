@@ -56,14 +56,20 @@ bool writesOverlap(Graph& graph, Node* node, AbstractHeap heap)
     return addWrite.result();
 }
 
-bool clobbersWorld(Graph& graph, Node* node)
+bool clobbersHeap(Graph& graph, Node* node)
 {
     bool result = false;
     clobberize(
         graph, node, NoOpClobberize(),
         [&] (AbstractHeap heap) {
-            if (heap == AbstractHeap(World))
+            switch (heap.kind()) {
+            case World:
+            case Heap:
                 result = true;
+                break;
+            default:
+                break;
+            }
         },
         NoOpClobberize());
     return result;

@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 
 bool doesGC(Graph& graph, Node* node)
 {
-    if (clobbersWorld(graph, node))
+    if (clobbersHeap(graph, node))
         return true;
     
     // Now consider nodes that don't clobber the world but that still may GC. This includes all

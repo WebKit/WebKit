@@ -41,6 +41,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 {
     // Some notes:
     //
+    // - The canonical way of clobbering the world is to read world and write
+    //   heap. This is because World subsumes Heap and Stack, and Stack can be
+    //   read by anyone but only written to by explicit stack writing operations.
+    //   Of course, claiming to also write World is not wrong; it'll just
+    //   pessimise some important optimizations.
+    //
     // - We cannot hoist, or sink, anything that has effects. This means that the
     //   easiest way of indicating that something cannot be hoisted is to claim
     //   that it side-effects some miscellaneous thing.
@@ -53,9 +59,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     //   versions of those nodes that backward-exit instead, but I'm not convinced
     //   of the soundness.
     //
-    // - Some nodes lie, and claim that they do not read the JSCell_structureID, JSCell_typeInfoFlags, etc.
-    //   These are nodes that use the structure in a way that does not depend on
-    //   things that change under structure transitions.
+    // - Some nodes lie, and claim that they do not read the JSCell_structureID,
+    //   JSCell_typeInfoFlags, etc. These are nodes that use the structure in a way
+    //   that does not depend on things that change under structure transitions.
     //
     // - It's implicitly understood that OSR exits read the world. This is why we
     //   generally don't move or eliminate stores. Every node can exit, so the
@@ -157,16 +163,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetEnumerableLength:
     case GetStructurePropertyEnumerator:
     case GetGenericPropertyEnumerator: {
-        read(World);
+        read(Heap);
         write(SideState);
         return;
     }
 
     case GetDirectPname: {
-        // This reads and writes world because it can end up calling a generic getByVal 
+        // This reads and writes heap because it can end up calling a generic getByVal 
         // if the Structure changed, which could in turn end up calling a getter.
         read(World);
-        write(World);
+        write(Heap);
         return;
     }
 
@@ -187,7 +193,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, node->child1(), node->child2()), node);
                 return;
             }
-            read(World);
+            read(Heap);
             return;
         }
             
@@ -198,7 +204,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, node->child1(), node->child2()), node);
                 return;
             }
-            read(World);
+            read(Heap);
             return;
         }
             
@@ -209,7 +215,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, node->child1(), node->child2()), node);
                 return;
             }
-            read(World);
+            read(Heap);
             return;
         }
 
@@ -219,13 +225,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 read(IndexedArrayStorageProperties);
                 return;
             }
-            read(World);
+            read(Heap);
             return;
         }
 
         default: {
             read(World);
-            write(World);
+            write(Heap);
             return;
         }
         }
@@ -376,7 +382,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetMyArgumentByValSafe:
     case ValueAdd:
         read(World);
-        write(World);
+        write(Heap);
         return;
         
     case GetGetter:
@@ -425,7 +431,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Undecided:
             // Assume the worst since we don't have profiling yet.
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::ForceExit:
@@ -434,13 +440,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             
         case Array::Generic:
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::String:
             if (mode.isOutOfBounds()) {
                 read(World);
-                write(World);
+                write(Heap);
                 return;
             }
             // This appears to read nothing because it's only reading immutable data.
@@ -461,7 +467,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 return;
             }
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::Double:
@@ -472,7 +478,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 return;
             }
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::Contiguous:
@@ -483,7 +489,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 return;
             }
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::ArrayStorage:
@@ -494,7 +500,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 return;
             }
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::Int8Array:
@@ -529,7 +535,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::String:
             // Assume the worst since we don't have profiling yet.
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::ForceExit:
@@ -538,7 +544,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             
         case Array::Generic:
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         case Array::Arguments:
@@ -551,7 +557,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Int32:
             if (node->arrayMode().isOutOfBounds()) {
                 read(World);
-                write(World);
+                write(Heap);
                 return;
             }
             read(Butterfly_publicLength);
@@ -566,7 +572,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Double:
             if (node->arrayMode().isOutOfBounds()) {
                 read(World);
-                write(World);
+                write(Heap);
                 return;
             }
             read(Butterfly_publicLength);
@@ -581,7 +587,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Contiguous:
             if (node->arrayMode().isOutOfBounds()) {
                 read(World);
-                write(World);
+                write(Heap);
                 return;
             }
             read(Butterfly_publicLength);
@@ -597,7 +603,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::SlowPutArrayStorage:
             // Give up on life for now.
             read(World);
-            write(World);
+            write(Heap);
             return;
 
         case Array::Int8Array:
@@ -813,7 +819,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case StringCharAt:
         if (node->arrayMode().isOutOfBounds()) {
             read(World);
-            write(World);
+            write(Heap);
             return;
         }
         def(PureValue(node));
@@ -829,7 +835,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
         read(World);
-        write(World);
+        write(Heap);
         return;
         
     case ToString:
@@ -843,7 +849,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case CellUse:
         case UntypedUse:
             read(World);
-            write(World);
+            write(Heap);
             return;
             
         default:
@@ -945,7 +951,7 @@ private:
 bool accessesOverlap(Graph&, Node*, AbstractHeap);
 bool writesOverlap(Graph&, Node*, AbstractHeap);
 
-bool clobbersWorld(Graph&, Node*);
+bool clobbersHeap(Graph&, Node*);
 
 // We would have used bind() for these, but because of the overlaoding that we are doing,
 // it's quite a bit of clearer to just write this out the traditional way.

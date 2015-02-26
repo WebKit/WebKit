@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,14 +34,19 @@
 
 namespace JSC { namespace DFG {
 
-// Implements a three-level type hierarchy:
+// Implements a four-level type hierarchy:
 // - World is the supertype of all of the things.
-// - Kind with TOP payload is the direct subtype of World.
-// - Kind with non-TOP payload is the direct subtype of its corresponding TOP Kind.
+// - Stack with a TOP payload is a direct subtype of World
+// - Stack with a non-TOP payload is a direct subtype of Stack with a TOP payload.
+// - Heap is a direct subtype of World.
+// - Any other kind with TOP payload is the direct subtype of Heap.
+// - Any other kind with non-TOP payload is the direct subtype of the same kind with a TOP payload.
 
 #define FOR_EACH_ABSTRACT_HEAP_KIND(macro) \
     macro(InvalidAbstractHeap) \
     macro(World) \
+    macro(Stack) \
+    macro(Heap) \
     macro(Arguments_registers) \
     macro(Butterfly_publicLength) \
     macro(Butterfly_vectorLength) \
@@ -204,32 +209,48 @@ public:
         return payloadImpl();
     }
     
-    bool isDisjoint(const AbstractHeap& other) const
+    AbstractHeap supertype() const
     {
         ASSERT(kind() != InvalidAbstractHeap);
-        ASSERT(other.kind() != InvalidAbstractHeap);
-        if (kind() == World)
-            return false;
-        if (other.kind() == World)
-            return false;
-        if (kind() != other.kind())
-            return true;
-        return payload().isDisjoint(other.payload());
+        switch (kind()) {
+        case World:
+            return AbstractHeap();
+        case Heap:
+            return World;
+        default:
+            if (payload().isTop()) {
+                if (kind() == Stack)
+                    return World;
+                return Heap;
+            }
+            return AbstractHeap(kind());
+        }
+    }
+    
+    bool isStrictSubtypeOf(const AbstractHeap& other) const
+    {
+        AbstractHeap current = *this;
+        while (current.kind() != World) {
+            current = current.supertype();
+            if (current == other)
+                return true;
+        }
+        return false;
+    }
+    
+    bool isSubtypeOf(const AbstractHeap& other) const
+    {
+        return *this == other || isStrictSubtypeOf(other);
     }
     
     bool overlaps(const AbstractHeap& other) const
     {
-        return !isDisjoint(other);
+        return *this == other || isStrictSubtypeOf(other) || other.isStrictSubtypeOf(*this);
     }
     
-    AbstractHeap supertype() const
+    bool isDisjoint(const AbstractHeap& other) const
     {
-        ASSERT(kind() != InvalidAbstractHeap);
-        if (kind() == World)
-            return AbstractHeap();
-        if (payload().isTop())
-            return World;
-        return AbstractHeap(kind());
+        return !overlaps(other);
     }
     
     unsigned hash() const
