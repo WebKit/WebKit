@@ -49,31 +49,6 @@ class MacTest(port_testcase.PortTestCase):
         super(MacTest, self).test_default_timeout_ms()
         self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
 
-
-    example_skipped_file = u"""
-# <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
-fast/events/mouseout-on-window.html
-
-# <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
-fast/events/attempt-scroll-with-no-scrollbars.html
-
-# see bug <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
-svg/batik/text/smallFonts.svg
-
-# Java tests don't work on WK2
-java/
-"""
-    example_skipped_tests = [
-        "fast/events/mouseout-on-window.html",
-        "fast/events/attempt-scroll-with-no-scrollbars.html",
-        "svg/batik/text/smallFonts.svg",
-        "java",
-    ]
-
-    def test_tests_from_skipped_file_contents(self):
-        port = self.make_port()
-        self.assertEqual(port._tests_from_skipped_file_contents(self.example_skipped_file), self.example_skipped_tests)
-
     def assert_name(self, port_name, os_version_string, expected):
         host = MockSystemHost(os_name='mac', os_version=os_version_string)
         port = self.make_port(host=host, port_name=port_name)

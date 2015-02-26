@@ -1,3 +1,20 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [webkitpy] Remove skipped file related crufts
+        https://bugs.webkit.org/show_bug.cgi?id=142046
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.skipped_layout_tests):
+        (Port._tests_from_skipped_file_contents): Deleted.
+        (Port): Deleted.
+        (Port._expectations_from_skipped_files): Deleted.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_default_timeout_ms):
+        (MacTest): Deleted.
+        (test_tests_from_skipped_file_contents): Deleted.
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed WinCairo build fix after r180653.
