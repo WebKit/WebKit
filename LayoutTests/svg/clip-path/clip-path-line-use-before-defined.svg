@@ -1,38 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <style>
       line, path {
         stroke: black;
+        stroke-width: 3;
       }
     </style>
+    <g id="circle-in-rect">
+      <rect x="0" y="0" width="150" height="150" fill="lime"/>
+      <rect x="0" y="0" width="150" height="150" fill="white" clip-path="url(#clip-circle)"/>
+    </g>
   </defs>
-  
-  <rect x="0" y="0" width="100%" height="100%" fill="lime"/>
-  <rect x="0" y="0" width="100%" height="100%" fill="white" clip-path="url(#clip-circle)"/>
 
-  <!-- diagonal -->
-  <line x1="170" y1="30" x2="30" y2="170" clip-path="url(#clip-circle)"/>
+  <use xlink:href="#circle-in-rect" transform="translate(10, 10)">
+    <!-- center lines -->
+    <path d="M0 75 L150 75" clip-path="url(#clip-circle)"/>
+    <line x1="75" y1="0" x2="75" y2="150" clip-path="url(#clip-circle)"/>
+  </use>
   
-  <!-- top and left lines -->
-  <path d="M30 75 L170 75" clip-path="url(#clip-circle)"/>
-  <line x1="75" y1="30" x2="75" y2="170" clip-path="url(#clip-circle)"/>
+  <use xlink:href="#circle-in-rect" transform="translate(170, 10)">
+    <!-- diagonal lines -->
+    <path d="M0 0 L150 150" clip-path="url(#clip-circle)"/>
+    <line x1="0" y1="150" x2="150" y2="0" clip-path="url(#clip-circle)"/>
+  </use>
 
-  <!-- bottom and right lines -->
-  <g clip-path="url(#clip-circle)">
-    <path d="M30 125 L170 125"/>
-    <line x1="125" y1="30" x2="125" y2="170"/>
-  </g>
+  <use xlink:href="#circle-in-rect" transform="translate(330, 10)">
+    <!-- top and left lines -->
+    <path d="M0 50 L150 50" clip-path="url(#clip-circle)"/>
+    <line x1="50" y1="0" x2="50" y2="150" clip-path="url(#clip-circle)"/>
+    <g clip-path="url(#clip-circle)">
+      <!-- bottom and right lines -->
+      <path d="M0 100 L150 100"/>
+      <line x1="100" y1="0" x2="100" y2="150"/>
+    </g>
+  </use>
   
   <defs>
     <clipPath id="clip-circle">
-      <circle cx="50%" cy="50%" r="50%" clip-path="url(#clip-small-circle)"/>
+      <circle cx="75" cy="75" r="75" clip-path="url(#clip-small-circle)"/>
     </clipPath>
     <clipPath id="clip-small-circle">
-      <circle cx="50%" cy="50%" r="25%"/>
+      <circle cx="75" cy="75" r="50"/>
     </clipPath>
   </defs>
-
-  <!-- center lines -->
-  <path d="M30 100 L170 100" clip-path="url(#clip-circle)"/>
-  <line x1="100" y1="30" x2="100" y2="170" clip-path="url(#clip-circle)"/>
 </svg>

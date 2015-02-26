@@ -1,5 +1,16 @@
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Cleanup RenderSVGResourceClipper class.
+        https://bugs.webkit.org/show_bug.cgi?id=142032.
+
+        Reviewed by Darin Adler.
+
+        * svg/clip-path/clip-path-line-use-before-defined-expected.svg:
+        * svg/clip-path/clip-path-line-use-before-defined.svg: Simplify the test
+        and make separate drawings for different cases.
+
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Setting any of the <object> element plugin controlling attributes does not have any affect.
         https://bugs.webkit.org/show_bug.cgi?id=141936.
 

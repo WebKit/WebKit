@@ -1,5 +1,28 @@
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Cleanup RenderSVGResourceClipper class.
+        https://bugs.webkit.org/show_bug.cgi?id=142032.
+
+        Reviewed by Darin Adler.
+        
+        This is a follow up for r180643: <http://trac.webkit.org/changeset/180643>.
+        It includes cleanup for RenderSVGResourceClipper class.
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceClipper.h: Change ClipperData to be a
+        typedef instead of a class and rename it to ClipperMaskImage. The purpose
+        of having it a class even though it includes only one member was because
+        we wanted it to be WTF_MAKE_FAST_ALLOCATED. We do not need to allocate it
+        as a separate object on the heap anymore.
+        
+        (WebCore::RenderSVGResourceClipper::addRendererToClipper): Instead of doing
+        double hash table lookups by calling HashMap::contains() and then HashMap::get(),
+        we can use HashMap::add() instead.
+
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Setting any of the <object> element plugin controlling attributes does not have any affect.
         https://bugs.webkit.org/show_bug.cgi?id=141936.
 
