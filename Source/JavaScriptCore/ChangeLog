@@ -1,3 +1,20 @@
+2015-02-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180516.
+
+    2015-02-23  Matthew Mirman  <mmirman@apple.com>
+
+            r9 is volatile on ARMv7 for iOS 3 and up. 
+            https://bugs.webkit.org/show_bug.cgi?id=141489
+            rdar://problem/19432916
+
+            Reviewed by Michael Saboff.
+
+            * jit/RegisterSet.cpp: 
+            (JSC::RegisterSet::calleeSaveRegisters): removed r9 from the list of ARMv7 callee save registers.
+            * tests/stress/regress-141489.js: Added.
+            (foo):
+
 2015-02-20  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180237
