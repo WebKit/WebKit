@@ -1,3 +1,17 @@
+2015-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [FreeType] REGRESSION(r180563): Introduced crashes
+        https://bugs.webkit.org/show_bug.cgi?id=142044
+
+        Reviewed by Martin Robinson.
+
+        No new tests, should be caught by any woff font test.
+
+        Use optionsPattern, not m_pattern, when m_pattern may be null.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::initializeWithFontFace):
+
 2015-02-26  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: !length.isUndefined() in WebCore::GridLength::GridLength
