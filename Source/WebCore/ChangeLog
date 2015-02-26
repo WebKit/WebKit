@@ -1,5 +1,33 @@
 2015-02-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r180174
+
+    2015-02-16  Zalan Bujtas  <zalan@apple.com>
+
+            RenderTableCell can't access its parent while in detached state.
+            https://bugs.webkit.org/show_bug.cgi?id=141639
+            rdar://problem/19850760
+
+            Reviewed by Simon Fraser.
+
+            Null check against ancestor chain so that certain methods in RenderTableCell can
+            be called even if the renderer is not yet attached.
+
+            Test: fast/table/table-cell-crash-when-detached-state.html
+
+            * rendering/RenderTableCell.cpp:
+            (WebCore::RenderTableCell::borderLeft):
+            (WebCore::RenderTableCell::borderRight):
+            (WebCore::RenderTableCell::borderTop):
+            (WebCore::RenderTableCell::borderBottom):
+            (WebCore::RenderTableCell::borderStart):
+            (WebCore::RenderTableCell::borderEnd):
+            (WebCore::RenderTableCell::borderBefore):
+            (WebCore::RenderTableCell::borderAfter):
+            * rendering/RenderTableCell.h:
+
+2015-02-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r179480
 
     2015-02-02  Jeremy Jones  <jeremyj@apple.com>
