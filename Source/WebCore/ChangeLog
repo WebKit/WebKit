@@ -1,3 +1,21 @@
+2015-02-26  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] incorrect front padding on time values
+        https://bugs.webkit.org/show_bug.cgi?id=142027
+        <rdar://problem/19960790>
+
+        Reviewed by Brent Fulgham.
+
+        My last commit was updating the OS X file,
+        not the iOS file.
+
+        We don't want to prefix times with a "0".
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.formatTime):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.formatTime):
+
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r180602, r180608, r180613, r180617, r180671.

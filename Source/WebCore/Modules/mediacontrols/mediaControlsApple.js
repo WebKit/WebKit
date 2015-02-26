@@ -1009,7 +1009,7 @@ Controller.prototype = {
         if (intHours > 0)
             return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
 
-        return (time < 0 ? '-' : String()) + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
+        return sign + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
     },
 
     updatePlaying: function()
