@@ -1,3 +1,15 @@
+2015-02-26  Michael Saboff  <msaboff@apple.com>
+
+        [Win] Debug-only JavaScriptCore failures
+        https://bugs.webkit.org/show_bug.cgi?id=142045
+
+        Rubber stamped by Filip Pizlo.
+
+        Reduced loop count to a more reasonable value of 10,000.  This still gets us to tier up
+        to the FTL, but doesn't take too long to run.
+
+        * tests/stress/repeated-arity-check-fail.js:
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Make build logs more legible by reducing noise
