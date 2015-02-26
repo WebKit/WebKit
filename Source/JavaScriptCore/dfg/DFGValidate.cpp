@@ -214,7 +214,7 @@ public:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
                     break;
                 case SetLocal:
-                case PutLocal:
+                case PutStack:
                 case Upsilon:
                     VALIDATE((node), !!node->child1());
                     switch (node->child1().useKind()) {
@@ -433,6 +433,24 @@ private:
                     }
                 }
                 
+                switch (node->op()) {
+                case Phi:
+                case Upsilon:
+                case CheckInBounds:
+                case PhantomNewObject:
+                case PutByOffsetHint:
+                case CheckStructureImmediate:
+                case PutStructureHint:
+                case MaterializeNewObject:
+                case PutStack:
+                case KillStack:
+                case GetStack:
+                    VALIDATE((node), !"unexpected node type in CPS");
+                    break;
+                default:
+                    break;
+                }
+                
                 if (!node->shouldGenerate())
                     continue;
                 switch (node->op()) {
@@ -493,6 +511,8 @@ private:
             if (!block)
                 continue;
             
+            VALIDATE((block), block->phis.isEmpty());
+            
             unsigned nodeIndex = 0;
             for (; nodeIndex < block->size() && !block->at(nodeIndex)->origin.forExit.isSet(); nodeIndex++) { }
             
@@ -506,6 +526,13 @@ private:
                 switch (node->op()) {
                 case Phi:
                     VALIDATE((node), !node->origin.forExit.isSet());
+                    break;
+                    
+                case GetLocal:
+                case SetLocal:
+                case GetLocalUnlinked:
+                case SetArgument:
+                    VALIDATE((node), !"bad node type for SSA");
                     break;
                     
                 default:

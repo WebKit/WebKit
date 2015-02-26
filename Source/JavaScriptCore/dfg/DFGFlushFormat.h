@@ -134,6 +134,11 @@ inline FlushFormat merge(FlushFormat a, FlushFormat b)
     return ConflictingFlush;
 }
 
+inline bool isConcrete(FlushFormat format)
+{
+    return format != DeadFlush && format != ConflictingFlush;
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

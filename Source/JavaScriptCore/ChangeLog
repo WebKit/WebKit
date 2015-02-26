@@ -1,3 +1,99 @@
+2015-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG SSA stack accesses shouldn't speak of VariableAccessDatas
+        https://bugs.webkit.org/show_bug.cgi?id=142036
+
+        Reviewed by Michael Saboff.
+        
+        VariableAccessData is a useful thing in LoadStore and ThreadedCPS, but it's purely harmful in
+        SSA because you can't cook up new VariableAccessDatas. So, if you know that you want to load
+        or store to the stack, and you know what format to use as well as the location, then prior to
+        this patch you couldn't do it unless you found some existing VariableAccessData that matched
+        your requirements. That can be a hard task.
+        
+        It's better if SSA doesn't speak of VariableAccessDatas but instead just has stack accesses
+        that speak of the things that a stack access needs: local, machineLocal, and format. This
+        patch changes the SSA way of accessing the stack to do just that.
+        
+        Also add more IR validation.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::isConcrete):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::StackAccessData::StackAccessData):
+        (JSC::DFG::StackAccessData::flushedAt):
+        (JSC::DFG::Node::convertToPutStack):
+        (JSC::DFG::Node::convertToGetStack):
+        (JSC::DFG::Node::hasUnlinkedLocal):
+        (JSC::DFG::Node::hasStackAccessData):
+        (JSC::DFG::Node::stackAccessData):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPutLocalSinkingPhase.cpp: Removed.
+        * dfg/DFGPutLocalSinkingPhase.h: Removed.
+        * dfg/DFGPutStackSinkingPhase.cpp: Copied from Source/JavaScriptCore/dfg/DFGPutLocalSinkingPhase.cpp.
+        (JSC::DFG::performPutStackSinking):
+        (JSC::DFG::performPutLocalSinking): Deleted.
+        * dfg/DFGPutStackSinkingPhase.h: Copied from Source/JavaScriptCore/dfg/DFGPutLocalSinkingPhase.h.
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateCPS):
+        (JSC::DFG::Validate::validateSSA):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetStack):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStack):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compilePutLocal): Deleted.
+        * ftl/FTLOSRExit.h:
+        * tests/stress/many-sunken-locals.js: Added. This failure mode was caught by some miscellaneous test, so I figured I should write an explicit test for it.
+        (foo):
+        (bar):
+        (baz):
+        (fuzz):
+        (buzz):
+
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r180602, r180608, r180613, r180617, r180671.

@@ -197,6 +197,25 @@ struct LoadVarargsData {
     unsigned limit; // Maximum number of elements to load. Includes "this".
 };
 
+struct StackAccessData {
+    StackAccessData()
+        : format(DeadFlush)
+    {
+    }
+    
+    StackAccessData(VirtualRegister local, FlushFormat format)
+        : local(local)
+        , format(format)
+    {
+    }
+    
+    VirtualRegister local;
+    VirtualRegister machineLocal;
+    FlushFormat format;
+    
+    FlushedAt flushedAt() { return FlushedAt(format, machineLocal); }
+};
+
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
@@ -484,6 +503,23 @@ struct Node {
         children.reset();
     }
     
+    void convertToPutStack(StackAccessData* data)
+    {
+        m_op = PutStack;
+        m_flags |= NodeMustGenerate;
+        m_opInfo = bitwise_cast<uintptr_t>(data);
+        m_opInfo2 = 0;
+    }
+    
+    void convertToGetStack(StackAccessData* data)
+    {
+        m_op = GetStack;
+        m_flags &= ~NodeMustGenerate;
+        m_opInfo = bitwise_cast<uintptr_t>(data);
+        m_opInfo2 = 0;
+        children.reset();
+    }
+    
     void convertToGetByOffset(StorageAccessData& data, Edge storage)
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == MultiGetByOffset);
@@ -717,7 +753,7 @@ struct Node {
         case ExtractOSREntryLocal:
         case MovHint:
         case ZombieHint:
-        case KillLocal:
+        case KillStack:
             return true;
         default:
             return false;
@@ -745,6 +781,23 @@ struct Node {
     {
         ASSERT(hasUnlinkedMachineLocal());
         return VirtualRegister(m_opInfo2);
+    }
+    
+    bool hasStackAccessData()
+    {
+        switch (op()) {
+        case PutStack:
+        case GetStack:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    StackAccessData* stackAccessData()
+    {
+        ASSERT(hasStackAccessData());
+        return bitwise_cast<StackAccessData*>(m_opInfo);
     }
     
     bool hasPhi()
@@ -1428,8 +1481,6 @@ struct Node {
     {
         switch (op()) {
         case SetLocal:
-        case PutLocal:
-        case KillLocal:
         case MovHint:
         case ZombieHint:
         case PhantomArguments:

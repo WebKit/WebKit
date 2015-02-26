@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPutLocalSinkingPhase_h
-#define DFGPutLocalSinkingPhase_h
+#ifndef DFGPutStackSinkingPhase_h
+#define DFGPutStackSinkingPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -32,15 +32,15 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Sinks PutLocals to the absolute latest point where they can possibly happen, which is usually
-// side-effects that may observe them. This eliminates PutLocals if it sinks them past the point of
+// Sinks PutStacks to the absolute latest point where they can possibly happen, which is usually
+// side-effects that may observe them. This eliminates PutStacks if it sinks them past the point of
 // their deaths.
 
-bool performPutLocalSinking(Graph&);
+bool performPutStackSinking(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGPutLocalSinkingPhase_h
+#endif // DFGPutStackSinkingPhase_h
 

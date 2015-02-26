@@ -282,6 +282,13 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
                 out.print(comma, "machine:", operand);
         }
     }
+    if (node->hasStackAccessData()) {
+        StackAccessData* data = node->stackAccessData();
+        out.print(comma, data->local);
+        if (data->machineLocal.isValid())
+            out.print(comma, "machine:", data->machineLocal);
+        out.print(comma, data->format);
+    }
     if (node->hasUnlinkedLocal()) 
         out.print(comma, node->unlinkedLocal());
     if (node->hasUnlinkedMachineLocal()) {

@@ -5088,8 +5088,9 @@ void SpeculativeJIT::compile(Node* node)
     case CheckStructureImmediate:
     case PutStructureHint:
     case MaterializeNewObject:
-    case PutLocal:
-    case KillLocal:
+    case PutStack:
+    case KillStack:
+    case GetStack:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

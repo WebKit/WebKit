@@ -783,7 +783,7 @@ public:
     // that survived DCE. All of them except maybe "this" will survive DCE, because of the Flush
     // nodes.
     //
-    // In SSA, this is all of the GetLocal nodes for the arguments in the machine code block that
+    // In SSA, this is all of the GetStack nodes for the arguments in the machine code block that
     // may have some speculation in the prologue and survived DCE. Note that to get the speculation
     // for an argument in SSA, you must use m_argumentFormats, since we still have to speculate
     // even if the argument got killed. For example:
@@ -794,7 +794,7 @@ public:
     //
     // Assume that x is always int during profiling. The ArithAdd for "x + 1" will be dead and will
     // have a proven check for the edge to "x". So, we will not insert a Check node and we will
-    // kill the GetLocal for "x". But, we must do the int check in the progolue, because that's the
+    // kill the GetStack for "x". But, we must do the int check in the progolue, because that's the
     // thing we used to allow DCE of ArithAdd. Otherwise the add could be impure:
     //
     //     var o = {
@@ -821,6 +821,7 @@ public:
     Bag<ObjectMaterializationData> m_objectMaterializationData;
     Bag<CallVarargsData> m_callVarargsData;
     Bag<LoadVarargsData> m_loadVarargsData;
+    Bag<StackAccessData> m_stackAccessData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     bool m_hasArguments;

@@ -167,6 +167,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case GetStack: {
+        StackAccessData* data = node->stackAccessData();
+        AbstractValue value = m_state.variables().operand(data->local);
+        // The value in the local should already be checked.
+        DFG_ASSERT(m_graph, node, value.isType(typeFilterFor(data->format)));
+        if (value.value())
+            m_state.setFoundConstants(true);
+        forNode(node) = value;
+        break;
+    }
+        
     case GetLocalUnlinked: {
         AbstractValue value = m_state.variables().operand(node->unlinkedLocal().offset());
         if (value.value())
@@ -175,9 +186,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case SetLocal:
-    case PutLocal: {
-        m_state.variables().operand(node->local().offset()) = forNode(node->child1());
+    case SetLocal: {
+        m_state.variables().operand(node->local()) = forNode(node->child1());
+        break;
+    }
+        
+    case PutStack: {
+        m_state.variables().operand(node->stackAccessData()->local) = forNode(node->child1());
         break;
     }
         
@@ -188,7 +203,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case KillLocal: {
+    case KillStack: {
         // This is just a hint telling us that the OSR state of the local is no longer inside the
         // flushed data.
         break;

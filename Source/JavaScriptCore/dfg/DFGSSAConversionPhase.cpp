@@ -97,8 +97,10 @@ public:
                     ASSERT(node->op() == SetArgument);
                     childNode = m_insertionSet.insertNode(
                         nodeIndex, node->variableAccessData()->prediction(),
-                        GetLocal, node->origin, OpInfo(node->variableAccessData()));
-                    m_argumentGetters.add(childNode);
+                        GetStack, node->origin,
+                        OpInfo(m_graph.m_stackAccessData.add(variable->local(), variable->flushFormat())));
+                    if (!ASSERT_DISABLED)
+                        m_argumentGetters.add(childNode);
                     m_argumentMapping.add(node, childNode);
                 }
                 
@@ -188,26 +190,26 @@ public:
         //
         //   - MovHint has KillLocal prepended to it.
         //
-        //   - GetLocal over captured variables lose their phis.
+        //   - GetLocal over captured variables lose their phis and become GetStack.
         //
         //   - GetLocal over uncaptured variables die and get replaced with references to the node
         //     specified by valueForOperand.
         //
-        //   - SetLocal turns into PutLocal if it's flushed, or turns into a Check otherwise.
+        //   - SetLocal turns into PutStack if it's flushed, or turns into a Check otherwise.
         //
         //   - Flush loses its children and turns into a Phantom.
         //
         //   - PhantomLocal becomes Phantom, and its child is whatever is specified by
         //     valueForOperand.
         //
-        //   - SetArgument is removed. Note that GetLocal nodes have already been inserted.
+        //   - SetArgument is removed. Note that GetStack nodes have already been inserted.
         Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             valueForOperand.clear();
             
             // CPS will claim that the root block has all arguments live. But we have already done
             // the first step of SSA conversion: argument locals are no longer live at head;
-            // instead we have GetLocal nodes for extracting the values of arguments. So, we
+            // instead we have GetStack nodes for extracting the values of arguments. So, we
             // skip the at-head available value calculation for the root block.
             if (block != m_graph.block(0)) {
                 for (size_t i = valueForOperand.size(); i--;) {
@@ -273,7 +275,7 @@ public:
                 switch (node->op()) {
                 case MovHint: {
                     m_insertionSet.insertNode(
-                        nodeIndex, SpecNone, KillLocal, node->origin,
+                        nodeIndex, SpecNone, KillStack, node->origin,
                         OpInfo(node->unlinkedLocal().offset()));
                     break;
                 }
@@ -281,9 +283,11 @@ public:
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
                     
-                    if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed))
-                        node->setOpAndDefaultFlags(PutLocal);
-                    else
+                    if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed)) {
+                        node->convertToPutStack(
+                            m_graph.m_stackAccessData.add(
+                                variable->local(), variable->flushFormat()));
+                    } else
                         node->setOpAndDefaultFlags(Check);
                     
                     if (!variable->isCaptured()) {
@@ -294,18 +298,20 @@ public:
                     break;
                 }
                     
+                case GetStack: {
+                    ASSERT(m_argumentGetters.contains(node));
+                    valueForOperand.operand(node->stackAccessData()->local) = node;
+                    break;
+                }
+                    
                 case GetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
-                    if (m_argumentGetters.contains(node)) {
-                        if (verbose)
-                            dataLog("Mapping: ", variable->local(), " -> ", node, "\n");
-                        valueForOperand.operand(variable->local()) = node;
-                        break;
-                    }
                     node->children.reset();
                     
-                    if (variable->isCaptured())
+                    if (variable->isCaptured()) {
+                        node->convertToGetStack(m_graph.m_stackAccessData.add(variable->local(), variable->flushFormat()));
                         break;
+                    }
                     
                     node->convertToPhantom();
                     if (verbose)
@@ -401,7 +407,7 @@ public:
             // track the argument loads of those arguments for which we speculate type. We don't
             // speculate type for captured arguments.
             if (node)
-                format = node->variableAccessData()->flushFormat();
+                format = node->stackAccessData()->format;
             
             m_graph.m_argumentFormats[i] = format;
             m_graph.m_arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,14 +45,12 @@ namespace JSC { namespace FTL {
 
 // Tracks one OSR exit site within the FTL JIT. OSR exit in FTL works by deconstructing
 // the crazy that is OSR down to simple SSA CFG primitives that any compiler backend
-// (including of course LLVM) can grok and do meaningful things to. Except for
-// watchpoint-based exits, which haven't yet been implemented (see webkit.org/b/113647),
-// an exit is just a conditional branch in the emitted code where one destination is the
-// continuation and the other is a basic block that performs a no-return tail-call to an
-// exit thunk. This thunk takes as its arguments the live non-constant
-// not-already-accounted-for bytecode state. To appreciate how this works consider the
-// following JavaScript program, and its lowering down to LLVM IR including the relevant
-// exits:
+// (including of course LLVM) can grok and do meaningful things to. An exit is just a
+// conditional branch in the emitted code where one destination is the continuation and
+// the other is a basic block that performs a no-return tail-call to an  exit thunk.
+// This thunk takes as its arguments the live non-constant not-already-accounted-for
+// bytecode state. To appreciate how this works consider the following JavaScript
+// program, and its lowering down to LLVM IR including the relevant exits:
 //
 // function foo(o) {
 //     var a = o.a; // predicted int
@@ -66,10 +64,10 @@ namespace JSC { namespace FTL {
 //
 // BitOr(Check:Int32:@a, Int32:5)
 //
-// Where @a is the node for the GetLocal node that gets the value of the 'a' variable.
-// Conceptually, this node can be further broken down to the following (note that this
-// particular lowering never actually happens - we skip this step and go straight to
-// LLVM IR - but it's still useful to see this):
+// Where @a is the node for the value of the 'a' variable. Conceptually, this node can
+// be further broken down to the following (note that this particular lowering never
+// actually happens - we skip this step and go straight to LLVM IR - but it's still
+// useful to see this):
 //
 // exitIf(@a is not int32);
 // continuation;
@@ -124,22 +122,12 @@ namespace JSC { namespace FTL {
 //   arguments into argument position), the backend could choose to simply inform us
 //   where it had placed the arguments and expect the callee (i.e. the exit thunk) to
 //   figure it out from there. It could also tell us what we need to do to pop stack,
-//   although again, it doesn't have to; it could just emit that code normally. Though
-//   we don't support this yet, we could; the only thing that would change on our end
-//   is that we'd need feedback from the backend about the location of the arguments
-//   and a description of the things that need to be done to pop stack. This would
-//   involve switching the m_values array to use something more akin to ValueRecovery
-//   rather than the current ExitValue, albeit possibly with some hacks to better
-//   understand the kinds of places where the LLVM backend would put values.
+//   although again, it doesn't have to; it could just emit that code normally. We do
+//   all of these things through the patchpoint/stackmap LLVM intrinsics.
 //
 // - It could be extended to allow the backend to do its own exit hoisting, by using
 //   intrinsics (or meta-data, or something) to inform the backend that it's safe to
 //   make the predicate passed to 'exitIf()' more truthy.
-//
-// - It could be extended to support watchpoints (see webkit.org/b/113647) by making
-//   the predicate passed to 'exitIf()' be an intrinsic that the backend knows to be
-//   true at compile-time. The backend could then turn the conditional branch into a
-//   replaceable jump, much like the DFG does.
 
 struct OSRExit : public DFG::OSRExitBase {
     OSRExit(

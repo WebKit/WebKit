@@ -253,7 +253,7 @@ public:
             LValue jsValue = m_out.load64(addressFor(operand));
             
             if (node) {
-                DFG_ASSERT(m_graph, node, operand == node->variableAccessData()->machineLocal());
+                DFG_ASSERT(m_graph, node, operand == node->stackAccessData()->machineLocal);
                 
                 // This is a hack, but it's an effective one. It allows us to do CSE on the
                 // primordial load of arguments. This assumes that the GetLocal that got put in
@@ -455,11 +455,11 @@ private:
         case ExtractOSREntryLocal:
             compileExtractOSREntryLocal();
             break;
-        case GetLocal:
-            compileGetLocal();
+        case GetStack:
+            compileGetStack();
             break;
-        case PutLocal:
-            compilePutLocal();
+        case PutStack:
+            compilePutStack();
             break;
         case GetMyArgumentsLength:
             compileGetMyArgumentsLength();
@@ -828,7 +828,7 @@ private:
         case PutByOffsetHint:
         case PutStructureHint:
         case BottomValue:
-        case KillLocal:
+        case KillStack:
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
@@ -1067,7 +1067,7 @@ private:
         setJSValue(m_out.load64(m_out.absolute(buffer + m_node->unlinkedLocal().toLocal())));
     }
     
-    void compileGetLocal()
+    void compileGetStack()
     {
         // GetLocals arise only for captured variables and arguments. For arguments, we might have
         // already loaded it.
@@ -1076,47 +1076,50 @@ private:
             return;
         }
         
-        VariableAccessData* variable = m_node->variableAccessData();
-        AbstractValue& value = m_state.variables().operand(variable->local());
+        StackAccessData* data = m_node->stackAccessData();
+        AbstractValue& value = m_state.variables().operand(data->local);
+        
+        DFG_ASSERT(m_graph, m_node, isConcrete(data->format));
+        DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble); // This just happens to not arise for GetStacks, right now. It would be trivial to support.
         
         if (isInt32Speculation(value.m_type))
-            setInt32(m_out.load32(payloadFor(variable->machineLocal())));
+            setInt32(m_out.load32(payloadFor(data->machineLocal)));
         else
-            setJSValue(m_out.load64(addressFor(variable->machineLocal())));
+            setJSValue(m_out.load64(addressFor(data->machineLocal)));
     }
     
-    void compilePutLocal()
+    void compilePutStack()
     {
-        VariableAccessData* variable = m_node->variableAccessData();
-        switch (variable->flushFormat()) {
+        StackAccessData* data = m_node->stackAccessData();
+        switch (data->format) {
         case FlushedJSValue:
         case FlushedArguments: {
             LValue value = lowJSValue(m_node->child1());
-            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_out.store64(value, addressFor(data->machineLocal));
             break;
         }
             
         case FlushedDouble: {
             LValue value = lowDouble(m_node->child1());
-            m_out.storeDouble(value, addressFor(variable->machineLocal()));
+            m_out.storeDouble(value, addressFor(data->machineLocal));
             break;
         }
             
         case FlushedInt32: {
             LValue value = lowInt32(m_node->child1());
-            m_out.store32(value, payloadFor(variable->machineLocal()));
+            m_out.store32(value, payloadFor(data->machineLocal));
             break;
         }
             
         case FlushedInt52: {
             LValue value = lowInt52(m_node->child1());
-            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_out.store64(value, addressFor(data->machineLocal));
             break;
         }
             
         case FlushedCell: {
             LValue value = lowCell(m_node->child1());
-            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_out.store64(value, addressFor(data->machineLocal));
             break;
         }
             
@@ -1124,7 +1127,7 @@ private:
             speculateBoolean(m_node->child1());
             m_out.store64(
                 lowJSValue(m_node->child1(), ManualOperandSpeculation),
-                addressFor(variable->machineLocal()));
+                addressFor(data->machineLocal));
             break;
         }
             

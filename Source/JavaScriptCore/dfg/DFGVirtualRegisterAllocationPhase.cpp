@@ -45,6 +45,8 @@ public:
     
     bool run()
     {
+        DFG_ASSERT(m_graph, nullptr, m_graph.m_form == ThreadedCPS);
+        
         ScoreBoard scoreBoard(m_graph.m_nextMachineLocal);
         scoreBoard.assertClear();
         for (size_t blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

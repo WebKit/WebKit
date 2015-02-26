@@ -207,8 +207,9 @@ bool doesGC(Graph& graph, Node* node)
     case PutByOffsetHint:
     case CheckStructureImmediate:
     case PutStructureHint:
-    case PutLocal:
-    case KillLocal:
+    case PutStack:
+    case KillStack:
+    case GetStack:
         return false;
 
     case CreateActivation:

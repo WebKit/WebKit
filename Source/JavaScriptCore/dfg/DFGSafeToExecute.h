@@ -118,8 +118,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetCallee:
     case GetLocal:
     case SetLocal:
-    case PutLocal:
-    case KillLocal:
+    case PutStack:
+    case KillStack:
+    case GetStack:
     case MovHint:
     case ZombieHint:
     case Phantom:

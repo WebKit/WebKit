@@ -260,7 +260,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
          
     case MovHint:
     case ZombieHint:
-    case KillLocal:
+    case KillStack:
     case Upsilon:
     case Phi:
     case PhantomLocal:
@@ -406,10 +406,23 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case SetLocal:
-    case PutLocal:
         write(AbstractHeap(Variables, node->local()));
         def(HeapLocation(VariableLoc, AbstractHeap(Variables, node->local())), node->child1().node());
         return;
+        
+    case GetStack: {
+        AbstractHeap heap(Variables, node->stackAccessData()->local);
+        read(heap);
+        def(HeapLocation(VariableLoc, heap), node);
+        return;
+    }
+        
+    case PutStack: {
+        AbstractHeap heap(Variables, node->stackAccessData()->local);
+        write(heap);
+        def(HeapLocation(VariableLoc, heap), node->child1().node());
+        return;
+    }
         
     case LoadVarargs:
         // This actually writes to local variables as well. But when it reads the array, it does

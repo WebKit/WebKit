@@ -128,21 +128,20 @@ void LocalOSRAvailabilityCalculator::endBlock(BasicBlock* block)
 void LocalOSRAvailabilityCalculator::executeNode(Node* node)
 {
     switch (node->op()) {
-    case PutLocal: {
-        VariableAccessData* variable = node->variableAccessData();
-        m_availability.m_locals.operand(variable->local()).setFlush(variable->flushedAt());
+    case PutStack: {
+        StackAccessData* data = node->stackAccessData();
+        m_availability.m_locals.operand(data->local).setFlush(data->flushedAt());
         break;
     }
         
-    case KillLocal: {
+    case KillStack: {
         m_availability.m_locals.operand(node->unlinkedLocal()).setFlush(FlushedAt(ConflictingFlush));
         break;
     }
 
-    case GetLocal: {
-        VariableAccessData* variable = node->variableAccessData();
-        m_availability.m_locals.operand(variable->local()) =
-            Availability(node, variable->flushedAt());
+    case GetStack: {
+        StackAccessData* data = node->stackAccessData();
+        m_availability.m_locals.operand(data->local) = Availability(node, data->flushedAt());
         break;
     }
 

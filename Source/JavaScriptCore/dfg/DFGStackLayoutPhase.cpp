@@ -66,7 +66,6 @@ public:
                 switch (node->op()) {
                 case GetLocal:
                 case SetLocal:
-                case PutLocal:
                 case Flush:
                 case PhantomLocal: {
                     VariableAccessData* variable = node->variableAccessData();
@@ -97,6 +96,15 @@ public:
                             usedLocals.set(VirtualRegister(data->start.offset() + i).toLocal());
                     } // the else case shouldn't happen.
                     hasNodesThatNeedFixup = true;
+                    break;
+                }
+                    
+                case PutStack:
+                case GetStack: {
+                    StackAccessData* stack = node->stackAccessData();
+                    if (stack->local.isArgument())
+                        break;
+                    usedLocals.set(stack->local.toLocal());
                     break;
                 }
                     
@@ -169,6 +177,20 @@ public:
                 continue;
             
             variable->machineLocal() = assign(allocation, variable->local());
+        }
+        
+        for (StackAccessData* data : m_graph.m_stackAccessData) {
+            if (!data->local.isLocal()) {
+                data->machineLocal = data->local;
+                continue;
+            }
+            
+            if (static_cast<size_t>(data->local.toLocal()) >= allocation.size())
+                continue;
+            if (allocation[data->local.toLocal()] == UINT_MAX)
+                continue;
+            
+            data->machineLocal = assign(allocation, data->local);
         }
         
         if (codeBlock()->usesArguments()) {

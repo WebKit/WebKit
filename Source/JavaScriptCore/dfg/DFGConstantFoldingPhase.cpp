@@ -397,7 +397,10 @@ private:
                         m_insertionSet.insertNode(
                             indexInBlock, SpecNone, Phantom, node->origin, node->children);
                         
-                        node->convertToGetLocalUnlinked(VirtualRegister(operand));
+                        if (m_graph.m_form == SSA)
+                            node->convertToGetStack(m_graph.m_stackAccessData.add(VirtualRegister(operand), FlushedJSValue));
+                        else
+                            node->convertToGetLocalUnlinked(VirtualRegister(operand));
                         break;
                     }
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DFGPutLocalSinkingPhase.h"
+#include "DFGPutStackSinkingPhase.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -44,93 +44,28 @@ namespace {
 
 bool verbose = false;
 
-class VariableDeferral {
+class PutStackSinkingPhase : public Phase {
 public:
-    VariableDeferral(VariableAccessData* variable = nullptr)
-        : m_variable(variable)
-    {
-    }
-    
-    static VariableDeferral conflict()
-    {
-        return VariableDeferral(conflictMarker());
-    }
-    
-    bool operator!() const { return !m_variable; }
-    
-    bool hasVariable() const { return !!*this && !isConflict(); }
-    
-    VariableAccessData* variable() const
-    {
-        ASSERT(hasVariable());
-        return m_variable;
-    }
-    
-    bool isConflict() const
-    {
-        return m_variable == conflictMarker();
-    }
-    
-    VariableDeferral merge(VariableDeferral other) const
-    {
-        if (*this == other || !other)
-            return *this;
-        if (!*this)
-            return other;
-        return conflict();
-    }
-    
-    bool operator==(VariableDeferral other) const
-    {
-        return m_variable == other.m_variable;
-    }
-    
-    void dump(PrintStream& out) const
-    {
-        if (!*this)
-            out.print("-");
-        else if (isConflict())
-            out.print("Conflict");
-        else
-            out.print(RawPointer(m_variable));
-    }
-    
-    void dumpInContext(PrintStream& out, DumpContext*) const
-    {
-        dump(out);
-    }
-    
-private:
-    static VariableAccessData* conflictMarker()
-    {
-        return bitwise_cast<VariableAccessData*>(static_cast<intptr_t>(1));
-    }
-    
-    VariableAccessData* m_variable;
-};
-
-class PutLocalSinkingPhase : public Phase {
-public:
-    PutLocalSinkingPhase(Graph& graph)
-        : Phase(graph, "PutLocal sinking")
+    PutStackSinkingPhase(Graph& graph)
+        : Phase(graph, "PutStack sinking")
     {
     }
     
     bool run()
     {
         // FIXME: One of the problems of this approach is that it will create a duplicate Phi graph
-        // for sunken PutLocals in the presence of interesting control flow merges, and where the
-        // value being PutLocal'd is also otherwise live in the DFG code. We could work around this
+        // for sunken PutStacks in the presence of interesting control flow merges, and where the
+        // value being PutStack'd is also otherwise live in the DFG code. We could work around this
         // by doing the sinking over CPS, or maybe just by doing really smart hoisting. It's also
         // possible that the duplicate Phi graph can be deduplicated by LLVM. It would be best if we
         // could observe that there is already a Phi graph in place that does what we want. In
         // principle if we have a request to place a Phi at a particular place, we could just check
-        // if there is already a Phi that does what we want. Because PutLocalSinkingPhase runs just
+        // if there is already a Phi that does what we want. Because PutStackSinkingPhase runs just
         // after SSA conversion, we have almost a guarantee that the Phi graph we produce here would
         // be trivially redundant to the one we already have.
         
         if (verbose) {
-            dataLog("Graph before PutLocal sinking:\n");
+            dataLog("Graph before PutStack sinking:\n");
             m_graph.dump();
         }
         
@@ -180,7 +115,7 @@ public:
                                 return;
                             }
                             
-                            RELEASE_ASSERT(node->op() == PutLocal);
+                            RELEASE_ASSERT(node->op() == PutStack);
                             live.operand(operand) = false;
                         });
                 }
@@ -212,76 +147,77 @@ public:
         for (size_t i = liveAtHead.atIndex(0).numberOfArguments(); i--;)
             DFG_ASSERT(m_graph, nullptr, liveAtHead.atIndex(0).argument(i));
         
-        // Next identify where we would want to sink PutLocals to. We say that there is a deferred
-        // flush if we had a PutLocal with a given VariableAccessData* but it hasn't been
-        // materialized yet. Deferrals have the following lattice; but it's worth noting that the
-        // TOP part of the lattice serves an entirely different purpose than the rest of the lattice:
-        // it just means that we're in a region of code where nobody should have been relying on the
-        // value. The rest of the lattice means that we either have a PutLocal that is deferred (i.e.
-        // still needs to be executed) or there isn't one (because we've alraedy executed it).
+        // Next identify where we would want to sink PutStacks to. We say that there is a deferred
+        // flush if we had a PutStack with a given FlushFormat but it hasn't been materialized yet.
+        // Deferrals have the following lattice; but it's worth noting that the TOP part of the
+        // lattice serves an entirely different purpose than the rest of the lattice: it just means
+        // that we're in a region of code where nobody should have been relying on the value. The
+        // rest of the lattice means that we either have a PutStack that is deferred (i.e. still
+        // needs to be executed) or there isn't one (because we've alraedy executed it).
         //
         // Bottom:
-        //     Instantiated as VariableDeferral(). 
-        //     Means that all previous PutLocals have been executed so there is nothing deferred.
+        //     Represented as DeadFlush. 
+        //     Means that all previous PutStacks have been executed so there is nothing deferred.
         //     During merging this is subordinate to the other kinds of deferrals, because it
-        //     represents the fact that we've already executed all necessary PutLocals. This implies
-        //     that there *had* been some PutLocals that we should have executed.
+        //     represents the fact that we've already executed all necessary PutStacks. This implies
+        //     that there *had* been some PutStacks that we should have executed.
         //
         // Top:
-        //     Instantiated as VariableDeferral::conflict().
+        //     Represented as ConflictingFlush.
         //     Represents the fact that we know, via forward flow, that there isn't any value in the
         //     given local that anyone should have been relying on. This comes into play at the
         //     prologue (because in SSA form at the prologue no local has any value) or when we merge
-        //     deferrals for different VariableAccessData*'s. A VAD encompasses a lexical scope in
-        //     which the local has some semantic meaning; if we had stores from different lexical
-        //     scopes that got merged together then we know that we're not in either scope anymore.
-        //     Note that this is all approximate and only precise enough to later answer questions
-        //     pertinent to sinking. For example, this doesn't always detect when a local is no
-        //     longer semantically relevant - we may well have a deferral from inside some inlined
-        //     call survive outside of that inlined code, and this is generally OK. In the worst case
-        //     it means that we might think that a deferral that is actually dead must still be
-        //     executed. But we usually catch that with liveness. Liveness doesn't always catch it
-        //     because liveness is conservative.
+        //     deferrals for different formats's. A lexical scope in which a local had some semantic
+        //     meaning will by this point share the same format; if we had stores from different
+        //     lexical scopes that got merged together then we may have a conflicting format. Hence
+        //     a conflicting format proves that we're no longer in an area in which the variable was
+        //     in scope. Note that this is all approximate and only precise enough to later answer
+        //     questions pertinent to sinking. For example, this doesn't always detect when a local
+        //     is no longer semantically relevant - we may well have a deferral from inside some
+        //     inlined call survive outside of that inlined code, and this is generally OK. In the
+        //     worst case it means that we might think that a deferral that is actually dead must
+        //     still be executed. But we usually catch that with liveness. Liveness usually catches
+        //     such cases, but that's not guaranteed since liveness is conservative.
         //
         //     What Top does give us is detects situations where we both don't need to care about a
         //     deferral and there is no way that we could reason about it anyway. If we merged
-        //     deferrals for different variables then we wouldn't know the format to use. So, we
-        //     use Top in that case because that's also a case where we know that we can ignore the
+        //     deferrals for different formats then we wouldn't know the format to use. So, we use
+        //     Top in that case because that's also a case where we know that we can ignore the
         //     deferral.
         //
-        // Deferral with a concrete VariableAccessData*:
-        //     Instantiated as VariableDeferral(someVariableAccessData)
-        //     Represents the fact that the original code would have done a PutLocal but we haven't
-        //     identified an operation that would have observed that PutLocal.
+        // Deferral with a concrete format:
+        //     Represented by format values other than DeadFlush or ConflictingFlush.
+        //     Represents the fact that the original code would have done a PutStack but we haven't
+        //     identified an operation that would have observed that PutStack.
         //
         // This code has some interesting quirks because of the fact that neither liveness nor
         // deferrals are very precise. They are only precise enough to be able to correctly tell us
-        // when we may [sic] need to execute PutLocals. This means that they may report the need to
-        // execute a PutLocal in cases where we actually don't really need it, and that's totally OK.
-        BlockMap<Operands<VariableDeferral>> deferredAtHead(m_graph);
-        BlockMap<Operands<VariableDeferral>> deferredAtTail(m_graph);
+        // when we may [sic] need to execute PutStacks. This means that they may report the need to
+        // execute a PutStack in cases where we actually don't really need it, and that's totally OK.
+        BlockMap<Operands<FlushFormat>> deferredAtHead(m_graph);
+        BlockMap<Operands<FlushFormat>> deferredAtTail(m_graph);
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             deferredAtHead[block] =
-                Operands<VariableDeferral>(OperandsLike, block->variablesAtHead);
+                Operands<FlushFormat>(OperandsLike, block->variablesAtHead);
             deferredAtTail[block] =
-                Operands<VariableDeferral>(OperandsLike, block->variablesAtHead);
+                Operands<FlushFormat>(OperandsLike, block->variablesAtHead);
         }
         
-        deferredAtHead.atIndex(0).fill(VariableDeferral::conflict());
+        deferredAtHead.atIndex(0).fill(ConflictingFlush);
         
         do {
             changed = false;
             
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-                Operands<VariableDeferral> deferred = deferredAtHead[block];
+                Operands<FlushFormat> deferred = deferredAtHead[block];
                 
                 for (Node* node : *block) {
                     if (verbose)
                         dataLog("Deferred at ", node, ":", deferred, "\n");
                     
-                    if (node->op() == KillLocal) {
-                        deferred.operand(node->unlinkedLocal()) = VariableDeferral::conflict();
+                    if (node->op() == KillStack) {
+                        deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
                         continue;
                     }
                     
@@ -289,7 +225,7 @@ public:
                         if (operand.isHeader())
                             return;
                         // We will materialize just before any reads.
-                        deferred.operand(operand) = VariableDeferral();
+                        deferred.operand(operand) = DeadFlush;
                     };
                     
                     preciseLocalClobberize(
@@ -300,7 +236,7 @@ public:
                                 return;
                             }
                             
-                            deferred.operand(operand) = VariableDeferral(node->variableAccessData());
+                            deferred.operand(operand) = node->stackAccessData()->format;
                         });
                 }
                 
@@ -316,7 +252,7 @@ public:
                             dataLog("Considering ", VirtualRegister(deferred.operandForIndex(i)), " at ", pointerDump(block), "->", pointerDump(successor), ": ", deferred[i], " and ", deferredAtHead[successor][i], " merges to ");
 
                         deferredAtHead[successor][i] =
-                            deferredAtHead[successor][i].merge(deferred[i]);
+                            merge(deferredAtHead[successor][i], deferred[i]);
                         
                         if (verbose)
                             dataLog(deferredAtHead[successor][i], "\n");
@@ -326,16 +262,16 @@ public:
             
         } while (changed);
         
-        // We wish to insert PutLocals at all of the materialization points, which are defined
+        // We wish to insert PutStacks at all of the materialization points, which are defined
         // implicitly as the places where we set deferred to Dead while it was previously not Dead.
         // To do this, we may need to build some Phi functions to handle stuff like this:
         //
         // Before:
         //
         //     if (p)
-        //         PutLocal(r42, @x)
+        //         PutStack(r42, @x)
         //     else
-        //         PutLocal(r42, @y)
+        //         PutStack(r42, @y)
         //
         // After:
         //
@@ -344,10 +280,10 @@ public:
         //     else
         //         Upsilon(@y, ^z)
         //     z: Phi()
-        //     PutLocal(r42, @z)
+        //     PutStack(r42, @z)
         //
         // This means that we have an SSACalculator::Variable for each local, and a Def is any
-        // PutLocal in the original program. The original PutLocals will simply vanish.
+        // PutStack in the original program. The original PutStacks will simply vanish.
         
         Operands<SSACalculator::Variable*> operandToVariable(
             OperandsLike, m_graph.block(0)->variablesAtHead);
@@ -366,14 +302,16 @@ public:
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
-                case PutLocal:
+                case PutStack:
                     putLocalsToSink.add(node);
                     ssaCalculator.newDef(
-                        operandToVariable.operand(node->local()), block, node->child1().node());
+                        operandToVariable.operand(node->stackAccessData()->local),
+                        block, node->child1().node());
                     break;
-                case GetLocal:
+                case GetStack:
                     ssaCalculator.newDef(
-                        operandToVariable.operand(node->local()), block, node);
+                        operandToVariable.operand(node->stackAccessData()->local),
+                        block, node);
                     break;
                 default:
                     break;
@@ -388,24 +326,22 @@ public:
                 if (!liveAtHead[block].operand(operand))
                     return nullptr;
                 
-                VariableDeferral variableDeferral = deferredAtHead[block].operand(operand);
+                FlushFormat format = deferredAtHead[block].operand(operand);
 
                 // We could have an invalid deferral because liveness is imprecise.
-                if (!variableDeferral.hasVariable())
+                if (!isConcrete(format))
                     return nullptr;
 
                 if (verbose)
                     dataLog("Adding Phi for ", operand, " at ", pointerDump(block), "\n");
                 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
-                DFG_ASSERT(m_graph, nullptr, variableDeferral.hasVariable());
-                FlushFormat format = variableDeferral.variable()->flushFormat();
                 phiNode->mergeFlags(resultFor(format));
                 return phiNode;
             });
         
         Operands<Node*> mapping(OperandsLike, m_graph.block(0)->variablesAtHead);
-        Operands<VariableDeferral> deferred;
+        Operands<FlushFormat> deferred;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             mapping.fill(nullptr);
             
@@ -440,18 +376,18 @@ public:
                     dataLog("Deferred at ", node, ":", deferred, "\n");
                 
                 switch (node->op()) {
-                case PutLocal: {
-                    VariableAccessData* variable = node->variableAccessData();
-                    VirtualRegister operand = variable->local();
-                    deferred.operand(operand) = VariableDeferral(variable);
+                case PutStack: {
+                    StackAccessData* data = node->stackAccessData();
+                    VirtualRegister operand = data->local;
+                    deferred.operand(operand) = data->format;
                     if (verbose)
                         dataLog("   Mapping ", operand, " to ", node->child1().node(), " at ", node, "\n");
                     mapping.operand(operand) = node->child1().node();
                     break;
                 }
                     
-                case KillLocal: {
-                    deferred.operand(node->unlinkedLocal()) = VariableDeferral();
+                case KillStack: {
+                    deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
                     break;
                 }
                 
@@ -460,36 +396,36 @@ public:
                         if (operand.isHeader())
                             return;
                     
-                        VariableDeferral variableDeferral = deferred.operand(operand);
-                        if (!variableDeferral.hasVariable())
+                        FlushFormat format = deferred.operand(operand);
+                        if (!isConcrete(format))
                             return;
                     
-                        // Gotta insert a PutLocal.
+                        // Gotta insert a PutStack.
                         if (verbose)
-                            dataLog("Inserting a PutLocal for ", operand, " at ", node, "\n");
+                            dataLog("Inserting a PutStack for ", operand, " at ", node, "\n");
 
                         Node* incoming = mapping.operand(operand);
                         DFG_ASSERT(m_graph, node, incoming);
                     
                         insertionSet.insertNode(
-                            nodeIndex, SpecNone, PutLocal, node->origin,
-                            OpInfo(variableDeferral.variable()),
-                            Edge(incoming, useKindFor(variableDeferral.variable()->flushFormat())));
+                            nodeIndex, SpecNone, PutStack, node->origin,
+                            OpInfo(m_graph.m_stackAccessData.add(operand, format)),
+                            Edge(incoming, useKindFor(format)));
                     
-                        deferred.operand(operand) = nullptr;
+                        deferred.operand(operand) = DeadFlush;
                     };
                 
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
                         [&] (VirtualRegister, Node*) { });
                     
-                    // If we're a GetLocal, then we also create a mapping.
+                    // If we're a GetStack, then we also create a mapping.
                     // FIXME: We should be able to just eliminate such GetLocals, when we know
                     // what their incoming value will be.
                     // https://bugs.webkit.org/show_bug.cgi?id=141624
-                    if (node->op() == GetLocal) {
-                        VariableAccessData* variable = node->variableAccessData();
-                        VirtualRegister operand = variable->local();
+                    if (node->op() == GetStack) {
+                        StackAccessData* data = node->stackAccessData();
+                        VirtualRegister operand = data->local;
                         mapping.operand(operand) = node;
                     }
                     break;
@@ -505,10 +441,8 @@ public:
                     VirtualRegister operand = indexToOperand[variable->index()];
                     if (verbose)
                         dataLog("Creating Upsilon for ", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
-                    VariableDeferral variableDeferral =
-                        deferredAtHead[successorBlock].operand(operand);
-                    DFG_ASSERT(m_graph, nullptr, variableDeferral.hasVariable());
-                    FlushFormat format = variableDeferral.variable()->flushFormat();
+                    FlushFormat format = deferredAtHead[successorBlock].operand(operand);
+                    DFG_ASSERT(m_graph, nullptr, isConcrete(format));
                     UseKind useKind = useKindFor(format);
                     Node* incoming = mapping.operand(operand);
                     if (!incoming) {
@@ -524,12 +458,12 @@ public:
                         // if (predicate1)
                         //     PutClosureVar(loc42) // prevent GCSE of our GetClosureVar's
                         // if (predicate2)
-                        //     PutLocal(loc42) // we now have a concrete deferral
+                        //     PutStack(loc42) // we now have a concrete deferral
                         // // we still have the concrete deferral because we merged with bottom
                         // GetClosureVar(loc42) // force materialization
                         //
                         // We will have a Phi with no incoming value form the basic block that
-                        // bypassed the PutLocal.
+                        // bypassed the PutStack.
                         
                         // Note: we sort of could have used the equivalent of LLVM's undef here. The
                         // point is that it's OK to just leave random bits in the local if we're
@@ -549,7 +483,7 @@ public:
             insertionSet.execute(block);
         }
         
-        // Finally eliminate the sunken PutLocals by turning them into Phantoms. This keeps whatever
+        // Finally eliminate the sunken PutStacks by turning them into Phantoms. This keeps whatever
         // type check they were doing. Also prepend KillLocals to them to ensure that we know that
         // the relevant value was *not* stored to the stack.
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -560,7 +494,7 @@ public:
                     continue;
                 
                 insertionSet.insertNode(
-                    nodeIndex, SpecNone, KillLocal, node->origin, OpInfo(node->local().offset()));
+                    nodeIndex, SpecNone, KillStack, node->origin, OpInfo(node->stackAccessData()->local.offset()));
                 node->convertToPhantom();
             }
             
@@ -568,7 +502,7 @@ public:
         }
         
         if (verbose) {
-            dataLog("Graph after PutLocal sinking:\n");
+            dataLog("Graph after PutStack sinking:\n");
             m_graph.dump();
         }
         
@@ -578,10 +512,10 @@ public:
 
 } // anonymous namespace
     
-bool performPutLocalSinking(Graph& graph)
+bool performPutStackSinking(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG PutLocal Sinking Phase");
-    return runPhase<PutLocalSinkingPhase>(graph);
+    SamplingRegion samplingRegion("DFG PutStack Sinking Phase");
+    return runPhase<PutStackSinkingPhase>(graph);
 }
 
 } } // namespace JSC::DFG
