@@ -74,114 +74,114 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
       <HeaderFileName>$(OutDir)%(Filename).h</HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file.
-if not exist "$(ProjectDir)$(ProjectName)PostBuild.cmd" exit /b
+      <Command>@REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file.
+@if not exist "$(ProjectDir)$(ProjectName)PostBuild.cmd" exit /b
 
-set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
-set CONFIGURATIONNAME=$(ConfigurationName)
-set INPUTDIR=$(InputDir)
-set INPUTFILENAME=$(InputFileName)
-set INPUTPATH=$(InputPath)
-set INTDIR=$(IntDir)
-set OUTDIR=$(OutDir)
-set PLATFORMARCHITECTURE=$(PlatformArchitecture)
-set PLATFORMNAME=$(PlatformName)
-set PROJECTDIR=$(ProjectDir)
-set PROJECTFILENAME=$(ProjectFileName)
-set PROJECTNAME=$(ProjectName)
-set PROJECTPATH=$(ProjectPath)
-set SOLUTIONDIR=$(SolutionDir)
-set SOLUTIONFILENAME=$(SolutionFileName)
-set SOLUTIONNAME=$(SolutionName)
-set SOLUTIONPATH=$(SolutionPath)
-set TARGETDIR=$(TargetDir)
-set TARGETEXT=$(TargetExt)
-set TARGETFILENAME=$(TargetFileName)
-set TARGETPATH=$(TargetPath)
-set DEBUGSUFFIX=$(DebugSuffix)
-set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
+@set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
+@set CONFIGURATIONNAME=$(ConfigurationName)
+@set INPUTDIR=$(InputDir)
+@set INPUTFILENAME=$(InputFileName)
+@set INPUTPATH=$(InputPath)
+@set INTDIR=$(IntDir)
+@set OUTDIR=$(OutDir)
+@set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+@set PLATFORMNAME=$(PlatformName)
+@set PROJECTDIR=$(ProjectDir)
+@set PROJECTFILENAME=$(ProjectFileName)
+@set PROJECTNAME=$(ProjectName)
+@set PROJECTPATH=$(ProjectPath)
+@set SOLUTIONDIR=$(SolutionDir)
+@set SOLUTIONFILENAME=$(SolutionFileName)
+@set SOLUTIONNAME=$(SolutionName)
+@set SOLUTIONPATH=$(SolutionPath)
+@set TARGETDIR=$(TargetDir)
+@set TARGETEXT=$(TargetExt)
+@set TARGETFILENAME=$(TargetFileName)
+@set TARGETPATH=$(TargetPath)
+@set DEBUGSUFFIX=$(DebugSuffix)
+@set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
-REM If any of the above variables didn't exist previously and
-REM were set to an empty string, set will set the errorlevel to 1,
-REM which will cause the project-specific script to think the build
-REM has failed. This cmd /c call will clear the errorlevel.
-cmd /c
+@REM If any of the above variables didn't exist previously and
+@REM were set to an empty string, set will set the errorlevel to 1,
+@REM which will cause the project-specific script to think the build
+@REM has failed. This cmd /c call will clear the errorlevel.
+@cmd /c
 
-"$(ProjectDir)$(ProjectName)PostBuild.cmd"
+@"$(ProjectDir)$(ProjectName)PostBuild.cmd"
 </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.
-if not exist "$(ProjectDir)$(ProjectName)PreBuild.cmd" exit /b
+      <Command>@REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.
+@if not exist "$(ProjectDir)$(ProjectName)PreBuild.cmd" exit /b
 
-set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
-set CONFIGURATIONNAME=$(ConfigurationName)
-set INPUTDIR=$(InputDir)
-set INPUTFILENAME=$(InputFileName)
-set INPUTPATH=$(InputPath)
-set INTDIR=$(IntDir)
-set OUTDIR=$(OutDir)
-set PLATFORMARCHITECTURE=$(PlatformArchitecture)
-set PLATFORMNAME=$(PlatformName)
-set PROJECTDIR=$(ProjectDir)
-set PROJECTFILENAME=$(ProjectFileName)
-set PROJECTNAME=$(ProjectName)
-set PROJECTPATH=$(ProjectPath)
-set SOLUTIONDIR=$(SolutionDir)
-set SOLUTIONFILENAME=$(SolutionFileName)
-set SOLUTIONNAME=$(SolutionName)
-set SOLUTIONPATH=$(SolutionPath)
-set TARGETDIR=$(TargetDir)
-set TARGETEXT=$(TargetExt)
-set TARGETFILENAME=$(TargetFileName)
-set TARGETPATH=$(TargetPath)
-set DEBUGSUFFIX=$(DebugSuffix)
-set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
+@set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
+@set CONFIGURATIONNAME=$(ConfigurationName)
+@set INPUTDIR=$(InputDir)
+@set INPUTFILENAME=$(InputFileName)
+@set INPUTPATH=$(InputPath)
+@set INTDIR=$(IntDir)
+@set OUTDIR=$(OutDir)
+@set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+@set PLATFORMNAME=$(PlatformName)
+@set PROJECTDIR=$(ProjectDir)
+@set PROJECTFILENAME=$(ProjectFileName)
+@set PROJECTNAME=$(ProjectName)
+@set PROJECTPATH=$(ProjectPath)
+@set SOLUTIONDIR=$(SolutionDir)
+@set SOLUTIONFILENAME=$(SolutionFileName)
+@set SOLUTIONNAME=$(SolutionName)
+@set SOLUTIONPATH=$(SolutionPath)
+@set TARGETDIR=$(TargetDir)
+@set TARGETEXT=$(TargetExt)
+@set TARGETFILENAME=$(TargetFileName)
+@set TARGETPATH=$(TargetPath)
+@set DEBUGSUFFIX=$(DebugSuffix)
+@set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
-REM If any of the above variables didn't exist previously and
-REM were set to an empty string, set will set the errorlevel to 1,
-REM which will cause the project-specific script to think the build
-REM has failed. This cmd /c call will clear the errorlevel.
-cmd /c
+@REM If any of the above variables didn't exist previously and
+@REM were set to an empty string, set will set the errorlevel to 1,
+@REM which will cause the project-specific script to think the build
+@REM has failed. This cmd /c call will clear the errorlevel.
+@cmd /c
 
-"$(ProjectDir)$(ProjectName)PreBuild.cmd"
+@"$(ProjectDir)$(ProjectName)PreBuild.cmd"
 </Command>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.
-if not exist "$(ProjectDir)$(ProjectName)PreLink.cmd" exit /b
+      <Command>@REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.
+@if not exist "$(ProjectDir)$(ProjectName)PreLink.cmd" exit /b
 
-set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
-set CONFIGURATIONNAME=$(ConfigurationName)
-set INPUTDIR=$(InputDir)
-set INPUTFILENAME=$(InputFileName)
-set INPUTPATH=$(InputPath)
-set INTDIR=$(IntDir)
-set OUTDIR=$(OutDir)
-set PLATFORMARCHITECTURE=$(PlatformArchitecture)
-set PLATFORMNAME=$(PlatformName)
-set PROJECTDIR=$(ProjectDir)
-set PROJECTFILENAME=$(ProjectFileName)
-set PROJECTNAME=$(ProjectName)
-set PROJECTPATH=$(ProjectPath)
-set SOLUTIONDIR=$(SolutionDir)
-set SOLUTIONFILENAME=$(SolutionFileName)
-set SOLUTIONNAME=$(SolutionName)
-set SOLUTIONPATH=$(SolutionPath)
-set TARGETDIR=$(TargetDir)
-set TARGETEXT=$(TargetExt)
-set TARGETFILENAME=$(TargetFileName)
-set TARGETPATH=$(TargetPath)
-set DEBUGSUFFIX=$(DebugSuffix)
-set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
+@set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
+@set CONFIGURATIONNAME=$(ConfigurationName)
+@set INPUTDIR=$(InputDir)
+@set INPUTFILENAME=$(InputFileName)
+@set INPUTPATH=$(InputPath)
+@set INTDIR=$(IntDir)
+@set OUTDIR=$(OutDir)
+@set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+@set PLATFORMNAME=$(PlatformName)
+@set PROJECTDIR=$(ProjectDir)
+@set PROJECTFILENAME=$(ProjectFileName)
+@set PROJECTNAME=$(ProjectName)
+@set PROJECTPATH=$(ProjectPath)
+@set SOLUTIONDIR=$(SolutionDir)
+@set SOLUTIONFILENAME=$(SolutionFileName)
+@set SOLUTIONNAME=$(SolutionName)
+@set SOLUTIONPATH=$(SolutionPath)
+@set TARGETDIR=$(TargetDir)
+@set TARGETEXT=$(TargetExt)
+@set TARGETFILENAME=$(TargetFileName)
+@set TARGETPATH=$(TargetPath)
+@set DEBUGSUFFIX=$(DebugSuffix)
+@set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
-REM If any of the above variables didn't exist previously and
-REM were set to an empty string, set will set the errorlevel to 1,
-REM which will cause the project-specific script to think the build
-REM has failed. This cmd /c call will clear the errorlevel.
-cmd /c
+@REM If any of the above variables didn't exist previously and
+@REM were set to an empty string, set will set the errorlevel to 1,
+@REM which will cause the project-specific script to think the build
+@REM has failed. This cmd /c call will clear the errorlevel.
+@cmd /c
 
-"$(ProjectDir)$(ProjectName)PreLink.cmd"
+@"$(ProjectDir)$(ProjectName)PreLink.cmd"
 </Command>
     </PreLinkEvent>
     <ResourceCompile>
