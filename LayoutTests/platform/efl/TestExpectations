@@ -811,9 +811,9 @@ webkit.org/b/124925 fast/css/hover-display-block-none.html [ Failure Pass ]
 webkit.org/b/124926 fast/events/popup-allowed-from-gesture-initiated-event.html [ Failure Pass ]
 
 # Fail after r139145 on MAC, EFL, QT, GTK.
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout ]
-webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
-webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+# webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout ]
+# webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
+# webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
 webkit.org/b/124929 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html [ Failure Pass ]
 
@@ -1025,7 +1025,7 @@ webkit.org/b/106507 storage/storageinfo-query-usage.html
 webkit.org/b/106507 storage/storageinfo-request-quota.html
 webkit.org/b/106507 storage/storagequota-query-usage.html
 webkit.org/b/106507 storage/storagequota-request-quota.html
-webkit.org/b/106507 fast/workers/worker-storagequota-query-usage.html
+# webkit.org/b/106507 fast/workers/worker-storagequota-query-usage.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin.
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Timeout ]
@@ -2143,3 +2143,6 @@ webkit.org/b/141896 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
 # Need to investigate why these security tests have been failed since r144338.
 webkit.org/b/141958 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
 webkit.org/b/141958 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+
+# [EFL][GTK] REGRESSION(180602): It made fast/workers test timeout
+webkit.org/b/142041 fast/workers [ Skip ]

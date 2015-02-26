@@ -1,5 +1,12 @@
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Unreviewed gardening, skip fast/workers tests to unbreak the buildbot.
+        https://bugs.webkit.org/show_bug.cgi?id=142041
+
+        * platform/efl/TestExpectations:
+
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Unreviewed gardening, comment out old expectations
         of WebGL tests to really skip them as we expected.
 
