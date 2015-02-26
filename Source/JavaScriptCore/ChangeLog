@@ -1,5 +1,83 @@
 2015-02-25  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge patch for r180247 and r180249.
+
+    2015-02-20  Michael Saboff  <msaboff@apple.com>
+
+            CrashTracer: DFG_CRASH beneath JSC::FTL::LowerDFGToLLVM::compileNode
+            https://bugs.webkit.org/show_bug.cgi?id=141730
+
+            Reviewed by Geoffrey Garen.
+
+            Added a new failure handler, loweringFailed(), to LowerDFGToLLVM that reports failures
+            while processing DFG lowering.  For debug builds, the failures are logged identical
+            to the way the DFG_CRASH() reports them.  For release builds, the failures are reported
+            and that FTL compilation is terminated, but the process is allowed to continue.
+            Wrapped calls to loweringFailed() in a macro LOWERING_FAILED so the function and
+            line number are reported at the point of the inconsistancy.
+
+            Converted instances of DFG_CRASH to LOWERING_FAILED.
+
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl): Added lowerDFGToLLVM() failure check that
+            will fail the FTL compile.
+
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+            Added new member variable, m_loweringSucceeded, to stop compilation on the first
+            reported failure.
+
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::lower):
+            * ftl/FTLLowerDFGToLLVM.h:
+            Added check for compilation failures and now report those failures via a boolean
+            return value.
+
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::createPhiVariables):
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileUpsilon):
+            (JSC::FTL::LowerDFGToLLVM::compilePhi):
+            (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+            (JSC::FTL::LowerDFGToLLVM::compileValueRep):
+            (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+            (JSC::FTL::LowerDFGToLLVM::compilePutLocal):
+            (JSC::FTL::LowerDFGToLLVM::compileArithAddOrSub):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+            (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+            (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+            (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+            (JSC::FTL::LowerDFGToLLVM::compileGetById):
+            (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+            (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+            (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+            (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+            (JSC::FTL::LowerDFGToLLVM::compileNewArray):
+            (JSC::FTL::LowerDFGToLLVM::compileToString):
+            (JSC::FTL::LowerDFGToLLVM::compileMakeRope):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+            (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+            (JSC::FTL::LowerDFGToLLVM::compare):
+            (JSC::FTL::LowerDFGToLLVM::boolify):
+            (JSC::FTL::LowerDFGToLLVM::opposite):
+            (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+            (JSC::FTL::LowerDFGToLLVM::speculate):
+            (JSC::FTL::LowerDFGToLLVM::isArrayType):
+            (JSC::FTL::LowerDFGToLLVM::exitValueForAvailability):
+            (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+            (JSC::FTL::LowerDFGToLLVM::setInt52):
+            Changed DFG_CRASH() to LOWERING_FAILED().  Updated related control flow as appropriate.
+
+            (JSC::FTL::LowerDFGToLLVM::loweringFailed): New error reporting member function.
+
+2015-02-25  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r180516.
 
     2015-02-23  Matthew Mirman  <mmirman@apple.com>
