@@ -731,9 +731,6 @@
     <None Include="..\..\win\WebKit.resources\zoomOutCursor.png">
       <Filter>Resources</Filter>
     </None>
-    <None Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def">
-      <Filter>Generated</Filter>
-    </None>
     <None Include="WebKitVersion.cmd" />
   </ItemGroup>
   <ItemGroup>

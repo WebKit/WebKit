@@ -552,7 +552,6 @@
     <CustomBuildStep Include="..\WebLocalizableStrings.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def" />
     <CustomBuild Include="..\..\mac\Configurations\Version.xcconfig">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">WebKitVersion.cmd</Command>

@@ -1,5 +1,31 @@
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Remove WebKitExportGenerator project (and related)
+        https://bugs.webkit.org/show_bug.cgi?id=142035
+
+        Reviewed by Dean Jackson.
+
+        * WebKit.vcxproj/WebKit.sln: Remove references to WebKitExportGenerator
+        * WebKit.vcxproj/WebKit.submit.sln: Ditto.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Ditto.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Ditto.
+        * WebKit.vcxproj/WebKitExportGenerator: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj.filters: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebug.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebugWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPostBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorProduction.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorRelease.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorReleaseWinCairo.props: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Removed.
+        * WebKit.vcxproj/WebKitExportGenerator/make-export-file-generator: Removed.
+
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Make build logs more legible by reducing noise
         https://bugs.webkit.org/show_bug.cgi?id=142034
 
