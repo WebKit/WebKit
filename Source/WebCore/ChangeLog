@@ -1,3 +1,20 @@
+2015-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        Black line across screen on Adobe Illustrator detail page (non-retina only)
+        https://bugs.webkit.org/show_bug.cgi?id=141866
+
+        Reviewed by Simon Fraser.
+
+        Phase is relative to the destination origin. We need to take location information into account
+        while snapping so that the result is inline with the snapped destination rect.
+        (location affects the snapped size.)
+
+        Test: fast/backgrounds/gradient-background-on-subpixel-position.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
 2015-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use WEBCORE_EXPORT instead of Definition file

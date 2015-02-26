@@ -1035,9 +1035,9 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
 static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& tileSize, LayoutSize& phase, LayoutSize& space, float scaleFactor)
 {
     tileSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), tileSize), scaleFactor).size());
+    phase = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), phase), scaleFactor).size());
     space = LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), space), scaleFactor).size());
     destinationRect = LayoutRect(snapRectToDevicePixels(destinationRect, scaleFactor));
-    phase = LayoutSize(toFloatSize(roundPointToDevicePixels(toLayoutPoint(phase), scaleFactor)));
 }
 
 bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
@@ -1161,7 +1161,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     }
 
     if (backgroundRepeatX == RepeatFill) {
-        phase.setWidth(tileSize.width() ? tileSize.width() -  fmodf(computedXPosition + left, tileSize.width()): 0);
+        phase.setWidth(tileSize.width() ? tileSize.width() - fmodf(computedXPosition + left, tileSize.width()) : 0);
         spaceSize.setWidth(0);
     } else if (backgroundRepeatX == SpaceFill && tileSize.width() > 0) {
         LayoutUnit space = getSpace(positioningAreaSize.width(), tileSize.width());
