@@ -41,7 +41,6 @@ public:
     { }
 
     // CDMFactory support:
-    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<MockCDM>(cdm); }
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 

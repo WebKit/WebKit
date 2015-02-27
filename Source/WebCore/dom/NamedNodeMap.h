@@ -40,9 +40,10 @@ class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:
-    static std::unique_ptr<NamedNodeMap> create(Element& element)
+    explicit NamedNodeMap(Element& element)
+        : m_element(element)
     {
-        return std::unique_ptr<NamedNodeMap>(new NamedNodeMap(element));
+        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
     }
 
     void ref();
@@ -65,12 +66,6 @@ public:
     Element& element() const { return m_element; }
 
 private:
-    explicit NamedNodeMap(Element& element)
-        : m_element(element)
-    {
-        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
-    }
-
     Element& m_element;
 };
 

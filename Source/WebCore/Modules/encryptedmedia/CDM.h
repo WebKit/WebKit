@@ -40,7 +40,7 @@ class CDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-typedef std::unique_ptr<CDMPrivateInterface> (*CreateCDM)(CDM*);
+typedef std::function<std::unique_ptr<CDMPrivateInterface> (CDM*)> CreateCDM;
 typedef bool (*CDMSupportsKeySystem)(const String&);
 typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
 

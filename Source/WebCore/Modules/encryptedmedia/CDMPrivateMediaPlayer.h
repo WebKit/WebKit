@@ -42,7 +42,6 @@ public:
         : m_cdm(cdm)
     { }
 
-    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<CDMPrivateMediaPlayer>(cdm); }
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 

@@ -36,7 +36,11 @@ class CDM;
 
 class CDMPrivateClearKey : public CDMPrivateInterface {
 public:
-    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::unique_ptr<CDMPrivateInterface>(new CDMPrivateClearKey(cdm)); }
+    explicit CDMPrivateClearKey(CDM* cdm)
+        : m_cdm(cdm)
+    {
+    }
+
     virtual ~CDMPrivateClearKey() { }
 
     static bool supportsKeySystem(const String&);
@@ -46,11 +50,6 @@ public:
     virtual std::unique_ptr<CDMSession> createSession() override;
 
 protected:
-    explicit CDMPrivateClearKey(CDM* cdm)
-        : m_cdm(cdm)
-    {
-    }
-
     CDM* m_cdm;
 };
 

@@ -41,7 +41,6 @@ public:
     { }
     virtual ~CDMPrivateMediaSourceAVFObjC() { }
 
-    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<CDMPrivateMediaSourceAVFObjC>(cdm); }
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
