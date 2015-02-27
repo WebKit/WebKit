@@ -145,13 +145,17 @@ WebInspector.ObjectPreviewView.prototype = {
             if (i > 0)
                 element.appendChild(document.createTextNode(", "));
 
+            var keyPreviewLossless = true;
             var entry = preview.collectionEntryPreviews[i];
             if (entry.keyPreview) {
-                this._appendPreview(element, entry.keyPreview);
+                keyPreviewLossless = this._appendPreview(element, entry.keyPreview);
                 element.appendChild(document.createTextNode(" => "));
             }
 
-            this._appendPreview(element, entry.valuePreview);
+            var valuePreviewLossless = this._appendPreview(element, entry.valuePreview);
+
+            if (!keyPreviewLossless || !valuePreviewLossless)
+                lossless = false;
         }
 
         if (preview.overflow)
