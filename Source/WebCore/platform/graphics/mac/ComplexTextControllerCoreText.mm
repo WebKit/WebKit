@@ -163,7 +163,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     // Synthesize a run of missing glyphs.
     m_glyphsVector.fill(0, m_glyphCount);
     m_glyphs = m_glyphsVector.data();
-    m_advancesVector.fill(CGSizeMake(m_font.glyphZeroWidth(), 0), m_glyphCount);
+    m_advancesVector.fill(CGSizeMake(m_font.widthForGlyph(0), 0), m_glyphCount);
     m_advances = m_advancesVector.data();
 }
 

@@ -191,7 +191,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         if (character == '\t' && m_run.allowTabs())
             width = m_font->tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
         else {
-            width = glyphData.width;
+            width = font->widthForGlyph(glyph);
 
             // SVG uses horizontalGlyphStretch(), when textLength is used to stretch/squeeze text.
             width *= m_run.horizontalGlyphStretch();

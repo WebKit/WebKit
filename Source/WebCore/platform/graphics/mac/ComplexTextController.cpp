@@ -638,7 +638,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 #if PLATFORM(IOS)
             if (isEmoji && advance.width)
-                advance.width = font.computeWidthForGlyph(glyph);
+                advance.width = font.widthForGlyph(glyph);
 #endif
 
             if (ch == '\t' && m_run.allowTabs())
