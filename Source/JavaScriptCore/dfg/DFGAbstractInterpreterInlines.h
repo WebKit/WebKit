@@ -267,7 +267,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (concreteValue.isBoolean())
                 setConstant(node, jsNumber(concreteValue.asBoolean()));
             else
-                setConstant(node, concreteValue);
+                setConstant(node, *m_graph.freeze(concreteValue));
             break;
         }
         AbstractValue& value = forNode(node);
