@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2009 Acision BV. All rights reserved.
  *
@@ -88,6 +88,65 @@ static void pthreadSignalHandlerSuspendResume(int)
 #endif
 #endif
 
+class ActiveMachineThreadsManager;
+static ActiveMachineThreadsManager& activeMachineThreadsManager();
+
+class ActiveMachineThreadsManager {
+    WTF_MAKE_NONCOPYABLE(ActiveMachineThreadsManager);
+public:
+
+    class Locker {
+    public:
+        Locker(ActiveMachineThreadsManager& manager)
+            : m_locker(manager.m_lock)
+        {
+        }
+
+    private:
+        MutexLocker m_locker;
+    };
+
+    void add(MachineThreads* machineThreads)
+    {
+        MutexLocker managerLock(m_lock);
+        m_set.add(machineThreads);
+    }
+
+    void remove(MachineThreads* machineThreads)
+    {
+        MutexLocker managerLock(m_lock);
+        auto recordedMachineThreads = m_set.take(machineThreads);
+        RELEASE_ASSERT(recordedMachineThreads = machineThreads);
+    }
+
+    bool contains(MachineThreads* machineThreads)
+    {
+        return m_set.contains(machineThreads);
+    }
+
+private:
+    typedef HashSet<MachineThreads*> MachineThreadsSet;
+
+    ActiveMachineThreadsManager() { }
+    
+    Mutex m_lock;
+    MachineThreadsSet m_set;
+
+    friend ActiveMachineThreadsManager& activeMachineThreadsManager();
+};
+
+static ActiveMachineThreadsManager& activeMachineThreadsManager()
+{
+    static std::once_flag initializeManagerOnceFlag;
+    static ActiveMachineThreadsManager* manager = nullptr;
+
+    std::call_once(initializeManagerOnceFlag, [] {
+        manager = new ActiveMachineThreadsManager();
+    });
+    return *manager;
+}
+    
+
 class MachineThreads::Thread {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -124,10 +183,12 @@ MachineThreads::MachineThreads(Heap* heap)
 {
     UNUSED_PARAM(heap);
     threadSpecificKeyCreate(&m_threadSpecific, removeThread);
+    activeMachineThreadsManager().add(this);
 }
 
 MachineThreads::~MachineThreads()
 {
+    activeMachineThreadsManager().remove(this);
     threadSpecificKeyDelete(m_threadSpecific);
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
@@ -180,15 +241,24 @@ void MachineThreads::addCurrentThread()
 
 void MachineThreads::removeThread(void* p)
 {
-    static_cast<MachineThreads*>(p)->removeCurrentThread();
+    auto& manager = activeMachineThreadsManager();
+    ActiveMachineThreadsManager::Locker lock(manager);
+    auto machineThreads = static_cast<MachineThreads*>(p);
+    if (manager.contains(machineThreads)) {
+        // There's a chance that the MachineThreads registry that this thread
+        // was registered with was already destructed, and another one happened
+        // to be instantiated at the same address. Hence, this thread may or
+        // may not be found in this MachineThreads registry. We only need to
+        // do a removal if this thread is found in it.
+        machineThreads->removeThreadIfFound(getCurrentPlatformThread());
+    }
 }
 
-void MachineThreads::removeCurrentThread()
+template<typename PlatformThread>
+void MachineThreads::removeThreadIfFound(PlatformThread platformThread)
 {
-    PlatformThread currentPlatformThread = getCurrentPlatformThread();
-
     MutexLocker lock(m_registeredThreadsMutex);
-    if (equalThread(currentPlatformThread, m_registeredThreads->platformThread)) {
+    if (equalThread(platformThread, m_registeredThreads->platformThread)) {
         Thread* t = m_registeredThreads;
         m_registeredThreads = m_registeredThreads->next;
         delete t;
@@ -196,13 +266,12 @@ void MachineThreads::removeCurrentThread()
         Thread* last = m_registeredThreads;
         Thread* t;
         for (t = m_registeredThreads->next; t; t = t->next) {
-            if (equalThread(t->platformThread, currentPlatformThread)) {
+            if (equalThread(t->platformThread, platformThread)) {
                 last->next = t->next;
                 break;
             }
             last = t;
         }
-        ASSERT(t); // If t is NULL, we never found ourselves in the list.
         delete t;
     }
 }

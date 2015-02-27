@@ -55,7 +55,9 @@ namespace JSC {
         bool tryCopyOtherThreadStacks(MutexLocker&, void*, size_t capacity, size_t*);
 
         static void removeThread(void*);
-        void removeCurrentThread();
+
+        template<typename PlatformThread>
+        void removeThreadIfFound(PlatformThread);
 
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
