@@ -105,11 +105,11 @@ void DatabaseThread::databaseThreadStart(void* vDatabaseThread)
 #if PLATFORM(IOS)
 class DatabaseUnpauseTask : public DatabaseTask {
 public:
-    static std::unique_ptr<DatabaseUnpauseTask> create(DatabaseThread* thread)
-    {
-        return std::unique_ptr<DatabaseUnpauseTask>(new DatabaseUnpauseTask(thread));
-    }
-    
+    explicit DatabaseUnpauseTask(DatabaseThread& thread)
+        : DatabaseTask(0, 0)
+        , m_thread(thread)
+    { }
+
     virtual bool shouldPerformWhilePaused() const 
     {
         // Since we're not locking the DatabaseThread::m_paused in the main database thread loop, it's possible that
@@ -121,11 +121,6 @@ public:
     }
 
 private:
-    DatabaseUnpauseTask(DatabaseThread* thread)
-        : DatabaseTask(0, 0)
-        , m_thread(thread)
-    {}
-
     virtual void doPerformTask()
     {
         m_thread->handlePausedQueue();
@@ -134,7 +129,7 @@ private:
     virtual const char* debugTaskName() const { return "DatabaseUnpauseTask"; }
 #endif
 
-    DatabaseThread* m_thread;
+    DatabaseThread& m_thread;
 };
 
 
@@ -146,7 +141,7 @@ void DatabaseThread::setPaused(bool paused)
     MutexLocker pausedLocker(m_pausedMutex);
     m_paused = paused;
     if (!m_paused)
-        scheduleTask(DatabaseUnpauseTask::create(this));
+        scheduleTask(std::make_unique<DatabaseUnpauseTask>(*this));
 }
 
 void DatabaseThread::handlePausedQueue()

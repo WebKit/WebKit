@@ -69,11 +69,6 @@ static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restri
 }
 #endif
 
-std::unique_ptr<HTMLMediaSession> HTMLMediaSession::create(MediaSessionClient& client)
-{
-    return std::make_unique<HTMLMediaSession>(client);
-}
-
 HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
     : MediaSession(client)
     , m_restrictions(NoRestrictions)

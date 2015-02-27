@@ -47,18 +47,12 @@ class CryptoKeyDataRSAComponents;
 class JSCryptoKeySerializationJWK final : public CryptoKeySerialization {
 WTF_MAKE_NONCOPYABLE(JSCryptoKeySerializationJWK);
 public:
-    static std::unique_ptr<JSCryptoKeySerializationJWK> create(JSC::ExecState* exec, const String& jsonString)
-    {
-        return std::unique_ptr<JSCryptoKeySerializationJWK>(new JSCryptoKeySerializationJWK(exec, jsonString));
-    }
-
+    JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
     virtual ~JSCryptoKeySerializationJWK();
 
     static String serialize(JSC::ExecState* exec, const CryptoKey&);
 
 private:
-    JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
-
     virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const override;
 
     virtual void reconcileUsages(CryptoKeyUsage&) const override;

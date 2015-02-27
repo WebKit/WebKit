@@ -448,7 +448,7 @@ static void importKey(ExecState* exec, CryptoKeyFormat keyFormat, CryptoOperatio
             throwTypeError(exec, "JWK JSON serialization is not valid UTF-8");
             return;
         }
-        keySerialization = JSCryptoKeySerializationJWK::create(exec, jwkString);
+        keySerialization = std::make_unique<JSCryptoKeySerializationJWK>(exec, jwkString);
         if (exec->hadException())
             return;
         break;

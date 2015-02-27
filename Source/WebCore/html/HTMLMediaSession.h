@@ -38,9 +38,7 @@ class SourceBuffer;
 
 class HTMLMediaSession final : public MediaSession {
 public:
-    static std::unique_ptr<HTMLMediaSession> create(MediaSessionClient&);
-
-    HTMLMediaSession(MediaSessionClient&);
+    explicit HTMLMediaSession(MediaSessionClient&);
     virtual ~HTMLMediaSession() { }
 
     bool playbackPermitted(const HTMLMediaElement&) const;

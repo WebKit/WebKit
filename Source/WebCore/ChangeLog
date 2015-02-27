@@ -1,3 +1,26 @@
+2015-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove unnecessary create() factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=142039
+
+        Reviewed by Chris Dumez.
+
+        Clean up remaining JSCryptoKeySerializationJWK::create, HTMLMediaSession::create,
+        and DatabaseUnpauseTask::create.
+
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseUnpauseTask::DatabaseUnpauseTask):
+        (WebCore::DatabaseThread::setPaused):
+        (WebCore::DatabaseUnpauseTask::create): Deleted.
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::importKey):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::create): Deleted.
+        * html/HTMLMediaSession.h:
+
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
