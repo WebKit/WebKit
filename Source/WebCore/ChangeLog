@@ -1,3 +1,81 @@
+2015-02-26  Timothy Horton  <timothy_horton@apple.com>
+
+        Implement <attachment> element appearance on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=142023
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (attachment):
+        * platform/ThemeTypes.h:
+        Add a new -webkit-appearance value, attachment.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::setFile):
+        Let the renderer know when the file changes (so it can relayout and repaint).
+
+        (WebCore::HTMLAttachmentElement::filePath):
+        (WebCore::HTMLAttachmentElement::fileName):
+        * html/HTMLAttachmentElement.h:
+        Handy acccessors for the full path and the name of the file.
+
+        * platform/spi/mac/IconServicesSPI.h: Added.
+        * platform/spi/mac/LaunchServicesSPI.h: Added.
+        Add some IconServices and LaunchServices SPI headers.
+
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::RenderAttachment):
+        Don't have a default intrinsic size; we'll adjust in layout().
+
+        (WebCore::RenderAttachment::isSelected):
+        (WebCore::RenderAttachment::isFocused):
+        (WebCore::RenderAttachment::isSelectedOrFocused):
+        Factor out from paintReplaced().
+
+        (WebCore::RenderAttachment::layout):
+        Use RenderTheme to compute the intrinsic size of this attachment.
+
+        (WebCore::RenderAttachment::paintReplaced):
+        Use RenderTheme to paint the attachment.
+
+        (WebCore::RenderAttachment::representedFileChanged):
+        When the represented file changes, we need to recompute the intrinsic size and repaint.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::adjustAttachmentStyle):
+        (WebCore::RenderTheme::paintAttachment):
+        Plumb through the attachment appearance.
+
+        * rendering/RenderAttachment.h:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintAttachment):
+        (WebCore::RenderTheme::attachmentIntrinsicSize):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::attachmentIconBackgroundColor):
+        (WebCore::attachmentIconBorderColor):
+        (WebCore::AttachmentLayout):
+        AttachmentLayout lays out the innards of the RenderThemeMac attachment
+        presentation: an icon with an optional bordered background, with a label
+        underneath it with an optional background.
+
+        (WebCore::RenderThemeMac::attachmentIntrinsicSize):
+        (WebCore::paintAttachmentIconBackground):
+        (WebCore::paintAttachmentIcon):
+        (WebCore::RenderThemeMac::paintAttachmentLabelBackground):
+        (WebCore::RenderThemeMac::paintAttachmentLabel):
+        (WebCore::RenderThemeMac::paintAttachment):
+        Paint the attachment element. Paint the optional backgrounds (and swap
+        out the text color) if the element is selected/focused.
+
 2015-02-26  Doug Russell  <d_russell@apple.com>
 
         AX: Expose caret browsing preference to accessibility API

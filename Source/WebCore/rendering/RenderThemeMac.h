@@ -38,6 +38,7 @@ namespace WebCore {
 
 class RenderProgress;
 class RenderStyle;
+struct AttachmentLayout;
 
 class RenderThemeMac final : public RenderTheme {
 public:
@@ -167,6 +168,11 @@ protected:
 
     virtual bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const override;
+    virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
+#endif
+
 private:
     virtual String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const override;
 
@@ -224,6 +230,11 @@ private:
     virtual IntSize imageControlsButtonPositionOffset() const override;
 
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void paintAttachmentLabelBackground(const RenderAttachment&, GraphicsContext&, AttachmentLayout&) const;
+    void paintAttachmentLabel(const RenderAttachment&, GraphicsContext&, AttachmentLayout&, bool useSelectedStyle) const;
 #endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;

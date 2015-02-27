@@ -252,6 +252,10 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
 #endif
     case CapsLockIndicatorPart:
         return adjustCapsLockIndicatorStyle(styleResolver, style, e);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+        return adjustAttachmentStyle(styleResolver, style, e);
+#endif
     default:
         break;
     }
@@ -390,6 +394,10 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
 #endif
     case CapsLockIndicatorPart:
         return paintCapsLockIndicator(o, paintInfo, integralSnappedRect);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+        return paintAttachment(o, paintInfo, integralSnappedRect);
+#endif
     default:
         break;
     }
@@ -974,6 +982,17 @@ bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, 
 {
     return false;
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void RenderTheme::adjustAttachmentStyle(StyleResolver&, RenderStyle&, Element*) const
+{
+}
+
+bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&)
+{
+    return false;
+}
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 LayoutUnit RenderTheme::sliderTickSnappingThreshold() const

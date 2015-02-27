@@ -23,63 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RenderAttachment.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#if ENABLE(ATTACHMENT_ELEMENT)
+#include <LaunchServices/LaunchServicesPriv.h>
 
-#include "FloatRect.h"
-#include "FloatRoundedRect.h"
-#include "FrameSelection.h"
-#include "HTMLAttachmentElement.h"
-#include "Page.h"
-#include "PaintInfo.h"
-#include "RenderTheme.h"
-#include "URL.h"
+#else
 
-namespace WebCore {
-
-using namespace HTMLNames;
-
-RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, Ref<RenderStyle>&& style)
-    : RenderReplaced(element, WTF::move(style), LayoutSize())
-{
-}
-
-HTMLAttachmentElement& RenderAttachment::attachmentElement() const
-{
-    return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());
-}
-
-bool RenderAttachment::isSelected() const
-{
-    RefPtr<Range> selectionRange = frame().selection().selection().firstRange();
-    return selectionRange && selectionRange->intersectsNode(&nodeForNonAnonymous(), ASSERT_NO_EXCEPTION);
-}
-
-bool RenderAttachment::isFocused() const
-{
-    return frame().selection().isFocusedAndActive() && document().focusedElement() == &attachmentElement();
-}
-
-void RenderAttachment::layout()
-{
-    setIntrinsicSize(document().page()->theme().attachmentIntrinsicSize(*this));
-
-    RenderReplaced::layout();
-}
-
-void RenderAttachment::focusChanged()
-{
-    repaint();
-}
-
-void RenderAttachment::representedFileChanged()
-{
-    setNeedsLayout();
-    repaint();
-}
-
-} // namespace WebCore
+WTF_EXTERN_C_BEGIN
+typedef struct _LSBinding* LSBindingRef;
+LSBindingRef _LSBindingCreateWithURL(CFAllocatorRef, CFURLRef);
+WTF_EXTERN_C_END
 
 #endif

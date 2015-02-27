@@ -64,6 +64,12 @@ File* HTMLAttachmentElement::file()
 void HTMLAttachmentElement::setFile(File* file)
 {
     m_file = file;
+
+    auto* renderer = this->renderer();
+    if (!is<RenderAttachment>(renderer))
+        return;
+
+    downcast<RenderAttachment>(*renderer).representedFileChanged();
 }
 
 void HTMLAttachmentElement::setFocus(bool shouldBeFocused)

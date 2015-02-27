@@ -34,19 +34,23 @@
 #import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
+#import "HTMLAttachmentElement.h"
 #import "HTMLAudioElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInImageElement.h"
+#import "IconServicesSPI.h"
 #import "Image.h"
 #import "ImageBuffer.h"
+#import "LaunchServicesSPI.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
 #import "NSSharingServicePickerSPI.h"
 #import "Page.h"
 #import "PaintInfo.h"
+#import "RenderAttachment.h"
 #import "RenderLayer.h"
 #import "RenderMedia.h"
 #import "RenderMediaControlElements.h"
@@ -2065,6 +2069,170 @@ IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
 #endif
 }
 #endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+const CGFloat attachmentIconSize = 48;
+const CGFloat attachmentIconBackgroundPadding = 6;
+const CGFloat attachmentIconBackgroundSize = attachmentIconSize + attachmentIconBackgroundPadding;
+const CGFloat attachmentIconSelectionBorderThickness = 1;
+const CGFloat attachmentIconBackgroundRadius = 3;
+const CGFloat attachmentIconToLabelMargin = 2;
+
+static Color attachmentIconBackgroundColor() { return Color(0, 0, 0, 30); }
+static Color attachmentIconBorderColor() { return Color(255, 255, 255, 125); }
+
+const CGFloat attachmentLabelFontSize = 12;
+const CGFloat attachmentLabelBackgroundRadius = 3;
+const CGFloat attachmentLabelBackgroundPadding = 3;
+
+const CGFloat attachmentMargin = 3;
+
+struct AttachmentLayout {
+    AttachmentLayout(const RenderAttachment&);
+
+    FloatRect textRect;
+    FloatRect textBackgroundRect;
+    FloatRect iconRect;
+    FloatRect iconBackgroundRect;
+    FloatRect attachmentRect;
+
+    RetainPtr<CTFontRef> labelFont;
+    FontCascade labelFontCascade;
+    std::unique_ptr<TextRun> labelTextRun;
+};
+
+AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
+{
+    // FIXME: We should have a limit on the width of the label.
+    // FIXME: We should support line-breaking (up to two lines) and always middle-truncate the second line.
+    File* file = attachment.attachmentElement().file();
+
+    labelFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontSystemFontType, attachmentLabelFontSize, nullptr));
+    labelFontCascade = FontCascade(FontPlatformData(labelFont.get(), attachmentLabelFontSize));
+
+    String filename = file ? file->name() : String();
+    labelTextRun = std::make_unique<TextRun>(filename);
+    labelTextRun->setDirection(filename.defaultWritingDirection() == U_LEFT_TO_RIGHT ? LTR : RTL);
+    float textWidth = labelFontCascade.width(*labelTextRun);
+    float textHeight = labelFontCascade.fontMetrics().height();
+    float xOffset = (attachmentIconBackgroundSize / 2) - (textWidth / 2);
+
+    textRect = FloatRect(xOffset, attachmentIconBackgroundSize + attachmentIconToLabelMargin, textWidth, textHeight);
+    textBackgroundRect = textRect;
+    textBackgroundRect.inflateX(attachmentLabelBackgroundPadding);
+    textBackgroundRect = encloseRectToDevicePixels(textBackgroundRect, attachment.document().deviceScaleFactor());
+
+    iconBackgroundRect = FloatRect(0, 0, attachmentIconBackgroundSize, attachmentIconBackgroundSize);
+
+    iconRect = iconBackgroundRect;
+    iconRect.setSize(FloatSize(attachmentIconSize, attachmentIconSize));
+    iconRect.move(attachmentIconBackgroundPadding / 2, attachmentIconBackgroundPadding / 2);
+
+    attachmentRect = iconBackgroundRect;
+    attachmentRect.unite(textBackgroundRect);
+    attachmentRect.inflate(attachmentMargin);
+    attachmentRect = encloseRectToDevicePixels(attachmentRect, attachment.document().deviceScaleFactor());
+}
+
+LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attachment) const
+{
+    AttachmentLayout layout(attachment);
+    return LayoutSize(layout.attachmentRect.size());
+}
+
+static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
+{
+    // FIXME: Finder has a discontinuous behavior here when you have a background color other than white,
+    // where it switches into 'bordered mode' and the border pops in on top of the background.
+    bool paintBorder = true;
+
+    FloatRect backgroundRect = layout.iconBackgroundRect;
+    if (paintBorder)
+        backgroundRect.inflate(-attachmentIconSelectionBorderThickness);
+
+    FloatSize iconBackgroundRadiusSize(attachmentIconBackgroundRadius, attachmentIconBackgroundRadius);
+
+    Path backgroundPath;
+    backgroundPath.addRoundedRect(backgroundRect, iconBackgroundRadiusSize);
+    context.setFillColor(attachmentIconBackgroundColor(), ColorSpaceDeviceRGB);
+    context.fillPath(backgroundPath);
+
+    if (paintBorder) {
+        FloatRect borderRect = layout.iconBackgroundRect;
+        borderRect.inflate(-attachmentIconSelectionBorderThickness / 2);
+
+        Path borderPath;
+        borderPath.addRoundedRect(borderRect, iconBackgroundRadiusSize);
+        context.setStrokeColor(attachmentIconBorderColor(), ColorSpaceDeviceRGB);
+        context.setStrokeThickness(attachmentIconSelectionBorderThickness);
+        context.strokePath(borderPath);
+    }
+}
+
+static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+{
+    File* file = attachment.attachmentElement().file();
+    RetainPtr<LSBindingRef> lsBinding = adoptCF(_LSBindingCreateWithURL(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:file ? file->path() : String()]));
+    if (!lsBinding)
+        return;
+
+    // FIXME: This should take transforms and page scale into account, not just deviceScaleFactor.
+    FloatSize iconSizeInPoints(attachmentIconSize, attachmentIconSize);
+    iconSizeInPoints.scale(attachment.document().deviceScaleFactor());
+
+    RetainPtr<CGImageRef> icon = adoptCF(_ISCreateCGImageFromBindingWithSizeScaleAndOptions(lsBinding.get(), iconSizeInPoints, 1, nil));
+    if (!icon)
+        return;
+
+    context.drawNativeImage(icon.get(), iconSizeInPoints, ColorSpaceDeviceRGB, layout.iconRect, FloatRect(FloatPoint(), iconSizeInPoints));
+}
+
+void RenderThemeMac::paintAttachmentLabelBackground(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout) const
+{
+    Path backgroundPath;
+    backgroundPath.addRoundedRect(layout.textBackgroundRect, FloatSize(attachmentLabelBackgroundRadius, attachmentLabelBackgroundRadius));
+    context.setFillColor(convertNSColorToColor([NSColor alternateSelectedControlColor]), ColorSpaceDeviceRGB);
+    context.fillPath(backgroundPath);
+}
+
+void RenderThemeMac::paintAttachmentLabel(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout, bool useSelectedStyle) const
+{
+    FloatPoint textLocation = layout.textRect.minXMaxYCorner();
+    textLocation.move(0, -layout.labelFontCascade.fontMetrics().descent());
+
+    context.setFillColor(useSelectedStyle ? convertNSColorToColor([NSColor alternateSelectedControlTextColor]) : Color::black, ColorSpaceDeviceRGB);
+    context.drawBidiText(layout.labelFontCascade, *layout.labelTextRun, textLocation);
+}
+
+bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
+{
+    if (!is<RenderAttachment>(renderer))
+        return false;
+
+    const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
+
+    AttachmentLayout layout(attachment);
+
+    GraphicsContext& context = *paintInfo.context;
+
+    GraphicsContextStateSaver saver(context);
+
+    context.translate(toFloatSize(paintRect.location()));
+    context.translate(FloatSize((layout.attachmentRect.width() - attachmentIconBackgroundSize) / 2, 0));
+
+    bool useSelectedStyle = attachment.isSelectedOrFocused();
+
+    if (useSelectedStyle)
+        paintAttachmentIconBackground(attachment, context, layout);
+    paintAttachmentIcon(attachment, context, layout);
+    if (useSelectedStyle)
+        paintAttachmentLabelBackground(attachment, context, layout);
+    paintAttachmentLabel(attachment, context, layout, useSelectedStyle);
+
+    return true;
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace WebCore
 

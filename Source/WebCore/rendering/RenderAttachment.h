@@ -41,14 +41,21 @@ public:
     HTMLAttachmentElement& attachmentElement() const;
 
     void focusChanged();
+    void representedFileChanged();
+
+    bool isSelectedOrFocused() const { return isSelected() || isFocused(); }
 
 private:
     void element() const = delete;
     virtual bool isAttachment() const override { return true; }
     virtual const char* renderName() const override { return "RenderAttachment"; }
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
     virtual bool shouldDrawSelectionTint() const override { return false; }
+
+    virtual void layout() override;
+
+    bool isSelected() const;
+    bool isFocused() const;
 };
 
 } // namespace WebCore

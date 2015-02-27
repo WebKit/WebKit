@@ -1,3 +1,16 @@
+2015-02-26  Timothy Horton  <timothy_horton@apple.com>
+
+        Implement <attachment> element appearance on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=142023
+
+        Reviewed by Dean Jackson.
+
+        * fast/attachment/attachment-rendering-expected.txt:
+        * platform/mac/fast/attachment/attachment-disabled-rendering-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-rendering-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-rendering-expected.txt: Added.
+        Add Mac overrides for <attachment> tests (and pixel results).
+
 2015-02-26  Doug Russell  <d_russell@apple.com>
 
         AX: Expose caret browsing preference to accessibility API

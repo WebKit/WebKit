@@ -1193,6 +1193,10 @@ applet, embed, object, img {
 #endif
 
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
+attachment {
+    -webkit-appearance: attachment;
+}
+
 attachment:focus {
     outline: none;
 }

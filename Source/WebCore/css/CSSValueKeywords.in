@@ -745,6 +745,9 @@ rating-level-indicator
 image-controls-button
 #endif
 textarea
+#if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
+attachment
+#endif
 caps-lock-indicator
 
 //

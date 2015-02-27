@@ -602,6 +602,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case CapsLockIndicatorPart:
         m_value.valueID = CSSValueCapsLockIndicator;
         break;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+        m_value.valueID = CSSValueAttachment;
+        break;
+#endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         m_value.valueID = CSSValueImageControlsButton;

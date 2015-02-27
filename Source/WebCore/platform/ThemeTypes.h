@@ -45,7 +45,11 @@ enum ControlPart {
 #if ENABLE(SERVICE_CONTROLS)
     ImageControlsButtonPart,
 #endif
-    TextAreaPart, CapsLockIndicatorPart
+    TextAreaPart,
+#if ENABLE(ATTACHMENT_ELEMENT)
+    AttachmentPart,
+#endif
+    CapsLockIndicatorPart
 };
 
 enum SelectionPart {

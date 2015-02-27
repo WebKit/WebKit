@@ -43,6 +43,7 @@ class FileList;
 class HTMLInputElement;
 class Icon;
 class PopupMenu;
+class RenderAttachment;
 class RenderMenuList;
 #if ENABLE(METER_ELEMENT)
 class RenderMeter;
@@ -249,6 +250,10 @@ public:
 
     virtual bool defaultButtonHasAnimation() const { return false; }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
+#endif
+
 protected:
     virtual FontDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontDescription&) const = 0;
@@ -314,6 +319,11 @@ protected:
 
     virtual void adjustCapsLockIndicatorStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual void adjustAttachmentStyle(StyleResolver&, RenderStyle&, Element*) const;
+    virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
+#endif
 
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
