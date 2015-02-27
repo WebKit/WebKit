@@ -1,3 +1,13 @@
+2015-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip tests added in r180771 on platforms that don't support IndexedDB.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2015-02-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip IndexDB tests on Windows since it's not implemented.

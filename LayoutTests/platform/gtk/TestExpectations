@@ -2110,6 +2110,9 @@ webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb.html [ Ski
 webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 webkit.org/b/107194 crypto/subtle/rsa-indexeddb.html [ Skip ]
 webkit.org/b/107194 inspector-protocol/indexeddb/basics.html [ Skip ]
+webkit.org/b/107194 fast/history/page-cache-indexed-closed-db.html [ Skip ]
+webkit.org/b/107194 fast/history/page-cache-indexed-opened-db.html [ Skip ]
+webkit.org/b/107194 fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
 
 # Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
 webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
