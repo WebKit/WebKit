@@ -31,7 +31,6 @@
 #include "MemoryCache.h"
 #include "CachedPage.h"
 #include "DOMWindow.h"
-#include "DatabaseManager.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "DiagnosticLoggingClient.h"
@@ -83,7 +82,7 @@ enum ReasonFrameCannotBeInPageCache {
     IsErrorPage,
     HasPlugins,
     IsHttpsAndCacheControlled,
-    HasDatabaseHandles,
+    HasDatabaseHandles, // FIXME: Remove.
     HasSharedWorkers, // FIXME: Remove.
     NoHistoryItem,
     QuickRedirectComing,
@@ -152,11 +151,6 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
         PCLOG("   -Frame is HTTPS, and cache control prohibits storing");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
-    }
-    if (DatabaseManager::singleton().hasOpenDatabases(frame.document())) {
-        PCLOG("   -Frame has open database handles");
-        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::hasOpenDatabasesKey());
-        rejectReasons |= 1 << HasDatabaseHandles;
     }
     if (!frame.loader().history().currentItem()) {
         PCLOG("   -No current history item");
@@ -319,7 +313,6 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame.page()->settings().pageCacheSupportsPlugins())
         && !(frame.isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
-        && !DatabaseManager::singleton().hasOpenDatabases(document)
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()

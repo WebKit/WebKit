@@ -145,6 +145,11 @@ void DatabaseContext::stop()
     stopDatabases();
 }
 
+bool DatabaseContext::canSuspend() const
+{
+    return !hasOpenDatabases();
+}
+
 DatabaseThread* DatabaseContext::databaseThread()
 {
     if (!m_databaseThread && !m_hasOpenDatabases) {

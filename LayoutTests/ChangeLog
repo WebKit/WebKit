@@ -1,3 +1,16 @@
+2015-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary DatabaseManager::hasOpenDatabases() in PageCache::canCachePageContainingThisFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=142052
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test to check that a page with an open WebDatabase does
+        not enter the PageCache.
+
+        * fast/history/page-cache-webdatabase-opened-db-expected.txt: Added.
+        * fast/history/page-cache-webdatabase-opened-db.html: Added.
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle

@@ -55,7 +55,7 @@ public:
 #endif
 
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
-    bool hasOpenDatabases() { return m_hasOpenDatabases; }
+    bool hasOpenDatabases() const { return m_hasOpenDatabases; }
 
     // When the database cleanup is done, the sychronizer will be signalled.
     bool stopDatabases(DatabaseTaskSynchronizer*);
@@ -73,9 +73,10 @@ private:
 
     void stopDatabases() { stopDatabases(nullptr); }
 
-    virtual void contextDestroyed() override final;
-    virtual void stop() override final;
-    virtual const char* activeDOMObjectName() const override { return "DatabaseContext"; }
+    void contextDestroyed() override;
+    void stop() override;
+    bool canSuspend() const override;
+    const char* activeDOMObjectName() const override { return "DatabaseContext"; }
 
     RefPtr<DatabaseThread> m_databaseThread;
     bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.

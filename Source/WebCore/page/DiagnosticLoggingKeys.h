@@ -47,7 +47,6 @@ public:
     static String engineFailedToLoadKey();
     static String expiredKey();
     static String fontKey();
-    static String hasOpenDatabasesKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
     static String imageKey();

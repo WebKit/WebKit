@@ -223,11 +223,6 @@ String DiagnosticLoggingKeys::isConditionalRequestKey()
     return ASCIILiteral("isConditionalRequest");
 }
 
-String DiagnosticLoggingKeys::hasOpenDatabasesKey()
-{
-    return ASCIILiteral("hasOpenDatabases");
-}
-
 String DiagnosticLoggingKeys::noCurrentHistoryItemKey()
 {
     return ASCIILiteral("noCurrentHistoryItem");
