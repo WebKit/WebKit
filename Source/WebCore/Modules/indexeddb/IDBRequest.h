@@ -131,8 +131,9 @@ protected:
 
 private:
     // ActiveDOMObject
-    virtual void stop() override;
-    virtual const char* activeDOMObjectName() const override { return "IDBRequest"; }
+    void stop() override;
+    const char* activeDOMObjectName() const override { return "IDBRequest"; }
+    bool canSuspend() const override;
 
     // EventTarget
     virtual void refEventTarget() override final { ref(); }

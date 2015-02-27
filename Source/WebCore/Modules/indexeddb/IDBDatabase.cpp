@@ -61,6 +61,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
     : ActiveDOMObject(context)
     , m_backend(backend)
     , m_closePending(false)
+    , m_isClosed(false)
     , m_contextStopped(false)
     , m_databaseCallbacks(callbacks)
 {
@@ -297,6 +298,8 @@ void IDBDatabase::closeConnection()
         bool removed = eventQueue.cancelEvent(*m_enqueuedEvents[i]);
         ASSERT_UNUSED(removed, removed);
     }
+
+    m_isClosed = true;
 }
 
 void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness)
@@ -314,6 +317,7 @@ void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion, Inde
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(!m_contextStopped);
+    ASSERT(!m_isClosed);
     ASSERT(scriptExecutionContext());
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(event.get());
@@ -355,6 +359,11 @@ void IDBDatabase::stop()
     close();
 
     m_contextStopped = true;
+}
+
+bool IDBDatabase::canSuspend() const
+{
+    return m_isClosed;
 }
 
 } // namespace WebCore

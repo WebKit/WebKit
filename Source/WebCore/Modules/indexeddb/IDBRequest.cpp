@@ -443,6 +443,11 @@ void IDBRequest::stop()
         markEarlyDeath();
 }
 
+bool IDBRequest::canSuspend() const
+{
+    return !m_hasPendingActivity;
+}
+
 EventTargetInterface IDBRequest::eventTargetInterface() const
 {
     return IDBRequestEventTargetInterfaceType;
