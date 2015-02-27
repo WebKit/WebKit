@@ -122,6 +122,7 @@ namespace WebCore {
 
         void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);
+        void addEllipse(FloatPoint, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise);
         void addEllipse(const FloatRect&);
 
         enum RoundedRectStrategy {

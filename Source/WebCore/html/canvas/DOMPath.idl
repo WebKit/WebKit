@@ -63,9 +63,11 @@
               [Default=Undefined] optional float width,
               [Default=Undefined] optional float height);
     [RaisesException] void arc([Default=Undefined] optional float x,
-             [Default=Undefined] optional float y,
-             [Default=Undefined] optional float radius,
-             [Default=Undefined] optional float startAngle,
-             [Default=Undefined] optional float endAngle,
-             [Default=Undefined] optional boolean anticlockwise);
+                               [Default=Undefined] optional float y,
+                               [Default=Undefined] optional float radius,
+                               [Default=Undefined] optional float startAngle,
+                               [Default=Undefined] optional float endAngle,
+                               [Default=Undefined] optional boolean anticlockwise);
+    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
+
 };

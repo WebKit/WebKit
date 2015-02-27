@@ -292,16 +292,25 @@ void Path::closeSubpath()
     CGPathCloseSubpath(m_path);
 }
 
-void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)
+void Path::addArc(const FloatPoint& p, float radius, float startAngle, float endAngle, bool clockwise)
 {
     // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle
-    if (std::isfinite(sa) && std::isfinite(ea))
-        CGPathAddArc(ensurePlatformPath(), 0, p.x(), p.y(), r, sa, ea, clockwise);
+    if (std::isfinite(startAngle) && std::isfinite(endAngle))
+        CGPathAddArc(ensurePlatformPath(), nullptr, p.x(), p.y(), radius, startAngle, endAngle, clockwise);
 }
 
 void Path::addRect(const FloatRect& r)
 {
     CGPathAddRect(ensurePlatformPath(), 0, r);
+}
+
+void Path::addEllipse(FloatPoint p, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
+{
+    AffineTransform transform;
+    transform.translate(p.x(), p.y()).rotate(rad2deg(rotation)).scale(radiusX, radiusY);
+
+    CGAffineTransform cgTransform = transform;
+    CGPathAddArc(ensurePlatformPath(), &cgTransform, 0, 0, 1, startAngle, endAngle, anticlockwise);
 }
 
 void Path::addEllipse(const FloatRect& r)

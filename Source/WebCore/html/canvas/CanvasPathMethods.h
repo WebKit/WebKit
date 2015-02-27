@@ -48,6 +48,7 @@ public:
     void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
     void arcTo(float x0, float y0, float x1, float y1, float radius, ExceptionCode&);
     void arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode&);
+    void ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngled, bool anticlockwise, ExceptionCode&);
     void rect(float x, float y, float width, float height);
 
 protected:
@@ -55,6 +56,8 @@ protected:
     CanvasPathMethods(const Path& path) : m_path(path) { }
 
     virtual bool hasInvertibleTransform() const { return true; }
+
+    void lineTo(FloatPoint);
 
     Path m_path;
 };

@@ -35,6 +35,7 @@
 #include "config.h"
 #include "CanvasPathMethods.h"
 
+#include "AffineTransform.h"
 #include "ExceptionCode.h"
 #include "FloatRect.h"
 #include <wtf/MathExtras.h>
@@ -58,6 +59,11 @@ void CanvasPathMethods::moveTo(float x, float y)
     if (!hasInvertibleTransform())
         return;
     m_path.moveTo(FloatPoint(x, y));
+}
+
+void CanvasPathMethods::lineTo(FloatPoint point)
+{
+    lineTo(point.x(), point.y());
 }
 
 void CanvasPathMethods::lineTo(float x, float y)
@@ -130,37 +136,91 @@ void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, E
         m_path.addArcTo(p1, p2, r);
 }
 
-void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode& ec)
+static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwise)
 {
-    ec = 0;
-    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(r) || !std::isfinite(sa) || !std::isfinite(ea))
+    float newStartAngle = startAngle;
+    if (newStartAngle < 0)
+        newStartAngle = (2 * piFloat) + fmodf(newStartAngle, -(2 * piFloat));
+    else
+        newStartAngle = fmodf(newStartAngle, 2 * piFloat);
+
+    float delta = newStartAngle - startAngle;
+    startAngle = newStartAngle;
+    endAngle = endAngle + delta;
+    ASSERT(newStartAngle >= 0 && newStartAngle < 2 * piFloat);
+
+    if (anticlockwise && startAngle - endAngle >= 2 * piFloat)
+        endAngle = startAngle - 2 * piFloat;
+    else if (!anticlockwise && endAngle - startAngle >= 2 * piFloat)
+        endAngle = startAngle + 2 * piFloat;
+}
+
+void CanvasPathMethods::arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise, ExceptionCode& ec)
+{
+    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
         return;
 
-    if (r < 0) {
+    if (radius < 0) {
         ec = INDEX_SIZE_ERR;
-        return;
-    }
-
-    if (!r || sa == ea) {
-        // The arc is empty but we still need to draw the connecting line.
-        lineTo(x + r * cosf(sa), y + r * sinf(sa));
         return;
     }
 
     if (!hasInvertibleTransform())
         return;
 
-    // If 'sa' and 'ea' differ by more than 2Pi, just add a circle starting/ending at 'sa'.
-    if (anticlockwise && sa - ea >= 2 * piFloat) {
-        m_path.addArc(FloatPoint(x, y), r, sa, sa - 2 * piFloat, anticlockwise);
-        return;
-    }
-    if (!anticlockwise && ea - sa >= 2 * piFloat) {
-        m_path.addArc(FloatPoint(x, y), r, sa, sa + 2 * piFloat, anticlockwise);
+    normalizeAngles(startAngle, endAngle, anticlockwise);
+
+    if (!radius || startAngle == endAngle) {
+        // The arc is empty but we still need to draw the connecting line.
+        lineTo(x + radius * cosf(startAngle), y + radius * sinf(startAngle));
         return;
     }
 
-    m_path.addArc(FloatPoint(x, y), r, sa, ea, anticlockwise);
+    m_path.addArc(FloatPoint(x, y), radius, startAngle, endAngle, anticlockwise);
+}
+    
+void CanvasPathMethods::ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise, ExceptionCode& ec)
+{
+    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radiusX) || !std::isfinite(radiusY) || !std::isfinite(rotation) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+        return;
+
+    if (radiusX < 0 || radiusY < 0) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    if (!hasInvertibleTransform())
+        return;
+
+    normalizeAngles(startAngle, endAngle, anticlockwise);
+
+    if ((!radiusX && !radiusY) || startAngle == endAngle) {
+        AffineTransform transform;
+        transform.translate(x, y).rotate(rad2deg(rotation));
+
+        lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(startAngle), radiusY * sinf(startAngle))));
+        return;
+    }
+
+    if (!radiusX || !radiusY) {
+        AffineTransform transform;
+        transform.translate(x, y).rotate(rad2deg(rotation));
+
+        lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(startAngle), radiusY * sinf(startAngle))));
+
+        if (!anticlockwise) {
+            for (float angle = startAngle - fmodf(startAngle, piOverTwoFloat) + piOverTwoFloat; angle < endAngle; angle += piOverTwoFloat)
+                lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(angle), radiusY * sinf(angle))));
+        } else {
+            for (float angle = startAngle - fmodf(startAngle, piOverTwoFloat); angle > endAngle; angle -= piOverTwoFloat)
+                lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(angle), radiusY * sinf(angle))));
+        }
+
+        lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(endAngle), radiusY * sinf(endAngle))));
+        return;
+    }
+
+    m_path.addEllipse(FloatPoint(x, y), radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
 }
 
 void CanvasPathMethods::rect(float x, float y, float width, float height)

@@ -1,3 +1,31 @@
+2015-02-26  Sam Weinig  <sam@webkit.org>
+
+        Add support for canvas ellipse method
+        https://bugs.webkit.org/show_bug.cgi?id=82791
+        <rdar://problem/11159172>
+
+        Reviewed by Dirk Schulze.
+
+        * fast/canvas/canvas-ellipse-360-winding-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-360-winding.html: Added.
+        * fast/canvas/canvas-ellipse-circumference-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-circumference-fill-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-circumference-fill.html: Added.
+        * fast/canvas/canvas-ellipse-circumference.html: Added.
+        * fast/canvas/canvas-ellipse-connecting-line-expected.html: Added.
+        * fast/canvas/canvas-ellipse-connecting-line.html: Added.
+        * fast/canvas/canvas-ellipse-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-negative-radius-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-negative-radius.html: Added.
+        * fast/canvas/canvas-ellipse-zero-lineto-expected.txt: Added.
+        * fast/canvas/canvas-ellipse-zero-lineto.html: Added.
+        * fast/canvas/canvas-ellipse.html: Added.
+        * fast/canvas/script-tests/canvas-ellipse-360-winding.js: Added.
+        * fast/canvas/script-tests/canvas-ellipse.js: Added.
+        * fast/canvas/script-tests/js-ellipse-implementation.js: Added.
+        * platform/mac/fast/canvas/canvas-ellipse-circumference-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-ellipse-circumference-fill-expected.png: Added.
+
 2015-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Test more features of content extensions.

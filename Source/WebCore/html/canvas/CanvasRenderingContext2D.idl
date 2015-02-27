@@ -78,6 +78,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void rect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
     [RaisesException] void arc(unrestricted float x, unrestricted float y, unrestricted float radius, unrestricted float startAngle,
         unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
+    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
 
     void fill(DOMPath path, optional CanvasWindingRule winding);
     void stroke(DOMPath path);

@@ -1,3 +1,48 @@
+2015-02-26  Sam Weinig  <sam@webkit.org>
+
+        Add support for canvas ellipse method
+        https://bugs.webkit.org/show_bug.cgi?id=82791
+        <rdar://problem/11159172>
+
+        Reviewed by Dirk Schulze.
+
+        Tests: fast/canvas/canvas-ellipse-360-winding.html
+               fast/canvas/canvas-ellipse-circumference-fill.html
+               fast/canvas/canvas-ellipse-circumference.html
+               fast/canvas/canvas-ellipse-connecting-line.html
+               fast/canvas/canvas-ellipse-negative-radius.html
+               fast/canvas/canvas-ellipse-zero-lineto.html
+               fast/canvas/canvas-ellipse.html
+
+        * html/canvas/CanvasPathMethods.h:
+        * html/canvas/CanvasPathMethods.cpp:
+        (WebCore::CanvasPathMethods::lineTo):
+        Convenience for passing a FloatPoint instead of two floats.
+
+        (WebCore::normalizeAngles):
+        Normalizes the angles as described in the HTML spec. Ensuring the startAngle
+        is greater than 0 and less than 2pi, and the the endAngle is at most 2pi
+        from the start angle.
+
+        (WebCore::CanvasPathMethods::arc):
+        - Renames some of the parameters to be clearer.
+        - Normalizes the angles for consistency with ellipse.
+        - Moves hasInvertibleTransform() higher in the function for consistency.
+
+        (WebCore::CanvasPathMethods::ellipse): Added.
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl:
+        Add ellipse(...).
+
+        * platform/graphics/Path.h:
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addArc):
+        Rename parameters for clarity and use a nullptr.
+
+        (WebCore::Path::addEllipse):
+        Added. Constructs an ellipse via a transformed arc.
+
 2015-02-27  Enrica Casucci  <enrica@apple.com>
 
         Adding support for serializing HTMLAttachment elements.
