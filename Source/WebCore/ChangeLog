@@ -1,3 +1,13 @@
+2015-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out r180280.
+
+        Crashes under IDBDatabase::closeConnection.
+        https://bugs.webkit.org/show_bug.cgi?id=141745
+        rdar://problem/19816412
+
+        * Modules/indexeddb/IDBDatabase.cpp: (WebCore::IDBDatabase::closeConnection):
+
 2015-02-18  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r174761) Dangling spanner pointer in RenderMultiColumnSpannerPlaceholder.
