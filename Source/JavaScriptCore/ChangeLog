@@ -1,5 +1,23 @@
 2015-02-17  Filip Pizlo  <fpizlo@apple.com>
 
+        StackLayoutPhase should use CodeBlock::usesArguments rather than FunctionExecutable::usesArguments
+        https://bugs.webkit.org/show_bug.cgi?id=141721
+        rdar://problem/17198633
+
+        Reviewed by Michael Saboff.
+        
+        I've seen cases where the two are out of sync.  We know we can trust the CodeBlock::usesArguments because
+        we use it everywhere else.
+        
+        No test because I could never reproduce the crash.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::usesArguments):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+
+2015-02-17  Filip Pizlo  <fpizlo@apple.com>
+
         Throwing from an FTL call IC slow path may result in tag registers being clobbered on 64-bit CPUs
         https://bugs.webkit.org/show_bug.cgi?id=141717
         rdar://problem/19863382
