@@ -928,7 +928,7 @@ void GraphicsContext::setMiterLimit(float miter)
     cairo_set_miter_limit(platformContext()->cr(), miter);
 }
 
-void GraphicsContext::setAlpha(float alpha)
+void GraphicsContext::setPlatformAlpha(float alpha)
 {
     platformContext()->setGlobalAlpha(alpha);
 }

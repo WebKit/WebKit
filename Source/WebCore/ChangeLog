@@ -1,3 +1,56 @@
+2015-02-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Drawing an SVG image into a canvas using drawImage() ignores globalAlpha.
+        https://bugs.webkit.org/show_bug.cgi?id=141729.
+
+        Reviewed by Daniel Bates.
+
+        Fix a build break which is caused by http://trac.webkit.org/changeset/180511/trunk.
+        Two functions of GraphicsContext were made inline but they were kept WEBCORE_EXPORT.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::updatingControlTints):
+
+2015-02-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Drawing an SVG image into a canvas using drawImage() ignores globalAlpha.
+        https://bugs.webkit.org/show_bug.cgi?id=141729.
+
+        Reviewed by Simon Fraser.
+
+        When drawing an SVG image and the drawing context is set to be transparent,
+        make sure this transparency is applied to the compositing layer.
+
+        Test: svg/canvas/canvas-global-alpha-svg.html
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setAlpha): Make setAlpha() calls the platform
+        function and sets 'm_state.alpha' to the input value.
+
+        (WebCore::GraphicsContext::alpha): Add a new function 'alpha()' which
+        returns the value of the global alpha.
+        
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState): Add a new member
+        'alpha' to the context state since the getter function CGContextGetAlpha
+        is defined only in a private header file. Also move single line functions
+        from the source file to the header file.
+    
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformAlpha):
+        (WebCore::GraphicsContext::setAlpha): Deleted.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformAlpha):
+        (WebCore::GraphicsContext::setAlpha): Deleted.
+        Rename setAlpha() to setPlatformAlpha() in the platform files. Add setAlpha()
+        to the core file. setAlpha() will set the value of 'm_state.alpha' and call
+        setPlatformAlpha().
+    
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw): If the drawing context is transparent, apply its
+        global alpha value to the compositing layer.
+        
 2015-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Redundant track language notifications

@@ -229,9 +229,11 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp, blendMode);
     context->clip(enclosingIntRect(dstRect));
-    bool compositingRequiresTransparencyLayer = compositeOp != CompositeSourceOver || blendMode != BlendModeNormal;
+
+    float alpha = context->alpha();
+    bool compositingRequiresTransparencyLayer = compositeOp != CompositeSourceOver || blendMode != BlendModeNormal || alpha < 1;
     if (compositingRequiresTransparencyLayer) {
-        context->beginTransparencyLayer(1);
+        context->beginTransparencyLayer(alpha);
         context->setCompositeOperation(CompositeSourceOver, BlendModeNormal);
     }
 

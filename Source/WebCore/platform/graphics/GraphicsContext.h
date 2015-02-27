@@ -113,19 +113,7 @@ namespace WebCore {
 
     struct GraphicsContextState {
         GraphicsContextState()
-            : strokeThickness(0)
-            , shadowBlur(0)
-            , textDrawingMode(TextModeFill)
-            , strokeColor(Color::black)
-            , fillColor(Color::black)
-            , strokeStyle(SolidStroke)
-            , fillRule(RULE_NONZERO)
-            , strokeColorSpace(ColorSpaceDeviceRGB)
-            , fillColorSpace(ColorSpaceDeviceRGB)
-            , shadowColorSpace(ColorSpaceDeviceRGB)
-            , compositeOperator(CompositeSourceOver)
-            , blendMode(BlendModeNormal)
-            , shouldAntialias(true)
+            : shouldAntialias(true)
             , shouldSmoothFonts(true)
             , shouldSubpixelQuantizeFonts(true)
             , paintingDisabled(false)
@@ -147,24 +135,25 @@ namespace WebCore {
 
         FloatSize shadowOffset;
 
-        float strokeThickness;
-        float shadowBlur;
+        float strokeThickness { 0 };
+        float shadowBlur { 0 };
 
-        TextDrawingModeFlags textDrawingMode;
+        TextDrawingModeFlags textDrawingMode { TextModeFill };
 
-        Color strokeColor;
-        Color fillColor;
+        Color strokeColor { Color::black };
+        Color fillColor { Color::black };
         Color shadowColor;
 
-        StrokeStyle strokeStyle;
-        WindRule fillRule;
+        StrokeStyle strokeStyle { SolidStroke };
+        WindRule fillRule { RULE_NONZERO };
 
-        ColorSpace strokeColorSpace;
-        ColorSpace fillColorSpace;
-        ColorSpace shadowColorSpace;
+        ColorSpace strokeColorSpace { ColorSpaceDeviceRGB };
+        ColorSpace fillColorSpace { ColorSpaceDeviceRGB };
+        ColorSpace shadowColorSpace { ColorSpaceDeviceRGB };
 
-        CompositeOperator compositeOperator;
-        BlendMode blendMode;
+        float alpha { 1 };
+        CompositeOperator compositeOperator { CompositeSourceOver };
+        BlendMode blendMode { BlendModeNormal };
 
         bool shouldAntialias : 1;
         bool shouldSmoothFonts : 1;
@@ -216,47 +205,50 @@ namespace WebCore {
 
         WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
-        float strokeThickness() const;
         void setStrokeThickness(float);
-        StrokeStyle strokeStyle() const;
+        float strokeThickness() const { return m_state.strokeThickness; }
+
         void setStrokeStyle(StrokeStyle);
-        Color strokeColor() const;
-        ColorSpace strokeColorSpace() const;
+        StrokeStyle strokeStyle() const { return m_state.strokeStyle; }
+
         WEBCORE_EXPORT void setStrokeColor(const Color&, ColorSpace);
+        Color strokeColor() const { return m_state.strokeColor; }
+        ColorSpace strokeColorSpace() const { return m_state.strokeColorSpace; }
 
         void setStrokePattern(Ref<Pattern>&&);
-        Pattern* strokePattern() const;
+        Pattern* strokePattern() const { return m_state.strokePattern.get(); }
 
         void setStrokeGradient(Ref<Gradient>&&);
-        Gradient* strokeGradient() const;
+        Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
 
-        WindRule fillRule() const;
-        void setFillRule(WindRule);
-        Color fillColor() const;
-        ColorSpace fillColorSpace() const;
+        void setFillRule(WindRule fillRule) { m_state.fillRule = fillRule; }
+        WindRule fillRule() const { return m_state.fillRule; }
+    
         WEBCORE_EXPORT void setFillColor(const Color&, ColorSpace);
+        Color fillColor() const { return m_state.fillColor; }
+        ColorSpace fillColorSpace() const { return m_state.fillColorSpace; }
 
         void setFillPattern(Ref<Pattern>&&);
-        Pattern* fillPattern() const;
+        Pattern* fillPattern() const { return m_state.fillPattern.get(); }
 
         WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
-        Gradient* fillGradient() const;
+        Gradient* fillGradient() const { return m_state.fillGradient.get(); }
 
-        void setShadowsIgnoreTransforms(bool);
-        bool shadowsIgnoreTransforms() const;
+        void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.shadowsIgnoreTransforms = shadowsIgnoreTransforms; }
+        bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }
 
         WEBCORE_EXPORT void setShouldAntialias(bool);
-        bool shouldAntialias() const;
+        bool shouldAntialias() const { return m_state.shouldAntialias; }
 
         WEBCORE_EXPORT void setShouldSmoothFonts(bool);
-        bool shouldSmoothFonts() const;
+        bool shouldSmoothFonts() const { return m_state.shouldSmoothFonts; }
 
         // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
         // In some cases we have to disable to to ensure a high-quality output of the glyphs.
-        void setShouldSubpixelQuantizeFonts(bool);
-        bool shouldSubpixelQuantizeFonts() const;
+        void setShouldSubpixelQuantizeFonts(bool shouldSubpixelQuantizeFonts) { m_state.shouldSubpixelQuantizeFonts = shouldSubpixelQuantizeFonts; }
+        bool shouldSubpixelQuantizeFonts() const { return m_state.shouldSubpixelQuantizeFonts; }
 
-        const GraphicsContextState& state() const;
+        const GraphicsContextState& state() const { return m_state; }
 
 #if USE(CG)
         void applyStrokePattern();
@@ -338,9 +330,9 @@ namespace WebCore {
         
         IntRect clipBounds() const;
 
-        TextDrawingModeFlags textDrawingMode() const;
         void setTextDrawingMode(TextDrawingModeFlags);
-        
+        TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode; }
+
         float drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
         void drawGlyphs(const FontCascade&, const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawEmphasisMarks(const FontCascade&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
@@ -367,26 +359,28 @@ namespace WebCore {
         static void updateDocumentMarkerResources();
         void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 
-        WEBCORE_EXPORT bool paintingDisabled() const;
-        void setPaintingDisabled(bool);
+        void setPaintingDisabled(bool paintingDisabled) { m_state.paintingDisabled = paintingDisabled; }
+        bool paintingDisabled() const { return m_state.paintingDisabled; }
 
-        WEBCORE_EXPORT bool updatingControlTints() const;
         void setUpdatingControlTints(bool);
+        bool updatingControlTints() const { return m_updatingControlTints; }
 
         WEBCORE_EXPORT void beginTransparencyLayer(float opacity);
         WEBCORE_EXPORT void endTransparencyLayer();
-        bool isInTransparencyLayer() const;
+        bool isInTransparencyLayer() const { return (m_transparencyCount > 0) && supportsTransparencyLayers(); }
 
-        bool hasShadow() const;
         WEBCORE_EXPORT void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
         // It has different treatment of radii > 8px.
         void setLegacyShadow(const FloatSize&, float blur, const Color&, ColorSpace);
 
-        bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
         WEBCORE_EXPORT void clearShadow();
+        bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
 
-        bool hasBlurredShadow() const;
+        bool hasVisibleShadow() const { return m_state.shadowColor.isValid() && m_state.shadowColor.alpha(); }
+        bool hasShadow() const { return hasVisibleShadow() && (m_state.shadowBlur || m_state.shadowOffset.width() || m_state.shadowOffset.height()); }
+        bool hasBlurredShadow() const { return hasVisibleShadow() && m_state.shadowBlur; }
+
 #if USE(CAIRO)
         bool mustUseShadowBlur() const;
 #endif
@@ -403,13 +397,14 @@ namespace WebCore {
         void setMiterLimit(float);
 
         void setAlpha(float);
+        float alpha() const { return m_state.alpha; }
 
         WEBCORE_EXPORT void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
-        CompositeOperator compositeOperation() const;
-        BlendMode blendModeOperation() const;
+        CompositeOperator compositeOperation() const { return m_state.compositeOperator; }
+        BlendMode blendModeOperation() const { return m_state.blendMode; }
 
-        void setDrawLuminanceMask(bool);
-        bool drawLuminanceMask() const;
+        void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.drawLuminanceMask = drawLuminanceMask; }
+        bool drawLuminanceMask() const { return m_state.drawLuminanceMask; }
 
         WEBCORE_EXPORT void clip(const Path&, WindRule = RULE_EVENODD);
 
@@ -540,6 +535,7 @@ namespace WebCore {
         void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         void clearPlatformShadow();
 
+        void setPlatformAlpha(float);
         void setPlatformCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
 
         void beginPlatformTransparencyLayer(float opacity);

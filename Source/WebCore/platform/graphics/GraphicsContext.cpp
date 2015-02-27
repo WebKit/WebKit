@@ -208,12 +208,6 @@ void GraphicsContext::clearShadow()
     clearPlatformShadow();
 }
 
-bool GraphicsContext::hasShadow() const
-{
-    return m_state.shadowColor.isValid() && m_state.shadowColor.alpha()
-           && (m_state.shadowBlur || m_state.shadowOffset.width() || m_state.shadowOffset.height());
-}
-
 bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color, ColorSpace& colorSpace) const
 {
     offset = m_state.shadowOffset;
@@ -222,11 +216,6 @@ bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color, Co
     colorSpace = m_state.shadowColorSpace;
 
     return hasShadow();
-}
-
-bool GraphicsContext::hasBlurredShadow() const
-{
-    return m_state.shadowColor.isValid() && m_state.shadowColor.alpha() && m_state.shadowBlur;
 }
 
 #if USE(CAIRO)
@@ -247,36 +236,6 @@ bool GraphicsContext::mustUseShadowBlur() const
 }
 #endif
 
-float GraphicsContext::strokeThickness() const
-{
-    return m_state.strokeThickness;
-}
-
-StrokeStyle GraphicsContext::strokeStyle() const
-{
-    return m_state.strokeStyle;
-}
-
-Color GraphicsContext::strokeColor() const
-{
-    return m_state.strokeColor;
-}
-
-ColorSpace GraphicsContext::strokeColorSpace() const
-{
-    return m_state.strokeColorSpace;
-}
-
-WindRule GraphicsContext::fillRule() const
-{
-    return m_state.fillRule;
-}
-
-void GraphicsContext::setFillRule(WindRule fillRule)
-{
-    m_state.fillRule = fillRule;
-}
-
 void GraphicsContext::setFillColor(const Color& color, ColorSpace colorSpace)
 {
     m_state.fillColor = color;
@@ -286,51 +245,16 @@ void GraphicsContext::setFillColor(const Color& color, ColorSpace colorSpace)
     setPlatformFillColor(color, colorSpace);
 }
 
-Color GraphicsContext::fillColor() const
+void GraphicsContext::setShouldAntialias(bool shouldAntialias)
 {
-    return m_state.fillColor;
+    m_state.shouldAntialias = shouldAntialias;
+    setPlatformShouldAntialias(shouldAntialias);
 }
 
-ColorSpace GraphicsContext::fillColorSpace() const
+void GraphicsContext::setShouldSmoothFonts(bool shouldSmoothFonts)
 {
-    return m_state.fillColorSpace;
-}
-
-void GraphicsContext::setShouldAntialias(bool b)
-{
-    m_state.shouldAntialias = b;
-    setPlatformShouldAntialias(b);
-}
-
-bool GraphicsContext::shouldAntialias() const
-{
-    return m_state.shouldAntialias;
-}
-
-void GraphicsContext::setShouldSmoothFonts(bool b)
-{
-    m_state.shouldSmoothFonts = b;
-    setPlatformShouldSmoothFonts(b);
-}
-
-bool GraphicsContext::shouldSmoothFonts() const
-{
-    return m_state.shouldSmoothFonts;
-}
-
-void GraphicsContext::setShouldSubpixelQuantizeFonts(bool b)
-{
-    m_state.shouldSubpixelQuantizeFonts = b;
-}
-
-bool GraphicsContext::shouldSubpixelQuantizeFonts() const
-{
-    return m_state.shouldSubpixelQuantizeFonts;
-}
-
-const GraphicsContextState& GraphicsContext::state() const
-{
-    return m_state;
+    m_state.shouldSmoothFonts = shouldSmoothFonts;
+    setPlatformShouldSmoothFonts(shouldSmoothFonts);
 }
 
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
@@ -357,36 +281,6 @@ void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient)
     m_state.fillPattern.clear();
 }
 
-Gradient* GraphicsContext::fillGradient() const
-{
-    return m_state.fillGradient.get();
-}
-
-Gradient* GraphicsContext::strokeGradient() const
-{
-    return m_state.strokeGradient.get();
-}
-
-Pattern* GraphicsContext::fillPattern() const
-{
-    return m_state.fillPattern.get();
-}
-
-Pattern* GraphicsContext::strokePattern() const
-{
-    return m_state.strokePattern.get();
-}
-
-void GraphicsContext::setShadowsIgnoreTransforms(bool ignoreTransforms)
-{
-    m_state.shadowsIgnoreTransforms = ignoreTransforms;
-}
-
-bool GraphicsContext::shadowsIgnoreTransforms() const
-{
-    return m_state.shadowsIgnoreTransforms;
-}
-
 void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     beginPlatformTransparencyLayer(opacity);
@@ -400,30 +294,10 @@ void GraphicsContext::endTransparencyLayer()
     --m_transparencyCount;
 }
 
-bool GraphicsContext::isInTransparencyLayer() const
-{
-    return (m_transparencyCount > 0) && supportsTransparencyLayers();
-}
-
-bool GraphicsContext::updatingControlTints() const
-{
-    return m_updatingControlTints;
-}
-
 void GraphicsContext::setUpdatingControlTints(bool b)
 {
     setPaintingDisabled(b);
     m_updatingControlTints = b;
-}
-
-void GraphicsContext::setPaintingDisabled(bool f)
-{
-    m_state.paintingDisabled = f;
-}
-
-bool GraphicsContext::paintingDisabled() const
-{
-    return m_state.paintingDisabled;
 }
 
 float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
@@ -610,11 +484,6 @@ IntRect GraphicsContext::clipBounds() const
 }
 #endif
 
-TextDrawingModeFlags GraphicsContext::textDrawingMode() const
-{
-    return m_state.textDrawingMode;
-}
-
 void GraphicsContext::setTextDrawingMode(TextDrawingModeFlags mode)
 {
     m_state.textDrawingMode = mode;
@@ -679,31 +548,17 @@ void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const FloatRo
 }
 #endif
 
+void GraphicsContext::setAlpha(float alpha)
+{
+    m_state.alpha = alpha;
+    setPlatformAlpha(alpha);
+}
+
 void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation, BlendMode blendMode)
 {
     m_state.compositeOperator = compositeOperation;
     m_state.blendMode = blendMode;
     setPlatformCompositeOperation(compositeOperation, blendMode);
-}
-
-CompositeOperator GraphicsContext::compositeOperation() const
-{
-    return m_state.compositeOperator;
-}
-
-BlendMode GraphicsContext::blendModeOperation() const
-{
-    return m_state.blendMode;
-}
-
-void GraphicsContext::setDrawLuminanceMask(bool drawLuminanceMask)
-{
-    m_state.drawLuminanceMask = drawLuminanceMask;
-}
-
-bool GraphicsContext::drawLuminanceMask() const
-{
-    return m_state.drawLuminanceMask;
 }
 
 #if !USE(CG)
