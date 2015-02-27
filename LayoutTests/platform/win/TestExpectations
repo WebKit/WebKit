@@ -799,6 +799,9 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 # Tests for MediaSource API. Feature is not yet functional.
 media/media-source/ [ Skip ]
 webkit.org/b/64731 http/tests/media/media-source/ [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-media-source-opened.html [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-media-source-closed.html [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-media-source-closed-2.html  [ Skip ]
 
 # These tests are for an obsolete version of the EME spec.
 fast/events/constructors/media-key-event-constructor.html [ Skip ] # [ WontFix ]

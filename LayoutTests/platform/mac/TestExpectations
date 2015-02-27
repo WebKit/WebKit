@@ -952,6 +952,9 @@ webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 # Mavericks and prior do not support Media Source.
 [ Mavericks ] media/media-source [ WontFix ]
 [ Mavericks ] http/tests/media/media-source/ [ WontFix ]
+[ Mavericks ] fast/history/page-cache-media-source-closed.html [ WontFix ]
+[ Mavericks ] fast/history/page-cache-media-source-closed-2.html [ WontFix ]
+[ Mavericks ] fast/history/page-cache-media-source-opened.html [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
 ## --- Start flaky media tests ---

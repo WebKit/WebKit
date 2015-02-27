@@ -100,8 +100,9 @@ public:
     static bool isTypeSupported(const String& type);
 
     // ActiveDOMObject interface
-    virtual bool hasPendingActivity() const override;
-    virtual void stop() override;
+    bool hasPendingActivity() const override;
+    void stop() override;
+    bool canSuspend() const override;
 
     // EventTarget interface
     virtual ScriptExecutionContext* scriptExecutionContext() const override final;

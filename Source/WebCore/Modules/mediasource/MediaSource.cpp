@@ -809,6 +809,11 @@ void MediaSource::stop()
     m_private.clear();
 }
 
+bool MediaSource::canSuspend() const
+{
+    return isClosed() && !m_asyncEventQueue.hasPendingEvents();
+}
+
 void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicString& newState)
 {
     if (isOpen()) {

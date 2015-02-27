@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a closed MediaSource goes into the page cache.');
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (!window.sessionStorage.page_cache_open_mediasource_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_open_mediasource_test_started;
+
+    if (event.persisted)
+        testFailed("Page did enter and was restored from the page cache");
+    else
+        testPassed("Page was not restored from page cache");
+
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (event.persisted) {
+        testFailed("Page entered the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    // Construct a MediaSource and open it.
+    mediaSource = new MediaSource();
+    mediaTag = document.createElement("video");
+    document.body.appendChild(mediaTag);
+    mediaSourceURL = URL.createObjectURL(mediaSource);
+    mediaTag.src = mediaSourceURL;
+
+    window.sessionStorage.page_cache_open_mediasource_test_started = true;
+
+    mediaSource.addEventListener('sourceopen', function() {
+        // Force a back navigation back to this page.
+        window.location.href = "resources/page-cache-helper.html";
+    });
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

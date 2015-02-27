@@ -1,3 +1,19 @@
+2015-02-27  Chris Dumez  <cdumez@apple.com>
+
+        MediaSource should be suspendable when closed
+        https://bugs.webkit.org/show_bug.cgi?id=142089
+        <rdar://problem/19923085>
+
+        Reviewed by Jer Noble.
+
+        Make MediaSource ActiveDOMObject suspendable when it is in closed state
+        and it has no pending events. This increases the likelihood of pages
+        using MediaSource to enter the PageCache.
+
+        Tests: fast/history/page-cache-media-source-closed-2.html
+               fast/history/page-cache-media-source-closed.html
+               fast/history/page-cache-media-source-opened.html
+
 2015-02-27  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed for JS wrapper owners.

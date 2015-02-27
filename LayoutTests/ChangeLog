@@ -1,5 +1,19 @@
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
+        MediaSource should be suspendable when closed
+        https://bugs.webkit.org/show_bug.cgi?id=142089
+        <rdar://problem/19923085>
+
+        Reviewed by Jer Noble.
+
+        Add layout tests to check that:
+        - Pages with an open MediaSource do not enter the PageCache
+        - Pages with an initially closed MediaSource enter the PageCache
+        - Pages with a MediaSource that changed state from opened to closed
+          enter the PageCache.
+
+2015-02-27  Chris Dumez  <cdumez@apple.com>
+
         Make IDBDatabase / IDBRequest suspendable
         https://bugs.webkit.org/show_bug.cgi?id=142076
         <rdar://problem/19923085>
