@@ -978,6 +978,11 @@ public:
     // other operations update type operations
     void updateBackingStore();
     
+#if PLATFORM(COCOA) && !PLATFORM(IOS)
+    bool caretBrowsingEnabled() const;
+    void setCaretBrowsingEnabled(bool);
+#endif
+    
 protected:
     AXID m_id;
     AccessibilityChildrenVector m_children;

@@ -28,6 +28,7 @@
 #import "ElementAncestorIterator.h"
 #import "HTMLFieldSetElement.h"
 #import "RenderObject.h"
+#import "Settings.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -106,6 +107,20 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     return DefaultBehavior;
 }
     
+bool AccessibilityObject::caretBrowsingEnabled() const
+{
+    Frame* frame = this->frame();
+    return frame && frame->settings().caretBrowsingEnabled();
+}
+
+void AccessibilityObject::setCaretBrowsingEnabled(bool on)
+{
+    Frame* frame = this->frame();
+    if (!frame)
+        return;
+    frame->settings().setCaretBrowsingEnabled(on);
+}
+
 } // WebCore
 
 #endif // HAVE(ACCESSIBILITY)

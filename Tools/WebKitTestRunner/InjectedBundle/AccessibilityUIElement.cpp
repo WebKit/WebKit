@@ -211,5 +211,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { retur
 
 #endif
 
+#if !PLATFORM(MAC) || !HAVE(ACCESSIBILITY)
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange() { return nullptr; }
+void AccessibilityUIElement::resetSelectedTextMarkerRange() { }
+void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
+#endif
+
 } // namespace WTR
 

@@ -69,12 +69,17 @@
 #define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
 #endif
 
+#ifndef NSAccessibilitySelectedTextMarkerRangeAttribute
+#define NSAccessibilitySelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
+- (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName;
 @end
 
 namespace WTR {
@@ -621,6 +626,13 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
     END_AX_OBJC_EXCEPTIONS
     
     return false;
+}
+
+void AccessibilityUIElement::setBoolAttributeValue(JSStringRef attribute, bool value)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element _accessibilitySetTestValue:@(value) forAttribute:[NSString stringWithJSStringRef:attribute]];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
@@ -1622,6 +1634,32 @@ PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRange
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;
+}
+    
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextMarkerRangeAttribute];
+    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+void AccessibilityUIElement::resetSelectedTextMarkerRange()
+{
+    id start = [m_element accessibilityAttributeValue:@"AXStartTextMarker"];
+    if (!start)
+        return;
+    
+    NSArray* textMarkers = @[start, start];
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUnorderedTextMarkers" forParameter:textMarkers];
+    if (!textMarkerRange)
+        return;
+    
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element _accessibilitySetTestValue:textMarkerRange forAttribute:NSAccessibilitySelectedTextMarkerRangeAttribute];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)

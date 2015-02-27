@@ -109,6 +109,7 @@ public:
     void uiElementArrayAttributeValue(JSStringRef attribute, Vector<AccessibilityUIElement>& elements) const;
     AccessibilityUIElement uiElementAttributeValue(JSStringRef attribute) const;    
     bool boolAttributeValue(JSStringRef attribute);
+    void setBoolAttributeValue(JSStringRef attribute, bool value);
     bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
     bool isPressActionSupported();
@@ -251,6 +252,8 @@ public:
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker startTextMarker();
     AccessibilityTextMarker endTextMarker();
+    AccessibilityTextMarkerRange selectedTextMarkerRange();
+    void resetSelectedTextMarkerRange();
     
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);

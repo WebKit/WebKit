@@ -1,3 +1,28 @@
+2015-02-26  Doug Russell  <d_russell@apple.com>
+
+        AX: Expose caret browsing preference to accessibility API
+        https://bugs.webkit.org/show_bug.cgi?id=141862
+
+        Reviewed by Chris Fleizach.
+
+        Exposing the caret browsing setting on WebCore::Frame via the accessibility API would allow assistive tech apps to enable it contextually (for example, when the assistive tech app is running).
+        Enabling caret browsing when assistive tech apps are running greatly improves the reliability of keyboard navigation on the web. Most especially in cases where selection would be disrupted by focus events.
+
+        Tests: platform/mac/accessibility/caret-browsing-arrow-nav.html
+               platform/mac/accessibility/caret-browsing-attribute.html
+               platform/mac/accessibility/caret-browsing-tab-selection.html
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::caretBrowsingEnabled):
+        (WebCore::AccessibilityObject::setCaretBrowsingEnabled):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySetValue:forAttribute:]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySetTestValue:forAttribute:]):
+
 2015-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unnecessary create() factory functions

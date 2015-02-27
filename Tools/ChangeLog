@@ -1,3 +1,37 @@
+2015-02-26  Doug Russell  <d_russell@apple.com>
+
+        AX: Expose caret browsing preference to accessibility API
+        https://bugs.webkit.org/show_bug.cgi?id=141862
+
+        Reviewed by Chris Fleizach.
+
+        Exposing the caret browsing setting on WebCore::Frame via the accessibility API would allow assistive tech apps to enable it contextually (for example, when the assistive tech app is running).
+        Enabling caret browsing when assistive tech apps are running greatly improves the reliability of keyboard navigation on the web. Most especially in cases where selection would be disrupted by focus events.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setBoolAttributeValueCallback):
+        (selectedTextMarkerRangeCallback):
+        (resetSelectedTextMarkerRangeCallback):
+        (AccessibilityUIElement::setBoolAttributeValue):
+        (AccessibilityUIElement::selectedTextMarkerRange):
+        (AccessibilityUIElement::resetSelectedTextMarkerRange):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::setBoolAttributeValue):
+        (AccessibilityUIElement::selectedTextMarkerRange):
+        (AccessibilityUIElement::resetSelectedTextMarkerRange):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::selectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::resetSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::setBoolAttributeValue):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setBoolAttributeValue):
+        (WTR::AccessibilityUIElement::selectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::resetSelectedTextMarkerRange):
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove WebKitExportGenerator project (and related)

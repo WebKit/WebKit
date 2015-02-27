@@ -1,3 +1,27 @@
+2015-02-26  Doug Russell  <d_russell@apple.com>
+
+        AX: Expose caret browsing preference to accessibility API
+        https://bugs.webkit.org/show_bug.cgi?id=141862
+
+        Reviewed by Chris Fleizach.
+
+        Exposing the caret browsing setting on WebCore::Frame via the accessibility API would allow assistive tech apps to enable it contextually (for example, when the assistive tech app is running).
+        Enabling caret browsing when assistive tech apps are running greatly improves the reliability of keyboard navigation on the web. Most especially in cases where selection would be disrupted by focus events.
+
+        * accessibility/parent-delete-expected.txt:
+        * platform/mac/accessibility/caret-browsing-arrow-nav-expected.txt: Added.
+        * platform/mac/accessibility/caret-browsing-arrow-nav.html: Added.
+        * platform/mac/accessibility/caret-browsing-attribute-expected.txt: Added.
+        * platform/mac/accessibility/caret-browsing-attribute.html: Added.
+        * platform/mac/accessibility/caret-browsing-tab-selection-expected.txt: Added.
+        * platform/mac/accessibility/caret-browsing-tab-selection.html: Added.
+        * platform/mac/accessibility/document-attributes-expected.txt:
+        * platform/mac/accessibility/resources/accessibility-helper.js: Added.
+        (clearSelectionAndFocusOnWebArea):
+        (elementAtStartMarkerOfSelectedTextMarkerRange):
+        (caretBrowsingEnabled):
+        (setCaretBrowsingEnabled):
+
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)

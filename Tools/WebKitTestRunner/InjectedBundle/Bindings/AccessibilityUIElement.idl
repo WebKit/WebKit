@@ -62,6 +62,7 @@ interface AccessibilityUIElement {
     object uiElementArrayAttributeValue(DOMString attr);
     AccessibilityUIElement uiElementAttributeValue(DOMString attr);  
     boolean boolAttributeValue(DOMString attr);
+    void setBoolAttributeValue(DOMString attr, boolean value);
     boolean isAttributeSupported(DOMString attr);
     boolean isAttributeSettable(DOMString attr);
     boolean isPressActionSupported();
@@ -174,6 +175,8 @@ interface AccessibilityUIElement {
     AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);    
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
+    AccessibilityTextMarkerRange selectedTextMarkerRange();
+    void resetSelectedTextMarkerRange();
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForBounds(int x, int y, int width, int height);
@@ -201,6 +204,5 @@ interface AccessibilityUIElement {
     // Notification support.
     boolean addNotificationListener(object callbackFunction);
     boolean removeNotificationListener();
-    
 };
 

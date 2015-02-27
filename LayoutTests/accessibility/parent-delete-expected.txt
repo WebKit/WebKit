@@ -27,5 +27,6 @@ AXLoaded: 1
 AXLayoutCount: 2
 AXLoadingProgress: 1
 AXURL: LayoutTests/accessibility/parent-delete.html
+AXCaretBrowsingEnabled: 0
 AXElementBusy: 0
 

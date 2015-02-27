@@ -464,6 +464,10 @@ using namespace HTMLNames;
 #define NSAccessibilityMathPrescriptsAttribute @"AXMathPrescripts"
 #define NSAccessibilityMathPostscriptsAttribute @"AXMathPostscripts"
 
+#ifndef NSAccessibilityCaretBrowsingEnabledAttribute
+#define NSAccessibilityCaretBrowsingEnabledAttribute @"AXCaretBrowsingEnabled"
+#endif
+
 @implementation WebAccessibilityObjectWrapper
 
 - (void)unregisterUniqueIdForUIElement
@@ -1354,6 +1358,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:@"AXLayoutCount"];
         [tempArray addObject:NSAccessibilityLoadingProgressAttribute];
         [tempArray addObject:NSAccessibilityURLAttribute];
+        [tempArray addObject:NSAccessibilityCaretBrowsingEnabledAttribute];
         webAreaAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -2953,6 +2958,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
         return m_object->getAttribute(idAttr);
     
+    if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
+        return [NSNumber numberWithBool:m_object->caretBrowsingEnabled()];
+    
     return nil;
 }
 
@@ -3023,6 +3031,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return m_object->canSetTextRangeAttributes();
     
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
+        return YES;
+    
+    if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
         return YES;
     
     return NO;
@@ -3341,6 +3352,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             m_object->setSelectedRows(selectedRows);
     } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         m_object->setARIAGrabbed([number boolValue]);
+    else if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
+        m_object->setCaretBrowsingEnabled([number boolValue]);
+}
+
+// Used to set attributes synchronously on accessibility elements within tests.
+// For use with DumpRenderTree only.
+- (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName
+{
+    [self _accessibilitySetValue:value forAttribute:attributeName];
 }
 
 static RenderObject* rendererForView(NSView* view)
