@@ -1,3 +1,16 @@
+2015-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        RunLoop::dispatch() should drop the mutex before calling wakeUp().
+        https://bugs.webkit.org/show_bug.cgi?id=141820
+
+        Reviewed by Alexey Proskuryakov.
+        
+        RunLoop::wakeUp() calls into CoreFoundation which could take time,
+        so scope the mutex just to protect m_functionQueue.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::dispatch):
+
 2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Enable bmalloc for EFL port 
