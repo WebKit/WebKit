@@ -1201,12 +1201,12 @@ webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnly
 
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
-# They used to fail on 10.8 EWS, and they still fail on 10.9 EWS, presumably also on ATI graphics only.
-webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
-webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
-webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
-webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
-webkit.org/b/93560 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
+# These tests fail on machines with AMD (ATI) graphics cards - that is, on EWS and locally.
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
 
 # These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]

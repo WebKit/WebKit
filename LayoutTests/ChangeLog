@@ -1,3 +1,12 @@
+2015-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Some WebGL tests fail on ATI hardware
+        https://bugs.webkit.org/show_bug.cgi?id=93560
+        rdar://problem/19991477
+
+        * platform/mac/TestExpectations: Updating expectations, as this is not limited to
+        Mavericks.
+
 2015-02-27  Enrica Casucci  <enrica@apple.com>
 
         Adding support for serializing HTMLAttachment elements.
