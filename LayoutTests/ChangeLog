@@ -1,3 +1,9 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More test expectation updates.
+
+        * platform/win/TestExpectations:
+
 2015-02-26  Timothy Horton  <timothy_horton@apple.com>
 
         Implement <attachment> element appearance on Mac
