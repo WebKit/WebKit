@@ -24,6 +24,7 @@
  */
 
 .object-preview {
+    color: black;
     font-style: italic;
     font-family: Menlo, monospace;
     font-size: 11px;

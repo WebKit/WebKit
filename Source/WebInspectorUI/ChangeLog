@@ -1,5 +1,18 @@
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Colored console messages apply text color to object tree properties
+        https://bugs.webkit.org/show_bug.cgi?id=142051
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree):
+        Default the color to black within Object Tree and Object Preview views.
+
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Clear Log on Reload clears some logs that were after reload
         https://bugs.webkit.org/show_bug.cgi?id=142070
 
