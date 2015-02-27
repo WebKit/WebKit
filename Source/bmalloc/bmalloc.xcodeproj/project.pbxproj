@@ -16,6 +16,8 @@
 		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
 		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1440AFC91A95142400837FAA /* SuperChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440AFC81A95142400837FAA /* SuperChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1440AFCB1A95261100837FAA /* Zone.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440AFCA1A95261100837FAA /* Zone.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440AFCC1A9527AF00837FAA /* Zone.cpp */; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14895D911A3A319C0006235D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14895D8F1A3A319C0006235D /* Environment.cpp */; };
@@ -92,6 +94,8 @@
 		143E29E918CAE8BE00FE8A0F /* MediumPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumPage.h; path = bmalloc/MediumPage.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
 		1440AFC81A95142400837FAA /* SuperChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuperChunk.h; path = bmalloc/SuperChunk.h; sourceTree = "<group>"; };
+		1440AFCA1A95261100837FAA /* Zone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Zone.h; path = bmalloc/Zone.h; sourceTree = "<group>"; };
+		1440AFCC1A9527AF00837FAA /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Zone.cpp; path = bmalloc/Zone.cpp; sourceTree = "<group>"; };
 		144469E417A46BFE00F9EA1D /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Cache.cpp; path = bmalloc/Cache.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		144469E517A46BFE00F9EA1D /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Cache.h; path = bmalloc/Cache.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		144469FD17A61F1F00F9EA1D /* PerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = PerThread.h; path = bmalloc/PerThread.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -260,6 +264,8 @@
 				1440AFC81A95142400837FAA /* SuperChunk.h */,
 				144F7BFB18BFC517003537F3 /* VMHeap.cpp */,
 				144F7BFC18BFC517003537F3 /* VMHeap.h */,
+				1440AFCA1A95261100837FAA /* Zone.h */,
+				1440AFCC1A9527AF00837FAA /* Zone.cpp */,
 			);
 			name = heap;
 			sourceTree = "<group>";
@@ -305,6 +311,7 @@
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
 				14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */,
 				14DD789218F48CFC00950702 /* EndTag.h in Headers */,
+				1440AFCB1A95261100837FAA /* Zone.h in Headers */,
 				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
@@ -433,6 +440,7 @@
 				14F271C818EA3990008C152F /* ObjectType.cpp in Sources */,
 				14F271C518EA397E008C152F /* Deallocator.cpp in Sources */,
 				14F271C418EA397B008C152F /* Cache.cpp in Sources */,
+				1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
