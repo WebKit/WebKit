@@ -1343,7 +1343,8 @@ float RenderMathMLOperator::heightForGlyph(const GlyphData& data) const
 
 float RenderMathMLOperator::advanceForGlyph(const GlyphData& data) const
 {
-    return data.font->widthForGlyph(data.glyph);
+    // FIXME: MathML code synthesizes bad GlyphDatas.
+    return data.width ? data.width : data.font->computeWidthForGlyph(data.glyph);
 }
 
 void RenderMathMLOperator::computePreferredLogicalWidths()

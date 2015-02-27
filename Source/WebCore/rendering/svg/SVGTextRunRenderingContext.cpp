@@ -298,7 +298,8 @@ static GlyphData missingGlyphForFont(const FontCascade& font)
     SVGFontElement* fontElement;
     SVGFontFaceElement* fontFaceElement;
     svgFontAndFontFaceElementForFontData(&primaryFont, fontFaceElement, fontElement);
-    return GlyphData(fontElement->missingGlyph(), &primaryFont);
+    auto missingGlyph = fontElement->missingGlyph();
+    return { missingGlyph, primaryFont.computeWidthForGlyph(missingGlyph), &primaryFont };
 }
 
 GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const FontCascade& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)

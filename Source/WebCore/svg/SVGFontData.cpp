@@ -79,7 +79,7 @@ void SVGFontData::initializeFont(Font* font, float fontSize)
     if (!xHeight && glyphPageZero) {
         // Fallback if x_heightAttr is not specified for the font element.
         Glyph letterXGlyph = glyphPageZero->glyphDataForCharacter('x').glyph;
-        xHeight = letterXGlyph ? font->widthForGlyph(letterXGlyph) : 2 * ascent / 3;
+        xHeight = letterXGlyph ? font->computeWidthForGlyph(letterXGlyph) : 2 * ascent / 3;
     }
 
     FontMetrics& fontMetrics = font->fontMetrics();
@@ -99,17 +99,17 @@ void SVGFontData::initializeFont(Font* font, float fontSize)
     }
 
     // Calculate space width.
-    Glyph spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
-    font->setSpaceGlyph(spaceGlyph);
-    font->setSpaceWidths(font->widthForGlyph(spaceGlyph));
+    auto spaceGlyphData = glyphPageZero->glyphDataForCharacter(' ');
+    font->setSpaceGlyph(spaceGlyphData.glyph);
+    font->setSpaceWidths(spaceGlyphData.width);
 
     // Estimate average character width.
-    Glyph numeralZeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
-    font->setAvgCharWidth(numeralZeroGlyph ? font->widthForGlyph(numeralZeroGlyph) : font->spaceWidth());
+    auto numeralZeroGlyphData = glyphPageZero->glyphDataForCharacter('0');
+    font->setAvgCharWidth(numeralZeroGlyphData.glyph ? numeralZeroGlyphData.width : font->spaceWidth());
 
     // Estimate maximum character width.
-    Glyph letterWGlyph = glyphPageZero->glyphDataForCharacter('W').glyph;
-    font->setMaxCharWidth(letterWGlyph ? font->widthForGlyph(letterWGlyph) : ascent);
+    auto letterWGlyphData = glyphPageZero->glyphDataForCharacter('W');
+    font->setMaxCharWidth(letterWGlyphData.glyph ? letterWGlyphData.width : ascent);
 }
 
 float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
