@@ -1,3 +1,28 @@
+2015-02-25  Mark Lam  <mark.lam@apple.com>
+
+        ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack.
+        <https://webkit.org/b/141672>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ASan does not like the fact that we memcpy the stack for GC scans.  So,
+        we're working around this by using our own memcpy (asanUnsafeMemcpy)
+        implementation that we can tell ASan to ignore.
+
+        Also removed the previous added directive to ignore *tryCopyOtherThreadStack*
+        which isn't effective for working around this issue. 
+
+        * asan/webkit-asan-ignore.txt:
+
+2015-02-17  Dana Burkart  <dburkart@apple.com>
+
+        ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack
+        https://bugs.webkit.org/show_bug.cgi?id=141672
+
+        Reviewed by David Kilzer.
+
+        * asan/webkit-asan-ignore.txt:
+
 2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ make distcheck.

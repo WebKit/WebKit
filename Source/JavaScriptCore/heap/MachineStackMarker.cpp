@@ -443,6 +443,26 @@ static std::pair<void*, size_t> otherThreadStack(void* stackBase, const Platform
     return std::make_pair(begin, static_cast<char*>(end) - static_cast<char*>(begin));
 }
 
+#if ASAN_ENABLED
+void asanUnsafeMemcpy(void* dst, const void* src, size_t);
+void asanUnsafeMemcpy(void* dst, const void* src, size_t size)
+{
+    size_t dstAsSize = reinterpret_cast<size_t>(dst);
+    size_t srcAsSize = reinterpret_cast<size_t>(src);
+    RELEASE_ASSERT(dstAsSize == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(dstAsSize));
+    RELEASE_ASSERT(srcAsSize == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(srcAsSize));
+    RELEASE_ASSERT(size == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(size));
+
+    intptr_t* dstPtr = reinterpret_cast<intptr_t*>(dst);
+    const intptr_t* srcPtr = reinterpret_cast<const intptr_t*>(src);
+    size /= sizeof(intptr_t);
+    while (size--)
+        *dstPtr++ = *srcPtr++;
+}
+    
+#define memcpy asanUnsafeMemcpy
+#endif
+
 // This function must not call malloc(), free(), or any other function that might
 // acquire a lock. Since 'thread' is suspended, trying to acquire a lock
 // will deadlock if 'thread' holds that lock.

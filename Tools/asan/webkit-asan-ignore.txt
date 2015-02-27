@@ -4,3 +4,4 @@ fun:*DFG*prepareOSREntry*
 # FIXME (rdar://problem/19379214): Register::jsValue() only needs to be blacklisted when
 # called from prepareOSREntry(), but there is currently no way to express this in a blacklist.
 fun:*JSC*Register*jsValue*
+fun:*asanUnsafeMemcpy*

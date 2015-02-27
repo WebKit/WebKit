@@ -1,3 +1,17 @@
+2015-02-25  Mark Lam  <mark.lam@apple.com>
+
+        ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack.
+        <https://webkit.org/b/141672>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ASan does not like the fact that we memcpy the stack for GC scans.  So,
+        we're working around this by using our own memcpy (asanUnsafeMemcpy)
+        implementation that we can tell ASan to ignore.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::asanUnsafeMemcpy):
+
 2015-02-15  Sam Weinig  <sam@webkit.org>
 
         Add experimental <attachment> element support
