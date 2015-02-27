@@ -32,10 +32,15 @@ public:
     // (for example: SVGTransform::matrix).
     static PassRefPtr<SVGMatrixTearOff> create(SVGPropertyTearOff<SVGTransform>& parent, SVGMatrix& value)
     {
-        RefPtr<SVGMatrixTearOff> result = adoptRef(new SVGMatrixTearOff(&parent, value));
+        ASSERT_UNUSED(value, &parent.propertyReference().svgMatrix() == &value);
+        RefPtr<SVGMatrixTearOff> result = adoptRef(new SVGMatrixTearOff(&parent));
         parent.addChild(result->m_weakFactory.createWeakPtr());
         return result.release();
     }
+
+    virtual SVGMatrix& propertyReference() override { return m_parent->propertyReference().svgMatrix(); }
+
+    virtual void setValue(SVGMatrix& value) override { m_parent->propertyReference().setMatrix(value); }
 
     virtual void commitChange()
     {
@@ -44,8 +49,8 @@ public:
     }
 
 private:
-    SVGMatrixTearOff(SVGPropertyTearOff<SVGTransform>* parent, SVGMatrix& value)
-        : SVGPropertyTearOff<SVGMatrix>(0, UndefinedRole, value)
+    SVGMatrixTearOff(SVGPropertyTearOff<SVGTransform>* parent)
+        : SVGPropertyTearOff<SVGMatrix>(nullptr)
         , m_parent(parent)
         , m_weakFactory(this)
     {
