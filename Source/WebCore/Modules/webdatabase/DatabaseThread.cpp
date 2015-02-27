@@ -123,7 +123,7 @@ public:
 private:
     virtual void doPerformTask()
     {
-        m_thread->handlePausedQueue();
+        m_thread.handlePausedQueue();
     }
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const { return "DatabaseUnpauseTask"; }

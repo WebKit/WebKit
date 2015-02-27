@@ -1,3 +1,9 @@
+2015-02-26  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS build fix after r180717.
+
+        * Modules/webdatabase/DatabaseThread.cpp: (WebCore::DatabaseUnpauseTask::doPerformTask):
+
 2015-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         isEditablePosition and related functions shouldn't move position out of table
