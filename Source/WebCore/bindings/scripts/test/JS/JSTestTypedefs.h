@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestTypedefs.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -84,8 +85,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestTypedefs*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestTypedefsOwner, jsTestTypedefsOwner, ());
-    return &jsTestTypedefsOwner;
+    static NeverDestroyed<JSTestTypedefsOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*);

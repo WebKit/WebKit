@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestNondeterministic.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,8 +83,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNondeterministic*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestNondeterministicOwner, jsTestNondeterministicOwner, ());
-    return &jsTestNondeterministicOwner;
+    static NeverDestroyed<JSTestNondeterministicOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterministic*);

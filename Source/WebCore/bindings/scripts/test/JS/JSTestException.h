@@ -24,6 +24,7 @@
 #include "JSDOMWrapper.h"
 #include "TestException.h"
 #include <runtime/ErrorPrototype.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -85,8 +86,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestException*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestExceptionOwner, jsTestExceptionOwner, ());
-    return &jsTestExceptionOwner;
+    static NeverDestroyed<JSTestExceptionOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestException*);
