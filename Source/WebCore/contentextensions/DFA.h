@@ -46,10 +46,8 @@ public:
     DFA& operator=(const DFA&);
 
     unsigned root() const { return m_root; }
-    // If there is a transition to a valid state on "character", return that state and set ok to true.
-    // Otherwise, the return value is undefined and ok is false.
-    unsigned nextState(unsigned currentState, char character, bool& ok) const;
-    const Vector<uint64_t>& actions(unsigned currentState) const;
+    unsigned size() const { return m_nodes.size(); }
+    const DFANode& nodeAt(unsigned i) const { return m_nodes[i]; }
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;

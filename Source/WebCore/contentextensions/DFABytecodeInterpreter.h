@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef DFABytecodeInterpreter_h
+#define DFABytecodeInterpreter_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionRule.h"
-#include "DFA.h"
 #include "DFABytecode.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-
-class URL;
-
+    
 namespace ContentExtensions {
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
+class DFABytecodeInterpreter {
 public:
-    // - Rule management interface. This can be used by upper layer.
-
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-    void removeRuleList(const String& identifier);
-    void removeAllRuleLists();
-
-    // - Internal WebCore Interface.
-    bool shouldBlockURL(const URL&);
+    DFABytecodeInterpreter(const Vector<DFABytecode>& bytecode)
+        : bytecode(bytecode)
+    {
+    }
+    
+    typedef HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Actions;
+    
+    Actions interpret(const CString&);
 
 private:
-    struct CompiledContentExtension {
-        Vector<DFABytecode> bytecode;
-        Vector<ContentExtensionRule> ruleList;
-    };
-
-    HashMap<String, CompiledContentExtension> m_ruleLists;
+    const Vector<DFABytecode>& bytecode;
 };
 
 } // namespace ContentExtensions
-
+    
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsBackend_h
+#endif // DFABytecodeInterpreter_h

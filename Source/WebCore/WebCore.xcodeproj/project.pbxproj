@@ -2142,6 +2142,11 @@
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
 		5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */; };
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
+		5C9A7A751AA0F6EA00958ACF /* DFABytecodeCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C39305E1AA0F6A90029C816 /* DFABytecodeCompiler.cpp */; };
+		5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */; };
+		5CD9F5661AA0F73C00DA45FF /* DFABytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305D1AA0F6A90029C816 /* DFABytecode.h */; };
+		5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */; };
+		5CD9F5681AA0F74600DA45FF /* DFABytecodeInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */; };
 		5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */; };
 		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
@@ -9286,6 +9291,11 @@
 		5B30695A18B3D3450099D5E8 /* WebGLDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLDrawBuffers.cpp; path = canvas/WebGLDrawBuffers.cpp; sourceTree = "<group>"; };
 		5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLDrawBuffers.h; path = canvas/WebGLDrawBuffers.h; sourceTree = "<group>"; };
 		5B30695C18B3D3450099D5E8 /* WebGLDrawBuffers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDrawBuffers.idl; path = canvas/WebGLDrawBuffers.idl; sourceTree = "<group>"; };
+		5C39305D1AA0F6A90029C816 /* DFABytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecode.h; sourceTree = "<group>"; };
+		5C39305E1AA0F6A90029C816 /* DFABytecodeCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFABytecodeCompiler.cpp; sourceTree = "<group>"; };
+		5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecodeCompiler.h; sourceTree = "<group>"; };
+		5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFABytecodeInterpreter.cpp; sourceTree = "<group>"; };
+		5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecodeInterpreter.h; sourceTree = "<group>"; };
 		5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTShaderTextureLOD.cpp; path = canvas/EXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTShaderTextureLOD.h; path = canvas/EXTShaderTextureLOD.h; sourceTree = "<group>"; };
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTShaderTextureLOD.idl; path = canvas/EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
@@ -15395,6 +15405,11 @@
 				26F0C8961A2E724B002794F8 /* ContentExtensionsManager.h */,
 				267725F61A5B3AD9003C24DD /* DFA.cpp */,
 				267725F71A5B3AD9003C24DD /* DFA.h */,
+				5C39305D1AA0F6A90029C816 /* DFABytecode.h */,
+				5C39305E1AA0F6A90029C816 /* DFABytecodeCompiler.cpp */,
+				5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */,
+				5C3930601AA0F6A90029C816 /* DFABytecodeInterpreter.cpp */,
+				5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */,
 				267725F91A5B3AD9003C24DD /* DFANode.h */,
 				269397251A4A5FBD00E8349D /* NFA.cpp */,
 				269397231A4A5B6400E8349D /* NFA.h */,
@@ -24068,6 +24083,7 @@
 				85ECBEEB0AA7626900544F0B /* DOMHTMLAreaElement.h in Headers */,
 				85E7119C0AC5D5350053270F /* DOMHTMLAreaElementInternal.h in Headers */,
 				859A9C470AA5E3BD00B694B2 /* DOMHTMLBaseElement.h in Headers */,
+				5CD9F5681AA0F74600DA45FF /* DFABytecodeInterpreter.h in Headers */,
 				85E7119D0AC5D5350053270F /* DOMHTMLBaseElementInternal.h in Headers */,
 				85ECBEED0AA7626900544F0B /* DOMHTMLBaseFontElement.h in Headers */,
 				85E7119E0AC5D5350053270F /* DOMHTMLBaseFontElementInternal.h in Headers */,
@@ -24547,6 +24563,7 @@
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 				FD31609912B026F700C1A359 /* HRTFDatabase.h in Headers */,
+				5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */,
 				FD31609B12B026F700C1A359 /* HRTFDatabaseLoader.h in Headers */,
 				FD31609D12B026F700C1A359 /* HRTFElevation.h in Headers */,
 				FD31609F12B026F700C1A359 /* HRTFKernel.h in Headers */,
@@ -24662,6 +24679,7 @@
 				A871DC280A15205700B12A68 /* HTMLTitleElement.h in Headers */,
 				977B3878122883E900B81FF8 /* HTMLTokenizer.h in Headers */,
 				0707568C142262D600414161 /* HTMLTrackElement.h in Headers */,
+				5CD9F5661AA0F73C00DA45FF /* DFABytecode.h in Headers */,
 				977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
 				AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */,
@@ -28182,6 +28200,7 @@
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
 				2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */,
 				B51A2F4117D7D5DE0072517A /* ImageQualityController.cpp in Sources */,
+				5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */,
 				0F3C725E1974874B00AEDD0C /* ImageSource.cpp in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
@@ -28713,6 +28732,7 @@
 				B2FA3D3A0AB75A6F000E5AC4 /* JSSVGAnimatedBoolean.cpp in Sources */,
 				B2FA3D3C0AB75A6F000E5AC4 /* JSSVGAnimatedEnumeration.cpp in Sources */,
 				B2FA3D3E0AB75A6F000E5AC4 /* JSSVGAnimatedInteger.cpp in Sources */,
+				5C9A7A751AA0F6EA00958ACF /* DFABytecodeCompiler.cpp in Sources */,
 				B2FA3D400AB75A6F000E5AC4 /* JSSVGAnimatedLength.cpp in Sources */,
 				B2FA3D420AB75A6F000E5AC4 /* JSSVGAnimatedLengthList.cpp in Sources */,
 				B2FA3D440AB75A6F000E5AC4 /* JSSVGAnimatedNumber.cpp in Sources */,

@@ -1,3 +1,41 @@
+2015-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        Compile DFA to bytecode.
+        https://bugs.webkit.org/show_bug.cgi?id=142031
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBlockURL):
+        * contentextensions/ContentExtensionsBackend.h:
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::nextState): Deleted.
+        (WebCore::ContentExtensions::DFA::actions): Deleted.
+        * contentextensions/DFA.h:
+        (WebCore::ContentExtensions::DFA::size):
+        (WebCore::ContentExtensions::DFA::nodeAt):
+        * contentextensions/DFABytecode.h: Added.
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp: Added.
+        (WebCore::ContentExtensions::append):
+        (WebCore::ContentExtensions::set32Bits):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitJump):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValue):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitTerminate):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::reserveBufferCapacity):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compile):
+        * contentextensions/DFABytecodeCompiler.h: Added.
+        (WebCore::ContentExtensions::DFABytecodeCompiler::DFABytecodeCompiler):
+        * contentextensions/DFABytecodeInterpreter.cpp: Added.
+        (WebCore::ContentExtensions::getBits):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h: Added.
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::DFABytecodeInterpreter):
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle

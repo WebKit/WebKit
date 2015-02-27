@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef DFABytecode_h
+#define DFABytecode_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "DFA.h"
-#include "DFABytecode.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
-
-class URL;
-
+    
 namespace ContentExtensions {
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
-public:
-    // - Rule management interface. This can be used by upper layer.
+typedef uint8_t DFABytecode;
 
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-    void removeRuleList(const String& identifier);
-    void removeAllRuleLists();
+enum class DFABytecodeInstruction : uint8_t {
 
-    // - Internal WebCore Interface.
-    bool shouldBlockURL(const URL&);
+    // CheckValue has two arguments:
+    // The value to check (1 byte),
+    // The index to jump to if the values are equal (4 bytes).
+    CheckValue,
 
-private:
-    struct CompiledContentExtension {
-        Vector<DFABytecode> bytecode;
-        Vector<ContentExtensionRule> ruleList;
-    };
+    // AppendAction has one argument:
+    // The action to append (4 bytes).
+    AppendAction,
 
-    HashMap<String, CompiledContentExtension> m_ruleLists;
+    // Terminate has no arguments.
+    Terminate,
+
+    // Jump has one argument:
+    // The index to jump to unconditionally (4 bytes).
+    Jump,
 };
 
+static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruction)
+{
+    switch (instruction) {
+    case DFABytecodeInstruction::CheckValue:
+        return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(unsigned);
+    case DFABytecodeInstruction::AppendAction:
+        return sizeof(DFABytecodeInstruction) + sizeof(unsigned);
+    case DFABytecodeInstruction::Terminate:
+        return sizeof(DFABytecodeInstruction);
+    case DFABytecodeInstruction::Jump:
+        return sizeof(DFABytecodeInstruction) + sizeof(unsigned);
+    }
+}
+    
 } // namespace ContentExtensions
-
+    
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsBackend_h
+#endif // DFABytecode_h

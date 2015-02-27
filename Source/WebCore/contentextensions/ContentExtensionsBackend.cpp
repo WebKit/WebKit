@@ -29,6 +29,8 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionsDebugging.h"
+#include "DFABytecodeCompiler.h"
+#include "DFABytecodeInterpreter.h"
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URL.h"
@@ -85,7 +87,7 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     double dfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
-    CompiledContentExtension compiledContentExtension = { NFAToDFA::convert(nfa), ruleList };
+    const DFA dfa = NFAToDFA::convert(nfa);
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double dfaBuildTimeEnd = monotonicallyIncreasingTime();
@@ -95,9 +97,13 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     // FIXME: never add a DFA that only matches the empty set.
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    compiledContentExtension.dfa.debugPrintDot();
+    dfa.debugPrintDot();
 #endif
 
+    Vector<DFABytecode> bytecode;
+    DFABytecodeCompiler compiler(dfa, bytecode);
+    compiler.compile();
+    CompiledContentExtension compiledContentExtension = { bytecode, ruleList };
     m_ruleLists.set(identifier, compiledContentExtension);
 }
 
@@ -115,24 +121,13 @@ bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
 {
     const String& urlString = url.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
+    const CString& urlCString = urlString.utf8();
 
     for (auto& ruleListSlot : m_ruleLists) {
-        CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
-        unsigned state = compiledContentExtension.dfa.root();
-
-        HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> triggeredActions;
-
-        for (unsigned i = 0; i < urlString.length(); ++i) {
-            char character = static_cast<char>(urlString[i]);
-            bool ok;
-            state = compiledContentExtension.dfa.nextState(state, character, ok);
-            if (!ok)
-                break;
-
-            const Vector<uint64_t>& actions = compiledContentExtension.dfa.actions(state);
-            if (!actions.isEmpty())
-                triggeredActions.add(actions.begin(), actions.end());
-        }
+        const CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
+        DFABytecodeInterpreter interpreter(compiledContentExtension.bytecode);
+        DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString);
+        // FIXME: We should eventually do something with each action rather than just returning a bool.
         if (!triggeredActions.isEmpty()) {
             Vector<uint64_t> sortedActions;
             copyToVector(triggeredActions, sortedActions);

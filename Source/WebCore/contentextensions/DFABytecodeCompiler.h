@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef DFABytecodeCompiler_h
+#define DFABytecodeCompiler_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "DFA.h"
 #include "DFABytecode.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include "DFANode.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class URL;
-
 namespace ContentExtensions {
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
+class DFA;
+
+class DFABytecodeCompiler {
 public:
-    // - Rule management interface. This can be used by upper layer.
-
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-    void removeRuleList(const String& identifier);
-    void removeAllRuleLists();
-
-    // - Internal WebCore Interface.
-    bool shouldBlockURL(const URL&);
+    DFABytecodeCompiler(const DFA& dfa, Vector<DFABytecode>& bytecode)
+        : m_bytecode(bytecode)
+        , m_dfa(dfa)
+    {
+    }
+    
+    void compile();
 
 private:
-    struct CompiledContentExtension {
-        Vector<DFABytecode> bytecode;
-        Vector<ContentExtensionRule> ruleList;
-    };
+    void compileNode(unsigned);
 
-    HashMap<String, CompiledContentExtension> m_ruleLists;
+    void emitAppendAction(unsigned);
+    void emitJump(unsigned destinationNodeIndex);
+    void emitCheckValue(uint8_t value, unsigned destinationNodeIndex);
+    void emitTerminate();
+
+    Vector<DFABytecode>& m_bytecode;
+    const DFA& m_dfa;
+    
+    Vector<unsigned> m_nodeStartOffsets;
+    
+    // The first value is the index in the bytecode buffer where the jump is to be written.
+    // The second value is the index of the node to jump to.
+    Vector<std::pair<unsigned, unsigned>> m_linkRecords;
 };
 
 } // namespace ContentExtensions
@@ -74,4 +72,4 @@ private:
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsBackend_h
+#endif // DFABytecodeCompiler_h
