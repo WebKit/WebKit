@@ -1,3 +1,44 @@
+2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r180258 to fix Windows build.
+
+        * runtime/MathCommon.cpp:
+        (JSC::mathPowInternal):
+
+2015-02-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the C-Loop LLInt build
+        https://bugs.webkit.org/show_bug.cgi?id=141618
+
+        Reviewed by Filip Pizlo.
+
+        I broke C-Loop when moving the common code of pow()
+        to JITOperations because that file is #ifdefed out
+        when the JITs are disabled.
+
+        It would be weird to move it back to MathObject since
+        the function needs to know about the calling conventions.
+
+        To avoid making a mess, I just gave the function its own file
+        that is used by both the runtime and the JIT.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/MathCommon.cpp: Added.
+        (JSC::fdlibmScalbn):
+        (JSC::fdlibmPow):
+        (JSC::isDenormal):
+        (JSC::isEdgeCase):
+        (JSC::mathPowInternal):
+        (JSC::operationMathPow):
+        * runtime/MathCommon.h: Added.
+        * runtime/MathObject.cpp:
+
 2015-02-17  Benjamin Poulain  <bpoulain@apple.com>
 
         Clean up OSRExit's considerAddingAsFrequentExitSite()

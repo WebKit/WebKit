@@ -32,6 +32,7 @@
 #include "GetByIdStatus.h"
 #include "GetterSetter.h"
 #include "JITOperations.h"
+#include "MathCommon.h"
 #include "Operations.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"

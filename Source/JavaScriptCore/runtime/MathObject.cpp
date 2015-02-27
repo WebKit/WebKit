@@ -21,8 +21,8 @@
 #include "config.h"
 #include "MathObject.h"
 
-#include "JITOperations.h"
 #include "Lookup.h"
+#include "MathCommon.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include <time.h>
