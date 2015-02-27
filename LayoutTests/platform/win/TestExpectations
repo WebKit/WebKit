@@ -805,6 +805,7 @@ webkit.org/b/64731 http/tests/media/media-source/ [ Skip ]
 webkit.org/b/64731 fast/history/page-cache-media-source-opened.html [ Skip ]
 webkit.org/b/64731 fast/history/page-cache-media-source-closed.html [ Skip ]
 webkit.org/b/64731 fast/history/page-cache-media-source-closed-2.html  [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 
 # These tests are for an obsolete version of the EME spec.
 fast/events/constructors/media-key-event-constructor.html [ Skip ] # [ WontFix ]

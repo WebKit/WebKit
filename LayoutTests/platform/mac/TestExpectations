@@ -955,6 +955,7 @@ webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 [ Mavericks ] fast/history/page-cache-media-source-closed.html [ WontFix ]
 [ Mavericks ] fast/history/page-cache-media-source-closed-2.html [ WontFix ]
 [ Mavericks ] fast/history/page-cache-media-source-opened.html [ WontFix ]
+[ Mavericks ] fast/history/page-cache-removed-source-buffer.html [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
 ## --- Start flaky media tests ---

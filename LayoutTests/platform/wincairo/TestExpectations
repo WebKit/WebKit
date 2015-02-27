@@ -2001,6 +2001,7 @@ http/tests/media/media-source/
 fast/history/page-cache-media-source-opened.html
 fast/history/page-cache-media-source-closed.html
 fast/history/page-cache-media-source-closed-2.html
+fast/history/page-cache-removed-source-buffer.html
 
 # Encrypted Media Extensions are not enabled.
 media/encrypted-media/

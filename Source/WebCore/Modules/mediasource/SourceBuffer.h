@@ -109,6 +109,7 @@ public:
     // ActiveDOMObject interface
     virtual bool hasPendingActivity() const override;
     virtual void stop() override;
+    bool canSuspend() const override;
 
     // EventTarget interface
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }

@@ -1,3 +1,21 @@
+2015-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Make SourceBuffer ActiveDOMObject suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=142108
+        <rdar://problem/19923085>
+
+        Reviewed by Jer Noble.
+
+        Make SourceBuffer ActiveDOMObject suspendable if it is removed from its
+        MediaSource and does not have any pending events. This makes it more
+        likely for pages using SourceBuffer objects to go into the PageCache.
+
+        Test: fast/history/page-cache-removed-source-buffer.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::canSuspend):
+        * Modules/mediasource/SourceBuffer.h:
+
 2015-02-26  Sam Weinig  <sam@webkit.org>
 
         Add support for canvas ellipse method

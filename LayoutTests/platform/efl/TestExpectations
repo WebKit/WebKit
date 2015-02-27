@@ -1052,6 +1052,7 @@ webkit.org/b/95296 media/media-source [ Skip ]
 webkit.org/b/95296 fast/history/page-cache-media-source-opened.html [ Skip ]
 webkit.org/b/95296 fast/history/page-cache-media-source-closed.html [ Skip ]
 webkit.org/b/95296 fast/history/page-cache-media-source-closed-2.html [ Skip ]
+webkit.org/b/95296 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Pass ]

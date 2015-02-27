@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a SourceBuffer removed from its MediaSource does not prevent a Page from entering PageCache');
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    // Construct a MediaSource and open it.
+    mediaSource = new MediaSource();
+    mediaTag = document.createElement("video");
+    document.body.appendChild(mediaTag);
+    mediaSourceURL = URL.createObjectURL(mediaSource);
+    mediaTag.src = mediaSourceURL;
+
+    window.sessionStorage.page_cache_open_mediasource_test_started = true;
+
+    mediaSource.addEventListener('sourceopen', function() {
+        sourceBuffer = mediaSource.addSourceBuffer('audio/mp4;codecs="mp4a.40.2"');
+
+        // Cause the MediaSource to close so that it does not prevent page caching.
+        mediaTag.src = "";
+    });
+
+    mediaSource.addEventListener('sourceclose', function() {
+        // Force a back navigation back to this page.
+        window.location.href = "resources/page-cache-helper.html";
+    });
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
