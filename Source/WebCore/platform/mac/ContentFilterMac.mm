@@ -30,58 +30,17 @@
 
 #import "ResourceResponse.h"
 #import "SoftLinking.h"
+#import "WebFilterEvaluatorSPI.h"
 #import <objc/runtime.h>
 
-#if defined(__has_include) && __has_include(<WebContentAnalysis/WebFilterEvaluator.h>)
-#import <WebContentAnalysis/WebFilterEvaluator.h>
-#else
-static const OSStatus kWFEStateBuffering = 2;
-@interface WebFilterEvaluator : NSObject
-+ (BOOL)isManagedSession;
-- (BOOL)wasBlocked;
-- (NSData *)addData:(NSData *)receivedData;
-- (NSData *)dataComplete;
-- (OSStatus)filterState;
-- (id)initWithResponse:(NSURLResponse *)response;
-@end
+#if HAVE(NE_FILTER_SOURCE)
+#import "NEFilterSourceSPI.h"
+SOFT_LINK_FRAMEWORK(NetworkExtension);
+SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
-
-#if HAVE(NE_FILTER_SOURCE)
-
-#if defined(__has_include) && __has_include(<NetworkExtension/NEFilterSource.h>)
-#import <NetworkExtension/NEFilterSource.h>
-#else
-typedef NS_ENUM(NSInteger, NEFilterSourceStatus) {
-    NEFilterSourceStatusPass = 1,
-    NEFilterSourceStatusBlock = 2,
-    NEFilterSourceStatusNeedsMoreData = 3,
-    NEFilterSourceStatusError = 4,
-};
-
-typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
-    NEFilterSourceDirectionOutbound = 1,
-    NEFilterSourceDirectionInbound = 2,
-};
-
-@interface NEFilterSource : NSObject
-+ (BOOL)filterRequired;
-- (id)initWithURL:(NSURL *)url direction:(NEFilterSourceDirection)direction socketIdentifier:(uint64_t)socketIdentifier;
-- (void)addData:(NSData *)data withCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
-- (void)dataCompleteWithCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
-@property (readonly) NEFilterSourceStatus status;
-@property (readonly) NSURL *url;
-@property (readonly) NEFilterSourceDirection direction;
-@property (readonly) uint64_t socketIdentifier;
-@end
-#endif
-
-SOFT_LINK_FRAMEWORK(NetworkExtension);
-SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
-
-#endif // HAVE(NE_FILTER_SOURCE)
 
 namespace WebCore {
 

@@ -1,3 +1,15 @@
+2015-02-26  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Move WebFilterEvaluator and NEFilterSource declarations to SPI headers
+        https://bugs.webkit.org/show_bug.cgi?id=142062
+
+        Reviewed by Daniel Bates.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/ContentFilterMac.mm:
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Added.
+        * platform/spi/cocoa/WebFilterEvaluatorSPI.h: Added.
+
 2015-02-26  Anders Carlsson  <andersca@apple.com>
 
         Add API to remove all website data for the given data records
