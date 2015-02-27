@@ -238,6 +238,9 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 crypto/subtle/rsa-indexeddb.html [ Skip ]
 inspector-protocol/indexeddb/basics.html [ Skip ]
+webkit.org/b/142076 fast/history/page-cache-indexed-closed-db.html [ Skip ]
+webkit.org/b/142076 fast/history/page-cache-indexed-opened-db.html [ Skip ]
+webkit.org/b/142076 fast/history/page-cache-webdatabase-opened-db.html [ Skip ]
 
 # Neither this port nor the mac port support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion/ [ Skip ]

@@ -1,3 +1,9 @@
+2015-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip IndexDB tests on Windows since it's not implemented.
+
+        * platform/win/TestExpectations:
+
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
         MediaSource should be suspendable when closed
