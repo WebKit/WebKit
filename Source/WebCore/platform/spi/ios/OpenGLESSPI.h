@@ -28,7 +28,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+// FIXME: Remove EAGL_IOSURFACE macro once header refactoring is completed.
+#define EAGL_IOSURFACE 1
 #import <OpenGLES/EAGLPrivate.h>
+#undef EAGL_IOSURFACE
 
 #else
 

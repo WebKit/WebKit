@@ -1,3 +1,10 @@
+2015-02-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build by defining EAGL_IOSURFACE macro before including <OpenGLES/EAGLPrivate.h>
+
+        * platform/spi/ios/OpenGLESSPI.h:  Define EAGL_IOSURFACE macro
+        until header refactoring is completed.
+
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
         MediaSource should be suspendable when closed
