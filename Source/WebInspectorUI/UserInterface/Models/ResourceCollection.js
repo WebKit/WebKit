@@ -28,8 +28,8 @@ WebInspector.ResourceCollection = function()
     WebInspector.Object.call(this);
 
     this._resources = [];
-    this._resourceURLMap = {};
-    this._resourcesTypeMap = {};
+    this._resourceURLMap = new Map;
+    this._resourcesTypeMap = new Map;
 };
 
 WebInspector.ResourceCollection.prototype = {
@@ -44,12 +44,12 @@ WebInspector.ResourceCollection.prototype = {
 
     resourceForURL: function(url)
     {
-        return this._resourceURLMap[url] || null;
+        return this._resourceURLMap.get(url) || null;
     },
 
     resourcesWithType: function(type)
     {
-        return this._resourcesTypeMap[type] || [];
+        return this._resourcesTypeMap.get(type) || [];
     },
 
     addResource: function(resource)
@@ -92,8 +92,8 @@ WebInspector.ResourceCollection.prototype = {
             this._disassociateWithResource(this._resources[i], true);
 
         this._resources = [];
-        this._resourceURLMap = {};
-        this._resourcesTypeMap = {};
+        this._resourceURLMap.clear();
+        this._resourcesTypeMap.clear();
     },
 
     // Private
@@ -101,11 +101,12 @@ WebInspector.ResourceCollection.prototype = {
     _associateWithResource: function(resource)
     {
         this._resources.push(resource);
-        this._resourceURLMap[resource.url] = resource;
+        this._resourceURLMap.set(resource.url, resource);
 
-        if (!this._resourcesTypeMap[resource.type])
-            this._resourcesTypeMap[resource.type] = [];
-        this._resourcesTypeMap[resource.type].push(resource);
+        if (!this._resourcesTypeMap.has(resource.type))
+            this._resourcesTypeMap.set(resource.type, [resource]);
+        else
+            this._resourcesTypeMap.get(resource.type).push(resource);
 
         resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
         resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
@@ -115,9 +116,9 @@ WebInspector.ResourceCollection.prototype = {
     {
         if (skipRemoval) {
             this._resources.remove(resource);
-            if (this._resourcesTypeMap[resource.type])
-                this._resourcesTypeMap[resource.type].remove(resource);
-            delete this._resourceURLMap[resource.url];
+            if (this._resourcesTypeMap.has(resource.type))
+                this._resourcesTypeMap.get(resource.type).remove(resource);
+            this._resourceURLMap.delete(resource.url);
         }
 
         resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
@@ -136,8 +137,8 @@ WebInspector.ResourceCollection.prototype = {
         if (!oldURL)
             return;
 
-        this._resourceURLMap[resource.url] = resource;
-        delete this._resourceURLMap[oldURL];
+        this._resourceURLMap.set(resource.url, resource);
+        this._resourceURLMap.delete(oldURL);
     },
 
     _resourceTypeDidChange: function(event)
@@ -152,12 +153,13 @@ WebInspector.ResourceCollection.prototype = {
         if (!oldType)
             return;
 
-        if (!this._resourcesTypeMap[resource.type])
-            this._resourcesTypeMap[resource.type] = [];
-        this._resourcesTypeMap[resource.type].push(resource);
+        if (!this._resourcesTypeMap.has(resource.type))
+            this._resourcesTypeMap.set(resource.type, [resource]);
+        else
+            this._resourcesTypeMap.get(resource.type).push(resource);
 
-        if (this._resourcesTypeMap[oldType])
-            this._resourcesTypeMap[oldType].remove(resource);
+        if (this._resourcesTypeMap.has(oldType))
+            this._resourcesTypeMap.get(oldType).remove(resource);
     }
 };
 
