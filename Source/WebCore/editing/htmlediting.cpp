@@ -143,7 +143,7 @@ Node* lowestEditableAncestor(Node* node)
 
 bool isEditablePosition(const Position& p, EditableType editableType, EUpdateStyle updateStyle)
 {
-    Node* node = p.deprecatedNode();
+    Node* node = p.containerNode();
     if (!node)
         return false;
     if (updateStyle == UpdateStyle)
@@ -151,28 +151,22 @@ bool isEditablePosition(const Position& p, EditableType editableType, EUpdateSty
     else
         ASSERT(updateStyle == DoNotUpdateStyle);
 
-    if (node->renderer() && node->renderer()->isTable())
-        node = node->parentNode();
-
     return node->hasEditableStyle(editableType);
 }
 
 bool isAtUnsplittableElement(const Position& pos)
 {
-    Node* node = pos.deprecatedNode();
+    Node* node = pos.containerNode();
     return (node == editableRootForPosition(pos) || node == enclosingNodeOfType(pos, &isTableCell));
 }
     
     
 bool isRichlyEditablePosition(const Position& p, EditableType editableType)
 {
-    Node* node = p.deprecatedNode();
+    Node* node = p.containerNode();
     if (!node)
         return false;
-        
-    if (node->renderer() && node->renderer()->isTable())
-        node = node->parentNode();
-    
+
     return node->hasRichlyEditableStyle(editableType);
 }
 
@@ -181,10 +175,7 @@ Element* editableRootForPosition(const Position& p, EditableType editableType)
     Node* node = p.containerNode();
     if (!node)
         return 0;
-        
-    if (node->renderer() && node->renderer()->isTable())
-        node = node->parentNode();
-    
+
     return node->rootEditableElement(editableType);
 }
 

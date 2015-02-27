@@ -1,3 +1,14 @@
+2015-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        isEditablePosition and related functions shouldn't move position out of table
+        https://bugs.webkit.org/show_bug.cgi?id=129200
+
+        Reviewed by Darin Adler.
+
+        Rebaselined a test. There is no visual difference.
+
+        * platform/mac/editing/inserting/5058163-1-expected.txt:
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More test expectation updates.

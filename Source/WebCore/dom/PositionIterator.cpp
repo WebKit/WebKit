@@ -43,10 +43,12 @@ PositionIterator::operator Position() const
     if (m_nodeAfterPositionInAnchor) {
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode);
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
-        if (editingIgnoresContent(m_nodeAfterPositionInAnchor->parentNode()))
+        if (positionBeforeOrAfterNodeIsCandidate(m_anchorNode))
             return positionBeforeNode(m_anchorNode);
         return positionInParentBeforeNode(m_nodeAfterPositionInAnchor);
     }
+    if (positionBeforeOrAfterNodeIsCandidate(m_anchorNode))
+        return atStartOfNode() ? positionBeforeNode(m_anchorNode) : positionAfterNode(m_anchorNode);
     if (m_anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(m_anchorNode);
     return createLegacyEditingPosition(m_anchorNode, m_offsetInAnchor);

@@ -1,3 +1,53 @@
+2015-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        isEditablePosition and related functions shouldn't move position out of table
+        https://bugs.webkit.org/show_bug.cgi?id=129200
+
+        Reviewed by Darin Adler.
+
+        This patch removes the legacy editing position for elements display: table in its computed style.
+        Previously, we used (table, 0) and (table, !0) to denote positions immediately before and after
+        such an element for historical reasons. This forced us to update the style tree before computing
+        the editability of a position because we have to check the editability of the position outside
+        the element with display: table if the position was using such a legacy editing position.
+        e.g. if a table was not editable (contenteditable=false), the position before the table (table, 0)
+        should still be considered editable if the parent node of the table was editable.
+
+        This patch replaces such a legacy editing position by using modern position types:
+        PositionIsBeforeAnchor and PositionIsAfterAnchor.
+
+        No new tests since there should be no change in the user perceived editing operations.
+
+        * dom/Position.cpp:
+        (WebCore::Position::previous): Setup the node and the offset correctly when the original position's
+        type is PositionIsBeforeAnchor. Also return a position before or after node when the node we found
+        is "atomic" (e.g. input, img, br, etc...) or it's a table. This avoids creating a legacy editing
+        position inside a table.
+        (WebCore::Position::next): Ditto.
+        (WebCore::Position::atStartOfTree): Use atFirstEditingPositionForNode, which takes care of all types
+        of positions.
+        (WebCore::Position::atEndOfTree): Ditto.
+        (WebCore::Position::downstream): Return a position before a node instead of a legacy editing position
+        for an atomic element or a table element as done in the equivalent code in Position::upstream.
+        (WebCore::Position::isCandidate): Don't treat a position inside a table to be a candidate. e.g.
+        (table, 1) when there are more than two children of the table.
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position): PositionIterator internally uses legacy editing
+        positions. So convert it to a modern position by returning a position before or after a table here.
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection): Check that the unsplittable element we found
+        is actually empty before executing the simple code path for an empty unsplittable element. Without
+        this check, block formatting a table element will fail.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isEditablePosition): Use containerNode instead of deprecatedNode because the editability
+        of a position before or after an element is determined by its parent, not the element itself.
+        (WebCore::isAtUnsplittableElement): Ditto.
+        (WebCore::isRichlyEditablePosition): Ditto. Removed the code that moved the starting node out of
+        an element with display: table. This is the code removal for which this patch was made.
+        (WebCore::editableRootForPosition): Ditto.
+
 2015-02-26  Timothy Horton  <timothy_horton@apple.com>
 
         Implement <attachment> element appearance on Mac
