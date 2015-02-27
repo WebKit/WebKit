@@ -1,29 +1,13 @@
 2015-02-26  Filip Pizlo  <fpizlo@apple.com>
 
-        BytecodeGenerator::constLocal() behaves identically to BytecodeGenerator::local() for the purposes of its one caller
-        https://bugs.webkit.org/show_bug.cgi?id=142071
-
-        Rubber stamped by Benjamin Poulain.
-        
-        The only behavioral differences between constLocal() and local() are:
-        
-        - constLocal() doesn't have a special case for "this" that overrides other checks like the
-          shouldOptimizeLocals() check.  But the one user of constLocal() is for the "const x"
-          expression, and "const this" doesn't parse.
-
-        - constLocal() won't createArgumentsIfNecessary() for "arguments".  But it's harmless if
-          it does, since its one user assigns to the local.
-
-        So, we can remove constLocal() and make its one caller use local() instead.
+        Unreviewed, roll out r180723. It broke a bunch of tests.
 
         * bytecompiler/BytecodeGenerator.cpp:
-        (JSC::BytecodeGenerator::constLocal): Deleted.
+        (JSC::BytecodeGenerator::constLocal):
         * bytecompiler/BytecodeGenerator.h:
         * bytecompiler/NodesCodegen.cpp:
         (JSC::ConstDeclNode::emitCodeSingle):
-        * tests/stress/const-arguments.js: Added.
-        (foo):
-        (check):
+        * tests/stress/const-arguments.js: Removed.
 
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 

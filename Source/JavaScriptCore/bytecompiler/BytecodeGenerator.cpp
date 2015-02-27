@@ -1214,6 +1214,24 @@ Local BytecodeGenerator::local(const Identifier& property)
     return Local(local, entry.getAttributes(), isArguments ? Local::SpecialLocal : Local::NormalLocal);
 }
 
+Local BytecodeGenerator::constLocal(const Identifier& property)
+{
+    if (m_codeType != FunctionCode)
+        return Local();
+
+    SymbolTableEntry entry = symbolTable().get(property.impl());
+    if (entry.isNull())
+        return Local();
+
+    RegisterID* local = createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+
+    bool isArguments = property == propertyNames().arguments;
+    if (isCaptured(local->index()) && m_lexicalEnvironmentRegister)
+        return Local();
+
+    return Local(local, entry.getAttributes(), isArguments ? Local::SpecialLocal : Local::NormalLocal);
+}
+
 void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value, RegisterID* base, Label* target)
 {
     size_t begin = instructions().size();
