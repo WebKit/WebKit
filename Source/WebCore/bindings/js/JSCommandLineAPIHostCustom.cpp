@@ -57,10 +57,7 @@ namespace WebCore {
 
 JSValue JSCommandLineAPIHost::inspectedObject(ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-
-    CommandLineAPIHost::InspectableObject* object = impl().inspectedObject(exec->uncheckedArgument(0).toInt32(exec));
+    CommandLineAPIHost::InspectableObject* object = impl().inspectedObject();
     if (!object)
         return jsUndefined();
 

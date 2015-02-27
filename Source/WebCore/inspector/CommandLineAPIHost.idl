@@ -37,7 +37,7 @@
     void clearConsoleMessages();
     void copyText(DOMString text);
     [Custom] void inspect(any objectId, any hints);
-    [Custom] any inspectedObject(int num);
+    [Custom] any inspectedObject();
     [Custom] Array getEventListeners(Node node);
     [Custom] DOMString databaseId(any database);
     [Custom] DOMString storageId(any storage);

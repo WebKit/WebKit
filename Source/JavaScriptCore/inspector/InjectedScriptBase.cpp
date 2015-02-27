@@ -112,7 +112,7 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown)
+void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResultIndex)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
@@ -127,26 +127,32 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
         return;
     }
 
-    RefPtr<InspectorObject> resultPair;
-    if (!result->asObject(resultPair)) {
+    RefPtr<InspectorObject> resultTuple;
+    if (!result->asObject(resultTuple)) {
         errorString = ASCIILiteral("Internal error: result is not an Object");
         return;
     }
 
     RefPtr<InspectorObject> resultObject;
-    if (!resultPair->getObject(ASCIILiteral("result"), resultObject)) {
+    if (!resultTuple->getObject(ASCIILiteral("result"), resultObject)) {
         errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
 
     bool wasThrownValue = false;
-    if (!resultPair->getBoolean(ASCIILiteral("wasThrown"), wasThrownValue)) {
+    if (!resultTuple->getBoolean(ASCIILiteral("wasThrown"), wasThrownValue)) {
         errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
 
     *objectResult = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
     *wasThrown = wasThrownValue;
+
+    if (savedResultIndex) {
+        int savedIndex = 0;
+        if (resultTuple->getInteger(ASCIILiteral("savedResultIndex"), savedIndex))
+            *savedResultIndex = savedIndex;
+    }
 }
 
 } // namespace Inspector

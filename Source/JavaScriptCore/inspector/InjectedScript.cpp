@@ -56,7 +56,7 @@ InjectedScript::~InjectedScript()
 {
 }
 
-void InjectedScript::evaluate(ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>* result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluate(ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>* result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("evaluate"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(expression);
@@ -64,7 +64,8 @@ void InjectedScript::evaluate(ErrorString& errorString, const String& expression
     function.appendArgument(includeCommandLineAPI);
     function.appendArgument(returnByValue);
     function.appendArgument(generatePreview);
-    makeEvalCall(errorString, function, result, wasThrown);
+    function.appendArgument(saveResult);
+    makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
 void InjectedScript::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>* result, Inspector::Protocol::OptOutput<bool>* wasThrown)
@@ -78,7 +79,7 @@ void InjectedScript::callFunctionOn(ErrorString& errorString, const String& obje
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString& errorString, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>* result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluateOnCallFrame(ErrorString& errorString, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>* result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("evaluateOnCallFrame"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(callFrames);
@@ -88,7 +89,8 @@ void InjectedScript::evaluateOnCallFrame(ErrorString& errorString, const Depreca
     function.appendArgument(includeCommandLineAPI);
     function.appendArgument(returnByValue);
     function.appendArgument(generatePreview);
-    makeEvalCall(errorString, function, result, wasThrown);
+    function.appendArgument(saveResult);
+    makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
 void InjectedScript::getFunctionDetails(ErrorString& errorString, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>* result)

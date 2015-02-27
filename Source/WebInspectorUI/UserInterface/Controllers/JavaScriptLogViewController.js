@@ -222,17 +222,17 @@ WebInspector.JavaScriptLogViewController.prototype = {
         var commandMessage = new WebInspector.ConsoleCommand(text);
         this._appendConsoleMessage(commandMessage, true);
 
-        function printResult(result, wasThrown)
+        function printResult(result, wasThrown, savedResultIndex)
         {
             if (!result || this._cleared)
                 return;
 
-            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage), true);
+            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, savedResultIndex), true);
         }
 
         text += "\n//# sourceURL=__WebInspectorConsole__\n";
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, printResult.bind(this));
+        WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, true, printResult.bind(this));
     },
 
     // Private

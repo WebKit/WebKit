@@ -1,3 +1,17 @@
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
+        https://bugs.webkit.org/show_bug.cgi?id=142061
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/command-line-api-exception-nested-catch.html:
+        * inspector/debugger/command-line-api-exception.html:
+        * inspector/model/remote-object-get-properties.html:
+        * inspector/model/remote-object-weak-collection.html:
+        * inspector/model/remote-object.html:
+        Update evaluateInInspectedWindow call sites for new parameter.
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More Debug assertion updates.

@@ -1,3 +1,36 @@
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
+        https://bugs.webkit.org/show_bug.cgi?id=142061
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/Runtime.json:
+        Input flag "saveResult" on whether we should try to save a result.
+        Output int "savedResultIndex" to tell the frontend the saved state.
+
+        * inspector/InjectedScriptSource.js:
+        Handle saving and clearing $1-$99 values.
+        Include in BasicCommandLineAPI for JSContext inspection.
+
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptBase.h:
+        Allow an optional "savedResultIndex" out value on evals.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::evaluate):
+        (Inspector::InjectedScript::evaluateOnCallFrame):
+        * inspector/InjectedScript.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        Plumbing for new in and out parameters.
+
 2015-02-26  Filip Pizlo  <fpizlo@apple.com>
 
         The bool returning form of BytecodeGenerator::addVar() can be removed

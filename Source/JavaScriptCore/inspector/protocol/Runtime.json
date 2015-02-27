@@ -209,11 +209,13 @@
                 { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions and mute console. Overrides setPauseOnException state." },
                 { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." },
                 { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." },
-                { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for the result." }
+                { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for the result." },
+                { "name": "saveResult", "type": "boolean", "optional": true, "description": "Whether the resulting value should be considered for saving in the $n history." }
             ],
             "returns": [
                 { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
-                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
+                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
+                { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
             ],
             "description": "Evaluates expression on global object."
         },

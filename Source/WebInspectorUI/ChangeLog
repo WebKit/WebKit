@@ -1,5 +1,50 @@
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
+        https://bugs.webkit.org/show_bug.cgi?id=142061
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evalCallback):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        Add a saveResult parameter for the new protocol command in parameter.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageImpl.prototype._rootPropertyPathForObject):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype.appendTitleSuffix):
+        For console evaluation results, show a "= $n" when the evaluation was
+        given a saved result index.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-saved-variable):
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview-name):
+        Make $n and class names in previews always non-italics.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.printResult):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (get WebInspector.JavaScriptRuntimeCompletionProvider.prototype.):
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messagesCleared):
+        (WebInspector.LogManager.prototype._mainResourceDidChange):
+        Try to provide better autocompletion for $n, by populating autocompletion menus
+        from $1-$n where n is the maximum saved result index seen. Clear the maximum
+        when we clear the console.
+
+        * UserInterface/Views/ConsoleCommandResult.js:
+        (WebInspector.ConsoleCommandResult):
+        (WebInspector.ConsoleCommandResult.clearMaximumSavedResultIndex):
+        Keep track of the maximum savedResultIndex for console evaluation results.
+
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Set/Map appear as lossless when they have lossy entries
         https://bugs.webkit.org/show_bug.cgi?id=142050
 

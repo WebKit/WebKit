@@ -223,6 +223,11 @@
     color: rgb(0, 128, 255);
 }
 
+.console-saved-variable {
+    font-style: normal;
+    color: hsl(0, 0%, 67%);
+}
+
 .console-messages a {
     color: rgb(33%, 33%, 33%);
     cursor: pointer;

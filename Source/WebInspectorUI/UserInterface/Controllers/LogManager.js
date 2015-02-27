@@ -59,6 +59,8 @@ WebInspector.LogManager.prototype = {
     {
         // Called from WebInspector.ConsoleObserver.
 
+        WebInspector.ConsoleCommandResult.clearMaximumSavedResultIndex();
+
         // We don't want to clear messages on reloads. We can't determine that easily right now.
         // FIXME: <rdar://problem/13767079> Console.messagesCleared should include a reason
         this._shouldClearMessages = true;
@@ -96,6 +98,8 @@ WebInspector.LogManager.prototype = {
             this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
         else
             this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted);
+
+        WebInspector.ConsoleCommandResult.clearMaximumSavedResultIndex();
 
         delete this._shouldClearMessages;
     }

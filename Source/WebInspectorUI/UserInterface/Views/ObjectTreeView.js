@@ -32,7 +32,7 @@ WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpandin
 
     this._object = object;
     this._mode = mode || WebInspector.ObjectTreeView.Mode.Properties;
-    this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "obj");
+    this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
     this._expanded = false;
     this._hasLosslessPreview = false;
 
@@ -184,6 +184,14 @@ WebInspector.ObjectTreeView.prototype = {
             this._previewView.showPreview();
 
         this._untrackWeakEntries();
+    },
+
+    appendTitleSuffix: function(suffixElement)
+    {
+        if (this._previewView)
+            this._previewView.element.appendChild(suffixElement);
+        else
+            this._titleElement.appendChild(suffixElement);
     },
 
     // Protected

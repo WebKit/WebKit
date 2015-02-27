@@ -1,3 +1,26 @@
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
+        https://bugs.webkit.org/show_bug.cgi?id=142061
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/CommandLineAPIModuleSource.js:
+        Replace $1-$4 "inspected objects" with $1-$99 "saved results".
+
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::inspectedObject):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::CommandLineAPIHost):
+        (WebCore::CommandLineAPIHost::InspectableObject::get):
+        (WebCore::CommandLineAPIHost::addInspectedObject):
+        (WebCore::CommandLineAPIHost::inspectedObject):
+        (WebCore::CommandLineAPIHost::clearInspectedObjects): Deleted.
+        * inspector/CommandLineAPIHost.h:
+        * inspector/CommandLineAPIHost.idl:
+        Since we now just save the single $0 inspected object, eliminate
+        keeping track of a list of 5 values.
+
 2015-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unnecessary create() factory functions in CDMFoo, NamedNodeMap

@@ -29,6 +29,7 @@
     font-size: 11px;
 }
 
+.object-preview-name,
 .object-preview.lossless {
     font-style: normal;
 }

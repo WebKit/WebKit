@@ -104,7 +104,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else
-            WebInspector.runtimeManager.evaluateInInspectedWindow(base, "completion", true, true, false, false, evaluated.bind(this));
+            WebInspector.runtimeManager.evaluateInInspectedWindow(base, "completion", true, true, false, false, false, evaluated.bind(this));
 
         function updateLastPropertyNames(propertyNames)
         {
@@ -155,7 +155,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
             if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
-                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, receivedPropertyNamesFromEvaluate.bind(this));
+                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, false, receivedPropertyNamesFromEvaluate.bind(this));
             else
                 console.error("Unknown result type: " + result.type);
         }
@@ -174,11 +174,15 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
             RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
-                var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$1", "$2", "$3", "$4", "$_"];
+                var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$_"];
                 if (WebInspector.debuggerManager.paused && WebInspector.debuggerManager.pauseReason === WebInspector.DebuggerManager.PauseReason.Exception)
                     commandLineAPI.push("$exception");
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
+
+                // FIXME: Due to caching, sometimes old $n values show up as completion results even though they are not available. We should clear that proactively.
+                for (var i = 1; i <= WebInspector.ConsoleCommandResult.maximumSavedResultIndex; ++i)
+                    propertyNames["$" + i] = true;
             }
 
             propertyNames = Object.keys(propertyNames);

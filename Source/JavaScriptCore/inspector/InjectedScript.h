@@ -52,9 +52,9 @@ public:
     InjectedScript(Deprecated::ScriptObject, InspectorEnvironment*);
     virtual ~InjectedScript();
 
-    void evaluate(ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
+    void evaluate(ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex);
     void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
-    void evaluateOnCallFrame(ErrorString&, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
+    void evaluateOnCallFrame(ErrorString&, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex);
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void getProperties(ErrorString&, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
     void getDisplayableProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);

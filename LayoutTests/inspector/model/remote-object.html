@@ -176,7 +176,7 @@ function test()
         InspectorTest.log("-----------------------------------------------------");
         InspectorTest.log("EXPRESSION: " + step.expression);
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, function(remoteObject, wasThrown) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, false, function(remoteObject, wasThrown) {
             InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
             InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, "  "));
             runNextStep();

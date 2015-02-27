@@ -58,6 +58,8 @@ var InjectedScript = function()
     this._idToObjectGroupName = {};
     this._objectGroups = {};
     this._modules = {};
+    this._nextSavedResultIndex = 1;
+    this._savedResults = [];
 }
 
 InjectedScript.primitiveTypes = {
@@ -174,13 +176,19 @@ InjectedScript.prototype = {
 
     releaseObjectGroup: function(objectGroupName)
     {
-        if (objectGroupName === "console")
+        if (objectGroupName === "console") {
             delete this._lastResult;
+            this._nextSavedResultIndex = 1;
+            this._savedResults = [];
+        }
+
         var group = this._objectGroups[objectGroupName];
         if (!group)
             return;
+
         for (var i = 0; i < group.length; i++)
             this._releaseObject(group[i]);
+
         delete this._objectGroups[objectGroupName];
     },
 
@@ -320,9 +328,9 @@ InjectedScript.prototype = {
         delete this._idToObjectGroupName[id];
     },
 
-    evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview)
+    evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
     },
 
     callFunctionOn: function(objectId, expression, args, returnByValue, generatePreview)
@@ -376,13 +384,20 @@ InjectedScript.prototype = {
         return undefined;
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue, generatePreview)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
         try {
-            return {
+            this._savedResultIndex = undefined;
+
+            var returnObject = {
                 wasThrown: false,
-                result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue, generatePreview)
+                result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI, saveResult), objectGroup, returnByValue, generatePreview)
             };
+
+            if (saveResult && this._savedResultIndex)
+                returnObject.savedResultIndex = this._savedResultIndex;
+
+            return returnObject;
         } catch (e) {
             return this._createThrownValue(e, objectGroup);
         }
@@ -400,7 +415,7 @@ InjectedScript.prototype = {
         };
     },
 
-    _evaluateOn: function(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI)
+    _evaluateOn: function(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI, saveResult)
     {
         var commandLineAPI = null;
         if (injectCommandLineAPI) {
@@ -445,8 +460,8 @@ InjectedScript.prototype = {
             var expressionFunction = evalFunction.call(object, boundExpressionFunctionString);
             var result = expressionFunction.apply(null, parameters);
 
-            if (objectGroup === "console")
-                this._lastResult = result;
+            if (objectGroup === "console" && saveResult)
+                this._saveResult(result);
 
             return result;
         }
@@ -465,8 +480,8 @@ InjectedScript.prototype = {
 
             var result = evalFunction.call(inspectedGlobalObject, expression);
 
-            if (objectGroup === "console")
-                this._lastResult = result;
+            if (objectGroup === "console" && saveResult)
+                this._saveResult(result);
 
             return result;
         } finally {
@@ -493,12 +508,12 @@ InjectedScript.prototype = {
         return result;
     },
 
-    evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview)
+    evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
         var callFrame = this._callFrameForId(topCallFrame, callFrameId);
         if (!callFrame)
             return "Could not find call frame with given id";
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue, generatePreview);
+        return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
     },
 
     _callFrameForId: function(topCallFrame, callFrameId)
@@ -809,6 +824,32 @@ InjectedScript.prototype = {
             return this._getWeakMapEntries(object, numberToFetch);
 
         throw "unexpected type";
+    },
+
+    _saveResult: function(result)
+    {
+        this._lastResult = result;
+
+        if (result === undefined || result === null)
+            return;
+
+        var existingIndex = this._savedResults.indexOf(result);
+        if (existingIndex !== -1) {
+            this._savedResultIndex = existingIndex;
+            return;
+        }
+
+        this._savedResultIndex = this._nextSavedResultIndex;
+        this._savedResults[this._nextSavedResultIndex++] = result;
+
+        // $n is limited from $1-$99. $0 is special.
+        if (this._nextSavedResultIndex >= 100)
+            this._nextSavedResultIndex = 1;
+    },
+
+    _savedResult: function(index)
+    {
+        return this._savedResults[index];
     }
 }
 
@@ -1117,10 +1158,35 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
     };
 }
 
+
+function slice(array, index)
+{
+    var result = [];
+    for (var i = index || 0; i < array.length; ++i)
+        result.push(array[i]);
+    return result;
+}
+
+function bind(func, thisObject, var_args)
+{
+    var args = slice(arguments, 2);
+    return function(var_args) {
+        return func.apply(thisObject, args.concat(slice(arguments)));
+    }
+}
+
 function BasicCommandLineAPI()
 {
     this.$_ = injectedScript._lastResult;
     this.$exception = injectedScript._exceptionValue;
+
+    // $1-$99
+    for (var i = 1; i <= injectedScript._savedResults.length; ++i) {
+        var member = "$" + i;
+        if (member in inspectedGlobalObject)
+            continue;
+        this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
+    }
 }
 
 return injectedScript;

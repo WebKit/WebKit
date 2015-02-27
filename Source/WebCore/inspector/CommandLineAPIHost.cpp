@@ -67,7 +67,7 @@ CommandLineAPIHost::CommandLineAPIHost()
     , m_domStorageAgent(nullptr)
     , m_databaseAgent(nullptr)
 {
-    m_defaultInspectableObject = std::make_unique<InspectableObject>();
+    m_inspectedObject = std::make_unique<InspectableObject>();
 }
 
 CommandLineAPIHost::~CommandLineAPIHost()
@@ -118,26 +118,16 @@ void CommandLineAPIHost::copyText(const String& text)
 Deprecated::ScriptValue CommandLineAPIHost::InspectableObject::get(JSC::ExecState*)
 {
     return Deprecated::ScriptValue();
-};
+}
 
 void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::InspectableObject> object)
 {
-    m_inspectedObjects.insert(0, WTF::move(object));
-    while (m_inspectedObjects.size() > 5)
-        m_inspectedObjects.removeLast();
+    m_inspectedObject = WTF::move(object);
 }
 
-void CommandLineAPIHost::clearInspectedObjects()
+CommandLineAPIHost::InspectableObject* CommandLineAPIHost::inspectedObject()
 {
-    m_inspectedObjects.clear();
-}
-
-CommandLineAPIHost::InspectableObject* CommandLineAPIHost::inspectedObject(unsigned index)
-{
-    if (index >= m_inspectedObjects.size())
-        return m_defaultInspectableObject.get();
-
-    return m_inspectedObjects[index].get();
+    return m_inspectedObject.get();
 }
 
 String CommandLineAPIHost::databaseIdImpl(Database* database)

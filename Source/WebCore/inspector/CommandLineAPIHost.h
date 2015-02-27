@@ -89,8 +89,7 @@ public:
         virtual ~InspectableObject() { }
     };
     void addInspectedObject(std::unique_ptr<InspectableObject>);
-    void clearInspectedObjects();
-    InspectableObject* inspectedObject(unsigned index);
+    InspectableObject* inspectedObject();
     void inspectImpl(RefPtr<Inspector::InspectorValue>&& objectToInspect, RefPtr<Inspector::InspectorValue>&& hints);
 
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
@@ -107,8 +106,7 @@ private:
     InspectorDOMStorageAgent* m_domStorageAgent;
     InspectorDatabaseAgent* m_databaseAgent;
 
-    Vector<std::unique_ptr<InspectableObject>> m_inspectedObjects;
-    std::unique_ptr<InspectableObject> m_defaultInspectableObject;
+    std::unique_ptr<InspectableObject> m_inspectedObject; // $0
 };
 
 } // namespace WebCore

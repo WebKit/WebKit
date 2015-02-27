@@ -125,6 +125,16 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         this._formattedMessage.appendChild(messageText);
 
+        if (this.savedResultIndex) {
+            var savedVariableElement = document.createElement("span");
+            savedVariableElement.className = "console-saved-variable";
+            savedVariableElement.textContent = " = $" + this.savedResultIndex;
+            if (this._objectTree)
+                this._objectTree.appendTitleSuffix(savedVariableElement);
+            else
+                this._formattedMessage.appendChild(savedVariableElement);
+        }
+
         if (this._shouldDumpStackTrace()) {
             var ol = document.createElement("ol");
             ol.className = "outline-disclosure";
@@ -296,9 +306,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsObject: function(obj, elem, forceExpansion)
     {
-        // FIXME: Intialize component with "$n" instead of "obj". Or, an existing property path.
-        var objectTree = new WebInspector.ObjectTreeView(obj, WebInspector.ObjectTreeView.Mode.Properties, null, forceExpansion);
-        elem.appendChild(objectTree.element);
+        this._objectTree = new WebInspector.ObjectTreeView(obj, WebInspector.ObjectTreeView.Mode.Properties, this._rootPropertyPathForObject(obj), forceExpansion);
+        elem.appendChild(this._objectTree.element);
     },
 
     _formatParameterAsString: function(output, elem)
@@ -315,9 +324,16 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsArray: function(arr, elem)
     {
-        // FIXME: Intialize component with "$n" instead of "obj". Or, an existing property path.
-        var objectTree = new WebInspector.ObjectTreeView(arr, WebInspector.ObjectTreeView.Mode.Properties);
-        elem.appendChild(objectTree.element);
+        this._objectTree = new WebInspector.ObjectTreeView(arr, WebInspector.ObjectTreeView.Mode.Properties, this._rootPropertyPathForObject(arr));
+        elem.appendChild(this._objectTree.element);
+    },
+
+    _rootPropertyPathForObject: function(object)
+    {
+        if (!this.savedResultIndex)
+            return null;
+
+        return new WebInspector.PropertyPath(object, "$" + this.savedResultIndex);
     },
 
     _userProvidedColumnNames: function(columnNamesArgument)
