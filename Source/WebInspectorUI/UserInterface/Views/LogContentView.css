@@ -63,10 +63,11 @@
     display: block;
     content: "";
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: -1px;
+    bottom: -1px;
     background: hsl(0, 0%, 60%);
     width: 2px;
+    z-index: 10;
 }
 
 .console-messages:focus .console-item.selected .data-grid tr.selected {
@@ -75,6 +76,15 @@
 
 .console-item .data-grid tr.selected {
     background-color: hsl(210, 0%, 90%) !important;
+}
+
+.console-messages:focus .console-item.selected {
+    background-color: hsl(210, 98%, 96%);
+    border-color: hsl(210, 90%, 93%);
+}
+
+.console-messages:focus .console-item.selected + .console-item {
+    border-top-color: hsl(210, 90%, 93%);
 }
 
 .console-messages:focus .console-item.selected::after {
@@ -170,9 +180,13 @@
     border-color: hsl(0, 100%, 92%);
 }
 
+.console-error-level + .console-item {
+    border-top-color: hsl(0, 100%, 92%);
+}
+
 .console-error-level .console-message-text,
 .console-error-level .section .header .title {
-    color: hsl(0, 75%, 50%);
+    color: hsl(0, 75%, 45%);
 }
 
 .console-debug-level .console-message-text {
@@ -189,7 +203,11 @@
 
 .console-warning-level {
     background-color: hsl(50, 100%, 94%);
-    border-color: hsl(50, 100%, 86%);
+    border-color: hsl(40, 100%, 90%);
+}
+
+.console-warning-level + .console-item {
+    border-top-color: hsl(40, 100%, 90%);
 }
 
 .console-warning-level .console-message-text {

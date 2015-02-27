@@ -1,3 +1,19 @@
+2015-02-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add a subtle blue background for selected console messages
+        https://bugs.webkit.org/show_bug.cgi?id=142073
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item.selected::after):
+        (.console-messages:focus .console-item.selected):
+        (.console-messages:focus .console-item.selected + .console-item):
+        (.console-error-level + .console-item):
+        (.console-error-level .section .header .title):
+        (.console-warning-level):
+        (.console-warning-level + .console-item):
+
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Colored console messages apply text color to object tree properties
