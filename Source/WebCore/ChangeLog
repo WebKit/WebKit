@@ -1,3 +1,16 @@
+2015-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Redundant track language notifications
+        https://bugs.webkit.org/show_bug.cgi?id=141908
+
+        Reviewed by Žan Doberšek.
+
+        Invoke languageChanged only if the language code actually
+        changed.
+
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged):
+
 2015-02-22  Dean Jackson  <dino@apple.com>
 
         Print a console warning when HTMLCanvasElement exceeds the maximum size
