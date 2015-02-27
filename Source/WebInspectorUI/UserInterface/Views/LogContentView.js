@@ -303,8 +303,10 @@ WebInspector.LogContentView.prototype = {
 
     _sessionStarted: function(event)
     {
-        if (this._clearLogOnReloadSetting.value) 
+        if (this._clearLogOnReloadSetting.value)  {
             this._clearLog();
+            return;
+        }
 
         this._logViewController.startNewSession();
     },
@@ -638,7 +640,9 @@ WebInspector.LogContentView.prototype = {
 
     _clearLog: function()
     {
+        this._ignoreDidClearMessages = true;
         this._logViewController.clear();
+        this._ignoreDidClearMessages = false;
     },
 
     _scopeBarSelectionDidChange: function(event)

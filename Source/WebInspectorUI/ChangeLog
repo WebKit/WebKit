@@ -1,5 +1,21 @@
 2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Clear Log on Reload clears some logs that were after reload
+        https://bugs.webkit.org/show_bug.cgi?id=142070
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        We can bail after calling clearLog, since that will already start
+        a new session for us.
+
+        (WebInspector.LogContentView.prototype._clearLog):
+        Don't trigger a backend clear messages, since that will cause us to
+        clear messages received between the request and response.
+
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Save Console Evaluations into Command Line variables $1-$99 ($n)
         https://bugs.webkit.org/show_bug.cgi?id=142061
 
