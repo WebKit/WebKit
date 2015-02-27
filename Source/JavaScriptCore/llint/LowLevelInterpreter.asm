@@ -66,6 +66,8 @@ if JSVALUE64
     const ValueTrue       = TagBitTypeOther | TagBitBool | 1
     const ValueUndefined  = TagBitTypeOther | TagBitUndefined
     const ValueNull       = TagBitTypeOther
+    const TagTypeNumber   = 0xffff000000000000
+    const TagMask         = TagTypeNumber | TagBitTypeOther
 else
     const Int32Tag = -1
     const BooleanTag = -2
