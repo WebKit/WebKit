@@ -1,3 +1,20 @@
+2015-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Invalid assert in CompositeEditCommand::insertNodeAfter/insertNodeBefore
+        https://bugs.webkit.org/show_bug.cgi?id=141854
+
+        Reviewed by Ryosuke Niwa.
+
+        Inserting content before/after the body as the result of editing is a valid operation.
+        This assert was originally introduced to cover cases where edited content would get moved
+        out of body. However, asserting such operation properly is not possible atm.
+
+        Test: editing/inserting/insert-as-body-sibling.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+
 2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Language ranges containing asterisks must be quoted as strings

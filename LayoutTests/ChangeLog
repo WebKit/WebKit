@@ -1,3 +1,17 @@
+2015-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Invalid assert in CompositeEditCommand::insertNodeAfter/insertNodeBefore
+        https://bugs.webkit.org/show_bug.cgi?id=141854
+
+        Reviewed by Ryosuke Niwa.
+
+        Inserting content before/after the body as the result of editing is a valid operation.
+        This assert was originally introduced to cover cases where edited content would get moved
+        out of body. However, asserting such operation properly is not possible atm.
+
+        * editing/inserting/insert-as-body-sibling-expected.txt: Added.
+        * editing/inserting/insert-as-body-sibling.html: Added.
+
 2015-02-20  Michael Saboff  <msaboff@apple.com>
 
         DFG JIT needs to check for stack overflow at the start of Program and Eval execution
