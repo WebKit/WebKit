@@ -1,3 +1,13 @@
+2015-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Build bmalloc through CMake as a static library. It's then linked either
+        into the WTF library (if built as a shared library) or into the JSC and
+        WebKit2 libraries. There's no need to build it as a standalone shared library.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2015-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [BMalloc] Add a FIXME comment for memory alignas
