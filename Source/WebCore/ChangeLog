@@ -1,3 +1,23 @@
+2015-02-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merged r180087.
+
+    2015-02-12  Enrica Casucci  <enrica@apple.com>
+
+            Additional emoji group support.
+            https://bugs.webkit.org/show_bug.cgi?id=141539
+            rdar://problem/19727527
+
+            Reviewed by Sam Weinig.
+
+            Adding some new emoji ligatures.
+            Updated existing test to include the new sequences.
+
+            * platform/text/TextBreakIterator.cpp:
+            (WebCore::cursorMovementIterator):
+            * rendering/RenderText.cpp:
+            (WebCore::isEmojiGroupCandidate):
+
 2015-02-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180174
