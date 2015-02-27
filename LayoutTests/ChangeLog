@@ -1,3 +1,23 @@
+2015-02-20  Michael Saboff  <msaboff@apple.com>
+
+        DFG JIT needs to check for stack overflow at the start of Program and Eval execution
+        https://bugs.webkit.org/show_bug.cgi?id=141676
+
+        Reviewed by Filip Pizlo.
+
+        Updated the check for out of stack at eval entry test from using a fixed number of frame to
+        back track to now adjust the amount of back tracking up the stack based on where we can run a
+        simple eval().  At that point in the stack we try to cause an out of stack exception.
+
+        Also added a second pass of the test that takes the originally failing eval and tiers that
+        eval expression up to the DFG when used with the agreessive options of run-jsc-stress-tests.
+        This was done to reduce the amount of time the test takes to run in debug builds.
+
+        * js/regress-141098-expected.txt:
+        * js/script-tests/regress-141098.js:
+        (testEval):
+        (probeAndRecurse):
+
 2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Language ranges containing asterisks must be quoted as strings

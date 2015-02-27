@@ -1,3 +1,27 @@
+2015-02-20  Michael Saboff  <msaboff@apple.com>
+
+        DFG JIT needs to check for stack overflow at the start of Program and Eval execution
+        https://bugs.webkit.org/show_bug.cgi?id=141676
+
+        Reviewed by Filip Pizlo.
+
+        Added stack check to the beginning of the code the DFG copmiler emits for Program and Eval nodes.
+        To aid in testing the code, I replaced the EvalCodeCache::maxCacheableSourceLength const
+        a options in runtime/Options.h.  The test script, run-jsc-stress-tests, sets that option
+        to a huge value when running with the "Eager" options.  This allows the updated test to 
+        reliably exercise the code in questions.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        Added stack check.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * runtime/Options.h:
+        Replaced EvalCodeCache::imaxCacheableSourceLength with Options::maximumEvalCacheableSourceLength
+        so that it can be configured when running the related test.
+
 2015-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r180258 to fix Windows build.

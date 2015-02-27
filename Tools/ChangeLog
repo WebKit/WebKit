@@ -1,3 +1,16 @@
+2015-02-20  Michael Saboff  <msaboff@apple.com>
+
+        DFG JIT needs to check for stack overflow at the start of Program and Eval execution
+        https://bugs.webkit.org/show_bug.cgi?id=141676
+
+        Reviewed by Filip Pizlo.
+
+        Set the newly added --maximumEvalCacheableSourceLength option for eager test runs.  This is needed
+        to allow the eval out of stack tests to tier up.  Without this option, we don't cache the likely
+        large string expression that we want to eval.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-02-25  Mark Lam  <mark.lam@apple.com>
 
         ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack.

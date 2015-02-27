@@ -234,6 +234,7 @@ typedef const char* optionString;
     v(unsigned, ftlOSREntryRetryThreshold, 100) \
     \
     v(int32, evalThresholdMultiplier, 10) \
+    v(unsigned, maximumEvalCacheableSourceLength, 256) \
     \
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false) \
     v(int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000) \

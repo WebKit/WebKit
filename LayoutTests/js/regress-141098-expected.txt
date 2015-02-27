@@ -3,6 +3,8 @@ Regression test for https://webkit.org/b/141098. Make sure eval() properly handl
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Exception: RangeError: Maximum call stack size exceeded.
+PASS Exception: RangeError: Maximum call stack size exceeded.
 PASS successfullyParsed is true
 
 TEST COMPLETE
