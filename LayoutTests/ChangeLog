@@ -1,3 +1,10 @@
+2015-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Rebaseline test after r180726.
+
+        * platform/win/TestExpectations: Mark a flaky test.
+        * platform/win/editing/inserting/5058163-1-expected.txt:
+
 2015-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         isEditablePosition and related functions shouldn't move position out of table
