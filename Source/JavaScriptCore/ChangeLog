@@ -1,5 +1,20 @@
 2015-02-26  Filip Pizlo  <fpizlo@apple.com>
 
+        The bool returning form of BytecodeGenerator::addVar() can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=142064
+
+        Reviewed by Mark Lam.
+        
+        It's easier to implement addVar() when you don't have to return whether it's a new
+        variable or not.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::addVar): Deleted.
+
+2015-02-26  Filip Pizlo  <fpizlo@apple.com>
+
         Various array access corner cases should take OSR exit feedback
         https://bugs.webkit.org/show_bug.cgi?id=142056
 

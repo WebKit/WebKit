@@ -613,16 +613,8 @@ namespace JSC {
 
         // Adds a var slot and maps it to the name ident in symbolTable().
         enum WatchMode { IsWatchable, NotWatchable };
-        RegisterID* addVar(const Identifier& ident, ConstantMode constantMode, WatchMode watchMode)
-        {
-            RegisterID* local;
-            addVar(ident, constantMode, watchMode, local);
-            return local;
-        }
+        RegisterID* addVar(const Identifier&, ConstantMode, WatchMode);
 
-        // Ditto. Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
-        bool addVar(const Identifier&, ConstantMode, WatchMode, RegisterID*&);
-        
         // Adds an anonymous var slot. To give this slot a name, add it to symbolTable().
         RegisterID* addVar()
         {

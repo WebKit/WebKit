@@ -123,8 +123,8 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-bool BytecodeGenerator::addVar(
-    const Identifier& ident, ConstantMode constantMode, WatchMode watchMode, RegisterID*& r0)
+RegisterID* BytecodeGenerator::addVar(
+    const Identifier& ident, ConstantMode constantMode, WatchMode watchMode)
 {
     ASSERT(static_cast<size_t>(m_codeBlock->m_numVars) == m_calleeRegisters.size());
     
@@ -133,10 +133,8 @@ bool BytecodeGenerator::addVar(
     SymbolTableEntry newEntry(index, constantMode == IsConstant ? ReadOnly : 0);
     SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);
 
-    if (!result.isNewEntry) {
-        r0 = &registerFor(result.iterator->value.getIndex());
-        return false;
-    }
+    if (!result.isNewEntry)
+        return &registerFor(result.iterator->value.getIndex());
     
     if (watchMode == IsWatchable) {
         while (m_watchableVariables.size() < static_cast<size_t>(m_codeBlock->m_numVars))
@@ -144,11 +142,9 @@ bool BytecodeGenerator::addVar(
         m_watchableVariables.append(ident);
     }
     
-    r0 = addVar();
-    
     ASSERT(watchMode == NotWatchable || static_cast<size_t>(m_codeBlock->m_numVars) == m_watchableVariables.size());
     
-    return true;
+    return addVar();
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
