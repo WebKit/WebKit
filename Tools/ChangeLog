@@ -1,3 +1,16 @@
+2015-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Add infrastructure for handling website data in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=142092
+
+        Reviewed by Andreas Kling.
+
+        Add a menu item that will fetch all website data, delete the returned data records, and
+        fetch all website data again so we can confirm that it's all empty.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetchAndClearWebsiteData:]):
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove remaining SafariTheme cruft

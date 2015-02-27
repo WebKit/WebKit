@@ -150,7 +150,7 @@ void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
     ASSERT(this->connection() == &connection);
 
     for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
-        callback({Vector<WebsiteData::Entry>()});
+        callback(WebsiteData());
     m_pendingFetchWebsiteDataCallbacks.clear();
 
     for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())

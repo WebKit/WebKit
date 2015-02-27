@@ -1,3 +1,48 @@
+2015-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Add infrastructure for handling website data in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=142092
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        Send back "Did" messages without actually doing anything for now.
+
+        * NetworkProcess/NetworkProcess.h:
+        Add new members.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        Add FetchWebsiteData and DeleteWebsiteDataForOrigins messages.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        Assert that all maps are empty.
+
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        Add callbacks and send fetch and delete messages respectively.
+
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+        Make sure to invoke all callbacks.
+
+        (WebKit::NetworkProcessProxy::didFetchWebsiteData):
+        Find the callback and invoke it.
+
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteDataForOrigins):
+        Ditto.
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        Add new members.
+
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        Add DidFetchWebsiteData and DidDeleteWebsiteDataForOrigins messages.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionDidClose):
+        Just pass an empty WebsiteData object.
+
 2015-02-26  Enrica Casucci  <enrica@apple.com>
 
         [WK2] REGRESSION(r180465): WebKit::WebPage::editorState() triggers a layout.

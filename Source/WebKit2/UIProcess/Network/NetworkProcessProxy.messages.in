@@ -27,7 +27,9 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     DidReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
+    DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
+    DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
     # Diagnostic messages logging
     LogDiagnosticMessage(uint64_t pageID, String message, String description, bool shouldSample)

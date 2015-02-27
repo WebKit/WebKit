@@ -469,6 +469,12 @@
                                     <action selector="clearWebsiteData:" target="-1" id="pEC-gb-vGm"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Fetch And Clear Website Data" id="VDP-iU-836">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="fetchAndClearWebsiteData:" target="-1" id="R06-l2-tP0"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

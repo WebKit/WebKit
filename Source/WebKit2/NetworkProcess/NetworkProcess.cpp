@@ -39,11 +39,12 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
+#include "SecurityOriginData.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "WebCookieManager.h"
 #include "WebProcessPoolMessages.h"
-#include "WebsiteDataTypes.h"
+#include "WebsiteData.h"
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -240,7 +241,15 @@ void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
     SessionTracker::destroySession(sessionID);
 }
 
-void NetworkProcess::deleteWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, uint64_t callbackID)
+{
+    // FIXME: Actually return data.
+    WebsiteData websiteData;
+
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
+}
+
+void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
     if (websiteDataTypes & WebsiteDataTypeCookies) {
         if (auto* networkStorageSession = SessionTracker::session(sessionID))
@@ -255,6 +264,17 @@ void NetworkProcess::deleteWebsiteData(WebCore::SessionID sessionID, uint64_t we
         clearDiskCache(modifiedSince, WTF::move(completionHandler));
         return;
     }
+
+    completionHandler();
+}
+
+void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, uint64_t callbackID)
+{
+    // FIXME: Actually delete something.
+
+    auto completionHandler = [this, callbackID] {
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
+    };
 
     completionHandler();
 }

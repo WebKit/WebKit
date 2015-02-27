@@ -414,6 +414,17 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }];
 }
 
+- (IBAction)fetchAndClearWebsiteData:(id)sender
+{
+    [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
+        [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll forDataRecords:websiteDataRecords completionHandler:^{
+            [_configuration._websiteDataStore fetchDataRecordsOfTypes:WKWebsiteDataTypeAll completionHandler:^(NSArray *websiteDataRecords) {
+                NSLog(@"did clear website data, after clearing data is %@.", websiteDataRecords);
+            }];
+        }];
+    }];
+}
+
 - (IBAction)clearWebsiteData:(id)sender
 {
     [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll modifiedSince:[NSDate distantPast] completionHandler:^{
