@@ -1,3 +1,18 @@
+2015-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Slight CachedPage class clean up
+        https://bugs.webkit.org/show_bug.cgi?id=141693
+
+        Reviewed by Andreas Kling.
+
+        Slight CachedPage class clean up:
+        - Drop unnecessary m_timeStamp data member
+        - Protect m_needsCaptionPreferencesChanged data member with
+          #if ENABLE(VIDEO_TRACK)
+        - Merge destroy() method into the destructor as this is the
+          only caller
+        - Update clear() to reset 2 data members that were missing
+
 2015-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Use HashMap::add instead of get/contains + set in DOMObjectCache
