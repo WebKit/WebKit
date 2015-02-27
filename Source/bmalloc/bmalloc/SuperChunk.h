@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BoundaryTagInlines.h"
+#ifndef SuperChunk_h
+#define SuperChunk_h
+
 #include "LargeChunk.h"
-#include "Line.h"
-#include "PerProcess.h"
-#include "SuperChunk.h"
-#include "VMHeap.h"
-#include <thread>
+#include "MediumChunk.h"
+#include "SmallChunk.h"
 
 namespace bmalloc {
 
-VMHeap::VMHeap()
+class SuperChunk {
+public:
+    static SuperChunk* create();
+
+    SmallChunk* smallChunk();
+    MediumChunk* mediumChunk();
+    LargeChunk* largeChunk();
+
+private:
+    SuperChunk();
+};
+
+inline SuperChunk* SuperChunk::create()
 {
+    void* result = static_cast<char*>(vmAllocate(superChunkSize, superChunkSize));
+    return new (result) SuperChunk;
 }
 
-void VMHeap::grow()
+inline SuperChunk::SuperChunk()
 {
-    SuperChunk* superChunk = SuperChunk::create();
-    m_superChunks.push(superChunk);
+    new (smallChunk()) SmallChunk;
+    new (mediumChunk()) MediumChunk;
+    new (largeChunk()) LargeChunk;
+}
 
-    SmallChunk* smallChunk = superChunk->smallChunk();
-    for (auto* it = smallChunk->begin(); it != smallChunk->end(); ++it)
-        m_smallPages.push(it);
+inline SmallChunk* SuperChunk::smallChunk()
+{
+    return reinterpret_cast<SmallChunk*>(
+        reinterpret_cast<char*>(this) + smallChunkOffset);
+}
 
-    MediumChunk* mediumChunk = superChunk->mediumChunk();
-    for (auto* it = mediumChunk->begin(); it != mediumChunk->end(); ++it)
-        m_mediumPages.push(it);
+inline MediumChunk* SuperChunk::mediumChunk()
+{
+    return reinterpret_cast<MediumChunk*>(
+        reinterpret_cast<char*>(this) + mediumChunkOffset);
+}
 
-    LargeChunk* largeChunk = superChunk->largeChunk();
-    m_largeRanges.insert(BoundaryTag::init(largeChunk));
+inline LargeChunk* SuperChunk::largeChunk()
+{
+    return reinterpret_cast<LargeChunk*>(
+        reinterpret_cast<char*>(this) + largeChunkOffset);
 }
 
 } // namespace bmalloc
+
+#endif // SuperChunk_h
