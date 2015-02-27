@@ -175,8 +175,14 @@ void WebPageGroup::removeAllUserContent()
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebPageGroup::addUserContentFilter(const API::UserContentFilter& userContentFilter)
 {
-    m_data.userContentFilters.append(std::make_pair(userContentFilter.name(), userContentFilter.serializedRules()));
+    m_data.userContentFilters.set(userContentFilter.name(), userContentFilter.serializedRules());
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserContentFilter(userContentFilter.name(), userContentFilter.serializedRules()), m_data.pageGroupID);
+}
+
+void WebPageGroup::removeUserContentFilter(const String& contentFilterName)
+{
+    m_data.userContentFilters.remove(contentFilterName);
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveUserContentFilter(contentFilterName), m_data.pageGroupID);
 }
 
 void WebPageGroup::removeAllUserContentFilters()

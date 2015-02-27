@@ -89,6 +89,17 @@ void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentF
 #endif
 }
 
+void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef userContentFilterNameRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->removeUserContentFilter(toWTFString(userContentFilterNameRef));
+#else
+    UNUSED_PARAM(pageGroupRef);
+    UNUSED_PARAM(userContentFilterNameRef);
+#endif
+}
+
+
 void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)

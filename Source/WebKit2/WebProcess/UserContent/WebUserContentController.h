@@ -62,6 +62,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addUserContentFilters(const Vector<std::pair<String, String>>&);
+    void removeUserContentFilter(const String& name);
     void removeAllUserContentFilters();
 #endif
 

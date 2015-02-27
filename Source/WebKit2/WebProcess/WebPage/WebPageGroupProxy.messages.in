@@ -29,6 +29,7 @@ messages -> WebPageGroupProxy {
 
 #if ENABLE(CONTENT_EXTENSIONS)
     AddUserContentFilter(String name, String serializedRules);
+    RemoveUserContentFilter(String name);
     RemoveAllUserContentFilters();
 #endif
 }

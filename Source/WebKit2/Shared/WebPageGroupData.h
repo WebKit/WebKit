@@ -28,7 +28,8 @@
 
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
-#include <wtf/Vector.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -51,7 +52,7 @@ struct WebPageGroupData {
     Vector<WebCore::UserScript> userScripts;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    Vector<std::pair<String, String>> userContentFilters;
+    HashMap<String, String> userContentFilters;
 #endif
 };
 

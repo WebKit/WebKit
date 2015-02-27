@@ -187,6 +187,11 @@ void WebUserContentController::addUserContentFilters(const Vector<std::pair<Stri
         m_userContentController->addUserContentFilter(userContentFilter.first, userContentFilter.second);
 }
 
+void WebUserContentController::removeUserContentFilter(const String& name)
+{
+    m_userContentController->removeUserContentFilter(name);
+}
+
 void WebUserContentController::removeAllUserContentFilters()
 {
     m_userContentController->removeAllUserContentFilters();

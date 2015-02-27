@@ -1,3 +1,44 @@
+2015-02-27  Brady Eidson  <beidson@apple.com>
+
+        Add API to remove a single content filter.
+        <rdar://problem/19977764> and https://bugs.webkit.org/show_bug.cgi?id=142088
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPageGroupData.h:
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupRemoveUserContentFilter):
+
+        * UIProcess/API/C/WKPageGroup.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _removeUserContentFilter:]):
+
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentFilter):
+        (WebKit::WebUserContentControllerProxy::removeUserContentFilter):
+        (WebKit::WebUserContentControllerProxy::removeAllUserContentFilters):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addUserContentFilter):
+        (WebKit::WebPageGroup::removeUserContentFilter):
+        * UIProcess/WebPageGroup.h:
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserContentFilter):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::removeUserContentFilter):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+
 2015-02-26  Anders Carlsson  <andersca@apple.com>
 
         Add API to remove all website data for the given data records

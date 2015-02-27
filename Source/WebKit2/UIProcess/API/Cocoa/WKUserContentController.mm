@@ -134,6 +134,13 @@ private:
 #endif
 }
 
+- (void)_removeUserContentFilter:(NSString *)userContentFilterName
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->removeUserContentFilter(userContentFilterName);
+#endif
+}
+
 - (void)_removeAllUserContentFilters
 {
 #if ENABLE(CONTENT_EXTENSIONS)

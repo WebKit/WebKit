@@ -1,3 +1,14 @@
+2015-02-27  Brady Eidson  <beidson@apple.com>
+
+        Add API to remove a single content filter.
+        <rdar://problem/19977764> and https://bugs.webkit.org/show_bug.cgi?id=142088
+
+        Reviewed by Sam Weinig.
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::removeUserContentFilter):
+        * page/UserContentController.h:
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove remaining SafariTheme cruft

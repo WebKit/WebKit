@@ -65,6 +65,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addUserContentFilter(const String& name, const String& serializedRules);
+    void removeUserContentFilter(const String& name);
     void removeAllUserContentFilters();
 #endif
 

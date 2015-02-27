@@ -32,6 +32,7 @@
 #include "WebProcessProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -67,6 +68,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addUserContentFilter(const API::UserContentFilter&);
+    void removeUserContentFilter(const String&);
     void removeAllUserContentFilters();
 #endif
 

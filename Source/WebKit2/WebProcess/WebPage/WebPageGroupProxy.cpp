@@ -54,8 +54,8 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
         addUserScript(userScript);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    for (const auto& pair : data.userContentFilters)
-        addUserContentFilter(pair.first, pair.second);
+    for (const auto& slot : data.userContentFilters)
+        addUserContentFilter(slot.key, slot.value);
 #endif
 }
 
@@ -100,6 +100,11 @@ void WebPageGroupProxy::removeAllUserContent()
 void WebPageGroupProxy::addUserContentFilter(const String& name, const String& serializedRules)
 {
     userContentController().addUserContentFilter(name, serializedRules);
+}
+
+void WebPageGroupProxy::removeUserContentFilter(const String& name)
+{
+    userContentController().removeUserContentFilter(name);
 }
 
 void WebPageGroupProxy::removeAllUserContentFilters()

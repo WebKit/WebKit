@@ -35,6 +35,7 @@ messages -> WebUserContentController {
 
 #if ENABLE(CONTENT_EXTENSIONS)
     AddUserContentFilters(Vector<std::pair<String, String>> userContentFilters);
+    RemoveUserContentFilter(String name);
     RemoveAllUserContentFilters();
 #endif
 }
