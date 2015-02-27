@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2009, 2012-2013, 2015 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -1695,7 +1695,7 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 {
     // FIXME: This code does not match the behavior of const in Firefox.
-    if (Local local = generator.constLocal(m_ident)) {
+    if (Local local = generator.local(m_ident)) {
         if (!m_init)
             return local.get();
 

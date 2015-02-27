@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -286,7 +286,6 @@ namespace JSC {
         CaptureMode captureMode(int operand) { return isCaptured(operand) ? IsCaptured : NotCaptured; }
         
         Local local(const Identifier&);
-        Local constLocal(const Identifier&);
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
