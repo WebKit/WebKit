@@ -23,16 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeView = function(object, mode, forceExpanding)
+WebInspector.ObjectTreeView = function(object, mode, propertyPath, forceExpanding)
 {
     WebInspector.Object.call(this);
 
     console.assert(object instanceof WebInspector.RemoteObject);
+    console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
 
     this._object = object;
     this._mode = mode || WebInspector.ObjectTreeView.Mode.Properties;
+    this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "obj");
     this._expanded = false;
     this._hasLosslessPreview = false;
+
+    // If ObjectTree is used outside of the console, we do not know when to release
+    // WeakMap entries. Currently collapse would work. For the console, we can just
+    // listen for console clear events. Currently all ObjectTrees are in the console.
+    this._inConsole = true;
 
     this._element = document.createElement("div");
     this._element.className = "object-tree";
@@ -60,6 +67,14 @@ WebInspector.ObjectTreeView = function(object, mode, forceExpanding)
     this._element.appendChild(this._outlineElement);
 
     // FIXME: Support editable ObjectTrees.
+};
+
+WebInspector.ObjectTreeView.emptyMessageElement = function(message)
+{
+    var emptyMessageElement = document.createElement("div");
+    emptyMessageElement.className = "empty-message";
+    emptyMessageElement.textContent = message;
+    return emptyMessageElement;
 };
 
 WebInspector.ObjectTreeView.Mode = {
@@ -152,6 +167,8 @@ WebInspector.ObjectTreeView.prototype = {
         if (this._previewView)
             this._previewView.showTitle();
 
+        this._trackWeakEntries();
+
         this.update();
     },
 
@@ -165,47 +182,76 @@ WebInspector.ObjectTreeView.prototype = {
 
         if (this._previewView)
             this._previewView.showPreview();
+
+        this._untrackWeakEntries();
     },
 
     // Protected
 
     update: function()
     {
-        this._object.getDisplayablePropertyDescriptors(this._updateProperties.bind(this));
+        if (this._object.isCollectionType() && this._mode === WebInspector.ObjectTreeView.Mode.Properties)
+            this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
+        else
+            this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
     },
 
     // Private
 
-    _updateProperties: function(properties)
+    _updateChildren: function(handler, list)
     {
         this._outline.removeChildren();
 
-        if (!properties) {
-            var errorMessageElement = document.createElement("div");
-            errorMessageElement.className = "empty-message";
-            errorMessageElement.textContent = WebInspector.UIString("Could not fetch properties. Object may no longer exist.");;
+        if (!list) {
+            var errorMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("Could not fetch properties. Object may no longer exist."));
             this._outline.appendChild(new TreeElement(errorMessageElement, null, false));
             return;
         }
 
-        properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
+        handler.call(this, list, this._propertyPath);
+    },
 
-        // FIXME: Intialize component with "$n" instead of "obj".
-        var rootPropertyPath = new WebInspector.PropertyPath(this._object, "obj");
-
-        for (var propertyDescriptor of properties)
-            this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, rootPropertyPath, this._mode));
-
-        // FIXME: Re-enable Collection Entries with new UI.
-        // if (this._mode === WebInspector.ObjectTreeView.Mode.Properties) {
-        //     if (this._object.isCollectionType())
-        //         this._outline.appendChild(new WebInspector.ObjectTreeCollectionTreeElement(this._object));
-        // }
+    _updateEntries: function(entries, propertyPath)
+    {
+        for (var entry of entries) {
+            if (entry.key) {
+                this._outline.appendChild(new WebInspector.ObjectTreeMapKeyTreeElement(entry.key, propertyPath));
+                this._outline.appendChild(new WebInspector.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key));
+            } else
+                this._outline.appendChild(new WebInspector.ObjectTreeSetIndexTreeElement(entry.value, propertyPath));
+        }
 
         if (!this._outline.children.length) {
-            var emptyMessageElement = document.createElement("div");
-            emptyMessageElement.className = "empty-message";
-            emptyMessageElement.textContent = WebInspector.UIString("No Properties");;
+            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Entries."));
+            this._outline.appendChild(new TreeElement(emptyMessageElement, null, false));
+        }
+
+        // Show the prototype so users can see the API.
+        this._object.getOwnPropertyDescriptor("__proto__", function(propertyDescriptor) {
+            if (propertyDescriptor)
+                this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+        }.bind(this));
+    },
+
+    _updateProperties: function(properties, propertyPath)
+    {
+        properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
+
+        var isArray = this._object.isArray();
+        var isPropertyMode = this._mode === WebInspector.ObjectTreeView.Mode.Properties;
+
+        for (var propertyDescriptor of properties) {
+            if (isArray && isPropertyMode) {
+                if (propertyDescriptor.isIndexProperty())
+                    this._outline.appendChild(new WebInspector.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
+                else if (propertyDescriptor.name === "__proto__")
+                    this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+            } else
+                this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+        }
+
+        if (!this._outline.children.length) {
+            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Properties."));
             this._outline.appendChild(new TreeElement(emptyMessageElement, null, false));
         }
     },
@@ -221,5 +267,45 @@ WebInspector.ObjectTreeView.prototype = {
             this.collapse();
 
         event.stopPropagation();
-    }
+    },
+
+    _trackWeakEntries: function()
+    {
+        if (this._trackingEntries)
+            return;
+
+        if (!this._object.isWeakCollection())
+            return;
+
+        this._trackingEntries = true;
+
+        if (this._inConsole) {
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+        }
+    },
+
+    _untrackWeakEntries: function()
+    {
+        if (!this._trackingEntries)
+            return;
+
+        if (!this._object.isWeakCollection())
+            return;
+
+        this._trackingEntries = false;
+
+        this._object.releaseWeakCollectionEntries();
+
+        if (this._inConsole) {
+            WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
+            WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
+            WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+        }
+
+        // FIXME: This only tries to release weak entries if this object was a WeakMap.
+        // If there was a WeakMap expanded in a sub-object, we will never release those values.
+        // Should we attempt walking the entire tree and release weak collections?
+    },
 };

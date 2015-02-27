@@ -111,3 +111,16 @@ WebInspector.FormattedValue.createElementForPropertyPreview = function(propertyP
 {
     return WebInspector.FormattedValue.createElementForTypesAndValue(propertyPreview.type, propertyPreview.subtype, propertyPreview.value, true, false);
 };
+
+WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = function(object, propertyPath)
+{
+    if (object.subtype === "node")
+        return WebInspector.FormattedValue.createElementForNode(object);
+
+    if (object.type === "object") {
+        var objectTree = new WebInspector.ObjectTreeView(object, WebInspector.ObjectTreeView.Mode.Properties, propertyPath);
+        return objectTree.element;
+    }
+
+    return WebInspector.FormattedValue.createElementForRemoteObject(object);
+};

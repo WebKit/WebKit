@@ -296,7 +296,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsObject: function(obj, elem, forceExpansion)
     {
-        var objectTree = new WebInspector.ObjectTreeView(obj, WebInspector.ObjectTreeView.Mode.Properties, forceExpansion);
+        // FIXME: Intialize component with "$n" instead of "obj". Or, an existing property path.
+        var objectTree = new WebInspector.ObjectTreeView(obj, WebInspector.ObjectTreeView.Mode.Properties, null, forceExpansion);
         elem.appendChild(objectTree.element);
     },
 
@@ -314,8 +315,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsArray: function(arr, elem)
     {
-        // FIXME: Array previews look poor. Keep doing what we currently do for arrays.
-        arr.deprecatedGetOwnProperties(this._printArray.bind(this, arr, elem));
+        // FIXME: Intialize component with "$n" instead of "obj". Or, an existing property path.
+        var objectTree = new WebInspector.ObjectTreeView(arr, WebInspector.ObjectTreeView.Mode.Properties);
+        elem.appendChild(objectTree.element);
     },
 
     _userProvidedColumnNames: function(columnNamesArgument)
@@ -437,57 +439,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         dataGridContainer.appendChild(dataGrid.element);
 
         return element;
-    },
-
-    _printArray: function(array, elem, properties)
-    {
-        if (!properties)
-            return;
-
-        var elements = [];
-        for (var i = 0; i < properties.length; ++i) {
-            var property = properties[i];
-            var name = property.name;
-            if (!isNaN(name))
-                elements[name] = this._formatAsArrayEntry(property.value);
-        }
-
-        elem.appendChild(document.createTextNode("["));
-        var lastNonEmptyIndex = -1;
-
-        function appendUndefined(elem, index)
-        {
-            if (index - lastNonEmptyIndex <= 1)
-                return;
-            var span = elem.createChild("span", "formatted-undefined");
-            span.textContent = WebInspector.UIString("undefined × %d").format(index - lastNonEmptyIndex - 1);
-        }
-
-        var length = array.arrayLength();
-        for (var i = 0; i < length; ++i) {
-            var element = elements[i];
-            if (!element)
-                continue;
-
-            if (i - lastNonEmptyIndex > 1) {
-                appendUndefined(elem, i);
-                elem.appendChild(document.createTextNode(", "));
-            }
-
-            elem.appendChild(element);
-            lastNonEmptyIndex = i;
-            if (i < length - 1)
-                elem.appendChild(document.createTextNode(", "));
-        }
-        appendUndefined(elem, length);
-
-        elem.appendChild(document.createTextNode("]"));
-    },
-
-    _formatAsArrayEntry: function(output)
-    {
-        // Prevent infinite expansion of cross-referencing arrays.
-        return this._formatParameter(output, output.subtype && output.subtype === "array");
     },
 
     _formatWithSubstitutionString: function(parameters, formattedResult)

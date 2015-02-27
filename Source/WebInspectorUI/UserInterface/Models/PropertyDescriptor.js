@@ -142,5 +142,10 @@ WebInspector.PropertyDescriptor.prototype = {
     hasSetter: function()
     {
         return this._set && this._set.type === "function";
-    }
+    },
+
+    isIndexProperty: function()
+    {
+        return !isNaN(Number(this._name));
+    },
 };

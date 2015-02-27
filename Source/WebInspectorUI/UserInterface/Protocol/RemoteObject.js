@@ -145,6 +145,11 @@ WebInspector.RemoteObject.prototype = {
         return this._preview;
     },
 
+    hasValue: function()
+    {
+        return "_value" in this;
+    },
+
     getOwnPropertyDescriptors: function(callback)
     {
         this._getPropertyDescriptors(true, callback);
@@ -350,6 +355,11 @@ WebInspector.RemoteObject.prototype = {
         return this._type === "symbol";
     },
 
+    isArray: function()
+    {
+        return this._subtype === "array";
+    },
+
     isCollectionType: function()
     {
         return this._subtype === "map" || this._subtype === "set" || this._subtype === "weakmap";
@@ -437,6 +447,32 @@ WebInspector.RemoteObject.prototype = {
         }
 
         this.callFunction(backendInvokeGetter, [getterRemoteObject], true, callback);
+    },
+
+    getOwnPropertyDescriptor: function(propertyName, callback)
+    {
+        if (!RuntimeAgent.getOwnPropertyDescriptor) {
+            function backendGetOwnPropertyDescriptor(propertyName)
+            {
+                return this[propertyName];
+            }
+
+            function wrappedCallback(error, result, wasThrown)
+            {
+                if (error || wasThrown || !(result instanceof WebInspector.RemoteObject)) {
+                    callback(null);
+                    return;
+                }
+
+                var fakeDescriptor = {name: propertyName, value: result, writable: true, configurable: true, enumerable: false};
+                var fakePropertyDescriptor = new WebInspector.PropertyDescriptor(fakeDescriptor, true, false, false, false);
+                callback(fakePropertyDescriptor);
+            }
+
+            this.callFunction(backendGetOwnPropertyDescriptor, [propertyName], false, wrappedCallback);
+        }
+
+        // FIXME: Implement a real getOwnPropertyDescriptor?
     },
 
     release: function()

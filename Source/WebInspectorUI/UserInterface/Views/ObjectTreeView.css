@@ -105,3 +105,7 @@
     font-family: sans-serif;
     font-size: 12px;
 }
+
+.object-tree-property :matches(.formatted-string, .formatted-regexp) {
+    white-space: nowrap;
+}

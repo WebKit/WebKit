@@ -1,3 +1,152 @@
+2015-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: New ObjectTree UI for Arrays / Maps / Sets
+        https://bugs.webkit.org/show_bug.cgi?id=142037
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Miscellaneous changes.
+
+        * UserInterface/Models/PropertyDescriptor.js:
+        (WebInspector.PropertyDescriptor.prototype.isIndexProperty):
+        Useful for quickly checking if this property is numeric and possibly
+        an array index.
+
+        * UserInterface/Models/PropertyPath.js:
+        (WebInspector.PropertyPath.prototype.appendMapKey):
+        (WebInspector.PropertyPath.prototype.appendMapValue):
+        (WebInspector.PropertyPath.prototype.appendSetIndex):
+        Be specific about property paths into maps / sets. Note that a map
+        value may be displayable if the key is simple.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.hasValue):
+        A simple value RemoteObject may have the value "undefined". So provide
+        a falsey proof helper that actually checks if we have a value.
+
+        (WebInspector.RemoteObject.prototype.isArray):
+        (WebInspector.RemoteObject.prototype.backendGetOwnPropertyDescriptor):
+        (WebInspector.RemoteObject.prototype.wrappedCallback):
+        (WebInspector.RemoteObject.prototype.getOwnPropertyDescriptor):
+        Currently backend APIs exist only to get all properties. In the case
+        of collections, we often want to get only one property (__proto__).
+        This is a simple implementation on top of callFunctionOn.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageImpl.prototype.appendUndefined): Deleted.
+        (WebInspector.ConsoleMessageImpl.prototype._printArray): Deleted.
+        (WebInspector.ConsoleMessageImpl.prototype._formatAsArrayEntry): Deleted.
+        Simplify array formatted to just use an ObjectTreeView. Add fixmes
+        that we should seed the ObjectTreeView with a starting property path.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > ol):
+        Sometimes, a node's display was getting overridden by various console styles.
+        Force a node to always display block. We may be able to remove this later.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject):
+        Helper for formatting a node / object / value more easily. This
+        is used by all collection types.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        We lost the nice sparse array support when switching to the new preview path,
+        we should add it back.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index):
+        (.object-tree-array-index > .titles):
+        (.object-tree-array-index > .icon):
+        (.object-tree-array-index .index-name):
+        (.object-tree-array-index .index-value .object-tree):
+        (.object-tree-array-index .index-value .object-tree .object-tree-outline):
+        (.object-tree-property + ol .object-tree-array-index):
+        New styles specific to array index tree elements.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.css:
+        (.object-tree-array-index.object-tree-map-entry > .titles > .title > .index-name):
+        (.object-tree-map-entry.key):
+        (.object-tree-map-entry.key:first-of-type):
+        (.object-tree-map-entry):
+        New styles specific to map key/value tree elements.
+
+        * UserInterface/Views/ObjectTreeCollectionTreeElement.js: Removed.
+        Remove old collection implementation.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js: Added.
+        (WebInspector.ObjectTreeArrayIndexTreeElement):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype.get property):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._resolvedValue):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._propertyPathType):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._resolvedValuePropertyPath):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._thisPropertyPath):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._propertyPathString):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._updateTitle):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._createInteractiveGetterElement.):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._createReadOnlyIconElement):
+        Index followed by formatted value. Unfortunately a page can hack up an array
+        with getter properties, so also support getter values in an array. This ends
+        up copying a lot of ObjectTreePropertyTreeElement as a result.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js: Added.
+        (WebInspector.ObjectTreeMapEntryTreeElement):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype.get object):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype._propertyPathString):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeMapKeyTreeElement):
+        (WebInspector.ObjectTreeMapKeyTreeElement.prototype.displayPropertyName):
+        (WebInspector.ObjectTreeMapKeyTreeElement.prototype.resolvedValuePropertyPath):
+        (WebInspector.ObjectTreeMapValueTreeElement):
+        (WebInspector.ObjectTreeMapValueTreeElement.prototype.displayPropertyName):
+        (WebInspector.ObjectTreeMapValueTreeElement.prototype.resolvedValuePropertyPath):
+        Key/value followed by formatted value.
+
+        * UserInterface/Views/ObjectTreeSetIndexTreeElement.js: Added.
+        (WebInspector.ObjectTreeSetIndexTreeElement):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype.get object):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._resolvedValuePropertyPath):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._titleFragment):
+        Dot followed by formatted value.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property > .titles):
+        Reformat.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-property :matches(.formatted-string, .formatted-regexp)):
+        Upgrade generic styles.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._resolvedValue):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._resolvedValuePropertyPath):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateChildren):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateChildrenInternal):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateEntries):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateProperties):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        (WebInspector.ObjectTreeView.emptyMessageElement):
+        (WebInspector.ObjectTreeView.prototype.expand):
+        (WebInspector.ObjectTreeView.prototype.collapse):
+        (WebInspector.ObjectTreeView.prototype.update):
+        (WebInspector.ObjectTreeView.prototype._updateChildren):
+        (WebInspector.ObjectTreeView.prototype._updateEntries):
+        (WebInspector.ObjectTreeView.prototype._updateProperties):
+        (WebInspector.ObjectTreeView.prototype._handlePreviewOrTitleElementClick):
+        Both ObjectTreeView and ObjectTreePropertyTreeElement will fetch only collection
+        entries or properties depending on the type of the object being expanded.
+
+        (WebInspector.ObjectTreeView.prototype._trackWeakEntries):
+        (WebInspector.ObjectTreeView.prototype._untrackWeakEntries):
+        Allow WeakMap entries to be Garbage Collected when the ObjectTreeView
+        collapses or the console is cleared. FIXME for handling sub-tree WeakMaps.
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Make build logs more legible by reducing noise

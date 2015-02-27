@@ -27,6 +27,16 @@
     margin-top: 1px;
 }
 
+.object-tree-property > .titles {
+    position: relative;
+    top: 2px;
+    line-height: normal;
+    padding-bottom: 1px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .object-tree-property > .disclosure-button {
     float: left;
 
@@ -160,20 +170,6 @@
     margin-left: 3px;
 }
 
-.object-tree-property :matches(.formatted-string, .formatted-regexp) {
-    white-space: nowrap;
-}
-
 .object-tree-property .value.error {
     color: red;
-}
-
-.object-tree-property > .titles {
-    position: relative;
-    top: 2px;
-    line-height: normal;
-    padding-bottom: 1px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
 }

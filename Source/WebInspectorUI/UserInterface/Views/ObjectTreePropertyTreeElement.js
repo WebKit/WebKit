@@ -94,10 +94,8 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
     {
         if (this._getterValue)
             return this._getterValue;
-
         if (this._property.hasValue())
             return this._property.value;
-
         return null;
     },
 
@@ -116,10 +114,8 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
     {
         if (this._getterValue)
             return this._propertyPath.appendPropertyDescriptor(this._getterValue, this._property, WebInspector.PropertyPath.Type.Value);
-
         if (this._property.hasValue())
             return this._propertyPath.appendPropertyDescriptor(this._property.value, this._property, WebInspector.PropertyPath.Type.Value);
-
         return null;
     },
 
@@ -391,48 +387,84 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             return;
 
         var resolvedValue = this._resolvedValue();
-        var resolvedValuePropertyPath = this._resolvedValuePropertyPath();
-
-        function callback(mode, properties)
-        {
-            this.removeChildren();
-
-            if (!properties) {
-                var errorMessageElement = document.createElement("div");
-                errorMessageElement.className = "empty-message";
-                errorMessageElement.textContent = WebInspector.UIString("Could not fetch properties. Object may no longer exist.");;
-                this.appendChild(new TreeElement(errorMessageElement, null, false));
-                return;
-            }
-
-            var prototypeName = undefined;
-            if (this._property.name === "__proto__") {
-                if (resolvedValue.description)
-                    prototypeName = this._sanitizedPrototypeString(resolvedValue);
-            }
-
-            var isAPI = mode === WebInspector.ObjectTreeView.Mode.API;
-
-            properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
-            for (var propertyDescriptor of properties) {
-                // FIXME: If this is a pure API ObjectTree, we should show the native getters.
-                // For now, just skip native binding getters in API mode, since we likely
-                // already showed them in the Properties section.
-                if (isAPI && propertyDescriptor.nativeGetter)
-                    continue;
-                this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, resolvedValuePropertyPath, mode, prototypeName));
-            }
-
-            // FIXME: Re-enable Collection Entries with new UI.
-            // if (mode === WebInspector.ObjectTreeView.Mode.Properties) {
-            //     if (resolvedValue.isCollectionType())
-            //         this.appendChild(new WebInspector.ObjectTreeCollectionTreeElement(resolvedValue));
-            // }
-        };
-
-        if (this._property.name === "__proto__")
-            resolvedValue.getOwnPropertyDescriptors(callback.bind(this, WebInspector.ObjectTreeView.Mode.API));
+        if (resolvedValue.isCollectionType() && this._mode === WebInspector.ObjectTreeView.Mode.Properties)
+            resolvedValue.getCollectionEntries(0, 100, this._updateChildrenInternal.bind(this, this._updateEntries, this._mode));
+        else if (this._property.name === "__proto__")
+            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WebInspector.ObjectTreeView.Mode.API));
         else
-            resolvedValue.getDisplayablePropertyDescriptors(callback.bind(this, this._mode));
+            resolvedValue.getDisplayablePropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, this._mode));
     },
+
+    _updateChildrenInternal: function(handler, mode, list)
+    {
+        this.removeChildren();
+
+        if (!list) {
+            var errorMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("Could not fetch properties. Object may no longer exist."));
+            this.appendChild(new TreeElement(errorMessageElement, null, false));
+            return;
+        }
+
+        handler.call(this, list, this._resolvedValuePropertyPath(), mode);
+    },
+
+    _updateEntries: function(entries, propertyPath, mode)
+    {
+        for (var entry of entries) {
+            if (entry.key) {
+                this.appendChild(new WebInspector.ObjectTreeMapKeyTreeElement(entry.key, propertyPath));
+                this.appendChild(new WebInspector.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key));
+            } else
+                this.appendChild(new WebInspector.ObjectTreeSetIndexTreeElement(entry.value, propertyPath));
+        }
+
+        if (!this.children.length) {
+            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Entries."));
+            this.appendChild(new TreeElement(emptyMessageElement, null, false));
+        }
+
+        // Show the prototype so users can see the API.
+        var resolvedValue = this._resolvedValue();
+        resolvedValue.getOwnPropertyDescriptor("__proto__", function(propertyDescriptor) {
+            if (propertyDescriptor)
+                this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode));
+        }.bind(this));
+    },
+
+    _updateProperties: function(properties, propertyPath, mode)
+    {
+        properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
+
+        var resolvedValue = this._resolvedValue();
+        var isArray = resolvedValue.isArray();
+        var isPropertyMode = mode === WebInspector.ObjectTreeView.Mode.Properties || this._getterValue;
+        var isAPI = mode === WebInspector.ObjectTreeView.Mode.API;
+
+        var prototypeName = undefined;
+        if (this._property.name === "__proto__") {
+            if (resolvedValue.description)
+                prototypeName = this._sanitizedPrototypeString(resolvedValue);
+        }
+
+        for (var propertyDescriptor of properties) {
+            // FIXME: If this is a pure API ObjectTree, we should show the native getters.
+            // For now, just skip native binding getters in API mode, since we likely
+            // already showed them in the Properties section.
+            if (isAPI && propertyDescriptor.nativeGetter)
+                continue;
+            
+            if (isArray && isPropertyMode) {
+                if (propertyDescriptor.isIndexProperty())
+                    this.appendChild(new WebInspector.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
+                else if (propertyDescriptor.name === "__proto__")
+                    this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
+            } else
+                this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
+        }
+
+        if (!this.children.length) {
+            var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Properties."));
+            this.appendChild(new TreeElement(emptyMessageElement, null, false));
+        }
+    }
 };

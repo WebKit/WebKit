@@ -44,10 +44,11 @@ WebInspector.PropertyPath = function(object, pathComponent, parent, isPrototype)
 };
 
 WebInspector.PropertyPath.SpecialPathComponent = {
-    CollectionIndex: "@collection[?]",
     InternalPropertyName: "@internal",
     SymbolPropertyName: "@symbol",
-    GetterPropertyName: "@getter",
+    MapKey: "@mapkey",
+    MapValue: "@mapvalue",
+    SetIndex: "@setindex",
 };
 
 WebInspector.PropertyPath.Type = {
@@ -200,12 +201,36 @@ WebInspector.PropertyPath.prototype = {
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendCollectionIndex: function(object)
+    appendMapKey: function(object)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.CollectionIndex;
+        var component = WebInspector.PropertyPath.SpecialPathComponent.MapKey;
         return new WebInspector.PropertyPath(object, component, this);
     },
 
+    appendMapValue: function(object, keyObject)
+    {
+        console.assert(!keyObject || keyObject instanceof WebInspector.RemoteObject);
+
+        if (keyObject && keyObject.hasValue()) {
+            if (keyObject.type === "string") {
+                var component = ".get(" + doubleQuotedString(keyObject.description) + ")";
+                return new WebInspector.PropertyPath(object, component, this);                
+            }
+
+            var component = ".get(" + keyObject.description + ")";
+            return new WebInspector.PropertyPath(object, component, this);                
+        }
+            
+        var component = WebInspector.PropertyPath.SpecialPathComponent.MapValue;
+        return new WebInspector.PropertyPath(object, component, this);
+    },
+
+    appendSetIndex: function(object)
+    {
+        var component = WebInspector.PropertyPath.SpecialPathComponent.SetIndex;
+        return new WebInspector.PropertyPath(object, component, this);
+    },
+    
     appendPropertyDescriptor: function(object, descriptor, type)
     {
         if (descriptor.isInternalProperty)

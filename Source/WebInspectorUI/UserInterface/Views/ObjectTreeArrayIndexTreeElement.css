@@ -23,41 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap {
+.object-tree-array-index {
     position: relative;
-    display: inline-block;
+    left: -12px;
+    margin-top: 2px;
+    margin-bottom: 1px;
+}
+
+.object-tree-array-index > .disclosure-button,
+.object-tree-array-index > .icon {
+    display: none;
+}
+
+.object-tree-array-index .index-name {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
     vertical-align: top;
-    color: black;
+    color: hsla(0, 0%, 0%, 0.33);
+
+    position:relative;
+    top: -1px;
+
+    display: inline-block;
+    width: 22px;
+    text-align: center;
 }
 
-.formatted-node > ol {
-    display: block !important;
+/* FIXME: Should this be all the time? */
+.object-tree-array-index .index-value .object-tree {
+    display: inline-block;
 }
 
-.formatted-number {
-    color: rgb(28, 0, 207);
+/* An array inside an array we should reduce the padding-start. */
+.object-tree-array-index .index-value .object-tree .object-tree-outline {
+    -webkit-padding-start: 6px;
 }
 
-.formatted-boolean {
-    color: rgb(170, 13, 145);
-}
-
-.formatted-string, .formatted-regexp {
-    white-space: pre;
-}
-
-.formatted-string {
-    color: rgb(196, 26, 22);
-}
-
-.formatted-regexp {
-    color: rgb(255, 88, 0);
-}
-
-.formatted-symbol {
-    color: rgb(63, 169, 156);
-}
-
-.formatted-null, .formatted-undefined {
-    color: rgb(128, 128, 128);
+/* An array inside an ObjectTreePropertyTreeElement needs more left shift */
+.object-tree-property + ol .object-tree-array-index {
+    left: -18px;
 }

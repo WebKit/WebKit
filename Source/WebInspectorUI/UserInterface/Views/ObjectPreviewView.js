@@ -171,6 +171,7 @@ WebInspector.ObjectPreviewView.prototype = {
         if (preview.subtype === "date")
             return !preview.propertyPreviews.length;
 
+        // FIXME: Array previews should have better sparse support: (undefined × 10).
         var isArray = preview.subtype === "array";
 
         element.appendChild(document.createTextNode(isArray ? "[" : "{"));
