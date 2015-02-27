@@ -80,19 +80,19 @@ PASS document.querySelectorAll(":lang(tic-tac-toe)").length is 1
 PASS document.querySelectorAll(":lang(tic-toe-tac)").length is 0
 
 PASS document.querySelectorAll(":lang(\\*)").length is 35
-PASS document.querySelectorAll(":lang(*-CH)").length is 5
+PASS document.querySelectorAll(':lang("*-CH")').length is 5
 
 PASS document.querySelectorAll(":lang(a)").length is 2
 PASS document.querySelectorAll(":lang(a-\\*)").length is 1
-PASS document.querySelectorAll(":lang(*-fr-\\*)").length is 2
-PASS document.querySelectorAll(":lang(*-\\*-lang)").length is 2
-PASS document.querySelectorAll(":lang(*-\\*-aa-bb-cc-dd)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-\\*-bb-cc-dd)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-cc-dd)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-\\*-dd)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-\\*-\\*)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-aa-\\*-cc-\\*)").length is 3
-PASS document.querySelectorAll(":lang(*-\\*-\\*-bb-\\*)").length is 3
+PASS document.querySelectorAll(':lang("*-fr-\\*")').length is 2
+PASS document.querySelectorAll(':lang("*-\\*-lang")').length is 2
+PASS document.querySelectorAll(':lang("*-\\*-aa-bb-cc-dd")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-\\*-bb-cc-dd")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-\\*-\\*-cc-dd")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-\\*-\\*-\\*-dd")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-\\*-\\*-\\*-\\*")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-aa-\\*-cc-\\*")').length is 3
+PASS document.querySelectorAll(':lang("*-\\*-\\*-bb-\\*")').length is 3
 PASS document.querySelectorAll(":lang(fooÃ‰)").length is 1
 PASS document.querySelectorAll(":lang(fOOÃ‰)").length is 1
 PASS document.querySelectorAll(":lang(FoOÃ‰)").length is 1

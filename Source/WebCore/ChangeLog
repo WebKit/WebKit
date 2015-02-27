@@ -1,3 +1,18 @@
+2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Language ranges containing asterisks must be quoted as strings
+        https://bugs.webkit.org/show_bug.cgi?id=141659
+
+        Reviewed by Benjamin Poulain.
+
+        As specified in [1], the language ranges containing asterisks must be quoted as strings.
+
+        [1] http://dev.w3.org/csswg/selectors-4/#the-lang-pseudo.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+
 2015-02-18  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.

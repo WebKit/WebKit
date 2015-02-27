@@ -1,3 +1,21 @@
+2015-02-20  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Language ranges containing asterisks must be quoted as strings
+        https://bugs.webkit.org/show_bug.cgi?id=141659
+
+        Reviewed by Benjamin Poulain.
+
+        Ensure language ranges containing asterisks are quoted as strings.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/parsing-css-lang-expected.txt:
+        * fast/css/parsing-css-lang.html:
+        * fast/selectors/lang-extended-filtering-expected.txt:
+        * fast/selectors/lang-extended-filtering.html:
+        * fast/selectors/lang-valid-extended-filtering-expected.txt:
+        * fast/selectors/lang-valid-extended-filtering.html:
+
 2015-02-18  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.

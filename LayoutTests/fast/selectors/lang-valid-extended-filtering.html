@@ -41,7 +41,7 @@ function testValidLanguageSelectorOnSingleElement(language, length) {
         if (i > 0)
             suffixRange += '-' + rangeSubtags[i];  
     }
-    shouldBeTrue("document.querySelectorAll(':lang(*" + suffixRange + ")').length == " + length);
+    shouldBeTrue("document.querySelectorAll(':lang(\"*" + suffixRange + "\")').length == " + length);
     document.querySelector('#target').removeAttribute('lang');
 
     debug('');
@@ -58,10 +58,11 @@ function testValidLanguageSelectorOnMultipleElementsWithFirstAsterisk(languages)
     for (var i = 0; i < languages.length; i++) {
         var language = languages[i];
         var ranges = language.split('-');
-        var range = '*';
+        var range = '"*';
         for (var j = 1; j < ranges.length; j++) {
             range += '-' + ranges[j];
         }
+        range += '"';
     }
     shouldBeTrue("document.querySelectorAll(':lang(" + range + ")').length == " + languages.length);
     debug('');

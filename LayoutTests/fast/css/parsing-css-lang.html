@@ -11,7 +11,7 @@
 description('Test the parsing of :lang(stringList) for querySelector and style.');
 
 function testValidLanguageRange(languageRangeString, expectedSerializedLanguageRange) {
-    shouldNotThrow('document.querySelector(":lang(' + languageRangeString.replace(/\\/g, '\\\\') + ')")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldNotThrow('document.querySelector(\':lang(' + languageRangeString.replace(/\\/g, '\\\\') + ')\')', '"Error: SyntaxError: DOM Exception 12"');
 
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':lang(' + languageRangeString + ') { }';
@@ -23,7 +23,7 @@ function testValidLanguageRange(languageRangeString, expectedSerializedLanguageR
 }
 
 var validLanguageRanges = [
-    
+
     "e",
     "en",
     "en-",
@@ -46,31 +46,31 @@ var validLanguageRanges = [
     "fr-CH", 
     "rm-CH",
 
-    "*-CH",
-    "*-DE-1996",
-    "*-br-zh",
+    '"*-CH"',
+    '"*-DE-1996"',
+    '"*-br-zh"',
     "id-\\*-sumatra",
-    "*-en-\\*-fr",
-    "*-en-\\*-\\*",
+    '"*-en-\\*-fr"',
+    '"*-en-\\*-\\*"',
 
     "\\*",
-    "*-\\*",
-    "*-\\*-\\*",
-    "*-\\*-\\*",
+    '"*-\\*"',
+    '"*-\\*-\\*"',
+    '"*-\\*-\\*"',
 
-    "ab-\\*",
-    "*-ab-\\*",
-    "*-ab-\\*-",
-    "*-ab-\\*--",
-    "*-ab-\\*---",
+    '"ab-\\*"',
+    '"*-ab-\\*"',
+    '"*-ab-\\*-"',
+    '"*-ab-\\*--"',
+    '"*-ab-\\*---"',
 
-    "*-foo-\\:",
-    "*-foo-\\:",
-    "*-foo-\\:\\`\\)",
-    "*-foo-\\:\\*",
+    '"*-foo-\\:"',
+    '"*-foo-\\:"',
+    '"*-foo-\\:\\`\\)"',
+    '"*-foo-\\:\\*"',
 
-    "en-\\*",
-    "fr-\\*"
+    '"en-\\*"',
+    '"fr-*"'
 ];
 
 debug("valid language ranges");

@@ -221,7 +221,6 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> DIRFUNCTION
-%token <string> LANGRANGE
 %token <string> LANGFUNCTION
 %token <string> ROLEFUNCTION
 #endif
@@ -1091,7 +1090,7 @@ nested_selector_list:
     ;
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
-lang_range: LANGRANGE | IDENT | STRING { $$.setTokenType(TokenType::AtomicStringToken); } ;
+lang_range: IDENT | STRING { $$.setTokenType(TokenType::AtomicStringToken); } ;
 
 comma_separated_lang_ranges:
     lang_range %prec UNIMPORTANT_TOK {
