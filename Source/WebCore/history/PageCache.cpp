@@ -365,7 +365,7 @@ bool PageCache::canCache(Page* page) const
 
 void PageCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
 {
-    TemporaryChange<unsigned>(m_maxSize, size);
+    TemporaryChange<unsigned> change(m_maxSize, size);
     prune(pruningReason);
 }
 

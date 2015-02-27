@@ -47,6 +47,9 @@ enum PageOverlayType {
     void pruneMemoryCacheToSize(long size);
     long memoryCacheSize();
 
+    void clearPageCache();
+    unsigned int pageCacheSize();
+
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
     [RaisesException] Node ensureShadowRoot(Element host);
