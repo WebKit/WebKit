@@ -1,3 +1,30 @@
+2015-02-27  Enrica Casucci  <enrica@apple.com>
+
+        Adding support for serializing HTMLAttachment elements.
+        https://bugs.webkit.org/show_bug.cgi?id=142026
+
+        Reviewed by Tim Horton.
+
+        Test: editing/pasteboard/copy-paste-attachment.html
+
+        Adding support to serialize the attachment element
+        and properly handle it when converting a DOM range
+        to NSAttributedString.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processElement):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendCustomAttributes): Create new attribute
+        for attachment element when serializating.
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::createFragmentFromMarkup): Remove the attribute from the attachment element
+        when creating the fragment.
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::file): Added const to file() to
+        use it in appendCustonAttributes where the element is a const reference.
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLAttributeNames.in:
+
 2015-02-27  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> should have an inactive style (gray in background)

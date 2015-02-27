@@ -1,0 +1,14 @@
+These tests cutting content with one attachemnt and pasting it back
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking the file name for the attachment element
+PASS attachment.file.name is 'abe.png'
+Perform Cut on the entire selection followed by Paste
+Checking the file name for the pasted attachment element
+PASS attachment.file.name is 'abe.png'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a paragraph with an attachment  and some other text.

@@ -41,7 +41,9 @@
 #include "ElementIterator.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
+#include "File.h"
 #include "Frame.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElement.h"
@@ -51,6 +53,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "URL.h"
 #include "MarkupAccumulator.h"
+#include "NodeList.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "Settings.h"
@@ -135,6 +138,7 @@ private:
     String stringValueForRange(const Node&, const Range*);
 
     void appendElement(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
+    virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
 
     virtual void appendText(StringBuilder& out, const Text&) override;
     virtual void appendElement(StringBuilder& out, const Element& element, Namespaces*) override
@@ -292,10 +296,28 @@ String StyledMarkupAccumulator::stringValueForRange(const Node& node, const Rang
     return nodeValue;
 }
 
+void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element&element, Namespaces* namespaces)
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (!is<HTMLAttachmentElement>(element))
+        return;
+    
+    const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
+    if (attachment.file())
+        appendAttribute(out, element, Attribute(webkitattachmentpathAttr, attachment.file()->path()), namespaces);
+#else
+    UNUSED_PARAM(out);
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(namespaces);
+#endif
+}
+
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     const bool documentIsHTML = element.document().isHTMLDocument();
     appendOpenTag(out, element, 0);
+
+    appendCustomAttributes(out, element, nullptr);
 
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
@@ -658,6 +680,17 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document& document, const 
 
     fragment->parseHTML(markup, fakeBody.get(), parserContentPolicy);
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.
+    RefPtr<NodeList> nodes = fragment->getElementsByTagName("attachment");
+    for (size_t i = 0; i < nodes->length(); ++i) {
+        if (!is<HTMLAttachmentElement>(*nodes->item(i)))
+            continue;
+        HTMLAttachmentElement& element = downcast<HTMLAttachmentElement>(*nodes->item(i));
+        element.setFile(File::create(element.fastGetAttribute(webkitattachmentpathAttr)).ptr());
+        element.removeAttribute(webkitattachmentpathAttr);
+    }
+#endif
     if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document.baseURL())
         completeURLs(fragment.get(), baseURL);
 

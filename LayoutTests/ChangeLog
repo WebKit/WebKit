@@ -1,3 +1,13 @@
+2015-02-27  Enrica Casucci  <enrica@apple.com>
+
+        Adding support for serializing HTMLAttachment elements.
+        https://bugs.webkit.org/show_bug.cgi?id=142026
+
+        Reviewed by Tim Horton.
+
+        * editing/pasteboard/copy-paste-attachment-expected.txt: Added.
+        * editing/pasteboard/copy-paste-attachment.html: Added.
+
 2015-02-27  Brady Eidson  <beidson@apple.com>
 
         Add a "block-cookies" rule to the user content filter.

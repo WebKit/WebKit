@@ -56,7 +56,7 @@ RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(Ref<Render
     return createRenderer<RenderAttachment>(*this, WTF::move(style));
 }
 
-File* HTMLAttachmentElement::file()
+File* HTMLAttachmentElement::file() const
 {
     return m_file.get();
 }

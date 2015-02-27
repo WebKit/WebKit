@@ -37,8 +37,8 @@ class File;
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-
-    File* file();
+    virtual bool canContainRangeEndPoint() const override { return false; }
+    File* file() const;
     void setFile(File*);
 
 private:

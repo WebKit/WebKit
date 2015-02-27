@@ -37,9 +37,11 @@
 #import "DocumentLoader.h"
 #import "Element.h"
 #import "ElementTraversal.h"
+#import "File.h"
 #import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "HTMLAttachmentElement.h"
 #import "HTMLElement.h"
 #import "HTMLFrameElementBase.h"
 #import "HTMLImageElement.h"
@@ -1961,6 +1963,16 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
         _addTableCellForElement(&element);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    } else if (is<HTMLAttachmentElement>(element)) {
+        HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
+        if (attachment.file()) {
+            NSURL *url = [NSURL fileURLWithPath:attachment.file()->path()];
+            if (url)
+                _addAttachmentForElement(element, url, isBlockLevel, NO);
+        }
+        retval = NO;
+#endif
     } else if (element.hasTagName(imgTag)) {
         NSString *urlString = element.getAttribute(srcAttr);
         if (urlString && [urlString length] > 0) {
