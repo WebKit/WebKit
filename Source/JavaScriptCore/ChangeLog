@@ -1,3 +1,27 @@
+2015-02-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        Clean up OSRExit's considerAddingAsFrequentExitSite()
+        https://bugs.webkit.org/show_bug.cgi?id=141690
+
+        Reviewed by Anders Carlsson.
+
+        Looks like some code was removed from CodeBlock::tallyFrequentExitSites()
+        and the OSRExit were left untouched.
+
+        This patch cleans up the two loops and remove the boolean return
+        on considerAddingAsFrequentExitSite().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+
 2015-02-17  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, Restoring the C LOOP insta-crash fix in r180184.

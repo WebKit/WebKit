@@ -3730,9 +3730,7 @@ void CodeBlock::tallyFrequentExitSites()
         DFG::JITCode* jitCode = m_jitCode->dfg();
         for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
             DFG::OSRExit& exit = jitCode->osrExit[i];
-            
-            if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
-                continue;
+            exit.considerAddingAsFrequentExitSite(profiledBlock);
         }
         break;
     }
@@ -3745,9 +3743,7 @@ void CodeBlock::tallyFrequentExitSites()
         FTL::JITCode* jitCode = m_jitCode->ftl();
         for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
             FTL::OSRExit& exit = jitCode->osrExit[i];
-            
-            if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
-                continue;
+            exit.considerAddingAsFrequentExitSite(profiledBlock);
         }
         break;
     }

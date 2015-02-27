@@ -104,9 +104,9 @@ struct OSRExit : public OSRExitBase {
     
     RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
     
-    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
+    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
-        return OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
+        OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
     }
 };
 

@@ -35,15 +35,13 @@
 
 namespace JSC { namespace DFG {
 
-bool OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
+void OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
 {
     CodeBlock* sourceProfiledCodeBlock =
         baselineCodeBlockForOriginAndBaselineCodeBlock(
             m_codeOriginForExitProfile, profiledCodeBlock);
-    if (!sourceProfiledCodeBlock)
-        return false;
-    return sourceProfiledCodeBlock->addFrequentExitSite(
-        FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind, jitType));
+    if (sourceProfiledCodeBlock)
+        sourceProfiledCodeBlock->addFrequentExitSite(FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind, jitType));
 }
 
 } } // namespace JSC::DFG
