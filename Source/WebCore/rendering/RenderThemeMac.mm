@@ -33,6 +33,7 @@
 #import "FloatRoundedRect.h"
 #import "FocusController.h"
 #import "Frame.h"
+#import "FrameSelection.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
@@ -2086,6 +2087,9 @@ const CGFloat attachmentLabelFontSize = 12;
 const CGFloat attachmentLabelBackgroundRadius = 3;
 const CGFloat attachmentLabelBackgroundPadding = 3;
 
+static Color attachmentLabelInactiveBackgroundColor() { return Color(204, 204, 204, 255); }
+static Color attachmentLabelInactiveTextColor() { return Color(100, 100, 100, 255); }
+
 const CGFloat attachmentMargin = 3;
 
 struct AttachmentLayout {
@@ -2198,20 +2202,36 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     context.drawNativeImage(icon.get(), iconSizeInPoints, ColorSpaceDeviceRGB, layout.iconRect, FloatRect(FloatPoint(), iconSizeInPoints));
 }
 
-void RenderThemeMac::paintAttachmentLabelBackground(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout) const
+void RenderThemeMac::paintAttachmentLabelBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout) const
 {
     Path backgroundPath;
     backgroundPath.addRoundedRect(layout.textBackgroundRect, FloatSize(attachmentLabelBackgroundRadius, attachmentLabelBackgroundRadius));
-    context.setFillColor(convertNSColorToColor([NSColor alternateSelectedControlColor]), ColorSpaceDeviceRGB);
+
+    Color backgroundColor;
+    if (attachment.frame().selection().isFocusedAndActive())
+        backgroundColor = convertNSColorToColor([NSColor alternateSelectedControlColor]);
+    else
+        backgroundColor = attachmentLabelInactiveBackgroundColor();
+
+    context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
     context.fillPath(backgroundPath);
 }
 
-void RenderThemeMac::paintAttachmentLabel(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout, bool useSelectedStyle) const
+void RenderThemeMac::paintAttachmentLabel(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout, bool useSelectedStyle) const
 {
     FloatPoint textLocation = layout.textRect.minXMaxYCorner();
     textLocation.move(0, -layout.labelFontCascade.fontMetrics().descent());
 
-    context.setFillColor(useSelectedStyle ? convertNSColorToColor([NSColor alternateSelectedControlTextColor]) : Color::black, ColorSpaceDeviceRGB);
+    Color textColor;
+    if (useSelectedStyle) {
+        if (attachment.frame().selection().isFocusedAndActive())
+            textColor = convertNSColorToColor([NSColor alternateSelectedControlTextColor]);
+        else
+            textColor = attachmentLabelInactiveTextColor();
+    } else
+        textColor = Color::black;
+
+    context.setFillColor(textColor, ColorSpaceDeviceRGB);
     context.drawBidiText(layout.labelFontCascade, *layout.labelTextRun, textLocation);
 }
 
