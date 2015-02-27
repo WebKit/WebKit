@@ -1,3 +1,11 @@
+2015-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/win/BitmapInfo.h:
+        Added WEBCORE_EXPORT.
+
 2015-02-27  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment>'s label baseline should match that of the surrounding text

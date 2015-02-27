@@ -117,7 +117,7 @@ public:
         return adoptRef(*new BitmapImage(observer));
     }
 #if PLATFORM(WIN)
-    static PassRefPtr<BitmapImage> create(HBITMAP);
+    WEBCORE_EXPORT static PassRefPtr<BitmapImage> create(HBITMAP);
 #endif
     virtual ~BitmapImage();
     

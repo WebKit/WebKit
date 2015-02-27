@@ -1,3 +1,10 @@
+2015-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props:
+        Use TestWebKitAPIPrefix.h like in TestWebKitAPICommon.props.
+
 2015-02-27  Anders Carlsson  <andersca@apple.com>
 
         Add infrastructure for handling website data in the network process
