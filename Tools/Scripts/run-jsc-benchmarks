@@ -1296,6 +1296,8 @@ class VM
       @libPath = [$~.pre_match + "/Contents/Resources", $~.pre_match + "/Contents/Frameworks"]
     elsif @path =~ /\/JavaScriptCore.framework\/Resources\/([a-zA-Z]+)$/
       @libPath, @relativeBinPath = [$~.pre_match], $&[1..-1]
+    elsif @path =~ /(DumpRenderTree|webkitTestRunner|jsc)$/
+      @libPath, @relativeBinPath = [$~.pre_match+"/"], "./#{$1}"
     end
   end
   

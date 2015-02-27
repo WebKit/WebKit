@@ -1,3 +1,15 @@
+2015-02-27  Michael Saboff  <msaboff@apple.com>
+
+        Add ability for run-jsc-benchmarks to set library path from test binary when run on a build bot
+        https://bugs.webkit.org/show_bug.cgi?id=142112
+
+        Reviewed by Filip Pizlo.
+
+        Added check for VMs in the form of <someDir>/{DumpRenderTree,webkitTestRunner,jsc} and use
+        <someDir> as the library path.
+
+        * Scripts/run-jsc-benchmarks:
+
 2015-02-27  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix.
