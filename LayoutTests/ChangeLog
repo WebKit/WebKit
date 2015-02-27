@@ -1,5 +1,11 @@
 2015-02-27  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Add another batch of debug assert failures.
+
+        * platform/win/TestExpectations:
+
+2015-02-27  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Rebaseline test after r180726.
 
         * platform/win/TestExpectations: Mark a flaky test.
