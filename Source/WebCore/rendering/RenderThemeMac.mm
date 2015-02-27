@@ -25,6 +25,7 @@
 #import "CSSValueKeywords.h"
 #import "CSSValueList.h"
 #import "ColorMac.h"
+#import "CoreGraphicsSPI.h"
 #import "Document.h"
 #import "Element.h"
 #import "ExceptionCodePlaceholder.h"
@@ -2096,6 +2097,8 @@ struct AttachmentLayout {
     FloatRect iconBackgroundRect;
     FloatRect attachmentRect;
 
+    int baseline;
+
     RetainPtr<CTFontRef> labelFont;
     FontCascade labelFontCascade;
     std::unique_ptr<TextRun> labelTextRun;
@@ -2116,6 +2119,8 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
     float textWidth = labelFontCascade.width(*labelTextRun);
     float textHeight = labelFontCascade.fontMetrics().height();
     float xOffset = (attachmentIconBackgroundSize / 2) - (textWidth / 2);
+
+    baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToLabelMargin + labelFontCascade.fontMetrics().ascent());
 
     textRect = FloatRect(xOffset, attachmentIconBackgroundSize + attachmentIconToLabelMargin, textWidth, textHeight);
     textBackgroundRect = textRect;
@@ -2138,6 +2143,12 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
 {
     AttachmentLayout layout(attachment);
     return LayoutSize(layout.attachmentRect.size());
+}
+
+int RenderThemeMac::attachmentBaseline(const RenderAttachment& attachment) const
+{
+    AttachmentLayout layout(attachment);
+    return layout.baseline;
 }
 
 static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)

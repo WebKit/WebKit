@@ -80,6 +80,11 @@ void RenderAttachment::representedFileChanged()
     repaint();
 }
 
+int RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const
+{
+    return document().page()->theme().attachmentBaseline(*this);
+}
+
 } // namespace WebCore
 
 #endif

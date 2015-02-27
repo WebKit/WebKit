@@ -252,6 +252,7 @@ public:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
+    virtual int attachmentBaseline(const RenderAttachment&) const { return -1; }
 #endif
 
 protected:

@@ -56,6 +56,8 @@ private:
 
     bool isSelected() const;
     bool isFocused() const;
+
+    virtual int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const;
 };
 
 } // namespace WebCore

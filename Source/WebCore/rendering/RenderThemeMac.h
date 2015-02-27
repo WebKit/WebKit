@@ -170,6 +170,7 @@ protected:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const override;
+    virtual int attachmentBaseline(const RenderAttachment&) const override;
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
