@@ -1,5 +1,15 @@
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 
+        Assertion fix for r180711: The bool returning form of BytecodeGenerator::addVar() can be removed.
+        <https://webkit.org/b/142064>
+
+        Reviewed by Joseph Pecoraro.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+
+2015-02-26  Mark Lam  <mark.lam@apple.com>
+
         MachineThreads::Thread clean up has a use after free race condition.
         <https://webkit.org/b/141990>
 

@@ -142,9 +142,10 @@ RegisterID* BytecodeGenerator::addVar(
         m_watchableVariables.append(ident);
     }
     
+    RegisterID* regID = addVar();
     ASSERT(watchMode == NotWatchable || static_cast<size_t>(m_codeBlock->m_numVars) == m_watchableVariables.size());
     
-    return addVar();
+    return regID;
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
