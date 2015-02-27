@@ -283,6 +283,9 @@ void IDBDatabase::closeConnection()
     ASSERT(m_closePending);
     ASSERT(m_transactions.isEmpty());
 
+    // This can destroy the last reference to the database.
+    Ref<IDBDatabase> protect(*this);
+
     m_backend->close(m_databaseCallbacks);
 
     if (m_contextStopped || !scriptExecutionContext())

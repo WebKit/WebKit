@@ -1,3 +1,14 @@
+2015-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Crashes under IDBDatabase::closeConnection.
+        https://bugs.webkit.org/show_bug.cgi?id=141745
+        rdar://problem/19816412
+
+        Reviewed by David Kilzer.
+
+        * Modules/indexeddb/IDBDatabase.cpp: (WebCore::IDBDatabase::closeConnection):
+        Add a missing protector.
+
 2015-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Justified ruby can cause lines to grow beyond their container
