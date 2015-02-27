@@ -12504,6 +12504,7 @@ static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned 
         // If the prefix is -apple- or -khtml-, change it to -webkit-.
         // This makes the string one character longer.
         // On iOS we don't want to change values starting with -apple-system to -webkit-system.
+        // FIXME: Remove this mangling without breaking the web.
         if ((hasPrefix(buffer, length, "-apple-") && !hasPrefix(buffer, length, "-apple-system")) || hasPrefix(buffer, length, "-khtml-")) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);

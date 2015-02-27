@@ -1,3 +1,12 @@
+2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add comment about CSS value name mangling
+
+        Unreviewed
+
+        * css/CSSParser.cpp:
+        (WebCore::cssValueKeywordID):
+
 2015-02-27  Antti Koivisto  <antti@apple.com>
 
         Cache glyph widths to GlyphPages
