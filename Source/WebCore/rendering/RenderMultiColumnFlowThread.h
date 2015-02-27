@@ -41,8 +41,6 @@ public:
     RenderMultiColumnFlowThread(Document&, Ref<RenderStyle>&&);
     ~RenderMultiColumnFlowThread();
 
-    virtual void removeFlowChildInfo(RenderObject*) override;
-
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
 
     RenderMultiColumnSet* firstMultiColumnSet() const;

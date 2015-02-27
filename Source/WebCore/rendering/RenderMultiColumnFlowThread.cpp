@@ -58,12 +58,6 @@ RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()
 {
 }
 
-void RenderMultiColumnFlowThread::removeFlowChildInfo(RenderObject* child)
-{
-    RenderFlowThread::removeFlowChildInfo(child);
-    flowThreadRelativeWillBeRemoved(child);
-}
-
 const char* RenderMultiColumnFlowThread::renderName() const
 {    
     return "RenderMultiColumnFlowThread";
