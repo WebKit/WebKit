@@ -1,3 +1,13 @@
+2015-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Add the necessary setupArgumentsWithExecState after bug141332
+        https://bugs.webkit.org/show_bug.cgi?id=141714
+
+        Reviewed by Michael Saboff.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2015-02-25  Mark Lam  <mark.lam@apple.com>
 
         ASan does not like JSC::MachineThreads::tryCopyOtherThreadStack.
