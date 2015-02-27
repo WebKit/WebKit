@@ -1,3 +1,26 @@
+2015-02-17  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, Restoring the C LOOP insta-crash fix in r180184.
+
+        Fixed a typo that only affected the C Loop in the prologue() macro in LowLevelInterpreter.asm.
+        After the stackHeightOKGetCodeBlock label, codeBlockSetter(t1) should be codeBlockGetter(t1).
+
+        * llint/LowLevelInterpreter.asm: Fixed a typo.
+
+2015-02-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180184.
+        https://bugs.webkit.org/show_bug.cgi?id=141733
+
+        Caused infinite recursion on js/function-apply-aliased.html
+        (Requested by ap_ on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r180060): C Loop crashes"
+        https://bugs.webkit.org/show_bug.cgi?id=141671
+        http://trac.webkit.org/changeset/180184
+
 2015-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         StackLayoutPhase should use CodeBlock::usesArguments rather than FunctionExecutable::usesArguments
