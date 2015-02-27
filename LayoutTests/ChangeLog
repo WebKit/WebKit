@@ -1,3 +1,16 @@
+2015-02-22  Dean Jackson  <dino@apple.com>
+
+        Print a console warning when HTMLCanvasElement exceeds the maximum size
+        https://bugs.webkit.org/show_bug.cgi?id=141861
+        <rdar://problem/19729145>
+
+        Reviewed by Simon Fraser.
+
+        Add error message to expected results.
+
+        * fast/canvas/canvas-toDataURL-crash-expected.txt:
+        * fast/canvas/pattern-too-large-to-create-expected.txt:
+
 2015-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Invalid assert in CompositeEditCommand::insertNodeAfter/insertNodeBefore

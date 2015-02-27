@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 6: Canvas area exceeds the maximum limit (width * height > 2.68435e+8).
 PASS
 
 Calling toDataURL() on a huge canvas shouldn't crash. If the text above is "PASS", the test passed.

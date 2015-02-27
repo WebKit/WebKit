@@ -1,3 +1,21 @@
+2015-02-22  Dean Jackson  <dino@apple.com>
+
+        Print a console warning when HTMLCanvasElement exceeds the maximum size
+        https://bugs.webkit.org/show_bug.cgi?id=141861
+        <rdar://problem/19729145>
+
+        Reviewed by Simon Fraser.
+
+        Add a warning if we ever try to create a canvas that is
+        too big.
+
+        No test because:
+        1. We can't ref-test against console messages.
+        2. The output is platform specific.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+
 2015-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Invalid assert in CompositeEditCommand::insertNodeAfter/insertNodeBefore
