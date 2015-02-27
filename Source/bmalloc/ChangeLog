@@ -5,6 +5,22 @@
 
         Reviewed by Andreas Kling.
 
+        Fixed a last-minute type.
+
+        The macro is OS, not PLATFORM.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.h:
+
+2015-02-19  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc should implement malloc introspection (to stop false-positive leaks when MallocStackLogging is off)
+        https://bugs.webkit.org/show_bug.cgi?id=141802
+
+        Reviewed by Andreas Kling.
+
         This patch does the bare minimum to stop false positive leaks from
         being reported by the Darwin leaks tool. We register each super chunk
         as a single object, and then request that the leaks tool scan it.
