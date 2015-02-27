@@ -1412,18 +1412,6 @@ HRESULT WebPreferences::unused4()
     return E_FAIL;
 }
 
-HRESULT WebPreferences::shouldPaintNativeControls(BOOL* shouldPaint)
-{
-    *shouldPaint = boolValueForKey(WebKitPaintNativeControlsPreferenceKey);
-    return S_OK;
-}
-
-HRESULT WebPreferences::setShouldPaintNativeControls(BOOL shouldPaint)
-{
-    setBoolValue(WebKitPaintNativeControlsPreferenceKey, shouldPaint);
-    return S_OK;
-}
-
 HRESULT WebPreferences::setDeveloperExtrasEnabled(BOOL enabled)
 {
     setBoolValue(WebKitDeveloperExtrasEnabledPreferenceKey, enabled);

@@ -377,12 +377,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setExperimentalNotificationsEnabled(
         /* [in] */ BOOL enabled);
 
-    virtual HRESULT STDMETHODCALLTYPE setShouldPaintNativeControls( 
-    /* [in] */ BOOL shouldPaint);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls( 
-    /* [retval][out] */ BOOL *shouldPaint);
-
     virtual HRESULT STDMETHODCALLTYPE setZoomsTextOnly( 
     /* [retval][out] */ BOOL zoomsTextOnly);
 

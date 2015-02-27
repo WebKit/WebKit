@@ -8024,7 +8024,6 @@
     <ClCompile Include="..\platform\win\PlatformMouseEventWin.cpp" />
     <ClCompile Include="..\platform\win\PlatformScreenWin.cpp" />
     <ClCompile Include="..\platform\win\PopupMenuWin.cpp" />
-    <ClCompile Include="..\platform\win\ScrollbarThemeSafari.cpp" />
     <ClCompile Include="..\platform\win\ScrollbarThemeWin.cpp" />
     <ClCompile Include="..\platform\win\SearchPopupMenuWin.cpp" />
     <ClCompile Include="..\platform\win\SharedBufferWin.cpp" />
@@ -11528,7 +11527,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderThemeSafari.cpp" />
     <ClCompile Include="..\rendering\RenderThemeWin.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -19591,7 +19589,6 @@
     <ClInclude Include="..\platform\win\PathWalker.h" />
     <ClInclude Include="..\platform\win\PEImage.h" />
     <ClInclude Include="..\platform\win\PopupMenuWin.h" />
-    <ClInclude Include="..\platform\win\ScrollbarThemeSafari.h" />
     <ClInclude Include="..\platform\win\ScrollbarThemeWin.h" />
     <ClInclude Include="..\platform\win\SearchPopupMenuWin.h" />
     <ClInclude Include="..\platform\win\SoftLinking.h" />
@@ -20394,7 +20391,6 @@
     <ClInclude Include="..\rendering\RenderTextFragment.h" />
     <ClInclude Include="..\rendering\RenderTextLineBoxes.h" />
     <ClInclude Include="..\rendering\RenderTheme.h" />
-    <CustomBuildStep Include="..\rendering\RenderThemeSafari.h" />
     <CustomBuildStep Include="..\rendering\RenderThemeWin.h" />
     <ClInclude Include="..\rendering\RenderTreeAsText.h" />
     <ClInclude Include="..\rendering\RenderVTTCue.h" />

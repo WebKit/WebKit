@@ -1269,9 +1269,6 @@
     <ClCompile Include="..\platform\win\PopupMenuWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\win\ScrollbarThemeSafari.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\win\ScrollbarThemeWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
@@ -2671,9 +2668,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderTheme.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderThemeSafari.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderThemeWin.cpp">
@@ -8338,9 +8332,6 @@
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\PopupMenuWin.h">
-      <Filter>platform\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\win\ScrollbarThemeSafari.h">
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\ScrollbarThemeWin.h">
@@ -15393,9 +15384,6 @@
       <Filter>rendering</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\rendering\RenderMediaControls.h">
-      <Filter>rendering</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\rendering\RenderThemeSafari.h">
       <Filter>rendering</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\rendering\RenderThemeWin.h">

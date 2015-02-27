@@ -1,3 +1,16 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove remaining SafariTheme cruft
+        https://bugs.webkit.org/show_bug.cgi?id=142075
+
+        Reviewed by Anders Carlsson.
+
+        Remove reference to SafariTheme-switching preference.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        (prepareConsistentTestingEnvironment):
+
 2015-02-26  Doug Russell  <d_russell@apple.com>
 
         AX: Expose caret browsing preference to accessibility API

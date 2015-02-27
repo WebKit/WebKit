@@ -1,3 +1,27 @@
+2015-02-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove remaining SafariTheme cruft
+        https://bugs.webkit.org/show_bug.cgi?id=142075
+
+        Reviewed by Anders Carlsson.
+
+        Remove reference to SafariTheme-switching preference.
+
+        Tested by existing layout tests.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * config.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::fontRenderingMode):
+        (WebCore::Settings::setShouldPaintNativeControls): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::shouldPaintNativeControls): Deleted.
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderTheme::themeForPage):
+
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add comment about CSS value name mangling

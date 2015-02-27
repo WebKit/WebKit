@@ -214,12 +214,6 @@ public:
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
 
-#if USE(SAFARI_THEME)
-    // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
-    static void setShouldPaintNativeControls(bool);
-    static bool shouldPaintNativeControls() { return gShouldPaintNativeControls; }
-#endif
-
     WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool flag);
     WEBCORE_EXPORT static bool mockScrollbarsEnabled();
 
@@ -340,9 +334,6 @@ private:
     static bool gMockScrollbarsEnabled;
     static bool gUsesOverlayScrollbars;
 
-#if USE(SAFARI_THEME)
-    static bool gShouldPaintNativeControls;
-#endif
 #if PLATFORM(WIN)
     static bool gShouldUseHighResolutionTimers;
 #endif
