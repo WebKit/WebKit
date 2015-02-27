@@ -1,3 +1,11 @@
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS, GTK, and EFL rebaselines after r180726.
+
+        * platform/efl/editing/inserting/5058163-1-expected.txt:
+        * platform/gtk/editing/inserting/5058163-1-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/5058163-1-expected.txt:
+
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip tests added in r180771 on platforms that don't support IndexedDB.

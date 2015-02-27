@@ -13,9 +13,10 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 469x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 467x17
                   text run at (1,1) width 467: "There should be two empty paragraphs after this table and before the next."
-        RenderBlock (anonymous) at (0,26) size 784x36
+        RenderBlock {DIV} at (0,26) size 784x18
           RenderBR {BR} at (0,0) size 0x17
-          RenderBR {BR} at (0,18) size 0x17
+        RenderBlock (anonymous) at (0,44) size 784x18
+          RenderBR {BR} at (0,0) size 0x17
         RenderTable {TABLE} at (0,62) size 276x26 [border: (1px solid #AAAAAA)]
           RenderTableSection {TBODY} at (1,1) size 274x24
             RenderTableRow {TR} at (0,2) size 274x20
