@@ -330,6 +330,30 @@ void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedStr
     callback->performCallbackWithReturnValue(string, actualRange);
 }
 
+void WebPageProxy::fontAtSelection(std::function<void (const String&, double, bool, CallbackBase::Error)>callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(String(), 0, false, CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), m_process->throttler().backgroundActivityToken());
+    
+    process().send(Messages::WebPage::FontAtSelection(callbackID), m_pageID);
+}
+
+void WebPageProxy::fontAtSelectionCallback(const String& fontName, double fontSize, bool selectionHasMultipleFonts, uint64_t callbackID)
+{
+    auto callback = m_callbacks.take<FontAtSelectionCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        // this can validly happen if a load invalidated the callback, though
+        return;
+    }
+    
+    callback->performCallbackWithReturnValue(fontName, fontSize, selectionHasMultipleFonts);
+}
+
 String WebPageProxy::stringSelectionForPasteboard()
 {
     String value;

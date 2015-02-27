@@ -360,6 +360,7 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(MAC)
     InsertDictatedTextAsync(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, bool registerUndoGroup)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, uint64_t callbackID);
+    FontAtSelection(uint64_t callbackID);
 #endif
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     InsertText(String text, struct WebKit::EditingRange replacementRange) -> (bool handled, struct WebKit::EditorState newState)

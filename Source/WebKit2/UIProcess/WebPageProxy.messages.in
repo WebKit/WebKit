@@ -171,6 +171,7 @@ messages -> WebPageProxy {
     RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, uint64_t callbackID)
 #if PLATFORM(MAC)
     AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, uint64_t callbackID)
+    FontAtSelectionCallback(String fontName, double fontSize, bool selectioHasMultipleFonts, uint64_t callbackID)
 #endif
 #if PLATFORM(IOS)
     GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)

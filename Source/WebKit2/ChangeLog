@@ -1,3 +1,40 @@
+2015-02-26  Enrica Casucci  <enrica@apple.com>
+
+        [WK2] REGRESSION(r180465): WebKit::WebPage::editorState() triggers a layout.
+        https://bugs.webkit.org/show_bug.cgi?id=142015
+
+        Reviewed by Alexey Proskuryakov.
+
+        We no longer compute the font information at selection
+        when we update the editor state.
+        Instead, we request the font information only when the selection
+        changes and the font panel is visible.
+        I added an observer to be notified of the font panel visibility
+        changes to update NSFontManager to reflect the font at the
+        current selection.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView updateFontPanelIfNeeded]):
+        (-[WKView _selectionChanged]):
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView observeValueForKeyPath:ofObject:change:context:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::fontAtSelection):
+        (WebKit::WebPageProxy::fontAtSelectionCallback):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState):
+        (WebKit::WebPage::fontAtSelection):
+
 2015-02-27  Brady Eidson  <beidson@apple.com>
 
         Add API to remove a single content filter.

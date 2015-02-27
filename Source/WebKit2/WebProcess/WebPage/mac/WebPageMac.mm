@@ -120,15 +120,6 @@ void WebPage::platformDetach()
 
 void WebPage::platformEditorState(Frame& frame, EditorState& result) const
 {
-    if (frame.selection().selection().isNone())
-        return;
-    
-    const Font* font = frame.editor().fontForSelection(result.selectionHasMultipleFonts);
-    NSFont *nsFont = font ? font->getNSFont() : nil;
-    if (nsFont) {
-        result.fontName = nsFont.fontName;
-        result.fontSize = nsFont.pointSize;
-    }
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
@@ -491,6 +482,24 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(editingRange.location, [result.string length]), callbackID));
 }
 
+void WebPage::fontAtSelection(uint64_t callbackID)
+{
+    String fontName;
+    double fontSize = 0;
+    bool selectionHasMultipleFonts = false;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    
+    if (!frame.selection().selection().isNone()) {
+        const Font* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
+        NSFont *nsFont = font ? font->getNSFont() : nil;
+        if (nsFont) {
+            fontName = nsFont.fontName;
+            fontSize = nsFont.pointSize;
+        }
+    }
+    send(Messages::WebPageProxy::FontAtSelectionCallback(fontName, fontSize, selectionHasMultipleFonts, callbackID));
+}
+    
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
     if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame())) {

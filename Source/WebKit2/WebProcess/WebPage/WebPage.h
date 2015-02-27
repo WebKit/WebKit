@@ -622,6 +622,7 @@ public:
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
+    void fontAtSelection(uint64_t callbackID);
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
     void insertText(const String& text, const EditingRange& replacementRange, bool& handled, EditorState& newState);
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange, EditorState& newState);

@@ -739,13 +739,23 @@ WEBCORE_COMMAND(yankAndSelect)
 
 // Font panel support.
 
-- (void)_selectionChanged
+- (void)updateFontPanelIfNeeded
 {
     const EditorState& editorState = _data->_page->editorState();
     if (editorState.selectionIsNone || !editorState.isContentEditable)
         return;
-    NSFont *font = [NSFont fontWithName:editorState.fontName size:editorState.fontSize];
-    [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:editorState.selectionHasMultipleFonts];
+    if ([NSFontPanel sharedFontPanelExists] && [[NSFontPanel sharedFontPanel] isVisible]) {
+        _data->_page->fontAtSelection([](const String& fontName, double fontSize, bool selectionHasMultipleFonts, CallbackBase::Error error) {
+            NSFont *font = [NSFont fontWithName:fontName size:fontSize];
+            if (font)
+                [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
+        });
+    }
+}
+
+- (void)_selectionChanged
+{
+    [self updateFontPanelIfNeeded];
 }
 
 - (void)changeFont:(id)sender
@@ -2509,6 +2519,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
                                                      name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeOcclusionState:)
                                                      name:NSWindowDidChangeOcclusionStateNotification object:window];
+        [[NSFontPanel sharedFontPanel] addObserver:self
+                                        forKeyPath:@"visible"
+                                           options:NSKeyValueObservingOptionNew
+                                           context:nil];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
         [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
@@ -2535,6 +2549,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
+    [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:nil];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
@@ -3714,8 +3729,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         self._topContentInset = 0;
 }
 
+#endif
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if ([NSFontPanel sharedFontPanelExists] && object == [NSFontPanel sharedFontPanel]) {
+        [self updateFontPanelIfNeeded];
+        return;
+    }
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (context == keyValueObservingContext) {
         if ([keyPath isEqualToString:@"contentLayoutRect"] || [keyPath isEqualToString:@"titlebarAppearsTransparent"])
             [self _updateContentInsetsIfAutomatic];
@@ -3723,9 +3745,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     }
 
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+#endif
 }
 
-#endif
 
 - (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
 {

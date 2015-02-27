@@ -53,10 +53,6 @@ struct EditorState {
         , isInPasswordField(false)
         , isInPlugin(false)
         , hasComposition(false)
-#if PLATFORM(MAC)
-        , selectionHasMultipleFonts(false)
-        , fontSize(0)
-#endif
 #if PLATFORM(IOS)
         , isReplaceAllowed(false)
         , hasContent(false)
@@ -78,12 +74,6 @@ struct EditorState {
     bool isInPasswordField;
     bool isInPlugin;
     bool hasComposition;
-
-#if PLATFORM(MAC)
-    bool selectionHasMultipleFonts;
-    String fontName;
-    double fontSize;
-#endif
 
 #if PLATFORM(IOS)
     bool isReplaceAllowed;
