@@ -203,12 +203,12 @@ void UserContentController::removeAllUserContentFilters()
     m_contentExtensionBackend->removeAllRuleLists();
 }
 
-bool UserContentController::contentFilterBlocksURL(const URL& url)
+ContentFilterAction UserContentController::actionForURL(const URL& url)
 {
     if (!m_contentExtensionBackend)
-        return false;
+        return ContentFilterAction::Load;
 
-    return m_contentExtensionBackend->shouldBlockURL(url);
+    return m_contentExtensionBackend->actionForURL(url);
 }
 
 #endif

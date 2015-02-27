@@ -464,8 +464,16 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frame() && frame()->page() && frame()->page()->userContentController() && frame()->page()->userContentController()->contentFilterBlocksURL(url))
-        return nullptr;
+    ContentFilterAction action = ContentFilterAction::Load;
+
+    if (frame() && frame()->page() && frame()->page()->userContentController()) {
+        action = frame()->page()->userContentController()->actionForURL(url);
+        if (action == ContentFilterAction::Block)
+            return nullptr;
+    }
+
+    if (action == ContentFilterAction::BlockCookies)
+        request.mutableResourceRequest().setAllowCookies(false);
 #endif
 
     auto& memoryCache = MemoryCache::singleton();

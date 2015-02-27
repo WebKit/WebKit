@@ -31,6 +31,7 @@
 #include "ContentExtensionRule.h"
 #include "DFA.h"
 #include "DFABytecode.h"
+#include "UserContentController.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -57,7 +58,7 @@ public:
     void removeAllRuleLists();
 
     // - Internal WebCore Interface.
-    bool shouldBlockURL(const URL&);
+    ContentFilterAction actionForURL(const URL&);
 
 private:
     struct CompiledContentExtension {

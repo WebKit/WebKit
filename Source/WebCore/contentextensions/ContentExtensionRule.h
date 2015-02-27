@@ -36,6 +36,7 @@ namespace ContentExtensions {
 
 enum class ExtensionActionType {
     BlockLoad,
+    BlockCookies,
     IgnorePreviousRules
 };
 

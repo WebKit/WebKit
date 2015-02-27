@@ -1,3 +1,31 @@
+2015-02-27  Brady Eidson  <beidson@apple.com>
+
+        Add a "block-cookies" rule to the user content filter.
+        https://bugs.webkit.org/show_bug.cgi?id=142105
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/usercontentfilter/block-cookies-basic.html
+               http/tests/usercontentfilter/block-cookies-send.html
+
+        * contentextensions/ContentExtensionRule.h:
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionForURL):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBlockURL): Deleted.
+        * contentextensions/ContentExtensionsBackend.h:
+
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadAction):
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::actionForURL):
+        (WebCore::UserContentController::contentFilterBlocksURL): Deleted.
+        * page/UserContentController.h:
+
 2015-02-27  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix.

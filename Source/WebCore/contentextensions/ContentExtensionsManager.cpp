@@ -96,6 +96,8 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, ContentExtensionRu
         action.type = ExtensionActionType::BlockLoad;
     else if (actionType == "ignore-previous-rules")
         action.type = ExtensionActionType::IgnorePreviousRules;
+    else if (actionType == "block-cookies")
+        action.type = ExtensionActionType::BlockCookies;
     else if (actionType != "block" && actionType != "") {
         WTFLogAlways("Unrecognized action: \"%s\"", actionType.utf8().data());
         return false;

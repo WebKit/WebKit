@@ -117,7 +117,7 @@ void ContentExtensionsBackend::removeAllRuleLists()
     m_ruleLists.clear();
 }
 
-bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
+ContentFilterAction ContentExtensionsBackend::actionForURL(const URL& url)
 {
     const String& urlString = url.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
@@ -133,12 +133,16 @@ bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
             copyToVector(triggeredActions, sortedActions);
             std::sort(sortedActions.begin(), sortedActions.end());
             size_t lastAction = static_cast<size_t>(sortedActions.last());
-            if (compiledContentExtension.ruleList[lastAction].action().type == ExtensionActionType::BlockLoad)
-                return true;
+            ExtensionActionType type = compiledContentExtension.ruleList[lastAction].action().type;
+
+            if (type == ExtensionActionType::BlockLoad)
+                return ContentFilterAction::Block;
+            if (type == ExtensionActionType::BlockCookies)
+                return ContentFilterAction::BlockCookies;
         }
     }
 
-    return false;
+    return ContentFilterAction::Load;
 }
 
 } // namespace ContentExtensions

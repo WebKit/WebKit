@@ -49,6 +49,12 @@ namespace ContentExtensions {
 class ContentExtensionsBackend;
 }
 
+enum class ContentFilterAction {
+    Load,
+    Block,
+    BlockCookies
+};
+
 class UserContentController : public RefCounted<UserContentController> {
 public:
     WEBCORE_EXPORT static RefPtr<UserContentController> create();
@@ -85,7 +91,7 @@ public:
     WEBCORE_EXPORT void removeAllUserContentFilters();
     
     // FIXME: Consider putting this (and other future content filter predicates) in its own class.
-    bool contentFilterBlocksURL(const URL&);
+    ContentFilterAction actionForURL(const URL&);
 #endif
 
 private:
