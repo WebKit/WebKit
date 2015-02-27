@@ -1,3 +1,14 @@
+2015-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        Test more features of content extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=142100
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/usercontentfilter/basic-filter.html:
+        * http/tests/usercontentfilter/basic-filter.html.json:
+        * platform/mac/http/tests/usercontentfilter/basic-filter-expected.txt:
+
 2015-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Some WebGL tests fail on ATI hardware

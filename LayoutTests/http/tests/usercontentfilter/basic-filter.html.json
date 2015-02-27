@@ -4,7 +4,15 @@
             "type": "block"
         },
         "trigger": {
-            "url-filter": "http://localhost"
+            "url-filter": ".*localhost"
+        }
+    },
+    {
+        "action": {
+            "type": "ignore-previous-rules"
+        },
+        "trigger": {
+            "url-filter": ".*whitelist"
         }
     }
 ]
