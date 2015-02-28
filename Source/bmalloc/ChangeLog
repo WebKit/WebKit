@@ -1,3 +1,18 @@
+2015-02-24  Stephanie Lewis  <slewis@apple.com>
+
+        Rolling out http://trac.webkit.org/changeset/180430 as it causes the PLT to crash.
+        <rdar://problem/19948015>
+
+        Unreviewed.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone):
+        (bmalloc::Zone::size): Deleted.
+        * bmalloc/Zone.h:
+
 2015-02-24  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Added a little more abstraction for large objects
