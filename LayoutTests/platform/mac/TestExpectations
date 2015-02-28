@@ -1213,26 +1213,6 @@ fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
 # Kerning, Ligatures, and Printer Fonts caused these tests to fail
-# The following tests are reftests
-webkit.org/b/139968 fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
-webkit.org/b/139968 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/multicol/cell-shrinkback.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/multicol/newmulticol/breaks-3-columns-3.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/regions/last-region-border-radius.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/table/td-width-fifty-percent-regression.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/text/font-kerning.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
 webkit.org/b/139968 fast/text/whitespace/inline-whitespace-wrapping-7.html [ ImageOnlyFailure ]
@@ -1244,8 +1224,16 @@ webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnl
 webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
+# Word-spacing is incorrectly applied
+webkit.org/b/142086 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
+webkit.org/b/142086 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/142086 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
+
+# Underlines' starting and ending positions need to be pixel-snapped
+webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
+webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
+
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
-webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]
 webkit.org/b/140588 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
@@ -1264,6 +1252,10 @@ webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ 
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
 webkit.org/b/139968 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
+webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]
+
+# Subpixel bug about rounding
+webkit.org/b/142065 fast/css-intrinsic-dimensions/width-avoid-floats.html [ ImageOnlyFailure ]
 
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]

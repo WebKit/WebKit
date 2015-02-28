@@ -1,5 +1,40 @@
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Updating more tests after r177774
+
+        Unreviewed.
+
+        Most of these tests simply need to be updated. However, I found two real bugs while
+        going through these!
+
+        * fast/css-generated-content/after-with-inline-continuation-expected.html:
+        * fast/css-generated-content/after-with-inline-continuation.html:
+        * fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines-expected.html:
+        * fast/inline/hidpi-select-inline-on-subpixel-position-expected.html:
+        * fast/inline/hidpi-select-inline-on-subpixel-position.html:
+        * fast/lists/rtl-marker-expected.html:
+        * fast/lists/rtl-marker.html:
+        * fast/multicol/cell-shrinkback-expected.html:
+        * fast/multicol/cell-shrinkback.html:
+        * fast/multicol/newmulticol/breaks-3-columns-3-expected.html:
+        * fast/multicol/newmulticol/breaks-3-columns-3.html:
+        * fast/regions/last-region-border-radius-expected.html:
+        * fast/regions/last-region-border-radius.html:
+        * fast/regions/overflow/overflow-first-and-last-regions.html:
+        * fast/regions/overflow/overflow-in-uniform-regions-dynamic-expected.html:
+        * fast/regions/overflow/overflow-in-uniform-regions-dynamic.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius-expected.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html:
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-inset-expected.html:
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html:
+        * fast/table/td-width-fifty-percent-regression-expected.html:
+        * fast/table/td-width-fifty-percent-regression.html:
+        * fast/text/complex-initial-advance-expected.html:
+        * fast/text/complex-initial-advance.html:
+        * platform/mac/TestExpectations:
+
+2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Subpixel] Subpixelize RenderListMarker
         https://bugs.webkit.org/show_bug.cgi?id=142093
 

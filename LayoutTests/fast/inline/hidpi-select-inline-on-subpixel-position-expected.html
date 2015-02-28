@@ -5,7 +5,6 @@
 <style>
   div {
     font-size: 16px;
-    width: 21px;
     height: 18px;
     position: fixed;
     background: rgba(255, 0, 0, 0.9);
@@ -23,6 +22,10 @@
       var e = document.createElement("div");
       e.style.top = (30 * i + j * adjustment) + "px";
       e.style.left = (30 * j + i * adjustment) + "px";
+      if (i == 0 || i == 3 || i == 5 || i == 8)
+        e.style.width = "21.5px";
+      else
+        e.style.width = "21px";
       e.innerHTML = "foo";
       container.appendChild(e);
     }
