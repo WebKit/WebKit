@@ -922,6 +922,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
         m_mainFrame->setUnreachableURL(unreachableURL);
 
     m_process->assumeReadAccessToBaseURL(baseURL);
+    m_process->assumeReadAccessToBaseURL(unreachableURL);
     m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer()->start();
 }
