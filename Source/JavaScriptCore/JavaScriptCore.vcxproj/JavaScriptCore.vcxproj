@@ -1605,6 +1605,7 @@
     <ClInclude Include="..\runtime\RegExpObject.h" />
     <ClInclude Include="..\runtime\RegExpPrototype.h" />
     <ClInclude Include="..\runtime\Reject.h" />
+    <ClInclude Include="..\runtime\RuntimeFlags.h" />
     <ClInclude Include="..\runtime\SamplingCounter.h" />
     <ClInclude Include="..\runtime\SetConstructor.h" />
     <ClInclude Include="..\runtime\SetIteratorConstructor.h" />

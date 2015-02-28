@@ -42,6 +42,11 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKWheelEventHandlerRegion = 1 << 1
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
+    _WKJavaScriptRuntimeFlagsSymbolEnabled = 1 << 0,
+    _WKJavaScriptRuntimeFlagsAllEnabled = _WKJavaScriptRuntimeFlagsSymbolEnabled
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 @interface WKPreferences (WKPrivate)
 
 // FIXME: This property should not have the verb "is" in it.
@@ -59,6 +64,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 @property (nonatomic, setter=_setLogsPageMessagesToSystemConsoleEnabled:) BOOL _logsPageMessagesToSystemConsoleEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, setter=_setAllowFileAccessFromFileURLs:) BOOL _allowFileAccessFromFileURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setJavaScriptRuntimeFlags:) _WKJavaScriptRuntimeFlags _javaScriptRuntimeFlags WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 

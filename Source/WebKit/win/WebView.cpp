@@ -4759,6 +4759,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     BString str;
     int size;
+    unsigned javaScriptRuntimeFlags;
     BOOL enabled;
 
     Settings& settings = m_page->settings();
@@ -5139,6 +5140,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings.setEnableInheritURIQueryComponent(enabled);
+
+    hr = prefsPrivate->javaScriptRuntimeFlags(&javaScriptRuntimeFlags);
+    if (FAILED(hr))
+        return hr;
+    settings.setJavaScriptRuntimeFlags(JSC::RuntimeFlags(javaScriptRuntimeFlags));
 
     return S_OK;
 }

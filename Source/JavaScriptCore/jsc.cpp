@@ -575,7 +575,7 @@ public:
         return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
     }
 
-    static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return true; }
+    static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags::createAllEnabled(); }
 
 protected:
     void finishCreation(VM& vm, const Vector<String>& arguments)
@@ -663,7 +663,7 @@ protected:
 };
 
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, &globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
-const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, 0, &shouldInterruptScriptBeforeTimeout };
+const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, 0, &shouldInterruptScriptBeforeTimeout };
 
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)

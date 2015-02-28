@@ -943,6 +943,7 @@
 		705B41B01A6E501E00716757 /* SymbolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A81A6E501E00716757 /* SymbolObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A91A6E501E00716757 /* SymbolPrototype.cpp */; };
 		705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41AA1A6E501E00716757 /* SymbolPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B0A9D01A9B66200001306A /* RuntimeFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CD2186F8A9300955C24 /* JSPromiseFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */; };
 		7C008CD3186F8A9300955C24 /* JSPromiseFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */; };
@@ -2615,6 +2616,7 @@
 		705B41A81A6E501E00716757 /* SymbolObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolObject.h; sourceTree = "<group>"; };
 		705B41A91A6E501E00716757 /* SymbolPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolPrototype.cpp; sourceTree = "<group>"; };
 		705B41AA1A6E501E00716757 /* SymbolPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.h; sourceTree = "<group>"; };
+		70B0A9D01A9B66200001306A /* RuntimeFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeFlags.h; sourceTree = "<group>"; };
 		7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = JSPromiseFunctions.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseFunctions.h; sourceTree = "<group>"; };
 		7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseDeferred.cpp; sourceTree = "<group>"; };
@@ -4513,6 +4515,7 @@
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
 				0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */,
 				0FB7F39115ED8E3800F167B2 /* Reject.h */,
+				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				0F7700911402FF280078EB39 /* SamplingCounter.cpp */,
 				0F77008E1402FDD60078EB39 /* SamplingCounter.h */,
 				A7299DA317D12858005F5FF9 /* SetConstructor.cpp */,
@@ -6249,6 +6252,7 @@
 				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
+				70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
 				0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */,

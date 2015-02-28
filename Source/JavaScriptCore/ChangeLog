@@ -1,3 +1,40 @@
+2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r179429): Can't type comments in Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=141859
+
+        Reviewed by Brent Fulgham.
+
+        When window.Symbol is exposed to user-space pages,
+        Facebook's JavaScript use it (maybe, for immutable-js and React.js's unique key).
+        However, to work with Symbols completely, it also requires
+        1) Object.getOwnPropertySymbols (for mixin including Symbols)
+        2) the latest ES6 Iterator interface that uses Iterator.next and it returns { done: boolean, value: value }.
+        Since they are not landed yet, comments in Facebook don't work.
+
+        This patch introduces RuntimeFlags for JavaScriptCore.
+        Specifying SymbolEnabled flag under test runner and inspector to continue to work with Symbol.
+        And drop JavaScriptExperimentsEnabled flag
+        because it is no longer used and use case of this is duplicated to runtime flags.
+
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (GlobalObject::javaScriptRuntimeFlags):
+        (GlobalObject::javaScriptExperimentsEnabled): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        (JSC::JSGlobalObject::javaScriptRuntimeFlags):
+        (JSC::JSGlobalObject::javaScriptExperimentsEnabled): Deleted.
+        * runtime/RuntimeFlags.h: Added.
+        (JSC::RuntimeFlags::RuntimeFlags):
+        (JSC::RuntimeFlags::createAllEnabled):
+
 2015-02-23  Matthew Mirman  <mmirman@apple.com>
 
         r9 is volatile on ARMv7 for iOS 3 and up. 

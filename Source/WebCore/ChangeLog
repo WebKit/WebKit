@@ -1,3 +1,29 @@
+2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r179429): Can't type comments in Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=141859
+
+        Reviewed by Brent Fulgham.
+
+        Enable SymbolEnabled runtime flag in inspector context.
+
+        * ForwardingHeaders/runtime/RuntimeFlags.h: Added.
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::javaScriptRuntimeFlags):
+        (WebCore::JSDOMWindowBase::javaScriptExperimentsEnabled): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::javaScriptRuntimeFlags):
+        (WebCore::JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled): Deleted.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+        * page/Settings.h:
+        * page/Settings.in:
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Layout Test accessibility/roles-exposed.html is failing

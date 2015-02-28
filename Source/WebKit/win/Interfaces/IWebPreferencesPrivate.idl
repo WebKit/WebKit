@@ -113,6 +113,9 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT javaScriptCanAccessClipboard([out, retval] BOOL *enabled);
     HRESULT setJavaScriptCanAccessClipboard([in] BOOL enabled);
 
+    HRESULT javaScriptRuntimeFlags([out, retval] unsigned* flags);
+    HRESULT setJavaScriptRuntimeFlags([in] unsigned flags);
+
     HRESULT isDNSPrefetchingEnabled([out, retval] BOOL *enabled);
     HRESULT setDNSPrefetchingEnabled([in] BOOL enabled);
 

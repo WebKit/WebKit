@@ -35,6 +35,7 @@
 #include "SettingsMacros.h"
 #include "Timer.h"
 #include <chrono>
+#include <runtime/RuntimeFlags.h>
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

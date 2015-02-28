@@ -31,6 +31,7 @@
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
+#include "RuntimeFlags.h"
 #include "SpecialPointer.h"
 #include "StringPrototype.h"
 #include "StructureChain.h"
@@ -86,13 +87,15 @@ struct ActivationStackNode;
 struct HashTable;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName)
-    
+
+#define FOR_EACH_EXPERIMENTAL_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
+    macro(Symbol, symbol, symbolObject, SymbolObject, Symbol) \
+
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(Set, set, set, JSSet, Set) \
     macro(Map, map, map, JSMap, Map) \
     macro(Date, date, date, DateInstance, Date) \
     macro(String, string, stringObject, StringObject, String) \
-    macro(Symbol, symbol, symbolObject, SymbolObject, Symbol) \
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean) \
     macro(Number, number, numberObject, NumberObject, Number) \
     macro(Error, error, error, ErrorInstance, Error) \
@@ -101,6 +104,7 @@ struct HashTable;
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
+    FOR_EACH_EXPERIMENTAL_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
     DEFINE_STANDARD_BUILTIN(macro, ArgumentsIterator, argumentsIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
@@ -131,8 +135,8 @@ struct GlobalObjectMethodTable {
     typedef bool (*ShouldInterruptScriptFunctionPtr)(const JSGlobalObject*);
     ShouldInterruptScriptFunctionPtr shouldInterruptScript;
 
-    typedef bool (*JavaScriptExperimentsEnabledFunctionPtr)(const JSGlobalObject*);
-    JavaScriptExperimentsEnabledFunctionPtr javaScriptExperimentsEnabled;
+    typedef RuntimeFlags (*JavaScriptRuntimeFlagsFunctionPtr)(const JSGlobalObject*);
+    JavaScriptRuntimeFlagsFunctionPtr javaScriptRuntimeFlags;
 
     typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, PassRefPtr<Microtask>);
     QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
@@ -272,7 +276,7 @@ protected:
 
     bool m_evalEnabled;
     String m_evalDisabledErrorMessage;
-    bool m_experimentsEnabled;
+    RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient;
 
     static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
@@ -308,7 +312,7 @@ protected:
     {
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
-        m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
+        m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
         init(vm);
         setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype(), PureForwardingProxyType), this));
     }
@@ -317,7 +321,7 @@ protected:
     {
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
-        m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
+        m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
         init(vm);
         setGlobalThis(vm, thisValue);
     }
@@ -544,7 +548,7 @@ public:
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
-    static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return false; }
+    static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags(); }
 
     void queueMicrotask(PassRefPtr<Microtask>);
 

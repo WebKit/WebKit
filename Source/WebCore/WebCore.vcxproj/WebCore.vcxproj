@@ -19136,6 +19136,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\PrototypeFunction.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\RegExp.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\RegExpObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\RuntimeFlags.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\StorageBarrier.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\StringPrototype.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Structure.h" />

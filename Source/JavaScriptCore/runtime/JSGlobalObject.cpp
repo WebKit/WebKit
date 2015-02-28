@@ -144,7 +144,7 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &Base::s_info, &globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
-const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, 0, &shouldInterruptScriptBeforeTimeout };
+const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, 0, &shouldInterruptScriptBeforeTimeout };
 
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
@@ -172,7 +172,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
-    , m_experimentsEnabled(false)
+    , m_runtimeFlags()
     , m_consoleClient(nullptr)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
@@ -371,7 +371,10 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
 putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Constructor, DontEnum); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE)
-    
+
+    if (m_runtimeFlags.isSymbolEnabled())
+        putDirectWithoutTransition(vm, vm.propertyNames->Symbol, symbolConstructor, DontEnum);
+
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
     PrototypeMap& prototypeMap = vm.prototypeMap;
     Structure* iteratorResultStructure = prototypeMap.emptyObjectStructureForPrototype(m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity());
@@ -424,7 +427,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     m_consoleStructure.set(vm, this, JSConsole::createStructure(vm, this, consolePrototype));
     JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
     putDirectWithoutTransition(vm, Identifier(exec, "console"), consoleObject, DontEnum);
-    
+
     resetPrototype(vm, prototype());
 }
 

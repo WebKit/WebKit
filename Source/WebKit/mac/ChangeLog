@@ -1,3 +1,29 @@
+2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r179429): Can't type comments in Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=141859
+
+        Reviewed by Brent Fulgham.
+
+        Introduce SymbolEnabled and drop javaScriptExperimentsEnabled.
+        Private API, javaScriptExperimentsEnabled is dropped.
+
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSMutableDictionary _webkit_setUnsignedInt:forKey:]):
+        * WebKit.order:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _setUnsignedIntValue:forKey:]):
+        (-[WebPreferences javaScriptRuntimeFlags]):
+        (-[WebPreferences setJavaScriptRuntimeFlags:]):
+        (-[WebPreferences setJavaScriptExperimentsEnabled:]): Deleted.
+        (-[WebPreferences javaScriptExperimentsEnabled]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-02-15  Sam Weinig  <sam@webkit.org>
 
         Add experimental <attachment> element support

@@ -56,7 +56,7 @@ static bool shouldAllowAccessFrom(const JSGlobalObject* thisObject, ExecState* e
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout };
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(vm, structure, &shell->world(), &s_globalObjectMethodTable)
@@ -169,13 +169,13 @@ bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* o
     return JSGlobalObject::shouldInterruptScriptBeforeTimeout(object);
 }
 
-bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
+RuntimeFlags JSDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     Frame* frame = thisObject->impl().frame();
     if (!frame)
-        return false;
-    return frame->settings().javaScriptExperimentsEnabled();
+        return RuntimeFlags();
+    return frame->settings().javaScriptRuntimeFlags();
 }
 
 void JSDOMWindowBase::queueTaskToEventLoop(const JSGlobalObject* object, PassRefPtr<Microtask> task)

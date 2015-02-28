@@ -120,6 +120,9 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     , m_dockSide(DockSide::Undocked)
 {
     m_frontendPage->settings().setAllowFileAccessFromFileURLs(true);
+    m_frontendPage->settings().setJavaScriptRuntimeFlags({
+        JSC::RuntimeFlags::SymbolEnabled
+    });
     m_dispatchTask = std::make_unique<InspectorBackendDispatchTask>(inspectorController);
 }
 

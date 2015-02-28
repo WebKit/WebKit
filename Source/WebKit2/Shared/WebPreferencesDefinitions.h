@@ -95,7 +95,6 @@
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true) \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true) \
     macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, DEFAULT_FRAME_FLATTENING_ENABLED) \
-    macro(JavaScriptExperimentsEnabled, javaScriptExperimentsEnabled, Bool, bool, false) \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \
     macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, DEFAULT_TEXT_AREAS_ARE_RESIZABLE) \
     macro(JavaScriptCanOpenWindowsAutomatically, javaScriptCanOpenWindowsAutomatically, Bool, bool, DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY) \
@@ -217,6 +216,7 @@
     macro(InspectorAttachedWidth, inspectorAttachedWidth, UInt32, uint32_t, 750) \
     macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, WebCore::SecurityOrigin::BlockThirdPartyStorage) \
+    macro(JavaScriptRuntimeFlags, javaScriptRuntimeFlags, UInt32, uint32_t, 0) \
     \
 
 #define FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \

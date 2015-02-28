@@ -1,3 +1,24 @@
+2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r179429): Can't type comments in Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=141859
+
+        Reviewed by Brent Fulgham.
+
+        Added Windows support.
+
+        * Interfaces/IWebPreferences.idl:
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::javaScriptRuntimeFlags):
+        (WebPreferences::setJavaScriptRuntimeFlags):
+        (WebPreferences::isWebSecurityEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2015-02-09  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove some unnecessary Inspector prefixes from class names in Inspector namespace
