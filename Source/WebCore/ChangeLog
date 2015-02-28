@@ -1,3 +1,32 @@
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        EventHandler references deleted Scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=141931
+        <rdar://problem/19915210>
+
+        Reviewed by Tim Horton.
+
+        Tested by scrollbars/overflow-custom-scrollbar-crash.html
+
+        Update the EventHandler class to use a WeakPtr to reference the
+        last used Scrollbar, rather than retaining the Scrollbar and
+        artificially extending its life. This keeps the EventHandler
+        state in proper sync with the state of the render tree, and
+        avoids cases where we have destroyed a ScrollableArea (and
+        Scrollbar) but are still sending messages to a fake zombie
+        version of the element.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::updateLastScrollbarUnderMouse):
+        * page/EventHandler.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar): Initialize WeakPtrFactory.
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::createWeakPtr): Added,
+
 2015-02-23  Shivakumar JM  <shiva.jm@samsung.com>
 
         Default value of HTMLSelectElement size IDL attribute should be 0.

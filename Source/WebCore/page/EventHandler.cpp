@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -99,6 +99,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TemporaryChange.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "StyleCachedImageSet.h"
@@ -3665,10 +3666,10 @@ bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& 
 }
 
 // If scrollbar (under mouse) is different from last, send a mouse exited. Set
-// last to scrollbar if setLast is true; else set last to 0.
+// last to scrollbar if setLast is true; else set last to nullptr.
 void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setLast)
 {
-    if (m_lastScrollbarUnderMouse != scrollbar) {
+    if (m_lastScrollbarUnderMouse.get() != scrollbar) {
         // Send mouse exited to the old scrollbar.
         if (m_lastScrollbarUnderMouse)
             m_lastScrollbarUnderMouse->mouseExited();
@@ -3677,7 +3678,10 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setL
         if (scrollbar && setLast)
             scrollbar->mouseEntered();
 
-        m_lastScrollbarUnderMouse = setLast ? scrollbar : 0;
+        if (setLast && scrollbar)
+            m_lastScrollbarUnderMouse = scrollbar->createWeakPtr();
+        else
+            m_lastScrollbarUnderMouse = nullptr;
     }
 }
 
