@@ -1,5 +1,22 @@
 2015-02-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        W3C importer should use filesystem instead of shutil/host
+        https://bugs.webkit.org/show_bug.cgi?id=142012
+
+        Reviewed by Bem Jones-Bey.
+
+        Removed direct use of python shutil and os, except for os.walk which will require its own fix.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (TestImporter.do_import):
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        (TestImporter.remove_deleted_files):
+        (TestImporter.write_import_log):
+
+2015-02-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         W3C test importer should use filesystem to read and write files
         https://bugs.webkit.org/show_bug.cgi?id=142084
 
