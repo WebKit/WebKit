@@ -495,6 +495,13 @@ Lexer<T>::Lexer(VM* vm, JSParserStrictness strictness)
 {
 }
 
+static inline JSTokenType tokenTypeForIntegerLikeToken(double doubleValue)
+{
+    if ((doubleValue || !std::signbit(doubleValue)) && static_cast<int64_t>(doubleValue) == doubleValue)
+        return INTEGER;
+    return DOUBLE;
+}
+
 template <typename T>
 Lexer<T>::~Lexer()
 {
@@ -1687,7 +1694,7 @@ start:
                 token = INVALID_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
-            token = NUMBER;
+            token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             m_buffer8.resize(0);
             break;
         }
@@ -1700,17 +1707,19 @@ start:
         }
         if (isASCIIOctalDigit(m_current)) {
             if (parseOctal(tokenData->doubleValue)) {
-                token = NUMBER;
+                token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
         }
         FALLTHROUGH;
     case CharacterNumber:
-        if (LIKELY(token != NUMBER)) {
+        if (LIKELY(token != INTEGER && token != DOUBLE)) {
             if (!parseDecimal(tokenData->doubleValue)) {
+                token = INTEGER;
                 if (m_current == '.') {
                     shift();
 inNumberAfterDecimalPoint:
                     parseNumberAfterDecimalPoint();
+                    token = DOUBLE;
                 }
                 if ((m_current | 0x20) == 'e') {
                     if (!parseNumberAfterExponentIndicator()) {
@@ -1721,8 +1730,10 @@ inNumberAfterDecimalPoint:
                 }
                 size_t parsedLength;
                 tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
-            }
-            token = NUMBER;
+                if (token == INTEGER)
+                    token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
+            } else
+                token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
         }
 
         // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.

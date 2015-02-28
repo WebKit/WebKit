@@ -217,9 +217,9 @@ public:
         Node* right = add->child2().node();
         
         if (left->hasConstant())
-            return addImmediateShouldSpeculateInt32(add, rightShouldSpeculateInt32, left, source);
+            return addImmediateShouldSpeculateInt32(add, rightShouldSpeculateInt32, right, left, source);
         if (right->hasConstant())
-            return addImmediateShouldSpeculateInt32(add, leftShouldSpeculateInt32, right, source);
+            return addImmediateShouldSpeculateInt32(add, leftShouldSpeculateInt32, left, right, source);
         
         return (leftShouldSpeculateInt32 && rightShouldSpeculateInt32 && add->canSpeculateInt32(source)) ? SpeculateInt32 : DontSpeculateInt32;
     }
@@ -846,12 +846,13 @@ public:
     StructureRegistrationState m_structureRegistrationState;
     GraphForm m_form;
     UnificationState m_unificationState;
+    PlanStage m_planStage { PlanStage::Initial };
     RefCountState m_refCountState;
 private:
     
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     
-    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* immediate, RareCaseProfilingSource source)
+    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* operand, Node*immediate, RareCaseProfilingSource source)
     {
         ASSERT(immediate->hasConstant());
         
@@ -861,8 +862,14 @@ private:
         
         if (!variableShouldSpeculateInt32)
             return DontSpeculateInt32;
+
+        // Integer constants can be typed Double if they are written like a double in the source code (e.g. 42.0).
+        // In that case, we stay conservative unless the other operand was explicitly typed as integer.
+        NodeFlags operandResultType = operand->result();
+        if (operandResultType != NodeResultInt32 && immediateValue.isDouble())
+            return DontSpeculateInt32;
         
-        if (immediateValue.isInt32() || immediateValue.isBoolean())
+        if (jsNumber(immediateValue.asNumber()).isInt32() || immediateValue.isBoolean())
             return add->canSpeculateInt32(source) ? SpeculateInt32 : DontSpeculateInt32;
         
         double doubleImmediate = immediateValue.asDouble();

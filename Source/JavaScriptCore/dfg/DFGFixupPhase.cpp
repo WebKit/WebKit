@@ -67,7 +67,9 @@ public:
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
             injectTypeConversionsInBlock(m_graph.block(blockIndex));
-        
+
+        m_graph.m_planStage = PlanStage::AfterFixup;
+
         return true;
     }
 
@@ -1056,7 +1058,6 @@ private:
         case DoubleRep:
         case ValueRep:
         case Int52Rep:
-        case DoubleConstant:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
@@ -1219,6 +1220,7 @@ private:
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
         case JSConstant:
+        case DoubleConstant:
         case GetLocal:
         case GetCallee:
         case Flush:

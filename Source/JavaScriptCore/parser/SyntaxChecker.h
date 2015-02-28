@@ -71,7 +71,7 @@ public:
 
     typedef SyntaxChecker FunctionBodyBuilder;
     enum { NoneExpr = 0,
-        ResolveEvalExpr, ResolveExpr, NumberExpr, StringExpr,
+        ResolveEvalExpr, ResolveExpr, IntegerExpr, DoubleExpr, StringExpr,
         ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
         FunctionExpr, ClassExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
@@ -151,7 +151,8 @@ public:
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int) { return ArrayLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int, int) { return ArrayLiteralExpr; }
-    ExpressionType createNumberExpr(const JSTokenLocation&, double) { return NumberExpr; }
+    ExpressionType createDoubleExpr(const JSTokenLocation&, double) { return DoubleExpr; }
+    ExpressionType createIntegerExpr(const JSTokenLocation&, double) { return IntegerExpr; }
     ExpressionType createString(const JSTokenLocation&, const Identifier*) { return StringExpr; }
     ExpressionType createBoolean(const JSTokenLocation&, bool) { return BoolExpr; }
     ExpressionType createNull(const JSTokenLocation&) { return NullExpr; }

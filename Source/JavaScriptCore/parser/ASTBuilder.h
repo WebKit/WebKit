@@ -192,10 +192,15 @@ public:
             incConstants();
         return new (m_parserArena) ArrayNode(location, elisions, elems);
     }
-    ExpressionNode* createNumberExpr(const JSTokenLocation& location, double d)
+    ExpressionNode* createDoubleExpr(const JSTokenLocation& location, double d)
     {
         incConstants();
-        return new (m_parserArena) NumberNode(location, d);
+        return new (m_parserArena) DoubleNode(location, d);
+    }
+    ExpressionNode* createIntegerExpr(const JSTokenLocation& location, double d)
+    {
+        incConstants();
+        return new (m_parserArena) IntegerNode(location, d);
     }
 
     ExpressionNode* createString(const JSTokenLocation& location, const Identifier* string)
@@ -748,11 +753,27 @@ private:
         m_evalCount++;
         m_scope.m_features |= EvalFeature;
     }
-    ExpressionNode* createNumber(const JSTokenLocation& location, double d)
+    ExpressionNode* createIntegerLikeNumber(const JSTokenLocation& location, double d)
     {
-        return new (m_parserArena) NumberNode(location, d);
+        return new (m_parserArena) IntegerNode(location, d);
     }
-    
+    ExpressionNode* createDoubleLikeNumber(const JSTokenLocation& location, double d)
+    {
+        return new (m_parserArena) DoubleNode(location, d);
+    }
+    ExpressionNode* createNumberFromBinaryOperation(const JSTokenLocation& location, double value, const NumberNode& originalNodeA, const NumberNode& originalNodeB)
+    {
+        if (originalNodeA.isIntegerNode() && originalNodeB.isIntegerNode())
+            return createIntegerLikeNumber(location, value);
+        return createDoubleLikeNumber(location, value);
+    }
+    ExpressionNode* createNumberFromUnaryOperation(const JSTokenLocation& location, double value, const NumberNode& originalNode)
+    {
+        if (originalNode.isIntegerNode())
+            return createIntegerLikeNumber(location, value);
+        return createDoubleLikeNumber(location, value);
+    }
+
     VM* m_vm;
     ParserArena& m_parserArena;
     SourceCode* m_sourceCode;
@@ -793,9 +814,8 @@ ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, Expr
 ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, ExpressionNode* n)
 {
     if (n->isNumber()) {
-        NumberNode* numberNode = static_cast<NumberNode*>(n);
-        numberNode->setValue(-numberNode->value());
-        return numberNode;
+        const NumberNode& numberNode = static_cast<const NumberNode&>(*n);
+        return createNumberFromUnaryOperation(location, -numberNode.value(), numberNode);
     }
 
     return new (m_parserArena) NegateNode(location, n);
@@ -804,7 +824,7 @@ ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, Expr
 ExpressionNode* ASTBuilder::makeBitwiseNotNode(const JSTokenLocation& location, ExpressionNode* expr)
 {
     if (expr->isNumber())
-        return createNumber(location, ~toInt32(static_cast<NumberNode*>(expr)->value()));
+        return createIntegerLikeNumber(location, ~toInt32(static_cast<NumberNode*>(expr)->value()));
     return new (m_parserArena) BitwiseNotNode(location, expr);
 }
 
@@ -813,8 +833,11 @@ ExpressionNode* ASTBuilder::makeMultNode(const JSTokenLocation& location, Expres
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createNumberFromBinaryOperation(location, numberExpr1.value() * numberExpr2.value(), numberExpr1, numberExpr2);
+    }
 
     if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
         return new (m_parserArena) UnaryPlusNode(location, expr2);
@@ -830,8 +853,14 @@ ExpressionNode* ASTBuilder::makeDivNode(const JSTokenLocation& location, Express
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        double result = numberExpr1.value() / numberExpr2.value();
+        if (static_cast<int64_t>(result) == result)
+            return createNumberFromBinaryOperation(location, result, numberExpr1, numberExpr2);
+        return createDoubleLikeNumber(location, result);
+    }
     return new (m_parserArena) DivNode(location, expr1, expr2, rightHasAssignments);
 }
 
@@ -839,16 +868,23 @@ ExpressionNode* ASTBuilder::makeModNode(const JSTokenLocation& location, Express
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
-    
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, fmod(static_cast<NumberNode*>(expr1)->value(), static_cast<NumberNode*>(expr2)->value()));
+
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, fmod(numberExpr1.value(), numberExpr2.value()));
+    }
     return new (m_parserArena) ModNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeAddNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
+
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createNumberFromBinaryOperation(location, numberExpr1.value() + numberExpr2.value(), numberExpr1, numberExpr2);
+    }
     return new (m_parserArena) AddNode(location, expr1, expr2, rightHasAssignments);
 }
 
@@ -857,50 +893,71 @@ ExpressionNode* ASTBuilder::makeSubNode(const JSTokenLocation& location, Express
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createNumberFromBinaryOperation(location, numberExpr1.value() - numberExpr2.value(), numberExpr1, numberExpr2);
+    }
     return new (m_parserArena) SubNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeLeftShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toInt32(numberExpr1.value()) << (toUInt32(numberExpr2.value()) & 0x1f));
+    }
     return new (m_parserArena) LeftShiftNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeRightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toInt32(numberExpr1.value()) >> (toUInt32(numberExpr2.value()) & 0x1f));
+    }
     return new (m_parserArena) RightShiftNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeURightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toUInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toUInt32(numberExpr1.value()) >> (toUInt32(numberExpr2.value()) & 0x1f));
+    }
     return new (m_parserArena) UnsignedRightShiftNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeBitOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) | toInt32(static_cast<NumberNode*>(expr2)->value()));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toInt32(numberExpr1.value()) | toInt32(numberExpr2.value()));
+    }
     return new (m_parserArena) BitOrNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeBitAndNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) & toInt32(static_cast<NumberNode*>(expr2)->value()));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toInt32(numberExpr1.value()) & toInt32(numberExpr2.value()));
+    }
     return new (m_parserArena) BitAndNode(location, expr1, expr2, rightHasAssignments);
 }
 
 ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) ^ toInt32(static_cast<NumberNode*>(expr2)->value()));
+    if (expr1->isNumber() && expr2->isNumber()) {
+        const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
+        const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
+        return createIntegerLikeNumber(location, toInt32(numberExpr1.value()) ^ toInt32(numberExpr2.value()));
+    }
     return new (m_parserArena) BitXOrNode(location, expr1, expr2, rightHasAssignments);
 }
 

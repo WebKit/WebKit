@@ -628,12 +628,14 @@ public:
 #endif
 
     Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
+    Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v)
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
         m_constantRegisters.last().set(m_globalObject->vm(), m_ownerExecutable.get(), v);
+        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
         return result;
     }
 
@@ -641,6 +643,7 @@ public:
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
+        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
         return result;
     }
 
@@ -649,6 +652,7 @@ public:
     WriteBarrier<Unknown>& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
     ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
+    ALWAYS_INLINE SourceCodeRepresentation constantSourceCodeRepresentation(int index) const { return m_constantsSourceCodeRepresentation[index - FirstConstantRegisterIndex]; }
 
     FunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
     int numberOfFunctionDecls() { return m_functionDecls.size(); }
@@ -983,12 +987,14 @@ private:
 
     void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
-    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants)
+    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
     {
+        ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
         size_t count = constants.size();
         m_constantRegisters.resize(count);
         for (size_t i = 0; i < count; i++)
             m_constantRegisters[i].set(*m_vm, ownerExecutable(), constants[i].get());
+        m_constantsSourceCodeRepresentation = constantsSourceCodeRepresentation;
     }
 
     void dumpBytecode(
@@ -996,6 +1002,7 @@ private:
         const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
 
     CString registerName(int r) const;
+    CString constantName(int index) const;
     void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printBinaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printConditionalJump(PrintStream&, ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
@@ -1093,6 +1100,7 @@ private:
     // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
+    Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     Vector<WriteBarrier<FunctionExecutable>> m_functionDecls;
     Vector<WriteBarrier<FunctionExecutable>> m_functionExprs;
 

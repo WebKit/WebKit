@@ -252,14 +252,21 @@ private:
             unsigned constantIndex = operand.toConstantIndex();
             unsigned oldSize = m_constants.size();
             if (constantIndex >= oldSize || !m_constants[constantIndex]) {
-                JSValue value = m_inlineStackTop->m_codeBlock->getConstant(operand.offset());
+                const CodeBlock& codeBlock = *m_inlineStackTop->m_codeBlock;
+                JSValue value = codeBlock.getConstant(operand.offset());
+                SourceCodeRepresentation sourceCodeRepresentation = codeBlock.constantSourceCodeRepresentation(operand.offset());
                 if (constantIndex >= oldSize) {
                     m_constants.grow(constantIndex + 1);
                     for (unsigned i = oldSize; i < m_constants.size(); ++i)
                         m_constants[i] = nullptr;
                 }
-                m_constants[constantIndex] =
-                    addToGraph(JSConstant, OpInfo(m_graph.freezeStrong(value)));
+
+                Node* constantNode = nullptr;
+                if (sourceCodeRepresentation == SourceCodeRepresentation::Double)
+                    constantNode = addToGraph(DoubleConstant, OpInfo(m_graph.freezeStrong(jsDoubleNumber(value.asNumber()))));
+                else
+                    constantNode = addToGraph(JSConstant, OpInfo(m_graph.freezeStrong(value)));
+                m_constants[constantIndex] = constantNode;
             }
             ASSERT(m_constants[constantIndex]);
             return m_constants[constantIndex];

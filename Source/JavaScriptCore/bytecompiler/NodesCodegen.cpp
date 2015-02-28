@@ -122,6 +122,15 @@ JSValue StringNode::jsValue(BytecodeGenerator& generator) const
     return generator.addStringConstant(m_value);
 }
 
+// ------------------------------ NumberNode ----------------------------------
+
+RegisterID* NumberNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (dst == generator.ignoredResult())
+        return nullptr;
+    return generator.emitLoad(dst, jsValue(generator), isIntegerNode() ? SourceCodeRepresentation::Integer : SourceCodeRepresentation::Double);
+}
+
 // ------------------------------ RegExpNode -----------------------------------
 
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

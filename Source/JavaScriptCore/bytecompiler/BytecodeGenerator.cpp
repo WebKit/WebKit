@@ -979,17 +979,19 @@ RegisterID* BytecodeGenerator::addConstantEmptyValue()
     return m_emptyValueRegister;
 }
 
-RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
+RegisterID* BytecodeGenerator::addConstantValue(JSValue v, SourceCodeRepresentation sourceCodeRepresentation)
 {
     if (!v)
         return addConstantEmptyValue();
 
     int index = m_nextConstantOffset;
-    JSValueMap::AddResult result = m_jsValueMap.add(JSValue::encode(v), m_nextConstantOffset);
+
+    EncodedJSValueWithRepresentation valueMapKey { JSValue::encode(v), sourceCodeRepresentation };
+    JSValueMap::AddResult result = m_jsValueMap.add(valueMapKey, m_nextConstantOffset);
     if (result.isNewEntry) {
         m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
         ++m_nextConstantOffset;
-        m_codeBlock->addConstant(v);
+        m_codeBlock->addConstant(v, sourceCodeRepresentation);
     } else
         index = result.iterator->value;
     return &m_constantPoolRegisters[index];
@@ -1162,9 +1164,9 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& ident
     return emitLoad(dst, JSValue(stringInMap));
 }
 
-RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v)
+RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRepresentation sourceCodeRepresentation)
 {
-    RegisterID* constantID = addConstantValue(v);
+    RegisterID* constantID = addConstantValue(v, sourceCodeRepresentation);
     if (dst)
         return emitMove(dst, constantID);
     return constantID;

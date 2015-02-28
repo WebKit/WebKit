@@ -443,7 +443,7 @@ namespace JSC {
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
-        RegisterID* emitLoad(RegisterID* dst, JSValue);
+        RegisterID* emitLoad(RegisterID* dst, JSValue, SourceCodeRepresentation = SourceCodeRepresentation::Other);
         RegisterID* emitLoadGlobalObject(RegisterID* dst);
 
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
@@ -646,7 +646,7 @@ namespace JSC {
 
         bool hasConstant(const Identifier&) const;
         unsigned addConstant(const Identifier&);
-        RegisterID* addConstantValue(JSValue);
+        RegisterID* addConstantValue(JSValue, SourceCodeRepresentation = SourceCodeRepresentation::Other);
         RegisterID* addConstantEmptyValue();
         unsigned addRegExp(RegExp*);
 
@@ -792,6 +792,8 @@ namespace JSC {
         
         // Constant pool
         IdentifierMap m_identifierMap;
+
+        typedef HashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
 

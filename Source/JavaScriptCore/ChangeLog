@@ -1,3 +1,160 @@
+2015-02-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Use the way number constants are written to help type speculation
+        https://bugs.webkit.org/show_bug.cgi?id=142072
+
+        Reviewed by Filip Pizlo.
+
+        This patch changes how we interpret numeric constant based on how they appear
+        in the source.
+
+        Constants that are integers but written with a decimal point now carry that information
+        to the optimizating tiers. From there, we use that to be more aggressive about typing
+        math operations toward double operations.
+
+        For example, in:
+            var a = x + 1.0;
+            var b = y + 1;
+        The Add for a would be biased toward doubles, the Add for b would speculate
+        integer as usual.
+
+
+        The gains are tiny but this is a prerequisite to make my next patch useful:
+        -SunSpider's access-fannkuch: definitely 1.0661x faster
+        -SunSpider's math-cordic: definitely 1.0266x slower
+            overal: might be 1.0066x slower.
+        -Kraken's imaging-darkroom: definitely 1.0333x faster.
+
+        * parser/Lexer.cpp:
+        (JSC::tokenTypeForIntegerLikeToken):
+        (JSC::Lexer<T>::lex):
+        The lexer now create two types of tokens for number: INTEGER and DOUBLE.
+        Those token types only carry information about how the values were
+        entered, an INTEGER does not have to be an integer, it is only written like one.
+        Large integer still end up represented as double in memory.
+
+        One trap I fell into was typing numbers like 12e3 as double. This kind of literal
+        is frequently used in integer-typed code, while 12.e3 would appear in double-typed
+        code.
+        Because of that, the only signals for double are: decimal point, negative zero,
+        and ridiculously large values.
+
+        * parser/NodeConstructors.h:
+        (JSC::DoubleNode::DoubleNode):
+        (JSC::IntegerNode::IntegerNode):
+        * parser/Nodes.h:
+        (JSC::NumberNode::value):
+        (JSC::NumberNode::setValue): Deleted.
+        Number get specialized in two new kind of nodes in the AST: IntegerNode and DoubleNode.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NumberNode::emitBytecode):
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createDoubleExpr):
+        (JSC::ASTBuilder::createIntegerExpr):
+        (JSC::ASTBuilder::createIntegerLikeNumber):
+        (JSC::ASTBuilder::createDoubleLikeNumber):
+        (JSC::ASTBuilder::createNumberFromBinaryOperation):
+        (JSC::ASTBuilder::createNumberFromUnaryOperation):
+        (JSC::ASTBuilder::makeNegateNode):
+        (JSC::ASTBuilder::makeBitwiseNotNode):
+        (JSC::ASTBuilder::makeMultNode):
+        (JSC::ASTBuilder::makeDivNode):
+        (JSC::ASTBuilder::makeModNode):
+        (JSC::ASTBuilder::makeAddNode):
+        (JSC::ASTBuilder::makeSubNode):
+        (JSC::ASTBuilder::makeLeftShiftNode):
+        (JSC::ASTBuilder::makeRightShiftNode):
+        (JSC::ASTBuilder::makeURightShiftNode):
+        (JSC::ASTBuilder::makeBitOrNode):
+        (JSC::ASTBuilder::makeBitAndNode):
+        (JSC::ASTBuilder::makeBitXOrNode):
+        (JSC::ASTBuilder::createNumberExpr): Deleted.
+        (JSC::ASTBuilder::createNumber): Deleted.
+        The AST has some optimization to resolve constants before emitting bytecode.
+        In the new code, the intger representation is kept if both operands where
+        also represented as integers.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDeconstructionPattern):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createDoubleExpr):
+        (JSC::SyntaxChecker::createIntegerExpr):
+        (JSC::SyntaxChecker::createNumberExpr): Deleted.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::registerName):
+        (JSC::CodeBlock::constantName):
+        Change constantName(r, getConstant(r)) -> constantName(r) to simplify
+        the dump code.
+
+        (JSC::CodeBlock::dumpBytecode):
+        Dump thre soure representation information we have with each constant.
+
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::constantName): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::constantsSourceCodeRepresentation):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::addConstantLazily):
+        (JSC::CodeBlock::constantSourceCodeRepresentation):
+        (JSC::CodeBlock::setConstantRegisters):
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addConstant):
+        (JSC::UnlinkedCodeBlock::constantsSourceCodeRepresentation):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/BytecodeGenerator.h:
+        We have to differentiate between constants that have the same values but are
+        represented differently in the source. Values like 1.0 and 1 now end up
+        as different constants.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::addConstantToGraph):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        ArithAdd is very aggressive toward using Int52, which is quite useful
+        in many benchmarks.
+
+        Here we need to specialize to make sure we don't force our literals
+        to Int52 if there were represented as double.
+
+        There is one exception to that rule: when the other operand is guaranteed
+        to come from a NodeResultInt32. This is because there is some weird code
+        doing stuff like:
+            var b = a|0;
+            var c = b*2.0;
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::setOpAndDefaultFlags):
+        (JSC::DFG::Node::sourceCodeRepresentation):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * runtime/JSCJSValue.h:
+        (JSC::EncodedJSValueWithRepresentationHashTraits::emptyValue):
+        (JSC::EncodedJSValueWithRepresentationHashTraits::constructDeletedValue):
+        (JSC::EncodedJSValueWithRepresentationHashTraits::isDeletedValue):
+        (JSC::EncodedJSValueWithRepresentationHash::hash):
+        (JSC::EncodedJSValueWithRepresentationHash::equal):
+        * tests/stress/arith-add-with-constants.js: Added.
+        * tests/stress/arith-mul-with-constants.js: Added.
+
 2015-02-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r180723. It broke a bunch of tests.

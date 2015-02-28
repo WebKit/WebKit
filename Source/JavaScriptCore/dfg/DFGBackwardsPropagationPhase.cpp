@@ -95,7 +95,7 @@ private:
     template<int power>
     bool isWithinPowerOfTwoNonRecursive(Node* node)
     {
-        if (node->op() != JSConstant)
+        if (!node->isNumberConstant())
             return false;
         return isWithinPowerOfTwoForConstant<power>(node);
     }
@@ -104,7 +104,9 @@ private:
     bool isWithinPowerOfTwo(Node* node)
     {
         switch (node->op()) {
-        case JSConstant: {
+        case DoubleConstant:
+        case JSConstant:
+        case Int52Constant: {
             return isWithinPowerOfTwoForConstant<power>(node);
         }
             
@@ -128,7 +130,7 @@ private:
                 return true;
             
             Node* shiftAmount = node->child2().node();
-            if (shiftAmount->op() != JSConstant)
+            if (!node->isNumberConstant())
                 return false;
             JSValue immediateValue = shiftAmount->asJSValue();
             if (!immediateValue.isInt32())

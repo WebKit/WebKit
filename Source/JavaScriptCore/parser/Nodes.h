@@ -236,14 +236,30 @@ namespace JSC {
     class NumberNode : public ConstantNode {
     public:
         NumberNode(const JSTokenLocation&, double value);
-        double value() { return m_value; }
-        void setValue(double value) { m_value = value; }
+        double value() const { return m_value; }
+        virtual bool isIntegerNode() const = 0;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override final;
 
     private:
-        virtual bool isNumber() const override { return true; }
+        virtual bool isNumber() const override final { return true; }
         virtual JSValue jsValue(BytecodeGenerator&) const override { return jsNumber(m_value); }
 
         double m_value;
+    };
+
+    class DoubleNode : public NumberNode {
+    public:
+        DoubleNode(const JSTokenLocation&, double value);
+
+    private:
+        virtual bool isIntegerNode() const override { return false; }
+    };
+
+    // An integer node represent a number represented as an integer (e.g. 42 instead of 42., 42.0, 42e0)
+    class IntegerNode : public DoubleNode {
+    public:
+        IntegerNode(const JSTokenLocation&, double value);
+        virtual bool isIntegerNode() const override final { return true; }
     };
 
     class StringNode : public ConstantNode {

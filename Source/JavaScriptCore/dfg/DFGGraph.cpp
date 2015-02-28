@@ -1053,6 +1053,7 @@ JSArrayBufferView* Graph::tryGetFoldableViewForChild1(Node* node)
 void Graph::registerFrozenValues()
 {
     m_codeBlock->constants().resize(0);
+    m_codeBlock->constantsSourceCodeRepresentation().resize(0);
     for (FrozenValue* value : m_frozenValues) {
         if (value->structure())
             ASSERT(m_plan.weakReferences.contains(value->structure()));
@@ -1078,6 +1079,7 @@ void Graph::registerFrozenValues()
         } }
     }
     m_codeBlock->constants().shrinkToFit();
+    m_codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
 }
 
 void Graph::visitChildren(SlotVisitor& visitor)

@@ -318,11 +318,12 @@ public:
     const Vector<Identifier>& identifiers() const { return m_identifiers; }
 
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
-    unsigned addConstant(JSValue v)
+    unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
         m_constantRegisters.last().set(*m_vm, this, v);
+        m_constantsSourceCodeRepresentation.append(sourceCodeRepresentation);
         return result;
     }
     unsigned addOrFindConstant(JSValue);
@@ -330,6 +331,7 @@ public:
     const WriteBarrier<Unknown>& constantRegister(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
     ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
+    const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
     // Jumps
     size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
@@ -347,6 +349,7 @@ public:
         m_jumpTargets.shrinkToFit();
         m_identifiers.shrinkToFit();
         m_constantRegisters.shrinkToFit();
+        m_constantsSourceCodeRepresentation.shrinkToFit();
         m_functionDecls.shrinkToFit();
         m_functionExprs.shrinkToFit();
         m_propertyAccessInstructions.shrinkToFit();
@@ -544,6 +547,7 @@ private:
     // Constant Pools
     Vector<Identifier> m_identifiers;
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
+    Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     typedef Vector<WriteBarrier<UnlinkedFunctionExecutable>> FunctionExpressionVector;
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;

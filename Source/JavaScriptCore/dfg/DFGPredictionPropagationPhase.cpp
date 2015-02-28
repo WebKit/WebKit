@@ -148,6 +148,11 @@ private:
             changed |= setPrediction(type);
             break;
         }
+        case DoubleConstant: {
+            SpeculatedType type = speculationFromValue(node->asJSValue());
+            changed |= setPrediction(type);
+            break;
+        }
             
         case GetLocal: {
             VariableAccessData* variable = node->variableAccessData();
@@ -532,7 +537,6 @@ private:
         case DoubleRep:
         case ValueRep:
         case Int52Rep:
-        case DoubleConstant:
         case Int52Constant:
         case Identity:
         case BooleanToNumber:

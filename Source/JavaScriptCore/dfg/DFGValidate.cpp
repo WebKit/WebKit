@@ -118,8 +118,8 @@ public:
                         continue;
                     
                     m_myRefCounts.find(edge.node())->value++;
-                    
-                    VALIDATE((node, edge), edge->hasDoubleResult() == (edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse));
+
+                    validateEdgeWithDoubleResultIfNecessary(node, edge);
                     VALIDATE((node, edge), edge->hasInt52Result() == (edge.useKind() == Int52RepUse));
                     
                     if (m_graph.m_form == SSA) {
@@ -543,7 +543,18 @@ private:
             }
         }
     }
-    
+
+    void validateEdgeWithDoubleResultIfNecessary(Node* node, Edge edge)
+    {
+        if (!edge->hasDoubleResult())
+            return;
+
+        if (m_graph.m_planStage < PlanStage::AfterFixup)
+            VALIDATE((node, edge), edge.useKind() == UntypedUse);
+        else
+            VALIDATE((node, edge), edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse);
+    }
+
     void checkOperand(
         BasicBlock* block, Operands<size_t>& getLocalPositions,
         Operands<size_t>& setLocalPositions, VirtualRegister operand)

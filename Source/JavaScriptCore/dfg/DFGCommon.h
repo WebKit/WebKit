@@ -256,6 +256,11 @@ inline KillStatus killStatusForDoesKill(bool doesKill)
     return doesKill ? DoesKill : DoesNotKill;
 }
 
+enum class PlanStage {
+    Initial,
+    AfterFixup
+};
+
 template<typename T, typename U>
 bool checkAndSet(T& left, U right)
 {

@@ -84,6 +84,16 @@ namespace JSC {
     {
     }
 
+    inline DoubleNode::DoubleNode(const JSTokenLocation& location, double value)
+        : NumberNode(location, value)
+    {
+    }
+
+    inline IntegerNode::IntegerNode(const JSTokenLocation& location, double value)
+        : DoubleNode(location, value)
+    {
+    }
+
     inline StringNode::StringNode(const JSTokenLocation& location, const Identifier& value)
         : ConstantNode(location, ResultType::stringType())
         , m_value(value)
