@@ -1,3 +1,11 @@
+2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening for Windows after r180796.
+
+        Unreviewed.
+
+        * platform/win/TestExpectations:
+
 2015-02-27  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=142119

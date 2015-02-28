@@ -3195,6 +3195,11 @@ webkit.org/b/141977 fast/history/page-cache-createObjectURL.html [ Skip ]
 
 webkit.org/b/142119 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
+# Text metrics differ between win and mac
+webkit.org/b/139968 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
