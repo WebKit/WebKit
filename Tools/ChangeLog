@@ -1,5 +1,16 @@
 2015-02-23  Brent Fulgham  <bfulgham@apple.com>
 
+        WTF::WeakPtr should rename 'forgot' to 'clear' and support nullptr assignment
+        https://bugs.webkit.org/show_bug.cgi?id=141935
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST): Updated for 'clear' method rename, and added a few
+        tests for assigning from nullptr.
+
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
         WTF::WeakPtr should have a 'forget' method.
         https://bugs.webkit.org/show_bug.cgi?id=141923
 
