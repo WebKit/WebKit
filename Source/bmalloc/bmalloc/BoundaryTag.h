@@ -50,8 +50,8 @@ public:
     bool isEnd() { return m_isEnd; }
     void setEnd(bool isEnd) { m_isEnd = isEnd; }
 
-    Owner owner() { return m_owner; }
-    void setOwner(Owner owner) { m_owner = owner; }
+    Owner owner() { return m_ownerIsHeap ? Owner::Heap : Owner::VMHeap; }
+    void setOwner(Owner owner) { m_ownerIsHeap = (owner == Owner::VMHeap); }
     
     bool isMarked() { return m_isMarked; }
     void setMarked(bool isMarked) { m_isMarked = isMarked; }
@@ -85,7 +85,7 @@ private:
 
     bool m_isFree: 1;
     bool m_isEnd: 1;
-    Owner m_owner: 1;
+    bool m_ownerIsHeap: 1;
     bool m_isMarked: 1;
     unsigned m_compactBegin: compactBeginBits;
     unsigned m_size: sizeBits;

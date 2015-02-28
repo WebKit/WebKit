@@ -1,3 +1,11 @@
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL build fix after r180797.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::owner):
+        (bmalloc::BoundaryTag::setOwner):
+
 2015-02-27  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Pathological madvise churn on the free(malloc(x)) benchmark
