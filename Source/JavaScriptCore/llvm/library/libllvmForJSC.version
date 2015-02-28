@@ -1,0 +1,4 @@
+LLVMFORJSC {
+    global: initializeAndGetJSCLLVMAPI;
+    local: *;
+};

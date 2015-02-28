@@ -1,3 +1,13 @@
+2015-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        CMake build of libllvmForJSC.so should limit its export list like the Xcode build does
+        https://bugs.webkit.org/show_bug.cgi?id=141989
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * llvm/library/libllvmForJSC.version: Added.
+
 2015-02-24  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r179753.  The fix was invalid.
