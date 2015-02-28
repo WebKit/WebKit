@@ -375,7 +375,6 @@ editing/style/5065910.html [ Missing ]
 editing/style/font-family-with-space.html [ Missing ]
 editing/style/smoosh-styles-001.html [ Missing ]
 editing/style/style-boundary-005.html [ Missing ]
-fast/borders/mixed-border-style2.html [ Missing ]
 fast/css/css2-system-fonts.html [ Missing ]
 fast/text/tatechuyoko.html [ Missing ]
 
@@ -518,6 +517,7 @@ webkit.org/b/131729 fast/events/touch [ Skip ]
 fast/canvas/webgl [ Skip ]
 webgl [ Skip ]
 http/tests/webgl [ Skip ]
+compositing/webgl [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Old WebGL expectations before skipping all of them
@@ -1868,9 +1868,6 @@ webkit.org/b/130020 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure
 
 webkit.org/b/130340 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
-# Need HighDPI support
-webkit.org/b/131987 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
-webkit.org/b/131987 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
@@ -1886,10 +1883,6 @@ webkit.org/b/131987 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-o
 webkit.org/b/131987 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
-
-# Failing after r169048
-webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
-webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
 
 # Failures EFL WK2 since the inception
 webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
@@ -1917,9 +1910,6 @@ svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ]
 
 webkit.org/b/133220 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/133220 fast/events/shadow-event-path-2.html [ Failure ]
-
-# Failing after r168868
-webkit.org/b/133307 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
 
 webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
 
@@ -2020,11 +2010,6 @@ webkit.org/b/141458 imported/mozilla/svg/blend-multiply.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-screen.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
-webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 # Started failing since r167808
 webkit.org/b/141496 fast/multicol/client-rects-spanners-complex.html [ Failure ]

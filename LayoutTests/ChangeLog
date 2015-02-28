@@ -1,3 +1,11 @@
+2015-02-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening 1st Mar.
+
+        * platform/efl/TestExpectations:
+        - Unskip tests which have been passed since r180672.
+        - Skip compositing/webgl.
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel-layout: width: max-content; property might cause unnecessary scrollbar.
