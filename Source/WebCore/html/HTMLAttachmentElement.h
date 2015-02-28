@@ -37,7 +37,6 @@ class File;
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-    virtual bool canContainRangeEndPoint() const override { return false; }
     File* file() const;
     void setFile(File*);
 
@@ -47,8 +46,7 @@ private:
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
-    virtual bool isFocusable() const override { return true; }
-    virtual void setFocus(bool shouldBeFocused) override;
+    virtual bool canContainRangeEndPoint() const override { return false; }
     
     RefPtr<File> m_file;
 };

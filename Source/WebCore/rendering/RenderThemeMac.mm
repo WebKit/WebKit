@@ -2251,7 +2251,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     context.translate(toFloatSize(paintRect.location()));
     context.translate(FloatSize((layout.attachmentRect.width() - attachmentIconBackgroundSize) / 2, 0));
 
-    bool useSelectedStyle = attachment.isSelectedOrFocused();
+    bool useSelectedStyle = attachment.isSelected();
 
     if (useSelectedStyle)
         paintAttachmentIconBackground(attachment, context, layout);

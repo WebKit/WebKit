@@ -57,21 +57,11 @@ bool RenderAttachment::isSelected() const
     return selectionRange && selectionRange->intersectsNode(&nodeForNonAnonymous(), ASSERT_NO_EXCEPTION);
 }
 
-bool RenderAttachment::isFocused() const
-{
-    return frame().selection().isFocusedAndActive() && document().focusedElement() == &attachmentElement();
-}
-
 void RenderAttachment::layout()
 {
     setIntrinsicSize(document().page()->theme().attachmentIntrinsicSize(*this));
 
     RenderReplaced::layout();
-}
-
-void RenderAttachment::focusChanged()
-{
-    repaint();
 }
 
 void RenderAttachment::representedFileChanged()

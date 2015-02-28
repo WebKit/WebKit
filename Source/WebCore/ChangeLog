@@ -1,3 +1,28 @@
+2015-02-27  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> should be selected immediately upon click, and be drag/copyable upon click
+        https://bugs.webkit.org/show_bug.cgi?id=142114
+        <rdar://problem/19982520>
+
+        Reviewed by Enrica Casucci.
+
+        * css/html.css:
+        (attachment):
+        Make attachment use 'user-select: all' to act as a single click-to-select unit.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::setFocus): Deleted.
+        * html/HTMLAttachmentElement.h:
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::isFocused): Deleted.
+        (WebCore::RenderAttachment::focusChanged): Deleted.
+        * rendering/RenderAttachment.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintAttachment):
+        Remove focus-related code; instead of focusing the element upon click,
+        we get a selection including just the <attachment>, and everything
+        behaves much more consistently (copy works, drag works, etc.).
+
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()

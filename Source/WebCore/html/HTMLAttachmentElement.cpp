@@ -72,20 +72,6 @@ void HTMLAttachmentElement::setFile(File* file)
     downcast<RenderAttachment>(*renderer).representedFileChanged();
 }
 
-void HTMLAttachmentElement::setFocus(bool shouldBeFocused)
-{
-    if (focused() == shouldBeFocused)
-        return;
-    
-    HTMLElement::setFocus(shouldBeFocused);
-    
-    auto* renderer = this->renderer();
-    if (!is<RenderAttachment>(renderer))
-        return;
-    
-    downcast<RenderAttachment>(*renderer).focusChanged();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

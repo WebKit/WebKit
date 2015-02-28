@@ -40,10 +40,9 @@ public:
 
     HTMLAttachmentElement& attachmentElement() const;
 
-    void focusChanged();
     void representedFileChanged();
 
-    bool isSelectedOrFocused() const { return isSelected() || isFocused(); }
+    bool isSelected() const;
 
 private:
     void element() const = delete;
@@ -53,9 +52,6 @@ private:
     virtual bool shouldDrawSelectionTint() const override { return false; }
 
     virtual void layout() override;
-
-    bool isSelected() const;
-    bool isFocused() const;
 
     virtual int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const;
 };
