@@ -49,7 +49,7 @@ public:
     virtual void play();
     virtual void pause();
 
-    virtual IntSize naturalSize() const;
+    virtual FloatSize naturalSize() const;
 
     virtual bool hasVideo() const;
     virtual bool hasAudio() const;
@@ -69,7 +69,7 @@ public:
 
     virtual void setSize(const IntSize&);
 
-    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const FloatRect&);
 
 private:
     MediaPlayer* m_player;
@@ -81,7 +81,7 @@ private:
     bool m_hasVideo;
     HWND m_hwndVideo;
     MediaPlayer::ReadyState m_readyState;
-    IntRect m_lastPaintRect;
+    FloatRect m_lastPaintRect;
 
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;

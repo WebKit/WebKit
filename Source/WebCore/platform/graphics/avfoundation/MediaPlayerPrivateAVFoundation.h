@@ -161,7 +161,7 @@ protected:
     virtual void play() override;
     virtual void pause() override;
 
-    virtual IntSize naturalSize() const override;
+    virtual FloatSize naturalSize() const override;
     virtual bool hasVideo() const override { return m_cachedHasVideo; }
     virtual bool hasAudio() const override { return m_cachedHasAudio; }
     virtual void setVisible(bool) override;
@@ -181,8 +181,8 @@ protected:
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
-    virtual void paint(GraphicsContext*, const IntRect&) = 0;
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
+    virtual void paint(GraphicsContext*, const FloatRect&) = 0;
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) = 0;
     virtual void setPreload(MediaPlayer::Preload) override;
     virtual PlatformLayer* platformLayer() const { return 0; }
     virtual bool supportsAcceleratedRendering() const = 0;
@@ -265,7 +265,7 @@ protected:
     void setDelayCharacteristicsChangedNotification(bool);
     void setDelayCallbacks(bool) const;
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
-    void setNaturalSize(IntSize);
+    void setNaturalSize(FloatSize);
     bool isLiveStream() const { return std::isinf(duration()); }
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingToContext, MediaRenderingToLayer };
@@ -320,7 +320,7 @@ private:
     String m_assetURL;
     MediaPlayer::Preload m_preload;
 
-    IntSize m_cachedNaturalSize;
+    FloatSize m_cachedNaturalSize;
     mutable MediaTime m_cachedMaxTimeLoaded;
     mutable MediaTime m_cachedMaxTimeSeekable;
     mutable MediaTime m_cachedMinTimeSeekable;

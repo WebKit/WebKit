@@ -65,7 +65,7 @@ public:
 #endif
 
     // Used by canvas to gain raw pixel access
-    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
 
     PassNativeImagePtr nativeImageForCurrentTime();
 

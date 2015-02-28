@@ -311,7 +311,7 @@ public:
     String errorLog() const;
 #endif
 
-    IntSize naturalSize();
+    FloatSize naturalSize();
     bool hasVideo() const;
     bool hasAudio() const;
 
@@ -391,8 +391,8 @@ public:
     bool autoplay() const;
     void setAutoplay(bool);
 
-    void paint(GraphicsContext*, const IntRect&);
-    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    void paint(GraphicsContext*, const FloatRect&);
+    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
 
     // copyVideoTextureToPlatformTexture() is used to do the GPU-GPU textures copy without a readback to system memory.
     // The first five parameters denote the corresponding GraphicsContext, destination texture, requested level, requested type and the required internalFormat for destination texture.
