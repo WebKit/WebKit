@@ -1,5 +1,29 @@
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: Implement support for ARIA 1.1 'switch' role
+        https://bugs.webkit.org/show_bug.cgi?id=141986
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-switch-checked-expected.txt: Added.
+        * accessibility/aria-switch-checked.html: Added.
+        * accessibility/aria-switch-sends-notification-expected.txt: Added.
+        * accessibility/aria-switch-sends-notification.html: Added.
+        * accessibility/aria-switch-text.html: Added.
+        * accessibility/roles-exposed.html: Added a test case for the new role.
+        * platform/efl/accessibility/aria-fallback-roles-expected.txt: Added.
+        * platform/efl/accessibility/aria-switch-text-expected.txt: Added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated for the new role.
+        * platform/gtk/accessibility/aria-fallback-roles-expected.txt: Added.
+        * platform/gtk/accessibility/aria-switch-text-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for the new role.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated for the new role.
+        * platform/mac/TestExpectations: Skip the 'checked' notifcation as the Mac doesn't have it.
+        * platform/mac/accessibility/aria-switch-text-expected.txt: Added.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated for the new role.
+
+2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK] Layout Test accessibility/roles-exposed.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=141960
 

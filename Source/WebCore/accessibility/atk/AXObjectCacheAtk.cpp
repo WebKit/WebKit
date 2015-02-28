@@ -194,7 +194,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
 
     switch (notification) {
     case AXCheckedStateChanged:
-        if (!coreObject->isCheckboxOrRadio())
+        if (!coreObject->isCheckboxOrRadio() && !coreObject->isSwitch())
             return;
         atk_object_notify_state_change(axObject, ATK_STATE_CHECKED, coreObject->isChecked());
         break;

@@ -1,3 +1,46 @@
+2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA 1.1 'switch' role
+        https://bugs.webkit.org/show_bug.cgi?id=141986
+
+        Reviewed by Chris Fleizach.
+
+        Map the role to ATK_ROLE_TOGGLE_BUTTON for Gtk and Efl; on the Mac, to
+        AXCheckBox with a subrole of AXSwitch. Ensure it looks and acts like a
+        widget to accessibility APIs (supports and emits notifications when
+        toggled, doesn't have children, exposes a name and description when
+        provided).
+
+        Tests: accessibility/aria-switch-checked.html
+               accessibility/aria-switch-sends-notification.html
+               accessibility/aria-switch-text.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren):
+        (WebCore::AccessibilityNodeObject::isChecked):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isARIAInput):
+        (WebCore::AccessibilityObject::actionVerb):
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::supportsChecked):
+        (WebCore::AccessibilityObject::checkboxOrRadioValue):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isSwitch):
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityCanFuzzyHitTest]):
+        (-[WebAccessibilityObjectWrapper accessibilityTraits]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

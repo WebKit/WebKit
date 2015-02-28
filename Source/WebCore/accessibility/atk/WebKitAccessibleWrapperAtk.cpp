@@ -510,6 +510,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_EMBEDDED;
     case ButtonRole:
         return ATK_ROLE_PUSH_BUTTON;
+    case SwitchRole:
     case ToggleButtonRole:
         return ATK_ROLE_TOGGLE_BUTTON;
     case RadioButtonRole:

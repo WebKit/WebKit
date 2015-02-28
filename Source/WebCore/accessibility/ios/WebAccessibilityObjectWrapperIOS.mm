@@ -299,6 +299,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case ScrollBarRole:
     case SliderRole:
     case StaticTextRole:
+    case SwitchRole:
     case TabRole:
     case TextFieldRole:
     case ToggleButtonRole:
@@ -566,6 +567,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             break;
         case ToggleButtonRole:
         case CheckBoxRole:
+        case SwitchRole:
             traits |= ([self _axButtonTrait] | [self _axToggleTrait]);
             break;
         case HeadingRole:
@@ -645,6 +647,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case TabRole:
         case DocumentMathRole:
         case HorizontalRuleRole:
+        case SwitchRole:
             return true;
         case StaticTextRole:
         {
