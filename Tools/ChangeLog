@@ -1,3 +1,14 @@
+2015-02-28  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Stop running webkit-build-directory on every layout test
+
+        This was originally fixed by David Farler for Bug 135409 in
+        r172602.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.relay_path): Mark as @memoized so it doesn't
+        run webkit-build-directory every time it's called.
+
 2015-02-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C importer should use filesystem instead of shutil/host

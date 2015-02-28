@@ -126,6 +126,7 @@ class IOSSimulatorPort(Port):
         return device_type
 
     @property
+    @memoized
     def relay_path(self):
         mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
         return self._filesystem.join(mac_config.build_directory(self.get_option('configuration')), self.relay_name)
