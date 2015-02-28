@@ -1,3 +1,11 @@
+2015-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Test gardening, unmark now passing tests.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()

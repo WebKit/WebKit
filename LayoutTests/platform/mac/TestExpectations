@@ -1075,14 +1075,13 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outsid
 webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
 
-# REGRESSION(r156546): 7 media tests broken (122021)
+# REGRESSION(r156546): 6 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
 webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
-webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
 
 webkit.org/b/139708 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 # --- End media tests ---
@@ -1095,7 +1094,7 @@ webkit.org/b/137157 [ Release ] inspector/page/main-frame-resource.html [ Pass F
 
 # FIXME: Needs bugzilla (<rdar://problem/15393179>)
 [ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
-[ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Failure ]
+[ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Pass Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
 

@@ -448,10 +448,6 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 ########################################
 ### START OF (6) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
 
-fast/dom/call-a-constructor-as-a-function.html [ Failure ]
-js/dom/constructor-length.html [ Failure ]
-js/dom/global-constructors-attributes.html [ Failure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
 http/tests/security/appcache-in-private-browsing.html [ Skip ]
