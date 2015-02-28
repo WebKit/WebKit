@@ -100,6 +100,23 @@ enum class ProcessAccessType {
     Launch,
 };
 
+static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+{
+    ProcessAccessType processAccessType = ProcessAccessType::None;
+
+    if (dataTypes & WebsiteDataTypeCookies) {
+        if (isNonPersistentStore)
+            processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
+        else
+            processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    }
+
+    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistentStore)
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
+    return processAccessType;
+}
+
 static ProcessAccessType computeWebProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
 {
     UNUSED_PARAM(isNonPersistentStore);
@@ -175,6 +192,34 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     };
 
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+
+    auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, isNonPersistent());
+    if (networkProcessAccessType != ProcessAccessType::None) {
+        HashSet<WebProcessPool*> processPools;
+        for (auto& process : processes())
+            processPools.add(&process->processPool());
+
+        for (auto& processPool : processPools) {
+            switch (networkProcessAccessType) {
+            case ProcessAccessType::OnlyIfLaunched:
+                if (!processPool->networkProcess())
+                    continue;
+                break;
+
+            case ProcessAccessType::Launch:
+                processPool->ensureNetworkProcess();
+                break;
+
+            case ProcessAccessType::None:
+                ASSERT_NOT_REACHED();
+            }
+
+            callbackAggregator->addPendingCallback();
+            processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
+                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            });
+        }
+    }
 
     auto webProcessAccessType = computeWebProcessAccessTypeForDataFetch(dataTypes, isNonPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
