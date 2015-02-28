@@ -1,3 +1,14 @@
+2015-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable concurrent JIT on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=142007
+
+        Reviewed by Benjamin Poulain.
+
+        Seems weird that GTK keeps it off. No good reason for that as far as I can tell.
+
+        * wtf/Platform.h:
+
 2015-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         WTF::WeakPtr should rename 'forgot' to 'clear' and support nullptr assignment
