@@ -1,3 +1,13 @@
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        WTF::WeakPtr should have a 'forget' method.
+        https://bugs.webkit.org/show_bug.cgi?id=141923
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST): Added 'Forget' tests case.
+
 2015-02-20  Michael Saboff  <msaboff@apple.com>
 
         DFG JIT needs to check for stack overflow at the start of Program and Eval execution

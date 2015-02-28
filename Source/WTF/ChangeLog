@@ -1,3 +1,13 @@
+2015-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        WTF::WeakPtr should have a 'forget' method
+        https://bugs.webkit.org/show_bug.cgi?id=141923
+
+        Reviewed by Myles C. Maxfield.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::forget): Added.
+
 2015-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         RunLoop::dispatch() should drop the mutex before calling wakeUp().
