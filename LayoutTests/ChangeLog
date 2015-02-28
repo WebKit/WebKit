@@ -1,3 +1,15 @@
+2015-02-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening: Skip some new page-cache tests
+
+        * platform/ios-simulator/TestExpectations:
+        - Skip MediaSource tests:
+          fast/history/page-cache-media-source-closed-2.html
+          fast/history/page-cache-media-source-closed.html
+          fast/history/page-cache-media-source-opened.html
+        - Skip test that uses drag-and-drop:
+          fast/history/page-cache-createObjectURL.html
+
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening for Windows after r180796.

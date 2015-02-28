@@ -58,6 +58,11 @@ http/tests/pointer-lock
 media
 http/tests/media
 
+# MediaSource is not currently supported on iOS.
+fast/history/page-cache-media-source-closed-2.html [ Skip ]
+fast/history/page-cache-media-source-closed.html [ Skip ]
+fast/history/page-cache-media-source-opened.html [ Skip ]
+
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 
@@ -67,7 +72,8 @@ webkit.org/b/136452 http/tests/security/contentTypeOptions
 # webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
 http/tests/w3c/webperf
 
-# IndexedDB is not supported on iOS
+# FIXME: Move this skip list to ios-simulator-wk1/TestExpectations.
+# IndexedDB is not supported on iOS WK1.
 storage/indexeddb
 inspector-protocol/indexeddb/basics.html
 crypto/subtle/rsa-indexeddb-non-exportable.html
@@ -162,6 +168,7 @@ fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/prevent-drag-to-navigate.html
 fast/events/standalone-image-drag-to-editable.html
 fast/files/local-file-drag-security.html
+fast/history/page-cache-createObjectURL.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-entry.html
 editing/pasteboard/data-transfer-items-drag-drop-file.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
