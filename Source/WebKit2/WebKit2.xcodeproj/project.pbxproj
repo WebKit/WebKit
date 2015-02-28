@@ -746,7 +746,7 @@
 		33D3A3C91339617900709BE4 /* WebMediaCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */; };
 		33D3A3CA1339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */; };
 		33D3A3CB1339617900709BE4 /* WebMediaCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */; };
-		33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */; };
+		33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.mm */; };
 		370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 370F34A01829BE1E009027C8 /* WKNavigationData.mm */; };
 		370F34A31829BE1E009027C8 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A11829BE1E009027C8 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		370F34A51829BEA3009027C8 /* WKNavigationDataInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */; };
@@ -2894,7 +2894,7 @@
 		33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerMessages.h; sourceTree = "<group>"; };
 		33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerProxyMessages.h; sourceTree = "<group>"; };
-		33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceCacheManagerCFNet.cpp; path = ResourceCache/cf/WebResourceCacheManagerCFNet.cpp; sourceTree = "<group>"; };
+		33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceCacheManagerCFNet.mm; path = ResourceCache/cf/WebResourceCacheManagerCFNet.mm; sourceTree = "<group>"; };
 		3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFAnnotationTextWidgetDetails.h; path = PDF/PDFAnnotationTextWidgetDetails.h; sourceTree = "<group>"; };
 		370F34A01829BE1E009027C8 /* WKNavigationData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationData.mm; sourceTree = "<group>"; };
 		370F34A11829BE1E009027C8 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
@@ -5234,7 +5234,7 @@
 		33F9D5B71312F1B1000D683F /* cf */ = {
 			isa = PBXGroup;
 			children = (
-				33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */,
+				33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.mm */,
 			);
 			name = cf;
 			sourceTree = "<group>";
@@ -9820,7 +9820,7 @@
 				37948403150C350600E52CE9 /* WebRenderLayer.cpp in Sources */,
 				3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */,
 				3336762F130C9998006C9DE2 /* WebResourceCacheManager.cpp in Sources */,
-				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */,
+				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.mm in Sources */,
 				33367655130C9ECA006C9DE2 /* WebResourceCacheManagerMessageReceiver.cpp in Sources */,
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,

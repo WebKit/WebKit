@@ -1,3 +1,14 @@
+2015-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebResourceCacheManagerCFNet.cpp to WebResourceCacheManagerCFNet.mm
+
+        Rubber-stamped by Dan Bernstein.
+
+        This will let us use lambda to block conversion in a subsequent patch.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.mm: Renamed from Source/WebKit2/WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp.
+
 2015-02-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180203 and r180210.
