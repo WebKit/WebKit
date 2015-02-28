@@ -3192,6 +3192,9 @@ inspector/css/stylesheet-with-mutations.html [ Skip ] # Timeout
 
 webkit.org/b/142017 fast/attachment/attachment-dom.html [ Skip ]
 webkit.org/b/141977 fast/history/page-cache-createObjectURL.html [ Skip ]
+
+webkit.org/b/142119 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
