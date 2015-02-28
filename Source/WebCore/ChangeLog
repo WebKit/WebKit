@@ -1,3 +1,13 @@
+2015-02-27  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] Fix build break after r180790,180798
+        https://bugs.webkit.org/show_bug.cgi?id=142127
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addEllipse):
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel-layout: width: max-content; property might cause unnecessary scrollbar.

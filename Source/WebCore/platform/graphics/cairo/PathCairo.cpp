@@ -284,6 +284,11 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     addArc(p, radius, sa, ea, anticlockwise);
 }
 
+void Path::addEllipse(FloatPoint, float, float, float, float, float, bool)
+{
+    notImplemented();
+}
+
 void Path::addEllipse(const FloatRect& rect)
 {
     cairo_t* cr = ensurePlatformPath()->context();
