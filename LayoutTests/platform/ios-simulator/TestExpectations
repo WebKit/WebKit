@@ -80,7 +80,6 @@ crypto/subtle/rsa-indexeddb-non-exportable.html
 crypto/subtle/rsa-indexeddb.html
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html
-fast/history/page-cache-webdatabase-opened-db.html
 
 # Quota API is not supported on iOS
 storage/domstorage/quota.html

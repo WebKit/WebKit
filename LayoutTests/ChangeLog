@@ -1,5 +1,12 @@
 2015-02-27  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Gardening: Unskip fast/history/page-cache-webdatabase-opened-db.html
+
+        * platform/ios-simulator/TestExpectations: Unskip test.  It
+        passes on iOS WK1 and WK2 because WebSQL != IndexedDB.
+
+2015-02-27  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Gardening: Skip some new page-cache tests
 
         * platform/ios-simulator/TestExpectations:
