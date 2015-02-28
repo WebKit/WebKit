@@ -1,3 +1,11 @@
+2015-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        Adjust project dependencies to ensure a consistent build order.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove WebKitExportGenerator project (and related)

@@ -30,7 +30,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\JavaScriptCore.vcxproj", "{22413D41-3A18-42B7-92A8-CEDC6CE86920}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 		{9221744B-5715-4F56-9590-42F7AB23DD8B} = {9221744B-5715-4F56-9590-42F7AB23DD8B}
 		{8EF73779-BED3-45BB-816D-9FF58399AFA5} = {8EF73779-BED3-45BB-816D-9FF58399AFA5}
 	EndProjectSection
@@ -42,19 +41,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsc", "..\..\JavaScriptCore
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "..\..\WebCore\WebCore.vcxproj\WebCore.vcxproj", "{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
 	ProjectSection(ProjectDependencies) = postProject
-		{22413D41-3A18-42B7-92A8-CEDC6CE86920} = {22413D41-3A18-42B7-92A8-CEDC6CE86920}
 		{A4159B6F-3106-4F75-9EDD-582307BDB96A} = {A4159B6F-3106-4F75-9EDD-582307BDB96A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCoreGenerated", "..\..\WebCore\WebCore.vcxproj\WebCoreGenerated.vcxproj", "{A4159B6F-3106-4F75-9EDD-582307BDB96A}"
 	ProjectSection(ProjectDependencies) = postProject
-		{FE09F693-9744-4D73-A17C-FE3209EB1905} = {FE09F693-9744-4D73-A17C-FE3209EB1905}
+		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6} = {E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit", "WebKit\WebKit.vcxproj", "{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6} = {E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}
-		{1659B1B6-F2A3-46B3-AE02-FE65B4A607EB} = {1659B1B6-F2A3-46B3-AE02-FE65B4A607EB}
+		{A15EDAD8-8B87-4D4A-8498-77A04AB65F16} = {A15EDAD8-8B87-4D4A-8498-77A04AB65F16}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRegExp", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\testRegExp\testRegExp.vcxproj", "{BB16286B-AADC-46C1-BC0D-6C06F323E04B}"
@@ -69,7 +66,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\JavaScript
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntOffsetsExtractor", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\LLInt\LLIntOffsetsExtractor\LLIntOffsetsExtractor.vcxproj", "{D595E3F6-24F2-4C60-935C-95D50C6B3E96}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 		{877150A0-41B3-4730-9D98-1B8298098B14} = {877150A0-41B3-4730-9D98-1B8298098B14}
 	EndProjectSection
 EndProject
@@ -80,7 +76,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntDesiredOffsets", "..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntAssembly", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\LLInt\LLIntAssembly\LLIntAssembly.vcxproj", "{9221744B-5715-4F56-9590-42F7AB23DD8B}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 		{D595E3F6-24F2-4C60-935C-95D50C6B3E96} = {D595E3F6-24F2-4C60-935C-95D50C6B3E96}
 	EndProjectSection
 EndProject
@@ -93,7 +88,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinLauncher Projects", "Win
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncherLib", "..\..\..\Tools\WinLauncher\WinLauncher.vcxproj\WinLauncherLib.vcxproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0662A8A9-82A3-4638-97D8-EC425D8D87C9} = {0662A8A9-82A3-4638-97D8-EC425D8D87C9}
+		{0473724F-0AB3-4F12-892E-9FAB0186C804} = {0473724F-0AB3-4F12-892E-9FAB0186C804}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\Tools\WinLauncher\WinLauncher.vcxproj\WinLauncher.vcxproj", "{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}"
@@ -157,7 +152,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssembleBuildLogs", "..\..\..\Tools\win\AssembleBuildLogs\AssembleBuildLogs.vcxproj", "{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D} = {AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}
-		{0473724F-0AB3-4F12-892E-9FAB0186C804} = {0473724F-0AB3-4F12-892E-9FAB0186C804}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ANGLE projects", "ANGLE projects", "{5E9B7191-CF7D-4EA4-8168-14A73749E585}"
@@ -166,24 +160,31 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libEGL", "..\..\ThirdParty\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libGLESv2", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\libGLESv2.vcxproj", "{B5871A7A-968C-42E3-A33B-981E6F448E78}"
 	ProjectSection(ProjectDependencies) = postProject
-		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8} = {74D9486C-8F75-46FD-B2B7-6142E09AE3A8}
-		{23C3AC97-A1BF-4188-A092-8C78CF022DD7} = {23C3AC97-A1BF-4188-A092-8C78CF022DD7}
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD} = {5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}
-		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A} = {8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "preprocessor", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\preprocessor.vcxproj", "{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A} = {8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "translator_common", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\translator_common.vcxproj", "{23C3AC97-A1BF-4188-A092-8C78CF022DD7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FE09F693-9744-4D73-A17C-FE3209EB1905} = {FE09F693-9744-4D73-A17C-FE3209EB1905}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "translator_glsl", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\translator_glsl.vcxproj", "{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{23C3AC97-A1BF-4188-A092-8C78CF022DD7} = {23C3AC97-A1BF-4188-A092-8C78CF022DD7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "translator_hlsl", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\translator_hlsl.vcxproj", "{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8} = {74D9486C-8F75-46FD-B2B7-6142E09AE3A8}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebInspectorUI", "..\..\WebInspectorUI\WebInspectorUI.vcxproj\WebInspectorUI.vcxproj", "{0473724F-0AB3-4F12-892E-9FAB0186C804}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
-		{A4159B6F-3106-4F75-9EDD-582307BDB96A} = {A4159B6F-3106-4F75-9EDD-582307BDB96A}
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9} = {0662A8A9-82A3-4638-97D8-EC425D8D87C9}
 	EndProjectSection
 EndProject
