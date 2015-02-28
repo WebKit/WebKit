@@ -1,5 +1,12 @@
 2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fixed a typo in the previous commit.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::setOwner):
+
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         EFL build fix after r180797.
 
         * bmalloc/BoundaryTag.h:

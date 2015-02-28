@@ -51,7 +51,7 @@ public:
     void setEnd(bool isEnd) { m_isEnd = isEnd; }
 
     Owner owner() { return m_ownerIsHeap ? Owner::Heap : Owner::VMHeap; }
-    void setOwner(Owner owner) { m_ownerIsHeap = (owner == Owner::VMHeap); }
+    void setOwner(Owner owner) { m_ownerIsHeap = (owner == Owner::Heap); }
     
     bool isMarked() { return m_isMarked; }
     void setMarked(bool isMarked) { m_isMarked = isMarked; }
