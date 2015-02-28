@@ -472,39 +472,13 @@ static bool blockSignatureContainsClass()
     return containsClass;
 }
 
-static void* useVMFromOtherThread(void* contextPtr)
+static void* threadMain(void* contextPtr)
 {
     JSContext *context = (__bridge JSContext*)contextPtr;
 
     // Do something to enter the VM.
     TestObject *testObject = [TestObject testObject];
     context[@"testObject"] = testObject;
-    pthread_exit(nullptr);
-}
-
-struct ThreadArgs {
-    JSContext* context;
-    volatile bool* mainThreadIsReadyToJoin;
-    volatile bool* otherThreadIsDoneWithJSWork;
-};
-
-static void* useVMFromOtherThreadAndOutliveVM(void* data)
-{
-    ThreadArgs* args = reinterpret_cast<ThreadArgs*>(data);
-    volatile bool& mainThreadIsReadyToJoin = *args->mainThreadIsReadyToJoin;
-    volatile bool& otherThreadIsDoneWithJSWork = *args->otherThreadIsDoneWithJSWork;
-
-    @autoreleasepool {
-        JSContext *context = args->context;
-
-        // Do something to enter the VM.
-        TestObject *testObject = [TestObject testObject];
-        context[@"testObject"] = testObject;
-    }
-    otherThreadIsDoneWithJSWork = true;
-
-    while (!mainThreadIsReadyToJoin)
-        usleep(10000);
     pthread_exit(nullptr);
 }
 
@@ -1401,33 +1375,13 @@ void testObjectiveCAPI()
         JSContext *context = [[JSContext alloc] init];
         
         pthread_t threadID;
-        pthread_create(&threadID, NULL, &useVMFromOtherThread, (__bridge void*)context);
+        pthread_create(&threadID, NULL, &threadMain, (__bridge void*)context);
         pthread_join(threadID, nullptr);
         JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         checkResult(@"Did not crash after entering the VM from another thread", true);
     }
-
-    @autoreleasepool {
-        pthread_t threadID;
-        volatile bool mainThreadIsReadyToJoin = false;
-        volatile bool otherThreadIsDoneWithJSWork = false;
-        @autoreleasepool {
-            JSContext *context = [[JSContext alloc] init];
-            ThreadArgs args = { context, &mainThreadIsReadyToJoin, &otherThreadIsDoneWithJSWork };
-
-            pthread_create(&threadID, NULL, &useVMFromOtherThreadAndOutliveVM, &args);
-            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
-
-            while (!otherThreadIsDoneWithJSWork)
-                usleep(10000);
-        }
-
-        mainThreadIsReadyToJoin = true;
-        pthread_join(threadID, nullptr);
-        checkResult(@"Did not crash if the VM is destructed before another thread using the VM ends", true);
-    }
-
+    
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();
