@@ -38,9 +38,6 @@ struct CSSParserString {
         m_data.characters8 = characters;
         m_length = length;
         m_is8Bit = true;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        m_tokenType = TokenType::IdentifierToken;
-#endif
     }
 
     void init(UChar* characters, unsigned length)
@@ -48,9 +45,6 @@ struct CSSParserString {
         m_data.characters16 = characters;
         m_length = length;
         m_is8Bit = false;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        m_tokenType = TokenType::IdentifierToken;
-#endif
     }
 
     void init(const String& string)
@@ -63,9 +57,6 @@ struct CSSParserString {
             m_data.characters16 = const_cast<UChar*>(string.characters16());
             m_is8Bit = false;
         }
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        m_tokenType = TokenType::IdentifierToken;
-#endif
     }
 
     void clear()
@@ -73,9 +64,6 @@ struct CSSParserString {
         m_data.characters8 = 0;
         m_length = 0;
         m_is8Bit = true;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        m_tokenType = TokenType::IdentifierToken;
-#endif
     }
 
     bool is8Bit() const { return m_is8Bit; }
@@ -86,11 +74,6 @@ struct CSSParserString {
 
     unsigned length() const { return m_length; }
     void setLength(unsigned length) { m_length = length; }
-
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    TokenType tokenType() const { return m_tokenType; }
-    void setTokenType(TokenType tokenType) { m_tokenType = tokenType; }
-#endif
 
     void lower();
 
@@ -118,9 +101,6 @@ struct CSSParserString {
     } m_data;
     unsigned m_length;
     bool m_is8Bit;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    TokenType m_tokenType;
-#endif
 };
 
 struct CSSParserFunction;

@@ -373,17 +373,13 @@ static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector*
 }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-static void appendLangArgumentList(StringBuilder& str, const Vector<LanguageArgument>& argumentList)
+static void appendLangArgumentList(StringBuilder& str, const Vector<AtomicString>& argumentList)
 {
     unsigned argumentListSize = argumentList.size();
     for (unsigned i = 0; i < argumentListSize; ++i) {
-        const LanguageArgument& argument = argumentList[i];
-        bool isAtomicStringToken = argument.tokenType == TokenType::AtomicStringToken;
-        if (isAtomicStringToken)
-            str.append('"');
-        str.append(argument.languageRange);
-        if (isAtomicStringToken)
-            str.append('"');
+        str.append('"');
+        str.append(argumentList[i]);
+        str.append('"');
         if (i != argumentListSize - 1)
             str.appendLiteral(", ");
     }
@@ -746,7 +742,7 @@ void CSSSelector::setArgument(const AtomicString& value)
 }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<LanguageArgument>> argumentList)
+void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<AtomicString>> argumentList)
 {
     createRareData();
     m_data.m_rareData->m_langArgumentList = WTF::move(argumentList);

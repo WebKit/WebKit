@@ -29,17 +29,6 @@
 namespace WebCore {
     class CSSSelectorList;
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    enum class TokenType {
-        IdentifierToken = 0,
-        AtomicStringToken
-    };
-    
-    struct LanguageArgument {
-        AtomicString languageRange;
-        TokenType tokenType;
-    };
-#endif
     enum class SelectorSpecificityIncrement {
         ClassA = 0x10000,
         ClassB = 0x100,
@@ -236,7 +225,7 @@ namespace WebCore {
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         bool attributeValueMatchingIsCaseInsensitive() const;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        const Vector<LanguageArgument>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
+        const Vector<AtomicString>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
 #endif
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
@@ -245,7 +234,7 @@ namespace WebCore {
         void setArgument(const AtomicString&);
         void setAttributeValueMatchingIsCaseInsensitive(bool);
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        void setLangArgumentList(std::unique_ptr<Vector<LanguageArgument>>);
+        void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
 #endif
         void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
@@ -354,7 +343,7 @@ namespace WebCore {
             AtomicString m_attributeCanonicalLocalName;
             AtomicString m_argument; // Used for :contains and :nth-*
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-            std::unique_ptr<Vector<LanguageArgument>> m_langArgumentList;
+            std::unique_ptr<Vector<AtomicString>> m_langArgumentList;
 #endif
             std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
         

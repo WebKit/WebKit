@@ -170,7 +170,7 @@ struct SelectorFragment {
     const CSSSelector* tagNameSelector = nullptr;
     const AtomicString* id = nullptr;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-    Vector<const Vector<LanguageArgument>*> languageArgumentsList;
+    Vector<const Vector<AtomicString>*> languageArgumentsList;
 #else
     const AtomicString* langFilter = nullptr;
 #endif
@@ -275,7 +275,7 @@ private:
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
 #if ENABLE(CSS_SELECTORS_LEVEL4)
     void generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment&);
-    void generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<LanguageArgument>*);
+    void generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<AtomicString>*);
 #else
     void generateElementIsInLanguage(Assembler::JumpList& failureCases, const AtomicString&);
 #endif
@@ -765,7 +765,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassLang:
         {
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-            const Vector<LanguageArgument>* selectorLangArgumentList = selector.langArgumentList();
+            const Vector<AtomicString>* selectorLangArgumentList = selector.langArgumentList();
             ASSERT(selectorLangArgumentList && !selectorLangArgumentList->isEmpty());
             fragment.languageArgumentsList.append(selectorLangArgumentList);
             return FunctionType::SimpleSelectorChecker;
@@ -3233,11 +3233,11 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
 #if ENABLE(CSS_SELECTORS_LEVEL4)
 void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    for (const Vector<LanguageArgument>* languageArguments : fragment.languageArgumentsList)
+    for (const Vector<AtomicString>* languageArguments : fragment.languageArgumentsList)
         generateElementIsInLanguage(failureCases, languageArguments);
 }
 
-void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<LanguageArgument>* languageArguments)
+void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<AtomicString>* languageArguments)
 {
     LocalRegisterWithPreference langRangeRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImmPtr(languageArguments), langRangeRegister);
