@@ -1,3 +1,13 @@
+2015-02-27  Sam Weinig  <sam@webkit.org>
+
+        Add WebKit2 SPI to create a DOM File object
+        https://bugs.webkit.org/show_bug.cgi?id=142109
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make <WebCore/File.h> (and associated files) available to WebKit2.
+
 2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Subpixel] Subpixelize RenderListMarker

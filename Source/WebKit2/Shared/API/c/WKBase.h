@@ -146,6 +146,7 @@ typedef const struct OpaqueWKBundleBackForwardList* WKBundleBackForwardListRef;
 typedef const struct OpaqueWKBundleBackForwardListItem* WKBundleBackForwardListItemRef;
 typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 typedef const struct OpaqueWKBundleDOMWindowExtension* WKBundleDOMWindowExtensionRef;
+typedef const struct OpaqueWKBundleFileHandle* WKBundleFileHandleRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleInspector* WKBundleInspectorRef;

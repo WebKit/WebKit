@@ -1130,6 +1130,10 @@
 		7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */; };
 		7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */; };
 		7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */; };
+		7CBB811C1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBB811A1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp */; };
+		7CBB811D1AA0F8B1006B1942 /* InjectedBundleFileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */; };
+		7CBB81201AA0F970006B1942 /* WKBundleFileHandleRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */; };
+		7CBB81211AA0F970006B1942 /* WKBundleFileHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CCCC8FA1A5F50FD008FB0DA /* WebNavigationState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */; };
 		7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */; };
@@ -3313,6 +3317,10 @@
 		7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.macromedia.Flash Player.plugin.sb"; sourceTree = "<group>"; };
 		7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.microsoft.SilverlightPlugin.sb; sourceTree = "<group>"; };
 		7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.oracle.java.JavaAppletPlugin.sb; sourceTree = "<group>"; };
+		7CBB811A1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFileHandle.cpp; sourceTree = "<group>"; };
+		7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleFileHandle.h; sourceTree = "<group>"; };
+		7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandleRef.cpp; sourceTree = "<group>"; };
+		7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleFileHandleRef.h; sourceTree = "<group>"; };
 		7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageInternal.h; sourceTree = "<group>"; };
 		7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationState.cpp; sourceTree = "<group>"; };
 		7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationState.h; sourceTree = "<group>"; };
@@ -6575,6 +6583,8 @@
 				935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */,
 				51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */,
 				51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */,
+				7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */,
+				7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */,
 				BCD25F1611D6BDE100169B0E /* WKBundleFrame.cpp */,
 				BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */,
 				BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */,
@@ -6676,6 +6686,8 @@
 			children = (
 				7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */,
 				7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */,
+				7CBB811A1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp */,
+				7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */,
 				BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */,
 				BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */,
 				BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */,
@@ -7921,6 +7933,7 @@
 				2DF9EEEC1A7836EE00B6CFBE /* APINavigationAction.h in Headers */,
 				BC54CACB12D64291005C67B0 /* WebGeolocationManagerProxy.h in Headers */,
 				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
+				7CBB811D1AA0F8B1006B1942 /* InjectedBundleFileHandle.h in Headers */,
 				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
 				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
 				7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */,
@@ -8281,6 +8294,7 @@
 				BC40760E124FF0270068F20A /* WKURLResponse.h in Headers */,
 				BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */,
 				1AFA3AC918E61C61003CCBAE /* WKUserContentController.h in Headers */,
+				7CBB81211AA0F970006B1942 /* WKBundleFileHandleRef.h in Headers */,
 				1AAF08A4192682DA00B6390C /* WKUserContentControllerInternal.h in Headers */,
 				377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */,
 				F6113E29126CE19B0057D0A7 /* WKUserContentURLPattern.h in Headers */,
@@ -9720,6 +9734,7 @@
 				1C8E28351275D73800BC7BD0 /* WebInspectorProxy.cpp in Sources */,
 				1CA8B936127C774E00576C2B /* WebInspectorProxyMac.mm in Sources */,
 				1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */,
+				7CBB811C1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp in Sources */,
 				1C891D6519B124FF00BA79DD /* WebInspectorUI.cpp in Sources */,
 				1CA8B954127C891500576C2B /* WebInspectorUIMac.mm in Sources */,
 				1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */,
@@ -9822,6 +9837,7 @@
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
+				7CBB81201AA0F970006B1942 /* WKBundleFileHandleRef.cpp in Sources */,
 				1AAF08AD1926936700B6390C /* WebUserContentController.cpp in Sources */,
 				1AAF08B719269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp in Sources */,
 				1AAF08A1192681D100B6390C /* WebUserContentControllerProxy.cpp in Sources */,

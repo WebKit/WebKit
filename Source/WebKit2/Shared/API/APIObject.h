@@ -154,6 +154,7 @@ public:
         BundleBackForwardListItem,
         BundleCSSStyleDeclarationHandle,
         BundleDOMWindowExtension,
+        BundleFileHandle,
         BundleFrame,
         BundleHitTestResult,
         BundleInspector,

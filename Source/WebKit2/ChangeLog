@@ -1,3 +1,38 @@
+2015-02-27  Sam Weinig  <sam@webkit.org>
+
+        Add WebKit2 SPI to create a DOM File object
+        https://bugs.webkit.org/show_bug.cgi?id=142109
+
+        Reviewed by Tim Horton.
+
+        Add a new handle type for exposing a DOM File object to script. Follow
+        the pattern of WKBundleNodeHandleRef and WKBundleRangeHandleRef with the
+        new class WKBundleFileHandleRef. It can be created for a specific path,
+        and then the JS wrapper can be obtained via WKBundleFrameGetJavaScriptWrapperForFileForWorld.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp: Added.
+        (WKBundleFileHandleGetTypeID):
+        (WKBundleFileHandleCreateWithPath):
+        * WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetJavaScriptWrapperForFileForWorld):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleFileHandle.cpp: Added.
+        (WebKit::domHandleCache):
+        (WebKit::InjectedBundleFileHandle::create):
+        (WebKit::InjectedBundleFileHandle::getOrCreate):
+        (WebKit::InjectedBundleFileHandle::InjectedBundleFileHandle):
+        (WebKit::InjectedBundleFileHandle::~InjectedBundleFileHandle):
+        (WebKit::InjectedBundleFileHandle::coreFile):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleFileHandle.h: Added.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::jsWrapperForWorld):
+        * WebProcess/WebPage/WebFrame.h:
+
 2015-02-27  Beth Dakin  <bdakin@apple.com>
 
         Lookup panel dismisses when pages are loading in other tabs/windows
