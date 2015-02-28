@@ -1,3 +1,13 @@
+2015-02-23  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Default value of HTMLSelectElement size IDL attribute should be 0.
+        https://bugs.webkit.org/show_bug.cgi?id=141795
+
+        Reviewed by Andreas Kling.
+
+        * fast/dom/select-size-expected.txt: Added.
+        * fast/dom/select-size.html: Added.
+
 2015-02-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Drawing an SVG image into a canvas using drawImage() ignores globalAlpha.
