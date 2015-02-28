@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebResourceCacheManager.h"
+#import "config.h"
+#import "WebResourceCacheManager.h"
 
 #if USE(CFURLCACHE)
 
@@ -33,14 +33,10 @@
 #include <wtf/text/CString.h>
 #endif
 
-#if PLATFORM(COCOA)
-#include "WebKitSystemInterface.h"
-#endif
-
+#import "WebKitSystemInterface.h"
 
 namespace WebKit {
 
-#if ENABLE(CACHE_PARTITIONING)
 static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -53,15 +49,8 @@ static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
     return domain;
 #endif
 }
-#endif
 
-RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
-{
-    return adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStore());
-}
-
-#if ENABLE(CACHE_PARTITIONING)
-void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(CacheCallback callback)
+void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(std::function<void (RetainPtr<CFArrayRef>)> callback)
 {
     WKCFURLCacheCopyAllPartitionNames(^(CFArrayRef partitionNames) {
         RetainPtr<CFArrayRef> hostNamesInPersistentStore = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
@@ -73,20 +62,17 @@ void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(CacheCallback call
         callback(WTF::move(hostNames));
     });
 }
-#endif
 
 void WebResourceCacheManager::clearCFURLCacheForHostNames(CFArrayRef hostNames)
 {
     WKCFURLCacheDeleteHostNamesInPersistentStore(hostNames);
 
-#if ENABLE(CACHE_PARTITIONING)
     CFIndex size = CFArrayGetCount(hostNames);
     for (CFIndex i = 0; i < size; ++i) {
         RetainPtr<CFStringRef> partition = partitionName(static_cast<CFStringRef>(CFArrayGetValueAtIndex(hostNames, i)));
         RetainPtr<CFArrayRef> partitionHostNames = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(partition.get()));
         WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(partitionHostNames.get(), partition.get());
     }
-#endif
 }
 
 } // namespace WebKit

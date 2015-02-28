@@ -52,19 +52,12 @@ WebResourceCacheManager::WebResourceCacheManager(WebProcess* process)
 
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 {
-#if USE(CFURLCACHE) && ENABLE(CACHE_PARTITIONING)
-    __block MemoryCache::SecurityOriginSet origins;
-#else
     MemoryCache::SecurityOriginSet origins;
-#endif
+
     MemoryCache::singleton().getOriginsWithCache(origins);
 
 #if USE(CFURLCACHE)
-#if ENABLE(CACHE_PARTITIONING)
-    cfURLCacheHostNamesWithCallback(^(RetainPtr<CFArrayRef> cfURLHosts) {
-#else
-        RetainPtr<CFArrayRef> cfURLHosts = cfURLCacheHostNames();
-#endif
+    cfURLCacheHostNamesWithCallback([&origins](RetainPtr<CFArrayRef> cfURLHosts) {
         CFIndex size = cfURLHosts ? CFArrayGetCount(cfURLHosts.get()) : 0;
 
         String httpString("http");
@@ -72,13 +65,10 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
             CFStringRef host = static_cast<CFStringRef>(CFArrayGetValueAtIndex(cfURLHosts.get(), i));
             origins.add(SecurityOrigin::create(httpString, host, 0));
         }
-#endif
-
-        returnCacheOrigins(callbackID, origins);
-
-#if USE(CFURLCACHE) && ENABLE(CACHE_PARTITIONING)
     });
 #endif
+
+    returnCacheOrigins(callbackID, origins);
 }
 
 void WebResourceCacheManager::returnCacheOrigins(uint64_t callbackID, const MemoryCache::SecurityOriginSet& origins) const

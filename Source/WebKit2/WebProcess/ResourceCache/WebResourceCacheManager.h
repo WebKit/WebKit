@@ -46,6 +46,11 @@ public:
 
     static const char* supplementName();
 
+#if USE(CFURLCACHE)
+    static void cfURLCacheHostNamesWithCallback(std::function<void (RetainPtr<CFArrayRef>)>);
+    static void clearCFURLCacheForHostNames(CFArrayRef);
+#endif
+
 private:
     // IPC::MessageReceiver
     // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
@@ -55,15 +60,6 @@ private:
     void returnCacheOrigins(uint64_t callbackID, const WebCore::MemoryCache::SecurityOriginSet&) const;
     void clearCacheForOrigin(const SecurityOriginData&, uint32_t cachesToClear) const;
     void clearCacheForAllOrigins(uint32_t cachesToClear) const;
-
-#if USE(CFURLCACHE)
-    static RetainPtr<CFArrayRef> cfURLCacheHostNames();
-#if ENABLE(CACHE_PARTITIONING)
-    typedef void (^CacheCallback)(RetainPtr<CFArrayRef>);
-    static void cfURLCacheHostNamesWithCallback(CacheCallback);
-#endif
-    static void clearCFURLCacheForHostNames(CFArrayRef);
-#endif
 
     WebProcess* m_process;
 };
