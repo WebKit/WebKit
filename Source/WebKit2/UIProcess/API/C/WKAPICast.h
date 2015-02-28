@@ -38,6 +38,7 @@
 #include "WKContext.h"
 #include "WKCookieManager.h"
 #include "WKCredentialTypes.h"
+#include "WKDiagnosticLoggingResultType.h"
 #include "WKPage.h"
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
@@ -46,6 +47,7 @@
 #include "WKSharedAPICast.h"
 #include "WebGrammarDetail.h"
 #include <WebCore/Credential.h>
+#include <WebCore/DiagnosticLoggingResultType.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/Settings.h>
@@ -523,6 +525,25 @@ inline WKWebGLLoadPolicy toAPI(WebCore::WebGLLoadPolicy webGLLoadPolicy)
 
     ASSERT_NOT_REACHED();
     return kWKWebGLLoadPolicyLoadNormally;
+}
+
+inline WKDiagnosticLoggingResultType toAPI(WebCore::DiagnosticLoggingResultType type)
+{
+    WKDiagnosticLoggingResultType wkType;
+
+    switch (type) {
+    case WebCore::DiagnosticLoggingResultPass:
+        wkType = kWKDiagnosticLoggingResultPass;
+        break;
+    case WebCore::DiagnosticLoggingResultFail:
+        wkType = kWKDiagnosticLoggingResultFail;
+        break;
+    case WebCore::DiagnosticLoggingResultNoop:
+        wkType = kWKDiagnosticLoggingResultNoop;
+        break;
+    }
+
+    return wkType;
 }
 
 inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)

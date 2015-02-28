@@ -29,7 +29,6 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit/WKBase.h>
 #include <WebKit/WKBundlePageContextMenuClient.h>
-#include <WebKit/WKBundlePageDiagnosticLoggingClient.h>
 #include <WebKit/WKBundlePageEditorClient.h>
 #include <WebKit/WKBundlePageFormClient.h>
 #include <WebKit/WKBundlePageFullScreenClient.h>
@@ -65,7 +64,6 @@ WK_EXPORT void WKBundlePageSetResourceLoadClient(WKBundlePageRef page, WKBundleP
 WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePolicyClientBase* client);
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClientBase* client);
 WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClientBase* client);
-WK_EXPORT void WKBundlePageSetDiagnosticLoggingClient(WKBundlePageRef page, WKBundlePageDiagnosticLoggingClientBase* client);
 
 WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
