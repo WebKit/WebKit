@@ -1,3 +1,54 @@
+2015-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [FreeType] REGRESSION(r180563): Introduced crashes
+        https://bugs.webkit.org/show_bug.cgi?id=142044
+
+        Reviewed by Martin Robinson.
+
+        No new tests, should be caught by any woff font test.
+
+        Use optionsPattern, not m_pattern, when m_pattern may be null.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::initializeWithFontFace):
+
+2015-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fonts loaded via @font-face look bad
+        https://bugs.webkit.org/show_bug.cgi?id=140994
+
+        Reviewed by Martin Robinson.
+
+        We've had several complaints that woff fonts look bad on some websites. This seems to be a
+        combination of multiple issues. For one, we don't look at Fontconfig settings at all when
+        creating a web font. This commit changes FontPlatformData::initializeWithFontFace to instead
+        use sane default settings from Fontconfig when loading a web font, rather than accepting the
+        default settings from GTK+, which are normally overridden by Fontconfig when loading system
+        fonts. However, we will hardcode the hinting setting for web fonts to always force use of
+        the light autohinter, so that we do not use a font's native hints. This avoids compatibility
+        issues when fonts with poor native hinting are only tested in browsers that do not use the
+        native hints. It also allows us to sidestep future security vulnerabilities in FreeType's
+        bytecode interpreter.
+
+        The net result of this is that there should be little noticable difference if you have GTK+
+        set to use slight hinting (which forces use of the autohinter) unless you have customized
+        Fontconfig configuration, but a dramatic improvement with particular fonts if you use medium
+        or full hinting. This should reduce complaints about our font rendering on "fancy sites."
+
+        No new tests, since the affected fonts we've found are not freely redistributable.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Force web fonts to be autohinted.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::getDefaultCairoFontOptions): Renamed to disambiguate.
+        (WebCore::getDefaultFontconfigOptions): Added.
+        (WebCore::FontPlatformData::initializeWithFontFace): Always call
+        FontPlatformData::setCairoOptionsFromFontConfigPattern. If the FontPlatformData was not
+        created with an FcPattern (e.g. because this is a web font), call
+        getDefaultFontconfigOptions to get a sane default FcPattern.
+        (WebCore::FontPlatformData::setOrientation): Renamed call to getDefaultCairoFontOptions.
+        (WebCore::getDefaultFontOptions): Deleted.
+
 2015-02-24  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Always serialize :lang()'s arguments to strings

@@ -26,6 +26,7 @@
 #include "FontPlatformData.h"
 
 #include "FontDescription.h"
+#include "RefPtrCairo.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
@@ -103,7 +104,7 @@ void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcP
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
 }
 
-static cairo_font_options_t* getDefaultFontOptions()
+static cairo_font_options_t* getDefaultCairoFontOptions()
 {
 #if PLATFORM(GTK)
     if (GdkScreen* screen = gdk_screen_get_default()) {
@@ -113,6 +114,24 @@ static cairo_font_options_t* getDefaultFontOptions()
     }
 #endif
     return cairo_font_options_create();
+}
+
+static FcPattern* getDefaultFontconfigOptions()
+{
+    // Get some generic default settings from fontconfig for web fonts. Strategy
+    // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
+    // For web fonts, the hint style is overridden in FontCustomPlatformData::FontCustomPlatformData
+    // so Fontconfig will not affect the hint style, but it may disable hinting completely.
+    static FcPattern* pattern = nullptr;
+    static std::once_flag flag;
+    std::call_once(flag, [](FcPattern*) {
+        pattern = FcPatternCreate();
+        FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+        FcDefaultSubstitute(pattern);
+        FcPatternDel(pattern, FC_FAMILY);
+        FcConfigSubstitute(nullptr, pattern, FcMatchFont);
+    }, pattern);
+    return pattern;
 }
 
 static void rotateCairoMatrixForVerticalOrientation(cairo_matrix_t* matrix)
@@ -283,7 +302,9 @@ String FontPlatformData::description() const
 
 void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const FontDescription& fontDescription)
 {
-    cairo_font_options_t* options = getDefaultFontOptions();
+    cairo_font_options_t* options = getDefaultCairoFontOptions();
+    FcPattern* optionsPattern = m_pattern ? m_pattern.get() : getDefaultFontconfigOptions();
+    setCairoFontOptionsFromFontConfigPattern(options, optionsPattern);
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
@@ -292,31 +313,25 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
     // Instead we scale we scale the font to a very tiny size and just abort rendering later on.
     float realSize = m_size ? m_size : 1;
 
+    // FontConfig may return a list of transformation matrices with the pattern, for instance,
+    // for fonts that are oblique. We use that to initialize the cairo font matrix.
     cairo_matrix_t fontMatrix;
-    if (!m_pattern)
-        cairo_matrix_init_scale(&fontMatrix, realSize, realSize);
-    else {
-        setCairoFontOptionsFromFontConfigPattern(options, m_pattern.get());
+    FcMatrix fontConfigMatrix, *tempFontConfigMatrix;
+    FcMatrixInit(&fontConfigMatrix);
 
-        // FontConfig may return a list of transformation matrices with the pattern, for instance,
-        // for fonts that are oblique. We use that to initialize the cairo font matrix.
-        FcMatrix fontConfigMatrix, *tempFontConfigMatrix;
-        FcMatrixInit(&fontConfigMatrix);
+    // These matrices may be stacked in the pattern, so it's our job to get them all and multiply them.
+    for (int i = 0; FcPatternGetMatrix(optionsPattern, FC_MATRIX, i, &tempFontConfigMatrix) == FcResultMatch; i++)
+        FcMatrixMultiply(&fontConfigMatrix, &fontConfigMatrix, tempFontConfigMatrix);
+    cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
+        -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
 
-        // These matrices may be stacked in the pattern, so it's our job to get them all and multiply them.
-        for (int i = 0; FcPatternGetMatrix(m_pattern.get(), FC_MATRIX, i, &tempFontConfigMatrix) == FcResultMatch; i++)
-            FcMatrixMultiply(&fontConfigMatrix, &fontConfigMatrix, tempFontConfigMatrix);
-        cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
-                          -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
+    // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
+    int actualFontSlant;
+    if (fontDescription.italic() && FcPatternGetInteger(optionsPattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch)
+        m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
 
-        // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
-        int actualFontSlant;
-        if (fontDescription.italic() && FcPatternGetInteger(m_pattern.get(), FC_SLANT, 0, &actualFontSlant) == FcResultMatch)
-            m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
-
-        // The matrix from FontConfig does not include the scale. 
-        cairo_matrix_scale(&fontMatrix, realSize, realSize);
-    }
+    // The matrix from FontConfig does not include the scale. 
+    cairo_matrix_scale(&fontMatrix, realSize, realSize);
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
@@ -388,7 +403,7 @@ void FontPlatformData::setOrientation(FontOrientation orientation)
     cairo_matrix_t fontMatrix;
     cairo_scaled_font_get_font_matrix(m_scaledFont, &fontMatrix);
 
-    cairo_font_options_t* options = getDefaultFontOptions();
+    cairo_font_options_t* options = getDefaultCairoFontOptions();
 
     // In case of vertical orientation, rotate the transformation matrix.
     // Otherwise restore the horizontal orientation matrix.
