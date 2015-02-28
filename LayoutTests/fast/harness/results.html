@@ -738,7 +738,7 @@ function testListHeaderHtml(header)
 
 function testList(tests, header, tableId)
 {
-    tests.sort();
+    tests.sort(function (a, b) { return a.name.localeCompare(b.name) });
 
     var html = '<div' + ((!hasUnexpected(tests) && tableId != 'stderr-table') ? ' class=expected' : '') + ' id=' + tableId + '>' +
         testListHeaderHtml(header) + '<table>';
