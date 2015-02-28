@@ -1,3 +1,16 @@
+2015-02-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180804.
+        https://bugs.webkit.org/show_bug.cgi?id=142131
+
+        Broke nightlies (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "[WK2] Drop legacy WKBundlePageDiagnosticLoggingClient API"
+        https://bugs.webkit.org/show_bug.cgi?id=141176
+        http://trac.webkit.org/changeset/180804
+
 2015-02-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL][GTK] Fix build break after r180790,180798 

@@ -38,6 +38,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
 #include "WKContextMenuItemTypes.h"
+#include "WKDiagnosticLoggingResultType.h"
 #include "WKEvent.h"
 #include "WKFindOptions.h"
 #include "WKGeometry.h"
@@ -50,6 +51,7 @@
 #include "WebEvent.h"
 #include "WebFindOptions.h"
 #include <WebCore/ContextMenuItem.h>
+#include <WebCore/DiagnosticLoggingResultType.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
@@ -810,6 +812,44 @@ inline SameDocumentNavigationType toSameDocumentNavigationType(WKSameDocumentNav
         break;
     }
     
+    return type;
+}
+
+inline WKDiagnosticLoggingResultType toAPI(WebCore::DiagnosticLoggingResultType type)
+{
+    WKDiagnosticLoggingResultType wkType;
+
+    switch (type) {
+    case WebCore::DiagnosticLoggingResultPass:
+        wkType = kWKDiagnosticLoggingResultPass;
+        break;
+    case WebCore::DiagnosticLoggingResultFail:
+        wkType = kWKDiagnosticLoggingResultFail;
+        break;
+    case WebCore::DiagnosticLoggingResultNoop:
+        wkType = kWKDiagnosticLoggingResultNoop;
+        break;
+    }
+
+    return wkType;
+}
+
+inline WebCore::DiagnosticLoggingResultType toDiagnosticLoggingResultType(WKDiagnosticLoggingResultType wkType)
+{
+    WebCore::DiagnosticLoggingResultType type;
+
+    switch (wkType) {
+    case kWKDiagnosticLoggingResultPass:
+        type = WebCore::DiagnosticLoggingResultPass;
+        break;
+    case kWKDiagnosticLoggingResultFail:
+        type = WebCore::DiagnosticLoggingResultFail;
+        break;
+    case kWKDiagnosticLoggingResultNoop:
+        type = WebCore::DiagnosticLoggingResultNoop;
+        break;
+    }
+
     return type;
 }
 

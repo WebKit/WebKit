@@ -46,6 +46,8 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
+    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(&m_page, message, description);
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description, shouldSample == WebCore::ShouldSample::Yes));
 }
 
@@ -54,6 +56,8 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& me
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
+    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithResult(&m_page, message, description, result);
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result, shouldSample == WebCore::ShouldSample::Yes));
 }
 
@@ -62,6 +66,8 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
+    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, value);
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, shouldSample == WebCore::ShouldSample::Yes));
 }
 
