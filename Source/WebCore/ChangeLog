@@ -1,3 +1,23 @@
+2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Layout Test accessibility/roles-exposed.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=141960
+
+        Reviewed by Martin Robinson.
+
+        The test was failing because Gtk now uses GtkColorChooserDialog for the
+        color input, making the input field a button which results in the color
+        chooser dialog appearing. As a side effect of this change, the input now
+        has an accessible role of ColorWell, which is currently mapped to
+        ATK_ROLE_COLOR_CHOOSER (which is by definition the dialog which results
+        upon activating the button input field). Changed the Gtk platform mapping
+        to ATK_ROLE_BUTTON, leaving the Efl mapping as-is.
+
+        No new tests. Instead, updated and unskipped failing test.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2015-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [FreeType] REGRESSION(r180563): Introduced crashes

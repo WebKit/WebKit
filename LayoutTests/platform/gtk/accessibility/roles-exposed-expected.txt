@@ -137,7 +137,7 @@ input[type='button']
       AXRole: AXButton
       
 input[type='color']
-      AXRole: AXTextField
+      AXRole: AXButton
       
 input[type='checkbox']
       AXRole: AXCheckBox

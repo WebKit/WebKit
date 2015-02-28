@@ -1,3 +1,13 @@
+2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Layout Test accessibility/roles-exposed.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=141960
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/TestExpectations: Unskip the failing test.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Update the expectations.
+
 2015-02-24  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Always serialize :lang()'s arguments to strings
