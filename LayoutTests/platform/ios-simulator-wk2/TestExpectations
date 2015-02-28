@@ -260,15 +260,6 @@ mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 # MathML tests that fail:
 mathml/presentation/mo-stretch.html [ Failure ]
 
-# <rdar://problem/19760282&19760299> Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()
-webkit.org/b/141371 mathml/opentype/horizontal.html [ Crash ]
-webkit.org/b/141371 mathml/opentype/horizontal-munderover.html [ Crash Timeout ]
-webkit.org/b/141371 mathml/opentype/large-operators.html [ Crash Failure ]
-webkit.org/b/141371 mathml/opentype/munderover-layout-resize.html [ Crash ]
-webkit.org/b/141371 mathml/opentype/munderover-layout-resize-expected.html [ Crash ]
-webkit.org/b/141371 mathml/presentation/mo-invisible.html [ Crash ]
-webkit.org/b/141371 mathml/opentype/vertical.html [ Crash Failure ]
-
 # SVG tests that time out:
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html

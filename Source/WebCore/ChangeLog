@@ -1,3 +1,19 @@
+2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Some MathML tests crash in RenderMathMLOperator::advanceForGlyph() or boundsForGlyph()
+        https://bugs.webkit.org/show_bug.cgi?id=141371
+
+        Reviewed by David Kilzer.
+
+        Null checks.
+
+        Covered by existing mathml tests.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::boundsForGlyph):
+        (WebCore::RenderMathMLOperator::advanceForGlyph):
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator):
+
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
         Make SourceBuffer ActiveDOMObject suspendable
