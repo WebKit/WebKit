@@ -37,14 +37,14 @@ class FreeList {
 public:
     FreeList();
 
-    void push(const LargeObject&);
+    void push(Owner, const LargeObject&);
 
-    LargeObject take(size_t);
-    LargeObject take(size_t alignment, size_t, size_t unalignedSize);
+    LargeObject take(Owner, size_t);
+    LargeObject take(Owner, size_t alignment, size_t, size_t unalignedSize);
     
-    LargeObject takeGreedy(size_t);
+    LargeObject takeGreedy(Owner);
 
-    void removeInvalidAndDuplicateEntries();
+    void removeInvalidAndDuplicateEntries(Owner);
     
 private:
     Vector<Range> m_vector;
@@ -57,11 +57,11 @@ inline FreeList::FreeList()
 {
 }
 
-inline void FreeList::push(const LargeObject& largeObject)
+inline void FreeList::push(Owner owner, const LargeObject& largeObject)
 {
     BASSERT(largeObject.isFree());
     if (m_vector.size() == m_limit) {
-        removeInvalidAndDuplicateEntries();
+        removeInvalidAndDuplicateEntries(owner);
         m_limit = std::max(m_vector.size() * freeListGrowFactor, freeListSearchDepth);
     }
     m_vector.push(largeObject.range());

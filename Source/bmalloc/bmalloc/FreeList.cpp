@@ -23,26 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BeginTag.h"
 #include "LargeChunk.h"
 #include "FreeList.h"
 #include "Vector.h"
 
 namespace bmalloc {
 
-LargeObject FreeList::takeGreedy(size_t size)
+LargeObject FreeList::takeGreedy(Owner owner)
 {
     for (size_t i = m_vector.size(); i-- > 0; ) {
         // We don't eagerly remove items when we merge and/or split ranges,
         // so we need to validate each free list entry before using it.
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
-        if (!largeObject.isValidAndFree(m_vector[i].size())) {
+        if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
             m_vector.pop(i);
             continue;
         }
-
-        if (largeObject.size() < size)
-            continue;
 
         m_vector.pop(i);
         return largeObject;
@@ -51,7 +47,7 @@ LargeObject FreeList::takeGreedy(size_t size)
     return LargeObject();
 }
 
-LargeObject FreeList::take(size_t size)
+LargeObject FreeList::take(Owner owner, size_t size)
 {
     LargeObject first;
     size_t end = m_vector.size() > freeListSearchDepth ? m_vector.size() - freeListSearchDepth : 0;
@@ -59,7 +55,7 @@ LargeObject FreeList::take(size_t size)
         // We don't eagerly remove items when we merge and/or split ranges, so
         // we need to validate each free list entry before using it.
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
-        if (!largeObject.isValidAndFree(m_vector[i].size())) {
+        if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
             m_vector.pop(i);
             continue;
         }
@@ -76,7 +72,7 @@ LargeObject FreeList::take(size_t size)
     return first;
 }
 
-LargeObject FreeList::take(size_t alignment, size_t size, size_t unalignedSize)
+LargeObject FreeList::take(Owner owner, size_t alignment, size_t size, size_t unalignedSize)
 {
     BASSERT(isPowerOfTwo(alignment));
     size_t alignmentMask = alignment - 1;
@@ -87,7 +83,7 @@ LargeObject FreeList::take(size_t alignment, size_t size, size_t unalignedSize)
         // We don't eagerly remove items when we merge and/or split ranges, so
         // we need to validate each free list entry before using it.
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
-        if (!largeObject.isValidAndFree(m_vector[i].size())) {
+        if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
             m_vector.pop(i);
             continue;
         }
@@ -107,11 +103,11 @@ LargeObject FreeList::take(size_t alignment, size_t size, size_t unalignedSize)
     return first;
 }
 
-void FreeList::removeInvalidAndDuplicateEntries()
+void FreeList::removeInvalidAndDuplicateEntries(Owner owner)
 {
     for (size_t i = m_vector.size(); i-- > 0; ) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
-        if (!largeObject.isValidAndFree(m_vector[i].size())) {
+        if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
             m_vector.pop(i);
             continue;
         }

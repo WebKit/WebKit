@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "LargeObject.h"
-#include "Line.h"
-#include "PerProcess.h"
-#include "SuperChunk.h"
-#include "VMHeap.h"
-#include <thread>
+#ifndef Owner_h
+#define Owner_h
 
 namespace bmalloc {
 
-VMHeap::VMHeap()
-    : m_largeObjects(Owner::VMHeap)
-{
-}
-
-void VMHeap::grow()
-{
-    SuperChunk* superChunk = SuperChunk::create();
-#if BPLATFORM(DARWIN)
-    m_zone.addSuperChunk(superChunk);
-#endif
-
-    SmallChunk* smallChunk = superChunk->smallChunk();
-    for (auto* it = smallChunk->begin(); it != smallChunk->end(); ++it)
-        m_smallPages.push(it);
-
-    MediumChunk* mediumChunk = superChunk->mediumChunk();
-    for (auto* it = mediumChunk->begin(); it != mediumChunk->end(); ++it)
-        m_mediumPages.push(it);
-
-    LargeChunk* largeChunk = superChunk->largeChunk();
-    m_largeObjects.insert(LargeObject(LargeObject::init(largeChunk).begin()));
-}
+enum class Owner : unsigned {
+    VMHeap,
+    Heap
+};
 
 } // namespace bmalloc
+
+#endif // Owner_h

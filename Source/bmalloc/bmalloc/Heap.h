@@ -86,8 +86,8 @@ private:
 
     void splitLarge(BeginTag*, size_t, EndTag*&, Range&);
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
-    void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& hasPhysicalPages);
-    void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& hasPhysicalPages);
+    void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
+    void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     
     void concurrentScavenge();
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);

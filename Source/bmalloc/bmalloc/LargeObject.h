@@ -46,19 +46,20 @@ public:
     bool operator!() { return !m_object; }
 
     char* begin() const { return static_cast<char*>(m_object); }
+    char* end() const { return begin() + size(); }
     size_t size() const { return m_beginTag->size(); }
     Range range() const { return Range(m_object, size()); }
 
     void setFree(bool) const;
     bool isFree() const;
     
-    bool hasPhysicalPages() const;
-    void setHasPhysicalPages(bool) const;
+    Owner owner() const;
+    void setOwner(Owner) const;
     
     bool isMarked() const;
     void setMarked(bool) const;
     
-    bool isValidAndFree(size_t) const;
+    bool isValidAndFree(Owner, size_t) const;
 
     LargeObject merge() const;
     std::pair<LargeObject, LargeObject> split(size_t) const;
@@ -116,17 +117,17 @@ inline bool LargeObject::isFree() const
     return m_beginTag->isFree();
 }
 
-inline bool LargeObject::hasPhysicalPages() const
+inline Owner LargeObject::owner() const
 {
     validate();
-    return m_beginTag->hasPhysicalPages();
+    return m_beginTag->owner();
 }
 
-inline void LargeObject::setHasPhysicalPages(bool hasPhysicalPages) const
+inline void LargeObject::setOwner(Owner owner) const
 {
     validate();
-    m_beginTag->setHasPhysicalPages(hasPhysicalPages);
-    m_endTag->setHasPhysicalPages(hasPhysicalPages);
+    m_beginTag->setOwner(owner);
+    m_endTag->setOwner(owner);
 }
 
 inline bool LargeObject::isMarked() const
@@ -142,7 +143,7 @@ inline void LargeObject::setMarked(bool isMarked) const
     m_endTag->setMarked(isMarked);
 }
 
-inline bool LargeObject::isValidAndFree(size_t expectedSize) const
+inline bool LargeObject::isValidAndFree(Owner expectedOwner, size_t expectedSize) const
 {
     if (!m_beginTag->isFree())
         return false;
@@ -156,6 +157,9 @@ inline bool LargeObject::isValidAndFree(size_t expectedSize) const
     if (m_beginTag->compactBegin() != BoundaryTag::compactBegin(m_object))
         return false;
 
+    if (m_beginTag->owner() != expectedOwner)
+        return false;
+    
     return true;
 }
 
@@ -164,17 +168,15 @@ inline LargeObject LargeObject::merge() const
     validate();
     BASSERT(isFree());
 
-    bool hasPhysicalPages = m_beginTag->hasPhysicalPages();
-
     BeginTag* beginTag = m_beginTag;
     EndTag* endTag = m_endTag;
     Range range = this->range();
+    Owner owner = this->owner();
     
     EndTag* prev = beginTag->prev();
-    if (prev->isFree()) {
+    if (prev->isFree() && prev->owner() == owner) {
         Range left(range.begin() - prev->size(), prev->size());
         range = Range(left.begin(), left.size() + range.size());
-        hasPhysicalPages &= prev->hasPhysicalPages();
 
         prev->clear();
         beginTag->clear();
@@ -183,11 +185,9 @@ inline LargeObject LargeObject::merge() const
     }
 
     BeginTag* next = endTag->next();
-    if (next->isFree()) {
+    if (next->isFree() && next->owner() == owner) {
         Range right(range.end(), next->size());
         range = Range(range.begin(), range.size() + right.size());
-
-        hasPhysicalPages &= next->hasPhysicalPages();
 
         endTag->clear();
         next->clear();
@@ -197,7 +197,7 @@ inline LargeObject LargeObject::merge() const
 
     beginTag->setRange(range);
     beginTag->setFree(true);
-    beginTag->setHasPhysicalPages(hasPhysicalPages);
+    beginTag->setOwner(owner);
     endTag->init(beginTag);
 
     return LargeObject(beginTag, endTag, range.begin());
@@ -238,7 +238,7 @@ inline void LargeObject::validateSelf() const
 
     BASSERT(m_beginTag->size() == m_endTag->size());
     BASSERT(m_beginTag->isFree() == m_endTag->isFree());
-    BASSERT(m_beginTag->hasPhysicalPages() == m_endTag->hasPhysicalPages());
+    BASSERT(m_beginTag->owner() == m_endTag->owner());
     BASSERT(m_beginTag->isMarked() == m_endTag->isMarked());
 }
 
@@ -264,7 +264,7 @@ inline Range LargeObject::init(LargeChunk* chunk)
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
     beginTag->setRange(range);
     beginTag->setFree(true);
-    beginTag->setHasPhysicalPages(false);
+    beginTag->setOwner(Owner::VMHeap);
 
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
     endTag->init(beginTag);
