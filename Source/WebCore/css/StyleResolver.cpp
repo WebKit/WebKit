@@ -2438,7 +2438,7 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
 void StyleResolver::loadPendingImages()
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
-    TemporaryChange<bool> { m_inLoadPendingImages, true };
+    TemporaryChange<bool> changeInLoadPendingImages(m_inLoadPendingImages, true);
 
     if (m_state.pendingImageProperties().isEmpty())
         return;

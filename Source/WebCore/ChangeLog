@@ -1,3 +1,10 @@
+2015-02-24  Antti Koivisto  <antti@apple.com>
+
+       Give TemporaryChange for m_inLoadPendingImages assertion a name so it actually does something.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImages):
+
 2015-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         EventHandler references deleted Scrollbar
