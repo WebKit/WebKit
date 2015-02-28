@@ -59,19 +59,19 @@ layer at (0,0) size 800x177
       RenderText {#text} at (0,0) size 0x0
 layer at (21,13) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
-layer at (21,36) size 130x13 scrollWidth 132
+layer at (21,36) size 130x13 scrollWidth 131
   RenderBlock {DIV} at (0,0) size 131x13
     RenderText {#text} at (0,0) size 131x13
       text run at (0,0) width 131: "12345678901234567890"
 layer at (30,59) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
-layer at (30,82) size 130x13 scrollWidth 132
+layer at (30,82) size 130x13 scrollWidth 131
   RenderBlock {DIV} at (0,0) size 131x13
     RenderText {#text} at (0,0) size 131x13
       text run at (0,0) width 131: "12345678901234567890"
 layer at (35,105) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
-layer at (35,128) size 130x13 scrollWidth 132
+layer at (35,128) size 130x13 scrollWidth 131
   RenderBlock {DIV} at (0,0) size 131x13
     RenderText {#text} at (0,0) size 131x13
       text run at (0,0) width 131: "12345678901234567890"

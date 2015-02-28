@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 765x36
           text run at (0,0) width 765: "Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and"
           text run at (0,18) width 164: "third scrolled to the right."
-layer at (13,13) size 130x13 scrollWidth 309
+layer at (13,13) size 130x13 scrollWidth 308
   RenderBlock {DIV} at (3,3) size 131x13
     RenderText {#text} at (0,0) size 308x13
       text run at (0,0) width 308: "this text field has a lot of text in it so that it needs to scroll"
@@ -24,7 +24,7 @@ layer at (157,13) size 130x13 scrollX 177 scrollWidth 307
   RenderBlock {DIV} at (3,3) size 131x13
     RenderText {#text} at (-177,0) size 309x13
       text run at (-177,0) width 308: "this text field has a lot of text in it so that it needs to scroll"
-layer at (302,13) size 130x13 scrollX 179 scrollWidth 309
+layer at (302,13) size 130x13 scrollX 178 scrollWidth 308
   RenderBlock {DIV} at (3,3) size 131x13
     RenderText {#text} at (0,0) size 308x13
       text run at (0,0) width 308: "this text field has a lot of text in it so that it needs to scroll"

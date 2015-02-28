@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (8,0) size 131x13
           RenderBlock {DIV} at (138,1) size 14x11
       RenderText {#text} at (0,0) size 0x0
-layer at (21,75) size 130x13 scrollWidth 273
+layer at (21,75) size 130x13 scrollWidth 272
   RenderBlock {DIV} at (0,0) size 131x13
     RenderText {#text} at (0,0) size 272x13
       text run at (0,0) width 272: "This text should be centered vertically in the button"

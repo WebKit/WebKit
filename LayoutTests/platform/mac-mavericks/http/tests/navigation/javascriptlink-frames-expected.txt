@@ -97,7 +97,7 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 532x37
                   RenderText {#text} at (0,0) size 532x37
                     text run at (0,0) width 532: "This is an anchor point named \"anchor1\"."
-        layer at (390,363) size 139x13 scrollWidth 151
+        layer at (390,363) size 139x13 scrollWidth 150
           RenderBlock {DIV} at (3,3) size 140x13
             RenderText {#text} at (0,0) size 150x13
               text run at (0,0) width 150: "Initial text before user input"

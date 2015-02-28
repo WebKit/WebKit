@@ -1,3 +1,28 @@
+2015-02-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel-layout: width: max-content; property might cause unnecessary scrollbar.
+        https://bugs.webkit.org/show_bug.cgi?id=142065
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline. Scroll layer shrinks in certain cases.
+
+        * platform/mac-mavericks/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/mac-mavericks/fast/css/text-overflow-input-expected.txt:
+        * platform/mac-mavericks/fast/forms/basic-inputs-expected.txt:
+        * platform/mac-mavericks/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac-mavericks/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac-mavericks/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac-mavericks/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-selection-expected.txt:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/mac/fast/forms/input-type-text-min-width-expected.txt:
+        * platform/mac/fast/forms/minWidthPercent-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+
 2015-02-27  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Gardening: rebaseline fast/attachment results

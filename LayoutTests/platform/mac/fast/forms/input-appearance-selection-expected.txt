@@ -74,7 +74,7 @@ layer at (0,0) size 800x600
           text run at (0,468) width 48: "Passed."
         RenderBR {BR} at (47,482) size 1x0
       RenderBlock {P} at (0,575) size 784x0
-layer at (13,47) size 130x13 scrollWidth 136
+layer at (13,47) size 130x13 scrollWidth 135
   RenderBlock {DIV} at (3,3) size 131x13
     RenderText {#text} at (0,0) size 135x13
       text run at (0,0) width 135: "123456789 ABCDEFGHIJ"

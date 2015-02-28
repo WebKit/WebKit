@@ -837,17 +837,16 @@ LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const
     if (!endPadding)
         return lineLayoutOverflow;
     
-    // FIXME: Audit whether to use pixel snapped values when not using integers for layout: https://bugs.webkit.org/show_bug.cgi?id=63656
     if (isHorizontal()) {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxXEdgeTo(std::max<LayoutUnit>(lineLayoutOverflow.maxX(), pixelSnappedLogicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxXEdgeTo(std::max<LayoutUnit>(lineLayoutOverflow.maxX(), logicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftXEdgeTo(std::min<LayoutUnit>(lineLayoutOverflow.x(), pixelSnappedLogicalLeft() - endPadding));
+            lineLayoutOverflow.shiftXEdgeTo(std::min<LayoutUnit>(lineLayoutOverflow.x(), logicalLeft() - endPadding));
     } else {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxYEdgeTo(std::max<LayoutUnit>(lineLayoutOverflow.maxY(), pixelSnappedLogicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxYEdgeTo(std::max<LayoutUnit>(lineLayoutOverflow.maxY(), logicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftYEdgeTo(std::min<LayoutUnit>(lineLayoutOverflow.y(), pixelSnappedLogicalLeft() - endPadding));
+            lineLayoutOverflow.shiftYEdgeTo(std::min<LayoutUnit>(lineLayoutOverflow.y(), logicalLeft() - endPadding));
     }
     
     return lineLayoutOverflow;
