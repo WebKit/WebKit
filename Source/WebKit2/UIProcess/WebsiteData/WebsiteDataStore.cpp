@@ -246,6 +246,18 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         }
     }
 
+    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->getOrigins([callbackAggregator](Vector<RefPtr<WebCore::SecurityOrigin>> origins) {
+            WebsiteData websiteData;
+            for (auto& origin : origins)
+                websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeLocalStorage });
+
+            callbackAggregator->removePendingCallback(WTF::move(websiteData));
+        });
+    }
+
     callbackAggregator->callIfNeeded();
 }
 
@@ -378,6 +390,13 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
 void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<WebsiteDataRecord>& dataRecords, std::function<void ()> completionHandler)
 {
+    Vector<RefPtr<WebCore::SecurityOrigin>> origins;
+
+    for (const auto& dataRecord : dataRecords) {
+        for (auto& origin : dataRecord.origins)
+            origins.append(origin);
+    }
+
     struct CallbackAggregator : public RefCounted<CallbackAggregator> {
         explicit CallbackAggregator (std::function<void ()> completionHandler)
             : completionHandler(WTF::move(completionHandler))
@@ -428,17 +447,19 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
             }
 
             callbackAggregator->addPendingCallback();
-            Vector<RefPtr<WebCore::SecurityOrigin>> origins;
-
-            for (const auto& dataRecord : dataRecords) {
-                for (auto& origin : dataRecord.origins)
-                    origins.append(origin);
-            }
 
             process->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
         }
+    }
+
+    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->deleteEntriesForOrigins(origins, [callbackAggregator] {
+            callbackAggregator->removePendingCallback();
+        });
     }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.

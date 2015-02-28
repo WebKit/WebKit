@@ -590,6 +590,30 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_
     });
 }
 
+void StorageManager::deleteEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
+{
+    Vector<RefPtr<WebCore::SecurityOrigin>> copiedOrigins;
+    copiedOrigins.reserveInitialCapacity(origins.size());
+
+    for (auto& origin : origins)
+        copiedOrigins.uncheckedAppend(origin->isolatedCopy());
+
+    RefPtr<StorageManager> storageManager(this);
+    m_queue->dispatch([storageManager, copiedOrigins, completionHandler] {
+        for (auto& origin : copiedOrigins) {
+            for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
+                localStorageNamespace->clearStorageAreasMatchingOrigin(*origin);
+
+            for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
+                transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(*origin);
+
+            storageManager->m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(origin.get());
+        }
+
+        RunLoop::main().dispatch(completionHandler);
+    });
+}
+
 void StorageManager::createLocalStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(&connection, storageMapID);
