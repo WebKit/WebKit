@@ -325,9 +325,7 @@ class TestImporter(object):
 
                         prefixed_property_values.extend(set(converted_file[1]) - set(prefixed_property_values))
 
-                        outfile = open(new_filepath, 'wb')
-                        outfile.write(converted_file[2])
-                        outfile.close()
+                        self.filesystem.write_binary_file(new_filepath, converted_file[2])
                 elif orig_filepath.endswith('__init__.py') and not self.filesystem.getsize(orig_filepath):
                     # Some bots dislike empty __init__.py.
                     self.filesystem.write_text_file(new_filepath, '# This file is required for Python to search this directory for modules.')
@@ -367,8 +365,7 @@ class TestImporter(object):
         if not os.path.exists(import_log_file):
             return
 
-        import_log = open(import_log_file, 'r')
-        contents = import_log.readlines()
+        contents = self.filesystem.read_text_file(import_log_file).split('\n')
 
         if 'List of files\n' in contents:
             list_index = contents.index('List of files:\n') + 1
@@ -380,36 +377,34 @@ class TestImporter(object):
             deleted_file = os.path.join(self._webkit_root, deleted_file)
             os.remove(deleted_file)
 
-        import_log.close()
-
     def write_import_log(self, import_directory, file_list, prop_list, property_values_list):
         """ Writes a w3c-import.log file in each directory with imported files. """
 
-        import_log = open(os.path.join(import_directory, 'w3c-import.log'), 'w')
-        import_log.write('The tests in this directory were imported from the W3C repository.\n')
-        import_log.write('Do NOT modify these tests directly in Webkit.\n')
-        import_log.write('Instead, push changes to the W3C CSS repo:\n')
-        import_log.write('\thttp://hg.csswg.org/test\n')
-        import_log.write('Or create a pull request on the W3C CSS github:\n')
-        import_log.write('\thttps://github.com/w3c/csswg-test\n\n')
-        import_log.write('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
-        import_log.write('Do NOT modify or remove this file\n\n')
-        import_log.write('------------------------------------------------------------------------\n')
-        import_log.write('Properties requiring vendor prefixes:\n')
+        import_log = []
+        import_log.append('The tests in this directory were imported from the W3C repository.\n')
+        import_log.append('Do NOT modify these tests directly in Webkit.\n')
+        import_log.append('Instead, push changes to the W3C CSS repo:\n')
+        import_log.append('\thttp://hg.csswg.org/test\n')
+        import_log.append('Or create a pull request on the W3C CSS github:\n')
+        import_log.append('\thttps://github.com/w3c/csswg-test\n\n')
+        import_log.append('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
+        import_log.append('Do NOT modify or remove this file\n\n')
+        import_log.append('------------------------------------------------------------------------\n')
+        import_log.append('Properties requiring vendor prefixes:\n')
         if prop_list:
             for prop in prop_list:
-                import_log.write(prop + '\n')
+                import_log.append(prop + '\n')
         else:
-            import_log.write('None\n')
-        import_log.write('Property values requiring vendor prefixes:\n')
+            import_log.append('None\n')
+        import_log.append('Property values requiring vendor prefixes:\n')
         if property_values_list:
             for value in property_values_list:
-                import_log.write(value + '\n')
+                import_log.append(value + '\n')
         else:
-            import_log.write('None\n')
-        import_log.write('------------------------------------------------------------------------\n')
-        import_log.write('List of files:\n')
+            import_log.append('None\n')
+        import_log.append('------------------------------------------------------------------------\n')
+        import_log.append('List of files:\n')
         for item in sorted(file_list):
-            import_log.write(item + '\n')
+            import_log.append(item + '\n')
 
-        import_log.close()
+        self.filesystem.write_text_file(self.filesystem.join(import_directory, 'w3c-import.log'), ''.join(import_log))
