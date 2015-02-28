@@ -22,6 +22,7 @@
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14895D911A3A319C0006235D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14895D8F1A3A319C0006235D /* Environment.cpp */; };
 		14895D921A3A319C0006235D /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 14895D901A3A319C0006235D /* Environment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14C6216F1A9A9A6200E72293 /* LargeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C6216E1A9A9A6200E72293 /* LargeObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
 		14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8818CD17CE002201E4 /* LargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -132,6 +133,7 @@
 		14B650C618F39F4800751968 /* bmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bmalloc.xcconfig; sourceTree = "<group>"; };
 		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		14B650C918F3A04200751968 /* mbmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mbmalloc.xcconfig; sourceTree = "<group>"; };
+		14C6216E1A9A9A6200E72293 /* LargeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LargeObject.h; path = bmalloc/LargeObject.h; sourceTree = "<group>"; };
 		14C919C818FCC59F0028DB43 /* BPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPlatform.h; path = bmalloc/BPlatform.h; sourceTree = "<group>"; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D9DB4517F2447100EAAB79 /* FixedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FixedVector.h; path = bmalloc/FixedVector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -218,6 +220,7 @@
 				14105E7B18DBD7AF003A106E /* BoundaryTagInlines.h */,
 				1417F64618B54A700076FA3F /* EndTag.h */,
 				147AAA8818CD17CE002201E4 /* LargeChunk.h */,
+				14C6216E1A9A9A6200E72293 /* LargeObject.h */,
 				146BEE2118C845AE0002D5A2 /* SegregatedFreeList.cpp */,
 				146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */,
 			);
@@ -319,6 +322,7 @@
 				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
 				14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
+				14C6216F1A9A9A6200E72293 /* LargeObject.h in Headers */,
 				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,
 				1400274C18F89C3D00115C97 /* SegregatedFreeList.h in Headers */,
 				14DD788D18F48CC600950702 /* BeginTag.h in Headers */,

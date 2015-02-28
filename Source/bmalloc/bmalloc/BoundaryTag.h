@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,7 @@ class Range;
 class BoundaryTag {
 public:
     static Range init(LargeChunk*);
-    static Range deallocate(void*);
-    static void allocate(const Range&, size_t, Range& leftover, bool& hasPhysicalPages);
-    static unsigned compactBegin(const Range&);
+    static unsigned compactBegin(void*);
 
     bool isFree() { return m_isFree; }
     void setFree(bool isFree) { m_isFree = isFree; }
@@ -62,6 +60,9 @@ public:
 
     void setRange(const Range&);
     
+    bool isSentinel() { return !m_compactBegin; }
+    void initSentinel();
+    
     EndTag* prev();
     BeginTag* next();
 
@@ -73,11 +74,6 @@ private:
     static_assert((1 << compactBeginBits) - 1 >= largeMin / largeAlignment, "compactBegin must be encodable in a BoundaryTag.");
     static_assert((1 << sizeBits) - 1 >= largeMax, "largeMax must be encodable in a BoundaryTag.");
 
-    static void split(const Range&, size_t, BeginTag*, EndTag*&, Range& leftover);
-    static Range mergeLeft(const Range&, BeginTag*&, EndTag* prev, bool& hasPhysicalPages);
-    static Range mergeRight(const Range&, EndTag*&, BeginTag* next, bool& hasPhysicalPages);
-    static Range merge(const Range&, BeginTag*&, EndTag*&);
-
     bool m_isFree: 1;
     bool m_isEnd: 1;
     bool m_hasPhysicalPages: 1;
@@ -85,17 +81,17 @@ private:
     unsigned m_size: sizeBits;
 };
 
-inline unsigned BoundaryTag::compactBegin(const Range& range)
+inline unsigned BoundaryTag::compactBegin(void* object)
 {
     return static_cast<unsigned>(
         reinterpret_cast<uintptr_t>(
             rightShift(
-                mask(range.begin(), largeMin - 1), largeAlignmentShift)));
+                mask(object, largeMin - 1), largeAlignmentShift)));
 }
 
 inline void BoundaryTag::setRange(const Range& range)
 {
-    m_compactBegin = compactBegin(range);
+    m_compactBegin = compactBegin(range.begin());
     m_size = static_cast<unsigned>(range.size());
     BASSERT(this->size() == range.size());
 }
@@ -110,6 +106,12 @@ inline BeginTag* BoundaryTag::next()
 {
     BoundaryTag* next = this + 1;
     return reinterpret_cast<BeginTag*>(next);
+}
+
+inline void BoundaryTag::initSentinel()
+{
+    setRange(Range(nullptr, largeMin));
+    setFree(false);
 }
 
 } // namespace bmalloc

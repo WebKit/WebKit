@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef SegregatedFreeList_h
 #define SegregatedFreeList_h
 
-#include "Range.h"
+#include "LargeObject.h"
 #include "Vector.h"
 #include <array>
 
@@ -36,34 +36,34 @@ class SegregatedFreeList {
 public:
     SegregatedFreeList();
 
-    void insert(const Range&);
+    void insert(const LargeObject&);
 
-    // Returns a reasonable fit for the provided size, or Range() if no fit
-    // is found. May return Range() spuriously if searching takes too long.
+    // Returns a reasonable fit for the provided size, or LargeObject() if no fit
+    // is found. May return LargeObject() spuriously if searching takes too long.
     // Incrementally removes stale items from the free list while searching.
-    // Does not eagerly remove the returned range from the free list.
-    Range take(size_t);
+    // Does not eagerly remove the returned object from the free list.
+    LargeObject take(size_t);
 
     // Returns a reasonable fit for the provided alignment and size, or
-    // a reasonable fit for the provided unaligned size, or Range() if no fit
-    // is found. May return Range() spuriously if searching takes too long.
-    // Incrementally removes stale items from the free list while searching.
-    // Does not eagerly remove the returned range from the free list.
-    Range take(size_t alignment, size_t, size_t unalignedSize);
+    // a reasonable fit for the provided unaligned size, or LargeObject() if no
+    // fit is found. May return LargeObject() spuriously if searching takes too
+    // long. Incrementally removes stale items from the free list while
+    // searching. Does not eagerly remove the returned object from the free list.
+    LargeObject take(size_t alignment, size_t, size_t unalignedSize);
 
-    // Returns an unreasonable fit for the provided size, or Range() if no fit
-    // is found. Never returns Range() spuriously.
-    // Incrementally removes stale items from the free list while searching.
-    // Eagerly removes the returned range from the free list.
-    Range takeGreedy(size_t);
+    // Returns an unreasonable fit for the provided size, or LargeObject() if no
+    // fit is found. Never returns LargeObject() spuriously. Incrementally
+    // removes stale items from the free list while searching. Eagerly removes
+    // the returned object from the free list.
+    LargeObject takeGreedy(size_t);
     
 private:
     typedef Vector<Range> List;
 
     List& select(size_t);
-    Range take(List&, size_t);
-    Range take(List&, size_t alignment, size_t, size_t unalignedSize);
-    Range takeGreedy(List&, size_t);
+    LargeObject take(List&, size_t);
+    LargeObject take(List&, size_t alignment, size_t, size_t unalignedSize);
+    LargeObject takeGreedy(List&, size_t);
 
     std::array<List, 19> m_lists;
 };
