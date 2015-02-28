@@ -1,3 +1,20 @@
+2015-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Subpixel] Subpixelize RenderListMarker
+        https://bugs.webkit.org/show_bug.cgi?id=142093
+
+        Reviewed by Zalan Bujtas.
+
+        Use floats instead of ints.
+
+        Test: fast/lists/rtl-marker.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::updateContent):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderListMarker.h:
+
 2015-02-27  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> should be selected immediately upon click, and be drag/copyable upon click

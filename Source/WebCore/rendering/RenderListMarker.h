@@ -77,7 +77,7 @@ private:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    IntRect getRelativeMarkerRect();
+    FloatRect getRelativeMarkerRect();
     LayoutRect localSelectionRect();
 
     String m_text;

@@ -1186,13 +1186,13 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 
-    if (!paintInfo.rect.intersects(snappedIntRect(overflowRect)))
+    if (!paintInfo.rect.intersects(overflowRect))
         return;
 
     LayoutRect box(boxOrigin, size());
     
-    IntRect marker = getRelativeMarkerRect();
-    marker.moveBy(roundedIntPoint(boxOrigin));
+    FloatRect marker = getRelativeMarkerRect();
+    marker.moveBy(boxOrigin);
 
     GraphicsContext* context = paintInfo.context;
 
@@ -1319,47 +1319,51 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     GraphicsContextStateSaver stateSaver(*context, false);
     if (!style().isHorizontalWritingMode()) {
-        marker.moveBy(roundedIntPoint(-boxOrigin));
+        marker.moveBy(-boxOrigin);
         marker = marker.transposedRect();
-        marker.moveBy(IntPoint(roundToInt(box.x()), roundToInt(box.y() - logicalHeight())));
+        marker.moveBy(FloatPoint(box.x(), box.y() - logicalHeight()));
         stateSaver.save();
         context->translate(marker.x(), marker.maxY());
         context->rotate(static_cast<float>(deg2rad(90.)));
         context->translate(-marker.x(), -marker.maxY());
     }
 
-    IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style().fontMetrics().ascent());
+    FloatPoint textOrigin = FloatPoint(marker.x(), marker.y() + style().fontMetrics().ascent());
+    textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
 
     if (type == Asterisks || type == Footnotes)
         context->drawText(font, textRun, textOrigin);
     else {
+        const UChar suffix = listMarkerSuffix(type, m_listItem.value());
+
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
         // and we only need to handle the direction U_RIGHT_TO_LEFT for now.
         bool textNeedsReversing = u_charDirection(m_text[0]) == U_RIGHT_TO_LEFT;
-        String reversedText;
+        String toDraw;
         if (textNeedsReversing) {
             unsigned length = m_text.length();
             StringBuilder buffer;
-            buffer.reserveCapacity(length);
+            buffer.reserveCapacity(length + 2);
+            if (!style().isLeftToRightDirection()) {
+                buffer.append(space);
+                buffer.append(suffix);
+            }
             for (unsigned i = 0; i < length; ++i)
                 buffer.append(m_text[length - i - 1]);
-            reversedText = buffer.toString();
-            textRun.setText(StringView(reversedText));
-        }
-
-        const UChar suffix = listMarkerSuffix(type, m_listItem.value());
-        if (style().isLeftToRightDirection()) {
-            int width = font.width(textRun);
-            context->drawText(font, textRun, textOrigin);
-            UChar suffixSpace[2] = { suffix, ' ' };
-            context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()), textOrigin + IntSize(width, 0));
+            if (style().isLeftToRightDirection()) {
+                buffer.append(suffix);
+                buffer.append(space);
+            }
+            toDraw = buffer.toString();
         } else {
-            UChar spaceSuffix[2] = { ' ', suffix };
-            TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, style());
-            int width = font.width(spaceSuffixRun);
-            context->drawText(font, spaceSuffixRun, textOrigin);
-            context->drawText(font, textRun, textOrigin + IntSize(width, 0));
+            if (style().isLeftToRightDirection())
+                toDraw = m_text + String(&suffix, 1) + String(&space, 1);
+            else
+                toDraw = String(&space, 1) + String(&suffix, 1) + m_text;
         }
+        textRun.setText(StringView(toDraw));
+
+        context->drawText(font, textRun, textOrigin);
     }
 }
 
@@ -1421,7 +1425,7 @@ void RenderListMarker::updateContent()
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
         int bulletWidth = style().fontMetrics().ascent() / 2;
-        m_image->setContainerSizeForRenderer(this, IntSize(bulletWidth, bulletWidth), style().effectiveZoom());
+        m_image->setContainerSizeForRenderer(this, FloatSize(bulletWidth, bulletWidth), style().effectiveZoom());
         return;
     }
 
@@ -1747,19 +1751,19 @@ bool RenderListMarker::isInside() const
     return m_listItem.notInList() || style().listStylePosition() == INSIDE;
 }
 
-IntRect RenderListMarker::getRelativeMarkerRect()
+FloatRect RenderListMarker::getRelativeMarkerRect()
 {
     if (isImage())
-        return IntRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
+        return FloatRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
     
-    IntRect relativeRect;
+    FloatRect relativeRect;
     EListStyleType type = style().listStyleType();
     switch (type) {
         case Asterisks:
         case Footnotes: {
             const FontCascade& font = style().fontCascade();
             TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
-            relativeRect = IntRect(0, 0, font.width(run), font.fontMetrics().height());
+            relativeRect = FloatRect(0, 0, font.width(run), font.fontMetrics().height());
             break;
         }
         case Disc:
@@ -1769,11 +1773,11 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             const FontMetrics& fontMetrics = style().fontMetrics();
             int ascent = fontMetrics.ascent();
             int bulletWidth = (ascent * 2 / 3 + 1) / 2;
-            relativeRect = IntRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
+            relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
             break;
         }
         case NoneListStyle:
-            return IntRect();
+            return FloatRect();
         case Afar:
         case Amharic:
         case AmharicAbegede:
@@ -1850,13 +1854,13 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case UpperRoman:
         case Urdu:
             if (m_text.isEmpty())
-                return IntRect();
+                return FloatRect();
             const FontCascade& font = style().fontCascade();
             TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
-            int itemWidth = font.width(run);
+            float itemWidth = font.width(run);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
-            int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
-            relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
+            float suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
+            relativeRect = FloatRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }
 
     if (!style().isHorizontalWritingMode()) {
