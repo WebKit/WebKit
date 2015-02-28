@@ -131,7 +131,18 @@ void RTCDTMFSender::didPlayTone(const String& tone)
 void RTCDTMFSender::stop()
 {
     m_stopped = true;
-    m_handler->setClient(0);
+    m_handler->setClient(nullptr);
+}
+
+const char* RTCDTMFSender::activeDOMObjectName() const
+{
+    return "RTCDTMFSender";
+}
+
+bool RTCDTMFSender::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
 }
 
 void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)

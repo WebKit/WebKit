@@ -93,9 +93,6 @@ public:
     virtual void onSuccess();
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>);
 
-    // ActiveDOMObject
-    virtual bool hasPendingActivity() const override;
-
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override;
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -112,6 +109,9 @@ public:
     IDBDatabaseBackend::TaskType taskType() { return m_taskType; }
 
     DOMRequestState* requestState() { return &m_requestState; }
+
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override;
 
 protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType, IDBTransaction*);
@@ -130,12 +130,12 @@ protected:
     bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
 
 private:
-    // ActiveDOMObject
+    // ActiveDOMObject API.
     void stop() override;
-    const char* activeDOMObjectName() const override { return "IDBRequest"; }
+    const char* activeDOMObjectName() const override;
     bool canSuspend() const override;
 
-    // EventTarget
+    // EventTarget API.
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
 

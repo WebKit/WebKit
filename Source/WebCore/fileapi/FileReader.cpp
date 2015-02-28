@@ -71,6 +71,11 @@ bool FileReader::canSuspend() const
     return false;
 }
 
+const char* FileReader::activeDOMObjectName() const
+{
+    return "FileReader";
+}
+
 void FileReader::stop()
 {
     terminate();

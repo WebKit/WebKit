@@ -81,6 +81,17 @@ void RTCVoidRequestImpl::stop()
     clear();
 }
 
+const char* RTCVoidRequestImpl::activeDOMObjectName() const
+{
+    return "RTCVoidRequestImpl";
+}
+
+bool RTCVoidRequestImpl::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 void RTCVoidRequestImpl::clear()
 {
     m_successCallback.clear();

@@ -1264,14 +1264,19 @@ void WebView::frameRect(RECT* rect)
     ::GetWindowRect(m_viewWindow, rect);
 }
 
-class WindowCloseTimer : public WebCore::SuspendableTimer {
+class WindowCloseTimer final : public WebCore::SuspendableTimer {
 public:
     static WindowCloseTimer* create(WebView*);
 
 private:
     WindowCloseTimer(ScriptExecutionContext&, WebView*);
-    virtual void contextDestroyed();
-    virtual void fired();
+
+    // ActiveDOMObject API.
+    void contextDestroyed() override;
+    const char* activeDOMObjectName() const override { return "WindowCloseTimer"; }
+
+    // SuspendableTimer API.
+    void fired() override;
 
     WebView* m_webView;
 };

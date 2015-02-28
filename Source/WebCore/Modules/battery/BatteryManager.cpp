@@ -88,6 +88,11 @@ void BatteryManager::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus
     m_batteryStatus = batteryStatus;
 }
 
+bool BatteryManager::canSuspend() const
+{
+    return true;
+}
+
 void BatteryManager::suspend(ReasonForSuspension)
 {
     if (m_batteryController)

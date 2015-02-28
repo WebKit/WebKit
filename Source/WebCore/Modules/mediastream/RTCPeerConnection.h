@@ -125,9 +125,6 @@ public:
     virtual EventTargetInterface eventTargetInterface() const override { return RTCPeerConnectionEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
-    // ActiveDOMObject
-    virtual void stop() override;
-
     // MediaStream::Observer
     virtual void didAddOrRemoveTrack() override;
 
@@ -146,7 +143,10 @@ private:
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
-    virtual const char* activeDOMObjectName() const override { return "RTCPeerConnection"; }
+    // ActiveDOMObject
+    void stop() override;
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
 
     void changeSignalingState(SignalingState);
     void changeIceGatheringState(IceGatheringState);

@@ -44,11 +44,6 @@
 
 namespace WebCore {
 
-AbstractWorker::AbstractWorker(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
-{
-}
-
 AbstractWorker::~AbstractWorker()
 {
 }

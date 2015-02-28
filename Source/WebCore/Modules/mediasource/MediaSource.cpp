@@ -814,6 +814,11 @@ bool MediaSource::canSuspend() const
     return isClosed() && !m_asyncEventQueue.hasPendingEvents();
 }
 
+const char* MediaSource::activeDOMObjectName() const
+{
+    return "MediaSource";
+}
+
 void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicString& newState)
 {
     if (isOpen()) {

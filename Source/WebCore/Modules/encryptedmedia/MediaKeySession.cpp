@@ -250,6 +250,27 @@ String MediaKeySession::mediaKeysStorageDirectory() const
     return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
 }
 
+bool MediaKeySession::hasPendingActivity() const
+{
+    return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents();
+}
+
+void MediaKeySession::stop()
+{
+    close();
+}
+
+const char* MediaKeySession::activeDOMObjectName() const
+{
+    return "MediaKeySession";
+}
+
+bool MediaKeySession::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 }
 
 #endif

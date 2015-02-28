@@ -91,6 +91,17 @@ void RTCStatsRequestImpl::stop()
     clear();
 }
 
+const char* RTCStatsRequestImpl::activeDOMObjectName() const
+{
+    return "RTCStatsRequestImpl";
+}
+
+bool RTCStatsRequestImpl::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 void RTCStatsRequestImpl::clear()
 {
     m_successCallback.clear();

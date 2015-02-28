@@ -106,11 +106,6 @@ public:
 
     bool active() const { return m_active; }
 
-    // ActiveDOMObject interface
-    virtual bool hasPendingActivity() const override;
-    virtual void stop() override;
-    bool canSuspend() const override;
-
     // EventTarget interface
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     virtual EventTargetInterface eventTargetInterface() const override { return SourceBufferEventTargetInterfaceType; }
@@ -129,6 +124,10 @@ public:
     void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
+
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override;
+
 protected:
     // EventTarget interface
     virtual void refEventTarget() override { ref(); }
@@ -137,7 +136,10 @@ protected:
 private:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
 
-    virtual const char* activeDOMObjectName() const override { return "SourceBuffer"; }
+    // ActiveDOMObject API.
+    void stop() override;
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
 
     // SourceBufferPrivateClient
     virtual void sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString&) override;

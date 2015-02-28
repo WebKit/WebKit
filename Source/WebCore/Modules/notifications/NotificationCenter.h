@@ -73,9 +73,10 @@ public:
 private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);
 
-    // ActiveDOMObject
-    virtual void stop() override;
-    virtual const char* activeDOMObjectName() const override { return "NotificationCenter"; }
+    // ActiveDOMObject API.
+    void stop() override;
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
 
     class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
     public:

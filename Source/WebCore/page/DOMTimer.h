@@ -79,6 +79,9 @@ namespace WebCore {
         virtual void didStop() override;
         virtual double alignedFireTime(double) const override;
 
+        // ActiveDOMObject API.
+        const char* activeDOMObjectName() const override;
+
         enum TimerThrottleState {
             Undetermined,
             ShouldThrottle,

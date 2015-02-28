@@ -57,9 +57,6 @@ public:
     static Ref<Geolocation> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~Geolocation();
 
-    virtual bool canSuspend() const override;
-    virtual void suspend(ReasonForSuspension) override;
-    virtual void resume() override;
     WEBCORE_EXPORT void resetAllGeolocationPermission();
     Document* document() const;
     WEBCORE_EXPORT Frame* frame() const;
@@ -80,7 +77,11 @@ private:
     Geoposition* lastPosition();
 
     // ActiveDOMObject
-    virtual void stop() override;
+    void stop() override;
+    bool canSuspend() const override;
+    void suspend(ReasonForSuspension) override;
+    void resume() override;
+    const char* activeDOMObjectName() const override;
 
     bool isDenied() const { return m_allowGeolocation == No; }
 
@@ -139,8 +140,6 @@ private:
     void requestUsesCachedPosition(GeoNotifier*);
     bool haveSuitableCachedPosition(PositionOptions*);
     void makeCachedPositionCallbacks();
-
-    virtual const char* activeDOMObjectName() const override { return "Geolocation"; }
 
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;

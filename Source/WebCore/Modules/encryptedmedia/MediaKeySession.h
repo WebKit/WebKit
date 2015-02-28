@@ -73,16 +73,15 @@ public:
 
     void enqueueEvent(PassRefPtr<Event>);
 
-    // ActiveDOMObject
-    virtual bool hasPendingActivity() const override { return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents(); }
-    virtual void stop() override { close(); }
-
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
 
     virtual EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override;
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
@@ -116,7 +115,10 @@ private:
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
-    virtual const char* activeDOMObjectName() const override { return "MediaKeySession"; }
+    // ActiveDOMObject API.
+    void stop() override;
+    bool canSuspend() const override;
+    const char* activeDOMObjectName() const override;
 };
 
 }

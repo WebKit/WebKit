@@ -62,7 +62,7 @@ public:
 
     // These three functions must not have a side effect of creating or destroying
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
-    virtual bool canSuspend() const;
+    virtual bool canSuspend() const = 0; // Returning false in canSuspend() will prevent the page from entering the PageCache.
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
 

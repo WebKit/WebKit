@@ -112,14 +112,14 @@ protected:
     void setSource(PassRefPtr<MediaStreamSource>);
 
 private:
-
     void configureTrackRendering();
     void trackDidEnd();
     void scheduleEventDispatch(PassRefPtr<Event>);
 
-    // ActiveDOMObject
-    virtual void stop() override final;
-    virtual const char* activeDOMObjectName() const override { return "MediaStreamTrack"; }
+    // ActiveDOMObject API.
+    void stop() override final;
+    const char* activeDOMObjectName() const override final;
+    bool canSuspend() const override final;
 
     // EventTarget
     virtual void refEventTarget() override final { ref(); }

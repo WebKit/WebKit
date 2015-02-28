@@ -85,9 +85,6 @@ public:
     
     bool isOfflineContext() { return m_isOfflineContext; }
 
-    // Document notification
-    virtual void stop() override;
-
     Document* document() const; // ASSERTs if document no longer exists.
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
@@ -264,8 +261,6 @@ protected:
     static bool isSampleRateRangeGood(float sampleRate);
     
 private:
-    virtual const char* activeDOMObjectName() const override { return "AudioContext"; }
-
     void constructCommon();
 
     void lazyInitialize();
@@ -295,6 +290,11 @@ private:
     // uniquely connected to.  See the AudioNode::ref() and AudioNode::deref() methods for more details.
     void refNode(AudioNode*);
     void derefNode(AudioNode*);
+
+    // ActiveDOMObject API.
+    void stop() override;
+    bool canSuspend() const override;
+    const char* activeDOMObjectName() const override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.
     // Make sure to dereference them here.

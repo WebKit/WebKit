@@ -57,13 +57,12 @@ public:
 private:
     virtual void fired() override = 0;
 
-    // ActiveDOMObject
-    virtual bool hasPendingActivity() const final override;
-    virtual void stop() final override;
-    virtual bool canSuspend() const final override;
-    virtual void suspend(ReasonForSuspension) final override;
-    virtual void resume() final override;
-    virtual const char* activeDOMObjectName() const override { return "SuspendableTimer"; }
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override final;
+    void stop() override final;
+    bool canSuspend() const override final;
+    void suspend(ReasonForSuspension) override final;
+    void resume() override final;
 
     bool m_suspended;
 

@@ -4713,6 +4713,11 @@ bool HTMLMediaElement::canSuspend() const
     return true; 
 }
 
+const char* HTMLMediaElement::activeDOMObjectName() const
+{
+    return "HTMLMediaElement";
+}
+
 void HTMLMediaElement::stop()
 {
     LOG(Media, "HTMLMediaElement::stop(%p)", this);

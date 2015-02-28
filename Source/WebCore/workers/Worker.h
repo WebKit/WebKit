@@ -46,7 +46,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class Worker final : public AbstractWorker, private WorkerScriptLoaderClient {
+    class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     public:
         static PassRefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
         virtual ~Worker();
@@ -58,12 +58,14 @@ namespace WebCore {
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
         void terminate();
-
-        virtual bool canSuspend() const override;
-        virtual void stop() override;
-        virtual bool hasPendingActivity() const override;
     
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
+
+        // EventTarget API.
+        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+
+        // ActiveDOMObject API.
+        bool hasPendingActivity() const override;
 
     private:
         explicit Worker(ScriptExecutionContext&);
@@ -73,6 +75,11 @@ namespace WebCore {
         // WorkerScriptLoaderClient callbacks
         virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
         virtual void notifyFinished() override;
+
+        // ActiveDOMObject API.
+        bool canSuspend() const override;
+        void stop() override;
+        const char* activeDOMObjectName() const override;
 
         friend void networkStateChanged(bool isOnLine);
 

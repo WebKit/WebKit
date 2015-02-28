@@ -690,6 +690,17 @@ void RTCPeerConnection::stop()
         (*i)->stop();
 }
 
+const char* RTCPeerConnection::activeDOMObjectName() const
+{
+    return "RTCPeerConnection";
+}
+
+bool RTCPeerConnection::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 void RTCPeerConnection::didAddOrRemoveTrack()
 {
     negotiationNeeded();

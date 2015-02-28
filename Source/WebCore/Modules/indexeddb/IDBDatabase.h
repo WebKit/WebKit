@@ -80,9 +80,6 @@ public:
     virtual void onAbort(int64_t, PassRefPtr<IDBDatabaseError>);
     virtual void onComplete(int64_t);
 
-    // ActiveDOMObject
-    virtual bool hasPendingActivity() const override;
-
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override final { return IDBDatabaseEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -108,12 +105,15 @@ public:
     using RefCounted<IDBDatabase>::ref;
     using RefCounted<IDBDatabase>::deref;
 
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override;
+
 private:
     IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
 
-    // ActiveDOMObject
+    // ActiveDOMObject API.
     void stop() override;
-    const char* activeDOMObjectName() const override { return "IDBDatabase"; }
+    const char* activeDOMObjectName() const override;
     bool canSuspend() const override;
 
     // EventTarget

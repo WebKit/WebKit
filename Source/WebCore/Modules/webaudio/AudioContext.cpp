@@ -313,6 +313,17 @@ void AudioContext::stop()
     callOnMainThread(stopDispatch, this);
 }
 
+bool AudioContext::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
+const char* AudioContext::activeDOMObjectName() const
+{
+    return "AudioContext";
+}
+
 Document* AudioContext::document() const
 {
     ASSERT(m_scriptExecutionContext);

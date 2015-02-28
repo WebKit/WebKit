@@ -84,6 +84,17 @@ void RTCSessionDescriptionRequestImpl::stop()
     clear();
 }
 
+const char* RTCSessionDescriptionRequestImpl::activeDOMObjectName() const
+{
+    return "RTCSessionDescriptionRequestImpl";
+}
+
+bool RTCSessionDescriptionRequestImpl::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 void RTCSessionDescriptionRequestImpl::clear()
 {
     m_successCallback.clear();

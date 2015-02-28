@@ -60,7 +60,7 @@ void networkStateChanged(bool isOnLine)
 }
 
 inline Worker::Worker(ScriptExecutionContext& context)
-    : AbstractWorker(context)
+    : ActiveDOMObject(&context)
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
 {
     if (!allWorkers) {
@@ -130,6 +130,11 @@ bool Worker::canSuspend() const
 {
     // FIXME: It is not currently possible to suspend a worker, so pages with workers can not go into page cache.
     return false;
+}
+
+const char* Worker::activeDOMObjectName() const
+{
+    return "Worker";
 }
 
 void Worker::stop()

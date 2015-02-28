@@ -448,6 +448,11 @@ bool IDBRequest::canSuspend() const
     return !m_hasPendingActivity;
 }
 
+const char* IDBRequest::activeDOMObjectName() const
+{
+    return "IDBRequest";
+}
+
 EventTargetInterface IDBRequest::eventTargetInterface() const
 {
     return IDBRequestEventTargetInterfaceType;

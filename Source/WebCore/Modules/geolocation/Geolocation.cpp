@@ -293,6 +293,11 @@ void Geolocation::stop()
     m_pendingForPermissionNotifiers.clear();
 }
 
+const char* Geolocation::activeDOMObjectName() const
+{
+    return "Geolocation";
+}
+
 Geoposition* Geolocation::lastPosition()
 {
     Page* page = this->page();

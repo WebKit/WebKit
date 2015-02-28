@@ -146,14 +146,14 @@ private:
 
     void setBody(const String& body) { m_body = body; }
 
-    // ActiveDOMObject interface
-    virtual void contextDestroyed() override;
+    // ActiveDOMObject API.
+    void contextDestroyed() override;
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
 
-    // EventTarget interface
+    // EventTarget API.
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
-
-    virtual const char* activeDOMObjectName() const override { return "Notification"; }
 
     void startLoadingIcon();
     void finishLoadingIcon();

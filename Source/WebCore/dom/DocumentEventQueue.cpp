@@ -51,6 +51,8 @@ private:
         m_eventQueue.pendingEventTimerFired();
     }
 
+    const char* activeDOMObjectName() const override { return "DocumentEventQueueTimer"; }
+
     DocumentEventQueue& m_eventQueue;
 };
 

@@ -3934,6 +3934,17 @@ void WebGLRenderingContextBase::stop()
     }
 }
 
+const char* WebGLRenderingContextBase::activeDOMObjectName() const
+{
+    return "WebGLRenderingContext";
+}
+
+bool WebGLRenderingContextBase::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 WebGLGetInfo WebGLRenderingContextBase::getBooleanParameter(GC3Denum pname)
 {
     GC3Dboolean value = 0;

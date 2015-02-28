@@ -156,6 +156,16 @@ void FontLoader::didLayout()
     loadingDone();
 }
 
+const char* FontLoader::activeDOMObjectName() const
+{
+    return "FontLoader";
+}
+
+bool FontLoader::canSuspend() const
+{
+    return !m_numLoadingFromCSS && !m_numLoadingFromJS;
+}
+
 void FontLoader::scheduleEvent(PassRefPtr<Event> event)
 {
     m_pendingEvents.append(event);

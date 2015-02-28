@@ -361,6 +361,11 @@ void IDBDatabase::stop()
     m_contextStopped = true;
 }
 
+const char* IDBDatabase::activeDOMObjectName() const
+{
+    return "IDBDatabase";
+}
+
 bool IDBDatabase::canSuspend() const
 {
     return m_isClosed;

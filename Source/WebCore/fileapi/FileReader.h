@@ -102,10 +102,10 @@ public:
 private:
     explicit FileReader(ScriptExecutionContext&);
 
-    // ActiveDOMObject
-    virtual const char* activeDOMObjectName() const override { return "FileReader"; }
-    virtual bool canSuspend() const override;
-    virtual void stop() override;
+    // ActiveDOMObject API.
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
+    void stop() override;
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }

@@ -50,12 +50,11 @@ public:
     void registerURL(SecurityOrigin*, const URL&, URLRegistrable*);
     void revoke(const URL&);
 
-    // ActiveDOMObject interface.
-    virtual void stop() override;
-    virtual bool canSuspend() const override;
-
 private:
-    virtual const char* activeDOMObjectName() const override { return "PublicURLManager"; }
+    // ActiveDOMObject API.
+    void stop() override;
+    bool canSuspend() const override;
+    const char* activeDOMObjectName() const override;
     
     typedef HashSet<String> URLSet;
     typedef HashMap<URLRegistry*, URLSet > RegistryURLMap;

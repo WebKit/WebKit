@@ -416,6 +416,17 @@ void EventSource::stop()
     close();
 }
 
+const char* EventSource::activeDOMObjectName() const
+{
+    return "EventSource";
+}
+
+bool EventSource::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 PassRefPtr<MessageEvent> EventSource::createMessageEvent()
 {
     RefPtr<MessageEvent> event = MessageEvent::create();

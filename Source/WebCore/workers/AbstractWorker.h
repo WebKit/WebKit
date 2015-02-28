@@ -43,11 +43,8 @@ namespace WebCore {
 
     class URL;
 
-    class AbstractWorker : public RefCounted<AbstractWorker>, public ActiveDOMObject, public EventTargetWithInlineData {
+    class AbstractWorker : public RefCounted<AbstractWorker>, public EventTargetWithInlineData {
     public:
-        // EventTarget APIs
-        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
-
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
         using RefCounted<AbstractWorker>::ref;
@@ -56,7 +53,7 @@ namespace WebCore {
         virtual ~AbstractWorker();
 
     protected:
-        explicit AbstractWorker(ScriptExecutionContext&);
+        AbstractWorker() = default;
 
         // Helper function that converts a URL to an absolute URL and checks the result for validity.
         URL resolveURL(const String& url, ExceptionCode& ec);
@@ -65,8 +62,6 @@ namespace WebCore {
     private:
         virtual void refEventTarget() override final { ref(); }
         virtual void derefEventTarget() override final { deref(); }
-
-        virtual const char* activeDOMObjectName() const override { return "AbstractWorker"; }
     };
 
 } // namespace WebCore

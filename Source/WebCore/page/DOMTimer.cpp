@@ -520,4 +520,9 @@ double DOMTimer::alignedFireTime(double fireTime) const
     return fireTime;
 }
 
+const char* DOMTimer::activeDOMObjectName() const
+{
+    return "DOMTimer";
+}
+
 } // namespace WebCore

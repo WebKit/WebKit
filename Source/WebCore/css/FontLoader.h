@@ -85,8 +85,6 @@ public:
     void loadError(CSSFontFaceRule*, CSSFontFaceSource*);
     void loadingDone();
 
-    virtual bool canSuspend() const override { return !m_numLoadingFromCSS && !m_numLoadingFromJS; }
-
 private:
     FontLoader(Document*);
 
@@ -95,7 +93,9 @@ private:
     virtual EventTargetData* eventTargetData() override;
     virtual EventTargetData& ensureEventTargetData() override;
 
-    virtual const char* activeDOMObjectName() const override { return "FontLoader"; }
+    // ActiveDOMObject API.
+    const char* activeDOMObjectName() const override;
+    bool canSuspend() const override;
 
     void pendingEventsTimerFired() { firePendingEvents(); }
     void scheduleEvent(PassRefPtr<Event>);

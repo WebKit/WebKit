@@ -1256,6 +1256,11 @@ bool XMLHttpRequest::canSuspend() const
     return !m_loader;
 }
 
+const char* XMLHttpRequest::activeDOMObjectName() const
+{
+    return "XMLHttpRequest";
+}
+
 void XMLHttpRequest::suspend(ReasonForSuspension)
 {
     m_progressEventThrottle.suspend();

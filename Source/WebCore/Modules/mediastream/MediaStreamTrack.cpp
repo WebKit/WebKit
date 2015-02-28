@@ -288,6 +288,17 @@ void MediaStreamTrack::stop()
     m_privateTrack->stop(MediaStreamTrackPrivate::StopTrackOnly);
 }
 
+const char* MediaStreamTrack::activeDOMObjectName() const
+{
+    return "MediaStreamTrack";
+}
+
+bool MediaStreamTrack::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 void MediaStreamTrack::scheduleEventDispatch(PassRefPtr<Event> event)
 {
     {

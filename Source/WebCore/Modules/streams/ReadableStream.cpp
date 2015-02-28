@@ -90,6 +90,17 @@ void ReadableStream::ready(SuccessCallback)
     notImplemented();
 }
 
+const char* ReadableStream::activeDOMObjectName() const
+{
+    return "ReadableStream";
+}
+
+bool ReadableStream::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
+}
+
 }
 
 #endif

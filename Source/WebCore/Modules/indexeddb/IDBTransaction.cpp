@@ -408,6 +408,11 @@ void IDBTransaction::stop()
     abort(IGNORE_EXCEPTION);
 }
 
+const char* IDBTransaction::activeDOMObjectName() const
+{
+    return "IDBTransaction";
+}
+
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT_WITH_MESSAGE(m_state != Finished, "A finished transaction tried to enqueue an event of type %s.", event->type().string().utf8().data());

@@ -102,7 +102,18 @@ void NotificationCenter::stop()
         return;
     m_client->cancelRequestsForPermission(scriptExecutionContext());
     m_client->clearNotifications(scriptExecutionContext());
-    m_client = 0;
+    m_client = nullptr;
+}
+
+const char* NotificationCenter::activeDOMObjectName() const
+{
+    return "NotificationCenter";
+}
+
+bool NotificationCenter::canSuspend() const
+{
+    // FIXME: We should try and do better here.
+    return false;
 }
 
 void NotificationCenter::requestTimedOut(NotificationCenter::NotificationRequestCallback* request)
