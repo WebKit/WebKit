@@ -118,7 +118,7 @@ Node* highestEditableRoot(const Position& position, EditableType editableType)
         node = node->parentNode();
         if (!node)
             break;
-        if (node->hasEditableStyle(editableType))
+        if (hasEditableStyle(*node, editableType))
             highestEditableRoot = node;
     }
 
@@ -141,17 +141,46 @@ Node* lowestEditableAncestor(Node* node)
     return 0;
 }
 
-bool isEditablePosition(const Position& p, EditableType editableType, EUpdateStyle updateStyle)
+static bool isEditableToAccessibility(const Node& node)
 {
-    Node* node = p.containerNode();
-    if (!node)
-        return false;
-    if (updateStyle == UpdateStyle)
-        node->document().updateStyleIfNeeded();
-    else
-        ASSERT(updateStyle == DoNotUpdateStyle);
+    ASSERT(AXObjectCache::accessibilityEnabled());
+    ASSERT(node.document().existingAXObjectCache());
 
-    return node->hasEditableStyle(editableType);
+    if (AXObjectCache* cache = node.document().existingAXObjectCache())
+        return cache->rootAXEditableElement(&node);
+
+    return false;
+}
+
+static bool computeEditability(const Node& node, EditableType editableType, Node::ShouldUpdateStyle shouldUpdateStyle)
+{
+    if (node.computeEditability(Node::UserSelectAllIsAlwaysNonEditable, shouldUpdateStyle) != Node::Editability::ReadOnly)
+        return true;
+
+    switch (editableType) {
+    case ContentIsEditable:
+        return false;
+    case HasEditableAXRole:
+        return isEditableToAccessibility(node);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool hasEditableStyle(const Node& node, EditableType editableType)
+{
+    return computeEditability(node, editableType, Node::ShouldUpdateStyle::DoNotUpdate);
+}
+
+bool isEditableNode(const Node& node)
+{
+    return computeEditability(node, ContentIsEditable, Node::ShouldUpdateStyle::Update);
+}
+
+bool isEditablePosition(const Position& position, EditableType editableType)
+{
+    Node* node = position.containerNode();
+    return node && computeEditability(*node, editableType, Node::ShouldUpdateStyle::Update);
 }
 
 bool isAtUnsplittableElement(const Position& pos)
@@ -161,13 +190,12 @@ bool isAtUnsplittableElement(const Position& pos)
 }
     
     
-bool isRichlyEditablePosition(const Position& p, EditableType editableType)
+bool isRichlyEditablePosition(const Position& position)
 {
-    Node* node = p.containerNode();
+    Node* node = position.containerNode();
     if (!node)
         return false;
-
-    return node->hasRichlyEditableStyle(editableType);
+    return node->hasRichlyEditableStyle();
 }
 
 Element* editableRootForPosition(const Position& p, EditableType editableType)
@@ -176,7 +204,15 @@ Element* editableRootForPosition(const Position& p, EditableType editableType)
     if (!node)
         return 0;
 
-    return node->rootEditableElement(editableType);
+    switch (editableType) {
+    case HasEditableAXRole:
+        if (AXObjectCache* cache = node->document().existingAXObjectCache())
+            return const_cast<Element*>(cache->rootAXEditableElement(node));
+        FALLTHROUGH;
+    case ContentIsEditable:
+        return node->rootEditableElement();
+    }
+    return 0;
 }
 
 // Finds the enclosing element until which the tree can be split.

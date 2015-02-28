@@ -537,16 +537,14 @@ const AtomicString& Node::namespaceURI() const
     return nullAtom;
 }
 
-bool Node::isContentEditable(UserSelectAllTreatment treatment)
+bool Node::isContentEditable()
 {
-    document().updateStyleIfNeeded();
-    return hasEditableStyle(Editable, treatment);
+    return computeEditability(UserSelectAllDoesNotAffectEditability, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
 bool Node::isContentRichlyEditable()
 {
-    document().updateStyleIfNeeded();
-    return hasEditableStyle(RichlyEditable, UserSelectAllIsAlwaysNonEditable);
+    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) == Editability::CanEditRichly;
 }
 
 void Node::inspect()
@@ -555,15 +553,18 @@ void Node::inspect()
         document().page()->inspectorController().inspect(this);
 }
 
-bool Node::hasEditableStyle(EditableLevel editableLevel, UserSelectAllTreatment treatment) const
+Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
+    if (shouldUpdateStyle == ShouldUpdateStyle::Update)
+        document().updateStyleIfNeeded();
+
     if (!document().hasLivingRenderTree())
-        return false;
+        return Editability::ReadOnly;
     if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable() && !containingShadowRoot())
-        return true;
+        return Editability::CanEditRichly;
 
     if (isPseudoElement())
-        return false;
+        return Editability::ReadOnly;
 
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion
@@ -579,40 +580,22 @@ bool Node::hasEditableStyle(EditableLevel editableLevel, UserSelectAllTreatment 
         // Elements with user-select: all style are considered atomic
         // therefore non editable.
         if (treatment == UserSelectAllIsAlwaysNonEditable && style->userSelect() == SELECT_ALL)
-            return false;
+            return Editability::ReadOnly;
 #else
         UNUSED_PARAM(treatment);
 #endif
         switch (style->userModify()) {
         case READ_ONLY:
-            return false;
+            return Editability::ReadOnly;
         case READ_WRITE:
-            return true;
+            return Editability::CanEditRichly;
         case READ_WRITE_PLAINTEXT_ONLY:
-            return editableLevel != RichlyEditable;
+            return Editability::CanEditPlainText;
         }
         ASSERT_NOT_REACHED();
-        return false;
+        return Editability::ReadOnly;
     }
-    return false;
-}
-
-bool Node::isEditableToAccessibility(EditableLevel editableLevel) const
-{
-    if (hasEditableStyle(editableLevel))
-        return true;
-
-    // FIXME: Respect editableLevel for ARIA editable elements.
-    if (editableLevel == RichlyEditable)
-        return false;
-
-    ASSERT(AXObjectCache::accessibilityEnabled());
-    ASSERT(document().existingAXObjectCache());
-
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        return cache->rootAXEditableElement(this);
-
-    return false;
+    return Editability::ReadOnly;
 }
 
 RenderBox* Node::renderBox() const
@@ -1028,16 +1011,6 @@ bool Node::isRootEditableElement() const
 {
     return hasEditableStyle() && isElementNode() && (!parentNode() || !parentNode()->hasEditableStyle()
         || !parentNode()->isElementNode() || hasTagName(bodyTag));
-}
-
-Element* Node::rootEditableElement(EditableType editableType) const
-{
-    if (editableType == HasEditableAXRole) {
-        if (AXObjectCache* cache = document().existingAXObjectCache())
-            return const_cast<Element*>(cache->rootAXEditableElement(this));
-    }
-    
-    return rootEditableElement();
 }
 
 Element* Node::rootEditableElement() const
@@ -2163,7 +2136,8 @@ bool Node::willRespondToMouseClickEvents()
         return false;
     if (downcast<Element>(*this).isDisabledFormControl())
         return false;
-    return isContentEditable(UserSelectAllIsAlwaysNonEditable) || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
+    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly
+        || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
 #endif
 }
 

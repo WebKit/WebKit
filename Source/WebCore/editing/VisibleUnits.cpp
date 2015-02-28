@@ -48,25 +48,25 @@ using namespace WTF::Unicode;
 
 static Node* previousLeafWithSameEditability(Node* node, EditableType editableType)
 {
-    bool editable = node->hasEditableStyle(editableType);
+    bool editable = hasEditableStyle(*node, editableType);
     node = previousLeafNode(node);
     while (node) {
-        if (editable == node->hasEditableStyle(editableType))
+        if (editable == hasEditableStyle(*node, editableType))
             return node;
         node = previousLeafNode(node);
     }
     return nullptr;
 }
 
-static Node* nextLeafWithSameEditability(Node* node, EditableType editableType = ContentIsEditable)
+static Node* nextLeafWithSameEditability(Node* node, EditableType editableType)
 {
     if (!node)
         return nullptr;
     
-    bool editable = node->hasEditableStyle(editableType);
+    bool editable = hasEditableStyle(*node, editableType);
     node = nextLeafNode(node);
     while (node) {
-        if (editable == node->hasEditableStyle(editableType))
+        if (editable == hasEditableStyle(*node, editableType))
             return node;
         node = nextLeafNode(node);
     }
@@ -935,6 +935,13 @@ static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineB
     return IntPoint(root.blockDirectionPointInLine(), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
+static Element* rootEditableOrDocumentElement(Node& node, EditableType editableType)
+{
+    if (hasEditableStyle(node, editableType))
+        return editableRootForPosition(firstPositionInOrBeforeNode(&node), editableType);
+    return node.document().documentElement();
+}
+
 VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int lineDirectionPoint, EditableType editableType)
 {
     Position p = visiblePosition.deepEquivalent();
@@ -984,7 +991,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
-    Element* rootElement = node->hasEditableStyle(editableType) ? node->rootEditableElement(editableType) : node->document().documentElement();
+    Element* rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
     return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
@@ -1042,7 +1049,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     // Could not find a next line. This means we must already be on the last line.
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
-    Element* rootElement = node->hasEditableStyle(editableType) ? node->rootEditableElement(editableType) : node->document().documentElement();
+    Element* rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
     return VisiblePosition(lastPositionInNode(rootElement), DOWNSTREAM);

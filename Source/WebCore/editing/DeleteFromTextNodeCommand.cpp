@@ -25,11 +25,12 @@
 
 #include "config.h"
 #include "DeleteFromTextNodeCommand.h"
-#include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 
 #include "AXObjectCache.h"
+#include "Document.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Text.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ void DeleteFromTextNodeCommand::doApply()
 {
     ASSERT(m_node);
 
-    if (!m_node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
+    if (!isEditableNode(*m_node))
         return;
 
     ExceptionCode ec = 0;

@@ -239,7 +239,7 @@ bool Element::isMouseFocusable() const
 
 bool Element::shouldUseInputMethod()
 {
-    return isContentEditable(UserSelectAllIsAlwaysNonEditable);
+    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomicString& eventType, int detail, Element* relatedTarget)

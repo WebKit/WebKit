@@ -643,7 +643,9 @@ bool VisibleSelection::isContentEditable() const
 
 bool VisibleSelection::hasEditableStyle() const
 {
-    return isEditablePosition(start(), ContentIsEditable, DoNotUpdateStyle);
+    if (Node* containerNode = start().containerNode())
+        return containerNode->hasEditableStyle();
+    return false;
 }
 
 bool VisibleSelection::isContentRichlyEditable() const

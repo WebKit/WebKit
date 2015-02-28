@@ -51,9 +51,9 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, P
 void InsertNodeBeforeCommand::doApply()
 {
     ContainerNode* parent = m_refChild->parentNode();
-    if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)))
+    if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !isEditableNode(*parent)))
         return;
-    ASSERT(parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable));
+    ASSERT(isEditableNode(*parent));
 
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION);
 
@@ -63,7 +63,7 @@ void InsertNodeBeforeCommand::doApply()
 
 void InsertNodeBeforeCommand::doUnapply()
 {
-    if (!m_insertChild->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
+    if (!isEditableNode(*m_insertChild))
         return;
 
     // Need to notify this before actually deleting the text

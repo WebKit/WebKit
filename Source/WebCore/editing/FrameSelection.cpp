@@ -1453,7 +1453,7 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
         return;
 
     if (RenderView* view = node->document().renderView()) {
-        if (shouldRepaintCaret(view, node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)))
+        if (shouldRepaintCaret(view, isEditableNode(*node)))
             repaintCaretForLocalRect(node, localCaretRectWithoutUpdate());
     }
 }

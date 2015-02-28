@@ -1,3 +1,78 @@
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Node::hasEditableStyle and isEditablePosition have too many options
+        https://bugs.webkit.org/show_bug.cgi?id=142078
+
+        Reviewed by Andreas Kling.
+
+        Moved the code that dealt with accessibility to htmlediting.cpp from Node. This patch introduces
+        new editing helper functions hasEditableStyle and isEditableNode for this purpose.
+
+        Also removed UserSelectAllTreatment from isContentEditable's arguments in the favor of using
+        newly extracted computeEditability in call sites that specify this option since isContentEditable
+        is a public DOM API.
+
+        No new tests since there should be no observable behavior changes.
+
+        * accessibility/AXObjectCache.h: Removed the declaration of an undefined function.
+
+        * dom/Element.cpp:
+        (WebCore::Element::shouldUseInputMethod): Uses newly added computeEditability.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable): Ditto. No longer takes UserSelectAllTreatment as an argument.
+        (WebCore::Node::isContentRichlyEditable): Ditto.
+        (WebCore::Node::computeEditability): Renamed from hasEditableStyle to avoid the confusion with
+        a helper function of the same name. Added ShouldUpdateStyle as an argument to optionally update
+        style tree. Also returns tri-state Editability enum instead of returning a boolean based on
+        the value of EditableLevel argument.
+        (WebCore::Node::isEditableToAccessibility): Moved to htmlediting.cpp.
+        (WebCore::Node::willRespondToMouseClickEvents): Uses newly added computeEditability.
+        (WebCore::Node::rootEditableElement): Moved to htmlediting.cpp.
+
+        * dom/Node.h: No longer includes EditingBoundary.h.
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::hasEditableStyle): No longer takes EditableType as an argument.
+        (WebCore::Node::hasRichlyEditableStyle): Ditto.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Uses newly added isEditableNode.
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Ditto.
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::invalidateCaretRect): Ditto.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto.
+        (WebCore::InsertNodeBeforeCommand::doUnapply): Ditto.
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doApply): Ditto.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::hasEditableStyle): Since this is the only caller of isEditablePosition
+        which sets DoNotUpdateStyle, directly call hasEditableStyle on the container node instead. This was
+        not possible prior to r180726 because isEditablePosition had to move out of tables.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLeafWithSameEditability): Uses newly added hasEditableStyle.
+        (WebCore::nextLeafWithSameEditability): Ditto.
+        (WebCore::rootEditableOrDocumentElement): Extracted from previousLinePosition. Use helper functions
+        in htmlediting.cpp instead of member functions of Node since they no longer support EditableType.
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+
+        * editing/htmlediting.cpp:
+        (WebCore::highestEditableRoot): Uses newly added hasEditableStyle.
+        (WebCore::isEditableToAccessibility): Moved from Node.
+        (WebCore::computeEditability): Extracted from isEditablePosition.
+        (WebCore::hasEditableStyle): Added.
+        (WebCore::isEditableNode): Added.
+        (WebCore::isEditablePosition): Now calls computeEditability.
+        (WebCore::isRichlyEditablePosition): No longer takes EditableType since that variant was never used.
+        (WebCore::editableRootForPosition): Moved the code from Node::rootEditableElement.
+
+        * editing/htmlediting.h:
+
 2015-02-27  Chris Dumez  <cdumez@apple.com>
 
         Make ActiveDOMObject::canSuspend() pure virtual

@@ -879,7 +879,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
 {
     ASSERT(element);
 
-    if (!element->parentNode() || !element->parentNode()->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
+    if (!element->parentNode() || !isEditableNode(*element->parentNode()))
         return false;
 
     if (isStyledInlineElementToRemove(element.get())) {
@@ -1349,7 +1349,7 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
     RefPtr<Node> node = startNode;
     while (node) {
         RefPtr<Node> next = node->nextSibling();
-        if (node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)) {
+        if (isEditableNode(*node)) {
             removeNode(node);
             appendNode(node, element);
         }

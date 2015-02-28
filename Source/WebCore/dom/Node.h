@@ -25,7 +25,6 @@
 #ifndef Node_h
 #define Node_h
 
-#include "EditingBoundary.h"
 #include "EventTarget.h"
 #include "URLHash.h"
 #include "LayoutRect.h"
@@ -313,7 +312,6 @@ public:
 
     bool isRootEditableElement() const;
     WEBCORE_EXPORT Element* rootEditableElement() const;
-    Element* rootEditableElement(EditableType) const;
 
     // Called by the parser when this element's close tag is reached,
     // signaling that all child tags have been parsed and added.
@@ -358,34 +356,24 @@ public:
         UserSelectAllDoesNotAffectEditability,
         UserSelectAllIsAlwaysNonEditable
     };
-    WEBCORE_EXPORT bool isContentEditable(UserSelectAllTreatment = UserSelectAllDoesNotAffectEditability);
+    WEBCORE_EXPORT bool isContentEditable();
     bool isContentRichlyEditable();
 
     WEBCORE_EXPORT void inspect();
 
-    bool hasEditableStyle(EditableType editableType = ContentIsEditable, UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
+    bool hasEditableStyle(UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
     {
-        switch (editableType) {
-        case ContentIsEditable:
-            return hasEditableStyle(Editable, treatment);
-        case HasEditableAXRole:
-            return isEditableToAccessibility(Editable);
-        }
-        ASSERT_NOT_REACHED();
-        return false;
+        return computeEditability(treatment, ShouldUpdateStyle::DoNotUpdate) != Editability::ReadOnly;
+    }
+    // FIXME: Replace every use of this function by helpers in htmlediting.h
+    bool hasRichlyEditableStyle() const
+    {
+        return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::DoNotUpdate) == Editability::CanEditRichly;
     }
 
-    bool hasRichlyEditableStyle(EditableType editableType = ContentIsEditable) const
-    {
-        switch (editableType) {
-        case ContentIsEditable:
-            return hasEditableStyle(RichlyEditable, UserSelectAllIsAlwaysNonEditable);
-        case HasEditableAXRole:
-            return isEditableToAccessibility(RichlyEditable);
-        }
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    enum class Editability { ReadOnly, CanEditPlainText, CanEditRichly };
+    enum class ShouldUpdateStyle { Update, DoNotUpdate };
+    WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
 
     WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
@@ -688,10 +676,6 @@ private:
 
     WEBCORE_EXPORT void removedLastRef();
     bool hasTreeSharedParent() const { return !!parentNode(); }
-
-    enum EditableLevel { Editable, RichlyEditable };
-    WEBCORE_EXPORT bool hasEditableStyle(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
-    WEBCORE_EXPORT bool isEditableToAccessibility(EditableLevel) const;
 
     virtual void refEventTarget() override;
     virtual void derefEventTarget() override;
