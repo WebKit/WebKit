@@ -29,7 +29,6 @@
 #include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IOSurface.h>
-#include <WebCore/MachSendRight.h>
 #include <WebCore/Region.h>
 #include <chrono>
 
@@ -134,7 +133,6 @@ private:
     Buffer m_backBuffer;
 #if USE(IOSURFACE)
     Buffer m_secondaryBackBuffer;
-    WebCore::MachSendRight m_frontBufferSendRight;
 #endif
 
     RetainPtr<CGContextRef> m_frontContextPendingFlush;
