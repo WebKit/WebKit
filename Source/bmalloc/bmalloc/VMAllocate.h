@@ -131,18 +131,16 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 #endif
 }
 
-// Trims requests that are un-page-aligned. NOTE: size must be at least a page.
+// Trims requests that are un-page-aligned.
 inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    BASSERT(size >= vmPageSize);
-
     char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
     char* end = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
 
-    Range range(begin, end - begin);
-    if (!range)
+    if (begin >= end)
         return;
-    vmDeallocatePhysicalPages(range.begin(), range.size());
+
+    vmDeallocatePhysicalPages(begin, end - begin);
 }
 
 // Expands requests that are un-page-aligned. NOTE: Allocation must proceed left-to-right.
@@ -151,10 +149,10 @@ inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
     char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
     char* end = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
 
-    Range range(begin, end - begin);
-    if (!range)
+    if (begin >= end)
         return;
-    vmAllocatePhysicalPages(range.begin(), range.size());
+
+    vmAllocatePhysicalPages(begin, end - begin);
 }
 
 } // namespace bmalloc

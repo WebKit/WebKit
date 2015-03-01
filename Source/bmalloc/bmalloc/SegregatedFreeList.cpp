@@ -27,21 +27,23 @@
 
 namespace bmalloc {
 
-SegregatedFreeList::SegregatedFreeList()
+SegregatedFreeList::SegregatedFreeList(Owner owner)
+    : m_owner(owner)
 {
     BASSERT(static_cast<size_t>(&select(largeMax) - m_freeLists.begin()) == m_freeLists.size() - 1);
 }
 
 void SegregatedFreeList::insert(const LargeObject& largeObject)
 {
+    BASSERT(largeObject.owner() == m_owner);
     auto& list = select(largeObject.size());
-    list.push(largeObject);
+    list.push(m_owner, largeObject);
 }
 
-LargeObject SegregatedFreeList::takeGreedy(size_t size)
+LargeObject SegregatedFreeList::takeGreedy()
 {
     for (size_t i = m_freeLists.size(); i-- > 0; ) {
-        LargeObject largeObject = m_freeLists[i].takeGreedy(size);
+        LargeObject largeObject = m_freeLists[i].takeGreedy(m_owner);
         if (!largeObject)
             continue;
 
@@ -53,7 +55,7 @@ LargeObject SegregatedFreeList::takeGreedy(size_t size)
 LargeObject SegregatedFreeList::take(size_t size)
 {
     for (auto* list = &select(size); list != m_freeLists.end(); ++list) {
-        LargeObject largeObject = list->take(size);
+        LargeObject largeObject = list->take(m_owner, size);
         if (!largeObject)
             continue;
 
@@ -65,7 +67,7 @@ LargeObject SegregatedFreeList::take(size_t size)
 LargeObject SegregatedFreeList::take(size_t alignment, size_t size, size_t unalignedSize)
 {
     for (auto* list = &select(size); list != m_freeLists.end(); ++list) {
-        LargeObject largeObject = list->take(alignment, size, unalignedSize);
+        LargeObject largeObject = list->take(m_owner, alignment, size, unalignedSize);
         if (!largeObject)
             continue;
 

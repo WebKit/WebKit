@@ -24,7 +24,6 @@
  */
 
 #include "BAssert.h"
-#include "BeginTag.h"
 #include "LargeChunk.h"
 #include "Deallocator.h"
 #include "Heap.h"

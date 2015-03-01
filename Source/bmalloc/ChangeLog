@@ -1,3 +1,126 @@
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fixed a typo in the previous commit.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::setOwner):
+
+2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL build fix after r180797.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::owner):
+        (bmalloc::BoundaryTag::setOwner):
+
+2015-02-27  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Pathological madvise churn on the free(malloc(x)) benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=142058
+
+        Reviewed by Andreas Kling.
+
+        The churn was caused by repeatedly splitting an object with physical
+        pages from an object without, and then merging them back together again.
+        The merge would conservatively forget that we had physical pages, forcing
+        a new call to madvise on the next allocation.
+
+        This patch more strictly segregates objects in the heap from objects in
+        the VM heap, with these changes:
+
+        (1) Objects in the heap are not allowed to merge with objects in the VM
+        heap, and vice versa -- since that would erase our precise knowledge of
+        which physical pages had been allocated.
+
+        (2) The VM heap is exclusively responsible for allocating and deallocating
+        physical pages.
+
+        (3) The heap free list must consider entries for objects that are in the
+        VM heap to be invalid, and vice versa. (This condition can arise
+        because the free list does not eagerly remove items.)
+
+        With these changes, we can know that any valid object in the heap's free
+        list already has physical pages, and does not need to call madvise.
+
+        Note that the VM heap -- as before -- might sometimes contain ranges
+        or pieces of ranges that have physical pages, since we allow splitting
+        of ranges at granularities smaller than the VM page size. These ranges
+        can eventually merge with ranges in the heap during scavenging.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::owner):
+        (bmalloc::BoundaryTag::setOwner):
+        (bmalloc::BoundaryTag::initSentinel):
+        (bmalloc::BoundaryTag::hasPhysicalPages): Deleted.
+        (bmalloc::BoundaryTag::setHasPhysicalPages): Deleted. Replaced the concept
+        of "has physical pages" with a bit indicating which heap owns the large
+        object. This is a more precise concept, since the old bit was really a
+        Yes / Maybe bit.
+
+        * bmalloc/Deallocator.cpp:
+
+        * bmalloc/FreeList.cpp: Adopt
+        (bmalloc::FreeList::takeGreedy):
+        (bmalloc::FreeList::take):
+        (bmalloc::FreeList::removeInvalidAndDuplicateEntries):
+        * bmalloc/FreeList.h:
+        (bmalloc::FreeList::push): Added API for considering the owner when
+        deciding if a free list entry is valid.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap): Adopt new API.
+
+        (bmalloc::Heap::scavengeLargeRanges): Scavenge all ranges with no minimum,
+        since some ranges might be able to merge with ranges in the VM heap, and
+        they won't be allowed to until we scavenge them.
+
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateMediumPage):
+        (bmalloc::Heap::allocateLarge): New VM heap API makes this function
+        simpler, since we always get back physical pages now.
+
+        * bmalloc/Heap.h:
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::end):
+        (bmalloc::LargeObject::owner):
+        (bmalloc::LargeObject::setOwner):
+        (bmalloc::LargeObject::isValidAndFree):
+        (bmalloc::LargeObject::merge): Do not merge objects across heaps since
+        that causes madvise churn.
+        (bmalloc::LargeObject::validateSelf):
+        (bmalloc::LargeObject::init):
+        (bmalloc::LargeObject::hasPhysicalPages): Deleted.
+        (bmalloc::LargeObject::setHasPhysicalPages): Deleted. Propogate the Owner API.
+
+        * bmalloc/Owner.h: Added.
+
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h: Propogate the owner API.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        (bmalloc::vmAllocatePhysicalPagesSloppy): Clarified these functions and
+        removed an edge case.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeObject):
+        (bmalloc::VMHeap::deallocateLargeObject): Be sure to give each object
+        a new chance to merge, since it might have been prohibited from merging
+        before by virtue of not being in the VM heap.
+
+        (bmalloc::VMHeap::allocateLargeRange): Deleted.
+        (bmalloc::VMHeap::deallocateLargeRange): Deleted.
+
 2015-02-26  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Large object free list can grow infinitely

@@ -27,6 +27,7 @@
 #define BoundaryTag_h
 
 #include "BAssert.h"
+#include "Owner.h"
 #include "Range.h"
 #include "Sizes.h"
 #include <cstring>
@@ -49,8 +50,8 @@ public:
     bool isEnd() { return m_isEnd; }
     void setEnd(bool isEnd) { m_isEnd = isEnd; }
 
-    bool hasPhysicalPages() { return m_hasPhysicalPages; }
-    void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
+    Owner owner() { return m_ownerIsHeap ? Owner::Heap : Owner::VMHeap; }
+    void setOwner(Owner owner) { m_ownerIsHeap = (owner == Owner::Heap); }
     
     bool isMarked() { return m_isMarked; }
     void setMarked(bool isMarked) { m_isMarked = isMarked; }
@@ -84,7 +85,7 @@ private:
 
     bool m_isFree: 1;
     bool m_isEnd: 1;
-    bool m_hasPhysicalPages: 1;
+    bool m_ownerIsHeap: 1;
     bool m_isMarked: 1;
     unsigned m_compactBegin: compactBeginBits;
     unsigned m_size: sizeBits;
@@ -121,6 +122,7 @@ inline void BoundaryTag::initSentinel()
 {
     setRange(Range(nullptr, largeMin));
     setFree(false);
+    setOwner(Owner::VMHeap);
 }
 
 } // namespace bmalloc

@@ -52,14 +52,15 @@ public:
 
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
-    LargeObject allocateLargeRange(size_t);
-    LargeObject allocateLargeRange(size_t alignment, size_t, size_t unalignedSize);
+    LargeObject allocateLargeObject(size_t);
+    LargeObject allocateLargeObject(size_t alignment, size_t, size_t unalignedSize);
 
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<StaticMutex>&, MediumPage*);
-    void deallocateLargeRange(std::unique_lock<StaticMutex>&, LargeObject&);
+    void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject&);
 
 private:
+    LargeObject allocateLargeObject(LargeObject&, size_t);
     void grow();
 
     Vector<SmallPage*> m_smallPages;
@@ -75,7 +76,9 @@ inline SmallPage* VMHeap::allocateSmallPage()
     if (!m_smallPages.size())
         grow();
 
-    return m_smallPages.pop();
+    SmallPage* page = m_smallPages.pop();
+    vmAllocatePhysicalPages(page->begin()->begin(), vmPageSize);
+    return page;
 }
 
 inline MediumPage* VMHeap::allocateMediumPage()
@@ -83,10 +86,27 @@ inline MediumPage* VMHeap::allocateMediumPage()
     if (!m_mediumPages.size())
         grow();
 
-    return m_mediumPages.pop();
+    MediumPage* page = m_mediumPages.pop();
+    vmAllocatePhysicalPages(page->begin()->begin(), vmPageSize);
+    return page;
 }
 
-inline LargeObject VMHeap::allocateLargeRange(size_t size)
+inline LargeObject VMHeap::allocateLargeObject(LargeObject& largeObject, size_t size)
+{
+    BASSERT(largeObject.isFree());
+
+    if (largeObject.size() - size > largeMin) {
+        std::pair<LargeObject, LargeObject> split = largeObject.split(size);
+        largeObject = split.first;
+        m_largeObjects.insert(split.second);
+    }
+
+    vmAllocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
+    largeObject.setOwner(Owner::Heap);
+    return largeObject.begin();
+}
+
+inline LargeObject VMHeap::allocateLargeObject(size_t size)
 {
     LargeObject largeObject = m_largeObjects.take(size);
     if (!largeObject) {
@@ -94,10 +114,11 @@ inline LargeObject VMHeap::allocateLargeRange(size_t size)
         largeObject = m_largeObjects.take(size);
         BASSERT(largeObject);
     }
-    return largeObject;
+
+    return allocateLargeObject(largeObject, size);
 }
 
-inline LargeObject VMHeap::allocateLargeRange(size_t alignment, size_t size, size_t unalignedSize)
+inline LargeObject VMHeap::allocateLargeObject(size_t alignment, size_t size, size_t unalignedSize)
 {
     LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize);
     if (!largeObject) {
@@ -105,7 +126,11 @@ inline LargeObject VMHeap::allocateLargeRange(size_t alignment, size_t size, siz
         largeObject = m_largeObjects.take(alignment, size, unalignedSize);
         BASSERT(largeObject);
     }
-    return largeObject;
+
+    size_t alignmentMask = alignment - 1;
+    if (test(largeObject.begin(), alignmentMask))
+        return allocateLargeObject(largeObject, unalignedSize);
+    return allocateLargeObject(largeObject, size);
 }
 
 inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, SmallPage* page)
@@ -126,20 +151,25 @@ inline void VMHeap::deallocateMediumPage(std::unique_lock<StaticMutex>& lock, Me
     m_mediumPages.push(page);
 }
 
-inline void VMHeap::deallocateLargeRange(std::unique_lock<StaticMutex>& lock, LargeObject& largeObject)
+inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject& largeObject)
 {
-    // Temporarily mark this range as allocated to prevent clients from merging
-    // with it and then reallocating it while we're messing with its physical pages.
-    largeObject.setFree(false);
+    largeObject.setOwner(Owner::VMHeap);
+    
+    // If we couldn't merge with our neighbors before because they were in the
+    // VM heap, we can merge with them now.
+    LargeObject merged = largeObject.merge();
+
+    // Temporarily mark this object as allocated to prevent clients from merging
+    // with it or allocating it while we're messing with its physical pages.
+    merged.setFree(false);
 
     lock.unlock();
-    vmDeallocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
+    vmDeallocatePhysicalPagesSloppy(merged.begin(), merged.size());
     lock.lock();
 
-    largeObject.setFree(true);
-    largeObject.setHasPhysicalPages(false);
+    merged.setFree(true);
 
-    m_largeObjects.insert(largeObject);
+    m_largeObjects.insert(merged);
 }
 
 } // namespace bmalloc

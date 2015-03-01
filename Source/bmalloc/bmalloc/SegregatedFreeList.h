@@ -33,7 +33,7 @@ namespace bmalloc {
 
 class SegregatedFreeList {
 public:
-    SegregatedFreeList();
+    SegregatedFreeList(Owner);
 
     void insert(const LargeObject&);
 
@@ -54,11 +54,12 @@ public:
     // fit is found. Never returns LargeObject() spuriously. Incrementally
     // removes stale items from the free list while searching. Eagerly removes
     // the returned object from the free list.
-    LargeObject takeGreedy(size_t);
-    
+    LargeObject takeGreedy();
+
 private:
     FreeList& select(size_t);
 
+    Owner m_owner;
     std::array<FreeList, 19> m_freeLists;
 };
 
