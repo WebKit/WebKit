@@ -1,3 +1,21 @@
+2015-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        FrameView::layoutTimerFired() should update style if needed before doing layout
+        https://bugs.webkit.org/show_bug.cgi?id=141688
+
+        Reviewed by Andreas Kling.
+
+        If the style recalc timer has been scheduled to fire after the layout timer,
+        when the layout timer fires, we might as well just do the style recalc
+        too. The call to updateStyleIfNeeded() will cancel the pending style
+        recalc timer.
+        
+        This doesn't have much impact on the number of layouts (measured via PLT)
+        but seems like a reasonable thing to do.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutTimerFired):
+
 2015-02-27  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed for JS wrapper owners.
