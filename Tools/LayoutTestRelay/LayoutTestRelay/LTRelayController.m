@@ -218,7 +218,7 @@
             if (value && strlen(value)) {
                 NSString *nsValue = [NSString stringWithUTF8String:value];
                 [dictionary setObject:nsValue forKey:keyName];
-                [dictionary setObject:[@"__XPC_" stringByAppendingString:nsValue] forKey:keyName];
+                [dictionary setObject:nsValue forKey:[@"__XPC_" stringByAppendingString:keyName]];
             }
         }
 

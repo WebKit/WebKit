@@ -1,5 +1,17 @@
 2015-03-01  David Kilzer  <ddkilzer@apple.com>
 
+        LayoutTestRealy: Prepend __XPC_ to the key, not the value!
+
+        Follow-up fix for:
+
+        LayoutTestRelay: App environment variables not set for --guard-malloc or --leaks
+        <http://webkit.org/b/142145>
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController _environmentVariables]): Fix think-o.
+
+2015-03-01  David Kilzer  <ddkilzer@apple.com>
+
         LayoutTestRelay: App environment variables not set for --guard-malloc or --leaks
         <http://webkit.org/b/142145>
 
