@@ -1,3 +1,30 @@
+2015-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Viewport units should not dirty style just before we do layout
+        https://bugs.webkit.org/show_bug.cgi?id=141682
+
+        Reviewed by Zalan Bujtas.
+        
+        In documents using viewport units, we dirtied style every time layout changed
+        the size of the document. This is nonsensical, because viewport units depend on the
+        viewport size, not the document size.
+        
+        Move the style dirtying from layout() into availableContentSizeChanged(). Hook
+        this up for WebKit1 by calling from -[WebFrameView _frameSizeChanged], and,
+        since that causes availableContentSizeChanged() to be called for WK1 for the first
+        time, protect the call to updateScrollbars() with a !platformWidget check.
+
+        Covered by existing viewport unit tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::availableContentSizeChanged):
+        (WebCore::FrameView::viewportSizeForCSSViewportUnits): Add a FIXME comment. Whether
+        scrollbars are ignored depends on the value of the overflow property on the root element.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::availableContentSizeChanged):
+
 2015-02-28  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Purge SQLite page cache when under memory pressure.

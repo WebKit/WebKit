@@ -1288,8 +1288,6 @@ void FrameView::layout(bool allowSubtree)
                         bodyRenderer->setChildNeedsLayout();
                     else if (rootRenderer && rootRenderer->stretchesToViewport())
                         rootRenderer->setChildNeedsLayout();
-
-                    document.updateViewportUnitsOnResize();
                 }
             }
 
@@ -2291,6 +2289,9 @@ bool FrameView::renderedCharactersExceed(unsigned threshold)
 
 void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
+    if (Document* document = frame().document())
+        document->updateViewportUnitsOnResize();
+
     setNeedsLayout();
     ScrollView::availableContentSizeChanged(reason);
 }
@@ -4726,8 +4727,11 @@ void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
     m_overrideViewportSize = size;
     m_hasOverrideViewportSize = true;
     
-    if (Document* document = m_frame->document())
+    if (Document* document = m_frame->document()) {
+        // FIXME: this should probably be updateViewportUnitsOnResize(), but synchronously
+        // dirtying style here causes assertions on iOS (rdar://problem/19998166).
         document->styleResolverChanged(DeferRecalcStyle);
+    }
 }
     
 IntSize FrameView::viewportSizeForCSSViewportUnits() const
@@ -4735,6 +4739,8 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
     if (m_hasOverrideViewportSize)
         return m_overrideViewportSize;
     
+    // FIXME: the value returned should take into account the value of the overflow
+    // property on the root element.
     return visibleContentRectIncludingScrollbars().size();
 }
     

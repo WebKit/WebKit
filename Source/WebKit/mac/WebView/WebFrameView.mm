@@ -351,7 +351,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         [[self _scrollView] setDrawsBackground:YES];
     if (Frame* coreFrame = [self _web_frame]) {
         if (FrameView* coreFrameView = coreFrame->view())
-            coreFrameView->setNeedsLayout();
+            coreFrameView->availableContentSizeChanged(ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
     }
 }
 

@@ -366,6 +366,10 @@ void ScrollView::setUseFixedLayout(bool enable)
 void ScrollView::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
     ScrollableArea::availableContentSizeChanged(reason);
+
+    if (platformWidget())
+        return;
+
     if (reason != AvailableSizeChangeReason::ScrollbarsChanged)
         updateScrollbars(scrollOffset());
 }

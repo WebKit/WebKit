@@ -488,6 +488,8 @@ public:
     WEBCORE_EXPORT virtual void willStartLiveResize() override;
     WEBCORE_EXPORT virtual void willEndLiveResize() override;
 
+    WEBCORE_EXPORT virtual void availableContentSizeChanged(AvailableSizeChangeReason) override;
+
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestonesIfNeeded();
     void fireLayoutRelatedMilestonesIfNeeded();
@@ -581,7 +583,6 @@ private:
 
     virtual void repaintContentRectangle(const IntRect&) override;
     virtual void updateContentsSize() override;
-    virtual void availableContentSizeChanged(AvailableSizeChangeReason) override;
     virtual void addedOrRemovedScrollbar() override;
 
     virtual void delegatesScrollingDidChange() override;
