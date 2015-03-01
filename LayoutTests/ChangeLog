@@ -1,5 +1,23 @@
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Setting any of the <object> element plugin controlling attributes does not have any affect.
+        https://bugs.webkit.org/show_bug.cgi?id=141936.
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/as-object/resources/lime100x100.html: Added.
+        * svg/as-object/resources/lime100x100.png: Added.
+        * svg/as-object/resources/lime100x100.svg: Added.
+        * svg/as-object/resources/red100x100.svg: Added.
+        * svg/as-object/svg-in-object-dynamic-attribute-change-expected.html: Added.
+        * svg/as-object/svg-in-object-dynamic-attribute-change.html: Added.
+        Ensure that changing the 'type' and the 'data' attributes of the <object>
+        element will have the expected outcome. Also make sure that the <object>
+        element renderer falls back correctly when setting any of the attributes
+        to some unexpected value.
+
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Cleanup RenderSVGResourceClipper class.
         https://bugs.webkit.org/show_bug.cgi?id=142032.
 

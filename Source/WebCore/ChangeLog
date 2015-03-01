@@ -1,5 +1,34 @@
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Setting any of the <object> element plugin controlling attributes does not have any affect.
+        https://bugs.webkit.org/show_bug.cgi?id=141936.
+
+        Reviewed by Zalan Bujtas.
+
+        When setting any of the <object> element plugin controlling attributes
+        dynamically we need to mark the the element to be dirty by calling
+        setNeedsStyleRecalc(), so it has to recreate its renderer when needed.
+        
+        Test: svg/as-object/svg-in-object-dynamic-attribute-change.html
+
+        * dom/Element.h: Delete unimplemented function.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute): Dirty the element by calling
+        setNeedsStyleRecalc() when one of the plugin controlling attributes gets
+        changed. We have to clear the m_useFallbackContent because the attribute's
+        new value might fix the object rendering.
+        
+        * html/HTMLObjectElement.h: Add a function to clear m_useFallbackContent.
+        
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle): We might need to 
+        reconstruct the object renderer in the image case. This can happen if the
+        image was rendering fallback content and the attribute's new value fixes
+        the object rendering.
+
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Cleanup RenderSVGResourceClipper class.
         https://bugs.webkit.org/show_bug.cgi?id=142032.
 
