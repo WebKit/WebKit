@@ -45,11 +45,17 @@
 #endif
 
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
+extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
 namespace WebCore {
 
 void MemoryPressureHandler::platformReleaseMemory(bool critical)
 {
+    {
+        ReliefLogger log("Purging SQLite caches");
+        _sqlite3_purgeEligiblePagerCacheMemory();
+    }
+
     {
         ReliefLogger log("Drain LayerPools");
         for (auto& pool : LayerPool::allLayerPools())
