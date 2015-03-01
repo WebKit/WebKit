@@ -997,6 +997,7 @@ webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/141084 [ Yosemite ] http/tests/media/video-preload.html [ Pass Timeout ]
 webkit.org/b/141294 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
+webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Faiure ]
 ## --- End flaky media tests
 
 # Skipped while Eric Carlson works on a fix.
