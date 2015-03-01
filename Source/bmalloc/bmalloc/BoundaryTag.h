@@ -51,6 +51,9 @@ public:
 
     bool hasPhysicalPages() { return m_hasPhysicalPages; }
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
+    
+    bool isMarked() { return m_isMarked; }
+    void setMarked(bool isMarked) { m_isMarked = isMarked; }
 
     bool isNull() { return !m_size; }
     void clear() { std::memset(this, 0, sizeof(*this)); }
@@ -67,7 +70,7 @@ public:
     BeginTag* next();
 
 private:
-    static const size_t flagBits = 3;
+    static const size_t flagBits = 4;
     static const size_t compactBeginBits = 4;
     static const size_t sizeBits = bitCount<unsigned>() - flagBits - compactBeginBits;
 
@@ -82,6 +85,7 @@ private:
     bool m_isFree: 1;
     bool m_isEnd: 1;
     bool m_hasPhysicalPages: 1;
+    bool m_isMarked: 1;
     unsigned m_compactBegin: compactBeginBits;
     unsigned m_size: sizeBits;
 };

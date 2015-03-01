@@ -35,19 +35,35 @@ namespace bmalloc {
 
 class FreeList {
 public:
+    FreeList();
+
     void push(const LargeObject&);
 
     LargeObject take(size_t);
     LargeObject take(size_t alignment, size_t, size_t unalignedSize);
+    
     LargeObject takeGreedy(size_t);
+
+    void removeInvalidAndDuplicateEntries();
     
 private:
     Vector<Range> m_vector;
+    size_t m_limit;
 };
+
+inline FreeList::FreeList()
+    : m_vector()
+    , m_limit(freeListSearchDepth)
+{
+}
 
 inline void FreeList::push(const LargeObject& largeObject)
 {
     BASSERT(largeObject.isFree());
+    if (m_vector.size() == m_limit) {
+        removeInvalidAndDuplicateEntries();
+        m_limit = std::max(m_vector.size() * freeListGrowFactor, freeListSearchDepth);
+    }
     m_vector.push(largeObject.range());
 }
 
