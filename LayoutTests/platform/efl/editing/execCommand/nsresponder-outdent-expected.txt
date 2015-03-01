@@ -14,6 +14,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 196: "This tests the outdent: method. "
           text run at (196,0) width 257: "You should see an undented 'foo' below."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 21x17
-          text run at (0,0) width 21: "foo"
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 21x17
+            text run at (0,0) width 21: "foo"
 caret: position 0 of child 0 {#text} of child 2 {DIV} of body

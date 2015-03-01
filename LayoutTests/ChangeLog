@@ -1,3 +1,19 @@
+2015-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL, GTK+, and Windows rebaselines after r180867.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/execCommand/5142012-1-expected.txt:
+        * platform/efl/editing/execCommand/nsresponder-outdent-expected.txt:
+        * platform/efl/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/gtk/editing/execCommand/5142012-1-expected.txt:
+        * platform/gtk/editing/execCommand/nsresponder-outdent-expected.txt:
+        * platform/gtk/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/gtk/editing/pasteboard/4989774-expected.txt:
+        * platform/win/editing/execCommand/5142012-1-expected.txt:
+        * platform/win/editing/execCommand/nsresponder-outdent-expected.txt:
+        * platform/win/editing/inserting/insert-at-end-02-expected.txt:
+
 2015-03-01  Alexey Proskuryakov  <ap@apple.com>
 
         media/track/track-in-band-cues-added-once.html flakily fails
