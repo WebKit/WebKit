@@ -1,3 +1,9 @@
+2015-03-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Document some more debug assertions.
+
+        * platform/win/TestExpectations:
+
 2015-02-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r85798): Lists of crashing/timeouting/stderr tests aren't sorted
