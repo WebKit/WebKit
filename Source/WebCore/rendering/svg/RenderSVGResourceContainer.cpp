@@ -52,7 +52,7 @@ void RenderSVGResourceContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Invalidate all resources if our layout changed.
-    if (everHadLayout() && selfNeedsLayout())
+    if (selfNeedsClientInvalidation())
         RenderSVGRoot::addResourceForClientInvalidation(this);
 
     RenderSVGHiddenContainer::layout();

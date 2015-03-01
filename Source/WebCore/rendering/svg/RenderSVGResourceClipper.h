@@ -31,11 +31,7 @@
 
 namespace WebCore {
 
-struct ClipperData {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    std::unique_ptr<ImageBuffer> clipMaskImage;
-};
+typedef std::unique_ptr<ImageBuffer> ClipperMaskImage;
 
 class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
 public:
@@ -60,17 +56,21 @@ public:
 
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return clipPathElement().clipPathUnits(); }
 
+protected:
+    virtual bool selfNeedsClientInvalidation() const override { return (everHadLayout() || m_clipper.size()) && selfNeedsLayout(); }
+
 private:
     void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderSVGResourceClipper"; }
 
     bool pathOnlyClipping(GraphicsContext*, const AffineTransform&, const FloatRect&);
-    bool drawContentIntoMaskImage(ClipperData*, const FloatRect& objectBoundingBox);
+    bool drawContentIntoMaskImage(const ClipperMaskImage&, const FloatRect& objectBoundingBox);
     void calculateClipContentRepaintRect();
+    ClipperMaskImage& addRendererToClipper(const RenderObject&);
 
     FloatRect m_clipBoundaries;
-    HashMap<RenderObject*, std::unique_ptr<ClipperData>> m_clipper;
+    HashMap<const RenderObject*, ClipperMaskImage> m_clipper;
 };
 
 }

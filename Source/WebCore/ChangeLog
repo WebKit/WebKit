@@ -1,3 +1,65 @@
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cleanup RenderSVGResourceClipper class.
+        https://bugs.webkit.org/show_bug.cgi?id=142032.
+
+        Reviewed by Darin Adler.
+        
+        This is a follow up for r180643: <http://trac.webkit.org/changeset/180643>.
+        It includes cleanup for RenderSVGResourceClipper class.
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceClipper.h: Change ClipperData to be a
+        typedef instead of a class and rename it to ClipperMaskImage. The purpose
+        of having it a class even though it includes only one member was because
+        we wanted it to be WTF_MAKE_FAST_ALLOCATED. We do not need to allocate it
+        as a separate object on the heap anymore.
+        
+        (WebCore::RenderSVGResourceClipper::addRendererToClipper): Instead of doing
+        double hash table lookups by calling HashMap::contains() and then HashMap::get(),
+        we can use HashMap::add() instead.
+
+2015-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Horizontal and vertical lines are clipped completely if clip-path is included in the tag but the referenced element is defined later.
+        https://bugs.webkit.org/show_bug.cgi?id=141776.
+
+        Reviewed by Dean Jackson.
+
+        Tests: svg/clip-path/clip-path-line-use-before-defined-expected.svg
+               svg/clip-path/clip-path-line-use-before-defined.svg
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext): Ensure the renderer
+        is added to m_clipper if it does not exist. The same renderer might have been 
+        added to m_clipper in resourceBoundingBox().
+        
+        (WebCore::RenderSVGResourceClipper::addRendererToClipper): Add the renderer to
+        m_clipper if it does not exist. Return the associated ClipperData.
+        
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox): If the clipper is
+        referenced before it is defined, add the renderer to m_clipper. While doing the
+        layout() for the clipper, we can check if m_clipper has values or not. If it does
+        have, we are going to mark the clipper for client invalidation which is done by
+        the SVG root.
+        
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.h:
+        (WebCore::RenderSVGResourceContainer::selfNeedsClientInvalidation): Define a 
+        new function selfNeedsClientInvalidation() which controls marking the clipper 
+        for client invalidation. In RenderSVGResourceClipper, override it so it checks
+        m_clipper to force clients validation even if it the first time we do layout
+        for this clipper.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout): Call the virtual function
+        selfNeedsClientInvalidation() to check whether we need to mark the clipper for
+        client invalidation.
+        
+        * svg/SVGElement.cpp: Delete unneeded header file.
+
 2015-02-25  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r180018 ): Holding a rubber-band in place can get stuck

@@ -39,7 +39,6 @@
 #include "HTMLParserIdioms.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGCursorElement.h"

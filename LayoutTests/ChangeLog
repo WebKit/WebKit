@@ -1,3 +1,27 @@
+2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cleanup RenderSVGResourceClipper class.
+        https://bugs.webkit.org/show_bug.cgi?id=142032.
+
+        Reviewed by Darin Adler.
+
+        * svg/clip-path/clip-path-line-use-before-defined-expected.svg:
+        * svg/clip-path/clip-path-line-use-before-defined.svg: Simplify the test
+        and make separate drawings for different cases.
+
+2015-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Horizontal and vertical lines are clipped completely if clip-path is included in the tag but the referenced element is defined later.
+        https://bugs.webkit.org/show_bug.cgi?id=141776.
+
+        Reviewed by Dean Jackson.
+        
+        New test cases for SVG lines which are clipped to a <clipPath>. The <clipPath>
+        is referenced before it is defined.
+
+        * svg/clip-path/clip-path-line-use-before-defined-expected.svg: Added.
+        * svg/clip-path/clip-path-line-use-before-defined.svg: Added.
+
 2015-02-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'searchbox' role
