@@ -97,6 +97,32 @@
 #endif
 
 #include <CoreFoundation/CoreFoundation.h>
+
+#if OS(WINDOWS)
+#ifndef CF_IMPLICIT_BRIDGING_ENABLED
+#define CF_IMPLICIT_BRIDGING_ENABLED
+#endif
+
+#ifndef CF_IMPLICIT_BRIDGING_DISABLED
+#define CF_IMPLICIT_BRIDGING_DISABLED
+#endif
+
+#include <CoreFoundation/CFBase.h>
+
+#ifndef CF_ENUM
+#define CF_ENUM(_type, _name) _type _name; enum
+#endif
+#ifndef CF_OPTIONS
+#define CF_OPTIONS(_type, _name) _type _name; enum
+#endif
+#ifndef CF_ENUM_DEPRECATED
+#define CF_ENUM_DEPRECATED(_macIntro, _macDep, _iosIntro, _iosDep)
+#endif
+#ifndef CF_ENUM_AVAILABLE
+#define CF_ENUM_AVAILABLE(_mac, _ios)
+#endif
+#endif
+
 #if PLATFORM(WIN_CAIRO)
 #include <ConditionalMacros.h>
 #include <windows.h>
