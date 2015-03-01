@@ -68,11 +68,16 @@ public:
 
 private:
     static const size_t flagBits = 3;
-    static const size_t compactBeginBits = 5;
+    static const size_t compactBeginBits = 4;
     static const size_t sizeBits = bitCount<unsigned>() - flagBits - compactBeginBits;
 
-    static_assert((1 << compactBeginBits) - 1 >= largeMin / largeAlignment, "compactBegin must be encodable in a BoundaryTag.");
-    static_assert((1 << sizeBits) - 1 >= largeMax, "largeMax must be encodable in a BoundaryTag.");
+    static_assert(
+        (1 << compactBeginBits) - 1 >= (largeMin - 1) / largeAlignment,
+        "compactBegin must be encodable in a BoundaryTag.");
+
+    static_assert(
+        (1 << sizeBits) - 1 >= largeMax,
+        "largeMax must be encodable in a BoundaryTag.");
 
     bool m_isFree: 1;
     bool m_isEnd: 1;
@@ -84,14 +89,14 @@ private:
 inline unsigned BoundaryTag::compactBegin(void* object)
 {
     return static_cast<unsigned>(
-        reinterpret_cast<uintptr_t>(
-            rightShift(
-                mask(object, largeMin - 1), largeAlignmentShift)));
+        reinterpret_cast<uintptr_t>(mask(object, largeMin - 1)) / largeAlignment);
 }
 
 inline void BoundaryTag::setRange(const Range& range)
 {
     m_compactBegin = compactBegin(range.begin());
+    BASSERT(this->compactBegin() == compactBegin(range.begin()));
+
     m_size = static_cast<unsigned>(range.size());
     BASSERT(this->size() == range.size());
 }

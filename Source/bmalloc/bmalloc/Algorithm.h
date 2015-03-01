@@ -53,11 +53,6 @@ template<typename T> inline constexpr T mask(T value, uintptr_t mask)
     return reinterpret_cast<T>(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
-template<typename T> inline constexpr T rightShift(T value, uintptr_t shift)
-{
-    return reinterpret_cast<T>(reinterpret_cast<uintptr_t>(value) >> shift);
-}
-
 template<typename T> inline constexpr bool test(T value, uintptr_t mask)
 {
     return !!(reinterpret_cast<uintptr_t>(value) & mask);
