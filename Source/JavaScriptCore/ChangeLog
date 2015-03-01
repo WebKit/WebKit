@@ -1,3 +1,80 @@
+2015-02-26  Mark Lam  <mark.lam@apple.com>
+
+        MachineThreads::Thread clean up has a use after free race condition.
+        <https://webkit.org/b/141990>
+
+        Reviewed by Filip Pizlo.
+
+        MachineThreads::Thread clean up relies on the clean up mechanism
+        implemented in _pthread_tsd_cleanup_key(), which looks like this:
+
+        void _pthread_tsd_cleanup_key(pthread_t self, pthread_key_t key)
+        {
+            void (*destructor)(void *);
+            if (_pthread_key_get_destructor(key, &destructor)) {
+                void **ptr = &self->tsd[key];
+                void *value = *ptr;
+
+            // === Start of window for the bug to manifest =================
+
+                // At this point, this thread has cached "destructor" and "value"
+                // (which is a MachineThreads*).  If the VM gets destructed (along
+                // with its MachineThreads registry) by another thread, then this
+                // thread will have no way of knowing that the MachineThreads* is
+                // now pointing to freed memory.  Calling the destructor below will
+                // therefore result in a use after free scenario when it tries to
+                // access the MachineThreads' data members.
+
+                if (value) {
+                    *ptr = NULL;
+                    if (destructor) {
+
+            // === End of window for the bug to manifest ==================
+
+                        destructor(value);
+                    }
+                }
+            }
+        }
+
+        The fix is to add each active MachineThreads to an ActiveMachineThreadsManager,
+        and always check if the manager still contains that MachineThreads object
+        before we call removeCurrentThread() on it.  When MachineThreads is destructed,
+        it will remove itself from the manager.  The add, remove, and checking
+        operations are all synchronized on the manager's lock, thereby ensuring that
+        the MachineThreads object, if found in the manager, will remain alive for the
+        duration of time we call removeCurrentThread() on it.
+
+        There's also possible for the MachineThreads object to already be destructed
+        and another one happened to have been instantiated at the same address.
+        Hence, we should only remove the exiting thread if it is found in the
+        MachineThreads object.
+
+        There is no test for this issue because this bug requires a race condition
+        between 2 threads where:
+        1. Thread B, which had previously used the VM, exiting and
+           getting to the bug window shown in _pthread_tsd_cleanup_key() above.
+        2. Thread A destructing the VM (and its MachineThreads object)
+           within that window of time before Thread B calls the destructor.
+
+        It is not possible to get a reliable test case without invasively
+        instrumenting _pthread_tsd_cleanup_key() or MachineThreads::removeCurrentThread()
+        to significantly increase that window of opportunity.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::ActiveMachineThreadsManager::Locker::Locker):
+        (JSC::ActiveMachineThreadsManager::add):
+        (JSC::ActiveMachineThreadsManager::remove):
+        (JSC::ActiveMachineThreadsManager::contains):
+        (JSC::ActiveMachineThreadsManager::ActiveMachineThreadsManager):
+        (JSC::activeMachineThreadsManager):
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::removeThreadIfFound):
+        (JSC::MachineThreads::removeCurrentThread): Deleted.
+        * heap/MachineStackMarker.h:
+
 2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add calleeSaveRegisters() implementation for ARM Traditional
