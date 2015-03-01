@@ -40,6 +40,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(IOS)
+#include <mach/vm_page_size.h>
+#endif
+
 namespace WebKit {
 
 static const char networkCacheSubdirectory[] = "WebKitCache";
