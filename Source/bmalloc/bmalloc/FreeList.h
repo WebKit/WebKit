@@ -23,44 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BoundaryTagInlines_h
-#define BoundaryTagInlines_h
+#ifndef FreeList_h
+#define FreeList_h
 
-#include "Range.h"
-#include "BeginTag.h"
-#include "EndTag.h"
-#include "Inline.h"
-#include "LargeChunk.h"
+#include "LargeObject.h"
+#include "Vector.h"
 
 namespace bmalloc {
 
-inline Range BoundaryTag::init(LargeChunk* chunk)
+// Helper object for SegregatedFreeList.
+
+class FreeList {
+public:
+    void push(const LargeObject&);
+
+    LargeObject take(size_t);
+    LargeObject take(size_t alignment, size_t, size_t unalignedSize);
+    LargeObject takeGreedy(size_t);
+    
+private:
+    Vector<Range> m_vector;
+};
+
+inline void FreeList::push(const LargeObject& largeObject)
 {
-    Range range(chunk->begin(), chunk->end() - chunk->begin());
-
-    BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-    beginTag->setRange(range);
-    beginTag->setFree(true);
-    beginTag->setHasPhysicalPages(false);
-
-    EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
-    endTag->init(beginTag);
-
-    // Mark the left and right edges of our chunk as allocated. This naturally
-    // prevents merging logic from overflowing beyond our chunk, without requiring
-    // special-case checks.
-    
-    EndTag* leftSentinel = beginTag->prev();
-    BASSERT(leftSentinel >= static_cast<void*>(chunk));
-    leftSentinel->initSentinel();
-
-    BeginTag* rightSentinel = endTag->next();
-    BASSERT(rightSentinel < static_cast<void*>(range.begin()));
-    rightSentinel->initSentinel();
-    
-    return range;
+    BASSERT(largeObject.isFree());
+    m_vector.push(largeObject.range());
 }
 
 } // namespace bmalloc
 
-#endif // BoundaryTagInlines_h
+#endif // FreeList_h

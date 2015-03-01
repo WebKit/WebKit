@@ -23,29 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BeginTag.h"
-#include "LargeChunk.h"
 #include "SegregatedFreeList.h"
-#include "Vector.h"
 
 namespace bmalloc {
 
 SegregatedFreeList::SegregatedFreeList()
 {
-    BASSERT(static_cast<size_t>(&select(largeMax) - m_lists.begin()) == m_lists.size() - 1);
+    BASSERT(static_cast<size_t>(&select(largeMax) - m_freeLists.begin()) == m_freeLists.size() - 1);
 }
 
 void SegregatedFreeList::insert(const LargeObject& largeObject)
 {
-    BASSERT(largeObject.isFree());
     auto& list = select(largeObject.size());
-    list.push(largeObject.range());
+    list.push(largeObject);
 }
 
 LargeObject SegregatedFreeList::takeGreedy(size_t size)
 {
-    for (size_t i = m_lists.size(); i-- > 0; ) {
-        LargeObject largeObject = takeGreedy(m_lists[i], size);
+    for (size_t i = m_freeLists.size(); i-- > 0; ) {
+        LargeObject largeObject = m_freeLists[i].takeGreedy(size);
         if (!largeObject)
             continue;
 
@@ -54,31 +50,10 @@ LargeObject SegregatedFreeList::takeGreedy(size_t size)
     return LargeObject();
 }
 
-LargeObject SegregatedFreeList::takeGreedy(List& list, size_t size)
-{
-    for (size_t i = list.size(); i-- > 0; ) {
-        // We don't eagerly remove items when we merge and/or split ranges,
-        // so we need to validate each free list entry before using it.
-        LargeObject largeObject(LargeObject::DoNotValidate, list[i].begin());
-        if (!largeObject.isValidAndFree(list[i].size())) {
-            list.pop(i);
-            continue;
-        }
-
-        if (largeObject.size() < size)
-            continue;
-
-        list.pop(i);
-        return largeObject;
-    }
-
-    return LargeObject();
-}
-
 LargeObject SegregatedFreeList::take(size_t size)
 {
-    for (auto* list = &select(size); list != m_lists.end(); ++list) {
-        LargeObject largeObject = take(*list, size);
+    for (auto* list = &select(size); list != m_freeLists.end(); ++list) {
+        LargeObject largeObject = list->take(size);
         if (!largeObject)
             continue;
 
@@ -89,8 +64,8 @@ LargeObject SegregatedFreeList::take(size_t size)
 
 LargeObject SegregatedFreeList::take(size_t alignment, size_t size, size_t unalignedSize)
 {
-    for (auto* list = &select(size); list != m_lists.end(); ++list) {
-        LargeObject largeObject = take(*list, alignment, size, unalignedSize);
+    for (auto* list = &select(size); list != m_freeLists.end(); ++list) {
+        LargeObject largeObject = list->take(alignment, size, unalignedSize);
         if (!largeObject)
             continue;
 
@@ -99,7 +74,7 @@ LargeObject SegregatedFreeList::take(size_t alignment, size_t size, size_t unali
     return LargeObject();
 }
 
-INLINE auto SegregatedFreeList::select(size_t size) -> List&
+INLINE auto SegregatedFreeList::select(size_t size) -> FreeList&
 {
     size_t alignCount = (size - largeMin) / largeAlignment;
     size_t result = 0;
@@ -107,63 +82,7 @@ INLINE auto SegregatedFreeList::select(size_t size) -> List&
         ++result;
         alignCount >>= 1;
     }
-    return m_lists[result];
-}
-
-INLINE LargeObject SegregatedFreeList::take(List& list, size_t size)
-{
-    LargeObject first;
-    size_t end = list.size() > segregatedFreeListSearchDepth ? list.size() - segregatedFreeListSearchDepth : 0;
-    for (size_t i = list.size(); i-- > end; ) {
-        // We don't eagerly remove items when we merge and/or split ranges, so
-        // we need to validate each free list entry before using it.
-        LargeObject largeObject(LargeObject::DoNotValidate, list[i].begin());
-        if (!largeObject.isValidAndFree(list[i].size())) {
-            list.pop(i);
-            continue;
-        }
-
-        if (largeObject.size() < size)
-            continue;
-
-        if (!!first && first.begin() < largeObject.begin())
-            continue;
-
-        first = largeObject;
-    }
-    
-    return first;
-}
-
-INLINE LargeObject SegregatedFreeList::take(List& list, size_t alignment, size_t size, size_t unalignedSize)
-{
-    BASSERT(isPowerOfTwo(alignment));
-    size_t alignmentMask = alignment - 1;
-
-    LargeObject first;
-    size_t end = list.size() > segregatedFreeListSearchDepth ? list.size() - segregatedFreeListSearchDepth : 0;
-    for (size_t i = list.size(); i-- > end; ) {
-        // We don't eagerly remove items when we merge and/or split ranges, so
-        // we need to validate each free list entry before using it.
-        LargeObject largeObject(LargeObject::DoNotValidate, list[i].begin());
-        if (!largeObject.isValidAndFree(list[i].size())) {
-            list.pop(i);
-            continue;
-        }
-
-        if (largeObject.size() < size)
-            continue;
-
-        if (test(largeObject.begin(), alignmentMask) && largeObject.size() < unalignedSize)
-            continue;
-
-        if (!!first && first.begin() < largeObject.begin())
-            continue;
-
-        first = largeObject;
-    }
-    
-    return first;
+    return m_freeLists[result];
 }
 
 } // namespace bmalloc

@@ -1,3 +1,46 @@
+2015-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r180693.
+
+        * CMakeLists.txt:
+
+2015-02-26  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Refactored SegregatedFreeList and BoundaryTag::init
+        https://bugs.webkit.org/show_bug.cgi?id=142049
+
+        Reviewed by Anders Carlsson.
+
+        Split out a FreeList class from SegregatedFreeList. This will make it
+        easier to add behaviors on free list insertion and removal -- and it's
+        probably how I should have designed things at the start.
+
+        Moved BoundaryTag::init into LargeObject, since all the related logic
+        lives in LargeObject now too, and this allows us to remove BoundaryTagInlines.h.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BoundaryTagInlines.h: Removed.
+        * bmalloc/FreeList.cpp: Copied from Source/bmalloc/bmalloc/SegregatedFreeList.cpp.
+        (bmalloc::FreeList::takeGreedy):
+        (bmalloc::FreeList::take):
+        (bmalloc::SegregatedFreeList::SegregatedFreeList): Deleted.
+        (bmalloc::SegregatedFreeList::insert): Deleted.
+        (bmalloc::SegregatedFreeList::takeGreedy): Deleted.
+        (bmalloc::SegregatedFreeList::take): Deleted.
+        * bmalloc/FreeList.h: Copied from Source/bmalloc/bmalloc/SegregatedFreeList.h.
+        (bmalloc::FreeList::push):
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::init):
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h:
+        * bmalloc/Sizes.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+
 2015-02-26  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: free up a bit in BoundaryTag

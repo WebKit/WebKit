@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BoundaryTagInlines.h"
-#include "LargeChunk.h"
+#include "LargeObject.h"
 #include "Line.h"
 #include "PerProcess.h"
 #include "SuperChunk.h"
@@ -53,7 +52,7 @@ void VMHeap::grow()
         m_mediumPages.push(it);
 
     LargeChunk* largeChunk = superChunk->largeChunk();
-    m_largeObjects.insert(LargeObject(BoundaryTag::init(largeChunk).begin()));
+    m_largeObjects.insert(LargeObject(LargeObject::init(largeChunk).begin()));
 }
 
 } // namespace bmalloc
