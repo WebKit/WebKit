@@ -367,28 +367,35 @@ void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicString
         map.add(customTable[i].attributeName.localName().impl(), customTable[i].eventName);
 }
 
-bool HTMLElement::matchesReadWritePseudoClass() const
+Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& node)
 {
-    const Element* currentElement = this;
+    const Node* currentNode = &node;
     do {
-        if (is<HTMLElement>(*currentElement)) {
-            switch (contentEditableType(downcast<HTMLElement>(*currentElement))) {
+        if (is<HTMLElement>(*currentNode)) {
+            switch (contentEditableType(downcast<HTMLElement>(*currentNode))) {
             case ContentEditableType::True:
+                return Node::Editability::CanEditRichly;
             case ContentEditableType::PlaintextOnly:
-                return true;
+                return Node::Editability::CanEditPlainText;
             case ContentEditableType::False:
-                return false;
+                return Node::Editability::ReadOnly;
             case ContentEditableType::Inherit:
                 break;
             }
         }
-        currentElement = currentElement->parentElement();
-    } while (currentElement);
+        currentNode = currentNode->parentNode();
+    } while (currentNode);
 
-    const Document& document = this->document();
+    const Document& document = node.document();
     if (is<HTMLDocument>(document))
-        return downcast<HTMLDocument>(document).inDesignMode();
-    return false;
+        return downcast<HTMLDocument>(document).inDesignMode() ? Node::Editability::CanEditRichly : Node::Editability::ReadOnly;
+
+    return Node::Editability::ReadOnly;
+}
+
+bool HTMLElement::matchesReadWritePseudoClass() const
+{
+    return editabilityFromContentEditableAttr(*this) != Editability::ReadOnly;
 }
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

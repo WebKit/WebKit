@@ -1747,8 +1747,11 @@ void Document::recalcStyle(Style::Change change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
 
+    // FIXME: We never reset this flags.
     if (m_elementSheet && m_elementSheet->contents().usesRemUnits())
         m_styleSheetCollection.setUsesRemUnit(true);
+    // We don't call setUsesStyleBasedEditability here because the whole point of the flag is to avoid style recalc.
+    // i.e. updating the flag here would be too late.
 
     m_inStyleRecalc = true;
     {
@@ -1808,7 +1811,7 @@ void Document::updateStyleIfNeeded()
     if (m_optimizedStyleSheetUpdateTimer.isActive())
         styleResolverChanged(RecalcStyleIfNeeded);
 
-    if ((!m_pendingStyleRecalcShouldForce && !childNeedsStyleRecalc()) || inPageCache())
+    if (!needsStyleRecalc())
         return;
 
     recalcStyle(Style::NoChange);
@@ -2683,9 +2686,13 @@ void Document::updateBaseURL()
         // Element sheet is silly. It never contains anything.
         ASSERT(!m_elementSheet->contents().ruleCount());
         bool usesRemUnits = m_elementSheet->contents().usesRemUnits();
+        bool usesStyleBasedEditability = m_elementSheet->contents().usesStyleBasedEditability();
         m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        m_elementSheet->contents().parserSetUsesRemUnits(usesRemUnits);
+        if (usesRemUnits)
+            m_elementSheet->contents().parserSetUsesRemUnits();
+        if (usesStyleBasedEditability)
+            m_elementSheet->contents().parserSetUsesStyleBasedEditability();
     }
 
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
@@ -2850,6 +2857,19 @@ CSSStyleSheet& Document::elementSheet()
     if (!m_elementSheet)
         m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
     return *m_elementSheet;
+}
+
+bool Document::usesStyleBasedEditability() const
+{
+    if (m_elementSheet && m_elementSheet->contents().usesStyleBasedEditability())
+        return true;
+
+    ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
+    ASSERT(!m_inStyleRecalc);
+
+    auto& collection = document().styleSheetCollection();
+    collection.flushPendingUpdates();
+    return collection.usesStyleBasedEditability();
 }
 
 void Document::processHttpEquiv(const String& equiv, const String& content)

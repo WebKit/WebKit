@@ -1,3 +1,68 @@
+2015-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        isContentEditable shouldn't trigger synchronous style recalc in most cases
+        https://bugs.webkit.org/show_bug.cgi?id=129034
+
+        Reviewed by Antti Koivisto.
+
+        Avoid style recalc inside isContentEditable when the document doesn't contain -webkit-user-modify or
+        -webkit-user-select: all. Instead, compute the value from contenteditable attributes in ancestors.
+        However, still compute the editability from the style tree when it's up-to-date in order to avoid
+        repeatedly walking up the DOM tree in a hot code path inside editing.
+
+        Test: fast/dom/HTMLElement/dynamic-editability-change.html
+
+        * css/CSSGrammar.y.in: No need to pass in "true" as we never call this function with false.
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Calls parserSetUsesStyleBasedEditability as needed.
+        (WebCore::parseKeywordValue): Passes around StyleSheetContents*.
+        (WebCore::CSSParser::parseValue): Ditto.
+        (WebCore::CSSParser::parseFont): Ditto.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents): Initializes and copies m_usesStyleBasedEditability.
+
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::parserSetUsesRemUnits): Removed the argument since it was always true.
+        (WebCore::StyleSheetContents::parserSetUsesStyleBasedEditability): Added.
+        (WebCore::StyleSheetContents::usesStyleBasedEditability): Added.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Added a FIXME as well as a comment explaining why we don't call
+        setUsesStyleBasedEditability. Since Node::computeEditability triggers style recalc only when the flag
+        is set to true, it's too late to update the flag here.
+        (WebCore::Document::updateStyleIfNeeded): Uses a newly extracted needsStyleRecalc.
+        (WebCore::Document::updateBaseURL): Preserves m_usesStyleBasedEditability as well as m_usesRemUnit.
+        (WebCore::Document::usesStyleBasedEditability): Added. Returns true when inline style declarations or
+        any active stylesheet uses -webkit-user-modify or -webkit-user-select: all. Flushing pending stylesheet
+        changes here is fine because the alternative is to trigger a full blown style recalc.
+
+        * dom/Document.h:
+        (WebCore::Document::needsStyleRecalc): Added. Extracted from updateStyleIfNeeded.
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::styleSheetsUseRemUnits): Deleted.
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets): Updates m_usesStyleBasedEditability
+        as well as m_usesRemUnit.
+
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::usesStyleBasedEditability): Added.
+        (WebCore::DocumentStyleSheetCollection::setUsesStyleBasedEditability): Added.
+
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle): Extracted from computeEditability.
+        (WebCore::Node::computeEditability): When the style recalc is requested and the render tree is dirty,
+        check if the document uses any CSS property that can affect the editability of elements. If it doesn't,
+        compute the editability from contenteditable attributes in the anchors via matchesReadWritePseudoClass.
+        Continue to use the style-based computation when the render tree isn't dirty to avoid the tree walk.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::editabilityFromContentEditableAttr): Extracted from matchesReadWritePseudoClass
+        to be called in Node::computeEditability. Also made it return Editability instead of boolean.
+        (WebCore::HTMLElement::matchesReadWritePseudoClass):
+        * html/HTMLElement.h:
+
 2015-03-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

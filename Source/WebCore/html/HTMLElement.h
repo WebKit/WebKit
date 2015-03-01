@@ -61,6 +61,8 @@ public:
     String contentEditable() const;
     void setContentEditable(const String&, ExceptionCode&);
 
+    static Editability editabilityFromContentEditableAttr(const Node&);
+
     virtual bool draggable() const;
     void setDraggable(bool);
 

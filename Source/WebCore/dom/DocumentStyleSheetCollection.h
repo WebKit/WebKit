@@ -105,6 +105,8 @@ public:
     bool usesFirstLetterRules() const { return m_usesFirstLetterRules; }
     bool usesRemUnits() const { return m_usesRemUnits; }
     void setUsesRemUnit(bool b) { m_usesRemUnits = b; }
+    bool usesStyleBasedEditability() { return m_usesStyleBasedEditability; }
+    void setUsesStyleBasedEditability(bool b) { m_usesStyleBasedEditability = b; }
 
     void combineCSSFeatureFlags();
     void resetCSSFeatureFlags();
@@ -157,6 +159,7 @@ private:
     bool m_usesFirstLineRules;
     bool m_usesFirstLetterRules;
     bool m_usesRemUnits;
+    bool m_usesStyleBasedEditability;
 };
 
 }

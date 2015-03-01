@@ -60,6 +60,7 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
     , m_usesFirstLineRules(false)
     , m_usesFirstLetterRules(false)
     , m_usesRemUnits(false)
+    , m_usesStyleBasedEditability(false)
 {
 }
 
@@ -390,15 +391,6 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     requiresFullStyleRecalc = false;
 }
 
-static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet>>& sheets)
-{
-    for (unsigned i = 0; i < sheets.size(); ++i) {
-        if (sheets[i]->contents().usesRemUnits())
-            return true;
-    }
-    return false;
-}
-
 static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i) {
@@ -457,7 +449,12 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     m_activeAuthorStyleSheets.swap(activeCSSStyleSheets);
     m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
-    m_usesRemUnits = styleSheetsUseRemUnits(m_activeAuthorStyleSheets);
+    for (const auto& sheet : m_activeAuthorStyleSheets) {
+        if (sheet->contents().usesRemUnits())
+            m_usesRemUnits = true;
+        if (sheet->contents().usesStyleBasedEditability())
+            m_usesStyleBasedEditability = true;
+    }
     m_pendingUpdateType = NoUpdate;
 
     return requiresFullStyleRecalc;

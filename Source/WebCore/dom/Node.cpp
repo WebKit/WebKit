@@ -71,6 +71,7 @@
 #include "Settings.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
+#include "StyleSheetContents.h"
 #include "TemplateContentDocumentFragment.h"
 #include "TextEvent.h"
 #include "TouchEvent.h"
@@ -553,24 +554,13 @@ void Node::inspect()
         document().page()->inspectorController().inspect(this);
 }
 
-Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+static Node::Editability computeEditabilityFromComputedStyle(const Node& startNode, Node::UserSelectAllTreatment treatment)
 {
-    if (shouldUpdateStyle == ShouldUpdateStyle::Update)
-        document().updateStyleIfNeeded();
-
-    if (!document().hasLivingRenderTree())
-        return Editability::ReadOnly;
-    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable() && !containingShadowRoot())
-        return Editability::CanEditRichly;
-
-    if (isPseudoElement())
-        return Editability::ReadOnly;
-
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion
     // would fire in the middle of Document::setFocusedElement().
 
-    for (const Node* node = this; node; node = node->parentNode()) {
+    for (const Node* node = &startNode; node; node = node->parentNode()) {
         RenderStyle* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
         if (!style)
             continue;
@@ -579,23 +569,39 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
 #if ENABLE(USERSELECT_ALL)
         // Elements with user-select: all style are considered atomic
         // therefore non editable.
-        if (treatment == UserSelectAllIsAlwaysNonEditable && style->userSelect() == SELECT_ALL)
-            return Editability::ReadOnly;
+        if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->userSelect() == SELECT_ALL)
+            return Node::Editability::ReadOnly;
 #else
         UNUSED_PARAM(treatment);
 #endif
         switch (style->userModify()) {
         case READ_ONLY:
-            return Editability::ReadOnly;
+            return Node::Editability::ReadOnly;
         case READ_WRITE:
-            return Editability::CanEditRichly;
+            return Node::Editability::CanEditRichly;
         case READ_WRITE_PLAINTEXT_ONLY:
-            return Editability::CanEditPlainText;
+            return Node::Editability::CanEditPlainText;
         }
         ASSERT_NOT_REACHED();
-        return Editability::ReadOnly;
+        return Node::Editability::ReadOnly;
     }
-    return Editability::ReadOnly;
+    return Node::Editability::ReadOnly;
+}
+
+Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+{
+    if (!document().hasLivingRenderTree() || isPseudoElement())
+        return Editability::ReadOnly;
+
+    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable() && !containingShadowRoot())
+        return Editability::CanEditRichly;
+
+    if (shouldUpdateStyle == ShouldUpdateStyle::Update && document().needsStyleRecalc()) {
+        if (!document().usesStyleBasedEditability())
+            return HTMLElement::editabilityFromContentEditableAttr(*this);
+        document().updateStyleIfNeeded();
+    }
+    return computeEditabilityFromComputedStyle(*this, treatment);
 }
 
 RenderBox* Node::renderBox() const

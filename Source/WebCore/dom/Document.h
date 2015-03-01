@@ -601,6 +601,7 @@ public:
 
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
+    bool needsStyleRecalc() const { return !inPageCache() && (m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || m_optimizedStyleSheetUpdateTimer.isActive()); }
 
     WEBCORE_EXPORT void updateLayout();
     
@@ -693,6 +694,7 @@ public:
     Frame* findUnsafeParentScrollPropagationBoundary();
 
     CSSStyleSheet& elementSheet();
+    bool usesStyleBasedEditability() const;
     
     virtual Ref<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }

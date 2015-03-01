@@ -1,3 +1,20 @@
+2015-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        isContentEditable shouldn't trigger synchronous style recalc in most cases
+        https://bugs.webkit.org/show_bug.cgi?id=129034
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test to update the editability of elements dynamically. Also rebaselined
+        tests per style recalc timing changes.
+
+        * fast/dom/HTMLElement/dynamic-editability-change-expected.txt: Added.
+        * fast/dom/HTMLElement/dynamic-editability-change.html: Added.
+        * platform/mac/editing/execCommand/5142012-1-expected.txt: anonymous render block differences.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.txt: Ditto.
+        * platform/mac/editing/inserting/insert-at-end-02-expected.txt: Empty render text differences.
+        * platform/mac/editing/pasteboard/4989774-expected.txt: Ditto.
+
 2015-03-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Document some more debug assertions.

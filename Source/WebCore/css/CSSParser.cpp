@@ -640,7 +640,7 @@ static bool parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPrope
     return true;
 }
 
-static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int valueID, const CSSParserContext& parserContext)
+static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int valueID, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
 {
     if (!valueID)
         return false;
@@ -1015,12 +1015,20 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
     case CSSPropertyWebkitUserModify: // read-only | read-write
-        if (valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly)
+        if (valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly) {
+            if (styleSheetContents)
+                styleSheetContents->parserSetUsesStyleBasedEditability();
             return true;
+        }
         break;
     case CSSPropertyWebkitUserSelect: // auto | none | text | all
-        if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll)
+        if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText)
             return true;
+        if (valueID == CSSValueAll) {
+            if (styleSheetContents)
+                styleSheetContents->parserSetUsesStyleBasedEditability();
+            return true;
+        }
         break;
     case CSSPropertyWebkitWritingMode:
         if (valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
@@ -1176,7 +1184,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
-static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext)
+static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
 {
     ASSERT(!string.isEmpty());
 
@@ -1203,7 +1211,7 @@ static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID
         value = cssValuePool().createInheritedValue();
     else if (valueID == CSSValueInitial)
         value = cssValuePool().createExplicitInitialValue();
-    else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext))
+    else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext, styleSheetContents))
         value = cssValuePool().createIdentifierValue(valueID);
     else
         return false;
@@ -1308,7 +1316,7 @@ bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID pr
         context.mode = cssParserMode;
     }
 
-    if (parseKeywordValue(declaration, propertyID, string, important, context))
+    if (parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet))
         return true;
     if (parseTranslateTransformValue(declaration, propertyID, string, important))
         return true;
@@ -1886,7 +1894,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     }
 
     if (isKeywordPropertyID(propId)) {
-        if (!isValidKeywordPropertyAndValue(propId, id, m_context))
+        if (!isValidKeywordPropertyAndValue(propId, id, m_context, m_styleSheet))
             return false;
         if (m_valueList->next() && !inShorthand())
             return false;
@@ -6297,7 +6305,7 @@ bool CSSParser::parseFont(bool important)
     bool fontWeightParsed = false;
     CSSParserValue* value;
     while ((value = m_valueList->current())) {
-        if (!fontStyleParsed && isValidKeywordPropertyAndValue(CSSPropertyFontStyle, value->id, m_context)) {
+        if (!fontStyleParsed && isValidKeywordPropertyAndValue(CSSPropertyFontStyle, value->id, m_context, m_styleSheet)) {
             addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(value->id), important);
             fontStyleParsed = true;
         } else if (!fontVariantParsed && (value->id == CSSValueNormal || value->id == CSSValueSmallCaps)) {
