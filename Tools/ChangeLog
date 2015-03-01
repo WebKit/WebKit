@@ -1,3 +1,14 @@
+2015-03-01  David Kilzer  <ddkilzer@apple.com>
+
+        LayoutTestRelay: App environment variables not set for --guard-malloc or --leaks
+        <http://webkit.org/b/142145>
+
+        Reviewed by Simon Fraser.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController _environmentVariables]): Add.
+        (-[LTRelayController launchApp]): Use -_environmentVariables.
+
 2015-02-28  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Stop running webkit-build-directory on every layout test

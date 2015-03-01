@@ -198,13 +198,40 @@
     [self setAppDispatchSource:nil];
 }
 
+- (NSDictionary *)_environmentVariables
+{
+    static NSDictionary *environmentVariables;
+    static dispatch_once_t once;
+
+    dispatch_once(&once, ^{
+        NSString *productDirectory = [self productDir];
+
+        NSMutableDictionary *dictionary = [@{
+            @"DYLD_FRAMEWORK_PATH": productDirectory,
+            @"__XPC_DYLD_FRAMEWORK_PATH": productDirectory,
+            @"DYLD_LIBRARY_PATH": productDirectory,
+            @"__XPC_DYLD_LIBRARY_PATH": productDirectory,
+        } mutableCopy];
+
+        for (NSString *keyName in @[@"DYLD_INSERT_LIBRARIES", @"MallocStackLogging"]) {
+            const char* value = getenv([keyName UTF8String]);
+            if (value && strlen(value)) {
+                NSString *nsValue = [NSString stringWithUTF8String:value];
+                [dictionary setObject:nsValue forKey:keyName];
+                [dictionary setObject:[@"__XPC_" stringByAppendingString:nsValue] forKey:keyName];
+            }
+        }
+
+        environmentVariables = [dictionary copy];
+    });
+
+    return environmentVariables;
+}
+
 - (void)launchApp
 {
     NSDictionary *launchOptions = @{
-        kSimDeviceLaunchApplicationEnvironment: @{
-            @"DYLD_LIBRARY_PATH": [self productDir],
-            @"DYLD_FRAMEWORK_PATH": [self productDir],
-        },
+        kSimDeviceLaunchApplicationEnvironment: [self _environmentVariables],
         kSimDeviceLaunchApplicationArguments: [self dumpToolArguments],
     };
 
