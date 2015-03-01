@@ -725,7 +725,7 @@ def defaultNoEagerRun
 end
 
 def runProfiler
-    if $remote
+    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin") or ($hostOS == "windows")
         skip
         return
     end

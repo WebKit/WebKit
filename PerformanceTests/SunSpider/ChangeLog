@@ -1,3 +1,12 @@
+2015-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        CodeBlock crashes when dumping op_push_name_scope
+        https://bugs.webkit.org/show_bug.cgi?id=141953
+
+        Reviewed by Filip Pizlo.
+
+        * profiler-test.yaml:
+
 2015-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] JSC profiler tests asserts in debug mode

@@ -1441,12 +1441,11 @@ void CodeBlock::dumpBytecode(
         }
         case op_push_name_scope: {
             int dst = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            unsigned attributes = (++it)->u.operand;
+            int k0 = (++it)->u.operand;
             JSNameScope::Type scopeType = (JSNameScope::Type)(++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "push_name_scope");
-            out.printf("%s, %s, %s, %u %s", registerName(dst).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes, (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : ((scopeType == JSNameScope::CatchScope) ? "catchScope" : "unknownScopeType"));
+            out.printf("%s, %s, %s, %s", registerName(dst).data(), registerName(r1).data(), constantName(k0, getConstant(k0)).data(), (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : ((scopeType == JSNameScope::CatchScope) ? "catchScope" : "unknownScopeType"));
             break;
         }
         case op_catch: {

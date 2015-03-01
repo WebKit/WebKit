@@ -1,3 +1,14 @@
+2015-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        CodeBlock crashes when dumping op_push_name_scope
+        https://bugs.webkit.org/show_bug.cgi?id=141953
+
+        Reviewed by Filip Pizlo and Csaba Osztrogonác.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * tests/stress/op-push-name-scope-crashes-profiler.js: Added.
+
 2015-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         CMake build of libllvmForJSC.so should limit its export list like the Xcode build does
