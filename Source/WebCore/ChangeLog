@@ -1,3 +1,23 @@
+2015-02-27  Zalan Bujtas  <zalan@apple.com>
+
+        Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle
+        https://bugs.webkit.org/show_bug.cgi?id=138366
+
+        Reviewed by Dave Hyatt.
+
+        This patch ensures that we clean up RenderNamedFlowFragment::m_renderObjectRegionStyle when embedded flow content is getting destroyed.
+
+        In m_renderObjectRegionStyle hash map, we store style information about the named flow's descendant children.
+        When a child is being detached from the tree, it removes itself from this hashmap.
+        We do it by traversing up on the ancestor chain and call removeFlowChildInfo() on the parent flow.
+        However in case of embedded flows (for example multicolumn content inside a region), we need to check whether the parent flow
+        is inside a flow too and continue the cleanup accordingly.
+
+        Test: fast/regions/region-with-multicolumn-embedded-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromRenderFlowThreadIncludingDescendants):
+
 2015-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Setting any of the <object> element plugin controlling attributes does not have any affect.
