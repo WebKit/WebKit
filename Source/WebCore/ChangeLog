@@ -1,3 +1,37 @@
+2015-02-25  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA 1.1 'searchbox' role
+        https://bugs.webkit.org/show_bug.cgi?id=142004
+
+        Reviewed by Chris Fleizach.
+
+        Add a new accessible SearchFieldRole to handle both the ARIA role
+        and the "search" input type.
+
+        No new tests. Instead, added a new test case to roles-exposed.html
+        for the mapping, and updated roles-computedRoleString.html because
+        there is now a one-to-one mapping between the "search" input type
+        and an ARIA role.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::isSearchField):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isARIATextControl):
+        (WebCore::AccessibilityObject::isARIAInput):
+        (WebCore::initializeRoleMap):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityCanFuzzyHitTest]):
+        (-[WebAccessibilityObjectWrapper accessibilityTraits]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'switch' role

@@ -631,6 +631,9 @@ div[role=scrollbar]
 div[role=search]
       AXRole: AXLandmarkSearch
       
+div[role=searchbox]
+      AXRole: AXTextField
+      
 div[role=separator]
       AXRole: AXSeparator
       

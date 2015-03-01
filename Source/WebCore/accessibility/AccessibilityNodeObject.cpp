@@ -302,6 +302,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
             return SliderRole;
         if (input.isInputTypeHidden())
             return IgnoredRole;
+        if (input.isSearchField())
+            return SearchFieldRole;
         
 #if ENABLE(INPUT_TYPE_COLOR)
         const AtomicString& type = input.getAttribute(typeAttr);
@@ -485,12 +487,12 @@ bool AccessibilityNodeObject::isSearchField() const
     if (!node)
         return false;
 
+    if (roleValue() == SearchFieldRole)
+        return true;
+
     HTMLInputElement* inputElement = node->toInputElement();
     if (!inputElement)
         return false;
-
-    if (inputElement->isSearchField())
-        return true;
 
     // Some websites don't label their search fields as such. However, they will
     // use the word "search" in either the form or input type. This won't catch every case,

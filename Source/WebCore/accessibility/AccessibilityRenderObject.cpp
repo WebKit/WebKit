@@ -2484,8 +2484,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (cssBox && cssBox->isRenderView())
         return WebAreaRole;
     
-    if (cssBox && cssBox->isTextField())
-        return TextFieldRole;
+    if (cssBox && cssBox->isTextField()) {
+        if (is<HTMLInputElement>(node))
+            return downcast<HTMLInputElement>(*node).isSearchField() ? SearchFieldRole : TextFieldRole;
+    }
     
     if (cssBox && cssBox->isTextArea())
         return TextAreaRole;

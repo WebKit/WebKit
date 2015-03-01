@@ -1,3 +1,18 @@
+2015-02-25  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA 1.1 'searchbox' role
+        https://bugs.webkit.org/show_bug.cgi?id=142004
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/roles-computedRoleString-expected.txt: Updated for new role.
+        * accessibility/roles-computedRoleString.html: Updated for new role.
+        * accessibility/roles-exposed.html: New test case added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated for new test case.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for new test case.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated for new test case.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated for new test case.
+
 2015-02-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'switch' role

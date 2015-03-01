@@ -1049,6 +1049,11 @@ div[role=search]
       AXSubrole: AXLandmarkSearch
       AXRoleDescription: search
       
+div[role=searchbox]
+      AXRole: AXTextField
+      AXSubrole: AXSearchField
+      AXRoleDescription: search text field
+      
 div[role=separator]
       AXRole: AXSplitter
       AXSubrole: 
