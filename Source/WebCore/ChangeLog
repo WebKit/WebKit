@@ -1,3 +1,18 @@
+2015-02-27  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed for JS wrapper owners.
+        <https://webkit.org/b/142090>
+
+        Reviewed by Chris Dumez.
+
+        Using NeverDestroyed puts these objects in BSS which is preferable
+        since that prevents them from pinning down entire malloc pages forever.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL.
+
+        * bindings/scripts/test/JS/*: Rebaseline bindings tests for this change.
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle

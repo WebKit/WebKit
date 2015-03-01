@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "readonly.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,8 +83,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, readonly*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSreadonlyOwner, jsreadonlyOwner, ());
-    return &jsreadonlyOwner;
+    static NeverDestroyed<JSreadonlyOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, readonly*);

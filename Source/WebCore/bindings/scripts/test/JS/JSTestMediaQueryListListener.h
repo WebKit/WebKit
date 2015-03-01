@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestMediaQueryListListener.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,8 +83,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMediaQueryListListener*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestMediaQueryListListenerOwner, jsTestMediaQueryListListenerOwner, ());
-    return &jsTestMediaQueryListListenerOwner;
+    static NeverDestroyed<JSTestMediaQueryListListenerOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);

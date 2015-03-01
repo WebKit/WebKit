@@ -23,6 +23,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestGenerateIsReachable.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -82,8 +83,8 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestGenerateIsReachable*)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestGenerateIsReachableOwner, jsTestGenerateIsReachableOwner, ());
-    return &jsTestGenerateIsReachableOwner;
+    static NeverDestroyed<JSTestGenerateIsReachableOwner> owner;
+    return &owner.get();
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestGenerateIsReachable*);
