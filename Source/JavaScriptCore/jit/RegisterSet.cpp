@@ -88,6 +88,15 @@ RegisterSet RegisterSet::calleeSaveRegisters()
     result.set(ARMRegisters::r8);
     result.set(ARMRegisters::r10);
     result.set(ARMRegisters::r11);
+#elif CPU(ARM_TRADITIONAL)
+    result.set(ARMRegisters::r4);
+    result.set(ARMRegisters::r5);
+    result.set(ARMRegisters::r6);
+    result.set(ARMRegisters::r7);
+    result.set(ARMRegisters::r8);
+    result.set(ARMRegisters::r9);
+    result.set(ARMRegisters::r10);
+    result.set(ARMRegisters::r11);
 #elif CPU(ARM64)
     // We don't include LR in the set of callee-save registers even though it technically belongs
     // there. This is because we use this set to describe the set of registers that need to be saved
