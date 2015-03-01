@@ -1,3 +1,20 @@
+2015-02-25  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r180018 ): Holding a rubber-band in place can get stuck
+        https://bugs.webkit.org/show_bug.cgi?id=142020
+        -and corresponding-
+        rdar://problem/19945216
+
+        Reviewed by Tom Horton.
+
+        It was a mistaken assumption that it was necessary to return false in the zero-
+        delta case. That is clearly conceptually wrong since false represents the DOM 
+        doing something special with the event, which is clearly not the case if we never 
+        even send the event to the DOM. Returning true will allow the rest of the 
+        scrolling machinery the ability to handle the event.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+
 2015-02-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA 1.1 'searchbox' role
