@@ -643,10 +643,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_initialScrollbarPaintTimer(*this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
     , m_sendContentAreaScrolledTimer(*this, &ScrollAnimatorMac::sendContentAreaScrolledTimerFired)
-#if ENABLE(RUBBER_BANDING)
-    , m_scrollController(this)
-    , m_snapRubberBandTimer(*this, &ScrollAnimatorMac::snapRubberBandTimerFired)
-#endif
     , m_haveScrolledSincePageLoad(false)
     , m_needsScrollerStyleUpdate(false)
 {
@@ -1269,21 +1265,6 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
     m_currentPosX = newPos.x();
     m_currentPosY = newPos.y();
     notifyPositionChanged(adjustedDelta);
-}
-
-void ScrollAnimatorMac::startSnapRubberbandTimer()
-{
-    m_snapRubberBandTimer.startRepeating(1.0 / 60.0);
-}
-
-void ScrollAnimatorMac::stopSnapRubberbandTimer()
-{
-    m_snapRubberBandTimer.stop();
-}
-
-void ScrollAnimatorMac::snapRubberBandTimerFired()
-{
-    m_scrollController.snapRubberBandTimerFired();
 }
 #endif
 

@@ -117,7 +117,7 @@ void AxisScrollSnapAnimator::handleWheelEvent(const PlatformWheelEvent& event)
         // Begin tracking wheel deltas for glide prediction.
         endScrollSnapAnimation(ScrollSnapState::UserInteraction);
         pushInitialWheelDelta(wheelDelta);
-        m_beginTrackingWheelDeltaOffset = m_client->scrollOffsetInAxis(m_axis);
+        m_beginTrackingWheelDeltaOffset = m_client->scrollOffsetOnAxis(m_axis);
         break;
 
     case WheelEventStatus::InertialScrolling:
@@ -153,7 +153,7 @@ void AxisScrollSnapAnimator::scrollSnapAnimationUpdate()
     ASSERT(m_currentState == ScrollSnapState::Gliding || m_currentState == ScrollSnapState::Snapping);
     float delta = m_currentState == ScrollSnapState::Snapping ? computeSnapDelta() : computeGlideDelta();
     if (delta)
-        m_client->immediateScrollInAxis(m_axis, delta);
+        m_client->immediateScrollOnAxis(m_axis, delta);
     else
         endScrollSnapAnimation(ScrollSnapState::DestinationReached);
 }
@@ -161,7 +161,7 @@ void AxisScrollSnapAnimator::scrollSnapAnimationUpdate()
 void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
 {
     ASSERT(newState == ScrollSnapState::Gliding || newState == ScrollSnapState::Snapping);
-    LayoutUnit offset = m_client->scrollOffsetInAxis(m_axis);
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(m_axis);
     float initialWheelDelta = newState == ScrollSnapState::Gliding ? averageInitialWheelDelta() : 0;
     LayoutUnit projectedScrollDestination = newState == ScrollSnapState::Gliding ? m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
     projectedScrollDestination = std::min(std::max(projectedScrollDestination, m_snapOffsets->first()), m_snapOffsets->last());
@@ -203,7 +203,7 @@ void AxisScrollSnapAnimator::endScrollSnapAnimation(ScrollSnapState newState)
 // relationship of the distance traveled, clamped by arbitrary min and max values.
 float AxisScrollSnapAnimator::computeSnapDelta() const
 {
-    LayoutUnit offset = m_client->scrollOffsetInAxis(m_axis);
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(m_axis);
     bool canComputeSnap =  (m_initialOffset <= offset && offset < m_targetOffset) || (m_targetOffset < offset && offset <= m_initialOffset);
     if (m_currentState != ScrollSnapState::Snapping || !canComputeSnap)
         return 0;
@@ -237,7 +237,7 @@ float AxisScrollSnapAnimator::computeSnapDelta() const
 // and VF. Thus, we can express our gliding equation all in terms of V0, VF and t.
 float AxisScrollSnapAnimator::computeGlideDelta() const
 {
-    LayoutUnit offset = m_client->scrollOffsetInAxis(m_axis);
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(m_axis);
     bool canComputeGlide = (m_initialOffset <= offset && offset < m_targetOffset) || (m_targetOffset < offset && offset <= m_initialOffset);
     if (m_currentState != ScrollSnapState::Gliding || !canComputeGlide)
         return 0;

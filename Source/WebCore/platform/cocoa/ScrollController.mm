@@ -31,6 +31,11 @@
 #include <sys/sysctl.h>
 #include <sys/time.h>
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "AxisScrollSnapAnimator.h"
+#include "ScrollableArea.h"
+#endif
+
 #if ENABLE(RUBBER_BANDING)
 
 static NSTimeInterval systemUptime()
@@ -91,17 +96,26 @@ static float scrollWheelMultiplier()
 
 ScrollController::ScrollController(ScrollControllerClient* client)
     : m_client(client)
+    , m_lastMomentumScrollTimestamp(0)
+    , m_startTime(0)
+    , m_snapRubberbandTimer(RunLoop::current(), this, &ScrollController::snapRubberBandTimerFired)
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    , m_horizontalScrollSnapTimer(RunLoop::current(), this, &ScrollController::horizontalScrollSnapTimerFired)
+    , m_verticalScrollSnapTimer(RunLoop::current(), this, &ScrollController::verticalScrollSnapTimerFired)
+#endif
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
     , m_ignoreMomentumScrolls(false)
-    , m_lastMomentumScrollTimestamp(0)
-    , m_startTime(0)
     , m_snapRubberbandTimerIsActive(false)
 {
 }
 
 bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    if (!processWheelEventForScrollSnap(wheelEvent))
+        return false;
+#endif
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
         // First, check if we should rubber-band at all.
         if (m_client->pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0))
@@ -365,9 +379,14 @@ bool ScrollController::isRubberBandInProgress() const
     return !m_client->stretchAmount().isZero();
 }
 
+void ScrollController::startSnapRubberbandTimer()
+{
+    m_snapRubberbandTimer.startRepeating(1.0 / 60.0);
+}
+
 void ScrollController::stopSnapRubberbandTimer()
 {
-    m_client->stopSnapRubberbandTimer();
+    m_snapRubberbandTimer.stop();
     m_snapRubberbandTimerIsActive = false;
 }
 
@@ -387,7 +406,7 @@ void ScrollController::snapRubberBand()
     m_origOrigin = FloatPoint();
     m_origVelocity = FloatSize();
 
-    m_client->startSnapRubberbandTimer();
+    startSnapRubberbandTimer();
     m_snapRubberbandTimerIsActive = true;
 }
 
@@ -400,6 +419,73 @@ bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheel
 
     return true;
 }
+
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
+{
+    if (m_verticalScrollSnapAnimator) {
+        m_verticalScrollSnapAnimator->handleWheelEvent(wheelEvent);
+        if (m_verticalScrollSnapAnimator->shouldOverrideWheelEvent(wheelEvent))
+            return false;
+    }
+    if (m_horizontalScrollSnapAnimator) {
+        m_horizontalScrollSnapAnimator->handleWheelEvent(wheelEvent);
+        if (m_horizontalScrollSnapAnimator->shouldOverrideWheelEvent(wheelEvent))
+            return false;
+    }
+
+    return true;
+}
+    
+void ScrollController::updateScrollAnimatorsAndTimers(const ScrollableArea& scrollableArea)
+{
+    // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
+    if (scrollableArea.horizontalSnapOffsets())
+        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, scrollableArea.horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
+    else if (m_horizontalScrollSnapAnimator)
+        m_horizontalScrollSnapAnimator = nullptr;
+
+    if (scrollableArea.verticalSnapOffsets())
+        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, scrollableArea.verticalSnapOffsets(), ScrollEventAxis::Vertical);
+    else if (m_verticalScrollSnapAnimator)
+        m_verticalScrollSnapAnimator = nullptr;
+}
+
+void ScrollController::startScrollSnapTimer(ScrollEventAxis axis)
+{
+    RunLoop::Timer<ScrollController>& scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer : m_verticalScrollSnapTimer;
+    if (!scrollSnapTimer.isActive())
+        scrollSnapTimer.startRepeating(1.0 / 60.0);
+}
+
+void ScrollController::stopScrollSnapTimer(ScrollEventAxis axis)
+{
+    RunLoop::Timer<ScrollController>& scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer : m_verticalScrollSnapTimer;
+    scrollSnapTimer.stop();
+}
+    
+void ScrollController::horizontalScrollSnapTimerFired()
+{
+    if (m_horizontalScrollSnapAnimator)
+        m_horizontalScrollSnapAnimator->scrollSnapAnimationUpdate();
+}
+
+void ScrollController::verticalScrollSnapTimerFired()
+{
+    if (m_verticalScrollSnapAnimator)
+        m_verticalScrollSnapAnimator->scrollSnapAnimationUpdate();
+}
+
+LayoutUnit ScrollController::scrollOffsetOnAxis(ScrollEventAxis axis)
+{
+    return m_client->scrollOffsetOnAxis(axis);
+}
+
+void ScrollController::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
+{
+    m_client->immediateScrollOnAxis(axis, delta);
+}
+#endif
 
 } // namespace WebCore
 

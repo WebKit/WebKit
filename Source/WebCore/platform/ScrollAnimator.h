@@ -33,14 +33,14 @@
 #define ScrollAnimator_h
 
 #include "FloatSize.h"
+#include "LayoutUnit.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-#include "AxisScrollSnapAnimator.h"
-#include "Timer.h"
+#if (ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)) && PLATFORM(MAC)
+#include "ScrollController.h"
 #endif
 
 namespace WebCore {
@@ -50,8 +50,8 @@ class PlatformTouchEvent;
 class ScrollableArea;
 class Scrollbar;
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-class ScrollAnimator : public AxisScrollSnapAnimatorClient {
+#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+class ScrollAnimator : private ScrollControllerClient {
 #else
 class ScrollAnimator {
 #endif
@@ -118,33 +118,22 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    void processWheelEventForScrollSnap(const PlatformWheelEvent&);
+    bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
+
     void updateScrollAnimatorsAndTimers();
-    virtual LayoutUnit scrollOffsetInAxis(ScrollEventAxis) override;
-    virtual void immediateScrollInAxis(ScrollEventAxis, float delta) override;
-    virtual void startScrollSnapTimer(ScrollEventAxis) override;
-    virtual void stopScrollSnapTimer(ScrollEventAxis) override;
+    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
 #endif
 
 protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    // Trivial wrappers around the actual update loop in AxisScrollSnapAnimator, since WebCore Timer requires a Timer argument.
-    void horizontalScrollSnapTimerFired();
-    void verticalScrollSnapTimerFired();
-#endif
-
     ScrollableArea& m_scrollableArea;
+#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+    ScrollController m_scrollController;
+#endif
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    std::unique_ptr<AxisScrollSnapAnimator> m_horizontalScrollSnapAnimator;
-    std::unique_ptr<Timer> m_horizontalScrollSnapTimer;
-    // FIXME: Find a way to consolidate both timers into one variable.
-    std::unique_ptr<AxisScrollSnapAnimator> m_verticalScrollSnapAnimator;
-    std::unique_ptr<Timer> m_verticalScrollSnapTimer;
-#endif
 };
 
 } // namespace WebCore
