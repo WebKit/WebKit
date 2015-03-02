@@ -1,3 +1,13 @@
+2015-03-02  Mark Lam  <mark.lam@apple.com>
+
+        The InspectorTimelineAgent should gracefully handle attempts to start more than once.
+        <https://webkit.org/b/142189>
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations:
+        - Unskipped inspector/timeline tests.
+
 2015-03-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip media control test after r180893.

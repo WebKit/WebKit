@@ -1,3 +1,26 @@
+2015-03-02  Mark Lam  <mark.lam@apple.com>
+
+        The InspectorTimelineAgent should gracefully handle attempts to start more than once.
+        <https://webkit.org/b/142189>
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests.  Unskipped an existing test that already asserts this.
+
+        InspectorTimelineAgent::internalStop() already checks for redundant calls to it in
+        case the InspectorTimelineAgent is already disabled. Similarly,
+        InspectorTimelineAgent::internalStart() should check if the InspectorTimelineAgent
+        is already enabled before proceeding to do work to enable it. Though wasteful,
+        it is legal for clients of the InspectorTimelineAgent to invoke start on it more
+        than once. Hence, this check is needed.
+
+        This check fixes the debug assertion failure when running the
+        inspector/timeline/debugger-paused-while-recording.html test. The test can now
+        be unskipped.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStart):
+
 2015-03-02  Roger Fong  <roger_fong@apple.com>
 
         Update backgrounds of sliders for inline media controls on OS X.

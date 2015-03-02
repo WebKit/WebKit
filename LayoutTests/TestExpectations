@@ -97,7 +97,6 @@ webkit.org/b/131919 inspector/dom [ Skip ]
 # These tests still mysteriously flake and/or time out.
 webkit.org/b/137131 inspector/debugger [ Skip ]
 webkit.org/b/137130 inspector/replay [ Skip ]
-webkit.org/b/137131 inspector/timeline [ Skip ]
 inspector/model/remote-object-get-properties.html [ Skip ]
 inspector/model/remote-object-weak-collection.html [ Skip ]
 inspector/model/remote-object.html [ Skip ]

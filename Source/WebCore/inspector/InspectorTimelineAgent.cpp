@@ -105,6 +105,9 @@ void InspectorTimelineAgent::stop(ErrorString&)
 
 void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 {
+    if (m_enabled)
+        return;
+
     if (maxCallStackDepth && *maxCallStackDepth > 0)
         m_maxCallStackDepth = *maxCallStackDepth;
     else
