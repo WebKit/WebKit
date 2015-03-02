@@ -88,6 +88,11 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             this._previewView.showPreview();
     },
 
+    oncontextmenu: function(event)
+    {
+        this._contextMenuHandler(event);
+    },
+
     // Private
 
     _resolvedValue: function()
@@ -185,6 +190,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         var nameElement = document.createElement("span");
         nameElement.className = "prototype-name";
         nameElement.textContent = WebInspector.UIString("%s Prototype").format(this._sanitizedPrototypeString(this._property.value));
+        nameElement.title = this._propertyPathString(this._thisPropertyPath());
         return nameElement;
     },
 
@@ -219,7 +225,6 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
                     valueOrGetterElement.textContent = this._functionPropertyString();
             }
 
-            // FIXME: Context Menu for Value. (See ObjectPropertiesSection).
             // FIXME: Option+Click for Value.
         } else {
             valueOrGetterElement = document.createElement("span");
@@ -465,6 +470,62 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         if (!this.children.length) {
             var emptyMessageElement = WebInspector.ObjectTreeView.emptyMessageElement(WebInspector.UIString("No Properties."));
             this.appendChild(new TreeElement(emptyMessageElement, null, false));
+        }
+    },
+
+    _contextMenuHandler: function(event)
+    {
+        var resolvedValue = this._resolvedValue();
+        if (!resolvedValue)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu(event);
+
+        var propertyPath = this._resolvedValuePropertyPath();
+        if (propertyPath && !propertyPath.isFullPathImpossible()) {
+            contextMenu.appendItem(WebInspector.UIString("Copy Path to Property"), function() {
+                InspectorFrontendHost.copyText(propertyPath.displayPath(WebInspector.PropertyPath.Type.Value));
+            }.bind(this));
+        }
+
+        contextMenu.appendSeparator();
+
+        this._appendMenusItemsForObject(contextMenu, resolvedValue);
+
+        if (!contextMenu.isEmpty())
+            contextMenu.show();
+    },
+
+    _appendMenusItemsForObject: function(contextMenu, resolvedValue)
+    {
+        if (resolvedValue.type === "function") {
+            // FIXME: We should better handle bound functions.
+            if (!isFunctionStringNativeCode(resolvedValue.description)) {
+                contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), function() {
+                    DebuggerAgent.getFunctionDetails(resolvedValue.objectId, function(error, response) {
+                        if (error)
+                            return;
+
+                        var location = response.location;
+                        var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                        if (!sourceCode)
+                            return;
+
+                        var sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+                        WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
+                    });
+                });
+            }
+            return;
+        }
+
+        if (resolvedValue.subtype === "node") {
+            contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), function() {
+                resolvedValue.pushNodeToFrontend(function(nodeId) {
+                    WebInspector.domTreeManager.inspectElement(nodeId);
+                });
+            });
+            return;
         }
     }
 };

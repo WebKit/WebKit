@@ -166,19 +166,26 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     if (!value.asCell()->inherits(JSFunction::info()))
         return jsUndefined();
 
+    // FIXME: This should provide better details for JSBoundFunctions.
+
     JSFunction* function = jsCast<JSFunction*>(value);
     const SourceCode* sourceCode = function->sourceCode();
     if (!sourceCode)
         return jsUndefined();
 
+    // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
     int lineNumber = sourceCode->firstLine();
     if (lineNumber)
-        lineNumber -= 1; // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
+        lineNumber -= 1;
+    int columnNumber = sourceCode->startColumn();
+    if (columnNumber)
+        columnNumber -= 1;
 
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(exec);
-    location->putDirect(exec->vm(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
     location->putDirect(exec->vm(), Identifier(exec, "scriptId"), jsString(exec, scriptID));
+    location->putDirect(exec->vm(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
+    location->putDirect(exec->vm(), Identifier(exec, "columnNumber"), jsNumber(columnNumber));
 
     JSObject* result = constructEmptyObject(exec);
     result->putDirect(exec->vm(), Identifier(exec, "location"), location);

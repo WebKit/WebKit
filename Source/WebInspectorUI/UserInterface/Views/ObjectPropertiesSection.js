@@ -257,20 +257,25 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     {
         function didGetLocation(error, response)
         {
-            if (error) {
-                console.error(error);
+            if (error)
                 return;
-            }
-            WebInspector.panels.scripts.showFunctionDefinition(response);
+
+            var location = response.location;
+            var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+            if (!sourceCode)
+                return;
+
+            var sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+            WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
         }
 
         function revealFunction()
         {
-            DebuggerAgent.getFunctionLocation(this.property.value.objectId, didGetLocation.bind(this));
+            DebuggerAgent.getFunctionDetails(this.property.value.objectId, didGetLocation);
         }
 
         var contextMenu = new WebInspector.ContextMenu(event);
-        contextMenu.appendItem(WebInspector.UIString("Show function definition"), revealFunction.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), revealFunction.bind(this));
         contextMenu.show();
     },
 

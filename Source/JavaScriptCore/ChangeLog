@@ -1,3 +1,14 @@
+2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Context Menus to Object Tree properties
+        https://bugs.webkit.org/show_bug.cgi?id=142125
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        Update to include columnNumber.
+
 2015-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         BytecodeGenerator shouldn't emit op_resolve_scope as a roundabout way of returning the scopeRegister

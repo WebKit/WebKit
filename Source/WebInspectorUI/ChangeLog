@@ -1,3 +1,26 @@
+2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Context Menus to Object Tree properties
+        https://bugs.webkit.org/show_bug.cgi?id=142125
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired.revealFunction):
+        Fix legacy implementation.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitlePrototype):
+        Give prototype buttons a tooltip.
+
+        (WebInspector.ObjectTreePropertyTreeElement.prototype.oncontextmenu):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._contextMenuHandler):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._appendMenusItemsForObject):
+        Context Menus based on the selected object.
+
 2015-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use Maps in ResourceCollection instead of objects

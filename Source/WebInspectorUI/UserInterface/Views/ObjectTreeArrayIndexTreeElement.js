@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This should share more code with ObjectTreePropertyTreeElement.
+// FIXME: This should share more code with ObjectTreePropertyTreeElement. (getters, resolved values, context menus)
 
 WebInspector.ObjectTreeArrayIndexTreeElement = function(property, propertyPath)
 {
