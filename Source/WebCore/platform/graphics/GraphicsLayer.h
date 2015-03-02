@@ -35,8 +35,10 @@
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
+#include "Path.h"
 #include "PlatformLayer.h"
 #include "TransformOperations.h"
+#include "WindRule.h"
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(CSS_COMPOSITING)
@@ -198,12 +200,15 @@ public:
     enum class Type {
         Normal,
         PageTiledBacking,
-        Scrolling
+        Scrolling,
+        Shape
     };
     
     WEBCORE_EXPORT static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
     
     WEBCORE_EXPORT virtual ~GraphicsLayer();
+    
+    Type type() const { return m_type; }
 
     virtual void initialize(Type) { }
 
@@ -381,6 +386,12 @@ public:
     FloatRoundedRect maskToBoundsRect() const { return m_masksToBoundsRect; };
     virtual bool setMasksToBoundsRect(const FloatRoundedRect& roundedRect) { m_masksToBoundsRect = roundedRect; return false; }
 
+    Path shapeLayerPath() const;
+    virtual void setShapeLayerPath(const Path&);
+
+    WindRule shapeLayerWindRule() const;
+    virtual void setShapeLayerWindRule(WindRule);
+
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
     
@@ -480,24 +491,9 @@ public:
     void resetTrackedRepaints();
     void addRepaintRect(const FloatRect&);
 
-    static bool supportsBackgroundColorContent()
-    {
-#if USE(CA) || USE(TEXTURE_MAPPER)
-        return true;
-#else
-        return false;
-#endif
-    }
-
-#if USE(COORDINATED_GRAPHICS)
+    static bool supportsBackgroundColorContent();
+    static bool supportsLayerType(Type);
     static bool supportsContentsTiling();
-#else
-    static bool supportsContentsTiling()
-    {
-        // FIXME: Enable the feature on different ports.
-        return false;
-    }
-#endif
 
     void updateDebugIndicators();
 
@@ -506,8 +502,6 @@ public:
     virtual bool isGraphicsLayerCA() const { return false; }
     virtual bool isGraphicsLayerCARemote() const { return false; }
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
-
-    virtual bool needsClippingMaskLayer() { return true; };
 
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
@@ -570,6 +564,8 @@ protected:
     BlendMode m_blendMode;
 #endif
 
+    const Type m_type;
+
     bool m_contentsOpaque : 1;
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;
@@ -604,6 +600,11 @@ protected:
 
     int m_repaintCount;
     CustomAppearance m_customAppearance;
+
+#if USE(CA)
+    Path m_shapeLayerPath;
+    WindRule m_shapeLayerWindRule { RULE_NONZERO };
+#endif
 };
 
 } // namespace WebCore

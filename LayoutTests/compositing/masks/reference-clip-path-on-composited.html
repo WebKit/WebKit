@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .container {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+    }
+    .clipped {
+        width: 180px;
+        height: 180px;
+        margin: 10px;
+        background-color: green;
+        -webkit-clip-path: url(#clipper);
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+    
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="clipped composited box"></div>
+</div>
+
+<svg height="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <rect x="0.25" y="0.25" width="0.5" height="0.5"/>
+    </clipPath>
+</svg>
+
+</body>
+</html>

@@ -54,6 +54,7 @@ class IntSize;
 class KeyframeValueList;
 class LinearTimingFunction;
 class Notification;
+class Path;
 class ProtectionSpace;
 class Region;
 class ResourceError;
@@ -196,6 +197,11 @@ template<> struct ArgumentCoder<WebCore::IntRect> {
 template<> struct ArgumentCoder<WebCore::IntSize> {
     static void encode(ArgumentEncoder&, const WebCore::IntSize&);
     static bool decode(ArgumentDecoder&, WebCore::IntSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::Path> {
+    static void encode(ArgumentEncoder&, const WebCore::Path&);
+    static bool decode(ArgumentDecoder&, WebCore::Path&);
 };
 
 template<> struct ArgumentCoder<WebCore::Region> {

@@ -128,6 +128,12 @@ public:
     virtual FloatRoundedRect shapeRoundedRect() const override;
     virtual void setShapeRoundedRect(const FloatRoundedRect&) override;
 
+    virtual Path shapePath() const override;
+    virtual void setShapePath(const Path&) override;
+
+    virtual WindRule shapeWindRule() const override;
+    virtual void setShapeWindRule(WindRule) override;
+
     virtual void setEdgeAntialiasingMask(unsigned) override;
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }

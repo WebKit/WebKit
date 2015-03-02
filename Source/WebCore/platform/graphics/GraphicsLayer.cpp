@@ -71,7 +71,40 @@ void KeyframeValueList::insert(std::unique_ptr<const AnimationValue> value)
     m_values.append(WTF::move(value));
 }
 
-GraphicsLayer::GraphicsLayer(Type, GraphicsLayerClient& client)
+#if !USE(CA)
+bool GraphicsLayer::supportsLayerType(Type type)
+{
+    switch (type) {
+    case Type::Normal:
+    case Type::PageTiledBacking:
+    case Type::Scrolling:
+        return true;
+    case Type::Shape:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool GraphicsLayer::supportsBackgroundColorContent()
+{
+#if USE(TEXTURE_MAPPER)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+#if !USE(COORDINATED_GRAPHICS)
+bool GraphicsLayer::supportsContentsTiling()
+{
+    // FIXME: Enable the feature on different ports.
+    return false;
+}
+#endif
+
+GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     : m_client(client)
     , m_anchorPoint(0.5f, 0.5f, 0)
     , m_opacity(1)
@@ -79,6 +112,7 @@ GraphicsLayer::GraphicsLayer(Type, GraphicsLayerClient& client)
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
 #endif
+    , m_type(type)
     , m_contentsOpaque(false)
     , m_preserves3D(false)
     , m_backfaceVisibility(true)
@@ -272,6 +306,42 @@ void GraphicsLayer::setMaskLayer(GraphicsLayer* layer)
     }
     
     m_maskLayer = layer;
+}
+
+Path GraphicsLayer::shapeLayerPath() const
+{
+#if USE(CA)
+    return m_shapeLayerPath;
+#else
+    return Path();
+#endif
+}
+
+void GraphicsLayer::setShapeLayerPath(const Path& path)
+{
+#if USE(CA)
+    m_shapeLayerPath = path;
+#else
+    UNUSED_PARAM(path);
+#endif
+}
+
+WindRule GraphicsLayer::shapeLayerWindRule() const
+{
+#if USE(CA)
+    return m_shapeLayerWindRule;
+#else
+    return RULE_NONZERO;
+#endif
+}
+
+void GraphicsLayer::setShapeLayerWindRule(WindRule windRule)
+{
+#if USE(CA)
+    m_shapeLayerWindRule = windRule;
+#else
+    UNUSED_PARAM(windRule);
+#endif
 }
 
 void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()

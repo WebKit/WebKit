@@ -197,6 +197,11 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         [(CAShapeLayer *)layer setPath:path.platformPath()];
     }
 
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ShapePathChanged) {
+        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
+        [(CAShapeLayer *)layer setPath:properties.shapePath.platformPath()];
+    }
+
     if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
         layer.minificationFilter = toCAFilterType(properties.minificationFilter);
 
@@ -205,6 +210,19 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BlendModeChanged)
         PlatformCAFilters::setBlendingFiltersOnLayer(layer, properties.blendMode);
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::WindRuleChanged) {
+        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
+        CAShapeLayer *shapeLayer = (CAShapeLayer *)layer;
+        switch (properties.windRule) {
+        case RULE_NONZERO:
+            shapeLayer.fillRule = @"non-zero";
+            break;
+        case RULE_EVENODD:
+            shapeLayer.fillRule = @"even-odd";
+            break;
+        }
+    }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
         layer.speed = properties.speed;

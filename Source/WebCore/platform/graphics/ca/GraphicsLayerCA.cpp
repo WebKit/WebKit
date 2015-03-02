@@ -276,6 +276,30 @@ static inline bool supportsAcceleratedFilterAnimations()
 #endif
 }
 
+bool GraphicsLayer::supportsLayerType(Type type)
+{
+    switch (type) {
+    case Type::Normal:
+    case Type::PageTiledBacking:
+    case Type::Scrolling:
+        return true;
+    case Type::Shape:
+#if PLATFORM(COCOA)
+        // FIXME: we can use shaper layers on Windows when PlatformCALayerMac::setShapePath() etc are implemented.
+        return true;
+#else
+        return false;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool GraphicsLayer::supportsBackgroundColorContent()
+{
+    return true;
+}
+
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     std::unique_ptr<GraphicsLayer> graphicsLayer;
@@ -350,6 +374,9 @@ void GraphicsLayerCA::initialize(Type layerType)
         break;
     case Type::Scrolling:
         platformLayerType = PlatformCALayer::LayerType::LayerTypeScrollingLayer;
+        break;
+    case Type::Shape:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeShapeLayer;
         break;
     }
     m_layer = createPlatformCALayer(platformLayerType, this);
@@ -805,6 +832,22 @@ bool GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
     GraphicsLayer::setMasksToBoundsRect(roundedRect);
     noteLayerPropertyChanged(MasksToBoundsRectChanged);
     return true;
+}
+
+void GraphicsLayerCA::setShapeLayerPath(const Path& path)
+{
+    // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
+    GraphicsLayer::setShapeLayerPath(path);
+    noteLayerPropertyChanged(ShapeChanged);
+}
+
+void GraphicsLayerCA::setShapeLayerWindRule(WindRule windRule)
+{
+    if (windRule == m_shapeLayerWindRule)
+        return;
+
+    GraphicsLayer::setShapeLayerWindRule(windRule);
+    noteLayerPropertyChanged(WindRuleChanged);
 }
 
 bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
@@ -1371,6 +1414,12 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         updateBlendMode();
 #endif
 
+    if (m_uncommittedChanges & ShapeChanged)
+        updateShape();
+
+    if (m_uncommittedChanges & WindRuleChanged)
+        updateWindRule();
+
     if (m_uncommittedChanges & AnimationChanged)
         updateAnimations();
 
@@ -1729,6 +1778,16 @@ void GraphicsLayerCA::updateBlendMode()
     }
 }
 #endif
+
+void GraphicsLayerCA::updateShape()
+{
+    m_layer->setShapePath(m_shapeLayerPath);
+}
+
+void GraphicsLayerCA::updateWindRule()
+{
+    m_layer->setShapeWindRule(m_shapeLayerWindRule);
+}
 
 void GraphicsLayerCA::updateStructuralLayer()
 {

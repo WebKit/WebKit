@@ -4023,6 +4023,37 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
     return referenceBox;
 }
 
+bool RenderLayer::paintsWithClipPath() const
+{
+    return renderer().style().clipPath() && !isComposited();
+}
+
+Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule& windRule) const
+{
+    const RenderStyle& style = renderer().style();
+
+    if (is<ShapeClipPathOperation>(*style.clipPath())) {
+        auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds);
+
+        windRule = clipPath.windRule();
+        return clipPath.pathForReferenceRect(referenceBox);
+    }
+    
+    if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
+
+        auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
+
+        RoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer()));
+        shapeRect.move(offsetFromRoot);
+
+        windRule = RULE_NONZERO;
+        return clipPath.pathForReferenceRect(shapeRect);
+    }
+    
+    return Path();
+}
+
 bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
 {
     if (!renderer().hasClipPath() || context->paintingDisabled())
@@ -4035,23 +4066,11 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 
     RenderStyle& style = renderer().style();
     ASSERT(style.clipPath());
-    if (is<ShapeClipPathOperation>(*style.clipPath())) {
-        auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
-
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds);
+    if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
+        WindRule windRule;
+        Path path = computeClipPath(offsetFromRoot, rootRelativeBounds, windRule);
         context->save();
-        context->clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
-        return true;
-    }
-
-    if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
-        auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
-
-        RoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer()));
-        shapeRect.move(offsetFromRoot);
-
-        context->save();
-        context->clipPath(clipPath.pathForReferenceRect(shapeRect), RULE_NONZERO);
+        context->clipPath(path, windRule);
         return true;
     }
 
@@ -4218,7 +4237,10 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
     if (renderer().flowThreadContainingBlock() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
-    bool hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+
+    bool hasClipPath = false;
+    if (paintsWithClipPath() || (localPaintFlags & PaintLayerPaintingCompositingClipPathPhase) || (localPaintFlags & PaintLayerPaintingCompositingMaskPhase))
+        hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
     LayerPaintingInfo localPaintingInfo(paintingInfo);
 
@@ -4319,6 +4341,11 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
     }
 
+    if ((localPaintFlags & PaintLayerPaintingCompositingClipPathPhase) && shouldPaintContent && !selectionOnly) {
+        // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
+        paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+    }
+    
     if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase) && shouldPaintContent && !selectionOnly) {
         // Paint the border radius mask for the fragments.
         paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);

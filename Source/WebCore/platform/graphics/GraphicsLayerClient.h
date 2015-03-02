@@ -39,13 +39,14 @@ class IntRect;
 class TransformationMatrix;
 
 enum GraphicsLayerPaintingPhaseFlags {
-    GraphicsLayerPaintBackground = (1 << 0),
-    GraphicsLayerPaintForeground = (1 << 1),
-    GraphicsLayerPaintMask = (1 << 2),
-    GraphicsLayerPaintOverflowContents = (1 << 3),
-    GraphicsLayerPaintCompositedScroll = (1 << 4),
-    GraphicsLayerPaintChildClippingMask = (1 << 5),
-    GraphicsLayerPaintAllWithOverflowClip = (GraphicsLayerPaintBackground | GraphicsLayerPaintForeground | GraphicsLayerPaintMask)
+    GraphicsLayerPaintBackground            = 1 << 0,
+    GraphicsLayerPaintForeground            = 1 << 1,
+    GraphicsLayerPaintMask                  = 1 << 2,
+    GraphicsLayerPaintClipPath              = 1 << 3,
+    GraphicsLayerPaintOverflowContents      = 1 << 4,
+    GraphicsLayerPaintCompositedScroll      = 1 << 5,
+    GraphicsLayerPaintChildClippingMask     = 1 << 6,
+    GraphicsLayerPaintAllWithOverflowClip   = GraphicsLayerPaintBackground | GraphicsLayerPaintForeground
 };
 typedef unsigned GraphicsLayerPaintingPhase;
 
@@ -58,14 +59,14 @@ enum AnimatedPropertyID {
 };
 
 enum LayerTreeAsTextBehaviorFlags {
-    LayerTreeAsTextBehaviorNormal = 0,
-    LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
-    LayerTreeAsTextIncludeVisibleRects = 1 << 1,
-    LayerTreeAsTextIncludeTileCaches = 1 << 2,
-    LayerTreeAsTextIncludeRepaintRects = 1 << 3,
-    LayerTreeAsTextIncludePaintingPhases = 1 << 4,
-    LayerTreeAsTextIncludeContentLayers = 1 << 5,
-    LayerTreeAsTextIncludePageOverlayLayers = 1 << 6,
+    LayerTreeAsTextBehaviorNormal               = 0,
+    LayerTreeAsTextDebug                        = 1 << 0, // Dump extra debugging info like layer addresses.
+    LayerTreeAsTextIncludeVisibleRects          = 1 << 1,
+    LayerTreeAsTextIncludeTileCaches            = 1 << 2,
+    LayerTreeAsTextIncludeRepaintRects          = 1 << 3,
+    LayerTreeAsTextIncludePaintingPhases        = 1 << 4,
+    LayerTreeAsTextIncludeContentLayers         = 1 << 5,
+    LayerTreeAsTextIncludePageOverlayLayers     = 1 << 6,
 };
 typedef unsigned LayerTreeAsTextBehavior;
 

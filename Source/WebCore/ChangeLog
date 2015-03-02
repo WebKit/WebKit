@@ -1,3 +1,142 @@
+2015-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Make clip-path work on <video>, <canvas> etc.
+        https://bugs.webkit.org/show_bug.cgi?id=138684
+
+        Reviewed by Darin Adler.
+        
+        clip-path only worked in compositing layers on the painted contents of the layer,
+        and failed to clip children. Fix this by translating the clip path into a Path
+        which is set on a CA shape layer (for Mac and iOS), or painted into the
+        RenderLayerBacking's mask layer. There are two code paths:
+
+        1. clip-path which is a <basic-shape> or <geometry-box>, and no mask.
+            Here we can use the optimal code path of converting the clip into a path
+            that is put onto a CAShapeLayer, which is then used as a mask. There is no
+            additional backing store.
+        2. clip-path with an SVG reference, or clip-path combined with -webkit-mask:
+            Here we have to allocate backing store for the mask layer, and paint the
+            clip path (possibly with the mask).
+        
+        We add GraphicsLayer::Type::Shape, and add a getter for the layer type.
+
+        Tests: compositing/masks/compositing-clip-path-and-mask.html
+               compositing/masks/compositing-clip-path-mask-change.html
+               compositing/masks/compositing-clip-path.html
+               compositing/masks/reference-clip-path-on-composited.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer): Store the type in the layer so the getter can return it.
+        (WebCore::GraphicsLayer::shapeLayerPath): Get and set the shape layer path.
+        (WebCore::GraphicsLayer::setShapeLayerPath): Ditto.
+        (WebCore::GraphicsLayer::shapeLayerWindRule): Get and set the shape layer wind rule.
+        (WebCore::GraphicsLayer::setShapeLayerWindRule): Ditto.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::type): Expose the type.
+        (WebCore::GraphicsLayer::supportsLayerType): Allow the cross-platform code to use
+        shape layers when it knows they are available.
+        (WebCore::GraphicsLayer::needsClippingMaskLayer): Deleted. This was never used.
+        * platform/graphics/GraphicsLayerClient.h: Align the bits (helps avoid typos). Add a
+        GraphicsLayerPaintClipPath phase.
+        * platform/graphics/Path.h: Some exports since WK2 needs to encode Paths now.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::initialize): Make shape layers.
+        (WebCore::GraphicsLayerCA::setShapeLayerPath): Setter for the shape path. Sadly we
+        can't early return on unchanged paths yet.
+        (WebCore::GraphicsLayerCA::setShapeLayerWindRule):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Updates for shape path
+        and wind rule.
+        (WebCore::GraphicsLayerCA::updateShape):
+        (WebCore::GraphicsLayerCA::updateWindRule):
+        * platform/graphics/ca/GraphicsLayerCA.h: Some new dirty bits for shape path and wind rule.
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Got rid of lots of m_layer.get().
+        (PlatformCALayerMac::~PlatformCALayerMac):
+        (PlatformCALayerMac::setNeedsDisplay):
+        (PlatformCALayerMac::setNeedsDisplayInRect):
+        (PlatformCALayerMac::removeFromSuperlayer):
+        (PlatformCALayerMac::setSublayers):
+        (PlatformCALayerMac::removeAllSublayers):
+        (PlatformCALayerMac::appendSublayer):
+        (PlatformCALayerMac::insertSublayer):
+        (PlatformCALayerMac::replaceSublayer):
+        (PlatformCALayerMac::adoptSublayers):
+        (PlatformCALayerMac::addAnimationForKey):
+        (PlatformCALayerMac::removeAnimationForKey):
+        (PlatformCALayerMac::animationForKey):
+        (PlatformCALayerMac::setMask):
+        (PlatformCALayerMac::isOpaque):
+        (PlatformCALayerMac::setOpaque):
+        (PlatformCALayerMac::bounds):
+        (PlatformCALayerMac::setBounds):
+        (PlatformCALayerMac::position):
+        (PlatformCALayerMac::setPosition):
+        (PlatformCALayerMac::anchorPoint):
+        (PlatformCALayerMac::setAnchorPoint):
+        (PlatformCALayerMac::transform):
+        (PlatformCALayerMac::setTransform):
+        (PlatformCALayerMac::sublayerTransform):
+        (PlatformCALayerMac::setSublayerTransform):
+        (PlatformCALayerMac::setHidden):
+        (PlatformCALayerMac::setGeometryFlipped):
+        (PlatformCALayerMac::isDoubleSided):
+        (PlatformCALayerMac::setDoubleSided):
+        (PlatformCALayerMac::masksToBounds):
+        (PlatformCALayerMac::setMasksToBounds):
+        (PlatformCALayerMac::acceleratesDrawing):
+        (PlatformCALayerMac::setAcceleratesDrawing):
+        (PlatformCALayerMac::contents):
+        (PlatformCALayerMac::setContents):
+        (PlatformCALayerMac::setContentsRect):
+        (PlatformCALayerMac::setMinificationFilter):
+        (PlatformCALayerMac::setMagnificationFilter):
+        (PlatformCALayerMac::backgroundColor):
+        (PlatformCALayerMac::setBackgroundColor):
+        (PlatformCALayerMac::setBorderWidth):
+        (PlatformCALayerMac::setBorderColor):
+        (PlatformCALayerMac::opacity):
+        (PlatformCALayerMac::setOpacity):
+        (PlatformCALayerMac::copyFiltersFrom):
+        (PlatformCALayerMac::setName):
+        (PlatformCALayerMac::setSpeed):
+        (PlatformCALayerMac::setTimeOffset):
+        (PlatformCALayerMac::contentsScale):
+        (PlatformCALayerMac::setContentsScale):
+        (PlatformCALayerMac::cornerRadius):
+        (PlatformCALayerMac::setCornerRadius):
+        (PlatformCALayerMac::setEdgeAntialiasingMask):
+        (PlatformCALayerMac::shapeWindRule): New function.
+        (PlatformCALayerMac::setShapeWindRule): Ditto.
+        (PlatformCALayerMac::shapePath): Ditto.
+        (PlatformCALayerMac::setShapePath): Ditto.
+        (PlatformCALayer::isWebLayer):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::Path): nullptr.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintsWithClipPath): Return true if the clip path is painted.
+        (WebCore::RenderLayer::computeClipPath): Factor code that computes the clip path into this
+        function, so we can call it from RenderLayerBacking too.
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::RenderLayer::paintLayerContents): We only want to apply the clip path
+        for painting when we're either painting a non-composited layer, or we're painting the
+        mask layer of a composited layer. We in the latter case, we just want to fill the clip
+        path with black, so re-use the paintChildClippingMaskForFragments() which does this.
+        * rendering/RenderLayer.h: Align the bits, add PaintLayerPaintingCompositingClipPathPhase.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry): Move mask updating into its own function.
+        (WebCore::RenderLayerBacking::updateMaskingLayerGeometry): If we're using the shape layer
+        code path, compute the Path and set it and the wind rule on the mask layer.
+        (WebCore::RenderLayerBacking::updateMaskingLayer): This is now more complex, as it has
+        to deal with combinations of clip-path and mask, some of which allow for the shape layer
+        mask, and we handle dynamic changes between these and painted masks.
+        (WebCore::RenderLayerBacking::paintingPhaseForPrimaryLayer): Include the GraphicsLayerPaintClipPath phase.
+        (WebCore::RenderLayerBacking::paintIntoLayer): Map GraphicsLayerPaintClipPath to PaintLayerPaintingCompositingClipPathPhase.
+        (WebCore::RenderLayerBacking::updateMaskLayer): Deleted.
+        * rendering/RenderLayerBacking.h:
+
 2015-03-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [Cairo] Implement Path::addEllipse 

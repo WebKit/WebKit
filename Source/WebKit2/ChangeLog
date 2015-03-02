@@ -1,3 +1,33 @@
+2015-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Make clip-path work on <video>, <canvas> etc.
+        https://bugs.webkit.org/show_bug.cgi?id=138684
+
+        Reviewed by Darin Adler.
+        
+        Support encode/decode for WebCore Path objects, which is done by traversing
+        the path.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::pathPointCountApplierFunction):
+        (IPC::pathEncodeApplierFunction):
+        (IPC::ArgumentCoder<Path>::encode):
+        (IPC::ArgumentCoder<Path>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer): Actually apply the path and wind rule to the shape layer.
+        * Shared/mac/RemoteLayerTreeTransaction.h: Include path and wind rule in the layer properties.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode): Encode shape and wind rule.
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode): Decode shape and wind rule.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::shapePath):
+        (WebKit::PlatformCALayerRemote::setShapePath):
+        (WebKit::PlatformCALayerRemote::shapeWindRule):
+        (WebKit::PlatformCALayerRemote::setShapeWindRule):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2015-03-01  Chris Dumez  <cdumez@apple.com>
 
         Make NotificationCenter / Notification suspendable

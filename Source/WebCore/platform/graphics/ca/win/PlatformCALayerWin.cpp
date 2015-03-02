@@ -601,6 +601,28 @@ void PlatformCALayerWin::setShapeRoundedRect(const FloatRoundedRect&)
     // FIXME: implement.
 }
 
+WindRule PlatformCALayerWin::shapeWindRule() const
+{
+    // FIXME: implement.
+    return RULE_NONZERO;
+}
+
+void PlatformCALayerWin::setShapeWindRule(WindRule)
+{
+    // FIXME: implement.
+}
+
+Path PlatformCALayerWin::shapePath() const
+{
+    // FIXME: implement.
+    return Path();
+}
+
+void PlatformCALayerWin::setShapePath(const Path&)
+{
+    // FIXME: implement.
+}
+
 #ifndef NDEBUG
 static void printIndent(int indent)
 {

@@ -96,6 +96,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , minificationFilter(PlatformCALayer::FilterType::Linear)
     , magnificationFilter(PlatformCALayer::FilterType::Linear)
     , blendMode(BlendModeNormal)
+    , windRule(RULE_NONZERO)
     , hidden(false)
     , geometryFlipped(false)
     , doubleSided(true)
@@ -115,6 +116,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , anchorPoint(other.anchorPoint)
     , bounds(other.bounds)
     , contentsRect(other.contentsRect)
+    , shapePath(other.shapePath)
     , maskLayerID(other.maskLayerID)
     , clonedLayerID(other.clonedLayerID)
     , timeOffset(other.timeOffset)
@@ -130,6 +132,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , minificationFilter(other.minificationFilter)
     , magnificationFilter(other.magnificationFilter)
     , blendMode(other.blendMode)
+    , windRule(other.windRule)
     , hidden(other.hidden)
     , geometryFlipped(other.geometryFlipped)
     , doubleSided(other.doubleSided)
@@ -224,6 +227,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
     if (changedProperties & ShapeRoundedRectChanged)
         encoder << *shapeRoundedRect;
 
+    if (changedProperties & ShapePathChanged)
+        encoder << shapePath;
+
     if (changedProperties & MinificationFilterChanged)
         encoder.encodeEnum(minificationFilter);
 
@@ -232,6 +238,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & BlendModeChanged)
         encoder.encodeEnum(blendMode);
+
+    if (changedProperties & WindRuleChanged)
+        encoder.encodeEnum(windRule);
 
     if (changedProperties & SpeedChanged)
         encoder << speed;
@@ -393,6 +402,14 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         result.shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
     }
 
+    if (result.changedProperties & ShapePathChanged) {
+        Path path;
+        if (!decoder.decode(path))
+            return false;
+        
+        result.shapePath = WTF::move(path);
+    }
+
     if (result.changedProperties & MinificationFilterChanged) {
         if (!decoder.decodeEnum(result.minificationFilter))
             return false;
@@ -405,6 +422,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & BlendModeChanged) {
         if (!decoder.decodeEnum(result.blendMode))
+            return false;
+    }
+
+    if (result.changedProperties & WindRuleChanged) {
+        if (!decoder.decodeEnum(result.windRule))
             return false;
     }
 

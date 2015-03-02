@@ -705,6 +705,32 @@ void PlatformCALayerRemote::setShapeRoundedRect(const FloatRoundedRect& roundedR
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ShapeRoundedRectChanged);
 }
 
+Path PlatformCALayerRemote::shapePath() const
+{
+    ASSERT(m_layerType == LayerTypeShapeLayer);
+    return m_properties.shapePath;
+}
+
+void PlatformCALayerRemote::setShapePath(const Path& path)
+{
+    ASSERT(m_layerType == LayerTypeShapeLayer);
+    m_properties.shapePath = path;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ShapePathChanged);
+}
+
+WindRule PlatformCALayerRemote::shapeWindRule() const
+{
+    ASSERT(m_layerType == LayerTypeShapeLayer);
+    return m_properties.windRule;
+}
+
+void PlatformCALayerRemote::setShapeWindRule(WindRule windRule)
+{
+    ASSERT(m_layerType == LayerTypeShapeLayer);
+    m_properties.windRule = windRule;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::WindRuleChanged);
+}
+
 bool PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange() const
 {
     return m_properties.customAppearance == GraphicsLayer::ScrollingShadow;

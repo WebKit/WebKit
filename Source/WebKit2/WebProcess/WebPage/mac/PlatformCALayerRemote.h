@@ -144,8 +144,15 @@ public:
 
     virtual void setEdgeAntialiasingMask(unsigned) override;
 
+    // FIXME: Having both shapeRoundedRect and shapePath is redundant. We could use shapePath for everything.
     virtual WebCore::FloatRoundedRect shapeRoundedRect() const override;
     virtual void setShapeRoundedRect(const WebCore::FloatRoundedRect&) override;
+
+    virtual WebCore::Path shapePath() const override;
+    virtual void setShapePath(const WebCore::Path&) override;
+
+    virtual WebCore::WindRule shapeWindRule() const override;
+    virtual void setShapeWindRule(WebCore::WindRule) override;
 
     virtual WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
     virtual void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;

@@ -90,8 +90,8 @@ namespace WebCore {
 #endif
         WEBCORE_EXPORT ~Path();
 
-        Path(const Path&);
-        Path& operator=(const Path&);
+        WEBCORE_EXPORT Path(const Path&);
+        WEBCORE_EXPORT Path& operator=(const Path&);
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
@@ -105,7 +105,7 @@ namespace WebCore {
         FloatPoint pointAtLength(float length, bool& ok) const;
         float normalAngleAtLength(float length, bool& ok) const;
 
-        void clear();
+        WEBCORE_EXPORT void clear();
         bool isNull() const { return !m_path; }
         bool isEmpty() const;
         // Gets the current point of the current path, which is conceptually the final point reached by the path so far.
@@ -113,12 +113,12 @@ namespace WebCore {
         bool hasCurrentPoint() const;
         FloatPoint currentPoint() const;
 
-        void moveTo(const FloatPoint&);
-        void addLineTo(const FloatPoint&);
-        void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint);
-        void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
+        WEBCORE_EXPORT void moveTo(const FloatPoint&);
+        WEBCORE_EXPORT void addLineTo(const FloatPoint&);
+        WEBCORE_EXPORT void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint);
+        WEBCORE_EXPORT void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
         void addArcTo(const FloatPoint&, const FloatPoint&, float radius);
-        void closeSubpath();
+        WEBCORE_EXPORT void closeSubpath();
 
         void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);
@@ -144,7 +144,7 @@ namespace WebCore {
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
         PlatformPathPtr ensurePlatformPath();
 
-        void apply(void* info, PathApplierFunction) const;
+        WEBCORE_EXPORT void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);
 
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);

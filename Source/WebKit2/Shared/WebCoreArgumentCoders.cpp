@@ -49,6 +49,7 @@
 #include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/Image.h>
 #include <WebCore/Length.h>
+#include <WebCore/Path.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/Region.h>
@@ -362,6 +363,115 @@ void ArgumentCoder<IntSize>::encode(ArgumentEncoder& encoder, const IntSize& int
 bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
 {
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
+}
+
+static void pathPointCountApplierFunction(void* info, const PathElement* element)
+{
+    uint64_t* pointCount = static_cast<uint64_t*>(info);
+    ++*pointCount;
+}
+
+static void pathEncodeApplierFunction(void* info, const PathElement* element)
+{
+    ArgumentEncoder& encoder = *static_cast<ArgumentEncoder*>(info);
+
+    encoder.encodeEnum(element->type);
+
+    switch (element->type) {
+    case PathElementMoveToPoint: // The points member will contain 1 value.
+        encoder << element->points[0];
+        break;
+    case PathElementAddLineToPoint: // The points member will contain 1 value.
+        encoder << element->points[0];
+        break;
+    case PathElementAddQuadCurveToPoint: // The points member will contain 2 values.
+        encoder << element->points[0];
+        encoder << element->points[1];
+        break;
+    case PathElementAddCurveToPoint: // The points member will contain 3 values.
+        encoder << element->points[0];
+        encoder << element->points[1];
+        encoder << element->points[2];
+        break;
+    case PathElementCloseSubpath: // The points member will contain no values.
+        break;
+    }
+}
+
+void ArgumentCoder<Path>::encode(ArgumentEncoder& encoder, const Path& path)
+{
+    uint64_t numPoints = 0;
+    path.apply(&numPoints, pathPointCountApplierFunction);
+
+    encoder << numPoints;
+
+    path.apply(&encoder, pathEncodeApplierFunction);
+}
+
+bool ArgumentCoder<Path>::decode(ArgumentDecoder& decoder, Path& path)
+{
+    uint64_t numPoints;
+    if (!decoder.decode(numPoints))
+        return false;
+    
+    path.clear();
+
+    for (uint64_t i = 0; i < numPoints; ++i) {
+    
+        PathElementType elementType;
+        if (!decoder.decodeEnum(elementType))
+            return false;
+        
+        switch (elementType) {
+        case PathElementMoveToPoint: { // The points member will contain 1 value.
+            FloatPoint point;
+            if (!decoder.decode(point))
+                return false;
+            path.moveTo(point);
+            break;
+        }
+        case PathElementAddLineToPoint: { // The points member will contain 1 value.
+            FloatPoint point;
+            if (!decoder.decode(point))
+                return false;
+            path.addLineTo(point);
+            break;
+        }
+        case PathElementAddQuadCurveToPoint: { // The points member will contain 2 values.
+            FloatPoint controlPoint;
+            if (!decoder.decode(controlPoint))
+                return false;
+
+            FloatPoint endPoint;
+            if (!decoder.decode(endPoint))
+                return false;
+
+            path.addQuadCurveTo(controlPoint, endPoint);
+            break;
+        }
+        case PathElementAddCurveToPoint: { // The points member will contain 3 values.
+            FloatPoint controlPoint1;
+            if (!decoder.decode(controlPoint1))
+                return false;
+
+            FloatPoint controlPoint2;
+            if (!decoder.decode(controlPoint2))
+                return false;
+
+            FloatPoint endPoint;
+            if (!decoder.decode(endPoint))
+                return false;
+
+            path.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+            break;
+        }
+        case PathElementCloseSubpath: // The points member will contain no values.
+            path.closeSubpath();
+            break;
+        }
+    }
+
+    return true;
 }
 
 template<> struct ArgumentCoder<Region::Span> {

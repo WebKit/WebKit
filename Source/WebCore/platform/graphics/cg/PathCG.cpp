@@ -74,7 +74,7 @@ static inline CGContextRef scratchContext()
 }
 
 Path::Path()
-    : m_path(0)
+    : m_path(nullptr)
 {
 }
 

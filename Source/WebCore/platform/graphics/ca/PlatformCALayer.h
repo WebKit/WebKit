@@ -210,6 +210,13 @@ public:
     // Only used by LayerTypeShapeLayer.
     virtual FloatRoundedRect shapeRoundedRect() const = 0;
     virtual void setShapeRoundedRect(const FloatRoundedRect&) = 0;
+
+    // Only used by LayerTypeShapeLayer.
+    virtual Path shapePath() const = 0;
+    virtual void setShapePath(const Path&) = 0;
+
+    virtual WindRule shapeWindRule() const = 0;
+    virtual void setShapeWindRule(WindRule) = 0;
     
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;

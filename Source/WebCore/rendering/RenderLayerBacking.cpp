@@ -149,7 +149,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
     updateBackgroundLayer(false);
-    updateMaskLayer(false);
+    updateMaskingLayer(false, false);
     updateScrollingLayers(false);
     detachFromScrollingCoordinator();
     destroyGraphicsLayers();
@@ -570,7 +570,7 @@ bool RenderLayerBacking::updateConfiguration()
             m_graphicsLayer->addChild(flatteningLayer);
     }
 
-    updateMaskLayer(renderer().hasMask());
+    updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath());
 
     updateChildClippingStrategy(needsDescendantsClippingLayer);
 
@@ -827,11 +827,8 @@ void RenderLayerBacking::updateGeometry()
         }
     }
     
-    if (m_maskLayer) {
-        m_maskLayer->setSize(m_graphicsLayer->size());
-        m_maskLayer->setPosition(FloatPoint());
-        m_maskLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
-    }
+    if (m_maskLayer)
+        updateMaskingLayerGeometry();
     
     if (m_owningLayer.renderer().hasTransformRelatedProperty()) {
         // Update properties that depend on layer dimensions.
@@ -1003,6 +1000,28 @@ void RenderLayerBacking::updateAfterDescendants()
     updateDrawsContent(isSimpleContainer);
 
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendantLayers());
+}
+
+// FIXME: Avoid repaints when clip path changes.
+void RenderLayerBacking::updateMaskingLayerGeometry()
+{
+    m_maskLayer->setSize(m_graphicsLayer->size());
+    m_maskLayer->setPosition(FloatPoint());
+    m_maskLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
+    
+    if (!m_maskLayer->drawsContent()) {
+        if (renderer().hasClipPath()) {
+            ASSERT(renderer().style().clipPath()->type() != ClipPathOperation::Reference);
+
+            WindRule windRule;
+            // FIXME: Use correct reference box for inlines: https://bugs.webkit.org/show_bug.cgi?id=129047
+            LayoutRect referenceBoxForClippedInline = m_owningLayer.boundingBox(&m_owningLayer);
+            Path clipPath = m_owningLayer.computeClipPath(LayoutSize(), referenceBoxForClippedInline, windRule);
+
+            m_maskLayer->setShapeLayerPath(clipPath);
+            m_maskLayer->setShapeLayerWindRule(windRule);
+        }
+    }
 }
 
 void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
@@ -1409,14 +1428,33 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     return layerChanged;
 }
 
-void RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
+// Masking layer is used for masks or clip-path.
+void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 {
     bool layerChanged = false;
-    if (needsMaskLayer) {
+    if (hasMask || hasClipPath) {
+        GraphicsLayerPaintingPhase maskPhases = 0;
+        if (hasMask)
+            maskPhases = GraphicsLayerPaintMask;
+        
+        if (hasClipPath) {
+            bool clipNeedsPainting = renderer().style().clipPath()->type() == ClipPathOperation::Reference;
+            if (clipNeedsPainting || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+                maskPhases |= GraphicsLayerPaintClipPath;
+        }
+
+        bool paintsContent = maskPhases;
+        GraphicsLayer::Type requiredLayerType = paintsContent ? GraphicsLayer::Type::Normal : GraphicsLayer::Type::Shape;
+        if (m_maskLayer && m_maskLayer->type() != requiredLayerType) {
+            m_graphicsLayer->setMaskLayer(nullptr);
+            willDestroyLayer(m_maskLayer.get());
+            m_maskLayer = nullptr;
+        }
+
         if (!m_maskLayer) {
-            m_maskLayer = createGraphicsLayer("Mask");
-            m_maskLayer->setDrawsContent(true);
-            m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
+            m_maskLayer = createGraphicsLayer("Mask", requiredLayerType);
+            m_maskLayer->setDrawsContent(paintsContent);
+            m_maskLayer->setPaintingPhase(maskPhases);
             layerChanged = true;
             m_graphicsLayer->setMaskLayer(m_maskLayer.get());
         }
@@ -1527,8 +1565,6 @@ GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() co
         phase |= GraphicsLayerPaintBackground;
     if (!m_foregroundLayer)
         phase |= GraphicsLayerPaintForeground;
-    if (!m_maskLayer)
-        phase |= GraphicsLayerPaintMask;
 
     if (m_scrollingContentsLayer) {
         phase &= ~GraphicsLayerPaintForeground;
@@ -2192,6 +2228,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingForegroundPhase;
     if (paintingPhase & GraphicsLayerPaintMask)
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingMaskPhase;
+    if (paintingPhase & GraphicsLayerPaintClipPath)
+        paintFlags |= RenderLayer::PaintLayerPaintingCompositingClipPathPhase;
     if (paintingPhase & GraphicsLayerPaintChildClippingMask)
         paintFlags |= RenderLayer::PaintLayerPaintingChildClippingMaskPhase;
     if (paintingPhase & GraphicsLayerPaintOverflowContents)

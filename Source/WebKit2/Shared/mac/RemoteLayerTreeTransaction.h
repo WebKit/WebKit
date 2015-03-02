@@ -73,16 +73,18 @@ public:
         ContentsScaleChanged            = 1LLU << 20,
         CornerRadiusChanged             = 1LLU << 21,
         ShapeRoundedRectChanged         = 1LLU << 22,
-        MinificationFilterChanged       = 1LLU << 23,
-        MagnificationFilterChanged      = 1LLU << 24,
-        BlendModeChanged                = 1LLU << 25,
-        SpeedChanged                    = 1LLU << 26,
-        TimeOffsetChanged               = 1LLU << 27,
-        BackingStoreChanged             = 1LLU << 28,
-        FiltersChanged                  = 1LLU << 29,
-        AnimationsChanged               = 1LLU << 30,
-        EdgeAntialiasingMaskChanged     = 1LLU << 31,
-        CustomAppearanceChanged         = 1LLU << 32
+        ShapePathChanged                = 1LLU << 23,
+        MinificationFilterChanged       = 1LLU << 24,
+        MagnificationFilterChanged      = 1LLU << 25,
+        BlendModeChanged                = 1LLU << 26,
+        WindRuleChanged                 = 1LLU << 27,
+        SpeedChanged                    = 1LLU << 28,
+        TimeOffsetChanged               = 1LLU << 29,
+        BackingStoreChanged             = 1LLU << 30,
+        FiltersChanged                  = 1LLU << 31,
+        AnimationsChanged               = 1LLU << 32,
+        EdgeAntialiasingMaskChanged     = 1LLU << 33,
+        CustomAppearanceChanged         = 1LLU << 34
     };
     typedef uint64_t LayerChange;
 
@@ -136,6 +138,7 @@ public:
         WebCore::FloatRect contentsRect;
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
         std::unique_ptr<WebCore::FilterOperations> filters;
+        WebCore::Path shapePath;
         WebCore::GraphicsLayer::PlatformLayerID maskLayerID;
         WebCore::GraphicsLayer::PlatformLayerID clonedLayerID;
         double timeOffset;
@@ -151,6 +154,7 @@ public:
         WebCore::PlatformCALayer::FilterType minificationFilter;
         WebCore::PlatformCALayer::FilterType magnificationFilter;
         WebCore::BlendMode blendMode;
+        WebCore::WindRule windRule;
         bool hidden;
         bool geometryFlipped;
         bool doubleSided;

@@ -428,20 +428,21 @@ public:
     int zIndex() const { return renderer().style().zIndex(); }
 
     enum PaintLayerFlag {
-        PaintLayerHaveTransparency = 1,
-        PaintLayerAppliedTransform = 1 << 1,
-        PaintLayerTemporaryClipRects = 1 << 2,
-        PaintLayerPaintingReflection = 1 << 3,
-        PaintLayerPaintingOverlayScrollbars = 1 << 4,
-        PaintLayerPaintingCompositingBackgroundPhase = 1 << 5,
-        PaintLayerPaintingCompositingForegroundPhase = 1 << 6,
-        PaintLayerPaintingCompositingMaskPhase = 1 << 7,
-        PaintLayerPaintingCompositingScrollingPhase = 1 << 8,
-        PaintLayerPaintingOverflowContents = 1 << 9,
-        PaintLayerPaintingRootBackgroundOnly = 1 << 10,
-        PaintLayerPaintingSkipRootBackground = 1 << 11,
-        PaintLayerPaintingChildClippingMaskPhase = 1 << 12,
-        PaintLayerPaintingCompositingAllPhases = (PaintLayerPaintingCompositingBackgroundPhase | PaintLayerPaintingCompositingForegroundPhase | PaintLayerPaintingCompositingMaskPhase)
+        PaintLayerHaveTransparency                      = 1 << 0,
+        PaintLayerAppliedTransform                      = 1 << 1,
+        PaintLayerTemporaryClipRects                    = 1 << 2,
+        PaintLayerPaintingReflection                    = 1 << 3,
+        PaintLayerPaintingOverlayScrollbars             = 1 << 4,
+        PaintLayerPaintingCompositingBackgroundPhase    = 1 << 5,
+        PaintLayerPaintingCompositingForegroundPhase    = 1 << 6,
+        PaintLayerPaintingCompositingMaskPhase          = 1 << 7,
+        PaintLayerPaintingCompositingClipPathPhase      = 1 << 8,
+        PaintLayerPaintingCompositingScrollingPhase     = 1 << 9,
+        PaintLayerPaintingOverflowContents              = 1 << 10,
+        PaintLayerPaintingRootBackgroundOnly            = 1 << 11,
+        PaintLayerPaintingSkipRootBackground            = 1 << 12,
+        PaintLayerPaintingChildClippingMaskPhase        = 1 << 13,
+        PaintLayerPaintingCompositingAllPhases          = PaintLayerPaintingCompositingBackgroundPhase | PaintLayerPaintingCompositingForegroundPhase | PaintLayerPaintingCompositingMaskPhase
     };
     
     typedef unsigned PaintLayerFlags;
@@ -752,6 +753,11 @@ private:
     void updateCompositingAndLayerListsIfNeeded();
 
     bool setupFontSubpixelQuantization(GraphicsContext*, bool& didQuantizeFonts);
+
+    bool paintsWithClipPath() const;
+
+    Path computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule&) const;
+
     bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
 
     bool hasFilterThatIsPainting(GraphicsContext*, PaintLayerFlags) const;
