@@ -303,10 +303,11 @@ static void fixFunctionBasedOnStackMaps(
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
         
-        if (inlineCallFrame->argumentsRegister.isValid()) {
-            inlineCallFrame->argumentsRegister = VirtualRegister(
-                inlineCallFrame->argumentsRegister.offset() + localsOffset);
-        }
+        if (inlineCallFrame->argumentsRegister.isValid())
+            inlineCallFrame->argumentsRegister += localsOffset;
+        
+        if (inlineCallFrame->argumentCountRegister.isValid())
+            inlineCallFrame->argumentCountRegister += localsOffset;
         
         for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {
             inlineCallFrame->arguments[argument] =

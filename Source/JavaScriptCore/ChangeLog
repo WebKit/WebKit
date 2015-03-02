@@ -1,5 +1,23 @@
 2015-03-02  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should correctly document where it puts the argument count for inlined varargs frames
+        https://bugs.webkit.org/show_bug.cgi?id=142187
+
+        Reviewed by Geoffrey Garn.
+        
+        After LLVM tells us where the captured variables alloca landed in the frame, we need to
+        tell all of our meta-data about it. We were forgetting to do so for the argument count
+        register, which is used by inlined varargs calls.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * tests/stress/inline-varargs-get-arguments.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
+2015-03-02  Filip Pizlo  <fpizlo@apple.com>
+
         Deduplicate slow path calling code in JITOpcodes.cpp/JITOpcodes32_64.cpp
         https://bugs.webkit.org/show_bug.cgi?id=142184
 
