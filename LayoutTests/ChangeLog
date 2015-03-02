@@ -1,3 +1,12 @@
+2015-03-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening on 2nd March.
+
+        Mark css3 shape tests to flaky. Unskip passing tests and so on.
+
+        * platform/efl/TestExpectations:
+        
+
 2015-03-01  Chris Dumez  <cdumez@apple.com>
 
         Make NotificationCenter / Notification suspendable

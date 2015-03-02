@@ -882,6 +882,13 @@ webkit.org/b/137138 svg/W3C-SVG-1.1 [ Failure ImageOnlyFailure Pass ]
 # EFL port doesn't support Khmer and Lao fallback fonts, this test has added since r170207.
 Bug(EFL) fast/text/khmer-lao-font.html [ Skip ]
 
+webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-011.html [ Failure Pass ]
+webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-012.html [ Failure Pass ]
+webkit.org/b/142156 css3/shapes/spec-examples/shape-outside-019.html [ Failure Pass ]
+
+webkit.org/b/142157 fast/profiler/dead-time.html [ Failure Pass ]
+webkit.org/b/142157 fast/profiler/stop-profiling-after-setTimeout.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -959,8 +966,6 @@ Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
 
 webkit.org/b/98653 svg/text/lengthAdjust-text-metrics.html [ Failure ]
-
-webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
 
@@ -1114,10 +1119,6 @@ webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # DRT doesn't check for isPrinting().
 webkit.org/b/87226 printing/iframe-print.html [ Failure ]
-
-webkit.org/b/108507 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
-webkit.org/b/108507 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
-webkit.org/b/108507 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
@@ -1882,8 +1883,6 @@ webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprec
 webkit.org/b/131987 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/131987 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131987 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/131987 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
-
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
 
 # Failures EFL WK2 since the inception
