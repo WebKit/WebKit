@@ -284,9 +284,20 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     addArc(p, radius, sa, ea, anticlockwise);
 }
 
-void Path::addEllipse(FloatPoint, float, float, float, float, float, bool)
+void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
 {
-    notImplemented();
+    cairo_t* cr = ensurePlatformPath()->context();
+    cairo_save(cr);
+    cairo_translate(cr, point.x(), point.y());
+    cairo_rotate(cr, rotation);
+    cairo_scale(cr, radiusX, radiusY);
+
+    if (anticlockwise)
+        cairo_arc_negative(cr, 0, 0, 1, startAngle, endAngle);
+    else
+        cairo_arc(cr, 0, 0, 1, startAngle, endAngle);
+
+    cairo_restore(cr);
 }
 
 void Path::addEllipse(const FloatRect& rect)

@@ -1,3 +1,15 @@
+2015-03-01  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [Cairo] Implement Path::addEllipse 
+        https://bugs.webkit.org/show_bug.cgi?id=142144
+
+        Reviewed by Gyuyoung Kim.
+
+        Add support for addEllipse method for platforms using cairo.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addEllipse):
+
 2015-03-01  Joonghun Park  <jh718.park@samsung.com>
 
         Use std::unique_ptr instead of PassOwnPtr|OwnPtr for ScrollAnimator
