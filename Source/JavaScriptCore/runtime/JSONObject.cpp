@@ -304,26 +304,21 @@ static void appendStringToStringBuilder(StringBuilder& builder, const CharType* 
     }
 }
 
-void escapeStringToBuilder(StringBuilder& builder, const String& message)
+void appendQuotedJSONStringToBuilder(StringBuilder& builder, const String& message)
 {
+    builder.append('"');
+
     if (message.is8Bit())
         appendStringToStringBuilder(builder, message.characters8(), message.length());
     else
         appendStringToStringBuilder(builder, message.characters16(), message.length());
+
+    builder.append('"');
 }
 
 void Stringifier::appendQuotedString(StringBuilder& builder, const String& value)
 {
-    int length = value.length();
-
-    builder.append('"');
-
-    if (value.is8Bit())
-        appendStringToStringBuilder<LChar>(builder, value.characters8(), length);
-    else
-        appendStringToStringBuilder<UChar>(builder, value.characters16(), length);
-
-    builder.append('"');
+    appendQuotedJSONStringToBuilder(builder, value);
 }
 
 inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionCall& propertyName)

@@ -101,11 +101,15 @@ public:
 
     void clear();
 
+    void dumpContentsToFile();
+
     String storagePath() const;
 
 private:
     NetworkCache() = default;
     ~NetworkCache() = delete;
+
+    String dumpFilePath() const;
 
     std::unique_ptr<NetworkCacheStorage> m_storage;
     std::unique_ptr<NetworkCacheStatistics> m_statistics;

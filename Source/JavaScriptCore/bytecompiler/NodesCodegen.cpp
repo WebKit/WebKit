@@ -2927,11 +2927,9 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
 {
     builder.append('{');
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (m_targetPatterns[i].wasString) {
-            builder.append('"');
-            escapeStringToBuilder(builder, m_targetPatterns[i].propertyName.string());
-            builder.append('"');
-        } else
+        if (m_targetPatterns[i].wasString)
+            appendQuotedJSONStringToBuilder(builder, m_targetPatterns[i].propertyName.string());
+        else
             builder.append(m_targetPatterns[i].propertyName.string());
         builder.append(':');
         m_targetPatterns[i].pattern->toString(builder);

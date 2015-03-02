@@ -148,11 +148,15 @@ public:
     void store(const NetworkCacheKey&, const Entry&, StoreCompletionHandler&&);
     void update(const NetworkCacheKey&, const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&&);
 
+    // Null entry signals end.
+    void traverse(std::function<void (const NetworkCacheKey&, const Entry*)>&&);
+
     void setMaximumSize(size_t);
     void clear();
 
     static const unsigned version = 2;
 
+    const String& baseDirectoryPath() const { return m_baseDirectoryPath; }
     const String& directoryPath() const { return m_directoryPath; }
 
 private:

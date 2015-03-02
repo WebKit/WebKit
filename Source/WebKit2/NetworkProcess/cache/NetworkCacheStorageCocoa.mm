@@ -140,13 +140,18 @@ static String directoryPathForKey(const NetworkCacheKey& key, const String& cach
     return WebCore::pathByAppendingComponent(cachePath, key.partition());
 }
 
+static String fileNameForKey(const NetworkCacheKey& key)
+{
+    return key.hashAsString();
+}
+
 static String filePathForKey(const NetworkCacheKey& key, const String& cachePath)
 {
-    return WebCore::pathByAppendingComponent(directoryPathForKey(key, cachePath), key.hashAsString());
+    return WebCore::pathByAppendingComponent(directoryPathForKey(key, cachePath), fileNameForKey(key));
 }
 
 enum class FileOpenType { Read, Write, Create };
-static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, FileOpenType type, const String& cachePath, int& fd)
+static DispatchPtr<dispatch_io_t> openFile(const String& fileName, const String& directoryPath, FileOpenType type, int& fd)
 {
     int oflag;
     mode_t mode;
@@ -155,7 +160,7 @@ static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, Fil
     case FileOpenType::Create:
         oflag = O_RDWR | O_CREAT | O_TRUNC | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
-        WebCore::makeAllDirectories(directoryPathForKey(key, cachePath));
+        WebCore::makeAllDirectories(directoryPath);
         break;
     case FileOpenType::Write:
         oflag = O_WRONLY | O_NONBLOCK;
@@ -166,7 +171,7 @@ static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, Fil
         mode = 0;
     }
 
-    CString path = WebCore::fileSystemRepresentation(filePathForKey(key, cachePath));
+    CString path = WebCore::fileSystemRepresentation(WebCore::pathByAppendingComponent(directoryPath, fileName));
     fd = ::open(path.data(), oflag, mode);
 
     LOG(NetworkCacheStorage, "(NetworkProcess) opening %s type=%d", path.data(), type);
@@ -181,6 +186,11 @@ static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, Fil
     dispatch_io_set_low_water(channel.get(), std::numeric_limits<size_t>::max());
 
     return channel;
+}
+
+static DispatchPtr<dispatch_io_t> openFileForKey(const NetworkCacheKey& key, FileOpenType type, const String& cachePath, int& fd)
+{
+    return openFile(fileNameForKey(key), directoryPathForKey(key, cachePath), type, fd);
 }
 
 static unsigned hashData(dispatch_data_t data)
@@ -250,26 +260,35 @@ static DispatchPtr<dispatch_data_t> mapFile(int fd, size_t offset, size_t size)
     return bodyMap;
 }
 
-static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t fileData, int fd, const NetworkCacheKey& key)
+static bool decodeEntryHeader(dispatch_data_t fileData, EntryMetaData& metaData, NetworkCacheStorage::Data& data)
 {
-    EntryMetaData metaData;
     if (!decodeEntryMetaData(metaData, fileData))
-        return nullptr;
-
+        return false;
     if (metaData.cacheStorageVersion != NetworkCacheStorage::version)
-        return nullptr;
-    if (metaData.key != key)
-        return nullptr;
+        return false;
     if (metaData.headerOffset + metaData.headerSize > metaData.bodyOffset)
-        return nullptr;
-    if (metaData.bodyOffset + metaData.bodySize != dispatch_data_get_size(fileData))
-        return nullptr;
+        return false;
 
     auto headerData = adoptDispatch(dispatch_data_create_subrange(fileData, metaData.headerOffset, metaData.headerSize));
     if (metaData.headerChecksum != hashData(headerData.get())) {
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
-        return nullptr;
+        return false;
     }
+    data =  NetworkCacheStorage::Data { headerData };
+    return true;
+}
+
+static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t fileData, int fd, const NetworkCacheKey& key)
+{
+    EntryMetaData metaData;
+    NetworkCacheStorage::Data headerData;
+    if (!decodeEntryHeader(fileData, metaData, headerData))
+        return nullptr;
+
+    if (metaData.key != key)
+        return nullptr;
+    if (metaData.bodyOffset + metaData.bodySize != dispatch_data_get_size(fileData))
+        return nullptr;
 
     auto bodyData = mapFile(fd, metaData.bodyOffset, metaData.bodySize);
     if (!bodyData) {
@@ -284,7 +303,7 @@ static std::unique_ptr<NetworkCacheStorage::Entry> decodeEntry(dispatch_data_t f
 
     return std::make_unique<NetworkCacheStorage::Entry>(NetworkCacheStorage::Entry {
         metaData.timeStamp,
-        NetworkCacheStorage::Data { headerData },
+        headerData,
         NetworkCacheStorage::Data { bodyData, NetworkCacheStorage::Data::Backing::Map }
     });
 }
@@ -469,6 +488,34 @@ void NetworkCacheStorage::update(const NetworkCacheKey& key, const Entry& update
     m_pendingWriteOperations.append(WTF::move(writeOperation));
 
     dispatchPendingWriteOperations();
+}
+
+void NetworkCacheStorage::traverse(std::function<void (const NetworkCacheKey&, const Entry*)>&& traverseHandler)
+{
+    StringCapture cachePathCapture(m_directoryPath);
+    dispatch_async(m_ioQueue.get(), [this, cachePathCapture, traverseHandler] {
+        String cachePath = cachePathCapture.string();
+        auto semaphore = adoptDispatch(dispatch_semaphore_create(0));
+        traverseCacheFiles(cachePath, [this, &semaphore, &traverseHandler](const String& fileName, const String& partitionPath) {
+            int fd;
+            auto channel = openFile(fileName, partitionPath, FileOpenType::Read, fd);
+            const size_t headerReadSize = 16 << 10;
+            dispatch_io_read(channel.get(), 0, headerReadSize, dispatch_get_main_queue(), [this, fd, &semaphore, &traverseHandler](bool done, dispatch_data_t fileData, int) {
+                EntryMetaData metaData;
+                NetworkCacheStorage::Data headerData;
+                if (decodeEntryHeader(fileData, metaData, headerData)) {
+                    Entry entry { metaData.timeStamp, headerData, Data() };
+                    traverseHandler(metaData.key, &entry);
+                }
+                if (done)
+                    dispatch_semaphore_signal(semaphore.get());
+            });
+            dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
+        });
+        dispatch_async(dispatch_get_main_queue(), [this, traverseHandler] {
+            traverseHandler({ }, nullptr);
+        });
+    });
 }
 
 void NetworkCacheStorage::dispatchPendingWriteOperations()

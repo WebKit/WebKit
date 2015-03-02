@@ -34,13 +34,19 @@
 #include "NetworkCacheStorage.h"
 #include "NetworkResourceLoader.h"
 #include "WebCoreArgumentCoders.h"
+#include <JavaScriptCore/JSONObject.h>
 #include <WebCore/CacheValidation.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringHasher.h>
 #include <wtf/text/StringBuilder.h>
+
+#if PLATFORM(COCOA)
+#include <notify.h>
+#endif
 
 namespace WebKit {
 
@@ -56,6 +62,16 @@ bool NetworkCache::initialize(const String& cachePath, bool enableEfficacyLoggin
 
     if (enableEfficacyLogging)
         m_statistics = NetworkCacheStatistics::open(cachePath);
+
+#if PLATFORM(COCOA)
+    // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
+    if (m_storage) {
+        int token;
+        notify_register_dispatch("com.apple.WebKit.Cache.dump", &token, dispatch_get_main_queue(), ^(int) {
+            dumpContentsToFile();
+        });
+    }
+#endif
 
     LOG(NetworkCache, "(NetworkProcess) opened cache storage, success %d", !!m_storage);
     return !!m_storage;
@@ -354,11 +370,81 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
     });
 }
 
+String NetworkCache::dumpFilePath() const
+{
+    return WebCore::pathByAppendingComponent(m_storage->baseDirectoryPath(), "dump.json");
+}
+
+static bool entryAsJSON(StringBuilder& json, const NetworkCacheKey& key, const NetworkCacheStorage::Entry& entry)
+{
+    NetworkCacheDecoder decoder(entry.header.data(), entry.header.size());
+    WebCore::ResourceResponse cachedResponse;
+    if (!decoder.decode(cachedResponse))
+        return false;
+    json.append("{\n");
+    json.append("\"hash\": ");
+    JSC::appendQuotedJSONStringToBuilder(json, key.hashAsString());
+    json.append(",\n");
+    json.append("\"partition\": ");
+    JSC::appendQuotedJSONStringToBuilder(json, key.partition());
+    json.append(",\n");
+    json.append("\"timestamp\": ");
+    json.appendNumber(entry.timeStamp.count());
+    json.append(",\n");
+    json.append("\"URL\": ");
+    JSC::appendQuotedJSONStringToBuilder(json, cachedResponse.url().string());
+    json.append(",\n");
+    json.append("\"headers\": {\n");
+    bool firstHeader = true;
+    for (auto& header : cachedResponse.httpHeaderFields()) {
+        if (!firstHeader)
+            json.append(",\n");
+        firstHeader = false;
+        json.append("    ");
+        JSC::appendQuotedJSONStringToBuilder(json, header.key);
+        json.append(": ");
+        JSC::appendQuotedJSONStringToBuilder(json, header.value);
+    }
+    json.append("\n}\n");
+    json.append("}");
+    return true;
+}
+
+void NetworkCache::dumpContentsToFile()
+{
+    if (!m_storage)
+        return;
+    auto dumpFileHandle = WebCore::openFile(dumpFilePath(), WebCore::OpenForWrite);
+    if (!dumpFileHandle)
+        return;
+    WebCore::writeToFile(dumpFileHandle, "[\n", 2);
+    m_storage->traverse([dumpFileHandle](const NetworkCacheKey& key, const NetworkCacheStorage::Entry* entry) {
+        if (!entry) {
+            WebCore::writeToFile(dumpFileHandle, "{}\n]\n", 5);
+            auto handle = dumpFileHandle;
+            WebCore::closeFile(handle);
+        }
+        StringBuilder json;
+        if (!entryAsJSON(json, key, *entry))
+            return;
+        json.append(",\n");
+        auto writeData = json.toString().utf8();
+        WebCore::writeToFile(dumpFileHandle, writeData.data(), writeData.length());
+    });
+}
+
 void NetworkCache::clear()
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
-    if (m_storage)
+    if (m_storage) {
         m_storage->clear();
+
+        auto queue = WorkQueue::create("com.apple.WebKit.Cache.delete");
+        StringCapture dumpFilePathCapture(dumpFilePath());
+        queue->dispatch([dumpFilePathCapture] {
+            WebCore::deleteFile(dumpFilePathCapture.string());
+        });
+    }
     if (m_statistics)
         m_statistics->clear();
 }
