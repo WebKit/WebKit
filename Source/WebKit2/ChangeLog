@@ -1,3 +1,13 @@
+2015-03-02  Antti Koivisto  <antti@apple.com>
+
+        Add way to dump cache meta data to file
+        https://bugs.webkit.org/show_bug.cgi?id=142183
+
+        Add a missing return so we don't try to decode a null entry.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::dumpContentsToFile):
+
 2015-03-02  Anders Carlsson  <andersca@apple.com>
 
         Return disk cache entries from the new disk cache

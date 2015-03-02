@@ -444,6 +444,7 @@ void NetworkCache::dumpContentsToFile()
             WebCore::writeToFile(dumpFileHandle, "{}\n]\n", 5);
             auto handle = dumpFileHandle;
             WebCore::closeFile(handle);
+            return;
         }
         StringBuilder json;
         if (!entryAsJSON(json, key, *entry))
