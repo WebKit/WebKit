@@ -370,6 +370,27 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
     });
 }
 
+void NetworkCache::traverse(std::function<void (const Entry*)>&& traverseHandler)
+{
+    ASSERT(isEnabled());
+
+    m_storage->traverse([traverseHandler](const NetworkCacheKey& key, const NetworkCacheStorage::Entry* entry) {
+        if (!entry) {
+            traverseHandler(nullptr);
+            return;
+        }
+
+        NetworkCache::Entry cacheEntry;
+        cacheEntry.storageEntry = *entry;
+
+        NetworkCacheDecoder decoder(cacheEntry.storageEntry.header.data(), cacheEntry.storageEntry.header.size());
+        if (!decoder.decode(cacheEntry.response))
+            return;
+
+        traverseHandler(&cacheEntry);
+    });
+}
+
 String NetworkCache::dumpFilePath() const
 {
     return WebCore::pathByAppendingComponent(m_storage->baseDirectoryPath(), "dump.json");

@@ -99,6 +99,8 @@ public:
     void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
     void update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
+    void traverse(std::function<void (const Entry*)>&&);
+
     void clear();
 
     void dumpContentsToFile();

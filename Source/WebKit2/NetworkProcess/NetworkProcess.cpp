@@ -50,12 +50,17 @@
 #include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"
+#endif
+
+#if ENABLE(NETWORK_CACHE)
+#include "NetworkCacheCoders.h"
 #endif
 
 using namespace WebCore;
@@ -263,9 +268,25 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
 {
 #if ENABLE(NETWORK_CACHE)
     if (NetworkCache::singleton().isEnabled()) {
-        // FIXME: Handle this.
-        RunLoop::main().dispatch([completionHandler] {
-            completionHandler({ });
+        auto* origins = new HashSet<RefPtr<SecurityOrigin>>();
+
+        NetworkCache::singleton().traverse([completionHandler, origins](const NetworkCache::Entry *entry) {
+            if (!entry) {
+                Vector<WebsiteData::Entry> entries;
+
+                for (auto& origin : *origins)
+                    entries.append(WebsiteData::Entry { origin, WebsiteDataTypeDiskCache });
+
+                delete origins;
+
+                RunLoop::main().dispatch([completionHandler, entries] {
+                    completionHandler(entries);
+                });
+
+                return;
+            }
+
+            origins->add(SecurityOrigin::create(entry->response.url()));
         });
 
         return;

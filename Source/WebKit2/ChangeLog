@@ -1,3 +1,20 @@
+2015-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Return disk cache entries from the new disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=142190
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        Call NetworkCache::traverse() to get all the cache entries, unique their origins and pass them back with the completion handler.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::traverse):
+        New helper function that traverses network cache entries.
+
+        * NetworkProcess/cache/NetworkCache.h:
+
 2015-03-02  Antti Koivisto  <antti@apple.com>
 
         Add way to dump cache meta data to file
