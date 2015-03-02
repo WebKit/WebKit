@@ -518,6 +518,11 @@ fast/canvas/webgl [ Skip ]
 webgl [ Skip ]
 http/tests/webgl [ Skip ]
 compositing/webgl [ Skip ]
+fast/images/webgl-teximage2d.html [ Skip ]
+http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Old WebGL expectations before skipping all of them
@@ -642,6 +647,8 @@ webkit.org/b/136099 fast/events/scroll-event-during-modal-dialog.html [ Crash Ti
 webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
 
 webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pass ]
+
+webkit.org/b/142158 inspector-protocol/dom/remove-multiple-nodes.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
