@@ -26,10 +26,15 @@ fast/events/constructors/device-proximity-event-constructor.html
 # FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
 printing
 
+# Web Notifications are not supported on iOS.
+fast/notifications
+http/tests/notifications
+fast/history/page-cache-notification-non-suspendable.html
+fast/history/page-cache-notification-suspendable.html
+
 # Not supported on iOS
 batterystatus
 fast/mediastream
-fast/notifications
 fast/speechsynthesis
 gamepad
 java
@@ -38,7 +43,6 @@ proximity
 touchadjustment
 vibration
 webaudio
-http/tests/notifications
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

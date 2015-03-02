@@ -177,8 +177,8 @@ const char* Notification::activeDOMObjectName() const
 
 bool Notification::canSuspend() const
 {
-    // FIXME: We should try and do better here.
-    return false;
+    // We can suspend if the Notification is not shown yet or after it is closed.
+    return m_state == Idle || m_state == Closed;
 }
 
 void Notification::finalize()

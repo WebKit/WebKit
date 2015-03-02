@@ -1074,6 +1074,8 @@ webkit.org/b/111446 indieui [ Skip ]
 # Requires support for Web notifications
 webkit.org/b/73544 fast/notifications [ Skip ]
 webkit.org/b/73544 http/tests/notifications [ Skip ]
+webkit.org/b/73544 fast/history/page-cache-notification-non-suspendable.html [ Skip ]
+webkit.org/b/73544 fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 # The test is too slow on Debug bot and randomly fails
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]

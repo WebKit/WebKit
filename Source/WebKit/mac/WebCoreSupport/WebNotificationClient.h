@@ -66,6 +66,7 @@ private:
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) override;
 #endif
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override { }
+    virtual bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     virtual WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -78,5 +79,7 @@ private:
     
     typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<RetainPtr<WebNotification>>> NotificationContextMap;
     NotificationContextMap m_notificationContextMap;
+
+    bool m_everRequestedPermission { false };
 #endif
 };

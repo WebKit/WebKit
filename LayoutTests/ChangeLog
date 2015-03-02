@@ -1,3 +1,24 @@
+2015-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Make NotificationCenter / Notification suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=142117
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Add layout tests to cover cases where notifications should prevent
+        entering the PageCache or not.
+
+        * fast/history/page-cache-notification-non-suspendable-expected.txt: Added.
+        * fast/history/page-cache-notification-non-suspendable.html: Added.
+        * fast/history/page-cache-notification-suspendable-expected.txt: Added.
+        * fast/history/page-cache-notification-suspendable.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2015-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         EFL, GTK+, and Windows rebaselines after r180867.

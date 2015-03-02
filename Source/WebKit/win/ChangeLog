@@ -1,3 +1,18 @@
+2015-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Make NotificationCenter / Notification suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=142117
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Provide implementation for NotificationClient::hasPendingPermissionRequests().
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::requestPermission):
+        (hasPendingPermissionRequests):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
 2015-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove remaining SafariTheme cruft

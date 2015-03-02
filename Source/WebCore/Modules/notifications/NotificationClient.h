@@ -81,6 +81,8 @@ public:
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>) = 0;
 #endif
 
+    virtual bool hasPendingPermissionRequests(ScriptExecutionContext*) const = 0;
+
     // Cancel all outstanding requests for the ScriptExecutionContext
     virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;
 

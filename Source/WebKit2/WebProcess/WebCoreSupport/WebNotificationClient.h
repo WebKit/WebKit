@@ -58,6 +58,7 @@ private:
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) override;
 #endif
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override;
+    virtual bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     virtual NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
     WebPage* m_page;

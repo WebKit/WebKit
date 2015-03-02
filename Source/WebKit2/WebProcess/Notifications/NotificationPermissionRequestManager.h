@@ -56,6 +56,7 @@ public:
     void startRequest(WebCore::SecurityOrigin*, PassRefPtr<WebCore::VoidCallback>);
 #endif
     void cancelRequest(WebCore::SecurityOrigin*);
+    bool hasPendingPermissionRequests(WebCore::SecurityOrigin*) const;
     
     WebCore::NotificationClient::Permission permissionLevel(WebCore::SecurityOrigin*);
 

@@ -120,6 +120,16 @@ void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 #endif
 }
 
+bool NotificationPermissionRequestManager::hasPendingPermissionRequests(SecurityOrigin* origin) const
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    return m_originToIDMap.contains(origin);
+#else
+    UNUSED_PARAM(origin);
+    return false;
+#endif
+}
+
 NotificationClient::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

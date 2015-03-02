@@ -86,6 +86,11 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, P
 }
 #endif
 
+bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext* context) const
+{
+    return m_page->notificationPermissionRequestManager()->hasPendingPermissionRequests(context->securityOrigin());
+}
+
 void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
     m_page->notificationPermissionRequestManager()->cancelRequest(context->securityOrigin());

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a notification that is showing does not enter page cache.');
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.grantWebNotificationPermission("file://");
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (!window.sessionStorage.page_cache_notifications_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_notifications_test_started;
+
+    if (event.persisted)
+        testFailed("Page did enter and was restored from the page cache");
+    else
+        testPassed("Page was not restored from page cache");
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (event.persisted) {
+        testFailed("Page entered the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    window.sessionStorage.page_cache_notifications_test_started = true;
+
+    // This notification is shown and should not be suspendable.
+    notification = webkitNotifications.createNotification('', 'title 2', 'body');
+    notification.onerror = function() {
+        testFailed("Could not show the notification");
+        finishJSTest();
+    };
+    notification.ondisplay = function() {
+        // Force a back navigation back to this page.
+        window.location.href = "resources/page-cache-helper.html";
+    };
+    notification.show();
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

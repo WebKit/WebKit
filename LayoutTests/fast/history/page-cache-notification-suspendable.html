@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that notifications do not prevent the Page from entering page cache if they are idle or closed.');
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.grantWebNotificationPermission("file://");
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    // This notification is in idle state and should be suspendable.
+    notification1 = webkitNotifications.createNotification('', 'title 1', 'body');
+
+    // This notification is shown and should be suspendable once it is closed.
+    notification2 = webkitNotifications.createNotification('', 'title 2', 'body');
+    notification2.ondisplay = function() {
+        // Close the notification.
+        setTimeout(function() {
+            notification2.cancel();
+        }, 0);
+    };
+    notification2.onerror = function() {
+        testFailed("Could not display the notification");
+        finishJSTest();
+    };
+    notification2.onclose = function() {
+        setTimeout(function() {
+            // Force a back navigation back to this page.
+            window.location.href = "resources/page-cache-helper.html";
+        }, 0);
+    };
+    notification2.show();
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

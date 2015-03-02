@@ -170,7 +170,9 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, W
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector])
         return;
-    
+
+    m_everRequestedPermission = true;
+
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()];
     
     CallUIDelegate(m_webView, selector, webOrigin, listener);
@@ -189,6 +191,17 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, P
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
+
+bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*) const
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    // We know permission was requested but we don't know if the client responded. In this case, we play it
+    // safe and presume there is one pending so that ActiveDOMObjects don't get suspended.
+    return m_everRequestedPermission;
+#else
+    return false;
+#endif
+}
 
 #if ENABLE(NOTIFICATIONS)
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)

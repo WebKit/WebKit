@@ -128,6 +128,8 @@ fast/dom/Geolocation/ [ Skip ]
 # TODO This port doesn't support Notifications.
 fast/notifications/ [ Skip ]
 http/tests/notifications/ [ Skip ]
+fast/history/page-cache-notification-non-suspendable.html [ Skip ]
+fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 # TODO DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
 java/ [ Skip ]

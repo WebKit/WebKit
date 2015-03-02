@@ -148,6 +148,8 @@ webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
 fast/notifications
+fast/history/page-cache-notification-non-suspendable.html
+fast/history/page-cache-notification-suspendable.html
 
 # we do not enable legacy notifications
 http/tests/notifications/legacy/window-show-on-click.html
