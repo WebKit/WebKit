@@ -206,43 +206,16 @@ video::-webkit-media-controls-volume-slider {
     margin-right: 10px !important;
 
     background-color: transparent !important;
-    background-image: -webkit-linear-gradient(
-        top,
-        rgba(15, 15, 15, .85) 0,
-        rgba(23, 23, 23, .85) 50%,
-        rgba(15, 15, 15, .85) 100%
-    ) !important;
-    border: 1px solid rgba(0, 0, 0, 0.875) !important;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb,
 audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none !important;
-    width: 8px !important;
-    height: 8px !important;
-    border-radius: 4px !important;
-    background-color: transparent !important;
-
-    /* rotateZ() forces the layer into compositing mode.
-    Slider thumbs are small, so forcing a compositing layer is inexpensive,
-       and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(0) !important;
-    background-image: -webkit-linear-gradient(
-        left,
-        rgba(99, 99, 99, 1),
-        rgba(144, 144, 144, 1)
-    ) !important;
-    box-shadow: inset -1px 0 0 rgba(255, 255, 255, .5), 0 1px rgba(255, 255, 255, .14) !important;
-}
-video::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
-video::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb,
-audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
-audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb {
-    background-image: -webkit-linear-gradient(
-        right top,
-        rgba(160, 160, 160, 1),
-        rgba(221, 221, 221, 1)
-    ) !important;
+    width: 7px !important;
+    height: 7px !important;
+    visibility: hidden;
 }
 
 video::-webkit-media-controls-mute-button.muted,
@@ -395,47 +368,20 @@ video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
     -webkit-appearance: none !important;
     -webkit-flex: 1 1 0 !important;
-    height: 9px !important;
+    height: 17px !important;
     margin: 0 !important;
-    background-size: 100% 9px !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat;
+    background-color: transparent;
 
-    border-radius: 4.5px !important;
-    background-color: rgb(74, 74, 74) !important;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
 }
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     -webkit-appearance: none !important;
-    width:6px !important;
-    height: 6px !important;
-    background-color: white !important;
-
-    /* rotateZ() forces the layer into compositing mode.
-    Slider thumbs are small, so forcing a compositing layer is inexpensive,
-       and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: translateY(1px) rotateZ(-45deg) !important;
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        right top,
-        color-stop(0, rgba(99,  99,  99,  1)),
-        color-stop(1, rgba(144, 144, 144, 1))
-    ) !important;
+    width:3px !important;
+    height: 15px !important;
 }
-video::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
-video::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
-audio::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
-audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
- {
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        right top,
-        color-stop(0, rgba(160, 160, 160, 1)),
-        color-stop(1, rgba(221, 221, 221, 1))
-    ) !important;
-}
+ 
 video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display,
@@ -489,7 +435,7 @@ video::-webkit-media-controls-panel .thumbnail-track,
 audio::-webkit-media-controls-panel .thumbnail-track {
     position: relative;
     -webkit-flex: 1 1 0;
-    height: 9px;
+    height: 17 px;
     margin: 0 2px;
     display: -webkit-flex;
     -webkit-align-items: stretch;

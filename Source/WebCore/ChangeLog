@@ -1,3 +1,32 @@
+2015-03-02  Roger Fong  <roger_fong@apple.com>
+
+        Update backgrounds of sliders for inline media controls on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=142188.
+        <rdar://problem/20012413>
+
+        Reviewed by Dean Jackson.
+
+        Don’t use CSS to draw volume and timeline slider backgrounds.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-panel .thumbnail-track):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb): Deleted.
+        (audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,): Deleted.
+
+        Draw volume and timeline slider backgrounds using 2d canvases.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls):
+        (Controller.prototype.handleVolumeSliderInput):
+        (Controller.prototype.addRoundedRect):
+        (Controller.prototype.drawTimelineBackground):
+        (Controller.prototype.drawVolumeBackground):
+        (Controller.prototype.showControls):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.addRoundedRect): Deleted.
+
 2015-03-01  Roger Fong  <roger_fong@apple.com>
 
         Update inline media element controls appearance Part 1.
