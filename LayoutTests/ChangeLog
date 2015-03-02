@@ -9,6 +9,16 @@
 
 2015-03-02  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Rebaseline canvas-ellipse-zero-lineto test.
+
+        Rebaseline this test since this is due to differences in the drawing libraries used on the
+        Windows and reference Mac platforms, and is not due to a bug in WebKit itself.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/canvas/canvas-ellipse-zero-lineto-expected.txt: Added.
+
+2015-03-02  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Document more debug assertions.
 
         * platform/win/TestExpectations:
