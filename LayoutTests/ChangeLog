@@ -1,5 +1,11 @@
 2015-03-02  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Skip media control test after r180893.
+
+        * platform/win/TestExpectations:
+
+2015-03-02  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Document more debug assertions.
 
         * platform/win/TestExpectations:

@@ -722,6 +722,8 @@ media [ Skip ]
 fast/media [ Skip ] 
 http/tests/media [ Skip ] 
 
+fast/layers/video-layer.html [ Skip ] # Skip until video control changes are done.
+
 # Web Audio is not supported on Windows
 media/W3C/audio [ Skip ]
 
