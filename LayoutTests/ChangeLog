@@ -1,3 +1,12 @@
+2015-02-28  Roger Fong  <roger_fong@apple.com>
+
+        Skip media control tests for now while new look is being finalized.
+        https://bugs.webkit.org/show_bug.cgi?id=142138.
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations:
+
 2015-03-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Document more debug assertions.

@@ -77,19 +77,7 @@ audio::-webkit-media-controls-panel {
     line-height: 25px;
     -webkit-user-select: none;
     -webkit-user-drag: element;
-    background-color: transparent;
-    background-image: -webkit-linear-gradient(top,
-        rgba(0,  0,  0,  .92) 0,
-        rgba(0,  0,  0,  .92) 1px,
-        rgba(89, 89, 89, .92) 1px,
-        rgba(89, 89, 89, .92) 2px,
-        rgba(60, 60, 60, .92) 2px,
-        rgba(35, 35, 35, .92) 12px,
-        rgba(30, 30, 30, .92) 12px,
-        rgba(30, 30, 30, .92) 13px,
-        rgba(25, 25, 25, .92) 13px,
-        rgba(17, 17, 17, .92) 100%
-    );
+    background-color: black !important;
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -103,7 +91,6 @@ audio::-webkit-media-controls-panel {
 
 video::-webkit-media-controls-panel {
     cursor: none;
-    opacity: 0;
 }
 
 video::-webkit-media-controls-panel.show,
@@ -140,15 +127,13 @@ audio::-webkit-media-controls-rewind-button {
     width: 16px;
     height: 18px;
     margin-bottom: 1px;
-    margin-left: 6px;
-    margin-right: 4px;
+    margin-left: 8px;
 }
 
 video::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-play-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 v 16 h 6 v -16 h -6 z" fill="url(#gradient)"/><path d="M 9,0 v 16 h 6 v -16 h -6 z" fill="url(#gradient)"/></svg>');
-    margin-left: 6px;
-    margin-right: 1px;
+    margin-left: 16px;
 }
 
 video::-webkit-media-controls-play-button.paused,
@@ -158,10 +143,9 @@ audio::-webkit-media-controls-play-button.paused {
 
 video::-webkit-media-controls-panel .mute-box,
 audio::-webkit-media-controls-panel .mute-box {
-    width: 22px;
-    height: 22px;
-    margin-right: 2px;
-
+    width: 16px;
+    height: 16px;
+    margin-right: 16px;
     position: relative;
     display: -webkit-flex;
     -webkit-flex-direction: column;
@@ -173,28 +157,21 @@ video::-webkit-media-controls-mute-button,
 audio::-webkit-media-controls-mute-button,
 video::-webkit-media-controls-volume-max-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="m 0,9 0,-4 3,0 3,-3 0,10 -3,-3 -3,0 z" style="fill:url(#gradient) "/><path d="m 10.449,1.087 c 1.963,1.055 3.322,3.291 3.322,5.881 0,2.642 -1.402,4.913 -3.424,5.945" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/><path d="m 9.13,3.134 c 1.289,0.681 2.181,2.142 2.181,3.835 0,1.743001 -0.939,3.24 -2.285,3.897" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/><path d="M 7.794,5.175 C 8.403001,5.491 8.827001,6.167 8.827001,6.971 8.827001,7.818 8.356,8.537001 7.688,8.826" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/></svg>');
-    width: 14px;
 }
 
 video::-webkit-media-controls-panel .volume-box,
 audio::-webkit-media-controls-panel .volume-box {
     position: absolute;
     box-sizing: border-box;
-    height: 22px;
+    height: 23px;
     bottom: 0;
     left: 0;
 
-    -webkit-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg) translateY(-4px) translateX(-5px);
     -webkit-transform-origin: 11px 11px;
 
-    background-color: transparent;
-    background-image: -webkit-linear-gradient(
-        left,
-        rgba(17, 17, 17,  0.92),
-        rgba(42, 42, 42, 0.92)
-    );
-    border: 1px solid rgba(0, 0, 0, 0.95);
-    border-radius: 12px;
+    background-color: black;
+    border-radius: 4px;
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -203,7 +180,7 @@ audio::-webkit-media-controls-panel .volume-box {
 
     opacity: 0;
     /* make zero width (rather than display:none) for AX and FKA */
-    width: 0; /* will become 114px when shown */
+    width: 0; /* will become 101px when shown */
 
 }
 
@@ -216,19 +193,18 @@ audio::-webkit-media-controls-panel .volume-box:hover,
 audio::-webkit-media-controls-panel .volume-box:active {
     opacity: 1;
     /* resize to usable amount (rather than display:none) for AX and FKA */
-    width: 114px;
+    width: 101px;
 }
 
 audio::-webkit-media-controls-volume-slider,
 video::-webkit-media-controls-volume-slider {
     -webkit-appearance: none !important;
     box-sizing: border-box !important;
-    height: 10px !important;
-    width: 80px !important;
+    height: 9px !important;
+    width: 64px !important;
     padding: 0 !important;
-    margin-right: 6px !important;
+    margin-right: 10px !important;
 
-    border-radius: 5px !important;
     background-color: transparent !important;
     background-image: -webkit-linear-gradient(
         top,
@@ -279,7 +255,7 @@ video::-webkit-media-controls-toggle-closed-captions-button,
 audio::-webkit-media-controls-toggle-closed-captions-button {
     width: 16px;
     height: 16px;
-    margin: 0 7px;
+    margin-right: 16px;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 105"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.46875" stop-color="rgb(216, 216, 216)"/><stop offset="0.46875" stop-color="rgb(208, 208, 208)"/><stop offset="0.53125" stop-color="rgb(208, 208, 208)"/><stop offset="0.53125" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M98.766,43.224c0-23.163-21.775-41.94-48.637-41.94c-26.859,0-48.635,18.777-48.635,41.94c0,18.266,13.546,33.796,32.444,39.549c1.131,8.356,26.037,24.255,22.864,19.921c-4.462-6.096-5.159-13.183-5.07-17.566C77.85,84.397,98.766,65.923,98.766,43.224z" fill="url(#gradient)"/></svg>');
     outline: 0;
 }
@@ -383,7 +359,7 @@ audio::-webkit-media-controls-closed-captions-container li.selected:hover::befor
 video::-webkit-media-controls-fullscreen-button,
 audio::-webkit-media-controls-fullscreen-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 14,1 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 1,14 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
-    margin: 0 7px;
+    margin-right: 8px;
 }
 video::-webkit-media-controls-fullscreen-button.exit,
 audio::-webkit-media-controls-fullscreen-button.exit {
@@ -486,9 +462,16 @@ audio::-webkit-media-controls-time-remaining-display {
     text-decoration: none;
 }
 
-video::-webkit-media-controls-timeline-container .hour-long-time,
-audio::-webkit-media-controls-timeline-container .hour-long-time {
-    min-width: 67px;
+video::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-current-time-display {
+    margin-left: 16px;
+    margin-right: 8px;
+}
+
+video::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-time-remaining-display {
+    margin-left: 8px;
+    margin-right: 16px;
 }
 
 video::-webkit-media-controls-timeline-container,
@@ -652,7 +635,6 @@ video:-webkit-full-screen::-webkit-media-controls-rewind-button {
 
 video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
     position: absolute;
-
 
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 22,0 11,7 22,15 z" fill="url(#gradient)"/><path d="M 11,0 0,7 11,15 z" fill="url(#gradient)"/></svg>');
 

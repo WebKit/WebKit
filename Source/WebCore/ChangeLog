@@ -1,3 +1,30 @@
+2015-03-01  Roger Fong  <roger_fong@apple.com>
+
+        Update inline media element controls appearance Part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=142138.
+        <rdar://problem/19997384>
+
+        Reviewed by Dean Jackson.
+
+        Update positioning, sizes, and background colors media control elements.
+        Volume and timeline sliders will be drawn in a separate patch via 2d canvases.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-panel .mute-box):
+        (video::-webkit-media-controls-volume-max-button):
+        (audio::-webkit-media-controls-panel .volume-box):
+        (audio::-webkit-media-controls-panel .volume-box:active):
+        (video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline-container .hour-long-time): Deleted.
+
 2015-03-02  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r180882): Build failure: Methods not marked override in GraphicsLayerCA.h
