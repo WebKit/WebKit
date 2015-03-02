@@ -1100,12 +1100,6 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     callOperation(WithProfile, operationGetByValGeneric, dst, regT1, regT0, regT3, regT2);
 }
 
-void JIT::emit_op_get_enumerable_length(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_enumerable_length);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_has_structure_property(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -1122,21 +1116,6 @@ void JIT::emit_op_has_structure_property(Instruction* currentInstruction)
     
     move(TrustedImm32(1), regT0);
     emitStoreBool(dst, regT0);
-}
-
-void JIT::emitSlow_op_has_structure_property(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_has_structure_property);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_has_generic_property(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_has_generic_property);
-    slowPathCall.call();
 }
 
 void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
@@ -1288,18 +1267,6 @@ void JIT::emitSlow_op_get_direct_pname(Instruction* currentInstruction, Vector<S
     slowPathCall.call();
 }
 
-void JIT::emit_op_get_structure_property_enumerator(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_structure_property_enumerator);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_get_generic_property_enumerator(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_generic_property_enumerator);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -1322,12 +1289,6 @@ void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
 
     done.link(this);
     emitStore(dst, regT2, regT0);
-}
-
-void JIT::emit_op_to_index_string(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_index_string);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_profile_type(Instruction* currentInstruction)
@@ -1392,13 +1353,6 @@ void JIT::emit_op_profile_type(Instruction* currentInstruction)
     callOperation(operationProcessTypeProfilerLog);
 
     jumpToEnd.link(this);
-}
-
-void JIT::emit_op_profile_control_flow(Instruction* currentInstruction)
-{
-    BasicBlockLocation* basicBlockLocation = currentInstruction[1].u.basicBlockLocation;
-    if (!basicBlockLocation->hasExecuted())
-        basicBlockLocation->emitExecuteCode(*this, regT1);
 }
 
 } // namespace JSC

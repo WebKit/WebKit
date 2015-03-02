@@ -1,3 +1,26 @@
+2015-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Deduplicate slow path calling code in JITOpcodes.cpp/JITOpcodes32_64.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=142184
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_enumerable_length):
+        (JSC::JIT::emitSlow_op_has_structure_property):
+        (JSC::JIT::emit_op_has_generic_property):
+        (JSC::JIT::emit_op_get_structure_property_enumerator):
+        (JSC::JIT::emit_op_get_generic_property_enumerator):
+        (JSC::JIT::emit_op_to_index_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_enumerable_length): Deleted.
+        (JSC::JIT::emitSlow_op_has_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_generic_property): Deleted.
+        (JSC::JIT::emit_op_get_structure_property_enumerator): Deleted.
+        (JSC::JIT::emit_op_get_generic_property_enumerator): Deleted.
+        (JSC::JIT::emit_op_to_index_string): Deleted.
+        (JSC::JIT::emit_op_profile_control_flow): Deleted.
+
 2015-03-02  Antti Koivisto  <antti@apple.com>
 
         Add way to dump cache meta data to file
