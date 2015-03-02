@@ -28,6 +28,7 @@
 
 #include "WebsiteDataTypes.h"
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -47,6 +48,7 @@ struct WebsiteData {
     };
 
     Vector<Entry> entries;
+    HashSet<String> hostNamesWithCookies;
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebsiteData&);

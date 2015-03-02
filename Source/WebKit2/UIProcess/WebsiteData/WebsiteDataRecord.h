@@ -29,6 +29,7 @@
 #include "WebsiteDataTypes.h"
 #include <WebCore/SecurityOriginHash.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,13 +39,16 @@ class SecurityOrigin;
 namespace WebKit {
 
 struct WebsiteDataRecord {
+    static String displayNameForCookieHostName(const String& hostName);
     static String displayNameForOrigin(const WebCore::SecurityOrigin&);
 
     void add(WebsiteDataTypes, RefPtr<WebCore::SecurityOrigin>&&);
+    void addCookieHostName(const String& hostName);
 
     String displayName;
     unsigned types { 0 };
     HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
+    HashSet<String> cookieHostNames;
 };
 
 }

@@ -164,6 +164,18 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 record.add(entry.type, WTF::move(entry.origin));
             }
 
+            for (auto& hostName : websiteData.hostNamesWithCookies) {
+                auto displayName = WebsiteDataRecord::displayNameForCookieHostName(hostName);
+                if (!displayName)
+                    continue;
+
+                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
+                if (!record.displayName)
+                    record.displayName = WTF::move(displayName);
+
+                record.addCookieHostName(hostName);
+            }
+
             callIfNeeded();
         }
 

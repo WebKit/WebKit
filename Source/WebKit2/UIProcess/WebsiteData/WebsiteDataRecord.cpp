@@ -31,6 +31,17 @@
 
 namespace WebKit {
 
+String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
+{
+    // FIXME: This needs to handle the local file domain for cookies.
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    return WebCore::topPrivatelyControlledDomain(hostName.startsWith('.') ? hostName.substring(1) : hostName);
+#endif
+
+    return String();
+}
+
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& securityOrigin)
 {
     const auto& protocol = securityOrigin.protocol();
@@ -53,6 +64,13 @@ void WebsiteDataRecord::add(WebsiteDataTypes type, RefPtr<WebCore::SecurityOrigi
     types |= type;
 
     origins.add(WTF::move(origin));
+}
+
+void WebsiteDataRecord::addCookieHostName(const String& hostName)
+{
+    types |= WebsiteDataTypeCookies;
+
+    cookieHostNames.add(hostName);
 }
 
 }

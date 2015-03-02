@@ -295,6 +295,8 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
 
         ~CallbackAggregator()
         {
+            ASSERT(RunLoop::isMain());
+
             auto completionHandler = WTF::move(m_completionHandler);
             auto websiteData = WTF::move(m_websiteData);
 
@@ -310,6 +312,11 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator([this, callbackID](WebsiteData websiteData) {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     }));
+
+    if (websiteDataTypes & WebsiteDataTypeCookies) {
+        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+            getHostnamesWithCookies(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithCookies);
+    }
 
     if (websiteDataTypes & WebsiteDataTypeDiskCache) {
         fetchDiskCacheEntries(sessionID, [callbackAggregator](Vector<WebsiteData::Entry> entries) {

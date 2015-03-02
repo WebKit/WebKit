@@ -1,3 +1,32 @@
+2015-03-02  Anders Carlsson  <andersca@apple.com>
+
+        WebsiteDataStore should support getting cookie host names
+        https://bugs.webkit.org/show_bug.cgi?id=142178
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        Assert that we're destroyed from the main thread since we end up copying the website data struct.
+
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode):
+        (WebKit::WebsiteData::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        Add a hostnamesWithCookies member.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::displayNameForCookieHostName):
+        Add a new function that will return the display name for a cookie host name.
+
+        (WebKit::WebsiteDataRecord::addCookieHostName):
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        Add a hash set of cookie host names.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        Create data records for each host name with cookies.
+
 2015-03-02  Jer Noble  <jer.noble@apple.com>
 
         [WK2][Mac] WebPageProxy::supressVisibilityUpdates() should suppress visibility updates.

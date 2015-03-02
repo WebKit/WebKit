@@ -53,11 +53,14 @@ bool WebsiteData::Entry::decode(IPC::ArgumentDecoder& decoder, WebsiteData::Entr
 void WebsiteData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << entries;
+    encoder << hostNamesWithCookies;
 }
 
 bool WebsiteData::decode(IPC::ArgumentDecoder& decoder, WebsiteData& result)
 {
     if (!decoder.decode(result.entries))
+        return false;
+    if (!decoder.decode(result.hostNamesWithCookies))
         return false;
 
     return true;
