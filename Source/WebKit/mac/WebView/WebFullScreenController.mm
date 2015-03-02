@@ -107,6 +107,9 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     [super dealloc];
 }
 
+@synthesize initialFrame=_initialFrame;
+@synthesize finalFrame=_finalFrame;
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];
@@ -238,7 +241,9 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     [[_webViewPlaceholder.get() window] recalculateKeyViewLoop];
     
     [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
-    
+
+    _savedScale = [_webView _viewScaleFactor];
+    [_webView _scaleWebView:1 atOrigin:NSMakePoint(0, 0)];
     [self _document]->webkitWillEnterFullScreenForElement(_element.get());
     [self _document]->setAnimatingFullScreen(true);
     [self _document]->updateLayout();
@@ -344,10 +349,11 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     // Screen updates to be re-enabled at the end of this function
     NSDisableScreenUpdates();
-    
+
     [self _document]->setAnimatingFullScreen(false);
     [self _document]->webkitDidExitFullScreenForElement(_element.get());
-    
+    [_webView _scaleWebView:_savedScale atOrigin:NSMakePoint(0, 0)];
+
     NSResponder *firstResponder = [[self window] firstResponder];
     [self _swapView:_webViewPlaceholder.get() with:_webView];
     [_webView _mainCoreFrame]->view()->setScrollPosition(_scrollPosition);

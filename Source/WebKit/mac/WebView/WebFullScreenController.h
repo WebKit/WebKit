@@ -51,12 +51,16 @@ namespace WebCore {
     NSRect _initialFrame;
     NSRect _finalFrame;
     WebCore::IntPoint _scrollPosition;
+    float _savedScale;
 
     BOOL _isEnteringFullScreen;
     BOOL _isExitingFullScreen;
     BOOL _isFullScreen;
     BOOL _isPlaying;
 }
+
+@property (readonly) NSRect initialFrame;
+@property (readonly) NSRect finalFrame;
 
 - (WebView*)webView;
 - (void)setWebView:(WebView*)webView;

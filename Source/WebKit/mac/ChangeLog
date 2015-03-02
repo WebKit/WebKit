@@ -1,3 +1,24 @@
+2015-03-02  Jer Noble  <jer.noble@apple.com>
+
+        [WK1][WK2][Mac] Fullscreen animation is incorrect when page is scaled.
+        https://bugs.webkit.org/show_bug.cgi?id=142121
+
+        Reviewed by Simon Fraser.
+
+        Fullscreening a page with a non-1 scale would result in that scale being applied to the
+        fullscreen content, breaking fullscreen mode. Set the page scale to 1 when entering
+        fullscreen and reset it to the original value when exiting fullscreen.
+
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]): Set the page scale to 1.
+        (-[WebFullScreenController finishedExitFullScreenAnimation:]): Reset the page
+                scale to the original value.
+        * WebView/WebView.mm:
+        (-[WebView _supportsFullScreenForElement:withKeyboard:]): Drive-by fix. Check the
+                WebView's own preferences to see if fullscreen mode is enabled, rather than
+                the global object's.
+
 2015-03-01  Chris Dumez  <cdumez@apple.com>
 
         Make NotificationCenter / Notification suspendable

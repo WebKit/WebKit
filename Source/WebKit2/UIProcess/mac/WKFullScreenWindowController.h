@@ -61,6 +61,9 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     RefPtr<WebKit::VoidCallback> _repaintCallback;
 }
 
+@property (readonly) NSRect initialFrame;
+@property (readonly) NSRect finalFrame;
+
 - (id)initWithWindow:(NSWindow *)window webView:(WKView *)webView;
 
 - (WebCoreFullScreenPlaceholderView*)webViewPlaceholder;

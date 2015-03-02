@@ -130,6 +130,9 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 #pragma mark -
 #pragma mark Accessors
 
+@synthesize initialFrame=_initialFrame;
+@synthesize finalFrame=_finalFrame;
+
 - (BOOL)isFullScreen
 {
     return _fullScreenState == WaitingToEnterFullScreen
@@ -249,10 +252,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     makeResponderFirstResponderIfDescendantOfView(self.window, webWindowFirstResponder, _webView);
 
-    [self _manager]->setAnimatingFullScreen(true);
-    [self _manager]->willEnterFullScreen();
     _savedScale = [self _page]->pageScaleFactor();
     [self _page]->scalePage(1, IntPoint());
+    [self _manager]->setAnimatingFullScreen(true);
+    [self _manager]->willEnterFullScreen();
 }
 
 - (void)beganEnterFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
@@ -320,10 +323,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
         [[_webView window] makeKeyAndOrderFront:self];
 
-        [self _manager]->didExitFullScreen();
-        [self _manager]->setAnimatingFullScreen(false);
         [self _page]->scalePage(_savedScale, IntPoint());
         [self _manager]->restoreScrollPosition();
+        [self _manager]->didExitFullScreen();
+        [self _manager]->setAnimatingFullScreen(false);
     }
 
     NSEnableScreenUpdates();

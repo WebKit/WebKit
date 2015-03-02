@@ -1,3 +1,18 @@
+2015-03-02  Jer Noble  <jer.noble@apple.com>
+
+        [WK1][WK2][Mac] Fullscreen animation is incorrect when page is scaled.
+        https://bugs.webkit.org/show_bug.cgi?id=142121
+
+        Reviewed by Simon Fraser.
+
+        Change the order of operations when entering or exiting fullscreen. Change the page scale to
+        1 before entering, so the final screen rect takes that scale into account, and vice-versa on
+        exiting.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+
 2015-03-01  Simon Fraser  <simon.fraser@apple.com>
 
         Make clip-path work on <video>, <canvas> etc.
