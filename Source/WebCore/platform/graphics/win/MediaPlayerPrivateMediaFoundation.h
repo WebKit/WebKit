@@ -64,7 +64,7 @@ public:
 
     virtual void setSize(const IntSize&);
 
-    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const FloatRect&);
 
 private:
 

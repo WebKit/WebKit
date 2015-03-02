@@ -83,7 +83,7 @@ private:
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
 
-    IntSize naturalSize() const;
+    FloatSize naturalSize() const override;
     bool hasVideo() const;
     bool hasAudio() const;
     bool supportsFullscreen() const;
@@ -130,8 +130,8 @@ private:
     
     virtual bool hasAvailableVideoFrame() const;
 
-    void paint(GraphicsContext*, const IntRect&);
-    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    void paint(GraphicsContext*, const FloatRect&);
+    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
     virtual void prepareForRendering();
 
     bool supportsAcceleratedRendering() const;
@@ -198,7 +198,7 @@ private:
     Timer<MediaPlayerPrivateQTKit> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
-    IntRect m_rect;
+    FloatRect m_rect;
     FloatSize m_scaleFactor;
     unsigned m_enabledTrackCount;
     unsigned m_totalTrackCount;

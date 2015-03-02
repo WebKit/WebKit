@@ -149,8 +149,8 @@ private:
     virtual double currentTimeDouble() const override;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);
-    virtual void paint(GraphicsContext*, const IntRect&);
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const FloatRect&);
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
     virtual PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)
     virtual void setVideoFullscreenLayer(PlatformLayer*);
@@ -211,8 +211,8 @@ private:
 
     void createImageGenerator();
     void destroyImageGenerator();
-    RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
-    void paintWithImageGenerator(GraphicsContext*, const IntRect&);
+    RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
+    void paintWithImageGenerator(GraphicsContext*, const FloatRect&);
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void createVideoOutput();
@@ -220,7 +220,7 @@ private:
     RetainPtr<CVPixelBufferRef> createPixelBuffer();
     void updateLastImage();
     bool videoOutputHasAvailableFrame();
-    void paintWithVideoOutput(GraphicsContext*, const IntRect&);
+    void paintWithVideoOutput(GraphicsContext*, const FloatRect&);
     virtual PassNativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
 #endif

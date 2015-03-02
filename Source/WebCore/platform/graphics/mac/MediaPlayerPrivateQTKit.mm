@@ -195,7 +195,6 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_seekTimer(this, &MediaPlayerPrivateQTKit::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
-    , m_rect()
     , m_scaleFactor(1, 1)
     , m_enabledTrackCount(0)
     , m_totalTrackCount(0)
@@ -819,10 +818,10 @@ bool MediaPlayerPrivateQTKit::seeking() const
     return m_seekTo >= 0;
 }
 
-IntSize MediaPlayerPrivateQTKit::naturalSize() const
+FloatSize MediaPlayerPrivateQTKit::naturalSize() const
 {
     if (!metaDataAvailable())
-        return IntSize();
+        return FloatSize();
 
     // In spite of the name of this method, return QTMovieNaturalSizeAttribute transformed by the 
     // initial movie scale because the spec says intrinsic size is:
@@ -842,8 +841,9 @@ IntSize MediaPlayerPrivateQTKit::naturalSize() const
         // event when this happens, so we must cache the last valid naturalSize here:
         m_cachedNaturalSize = naturalSize;
     }
-        
-    return IntSize(naturalSize.width() * m_scaleFactor.width(), naturalSize.height() * m_scaleFactor.height());
+    
+    naturalSize.scale(m_scaleFactor.width(), m_scaleFactor.height());
+    return naturalSize;
 }
 
 bool MediaPlayerPrivateQTKit::hasVideo() const
@@ -1269,7 +1269,7 @@ void MediaPlayerPrivateQTKit::repaint()
     m_player->repaint();
 }
 
-void MediaPlayerPrivateQTKit::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& r)
+void MediaPlayerPrivateQTKit::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& r)
 {
     id qtVideoRenderer = m_qtVideoRenderer.get();
     if (!qtVideoRenderer && currentRenderingMode() == MediaRenderingMovieLayer) {
@@ -1283,7 +1283,7 @@ void MediaPlayerPrivateQTKit::paintCurrentFrameInContext(GraphicsContext* contex
     paint(context, r);
 }
 
-void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
+void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const FloatRect& r)
 {
     if (context->paintingDisabled() || m_hasUnsupportedTracks)
         return;
@@ -1296,7 +1296,7 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSGraphicsContext* newContext;
     FloatSize scaleFactor(1.0f, -1.0f);
-    IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
+    FloatRect paintRect(FloatPoint(), r.size());
 
     GraphicsContextStateSaver stateSaver(*context);
     context->translate(r.x(), r.y() + r.height());
@@ -1321,7 +1321,7 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
             else {
                 // We don't really need the QTMovieView in any specific location so let's just get it out of the way
                 // where it won't intercept events or try to bring up the context menu.
-                IntRect farAwayButCorrectSize(m_rect);
+                FloatRect farAwayButCorrectSize(m_rect);
                 farAwayButCorrectSize.move(-1000000, -1000000);
                 [view setFrame:farAwayButCorrectSize];
             }

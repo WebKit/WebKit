@@ -120,9 +120,9 @@ void MockMediaPlayerMediaSource::pause()
     m_playing = 0;
 }
 
-IntSize MockMediaPlayerMediaSource::naturalSize() const
+FloatSize MockMediaPlayerMediaSource::naturalSize() const
 {
-    return IntSize();
+    return FloatSize();
 }
 
 bool MockMediaPlayerMediaSource::hasVideo() const
@@ -181,7 +181,7 @@ void MockMediaPlayerMediaSource::setSize(const IntSize&)
 {
 }
 
-void MockMediaPlayerMediaSource::paint(GraphicsContext*, const IntRect&)
+void MockMediaPlayerMediaSource::paint(GraphicsContext*, const FloatRect&)
 {
 }
 

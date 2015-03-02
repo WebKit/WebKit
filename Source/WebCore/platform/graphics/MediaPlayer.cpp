@@ -98,7 +98,7 @@ public:
     virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
     virtual PlatformLayer* platformLayer() const { return 0; }
 
-    virtual IntSize naturalSize() const { return IntSize(0, 0); }
+    virtual FloatSize naturalSize() const { return FloatSize(); }
 
     virtual bool hasVideo() const { return false; }
     virtual bool hasAudio() const { return false; }
@@ -135,7 +135,7 @@ public:
 
     virtual void setSize(const IntSize&) { }
 
-    virtual void paint(GraphicsContext*, const IntRect&) { }
+    virtual void paint(GraphicsContext*, const FloatRect&) override { }
 
     virtual bool canLoadPoster() const { return false; }
     virtual void setPoster(const String&) { }
@@ -572,7 +572,7 @@ bool MediaPlayer::requiresImmediateCompositing() const
     return m_private->requiresImmediateCompositing();
 }
 
-IntSize MediaPlayer::naturalSize()
+FloatSize MediaPlayer::naturalSize()
 {
     return m_private->naturalSize();
 }
@@ -760,12 +760,12 @@ void MediaPlayer::setPreload(MediaPlayer::Preload preload)
     m_private->setPreload(preload);
 }
 
-void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayer::paint(GraphicsContext* p, const FloatRect& r)
 {
     m_private->paint(p, r);
 }
 
-void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& r)
+void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const FloatRect& r)
 {
     m_private->paintCurrentFrameInContext(p, r);
 }

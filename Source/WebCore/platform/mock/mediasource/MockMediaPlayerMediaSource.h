@@ -64,7 +64,7 @@ private:
     virtual void cancelLoad() override;
     virtual void play() override;
     virtual void pause() override;
-    virtual IntSize naturalSize() const override;
+    virtual FloatSize naturalSize() const override;
     virtual bool hasVideo() const override;
     virtual bool hasAudio() const override;
     virtual void setVisible(bool) override;
@@ -75,7 +75,7 @@ private:
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
-    virtual void paint(GraphicsContext*, const IntRect&) override;
+    virtual void paint(GraphicsContext*, const FloatRect&) override;
     virtual double currentTimeDouble() const override;
     virtual double durationDouble() const override;
     virtual void seekWithTolerance(double time, double, double) override;

@@ -90,7 +90,7 @@ void MediaPlayerPrivateMediaFoundation::pause()
     notImplemented();
 }
 
-IntSize MediaPlayerPrivateMediaFoundation::naturalSize() const 
+FloatSize MediaPlayerPrivateMediaFoundation::naturalSize() const 
 {
     notImplemented();
     return IntSize(0, 0);
@@ -154,7 +154,7 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize&)
     notImplemented();
 }
 
-void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext* context, const FloatRect& rect)
 {
     if (context->paintingDisabled()
         || !m_player->visible())

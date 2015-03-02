@@ -1286,11 +1286,11 @@ static LayoutSize size(HTMLImageElement* image, ImageSizeType sizeType)
 }
 
 #if ENABLE(VIDEO)
-static IntSize size(HTMLVideoElement* video)
+static FloatSize size(HTMLVideoElement* video)
 {
     if (MediaPlayer* player = video->player())
         return player->naturalSize();
-    return IntSize();
+    return FloatSize();
 }
 #endif
 
@@ -1483,8 +1483,8 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, float x, float
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    IntSize s = size(video);
-    drawImage(video, x, y, s.width(), s.height(), ec);
+    FloatSize videoSize = size(video);
+    drawImage(video, x, y, videoSize.width(), videoSize.height(), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video,
@@ -1494,8 +1494,8 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video,
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    IntSize s = size(video);
-    drawImage(video, FloatRect(0, 0, s.width(), s.height()), FloatRect(x, y, width, height), ec);
+    FloatSize videoSize = size(video);
+    drawImage(video, FloatRect(0, 0, videoSize.width(), videoSize.height()), FloatRect(x, y, width, height), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video,
@@ -1552,7 +1552,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     c->translate(dstRect.x(), dstRect.y());
     c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
     c->translate(-srcRect.x(), -srcRect.y());
-    video->paintCurrentFrameInContext(c, IntRect(IntPoint(), size(video)));
+    video->paintCurrentFrameInContext(c, FloatRect(FloatPoint(), size(video)));
     stateSaver.restore();
     didDraw(dstRect);
 }

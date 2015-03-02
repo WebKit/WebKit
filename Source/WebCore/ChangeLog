@@ -1,3 +1,83 @@
+2015-03-01  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180839
+
+    2015-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+            Fullscreen video layers are off by one sometimes
+            https://bugs.webkit.org/show_bug.cgi?id=142122
+            rdar://problem/19878821
+
+            Reviewed by Eric Carlson.
+
+            Convert MediaPlayer::naturalSize() to return a FloatSize, since the natural size
+            isn't always integral (because of preserving pixel ratio etc). Fix all the media
+            backends to use FloatSizes for natural size. Convert the video image drawing code
+            paths to FloatSize, since naturalSize is used on the destination rect computation,
+            and painting should be floating point anyway.
+        
+            Give the layer created by SourceBufferPrivateAVFObjC a name in debug builds.
+
+            * html/HTMLVideoElement.cpp:
+            (WebCore::HTMLVideoElement::videoWidth):
+            (WebCore::HTMLVideoElement::videoHeight):
+            (WebCore::HTMLVideoElement::paintCurrentFrameInContext):
+            * html/HTMLVideoElement.h:
+            * html/canvas/CanvasRenderingContext2D.cpp:
+            (WebCore::size):
+            (WebCore::CanvasRenderingContext2D::drawImage):
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::videoFrameToImage):
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::NullMediaPlayerPrivate::naturalSize):
+            (WebCore::MediaPlayer::naturalSize):
+            (WebCore::MediaPlayer::paint):
+            (WebCore::MediaPlayer::paintCurrentFrameInContext):
+            (WebCore::NullMediaPlayerPrivate::paint): Deleted.
+            * platform/graphics/MediaPlayer.h:
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::paintCurrentFrameInContext):
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::naturalSize):
+            (WebCore::MediaPlayerPrivateAVFoundation::setNaturalSize):
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::paint):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::sizeChanged):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::naturalSize):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paint):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext):
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+            (WebCore::MediaSourcePrivateAVFObjC::naturalSize):
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+            (WebCore::SourceBufferPrivateAVFObjC::naturalSize):
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm:
+            (WebCore::VideoTrackPrivateMediaSourceAVFObjC::naturalSize):
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::MediaPlayerPrivateQTKit::naturalSize):
+            (WebCore::MediaPlayerPrivateQTKit::paintCurrentFrameInContext):
+            (WebCore::MediaPlayerPrivateQTKit::paint):
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+            (WebCore::MockMediaPlayerMediaSource::naturalSize):
+            (WebCore::MockMediaPlayerMediaSource::paint):
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+            * rendering/RenderVideo.cpp:
+            (WebCore::RenderVideo::calculateIntrinsicSize):
+            (WebCore::RenderVideo::paintReplaced):
+
 2015-02-19  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r175641

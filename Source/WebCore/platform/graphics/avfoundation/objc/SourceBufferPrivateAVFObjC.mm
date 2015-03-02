@@ -808,6 +808,9 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
         if (!m_displayLayer) {
             m_displayLayer = adoptNS([[getAVSampleBufferDisplayLayerClass() alloc] init]);
+#ifndef NDEBUG
+            [m_displayLayer setName:@"SourceBufferPrivateAVFObjC AVSampleBufferDisplayLayer"];
+#endif
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];
@@ -994,9 +997,9 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
         m_client->sourceBufferPrivateSeekToTime(this, time);
 }
 
-IntSize SourceBufferPrivateAVFObjC::naturalSize()
+FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    return roundedIntSize(m_cachedSize);
+    return m_cachedSize;
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
