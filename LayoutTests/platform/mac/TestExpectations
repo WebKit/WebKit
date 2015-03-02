@@ -1213,22 +1213,14 @@ webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
-# Kerning, Ligatures, and Printer Fonts caused these tests to fail
-webkit.org/b/139968 fast/text/font-kerning.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/text/whitespace/inline-whitespace-wrapping-7.html [ ImageOnlyFailure ]
-webkit.org/b/139968 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/139968 imported/mozilla/svg/dynamic-text-07.svg [ ImageOnlyFailure ]
-webkit.org/b/139968 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
-webkit.org/b/139968 platform/mac/fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
-webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
-webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
-webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+# SVG gradients are not bit-for-bit equivalent through a scale.
+webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
 # Word-spacing is incorrectly applied
 webkit.org/b/142086 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
 webkit.org/b/142086 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/142086 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
+webkit.org/b/142086 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 
 # Underlines' starting and ending positions need to be pixel-snapped
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]

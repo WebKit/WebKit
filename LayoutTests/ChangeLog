@@ -1,3 +1,24 @@
+2015-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Last gardening after r177774
+
+        Unreviewed.
+
+        * fast/text/font-kerning-expected.html:
+        * fast/text/font-variant-ligatures-expected.html:
+        * fast/text/whitespace/inline-whitespace-wrapping-7-expected.html:
+        * fast/text/whitespace/inline-whitespace-wrapping-7.html:
+        * mathml/presentation/scripts-subsup-expected.html:
+        * mathml/presentation/scripts-subsup.html:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/text/multiple-codeunit-vertical-upright-expected.html:
+        * platform/mac/fast/text/multiple-codeunit-vertical-upright.html:
+        * platform/mac/fast/text/resources/multiple-codeunit-vertical-upright.otf: Removed.
+        * svg/text/svg-font-word-rounding-hacks-spaces-expected.html:
+        * svg/text/svg-font-word-rounding-hacks-spaces.html:
+        * svg/text/tspan-outline-expected.svg:
+        * svg/text/tspan-outline.html:
+
 2015-03-02  Mark Lam  <mark.lam@apple.com>
 
         The InspectorTimelineAgent should gracefully handle attempts to start more than once.
