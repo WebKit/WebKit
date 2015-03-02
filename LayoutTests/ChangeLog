@@ -1,5 +1,11 @@
 2015-03-02  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix a typo in TestExpectations.
+
+        * platform/mac/TestExpectations: Faiure - > Failure.
+
+2015-03-02  Alexey Proskuryakov  <ap@apple.com>
+
         js/promises-tests/promises-tests-2-1-2.html sometimes times out
         https://bugs.webkit.org/show_bug.cgi?id=142175
 
