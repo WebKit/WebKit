@@ -344,9 +344,14 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteData
     completionHandler();
 }
 
-void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, uint64_t callbackID)
+void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
-    // FIXME: Actually delete something.
+    if (websiteDataTypes & WebsiteDataTypeCookies) {
+        if (auto* networkStorageSession = SessionTracker::session(sessionID)) {
+            for (const auto& cookieHostName : cookieHostNames)
+                deleteCookiesForHostname(*networkStorageSession, cookieHostName);
+        }
+    }
 
     auto completionHandler = [this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);

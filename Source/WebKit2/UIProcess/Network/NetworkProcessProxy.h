@@ -65,7 +65,7 @@ public:
 
     void fetchWebsiteData(WebCore::SessionID, WebsiteDataTypes, std::function<void (WebsiteData)> completionHandler);
     void deleteWebsiteData(WebCore::SessionID, WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, WebsiteDataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler);
+    void deleteWebsiteDataForOrigins(WebCore::SessionID, WebsiteDataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, const Vector<String>& cookieHostNames, std::function<void ()> completionHandler);
 
 #if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);

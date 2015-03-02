@@ -132,7 +132,7 @@ void NetworkProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, Websit
     send(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
 }
 
-void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, WebsiteDataTypes dataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
+void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, WebsiteDataTypes dataTypes, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, const Vector<String>& cookieHostNames, std::function<void ()> completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -143,7 +143,7 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, Websi
     for (auto& origin : origins)
         originData.append(SecurityOriginData::fromSecurityOrigin(*origin));
 
-    send(Messages::WebProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, originData, callbackID), 0);
+    send(Messages::NetworkProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, originData, cookieHostNames, callbackID), 0);
 }
 
 void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
