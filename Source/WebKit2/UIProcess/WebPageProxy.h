@@ -894,7 +894,7 @@ public:
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() override;
 
-    void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }
+    void setSuppressVisibilityUpdates(bool flag);
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
 
 #if PLATFORM(IOS)

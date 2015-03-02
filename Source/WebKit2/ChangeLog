@@ -1,5 +1,28 @@
 2015-03-02  Jer Noble  <jer.noble@apple.com>
 
+        [WK2][Mac] WebPageProxy::supressVisibilityUpdates() should suppress visibility updates.
+        https://bugs.webkit.org/show_bug.cgi?id=141907
+
+        Reviewed by Tim Horton.
+
+        At some point, the window/view/page visibility update code was refactored such that setting
+        WebPageProxy::setSuppressVisibilityUpdate() no longer suppressed visibility updates. This causes
+        full screen animations to become "flashy" when moving the WebView between the regular and full
+        screen window, as a HTMLMediaElement in the full screen animation will receive a "!visible"
+        notification and disconnect its rendering pipeline.
+
+        In WebPageProxy::viewStateDidChange(), respect m_suppressVisibilityUpdates and bail out early
+        if set. In WebPageProxy::setSuppressVisibilityUpdates(), trigger an explicit update after
+        clearing m_suppressVisibilityUpdates.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setSuppressVisibilityUpdates):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setSuppressVisibilityUpdates): Deleted.
+
+2015-03-02  Jer Noble  <jer.noble@apple.com>
+
         [WK1][WK2][Mac] Fullscreen animation is incorrect when page is scaled.
         https://bugs.webkit.org/show_bug.cgi?id=142121
 
