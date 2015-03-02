@@ -1,3 +1,11 @@
+2015-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Silence non-fatal errors about failing to create WebKitPluginHost.app and WebKitPluginAgent symlinks.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebKit.xcodeproj/project.pbxproj: If a link already exist, don’t try to create it.
+
 2015-02-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
