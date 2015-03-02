@@ -1,3 +1,13 @@
+2015-02-26  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Move another declaration to WebFilterEvaluatorSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=142066
+
+        Reviewed by Andreas Kling.
+
+        * platform/ios/ContentFilterIOS.mm:
+        * platform/spi/cocoa/WebFilterEvaluatorSPI.h:
+
 2015-03-01  Chris Dumez  <cdumez@apple.com>
 
         Make NotificationCenter / Notification suspendable

@@ -29,6 +29,8 @@
 
 #else
 
+#import <TargetConditionals.h>
+
 enum {
     kWFEStateBuffering = 2
 };
@@ -43,6 +45,9 @@ enum {
 - (NSData *)dataComplete;
 - (OSStatus)filterState;
 - (id)initWithResponse:(NSURLResponse *)response;
+#if TARGET_OS_IPHONE
+- (void)unblockWithCompletion:(void (^)(BOOL unblocked, NSError *error))completion;
+#endif
 @end
 
 #endif

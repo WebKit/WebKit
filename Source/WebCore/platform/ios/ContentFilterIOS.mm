@@ -30,14 +30,7 @@
 
 #import "ResourceRequest.h"
 #import "WebCoreThreadRun.h"
-
-#if defined(__has_include) && __has_include(<WebContentAnalysis/WebFilterEvaluator.h>)
-#import <WebContentAnalysis/WebFilterEvaluator.h>
-#else
-@interface NSObject (WebFilterEvaluatorDetails)
-- (void)unblockWithCompletion:(void (^)(BOOL unblocked, NSError *error))completion;
-@end
-#endif
+#import "WebFilterEvaluatorSPI.h"
 
 namespace WebCore {
 
