@@ -1257,27 +1257,21 @@ ResolveType BytecodeGenerator::resolveType()
 
 RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifier& identifier, ResolveScopeInfo& info)
 {
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-
     if (m_symbolTable && m_codeType == FunctionCode && !m_localScopeDepth) {
         SymbolTableEntry entry = m_symbolTable->get(identifier.impl());
         if (!entry.isNull()) {
-            emitOpcode(op_resolve_scope);
-            instructions().append(kill(dst));
-            instructions().append(scopeRegister()->index());
-            instructions().append(addConstant(identifier));
-            instructions().append(LocalClosureVar);
-            instructions().append(0);
-            instructions().append(0);
             info = ResolveScopeInfo(entry.getIndex());
-            return dst;
+            return scopeRegister();
         }
     }
 
     ASSERT(!m_symbolTable || !m_symbolTable->contains(identifier.impl()) || resolveType() == Dynamic);
 
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
     // resolve_scope dst, id, ResolveType, depth
     emitOpcode(op_resolve_scope);
+    dst = tempDestination(dst);
     instructions().append(kill(dst));
     instructions().append(scopeRegister()->index());
     instructions().append(addConstant(identifier));
@@ -1287,20 +1281,6 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
     return dst;
 }
 
-
-RegisterID* BytecodeGenerator::emitGetOwnScope(RegisterID* dst, const Identifier& identifier, OwnScopeLookupRules)
-{
-    emitOpcode(op_resolve_scope);
-    instructions().append(kill(dst));
-    instructions().append(scopeRegister()->index());
-    instructions().append(addConstant(identifier));
-    instructions().append(LocalClosureVar);
-    // This should be m_localScopeDepth if we aren't doing
-    // resolution during emitReturn()
-    instructions().append(0);
-    instructions().append(0);
-    return dst;
-}
 
 RegisterID* BytecodeGenerator::emitResolveConstantLocal(RegisterID* dst, const Identifier& identifier, ResolveScopeInfo& info)
 {
@@ -1914,9 +1894,8 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         int argumentsIndex = unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset();
         if (m_lexicalEnvironmentRegister && m_codeType == FunctionCode) {
             scratchRegister = newTemporary();
-            emitGetOwnScope(scratchRegister.get(), propertyNames().arguments, OwnScopeForReturn);
             ResolveScopeInfo scopeInfo(unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
-            emitGetFromScope(scratchRegister.get(), scratchRegister.get(), propertyNames().arguments, ThrowIfNotFound, scopeInfo);
+            emitGetFromScope(scratchRegister.get(), scopeRegister(), propertyNames().arguments, ThrowIfNotFound, scopeInfo);
             argumentsIndex = scratchRegister->index();
         }
         emitOpcode(op_tear_off_arguments);

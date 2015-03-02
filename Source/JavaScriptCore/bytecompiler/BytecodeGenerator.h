@@ -503,6 +503,10 @@ namespace JSC {
 
         ResolveType resolveType();
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
+        // Calls tempDestination(dst), so it's safe to pass nullptr. It's also redundant to call
+        // tempDestination(dst) on the thing you pass as the destination. The reason why this
+        // calls tempDestination() for you is that it may not need a spare register. It may return
+        // scopeRegister() directly. So, you cannot rely on this storing to dst.
         RegisterID* emitResolveScope(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode, const ResolveScopeInfo&);
         RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode, const ResolveScopeInfo&);
@@ -662,13 +666,6 @@ namespace JSC {
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* initializeCapturedVariable(RegisterID* dst, const Identifier&, RegisterID*);
-
-        // We'll may want a non-return mode in future, but currently
-        // this is only used during emitReturn(). emitReturn() occurs
-        // with the novel state of having popped off all the local scope
-        // nodes, but not actually modify any internal stack depth tracking.
-        enum OwnScopeLookupRules { OwnScopeForReturn };
-        RegisterID* emitGetOwnScope(RegisterID* dst, const Identifier&, OwnScopeLookupRules);
 
     public:
         JSString* addStringConstant(const Identifier&);

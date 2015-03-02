@@ -1955,10 +1955,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_resolve_scope: {
             const Identifier& ident = identifier(pc[3].u.operand);
             ResolveType type = static_cast<ResolveType>(pc[4].u.operand);
-            if (type == LocalClosureVar) {
-                instructions[i + 4].u.operand = ClosureVar;
-                break;
-            }
+            RELEASE_ASSERT(type != LocalClosureVar);
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, type);
             instructions[i + 4].u.operand = op.type;

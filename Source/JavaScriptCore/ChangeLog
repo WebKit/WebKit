@@ -1,3 +1,39 @@
+2015-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        BytecodeGenerator shouldn't emit op_resolve_scope as a roundabout way of returning the scopeRegister
+        https://bugs.webkit.org/show_bug.cgi?id=142153
+
+        Reviewed by Michael Saboff.
+        
+        We don't need a op_resolve_scope if we know that it will simply return the scope register.
+        This changes the BytecodeGenerator to use the scope register directly in those cases where
+        we know statically that we would just have returned that from op_resolve_scope.
+        
+        This doesn't appear to have a significant impact on performance.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitGetOwnScope): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+
 2015-02-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use the way number constants are written to help type speculation
