@@ -1,3 +1,40 @@
+2015-03-02  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r180882): Build failure: Methods not marked override in GraphicsLayerCA.h
+        <http://webkit.org/b/138684>
+
+        Fixes the following build failures:
+
+            In file included from WebKit2/WebProcess/WebPage/DrawingArea.cpp:39:
+            In file included from WebKit2/WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:30:
+            In file included from WebKit2/WebProcess/WebPage/mac/GraphicsLayerCARemote.h:29:
+            WebCore.framework/PrivateHeaders/GraphicsLayerCA.h:123:33: error: 'setShapeLayerPath' overrides a member function but is not marked 'override' [-Werror,-Winconsistent-missing-override]
+                WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
+                                            ^
+            In file included from WebKit2/WebProcess/WebPage/DrawingArea.cpp:30:
+            In file included from WebKit2/WebProcess/WebPage/WebPage.h:46:
+            In file included from WebKit2/WebProcess/Plugins/Plugin.h:31:
+            WebCore.framework/PrivateHeaders/GraphicsLayer.h:390:18: note: overridden virtual function is here
+                virtual void setShapeLayerPath(const Path&);
+                             ^
+            In file included from WebKit2/WebProcess/WebPage/DrawingArea.cpp:39:
+            In file included from WebKit2/WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:30:
+            In file included from WebKit2/WebProcess/WebPage/mac/GraphicsLayerCARemote.h:29:
+            WebCore.framework/PrivateHeaders/GraphicsLayerCA.h:124:33: error: 'setShapeLayerWindRule' overrides a member function but is not marked 'override' [-Werror,-Winconsistent-missing-override]
+                WEBCORE_EXPORT virtual void setShapeLayerWindRule(WindRule);
+                                            ^
+            In file included from WebKit2/WebProcess/WebPage/DrawingArea.cpp:30:
+            In file included from WebKit2/WebProcess/WebPage/WebPage.h:46:
+            In file included from WebKit2/WebProcess/Plugins/Plugin.h:31:
+            WebCore.framework/PrivateHeaders/GraphicsLayer.h:393:18: note: overridden virtual function is here
+                virtual void setShapeLayerWindRule(WindRule);
+                             ^
+            2 errors generated.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayer::setShapeLayerPath): Mark as override.
+        (WebCore::GraphicsLayer::setShapeLayerWindRule): Ditto.
+
 2015-03-01  Simon Fraser  <simon.fraser@apple.com>
 
         Make clip-path work on <video>, <canvas> etc.

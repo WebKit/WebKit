@@ -120,8 +120,8 @@ public:
     WEBCORE_EXPORT virtual void setContentsClippingRect(const FloatRoundedRect&) override;
     WEBCORE_EXPORT virtual bool setMasksToBoundsRect(const FloatRoundedRect&) override;
 
-    WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
-    WEBCORE_EXPORT virtual void setShapeLayerWindRule(WindRule);
+    WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&) override;
+    WEBCORE_EXPORT virtual void setShapeLayerWindRule(WindRule) override;
 
     WEBCORE_EXPORT virtual void suspendAnimations(double time) override;
     WEBCORE_EXPORT virtual void resumeAnimations() override;
