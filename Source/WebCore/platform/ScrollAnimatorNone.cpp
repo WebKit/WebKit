@@ -52,11 +52,11 @@ const double kTickTime = 1 / kFrameRate;
 const double kMinimumTimerInterval = .001;
 const double kZoomTicks = 11;
 
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
+std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
     if (scrollableArea.scrollAnimatorEnabled())
-        return adoptPtr(new ScrollAnimatorNone(scrollableArea));
-    return adoptPtr(new ScrollAnimator(scrollableArea));
+        return std::make_unique<ScrollAnimatorNone>(scrollableArea);
+    return std::make_unique<ScrollAnimator>(scrollableArea);
 }
 
 ScrollAnimatorNone::Parameters::Parameters()

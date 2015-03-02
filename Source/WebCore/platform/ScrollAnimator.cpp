@@ -41,9 +41,9 @@
 namespace WebCore {
 
 #if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS)
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
+std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return adoptPtr(new ScrollAnimator(scrollableArea));
+    return std::make_unique<ScrollAnimator>(scrollableArea);
 }
 #endif
 

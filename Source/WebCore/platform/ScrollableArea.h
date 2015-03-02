@@ -296,7 +296,7 @@ private:
     // scroll of the content.
     virtual void setScrollOffset(const IntPoint&) = 0;
 
-    mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
+    mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
 
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<Vector<LayoutUnit>> m_horizontalSnapOffsets;

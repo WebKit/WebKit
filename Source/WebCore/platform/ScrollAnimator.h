@@ -57,8 +57,9 @@ class ScrollAnimator {
 #endif
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ScrollAnimator> create(ScrollableArea&);
+    static std::unique_ptr<ScrollAnimator> create(ScrollableArea&);
 
+    explicit ScrollAnimator(ScrollableArea&);
     virtual ~ScrollAnimator();
 
     // Computes a scroll destination for the given parameters.  Returns false if
@@ -126,8 +127,6 @@ public:
 #endif
 
 protected:
-    explicit ScrollAnimator(ScrollableArea&);
-
     virtual void notifyPositionChanged(const FloatSize& delta);
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)

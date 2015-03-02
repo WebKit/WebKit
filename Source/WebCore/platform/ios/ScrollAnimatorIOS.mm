@@ -40,9 +40,9 @@ using namespace WebCore;
 
 namespace WebCore {
 
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
+std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return adoptPtr(new ScrollAnimatorIOS(scrollableArea));
+    return std::make_unique<ScrollAnimatorIOS>(scrollableArea);
 }
 
 ScrollAnimatorIOS::ScrollAnimatorIOS(ScrollableArea& scrollableArea)

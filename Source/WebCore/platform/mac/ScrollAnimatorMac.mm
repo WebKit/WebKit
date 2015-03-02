@@ -634,9 +634,9 @@ enum FeatureToAnimate {
 
 namespace WebCore {
 
-PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
+std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return adoptPtr(new ScrollAnimatorMac(scrollableArea));
+    return std::make_unique<ScrollAnimatorMac>(scrollableArea);
 }
 
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
