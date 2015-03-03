@@ -71,7 +71,7 @@ BuildbotIteration.RETRY = 5;
 BuildbotIteration.ProductiveSteps = {
     "compile-webkit": 1,
     "build archive": 1,
-    "build ASAN archive": 1,
+    "build ASan archive": 1,
     "Build" : 1,
     "layout-test": 1,
     "jscore-test": 1,

@@ -1,3 +1,9 @@
+2015-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Update the name of ASan build step.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+
 2015-03-02  Jer Noble  <jer.noble@apple.com>
 
         [WK1][WK2][Mac] Fullscreen animation is incorrect when page is scaled.
