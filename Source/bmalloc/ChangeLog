@@ -1,3 +1,30 @@
+2015-03-02  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Eagerly remove allocated objects from the free list
+        https://bugs.webkit.org/show_bug.cgi?id=142194
+
+        Reviewed by Andreas Kling.
+
+        This reduces the pressure to garbage collect the free list.
+
+        Might be a 1% speedup on MallocBench.
+
+        * bmalloc/FreeList.cpp: Put this comment at the top of the file instead
+        of repeating it inside of each function. Tried to clarify the details.
+
+        (bmalloc::FreeList::takeGreedy): Matched the other iteration code in this
+        file for consistency -- even though either direction works fine in this
+        function.
+
+        (bmalloc::FreeList::take): Change to iterate from low to high so that we
+        can maintain an index into the vector that is not disturbed even if we
+        pop from the middle (which invalidates the last index in the vector).
+
+        Decrement i when popping from the middle to make sure that we don't
+        skip the next item after popping.
+
+        (bmalloc::FreeList::removeInvalidAndDuplicateEntries): Ditto.
+
 2015-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fixed a typo in the previous commit.
