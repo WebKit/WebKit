@@ -1,3 +1,9 @@
+2015-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Document more debug assertions.
+
+        * platform/win/TestExpectations:
+
 2015-03-03  Chris Dumez  <cdumez@apple.com>
 
         Make AudioContext suspendable when it is not rendering
