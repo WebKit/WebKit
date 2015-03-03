@@ -1,3 +1,19 @@
+2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Synchronous XMLHttpRequests can time out when we reach the max connections limit
+        https://bugs.webkit.org/show_bug.cgi?id=141508
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a unit test to check that synchronous XHRs load even if the
+        maximum connection limits are reached.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (testWebViewSyncRequestOnMaxConns):
+        (serverCallback):
+        (beforeAll):
+        * gtk/jhbuild.modules: Bump libsoup version to 2.49.91.
+
 2015-02-25  Benjamin Poulain  <bpoulain@apple.com>
 
         CodeBlock crashes when dumping op_push_name_scope

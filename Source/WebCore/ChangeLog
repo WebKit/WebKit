@@ -1,3 +1,35 @@
+2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Synchronous XMLHttpRequests can time out when we reach the max connections limit
+        https://bugs.webkit.org/show_bug.cgi?id=141508
+
+        Reviewed by Sergio Villar Senin.
+
+        Use SOUP_MESSAGE_IGNORE_CONNECTION_LIMITS flag when loading a
+        synchronous message instead of increasing the maximum number of
+        connections allowed if the soup version is recent enough.
+        The current solution of increasing/decreasing the limits doesn't
+        always work, because connections are not marked as IDLE in libsoup
+        until the message is unqueued, but we don't wait for the message
+        to be unqueued to finish our loads in WebKit, we finish them as
+        soon as we have finished reading the stream. This causes that
+        synchronous loads keep blocked in the nested main loop until the
+        timeout of 10 seconds is fired and the load fails.
+        Also marked WebCoreSynchronousLoader class as final, the virtual
+        methods as override and removed the unsused method isSynchronousClient.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupMessageForHandleAndRequest):
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::isSynchronousClient): Deleted.
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didReceiveBuffer):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::didReceiveAuthenticationChallenge):
+        (WebCore::WebCoreSynchronousLoader::shouldUseCredentialStorage):
+
 2015-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         FrameView::layoutTimerFired() should update style if needed before doing layout

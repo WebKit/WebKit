@@ -75,7 +75,7 @@ namespace WebCore {
 static bool loadingSynchronousRequest = false;
 static const size_t gDefaultReadBufferSize = 8192;
 
-class WebCoreSynchronousLoader : public ResourceHandleClient {
+class WebCoreSynchronousLoader final : public ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
 public:
 
@@ -86,7 +86,6 @@ public:
         , m_data(data)
         , m_finished(false)
         , m_storedCredentials(storedCredentials)
-        
     {
         // We don't want any timers to fire while we are doing our synchronous load
         // so we replace the thread default main context. The main loop iterations
@@ -96,12 +95,16 @@ public:
         g_main_context_push_thread_default(innerMainContext.get());
         m_mainLoop = adoptGRef(g_main_loop_new(innerMainContext.get(), false));
 
+#if !SOUP_CHECK_VERSION(2, 49, 91)
         adjustMaxConnections(1);
+#endif
     }
 
     ~WebCoreSynchronousLoader()
     {
+#if !SOUP_CHECK_VERSION(2, 49, 91)
         adjustMaxConnections(-1);
+#endif
 
         GMainContext* context = g_main_context_get_thread_default();
         while (g_main_context_pending(context))
@@ -111,6 +114,7 @@ public:
         loadingSynchronousRequest = false;
     }
 
+#if !SOUP_CHECK_VERSION(2, 49, 91)
     void adjustMaxConnections(int adjustment)
     {
         int maxConnections, maxConnectionsPerHost;
@@ -126,23 +130,19 @@ public:
                      NULL);
 
     }
+#endif // SOUP_CHECK_VERSION(2, 49, 91)
 
-    virtual bool isSynchronousClient()
-    {
-        return true;
-    }
-
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) override
     {
         m_response = response;
     }
 
-    virtual void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)
+    virtual void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int) override
     {
         ASSERT_NOT_REACHED();
     }
 
-    virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */)
+    virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */) override
     {
         // This pattern is suggested by SharedBuffer.h.
         const char* segment;
@@ -153,26 +153,26 @@ public:
         }
     }
 
-    virtual void didFinishLoading(ResourceHandle*, double)
+    virtual void didFinishLoading(ResourceHandle*, double) override
     {
         if (g_main_loop_is_running(m_mainLoop.get()))
             g_main_loop_quit(m_mainLoop.get());
         m_finished = true;
     }
 
-    virtual void didFail(ResourceHandle* handle, const ResourceError& error)
+    virtual void didFail(ResourceHandle* handle, const ResourceError& error) override
     {
         m_error = error;
         didFinishLoading(handle, 0);
     }
 
-    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
+    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override
     {
         // We do not handle authentication for synchronous XMLHttpRequests.
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
     }
 
-    virtual bool shouldUseCredentialStorage(ResourceHandle*)
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) override
     {
         return m_storedCredentials == AllowStoredCredentials;
     }
@@ -930,7 +930,14 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     g_signal_connect(d->m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 
-    soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | SOUP_MESSAGE_NO_REDIRECT));
+    unsigned flags = SOUP_MESSAGE_NO_REDIRECT;
+#if SOUP_CHECK_VERSION(2, 49, 91)
+    // Ignore the connection limits in synchronous loads to avoid freezing the networking process.
+    // See https://bugs.webkit.org/show_bug.cgi?id=141508.
+    if (loadingSynchronousRequest)
+        flags |= SOUP_MESSAGE_IGNORE_CONNECTION_LIMITS;
+#endif
+    soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | flags));
 
 #if ENABLE(WEB_TIMING)
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);

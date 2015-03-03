@@ -22,6 +22,8 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
+#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/gobject/GMutexLocker.h>
 #include <wtf/gobject/GRefPtr.h>
 
 static WebKitTestServer* kServer;
@@ -667,6 +669,49 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     events.clear();
 }
 
+static GMutex s_serverMutex;
+static const unsigned s_maxConnectionsPerHost = 6;
+
+class SyncRequestOnMaxConnsTest: public ResourcesTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(SyncRequestOnMaxConnsTest);
+
+    void resourceLoadStarted(WebKitWebResource*, WebKitURIRequest*) override
+    {
+        if (!m_resourcesToStartPending)
+            return;
+
+        if (!--m_resourcesToStartPending)
+            g_main_loop_quit(m_mainLoop);
+    }
+
+    void waitUntilResourcesStarted(unsigned requestCount)
+    {
+        m_resourcesToStartPending = requestCount;
+        g_main_loop_run(m_mainLoop);
+    }
+
+    unsigned m_resourcesToStartPending;
+};
+
+static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gconstpointer)
+{
+    WTF::GMutexLocker<GMutex> lock(s_serverMutex);
+    test->loadURI(kServer->getURIForPath("/sync-request-on-max-conns-0").data());
+    test->waitUntilResourcesStarted(s_maxConnectionsPerHost + 1); // s_maxConnectionsPerHost resource + main resource.
+
+    for (unsigned i = 0; i < 2; ++i) {
+        GUniquePtr<char> xhr(g_strdup_printf("xhr = new XMLHttpRequest; xhr.open('GET', '/sync-request-on-max-conns-xhr%u', false); xhr.send();", i));
+        webkit_web_view_run_javascript(test->m_webView, xhr.get(), nullptr, nullptr, nullptr);
+    }
+
+    // By default sync XHRs have a 10 seconds timeout, we don't want to wait all that so use our own timeout.
+    GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy("Timeout", [] { g_assert_not_reached(); }, std::chrono::seconds(1));
+
+    GMainLoopSource::scheduleAndDeleteOnDestroy("Unlock Server Idle", [&lock] { lock.unlock(); });
+    test->waitUntilResourcesLoaded(s_maxConnectionsPerHost + 3); // s_maxConnectionsPerHost resource + main resource + 2 XHR.
+}
+
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
     // The actual date doesn't really matter.
@@ -760,7 +805,28 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_headers_append(message->response_headers, "Location", "/cancel-this.js");
     } else if (g_str_equal(path, "/invalid.css"))
         soup_message_set_status(message, SOUP_STATUS_CANT_CONNECT);
-    else
+    else if (g_str_has_prefix(path, "/sync-request-on-max-conns-")) {
+        char* contents;
+        gsize contentsLength;
+        if (g_str_equal(path, "/sync-request-on-max-conns-0")) {
+            GString* imagesHTML = g_string_new("<html><body>");
+            for (unsigned i = 1; i <= s_maxConnectionsPerHost; ++i)
+                g_string_append_printf(imagesHTML, "<img src='/sync-request-on-max-conns-%u'>", i);
+            g_string_append(imagesHTML, "</body></html>");
+
+            contentsLength = imagesHTML->len;
+            contents = g_string_free(imagesHTML, FALSE);
+        } else {
+            {
+                // We don't actually need to keep the mutex, so we release it as soon as we get it.
+                WTF::GMutexLocker<GMutex> lock(s_serverMutex);
+            }
+
+            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+            g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
+        }
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
+    } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
     soup_message_body_complete(message->response_body);
 }
@@ -779,6 +845,9 @@ void beforeAll()
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
     SendRequestTest::add("WebKitWebPage", "send-request", testWebResourceSendRequest);
+#if SOUP_CHECK_VERSION(2, 49, 91)
+    SyncRequestOnMaxConnsTest::add("WebKitWebView", "sync-request-on-max-conns", testWebViewSyncRequestOnMaxConns);
+#endif
 }
 
 void afterAll()
