@@ -19,6 +19,8 @@
 
                     { "name": "bot139", "platform": "mac-yosemite" },
                     { "name": "bot148", "platform": "mac-yosemite" },
+                    { "name": "bot155", "platform": "mac-yosemite" },
+                    { "name": "bot157", "platform": "mac-yosemite" },
                     { "name": "bot180", "platform": "mac-yosemite" },
                     { "name": "bot181", "platform": "mac-yosemite" },
                     { "name": "bot182", "platform": "mac-yosemite" },
@@ -113,10 +115,14 @@
                     },
                     { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2", "yosemite-leaks"],
+                      "triggers": ["yosemite-debug-tests-jsc", "yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2", "yosemite-leaks"],
                       "slavenames": ["bot180", "bot181"]
                     },
-                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "Test", "builddir": "yosemite-debug-tests-wk1",
+                    { "name": "Apple Yosemite Debug JSC (Tests)", "type": "TestJSC", "builddir": "yosemite-debug-tests-jsc",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["bot155"]
+                    },
+                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-debug-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot182", "bot183"]
@@ -136,10 +142,14 @@
                     },
                     { "name": "Apple Yosemite Release (Build)", "type": "Build", "builddir": "yosemite-release",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-release-tests-wk1", "yosemite-release-tests-wk2", "yosemite-release-perf"],
+                      "triggers": ["yosemite-release-tests-jsc", "yosemite-release-tests-wk1", "yosemite-release-tests-wk2", "yosemite-release-perf"],
                       "slavenames": ["bot188", "bot189"]
                     },
-                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "Test", "builddir": "yosemite-release-tests-wk1",
+                    { "name": "Apple Yosemite Release JSC (Tests)", "type": "TestJSC", "builddir": "yosemite-release-tests-jsc",
+                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["bot157"]
+                    },
+                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-release-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot190", "bot191"]
@@ -188,7 +198,7 @@
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-release-tests",
+                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2AndJSC", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-6"]
                     },
@@ -199,7 +209,7 @@
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-debug-tests",
+                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2AndJSC", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
                     },
@@ -276,11 +286,17 @@
                     { "type": "Triggerable", "name": "mavericks-release-perf",
                       "builderNames": ["Apple Mavericks Release (Perf)"]
                     },
+                    { "type": "Triggerable", "name": "yosemite-release-tests-jsc",
+                      "builderNames": ["Apple Yosemite Release JSC (Tests)"]
+                    },
                     { "type": "Triggerable", "name": "yosemite-release-tests-wk1",
                       "builderNames": ["Apple Yosemite Release WK1 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "yosemite-release-tests-wk2",
                       "builderNames": ["Apple Yosemite Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-debug-tests-jsc",
+                      "builderNames": ["Apple Yosemite Debug JSC (Tests)"]
                     },
                     { "type": "Triggerable", "name": "yosemite-debug-tests-wk1",
                       "builderNames": ["Apple Yosemite Debug WK1 (Tests)"]

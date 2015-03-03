@@ -1,3 +1,19 @@
+2015-03-03  Matthew Mirman  <mmirman@apple.com>
+
+        JSC tests should not be repeated twice for each branch builder, and should if possible have their own queue.
+        https://bugs.webkit.org/show_bug.cgi?id=142094
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added bots 155 and 157
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestFactory):
+        (TestFactory.__init__): Made running of JSC tests conditional.
+        (TestAllButJSCFactory):
+        (TestJSCFactory): Added.
+        (TestJSCFactory.__init__):
+        (TestWebKit2AndJSCFactory): Added factory to not run JSC tests on WebKit2.
+
 2015-03-03  David Kilzer  <ddkilzer@apple.com>
 
         `build-webkit --help` is wrong about how to build for the iOS simulator
