@@ -64,7 +64,6 @@ public:
 private:
     void reset();
 
-    InlineIterator nextSegmentBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
     void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
     void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
 

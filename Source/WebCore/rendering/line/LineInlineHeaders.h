@@ -43,7 +43,7 @@ inline bool hasInlineDirectionBordersPaddingOrMargin(const RenderInline& flow)
     return shouldApplyEndBorderPaddingOrMargin && (flow.borderEnd() || flow.marginEnd() || flow.paddingEnd());
 }
 
-inline const RenderStyle& lineStyle(const RenderElement& renderer, const LineInfo& lineInfo)
+inline const RenderStyle& lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
 {
     return lineInfo.isFirstLine() ? renderer.firstLineStyle() : renderer.style();
 }

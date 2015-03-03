@@ -71,8 +71,8 @@ public:
         , m_lineBreak(resolver.position())
         , m_block(block)
         , m_lastObject(m_current.renderer())
-        , m_nextObject(0)
-        , m_currentStyle(0)
+        , m_nextObject(nullptr)
+        , m_currentStyle(nullptr)
         , m_blockStyle(block.style())
         , m_lineInfo(inLineInfo)
         , m_renderTextInfo(inRenderTextInfo)
@@ -144,7 +144,7 @@ private:
     RenderObject* m_lastObject;
     RenderObject* m_nextObject;
 
-    RenderStyle* m_currentStyle;
+    const RenderStyle* m_currentStyle;
 
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific circumstances (in order to match common WinIE renderings).
@@ -194,7 +194,7 @@ inline void BreakingContext::initializeForCurrentObject()
 {
     m_hadUncommittedWidthBeforeCurrent = !!m_width.uncommittedWidth();
 
-    m_currentStyle = &m_current.renderer()->style();
+    m_currentStyle = &m_current.renderer()->style(); // FIXME: Should this be &lineStyle(*m_current.renderer(), m_lineInfo); ?
 
     ASSERT(m_currentStyle);
 
@@ -424,8 +424,7 @@ inline void BreakingContext::handleReplaced()
     // Break on replaced elements if either has normal white-space.
     if ((m_autoWrap || RenderStyle::autoWrap(m_lastWS)) && (!m_current.renderer()->isImage() || m_allowImagesToBreak)
         && (!m_current.renderer()->isRubyRun() || downcast<RenderRubyRun>(m_current.renderer())->canBreakBefore(m_renderTextInfo.m_lineBreakIterator))) {
-        m_width.commit();
-        m_lineBreak.moveToStartOf(m_current.renderer());
+        commitLineBreakAtCurrentWidth(*m_current.renderer());
     }
 
     if (m_ignoringSpaces)
@@ -618,7 +617,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         }
     }
 
-    const RenderStyle& style = lineStyle(*renderText.parent(), m_lineInfo);
+    const RenderStyle& style = lineStyle(renderText, m_lineInfo);
     const FontCascade& font = style.fontCascade();
     bool isFixedPitch = font.isFixedPitch();
     bool canHyphenate = style.hyphens() == HyphensAuto && WebCore::canHyphenate(style.locale());
@@ -807,16 +806,15 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             if (c == '\n' && m_preservesNewline) {
                 if (!stoppedIgnoringSpaces && m_current.offset())
                     ensureCharacterGetsLineBox(m_lineMidpointState, m_current);
-                m_lineBreak.moveTo(m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
+                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
                 m_lineBreak.increment();
                 m_lineInfo.setPreviousLineBrokeCleanly(true);
                 return true;
             }
 
             if (m_autoWrap && betweenWords) {
-                m_width.commit();
+                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
                 wrapW = 0;
-                m_lineBreak.moveTo(m_current.renderer(), m_current.offset(), m_current.nextBreakablePosition());
                 // Auto-wrapping text should not wrap in the middle of a word once it has had an
                 // opportunity to break after a word.
                 breakWords = false;
@@ -1011,8 +1009,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
         if (m_lastObject->isReplaced() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
-            m_width.commit();
-            m_lineBreak.moveToStartOf(m_nextObject);
+            commitLineBreakAtCurrentWidth(*m_nextObject);
         }
     }
 }
@@ -1046,13 +1043,13 @@ inline InlineIterator BreakingContext::handleEndOfLine()
     if (m_lineBreak == m_resolver.position()) {
         if (!m_lineBreak.renderer() || !m_lineBreak.renderer()->isBR()) {
             // we just add as much as possible
-            if (m_blockStyle.whiteSpace() == PRE && !m_current.offset()) {
-                m_lineBreak.moveTo(m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
-            } else if (m_lineBreak.renderer()) {
+            if (m_blockStyle.whiteSpace() == PRE && !m_current.offset())
+                commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
+            else if (m_lineBreak.renderer()) {
                 // Don't ever break in the middle of a word if we can help it.
                 // There's no room at all. We just have to be on this line,
                 // even though we'll spill out.
-                m_lineBreak.moveTo(m_current.renderer(), m_current.offset());
+                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset());
             }
         }
         // make sure we consume at least one char/object.
