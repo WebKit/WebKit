@@ -1,3 +1,15 @@
+2015-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        SpeculativeJIT::emitAllocateArguments() should be a bit faster, and shouldn't do destructor initialization
+        https://bugs.webkit.org/show_bug.cgi?id=142197
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateArguments): Use shift instead of mul, since mul doesn't automatically strength-reduce to shift. Also pass the structure as a TrustedImmPtr.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateVariableSizedJSObject): Rationalize this a bit. The other emitAllocate... methods take a templated structure so that it can be either a TrustedImmPtr or a register. Also don't do destructor initialization, since its one client doesn't need it, and it's actually probably wrong.
+
 2015-03-02  Mark Lam  <mark.lam@apple.com>
 
         Exception stack unwinding in JSC hangs while the Timeline Profiler is enabled.

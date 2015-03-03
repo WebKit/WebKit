@@ -112,9 +112,9 @@ void SpeculativeJIT::emitAllocateArguments(GPRReg resultGPR, GPRReg scratchGPR1,
     Structure* structure = m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)->argumentsStructure();
 
     m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), scratchGPR1);
-    m_jit.mul32(TrustedImm32(sizeof(JSValue)), scratchGPR1, scratchGPR1);
+    m_jit.lshift32(TrustedImm32(3), scratchGPR1);
     m_jit.add32(TrustedImm32(Arguments::offsetOfInlineRegisterArray()), scratchGPR1);
-    emitAllocateVariableSizedJSObject<Arguments>(resultGPR, structure, scratchGPR1, scratchGPR1, scratchGPR2, slowPath);
+    emitAllocateVariableSizedJSObject<Arguments>(resultGPR, TrustedImmPtr(structure), scratchGPR1, scratchGPR1, scratchGPR2, slowPath);
 
     m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfActivation()));
 

@@ -2298,8 +2298,7 @@ public:
 
         selectedSmallSpace.link(&m_jit);
 
-        emitAllocateJSObject(resultGPR, scratchGPR1, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR2, slowPath);
-        m_jit.storePtr(TrustedImmPtr(structure->classInfo()), MacroAssembler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
+        emitAllocateJSObject(resultGPR, scratchGPR1, structure, TrustedImmPtr(0), scratchGPR2, slowPath);
     }
 
     template <typename T>
