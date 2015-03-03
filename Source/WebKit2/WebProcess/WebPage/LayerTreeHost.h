@@ -93,6 +93,10 @@ public:
     virtual void scheduleAnimation() = 0;
 #endif
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
+#endif
+
     virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer*) = 0;
 
 protected:
