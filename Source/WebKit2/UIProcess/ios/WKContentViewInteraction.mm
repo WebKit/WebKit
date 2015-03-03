@@ -1223,7 +1223,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     return _formAccessoryView.get();
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >90000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 - (UITextInputAssistantItem *)inputAssistantItem
 {
     if (!_formAccessoryView) {

@@ -1,5 +1,13 @@
 2015-03-03  Enrica Casucci  <enrica@apple.com>
 
+        Fixed typo in platform guard in http://trac.webkit.org/changeset/180939.
+
+        Unreviewed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+2015-03-03  Enrica Casucci  <enrica@apple.com>
+
         Adopt new API for keyboard interaction.
         https://bugs.webkit.org/show_bug.cgi?id=142201
         rdar://problem/19924949
