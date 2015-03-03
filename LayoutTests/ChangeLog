@@ -1,3 +1,13 @@
+2015-03-03  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> label can get very wide, doesn't wrap/truncate
+        https://bugs.webkit.org/show_bug.cgi?id=142214
+        <rdar://problem/19982499>
+
+        * platform/mac-mavericks/fast/attachment: Added.
+        * platform/mac-mavericks/fast/attachment/attachment-label-highlight-expected.txt: Added.
+        Add a Mavericks result because text metrics differ.
+
 2015-03-03  Darin Adler  <darin@apple.com>
 
         Test legacy event handler attributes (ones with names like "onclick")
