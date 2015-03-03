@@ -29,18 +29,24 @@
 
 namespace bmalloc {
 
+// We don't eagerly remove invalidated entries from the free list when we merge
+// large objects. This means that the free list can contain invalid and/or
+// duplicate entries. (Repeating a merge-and-then-split produces a duplicate.)
+
+// To avoid infinite growth in invalid entries, we incrementally remove
+// invalid entries as we discover them during allocation, and we also garbage
+// collect the free list as it grows.
+
 LargeObject FreeList::takeGreedy(Owner owner)
 {
-    for (size_t i = m_vector.size(); i-- > 0; ) {
-        // We don't eagerly remove items when we merge and/or split ranges,
-        // so we need to validate each free list entry before using it.
+    for (size_t i = 0; i < m_vector.size(); ++i) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
         if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
-            m_vector.pop(i);
+            m_vector.pop(i--);
             continue;
         }
 
-        m_vector.pop(i);
+        m_vector.pop(i--);
         return largeObject;
     }
 
@@ -49,27 +55,29 @@ LargeObject FreeList::takeGreedy(Owner owner)
 
 LargeObject FreeList::take(Owner owner, size_t size)
 {
-    LargeObject first;
-    size_t end = m_vector.size() > freeListSearchDepth ? m_vector.size() - freeListSearchDepth : 0;
-    for (size_t i = m_vector.size(); i-- > end; ) {
-        // We don't eagerly remove items when we merge and/or split ranges, so
-        // we need to validate each free list entry before using it.
+    LargeObject candidate;
+    size_t candidateIndex;
+    size_t begin = m_vector.size() > freeListSearchDepth ? m_vector.size() - freeListSearchDepth : 0;
+    for (size_t i = begin; i < m_vector.size(); ++i) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
         if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
-            m_vector.pop(i);
+            m_vector.pop(i--);
             continue;
         }
 
         if (largeObject.size() < size)
             continue;
 
-        if (!!first && first.begin() < largeObject.begin())
+        if (!!candidate && candidate.begin() < largeObject.begin())
             continue;
 
-        first = largeObject;
+        candidate = largeObject;
+        candidateIndex = i;
     }
-    
-    return first;
+
+    if (!!candidate)
+        m_vector.pop(candidateIndex);
+    return candidate;
 }
 
 LargeObject FreeList::take(Owner owner, size_t alignment, size_t size, size_t unalignedSize)
@@ -77,14 +85,13 @@ LargeObject FreeList::take(Owner owner, size_t alignment, size_t size, size_t un
     BASSERT(isPowerOfTwo(alignment));
     size_t alignmentMask = alignment - 1;
 
-    LargeObject first;
-    size_t end = m_vector.size() > freeListSearchDepth ? m_vector.size() - freeListSearchDepth : 0;
-    for (size_t i = m_vector.size(); i-- > end; ) {
-        // We don't eagerly remove items when we merge and/or split ranges, so
-        // we need to validate each free list entry before using it.
+    LargeObject candidate;
+    size_t candidateIndex;
+    size_t begin = m_vector.size() > freeListSearchDepth ? m_vector.size() - freeListSearchDepth : 0;
+    for (size_t i = begin; i < m_vector.size(); ++i) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
         if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
-            m_vector.pop(i);
+            m_vector.pop(i--);
             continue;
         }
 
@@ -94,31 +101,34 @@ LargeObject FreeList::take(Owner owner, size_t alignment, size_t size, size_t un
         if (test(largeObject.begin(), alignmentMask) && largeObject.size() < unalignedSize)
             continue;
 
-        if (!!first && first.begin() < largeObject.begin())
+        if (!!candidate && candidate.begin() < largeObject.begin())
             continue;
 
-        first = largeObject;
+        candidate = largeObject;
+        candidateIndex = i;
     }
     
-    return first;
+    if (!!candidate)
+        m_vector.pop(candidateIndex);
+    return candidate;
 }
 
 void FreeList::removeInvalidAndDuplicateEntries(Owner owner)
 {
-    for (size_t i = m_vector.size(); i-- > 0; ) {
+    for (size_t i = 0; i < m_vector.size(); ++i) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
         if (!largeObject.isValidAndFree(owner, m_vector[i].size())) {
-            m_vector.pop(i);
+            m_vector.pop(i--);
             continue;
         }
         
         largeObject.setMarked(false);
     }
 
-    for (size_t i = m_vector.size(); i-- > 0; ) {
+    for (size_t i = 0; i < m_vector.size(); ++i) {
         LargeObject largeObject(LargeObject::DoNotValidate, m_vector[i].begin());
         if (largeObject.isMarked()) {
-            m_vector.pop(i);
+            m_vector.pop(i--);
             continue;
         }
 
