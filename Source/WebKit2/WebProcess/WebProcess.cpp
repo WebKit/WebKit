@@ -628,6 +628,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDeco
             return;
         
         pageGroupProxy->didReceiveMessage(connection, decoder);
+        return;
     }
 
     LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
