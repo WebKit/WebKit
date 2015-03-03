@@ -57,8 +57,8 @@ protected:
     virtual ~AxisScrollSnapAnimatorClient() { }
 
 public:
-    virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) = 0;
-    virtual void immediateScrollOnAxis(ScrollEventAxis, float velocity) = 0;
+    virtual LayoutUnit scrollOffsetInAxis(ScrollEventAxis) = 0;
+    virtual void immediateScrollInAxis(ScrollEventAxis, float velocity) = 0;
     virtual void startScrollSnapTimer(ScrollEventAxis) = 0;
     virtual void stopScrollSnapTimer(ScrollEventAxis) = 0;
 };

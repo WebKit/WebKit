@@ -961,12 +961,6 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     
     bool didHandleEvent = view ? view->wheelEvent(wheelEvent) : false;
     m_isHandlingWheelEvent = false;
-    
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (scrollableArea)
-        platformNotifySnapIfNecessary(wheelEvent, *scrollableArea);
-#endif
-
     return didHandleEvent;
 }
 

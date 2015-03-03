@@ -1,5 +1,20 @@
 2015-03-02  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r180902.
+        https://bugs.webkit.org/show_bug.cgi?id=142205
+
+        It broke scrolling in some cases. See bug 142202 for details.
+        (Requested by bdash on #webkit).
+
+        Reverted changeset:
+
+        "Move scroll animating functions from ScrollAnimator to
+        ScrollController"
+        https://bugs.webkit.org/show_bug.cgi?id=142102
+        http://trac.webkit.org/changeset/180902
+
+2015-03-02  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r180911.
         https://bugs.webkit.org/show_bug.cgi?id=142204
 

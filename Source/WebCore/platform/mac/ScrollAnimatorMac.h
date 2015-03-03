@@ -32,6 +32,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
+#include "ScrollController.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
@@ -41,11 +42,15 @@ OBJC_CLASS WebScrollbarPainterDelegate;
 
 typedef id ScrollbarPainterController;
 
+#if !ENABLE(RUBBER_BANDING)
+class ScrollControllerClient { };
+#endif
+
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollAnimatorMac : public ScrollAnimator {
+class ScrollAnimatorMac : public ScrollAnimator, private ScrollControllerClient {
 
 public:
     ScrollAnimatorMac(ScrollableArea&);
@@ -145,11 +150,17 @@ private:
     virtual WebCore::IntPoint absoluteScrollPosition() override;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
     virtual void immediateScrollBy(const FloatSize&) override;
+    virtual void startSnapRubberbandTimer() override;
+    virtual void stopSnapRubberbandTimer() override;
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
     bool pinnedInDirection(float deltaX, float deltaY);
+    void snapRubberBandTimerFired();
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
+
+    ScrollController m_scrollController;
+    Timer m_snapRubberBandTimer;
 #endif
 
     bool m_haveScrolledSincePageLoad;

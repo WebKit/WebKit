@@ -66,6 +66,8 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 {
+    if (m_snapRubberbandTimer)
+        CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingStateNode& stateNode)
@@ -294,6 +296,32 @@ void ScrollingTreeFrameScrollingNodeMac::immediateScrollByWithoutContentEdgeCons
     scrollByWithoutContentEdgeConstraints(offset);
 }
 
+void ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer()
+{
+    ASSERT(!m_snapRubberbandTimer);
+
+    CFTimeInterval timerInterval = 1.0 / 60.0;
+
+    m_snapRubberbandTimer = adoptCF(CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + timerInterval, timerInterval, 0, 0, ^(CFRunLoopTimerRef) {
+        m_scrollController.snapRubberBandTimerFired();
+    }));
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_snapRubberbandTimer.get(), kCFRunLoopDefaultMode);
+}
+
+void ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer()
+{
+    if (!m_snapRubberbandTimer)
+        return;
+
+    scrollingTree().setMainFrameIsRubberBanding(false);
+
+    // Since the rubberband timer has stopped, totalContentsSizeForRubberBand can be synchronized with totalContentsSize.
+    setTotalContentsSizeForRubberBand(totalContentsSize());
+
+    CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
+    m_snapRubberbandTimer = nullptr;
+}
+
 void ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary()
 {
     FloatPoint currentScrollPosition = absoluteScrollPosition();
@@ -511,19 +539,6 @@ void logWheelEventHandlerCountChanged(unsigned count)
 {
     WTFLogAlways("SCROLLING: Wheel event handler count changed. Time: %f Count: %u\n", WTF::monotonicallyIncreasingTime(), count);
 }
-
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-LayoutUnit ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis(ScrollEventAxis)
-{
-    // Temporary stub until http://webkit.org/b/141973.
-    return 0;
-}
-
-void ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis(ScrollEventAxis, float)
-{
-    // Temporary stub until http://webkit.org/b/141973.
-}
-#endif
 
 } // namespace WebCore
 

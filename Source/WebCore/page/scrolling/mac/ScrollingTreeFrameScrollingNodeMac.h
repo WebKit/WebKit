@@ -61,6 +61,8 @@ private:
     virtual IntPoint absoluteScrollPosition() override;
     virtual void immediateScrollBy(const FloatSize&) override;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
+    virtual void startSnapRubberbandTimer() override;
+    virtual void stopSnapRubberbandTimer() override;
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
     virtual FloatPoint scrollPosition() const override;
@@ -78,14 +80,10 @@ private:
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
-#endif
-
     void logExposedUnfilledArea();
 
     ScrollController m_scrollController;
+    RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;
