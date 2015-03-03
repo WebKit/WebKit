@@ -26,13 +26,28 @@
 #include "config.h"
 #include "WebsiteDataRecord.h"
 
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SecurityOrigin.h>
+
+#if PLATFORM(COCOA)
+#import <WebCore/CFNetworkSPI.h>
+#endif
+
+static String displayNameForLocalFiles()
+{
+    return WEB_UI_STRING("Local documents on your computer", "'Website' name displayed when local documents have stored local data");
+}
 
 namespace WebKit {
 
 String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 {
+#if PLATFORM(COCOA)
+    if (hostName == String(kCFHTTPCookieLocalFileDomain))
+        return displayNameForLocalFiles();
+#endif
+
     // FIXME: This needs to handle the local file domain for cookies.
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -46,10 +61,8 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& se
 {
     const auto& protocol = securityOrigin.protocol();
 
-    if (protocol == "file") {
-        // FIXME: Handle this. Return a localized display name.
-        ASSERT_NOT_REACHED();
-    }
+    if (protocol == "file")
+        return displayNameForLocalFiles();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     if (protocol == "http" || protocol == "https")

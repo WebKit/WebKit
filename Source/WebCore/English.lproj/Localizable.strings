@@ -316,6 +316,9 @@
 /* Media controller status message when the media is loading */
 "Loading..." = "Loading...";
 
+/* 'Website' name displayed when local documents have stored local data */
+"Local documents on your computer" = "Local documents on your computer";
+
 /* Look Up in Dictionary context menu item */
 "Look Up in Dictionary" = "Look Up in Dictionary";
 
