@@ -125,6 +125,11 @@ WebInspector.LogContentView.prototype = {
         return this._scopeBar;
     },
 
+    get logViewController()
+    {
+        return this._logViewController;
+    },
+
     updateLayout: function()
     {
         WebInspector.ContentView.prototype.updateLayout.call(this);

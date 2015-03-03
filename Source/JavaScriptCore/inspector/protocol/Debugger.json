@@ -230,7 +230,7 @@
             "returns": [
                 { "name": "details", "$ref": "FunctionDetails", "description": "Information about the function." }
             ],
-            "description": "Returns detailed informtation on given function."
+            "description": "Returns detailed information on given function."
         },
         {
             "name": "setPauseOnExceptions",

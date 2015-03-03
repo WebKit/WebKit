@@ -130,6 +130,22 @@ WebInspector.JavaScriptLogViewController.prototype = {
         consoleGroup.element.scrollIntoView();
     },
 
+    appendImmediateExecutionWithResult: function(text, result)
+    {
+        console.assert(result instanceof WebInspector.RemoteObject);
+
+        var commandMessage = new WebInspector.ConsoleCommand(text);
+        this._appendConsoleMessage(commandMessage, true);
+
+        function saveResultCallback(savedResultIndex)
+        {
+            var commandResultMessage = new WebInspector.ConsoleCommandResult(result, false, commandMessage, savedResultIndex);
+            this._appendConsoleMessage(commandResultMessage, true);
+        }
+
+        WebInspector.runtimeManager.saveResult(result, saveResultCallback.bind(this));
+    },
+
     appendConsoleMessage: function(consoleMessage)
     {
         // Clone the message since there might be multiple clients using the message,

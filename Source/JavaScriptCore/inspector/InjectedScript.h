@@ -60,6 +60,7 @@ public:
     void getDisplayableProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
     void getInternalProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::InternalPropertyDescriptor>>* result);
     void getCollectionEntries(ErrorString&, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<Protocol::Array<Protocol::Runtime::CollectionEntry>>* entries);
+    void saveResult(ErrorString&, const String& callArgumentJSON, Inspector::Protocol::OptOutput<int>* savedResultIndex);
 
     Ref<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
     RefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;

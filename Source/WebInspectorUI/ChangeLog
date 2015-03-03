@@ -1,5 +1,47 @@
 2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Context Menu to Log a Particular Object
+        https://bugs.webkit.org/show_bug.cgi?id=142198
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.saveResultCallback):
+        (WebInspector.JavaScriptLogViewController.prototype.appendImmediateExecutionWithResult):
+        Add a way to show an execution and result immediately in the Log View.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt.prototype.pushHistoryItem):
+        (WebInspector.ConsolePrompt.prototype.commitTextOrInsertNewLine):
+        (WebInspector.ConsolePrompt.prototype._handleEnterKey):
+        (WebInspector.ConsolePrompt.prototype._commitHistoryEntry):
+        Add a way to append a history item to the console prompt history.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype):
+        Add a context menu item to object tree properties to log the value.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.createCallArgument):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.RemoteObject.prototype.asCallArgument):
+        Simplify CallArgument creation.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.mycallback):
+        (WebInspector.RuntimeManager.prototype.saveResult):
+        Wrap RuntimeAgent.saveResult. If supported, run the backend command
+        and fetch a saved result index from the backend for the given value.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.get logViewController):
+        Misc.
+
+2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add Context Menus to Object Tree properties
         https://bugs.webkit.org/show_bug.cgi?id=142125
 

@@ -177,6 +177,23 @@ void InjectedScript::getCollectionEntries(ErrorString& errorString, const String
     *entries = BindingTraits<Array<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTF::move(result));
 }
 
+void InjectedScript::saveResult(ErrorString& errorString, const String& callArgumentJSON, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("saveResult"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(callArgumentJSON);
+
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+    if (!result || result->type() != InspectorValue::Type::Integer) {
+        errorString = ASCIILiteral("Internal error");
+        return;
+    }
+
+    int savedResultIndexInt = 0;
+    if (result->asInteger(savedResultIndexInt) && savedResultIndexInt > 0)
+        *savedResultIndex = savedResultIndexInt;
+}
+
 Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::ScriptValue& callFrames)
 {
     ASSERT(!hasNoValue());

@@ -210,6 +210,26 @@ void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const
     injectedScript.getCollectionEntries(errorString, objectId, objectGroup ? *objectGroup : String(), start, fetch, &entries);
 }
 
+void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const RefPtr<Inspector::InspectorObject>&& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+{
+    InjectedScript injectedScript;
+
+    String objectId;
+    if (callArgument->getString(ASCIILiteral("objectId"), objectId)) {
+        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+        if (injectedScript.hasNoValue()) {
+            errorString = ASCIILiteral("Inspected frame has gone");
+            return;
+        }
+    } else {
+        injectedScript = injectedScriptForEval(errorString, executionContextId);
+        if (injectedScript.hasNoValue())
+            return;
+    }
+
+    injectedScript.saveResult(errorString, callArgument->toJSONString(), savedResultIndex);
+}
+
 void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);

@@ -227,6 +227,7 @@ WebInspector.contentLoaded = function()
     this._consoleRepresentedObject = new WebInspector.LogObject;
     this._consoleTreeElement = new WebInspector.LogTreeElement(this._consoleRepresentedObject);
     this.consoleContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._consoleRepresentedObject);
+    this.consoleLogViewController = this.consoleContentView.logViewController;
 
     // FIXME: The sidebars should be flipped in RTL languages.
     this.leftSidebar = this.navigationSidebar = new WebInspector.Sidebar(document.getElementById("navigation-sidebar"), WebInspector.Sidebar.Sides.Left);

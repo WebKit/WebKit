@@ -473,6 +473,22 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         }
     },
 
+    _logValue: function(value)
+    {
+        var resolvedValue = value || this._resolvedValue();
+        if (!resolvedValue)
+            return;
+
+        var propertyPath = this._resolvedValuePropertyPath();
+        var isImpossible = propertyPath.isFullPathImpossible();
+        var text = isImpossible ? WebInspector.UIString("Selected Value") : propertyPath.displayPath(this._propertyPathType());
+
+        if (!isImpossible)
+            WebInspector.quickConsole.prompt.pushHistoryItem(text);
+
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue);
+    },
+
     _contextMenuHandler: function(event)
     {
         var resolvedValue = this._resolvedValue();
@@ -480,6 +496,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             return;
 
         var contextMenu = new WebInspector.ContextMenu(event);
+        contextMenu.appendItem(WebInspector.UIString("Log Value"), this._logValue.bind(this));
 
         var propertyPath = this._resolvedValuePropertyPath();
         if (propertyPath && !propertyPath.isFullPathImpossible()) {

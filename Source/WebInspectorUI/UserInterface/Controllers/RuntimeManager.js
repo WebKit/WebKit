@@ -79,6 +79,26 @@ WebInspector.RuntimeManager.prototype = {
         RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue, generatePreview: generatePreview, saveResult: saveResult}, evalCallback.bind(this));
     },
 
+    saveResult: function(remoteObject, callback)
+    {
+        console.assert(remoteObject instanceof WebInspector.RemoteObject);
+
+        if (!RuntimeAgent.saveResult) {
+            callback(undefined);
+            return;
+        }
+
+        function mycallback(error, savedResultIndex)
+        {
+            callback(savedResultIndex);
+        }
+
+        if (remoteObject.objectId)
+            RuntimeAgent.saveResult(remoteObject.asCallArgument(), mycallback);
+        else
+            RuntimeAgent.saveResult(remoteObject.asCallArgument(), WebInspector.quickConsole.executionContextIdentifier, mycallback);
+    },
+
     getPropertiesForRemoteObject: function(objectId, callback)
     {
         RuntimeAgent.getProperties(objectId, function(error, result) {

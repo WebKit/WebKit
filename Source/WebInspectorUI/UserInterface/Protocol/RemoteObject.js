@@ -82,6 +82,17 @@ WebInspector.RemoteObject.fromPayload = function(payload)
     return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.preview);
 };
 
+WebInspector.RemoteObject.createCallArgument = function(valueOrObject)
+{
+    if (valueOrObject instanceof WebInspector.RemoteObject) {
+        if (valueOrObject.objectId)
+            return {objectId: valueOrObject.objectId};
+        return {value: valueOrObject.value};
+    }
+
+    return {value: valueOrObject};
+};
+
 WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 {
     DOMAgent.resolveNode(node.id, objectGroup, function(error, object) {
@@ -413,16 +424,8 @@ WebInspector.RemoteObject.prototype = {
             callback(error, result, wasThrown);
         }
 
-        if (args) {
-            args = args.map(function(arg) {
-                if (arg instanceof WebInspector.RemoteObject) {
-                    if (arg.objectId)
-                        return {objectId: arg.objectId};
-                    return {value: arg.value};
-                }
-                return {value: arg};
-            });
-        }
+        if (args)
+            args = args.map(WebInspector.RemoteObject.createCallArgument);
 
         RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, generatePreview, mycallback);
     },
@@ -490,6 +493,11 @@ WebInspector.RemoteObject.prototype = {
             return 0;
 
         return parseInt(matches[1], 10);
+    },
+
+    asCallArgument: function()
+    {
+        return WebInspector.RemoteObject.createCallArgument(this);
     },
 
     // Private

@@ -274,6 +274,17 @@
             ]
         },
         {
+            "name": "saveResult",
+            "parameters": [
+                { "name": "value", "$ref": "CallArgument", "description": "Id or value of the object to save." },
+                { "name": "contextId", "optional": true, "$ref": "ExecutionContextId", "description": "Unique id of the execution context. To specify in which execution context script evaluation should be performed. If not provided, determine from the CallArgument's objectId." }
+            ],
+            "returns": [
+                { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the value was saved, this is the $n index that can be used to access the value." }
+            ],
+            "description": "Assign a saved result index to this value."
+        },
+        {
             "name": "releaseObject",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to release." }

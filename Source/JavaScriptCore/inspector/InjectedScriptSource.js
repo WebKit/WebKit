@@ -295,6 +295,19 @@ InjectedScript.prototype = {
         });
     },
 
+    saveResult: function(callArgumentJSON)
+    {
+        this._savedResultIndex = 0;
+
+        try {
+            var callArgument = InjectedScriptHost.evaluate("(" + callArgumentJSON + ")");
+            var value = this._resolveCallArgument(callArgument);
+            this._saveResult(value);
+        } catch (e) {}
+
+        return this._savedResultIndex;
+    },
+
     getFunctionDetails: function(functionId)
     {
         var parsedFunctionId = this._parseObjectId(functionId);
@@ -367,8 +380,12 @@ InjectedScript.prototype = {
         }
     },
 
-    _resolveCallArgument: function(callArgumentJson) {
-        var objectId = callArgumentJson.objectId;
+    _resolveCallArgument: function(callArgumentJSON)
+    {
+        if ("value" in callArgumentJSON)
+            return callArgumentJSON.value;
+
+        var objectId = callArgumentJSON.objectId;
         if (objectId) {
             var parsedArgId = this._parseObjectId(objectId);
             if (!parsedArgId || parsedArgId["injectedScriptId"] !== injectedScriptId)
@@ -379,15 +396,15 @@ InjectedScript.prototype = {
                 throw "Could not find object with given id";
 
             return resolvedArg;
-        } else if ("value" in callArgumentJson)
-            return callArgumentJson.value;
+        }
+
         return undefined;
     },
 
     _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
         try {
-            this._savedResultIndex = undefined;
+            this._savedResultIndex = 0;
 
             var returnObject = {
                 wasThrown: false,

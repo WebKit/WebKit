@@ -1,3 +1,24 @@
+2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Context Menu to Log a Particular Object
+        https://bugs.webkit.org/show_bug.cgi?id=142198
+
+        Reviewed by Timothy Hatcher.
+
+        Add a protocol method to assign a $n index to a value. For an object
+        use the injected script context for that object. For a value, use
+        the execution context to know where to save the value.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::saveResult):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::saveResult):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/Runtime.json:
+
 2015-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         SpeculativeJIT::emitAllocateArguments() should be a bit faster, and shouldn't do destructor initialization

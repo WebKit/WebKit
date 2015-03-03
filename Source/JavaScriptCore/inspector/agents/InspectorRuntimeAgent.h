@@ -66,6 +66,7 @@ public:
     virtual void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
     virtual void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
     virtual void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) override final;
+    virtual void saveResult(ErrorString&, const RefPtr<Inspector::InspectorObject>&& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) override final;
     virtual void releaseObjectGroup(ErrorString&, const String& objectGroup) override final;
     virtual void run(ErrorString&) override;
     virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const RefPtr<Inspector::InspectorArray>&& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
