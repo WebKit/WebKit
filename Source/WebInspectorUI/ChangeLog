@@ -1,3 +1,35 @@
+2015-03-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Refactoring: separate ConsoleSession from ConsoleGroup
+        https://bugs.webkit.org/show_bug.cgi?id=142141
+
+        ConsoleSession doesn't have a title and it's not collapsible either.
+        Simplify ConsoleSession by removing excessive markup.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessage):
+        (WebInspector.JavaScriptLogViewController.prototype.get topConsoleGroup): Deleted.
+        * UserInterface/Main.html:
+        * UserInterface/Views/ConsoleGroup.js:
+        (WebInspector.ConsoleGroup):
+        (WebInspector.ConsoleGroup.prototype.render):
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+        (WebInspector.ConsoleGroup.prototype.append):
+        (WebInspector.ConsoleGroup.prototype.hasMessages): Deleted.
+        * UserInterface/Views/ConsoleSession.js: Added.
+        (WebInspector.ConsoleSession):
+        (WebInspector.ConsoleSession.prototype.addMessage):
+        (WebInspector.ConsoleSession.prototype.append):
+        (WebInspector.ConsoleSession.prototype.hasMessages):
+        * UserInterface/Views/LogContentView.css:
+        (.console-session + .console-session):
+        (.console-group.new-session .console-group-messages .console-item:first-child): Deleted.
+        (.console-group.new-session): Deleted.
+
 2015-03-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: popover should use requestAnimationFrame to drive move/resize animations

@@ -54,10 +54,6 @@
     border-top: 1px solid rgb(240, 240, 240);
 }
 
-.console-group.new-session .console-group-messages .console-item:first-child {
-    border-top: none;
-}
-
 .console-item.selected::after {
     position: absolute;
     display: block;
@@ -171,7 +167,7 @@
     position: relative;
 }
 
-.console-group.new-session {
+.console-session + .console-session {
     border-top: 3px dashed rgb(240, 240, 240);
 }
 

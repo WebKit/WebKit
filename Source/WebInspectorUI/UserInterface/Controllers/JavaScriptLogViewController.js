@@ -45,7 +45,7 @@ WebInspector.JavaScriptLogViewController = function(element, scrollElement, text
     this._previousMessage = null;
     this._repeatCountWasInterrupted = false;
 
-    this._topConsoleGroups = [];
+    this._sessions = [];
 
     this.messagesClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._handleClearShortcut.bind(this));
     this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._element);
@@ -74,11 +74,6 @@ WebInspector.JavaScriptLogViewController.prototype = {
         return this._prompt;
     },
 
-    get topConsoleGroup()
-    {
-        return this._topConsoleGroup;
-    },
-
     get currentConsoleGroup()
     {
         return this._currentConsoleGroup;
@@ -98,36 +93,34 @@ WebInspector.JavaScriptLogViewController.prototype = {
 
     startNewSession: function(clearPreviousSessions)
     {
-        if (this._topConsoleGroups.length && clearPreviousSessions) {
-            for (var i = 0; i < this._topConsoleGroups.length; ++i)
-                this._element.removeChild(this._topConsoleGroups[i].element);
+        if (this._sessions.length && clearPreviousSessions) {
+            for (var i = 0; i < this._sessions.length; ++i)
+                this._element.removeChild(this._sessions[i].element);
 
-            this._topConsoleGroups = [];
-            this._topConsoleGroup = null;
+            this._sessions = [];
             this._currentConsoleGroup = null;
         }
 
-        // Reuse the top group if it has no messages.
-        if (this._topConsoleGroup && !this._topConsoleGroup.hasMessages()) {
+        var lastSession = this._sessions.lastValue;
+        // Reuse the last session if it has no messages.
+        if (lastSession && !lastSession.hasMessages()) {
             // Make sure the session is visible.
-            this._topConsoleGroup.element.scrollIntoView();
+            lastSession.element.scrollIntoView();
             return;
         }
 
-        var hasPreviousSession = !!this._topConsoleGroup;
-        var consoleGroup = new WebInspector.ConsoleGroup(null, hasPreviousSession);
+        var consoleSession = new WebInspector.ConsoleSession();
 
         this._previousMessage = null;
         this._repeatCountWasInterrupted = false;
 
-        this._topConsoleGroups.push(consoleGroup);
-        this._topConsoleGroup = consoleGroup;
-        this._currentConsoleGroup = consoleGroup;
+        this._sessions.push(consoleSession);
+        this._currentConsoleGroup = consoleSession;
 
-        this._element.appendChild(consoleGroup.element);
+        this._element.appendChild(consoleSession.element);
 
         // Make sure the new session is visible.
-        consoleGroup.element.scrollIntoView();
+        consoleSession.element.scrollIntoView();
     },
 
     appendImmediateExecutionWithResult: function(text, result)
@@ -290,11 +283,11 @@ WebInspector.JavaScriptLogViewController.prototype = {
         } else {
             if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
                 var group = new WebInspector.ConsoleGroup(this._currentConsoleGroup);
-                this._currentConsoleGroup.messagesElement.appendChild(group.element);
+                var groupElement = group.render(msg);
+                this._currentConsoleGroup.append(groupElement);
                 this._currentConsoleGroup = group;
-            }
-
-            this._currentConsoleGroup.addMessage(msg);
+            } else
+                this._currentConsoleGroup.addMessage(msg);
         }
 
         if (msg.type === WebInspector.ConsoleMessage.MessageType.Result || wasScrolledToBottom)
