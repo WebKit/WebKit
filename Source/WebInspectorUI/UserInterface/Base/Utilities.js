@@ -584,25 +584,6 @@ Object.defineProperty(String, "tokenizeFormatString",
     }
 });
 
-Object.defineProperty(String.prototype, "startsWith",
-{
-    value: function(string)
-    {
-        return this.lastIndexOf(string, 0) === 0;
-    }
-});
-
-Object.defineProperty(String.prototype, "endsWith",
-{
-    value: function(string)
-    {
-        var position = this.length - string.length;
-        if (position < 0)
-            return false;
-        return this.indexOf(string, position) === position;
-    }
-});
-
 Object.defineProperty(String.prototype, "hash",
 {
     get: function()
