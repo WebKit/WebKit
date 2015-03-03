@@ -1,3 +1,15 @@
+2015-03-02  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: skipping inspector/timeline tests since they are still flaky.
+        <https://webkit.org/b/142208>
+
+        Not reviewed.
+
+        * TestExpectations:
+        - Restore skipping of inspector/timeline tests.
+        * platform/win/TestExpectations:
+        - Removing the skipping here since the general TestExpectations has it covered.
+
 2015-03-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] inspector/timeline always times out.

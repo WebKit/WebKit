@@ -2289,8 +2289,6 @@ http/tests/xmlhttprequest/web-apps/013.html
 ################################################################################
 ################           Inspector Issues                   ##################
 ################################################################################
-# The timeline stuff seems to cause timeouts on Windows
-webkit.org/b/142208 inspector/timeline [ Skip ] 
 
 # Some inspector tests timing out after r173992. Skip them.
 webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
