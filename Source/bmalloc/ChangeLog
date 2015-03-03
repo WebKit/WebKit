@@ -1,5 +1,18 @@
 2015-03-03  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc should implement malloc introspection (to stop false-positive leaks when MallocStackLogging is off)
+        https://bugs.webkit.org/show_bug.cgi?id=141802
+
+        Reviewed by Andreas Kling.
+
+        Re-enabled this feature on iOS, now that the iOS crash should be fixed.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        * bmalloc/VMHeap.h:
+
+2015-03-03  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Added missing features to the malloc zone introspection API
         https://bugs.webkit.org/show_bug.cgi?id=142235
 
