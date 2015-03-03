@@ -1,4 +1,23 @@
 =================
+WebKitGTK+ 2.7.91
+=================
+
+What's new in WebKitGTK+ 2.7.91?
+
+  - Enable concurrent JIT.
+  - Add support for ARIA 1.1 'switch' and 'searchbox' roles.
+  - Fix synchronous loads when maximum connection limits are reached.
+  - Fix web timing calculations when loading resources from the disk cache.
+  - Fix a crash when loading a local file with webkit_web_view_load_alternate_html.
+  - Fix a WebProcess crash when entering accelerating compositing mode before the
+    WebView is realized.
+  - Improve the appearance of fonts loaded via @font-face.
+  - Fix undefined symbol issue when loading web extensions.
+  - Build bmalloc as a static library.
+  - Fix the build with CMake 3.2.
+  - Fix the C-Loop LLInt build.
+
+=================
 WebKitGTK+ 2.7.90
 =================
 

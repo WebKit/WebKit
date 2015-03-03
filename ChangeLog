@@ -1,3 +1,9 @@
+2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.91 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-03-02  Debarshi Ray  <debarshir@gnome.org>
 
         REGRESSION(r179409): [GTK] Undefined symbol prevents web extensions from being loaded
