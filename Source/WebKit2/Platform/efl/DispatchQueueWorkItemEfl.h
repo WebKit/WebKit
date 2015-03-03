@@ -34,18 +34,13 @@
 
 class WorkItem {
 public:
-    static std::unique_ptr<WorkItem> create(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function)
-    {
-        return std::unique_ptr<WorkItem>(new WorkItem(workQueue, WTF::move(function)));
-    }
-    void dispatch() { m_function(); }
-
-protected:
     WorkItem(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function)
         : m_workQueue(workQueue)
         , m_function(WTF::move(function))
     {
     }
+
+    void dispatch() { m_function(); }
 
 private:
     RefPtr<WorkQueue> m_workQueue;

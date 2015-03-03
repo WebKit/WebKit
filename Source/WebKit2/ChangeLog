@@ -1,3 +1,30 @@
+2015-03-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Remove unnecessary create() factory functions.
+        https://bugs.webkit.org/show_bug.cgi?id=142161
+
+        Reviewed by Chris Dumez.
+
+        We can replace some create() factory functions with std::make_unique(). Because
+        it just returns new instance. Even some of those functions have used std::unique_ptr<>
+        instead of std::make_unique<>. Fixed all.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+        (WebKit::SQLiteIDBTransaction::create): Deleted.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        * Platform/efl/DispatchQueueWorkItemEfl.h:
+        (WorkItem::dispatch):
+        (WorkItem::create): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (WebKit::PageClientImpl::create): Deleted.
+        * UIProcess/API/gtk/WebKitTextChecker.h:
+        (WebKitTextChecker::create): Deleted.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+
 2015-03-02  Brady Eidson  <beidson@apple.com>
 
         Lots of: ERROR: Unhandled web process message WebPageGroupProxy:RemoveAllUserContentFilters

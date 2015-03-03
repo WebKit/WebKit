@@ -289,7 +289,7 @@ static void webkitWebContextConstructed(GObject* object)
     priv->notificationProvider = WebKitNotificationProvider::create(priv->context->supplement<WebNotificationManagerProxy>());
 #endif
 #if ENABLE(SPELLCHECK)
-    priv->textChecker = WebKitTextChecker::create();
+    priv->textChecker = std::make_unique<WebKitTextChecker>();
 #endif
 }
 

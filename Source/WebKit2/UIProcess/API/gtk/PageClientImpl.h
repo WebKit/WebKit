@@ -49,16 +49,11 @@ class PageClientImpl : public PageClient
 #endif
 {
 public:
-    static std::unique_ptr<PageClientImpl> create(GtkWidget* viewWidget)
-    {
-        return std::unique_ptr<PageClientImpl>(new PageClientImpl(viewWidget));
-    }
+    explicit PageClientImpl(GtkWidget*);
 
     GtkWidget* viewWidget() { return m_viewWidget; }
 
 private:
-    explicit PageClientImpl(GtkWidget*);
-
     // PageClient
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) override;

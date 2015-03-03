@@ -57,7 +57,7 @@ void WorkQueue::dispatch(std::function<void ()> function)
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->dispatch(WorkItem::create(this, WTF::move(function)));
+    m_dispatchQueue->dispatch(std::make_unique<WorkItem>(this, WTF::move(function)));
 }
 
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)

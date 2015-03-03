@@ -56,11 +56,7 @@ class UniqueIDBDatabaseBackingStoreSQLite;
 class SQLiteIDBTransaction {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
-    static std::unique_ptr<SQLiteIDBTransaction> create(UniqueIDBDatabaseBackingStoreSQLite& backingStore, const IDBIdentifier& transactionIdentifier, WebCore::IndexedDB::TransactionMode mode)
-    {
-        return std::unique_ptr<SQLiteIDBTransaction>(new SQLiteIDBTransaction(backingStore, transactionIdentifier, mode));
-    }
-
+    SQLiteIDBTransaction(UniqueIDBDatabaseBackingStoreSQLite&, const IDBIdentifier& transactionIdentifier, WebCore::IndexedDB::TransactionMode);
     ~SQLiteIDBTransaction();
 
     const IDBIdentifier& transactionIdentifier() const { return m_identifier; }
@@ -81,8 +77,6 @@ public:
     WebCore::SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
 
 private:
-    SQLiteIDBTransaction(UniqueIDBDatabaseBackingStoreSQLite&, const IDBIdentifier& transactionIdentifier, WebCore::IndexedDB::TransactionMode);
-
     void clearCursors();
 
     IDBIdentifier m_identifier;

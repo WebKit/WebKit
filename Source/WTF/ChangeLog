@@ -1,3 +1,17 @@
+2015-03-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Remove unnecessary create() factory functions.
+        https://bugs.webkit.org/show_bug.cgi?id=142161
+
+        Reviewed by Chris Dumez.
+
+        We can replace some create() factory functions with std::make_unique(). Because
+        it just returns new instance. Even some of those functions have used std::unique_ptr<>
+        instead of std::make_unique<>. Fixed all.
+
+        * wtf/efl/WorkQueueEfl.cpp:
+        (WorkQueue::dispatch):
+
 2015-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG compile time measurements should really report milliseconds

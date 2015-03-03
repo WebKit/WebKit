@@ -501,7 +501,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::defaultPasteboardHelper()->targetList());
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
-    priv->pageClient = PageClientImpl::create(viewWidget);
+    priv->pageClient = std::make_unique<PageClientImpl>(viewWidget);
     priv->authenticationDialog = 0;
 }
 

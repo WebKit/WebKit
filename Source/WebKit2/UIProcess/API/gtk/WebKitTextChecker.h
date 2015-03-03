@@ -32,10 +32,7 @@ class WebKitTextChecker {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static std::unique_ptr<WebKitTextChecker> create()
-    {
-        return std::unique_ptr<WebKitTextChecker>(new WebKitTextChecker);
-    }
+    WebKitTextChecker();
     ~WebKitTextChecker();
 
     // For implementing TextCheckerClient.
@@ -51,8 +48,6 @@ public:
     void setSpellCheckingLanguages(const char* const* spellCheckingLanguages);
 
 private:
-    WebKitTextChecker();
-
     std::unique_ptr<WebCore::TextCheckerEnchant> m_textChecker;
     GRefPtr<GPtrArray> m_spellCheckingLanguages;
     bool m_spellCheckingEnabled;

@@ -450,7 +450,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifi
 {
     ASSERT(!RunLoop::isMain());
 
-    if (!m_transactions.add(transactionIdentifier, SQLiteIDBTransaction::create(*this, transactionIdentifier, mode)).isNewEntry) {
+    if (!m_transactions.add(transactionIdentifier, std::make_unique<SQLiteIDBTransaction>(*this, transactionIdentifier, mode)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
         return false;
     }
