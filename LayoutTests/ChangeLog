@@ -1,3 +1,13 @@
+2015-03-03  Daniel Bates  <dabates@apple.com>
+
+        Convert ManualTests/svg-tooltip.svg to a DRT test
+        https://bugs.webkit.org/show_bug.cgi?id=140480
+
+        Reviewed by Alex Christensen.
+
+        * svg/hittest/svg-tooltip-expected.txt: Added.
+        * svg/hittest/svg-tooltip.svg: Added.
+
 2015-03-03  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> label can get very wide, doesn't wrap/truncate

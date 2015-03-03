@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style type="text/css">
+    <![CDATA[
+    text {
+        display: block;
+    }
+    ]]>
+    </style>
+    <script type="text/javascript">
+    <![CDATA[
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("log").appendChild(document.createTextNode(message + "\n"))
+    }
+
+    function testTooltipForElement(element)
+    {
+        console.assert(window.internals);
+        console.assert(element.id);
+        var testCaseName = "<" + element.tagName + ' id="' + element.id + '"' + ">";
+        var tooltip = internals.toolTipFromElement(element);
+        var expectedTooltip = element.getAttribute("data-expected-tooltip");
+        if (tooltip == expectedTooltip)
+            log("PASS tooltip for " + testCaseName + " is '" + expectedTooltip + "'.");
+        else
+            log("FAIL tooltip for " + testCaseName + " should be '" + expectedTooltip + "'. Was '" + tooltip + "'.");
+    }
+
+    function testDocumentTitle()
+    {
+        var expectedTitle = document.getElementById("expected-document-title").textContent;
+        if (document.title == expectedTitle)
+            log("PASS document.title is '" + expectedTitle + "'.");
+        else
+            log("FAIL document.title should be '" + expectedTitle + "'. Was '" + document.title + "'.");
+    }
+
+    function runTest()
+    {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        testDocumentTitle();
+        var testCases = document.querySelectorAll(".test-case");
+        for (var i = 0; i < testCases.length; ++i)
+            testTooltipForElement(testCases[i]);
+
+        // Hide all <text> elements that describe the expected result for a human as they are not applicable
+        // when running this test in DRT/WTR.
+        document.styleSheets[0].rules[0].style.display = "none";
+    }
+
+    window.onload = runTest;
+    ]]>
+    </script>
+    <title id="expected-document-title">SVG Tooltips</title>
+    <defs>
+        <ellipse id="e4" cx="100" cy="200" rx="50" ry="30" fill="blue">
+            <title>PASS</title>
+        </ellipse>
+        <ellipse id="e5" cx="250" cy="200" rx="50" ry="30" fill="blue">
+            <title>FAIL</title>
+        </ellipse>
+        <symbol id="e7">
+            <ellipse cx="100" cy="300" rx="50" ry="30" fill="blue">
+            <title>PASS</title>
+            </ellipse>
+        </symbol>
+        <symbol id="e8">
+            <title>FAIL</title>
+            <ellipse cx="250" cy="300" rx="50" ry="30" fill="blue">
+            </ellipse>
+        </symbol>
+    </defs>
+
+    <text y="15" x="0" id="manual-instructions">Hover the cursor over each shape (below). This test passed if the tooltip for each shape that has a tooltip is "PASS". Otherwise, this test failed.</text>
+
+    <ellipse id="e1" cx="100" cy="100" rx="50" ry="30" fill="blue" class="test-case" data-expected-tooltip="PASS">
+        <title>PASS</title>
+    </ellipse>
+
+    <g>
+        <title>PASS</title>
+        <ellipse id="e2" cx="250" cy="100" rx="50" ry="30" fill="blue" class="test-case" data-expected-tooltip="PASS"/>
+    </g>
+
+    <a xlink:title="PASS" xlink:href="#">
+        <title>FAIL</title>
+        <ellipse id="e3" cx="400" cy="100" rx="50" ry="30" fill="blue" class="test-case" data-expected-tooltip="PASS"/>
+    </a>
+
+    <use id="e4" xlink:href="#e4" class="test-case" data-expected-tooltip=""/>
+    <text x="100" y="200" text-anchor="middle" fill="white">(no tooltip)</text>
+
+    <use id="e5" xlink:href="#e5" class="test-case" data-expected-tooltip="PASS">
+        <title>PASS</title>
+    </use>
+
+    <g>
+        <title>FAIL</title>
+        <ellipse id="e6" cx="400" cy="200" rx="50" ry="30" fill="blue" class="test-case" data-expected-tooltip="PASS">
+            <title>PASS</title>
+        </ellipse>
+    </g>
+
+    <use id="e7" xlink:href="#e7" class="test-case" data-expected-tooltip=""/>
+    <text x="100" y="300" text-anchor="middle" fill="white">(no tooltip)</text>
+
+    <use id="e8" xlink:href="#e8" class="test-case" data-expected-tooltip="PASS">
+        <title>PASS</title>
+    </use>
+
+    <foreignObject y="400" width="600" height="400">
+        <pre id="log" xmlns="http://www.w3.org/1999/xhtml"></pre>
+    </foreignObject>
+</svg>
