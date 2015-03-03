@@ -1,3 +1,34 @@
+2015-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid applying the clip-path when painting, if a layer also has a shape layer mask
+        https://bugs.webkit.org/show_bug.cgi?id=142212
+
+        Reviewed by Zalan Bujtas.
+
+        After r180882 we translate clip-path into a composited shape mask when the layer
+        is composited. However, we were also still applying the clip-path when painting
+        the layer contents.
+        
+        Now, we set the GraphicsLayer bits GraphicsLayerPaintClipPath and GraphicsLayerPaintMask
+        only for the m_maskLayer's painting. This translate into setting PaintLayerPaintingCompositingMaskPhase
+        and PaintLayerPaintingCompositingClipPathPhase only when painting that same mask layer,
+        rather than always. To ensure that masks and clip-path get applied for software paints,
+        add shouldPaintMask() and shouldApplyClipPath() that return true for non-composited layers,
+        and when doing a flattening paint.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents): Use shouldApplyClipPath().
+        Pull three chunks of code under a single "if (shouldPaintContent && !selectionOnly)" condition.
+        The condition for paintChildClippingMaskForFragments() is changed slightly; we need to call this
+        only when painting the clip-path/mask layer contents, but also only when there is no mask to fill
+        the clipped area for us.
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::paintsWithClipPath): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateMaskingLayer): Be sure to set the GraphicsLayerPaintClipPath bit
+        when having a mask forces us onto the painting path.
+
 2015-03-03  Anders Carlsson  <andersca@apple.com>
 
         Use the correct display name for website data for local files

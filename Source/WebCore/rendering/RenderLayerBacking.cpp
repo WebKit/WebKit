@@ -1438,8 +1438,8 @@ void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
             maskPhases = GraphicsLayerPaintMask;
         
         if (hasClipPath) {
-            bool clipNeedsPainting = renderer().style().clipPath()->type() == ClipPathOperation::Reference;
-            if (clipNeedsPainting || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+            // If we have a mask, we need to paint the combined clip-path and mask into the mask layer.
+            if (hasMask || renderer().style().clipPath()->type() == ClipPathOperation::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
                 maskPhases |= GraphicsLayerPaintClipPath;
         }
 

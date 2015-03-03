@@ -4023,11 +4023,6 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
     return referenceBox;
 }
 
-bool RenderLayer::paintsWithClipPath() const
-{
-    return renderer().style().clipPath() && !isComposited();
-}
-
 Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule& windRule) const
 {
     const RenderStyle& style = renderer().style();
@@ -4239,7 +4234,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     bool hasClipPath = false;
-    if (paintsWithClipPath() || (localPaintFlags & PaintLayerPaintingCompositingClipPathPhase) || (localPaintFlags & PaintLayerPaintingCompositingMaskPhase))
+    if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
         hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
     LayerPaintingInfo localPaintingInfo(paintingInfo);
@@ -4336,19 +4331,21 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     // Make sure that we now use the original transparency context.
     ASSERT(transparencyLayerContext == context);
 
-    if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer().hasMask() && !selectionOnly) {
-        // Paint the mask for the fragments.
-        paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
-    }
+    if (shouldPaintContent && !selectionOnly) {
+        if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
+            // Paint the mask for the fragments.
+            paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+        }
 
-    if ((localPaintFlags & PaintLayerPaintingCompositingClipPathPhase) && shouldPaintContent && !selectionOnly) {
-        // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
-        paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
-    }
-    
-    if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase) && shouldPaintContent && !selectionOnly) {
-        // Paint the border radius mask for the fragments.
-        paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+        if (!(paintFlags & PaintLayerPaintingCompositingMaskPhase) && (paintFlags & PaintLayerPaintingCompositingClipPathPhase)) {
+            // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
+            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+        }
+        
+        if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase)) {
+            // Paint the border radius mask for the fragments.
+            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+        }
     }
 
     // End our transparency layer
@@ -6060,6 +6057,30 @@ bool RenderLayer::paintsWithTransform(PaintBehavior paintBehavior) const
 {
     bool paintsToWindow = !isComposited() || backing()->paintsIntoWindow();
     return transform() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || paintsToWindow);
+}
+
+bool RenderLayer::shouldPaintMask(PaintBehavior paintBehavior, PaintLayerFlags paintFlags) const
+{
+    if (!renderer().hasMask())
+        return false;
+
+    bool paintsToWindow = !isComposited() || backing()->paintsIntoWindow();
+    if (paintsToWindow || (paintBehavior & PaintBehaviorFlattenCompositingLayers))
+        return true;
+
+    return (paintFlags & PaintLayerPaintingCompositingMaskPhase);
+}
+
+bool RenderLayer::shouldApplyClipPath(PaintBehavior paintBehavior, PaintLayerFlags paintFlags) const
+{
+    if (!renderer().hasClipPath())
+        return false;
+
+    bool paintsToWindow = !isComposited() || backing()->paintsIntoWindow();
+    if (paintsToWindow || (paintBehavior & PaintBehaviorFlattenCompositingLayers))
+        return true;
+
+    return (paintFlags & PaintLayerPaintingCompositingClipPathPhase);
 }
 
 bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
