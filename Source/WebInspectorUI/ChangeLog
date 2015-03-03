@@ -1,3 +1,24 @@
+2015-03-03  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Console log level selector loses selection on reload
+        https://bugs.webkit.org/show_bug.cgi?id=142199
+
+        Reviewed by Timothy Hatcher.
+
+        The selected items in the console scope bar were being saved as settings,
+        but the "All" scope is forcibly selected on reload due to a logic bug.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.showFullHeightConsole):
+        The scope bar may already have selected items restored from WebInspector.Settings.
+        Don't select a scope unless explicitly requested (i.e., clicking on dashboard buttons)
+        or if no scopes are selected at all. (In the latter case, "All" is the default scope.)
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView): Don't specify a default value here to avoid trampling
+        settings. The "All" scope is selected by default in showFullHeightConsole if
+        nothing else is selected.
+
 2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove native extensions now built-in

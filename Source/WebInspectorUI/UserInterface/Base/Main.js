@@ -622,19 +622,20 @@ WebInspector.hideSplitConsole = function()
     this.quickConsole.consoleLogVisibilityChanged(false);
 };
 
-WebInspector.showFullHeightConsole = function(scope)
+WebInspector.showFullHeightConsole = function(requestedScope)
 {
     this.splitContentBrowser.element.classList.add("hidden");
 
     this._showingSplitConsoleSetting.value = false;
 
-    scope = scope || WebInspector.LogContentView.Scopes.All;
+    var scope = requestedScope || WebInspector.LogContentView.Scopes.All;
 
     // If the requested scope is already selected and the console is showing, then switch back to All.
     if (this.isShowingConsoleView() && this.consoleContentView.scopeBar.item(scope).selected)
         scope = WebInspector.LogContentView.Scopes.All;
 
-    this.consoleContentView.scopeBar.item(scope).selected = true;
+    if (requestedScope || !this.consoleContentView.scopeBar.selectedItems.length)
+        this.consoleContentView.scopeBar.item(scope).selected = true;
 
     if (!this.contentBrowser.currentContentView || this.contentBrowser.currentContentView !== this.consoleContentView) {
         // Be sure to close any existing log view in the split content browser before showing it in the
