@@ -1,3 +1,17 @@
+2015-03-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180911.
+        https://bugs.webkit.org/show_bug.cgi?id=142204
+
+        The tests it added are crashing (Requested by bdash on
+        #webkit).
+
+        Reverted changeset:
+
+        "Add a microtask abstraction"
+        https://bugs.webkit.org/show_bug.cgi?id=137496
+        http://trac.webkit.org/changeset/180911
+
 2015-03-02   Yoav Weiss  <yoav@yoav.ws>
 
         Add a microtask abstraction

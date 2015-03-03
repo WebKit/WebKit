@@ -79,8 +79,6 @@
 #include "MediaSessionManager.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
-#include "MicroTask.h"
-#include "MicroTaskTest.h"
 #include "MockPageOverlayClient.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -2532,12 +2530,6 @@ RefPtr<File> Internals::createFile(const String& path)
         return nullptr;
 
     return File::create(url.fileSystemPath());
-}
-
-void Internals::queueMicroTask(int testNumber)
-{
-    if (contextDocument())
-        MicroTaskQueue::singleton().queueMicroTask(MicroTaskTest::create(contextDocument()->createWeakPtr(), testNumber));
 }
 
 }

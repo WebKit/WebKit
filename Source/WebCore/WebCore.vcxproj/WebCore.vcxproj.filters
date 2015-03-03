@@ -3201,9 +3201,6 @@
     <ClCompile Include="..\dom\MessagePortChannel.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\MicroTask.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\MouseEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10270,9 +10267,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\MessagePortChannel.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\MicroTask.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\MouseEvent.h">

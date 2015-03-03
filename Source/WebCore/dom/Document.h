@@ -1262,7 +1262,7 @@ public:
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
 
-    WEBCORE_EXPORT virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override final;
+    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override final;
 
     WEBCORE_EXPORT virtual SecurityOrigin* topOrigin() const override final;
 
@@ -1288,7 +1288,6 @@ public:
     bool isPlayingAudio() const { return m_isPlayingAudio; }
     WEBCORE_EXPORT void updateIsPlayingAudio();
     void pageMutedStateDidChange();
-    WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
