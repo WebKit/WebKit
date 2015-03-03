@@ -1,3 +1,13 @@
+2015-03-02  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Disable -Wdeprecated-declaration warnings in WebVideoFullscreenInterfaceAVKit.mm
+
+        Fixing the deprecations is tracked by: <rdar://problem/20018692>
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized):
+        Ignore -Wdeprecated-declaration warnings via clang pragmas.
+
 2015-03-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180902.

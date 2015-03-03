@@ -964,6 +964,9 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized()
         });
     };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // FIXME: <rdar://problem/20018692> Fix AVKit deprecation warnings
     auto stopCompletionHandler = [this, strongThis] (AVPlayerViewControllerOptimizedFullscreenStopReason reason) {
         m_exitCompleted = true;
 
@@ -983,6 +986,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized()
     };
 
     [m_playerViewController startOptimizedFullscreenWithStartCompletionHandler:startCompletionHandler stopCompletionHandler:stopCompletionHandler];
+#pragma clang diagnostic pop
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard()
