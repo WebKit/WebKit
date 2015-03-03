@@ -194,9 +194,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 @interface UIWebFormAccessory (StagingToRemove)
-@property(nonatomic,retain) NSArray *buttonItems;
+- (UITextInputAssistantItem *)inputAssistantItem;
 @end
+#endif
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
