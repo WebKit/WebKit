@@ -833,6 +833,13 @@ void ResourceHandle::didStartRequest()
     getInternal()->m_response.resourceLoadTiming().requestStart = milisecondsSinceRequest(m_requestTime);
 }
 
+#if SOUP_CHECK_VERSION(2, 49, 91)
+static void startingCallback(SoupMessage*, ResourceHandle* handle)
+{
+    handle->didStartRequest();
+}
+#endif // SOUP_CHECK_VERSION(2, 49, 91)
+
 static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStream*, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
@@ -940,6 +947,9 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | flags));
 
 #if ENABLE(WEB_TIMING)
+#if SOUP_CHECK_VERSION(2, 49, 91)
+    g_signal_connect(d->m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), handle);
+#endif
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), handle);
 #endif
