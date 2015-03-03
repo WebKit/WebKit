@@ -656,19 +656,6 @@ _llint_op_create_this:
     dispatch(4)
 
 
-_llint_op_get_callee:
-    traceExecution()
-    loadisFromInstruction(1, t0)
-    loadp Callee[cfr], t1
-    loadpFromInstruction(2, t2)
-    bpneq t1, t2, .opGetCalleeSlow
-    storep t1, [cfr, t0, 8]
-    dispatch(3)
-
-.opGetCalleeSlow:
-    callSlowPath(_slow_path_get_callee)
-    dispatch(3)
-
 _llint_op_to_this:
     traceExecution()
     loadisFromInstruction(1, t0)

@@ -210,14 +210,6 @@ SLOW_PATH_DECL(slow_path_touch_entry)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_get_callee)
-{
-    BEGIN();
-    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
-    pc[2].u.jsCell.set(exec->vm(), exec->codeBlock()->ownerExecutable(), callee);
-    RETURN(callee);
-}
-
 SLOW_PATH_DECL(slow_path_create_arguments)
 {
     BEGIN();

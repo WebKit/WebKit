@@ -49,7 +49,6 @@ void computeUsesForBytecodeOffset(
     case op_jmp:
     case op_new_object:
     case op_init_lazy_reg:
-    case op_get_callee:
     case op_enter:
     case op_catch:
     case op_touch_entry:
@@ -365,7 +364,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_mov:
     case op_new_object:
     case op_to_this:
-    case op_get_callee:
     case op_init_lazy_reg:
     case op_get_scope:
     case op_create_arguments:

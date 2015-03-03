@@ -772,12 +772,6 @@ void CodeBlock::dumpBytecode(
             printLocationOpAndRegisterOperand(out, exec, location, it, "init_lazy_reg", r0);
             break;
         }
-        case op_get_callee: {
-            int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "get_callee", r0);
-            ++it;
-            break;
-        }
         case op_create_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -2565,13 +2559,6 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[2].u.structure.clear();
                 curInstruction[3].u.toThisStatus = merge(
                     curInstruction[3].u.toThisStatus, ToThisClearedByGC);
-                break;
-            case op_get_callee:
-                if (!curInstruction[2].u.jsCell || Heap::isMarked(curInstruction[2].u.jsCell.get()))
-                    break;
-                if (Options::verboseOSR())
-                    dataLogF("Clearing LLInt get callee with function %p.\n", curInstruction[2].u.jsCell.get());
-                curInstruction[2].u.jsCell.clear();
                 break;
             case op_resolve_scope: {
                 WriteBarrierBase<JSLexicalEnvironment>& lexicalEnvironment = curInstruction[6].u.lexicalEnvironment;

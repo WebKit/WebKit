@@ -466,7 +466,6 @@ namespace JSC {
         void emit_op_construct_varargs(Instruction*);
         void emit_op_catch(Instruction*);
         void emit_op_construct(Instruction*);
-        void emit_op_get_callee(Instruction*);
         void emit_op_create_this(Instruction*);
         void emit_op_to_this(Instruction*);
         void emit_op_create_arguments(Instruction*);

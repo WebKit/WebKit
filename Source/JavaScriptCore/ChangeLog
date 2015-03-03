@@ -1,3 +1,40 @@
+2015-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove op_get_callee, it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=142206
+
+        Reviewed by Andreas Kling.
+        
+        It's a bit of a shame that we stopped using this opcode since it gives us same-callee
+        profiling. But, if we were to add this functionality back in, we would almost certainly do
+        it by adding a JSFunction allocation watchpoint on FunctionExecutable.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_callee): Deleted.
+        (JSC::JIT::emitSlow_op_get_callee): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_callee): Deleted.
+        (JSC::JIT::emitSlow_op_get_callee): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Deleted.
+
 2015-03-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Context Menu to Log a Particular Object

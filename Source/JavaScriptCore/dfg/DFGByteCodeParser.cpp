@@ -2690,22 +2690,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_regexp);
         }
             
-        case op_get_callee: {
-            JSCell* cachedFunction = currentInstruction[2].u.jsCell.get();
-            if (!cachedFunction 
-                || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
-                set(VirtualRegister(currentInstruction[1].u.operand), get(VirtualRegister(JSStack::Callee)));
-            } else {
-                FrozenValue* frozen = m_graph.freeze(cachedFunction);
-                ASSERT(cachedFunction->inherits(JSFunction::info()));
-                Node* actualCallee = get(VirtualRegister(JSStack::Callee));
-                addToGraph(CheckCell, OpInfo(frozen), actualCallee);
-                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(JSConstant, OpInfo(frozen)));
-            }
-            NEXT_OPCODE(op_get_callee);
-        }
-
         // === Bitwise operations ===
 
         case op_bitand: {
