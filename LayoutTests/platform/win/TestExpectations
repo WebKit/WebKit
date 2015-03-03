@@ -442,6 +442,9 @@ webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Ski
 
 # TODO For now, Web Audio tests are disabled
 webkit.org/b/86914 webaudio/ [ Skip ]
+webkit.org/b/86914 fast/history/page-cache-closed-audiocontext.html [ Skip ]
+webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
+webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ Skip ]

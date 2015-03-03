@@ -1,3 +1,21 @@
+2015-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Make AudioContext suspendable when it is not rendering
+        https://bugs.webkit.org/show_bug.cgi?id=142210
+        <rdar://problem/19923085>
+
+        Reviewed by Eric Carlson.
+
+        Add layout tests to check cases where an AudioContext should or should
+        not prevent pages from entering the page cache.
+
+        * fast/history/page-cache-closed-audiocontext-expected.txt: Added.
+        * fast/history/page-cache-closed-audiocontext.html: Added.
+        * fast/history/page-cache-running-audiocontext-expected.txt: Added.
+        * fast/history/page-cache-running-audiocontext.html: Added.
+        * fast/history/page-cache-suspended-audiocontext-expected.txt: Added.
+        * fast/history/page-cache-suspended-audiocontext.html: Added.
+
 2015-03-02  Mark Lam  <mark.lam@apple.com>
 
         Gardening: skipping inspector/timeline tests since they are still flaky.

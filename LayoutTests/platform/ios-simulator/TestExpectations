@@ -32,6 +32,12 @@ http/tests/notifications
 fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html
 
+# Web Audio tests are skipped on iOS for now.
+webaudio
+fast/history/page-cache-closed-audiocontext.html
+fast/history/page-cache-running-audiocontext.html
+fast/history/page-cache-suspended-audiocontext.html
+
 # Not supported on iOS
 batterystatus
 fast/mediastream
@@ -42,7 +48,6 @@ mhtml
 proximity
 touchadjustment
 vibration
-webaudio
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

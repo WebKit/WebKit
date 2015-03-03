@@ -1,0 +1,11 @@
+Tests that a page with a running AudioContext does not go into the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+PASS Page was not restored from page cache
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

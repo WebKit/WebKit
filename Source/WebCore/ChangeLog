@@ -1,3 +1,37 @@
+2015-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Make AudioContext suspendable when it is not rendering
+        https://bugs.webkit.org/show_bug.cgi?id=142210
+        <rdar://problem/19923085>
+
+        Reviewed by Eric Carlson.
+
+        Make AudioContext suspendable when it is not rendering to increase the
+        likelihood of entering the PageCache for pages using WebAudio.
+
+        This patch adds a state member to AudioContext with 3 possible states:
+        Suspended / Running / Closed, as defined in the specification:
+        http://webaudio.github.io/web-audio-api/#widl-AudioContext-state
+
+        This state is used to decide if we can suspend the page or not. We
+        can safely suspend if the AudioContext's state is suspended (did not
+        start rendering) or closed (Stopped rendering).
+
+        Note that this patch does not expose the AudioContext's state to the
+        Web yet, even though it is exposed in the latest specification.
+
+        Tests: fast/history/page-cache-closed-audiocontext.html
+               fast/history/page-cache-running-audiocontext.html
+               fast/history/page-cache-suspended-audiocontext.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::canSuspend):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::fireCompletionEvent):
+        * Modules/webaudio/AudioContext.h:
+
 2015-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use SoupMessage::starting instead of SoupSession::request-started

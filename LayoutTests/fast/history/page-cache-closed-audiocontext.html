@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../webaudio/resources/buffer-loader.js"></script>
+<script>
+description('Tests that a page with a closed AudioContext goes into the page cache.');
+window.jsTestIsAsync = true;
+
+var sampleRate = 44100.0;
+var lengthInSeconds = 2;
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    audioContext = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    bufferLoader = new BufferLoader(
+        audioContext,
+        [ "../../webaudio/resources/hyper-reality/br-jam-loop.wav", ],
+        finishedLoading
+    );
+    bufferLoader.load();
+}, false);
+
+function finishedLoading(bufferList)
+{
+    var bufferSource = audioContext.createBufferSource();
+    bufferSource.buffer = bufferList[0];
+
+    bufferSource.connect(audioContext.destination);
+    bufferSource.start(0);
+
+    audioContext.oncomplete = finishedPlaying;
+    audioContext.startRendering();    
+}
+
+function finishedPlaying()
+{
+    // The OfflineAudioContext should now be in 'closed' state since the completion event was fired.
+    // The context should thus be suspendable and not prevent the page from entering PageCache.
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

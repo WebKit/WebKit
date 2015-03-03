@@ -363,6 +363,9 @@ private:
     std::atomic<int> m_activeSourceCount;
 
     BehaviorRestrictions m_restrictions;
+
+    enum class State { Suspended, Running, Closed };
+    State m_state;
 };
 
 } // WebCore
