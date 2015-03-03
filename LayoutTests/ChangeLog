@@ -21,6 +21,16 @@
 
 2015-03-02  Mark Lam  <mark.lam@apple.com>
 
+        Exception stack unwinding in JSC hangs while the Timeline Profiler is enabled.
+        <https://webkit.org/b/142191>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/timeline/exception-in-injected-script-while-recording-expected.txt: Added.
+        * inspector/timeline/exception-in-injected-script-while-recording.html: Added.
+
+2015-03-02  Mark Lam  <mark.lam@apple.com>
+
         The InspectorTimelineAgent should gracefully handle attempts to start more than once.
         <https://webkit.org/b/142189>
 

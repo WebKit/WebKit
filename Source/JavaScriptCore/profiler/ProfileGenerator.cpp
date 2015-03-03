@@ -194,6 +194,9 @@ void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifi
 
 void ProfileGenerator::exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&)
 {
+    if (m_suspended)
+        return;
+
     // If the current node was called by the handler (==) or any
     // more nested function (>) the we have exited early from it.
     ASSERT(m_currentNode);

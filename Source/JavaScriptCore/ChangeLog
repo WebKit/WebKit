@@ -1,3 +1,33 @@
+2015-03-02  Mark Lam  <mark.lam@apple.com>
+
+        Exception stack unwinding in JSC hangs while the Timeline Profiler is enabled.
+        <https://webkit.org/b/142191>
+
+        Reviewed by Geoffrey Garen.
+
+        Imagine a scenario where the Inspector is paused / suspended at a breakpoint or
+        while the user is stepping through JS code. The user then tries to evaluate an
+        expression in the console, and that evaluation results in an exception being
+        thrown. Currently, if the Timeline Profiler is enabled while this exception is
+        being thrown, the WebProcess will hang while trying to handle that exception.
+
+        The issue is that the Timeline Profiler's ProfileGenerator::didExecute() will
+        return early and decline to process ProfileNodes if the Inspector is paused.
+        This is proper because it does not want to count work done for injected scripts
+        (e.g. from the console) towards the timeline profile of the webpage being run.
+        However, this is in conflict with ProfileGenerator::exceptionUnwind()'s
+        expectation that didExecute() will process ProfileNodes in order to do the stack
+        unwinding for the exception handling. As a result,
+        ProfileGenerator::exceptionUnwind() hangs.
+
+        ProfileGenerator::exceptionUnwind() is in error. While the Inspector is paused,
+        there will not be any ProfileNodes that it needs to "unwind". Hence, the fix is
+        simply to return early also in ProfileGenerator::exceptionUnwind() if the
+        Inspector is paused.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::exceptionUnwind):
+
 2015-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should correctly document where it puts the argument count for inlined varargs frames

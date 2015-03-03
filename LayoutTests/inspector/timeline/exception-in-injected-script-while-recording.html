@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript" src="./resources/timeline-helper.js"></script>
+<script>
+function installTimer()
+{
+    setTimeout(function() {
+        callFunction(mul, add(1, 3), 3);
+        hook();
+    });
+}
+
+function add(a, b)
+{
+    InspectorTestProxy.addResult("Calling add(): " + a + " + " + b);
+    return a + b;
+}
+
+function mul(a, b)
+{
+    InspectorTestProxy.addResult("Calling mul(): " + a + " * " + b);
+    return a * b;
+}
+
+function test()
+{
+    // First, set up the breakpoint, start timeline capturing, and trigger execution of installTimer().
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        var scriptObject = event.data.script;
+
+        if (!/timeline-helper\.js$/.test(scriptObject.url))
+            return;
+
+        var location = scriptObject.createSourceCodeLocation(17, 0);  // Inside timeline-helper.js:hook()
+        var breakpoint = new WebInspector.Breakpoint(location);
+        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        InspectorTest.addResult("Added a breakpoint inside hook().")
+
+        WebInspector.timelineManager.startCapturing();
+        InspectorTest.evaluateInPage("installTimer()");
+    });
+
+    // Second, the debugger will pause during timeline capturing. Resume, then stop timeline capturing.
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, function(event) {
+        InspectorTest.addResult("Debugger paused;");
+        checkIfExceptionLoopsForever();
+    });
+
+    function checkIfExceptionLoopsForever() {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("({}).x.x", "test", true, true, false, false, false, function(result, wasThrown) {
+            InspectorTest.addResult("An exception was " + (wasThrown ? "" : "not ") + "thrown from the injected script.");
+            WebInspector.debuggerManager.resume().then(function() {
+                InspectorTest.addResult("Debugger resumed; stopping timeline capture.");
+                WebInspector.timelineManager.stopCapturing();
+            });
+        });
+    }
+
+    // When timeline capturing stops, inspect the resulting timeline records for a profile.
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, function(event) {
+        var recording = WebInspector.timelineManager.activeRecording;
+        var scriptTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Script);
+        console.assert(scriptTimeline);
+
+        InspectorTest.addResult("Timeline capturing stopped. Inspecting the active recording....");
+
+        for (var record of scriptTimeline.records) {
+            if (record.eventType !== WebInspector.ScriptTimelineRecord.EventType.TimerFired)
+                continue;
+
+            var result = record.profile ? "TRUE" : "FALSE";
+            InspectorTest.addResult("TimerFired timeline record has profile attached: " + result);
+        }
+
+        InspectorTest.completeTest();
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that an injected script, run while the debugger is paused and the timeline profiler is enabled, should not loop forever if it has an exception thrown.</p>
+</body>
+</html>
