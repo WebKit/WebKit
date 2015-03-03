@@ -1,3 +1,51 @@
+2015-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Don't repeatedly handle each test type
+        https://bugs.webkit.org/show_bug.cgi?id=142211
+
+        Reviewed by Tim Horton and Matt Hanson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.javascriptTestResultsURLForIteration): Deleted.
+        (Buildbot.prototype.apiTestResultsURLForIteration): Deleted.
+        (Buildbot.prototype.platformAPITestResultsURLForIteration): Deleted.
+        (Buildbot.prototype.webkitpyTestResultsURLForIteration): Deleted.
+        (Buildbot.prototype.webkitperlTestResultsURLForIteration): Deleted.
+        (Buildbot.prototype.bindingsTestResultsURLForIteration): Deleted.
+        Removed functions that build a link to test step results. The buildbot provides
+        these links in JSON.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration): Put failing tests into an array, instead of named variables.
+        (BuildbotIteration.ProductiveSteps): Removed step names that are not used on build.webkit.org.
+        We can easily add them to the map as needed.
+        (BuildbotIteration.TestSteps): Added a list of test steps to be displayed by test queues.
+        (BuildbotIteration.prototype._parseData): Moved code for parsing step results away
+        to BuildbotTestResults class. We used to parse here, build an intermediate data structure,
+        and then build a BuildbotTestResults object, which was strange.
+        (BuildbotIteration.prototype.loadLayoutTestResults): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        Corrected an unrelated assertion that was buggy, and kept firing.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults):
+        (BuildbotTestResults.prototype._parseResults.resultSummarizer):
+        (BuildbotTestResults.prototype._parseResults):
+        (BuildbotTestResults.prototype.addFullLayoutTestResults):
+        Moved the code for parsing JSON results for a single step here.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype._testStepFailureDescription):
+        (BuildbotTesterQueueView.prototype._testStepFailureDescriptionWithCount):
+        (BuildbotTesterQueueView.prototype._presentPopoverForGenericTestFailures):
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): Deleted.
+        (BuildbotTesterQueueView.prototype.update): Deleted.
+        (BuildbotTesterQueueView.prototype._presentPopoverForMultipleFailureKinds): Deleted.
+        Updated for the new data structures. One behavior change is that we now display individual
+        counts when multiple test kinds fail, e.g. "1 javascript test failure, 83+ layout
+        test failures, 3 platform api test failures".
+
 2015-03-03  Matthew Mirman  <mmirman@apple.com>
 
         JSC tests should not be repeated twice for each branch builder, and should if possible have their own queue.

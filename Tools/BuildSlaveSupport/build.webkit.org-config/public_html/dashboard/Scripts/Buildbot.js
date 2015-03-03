@@ -113,36 +113,6 @@ Buildbot.prototype = {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
     },
 
-    javascriptTestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/jscore-test/logs/stdio";
-    },
-
-    apiTestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/run-api-tests/logs/stdio";
-    },
-
-    platformAPITestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/API%20tests/logs/stdio";
-    },
-
-    webkitpyTestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/webkitpy-test/logs/stdio";
-    },
-
-    webkitperlTestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/webkitperl-test/logs/stdio";
-    },
-
-    bindingsTestResultsURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/bindings-generation-tests/logs/stdio";
-    },
-
     layoutTestResultsURLForIteration: function(iteration)
     {
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/results.html";

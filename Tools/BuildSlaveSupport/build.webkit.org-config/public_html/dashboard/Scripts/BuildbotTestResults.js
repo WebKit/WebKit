@@ -23,28 +23,157 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-BuildbotTestResults = function(buildbotIteration, info)
+BuildbotTestResults = function(testStep)
 {
     BaseObject.call(this);
 
-    this.finished = info.finished || false;
-
-    this.allPassed = info.allPassed || false;
-    this.errorOccurred = info.errorOccurred || false;
-    this.tooManyFailures = info.tooManyFailures || false;
-
-    this.failureCount = info.failureCount || 0;
-    this.flakeyCount = info.flakeyCount || 0;
-    this.totalLeakCount = info.totalLeakCount || 0;
-    this.uniqueLeakCount = info.uniqueLeakCount || 0;
-    this.newPassesCount = info.newPassesCount || 0;
-    this.missingCount = info.missingCount || 0;
-    this.crashCount = info.crashCount || 0;
+    this._parseResults(testStep);
 };
 
 BaseObject.addConstructorFunctions(BuildbotTestResults);
 
 BuildbotTestResults.prototype = {
     constructor: BuildbotTestResults,
-    __proto__: BaseObject.prototype
+    __proto__: BaseObject.prototype,
+
+    _parseResults: function(testStep)
+    {
+        this.name = testStep.name;
+        this.URL = testStep.logs[0][1];
+
+        this.allPassed = false;
+        this.errorOccurred = false;
+        this.tooManyFailures = false;
+
+        this.failureCount = 0;
+        this.flakeyCount = 0;
+        this.totalLeakCount = 0;
+        this.uniqueLeakCount = 0;
+        this.newPassesCount = 0;
+        this.missingCount = 0;
+        this.crashCount = 0;
+
+        if (!testStep.isFinished) {
+            // The step never even ran, or hasn't finished running.
+            this.finished = false;
+            return;
+        }
+
+        this.finished = true;
+
+        if (!testStep.results || testStep.results[0] === BuildbotIteration.SUCCESS || testStep.results[0] === BuildbotIteration.WARNINGS) {
+            // All tests passed.
+            this.allPassed = true;
+            return;
+        }
+
+        if (/Exiting early/.test(testStep.results[1][0]))
+            this.tooManyFailures = true;
+
+        function resultSummarizer(matchString, sum, outputLine)
+        {
+            var match = /^(\d+)\s/.exec(outputLine);
+            if (!match)
+                return sum;
+            if (!outputLine.contains(matchString))
+                return sum;
+            if (!sum || sum === -1)
+                sum = 0;
+            return sum + parseInt(match[1], 10);
+        }
+
+        this.failureCount = testStep.results[1].reduce(resultSummarizer.bind(null, "fail"), undefined);
+        this.flakeyCount = testStep.results[1].reduce(resultSummarizer.bind(null, "flake"), undefined);
+        this.totalLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "total leak"), undefined);
+        this.uniqueLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "unique leak"), undefined);
+        this.newPassesCount = testStep.results[1].reduce(resultSummarizer.bind(null, "new pass"), undefined);
+        this.missingCount = testStep.results[1].reduce(resultSummarizer.bind(null, "missing"), undefined);
+        this.crashCount = testStep.results[1].reduce(resultSummarizer.bind(null, "crash"), undefined);
+
+        if (!this.failureCount && !this.flakyCount && !this.totalLeakCount && !this.uniqueLeakCount && !this.newPassesCount && !this.missingCount) {
+            // This step exited with a non-zero exit status, but we didn't find any output about the number of failed tests.
+            // Something must have gone wrong (e.g., timed out and was killed by buildbot).
+            this.errorOccurred = true;
+        }
+    },
+
+    addFullLayoutTestResults: function(data)
+    {
+        console.assert(this.name === "layout-test");
+
+        function collectResults(subtree, predicate)
+        {
+            // Results object is a trie:
+            // directory
+            //   subdirectory
+            //     test1.html
+            //       expected:"PASS"
+            //       actual: "IMAGE"
+            //       report: "REGRESSION"
+            //     test2.html
+            //       expected:"FAIL"
+            //       actual:"TEXT"
+
+            var result = [];
+            for (var key in subtree) {
+                var value = subtree[key];
+                console.assert(typeof value === "object");
+                var isIndividualTest = value.hasOwnProperty("actual") && value.hasOwnProperty("expected");
+                if (isIndividualTest) {
+                    // Possible values for actual and expected keys: PASS, FAIL, AUDIO, IMAGE, TEXT, IMAGE+TEXT, TIMEOUT, CRASH, MISSING.
+                    // Both actual and expected can be space separated lists. Actual contains two values when retrying a failed test
+                    // gives a different result (retrying may be disabled in tester configuration).
+                    // Possible values for report key (when present): REGRESSION, MISSING, FLAKY.
+
+                    if (predicate(value)) {
+                        var item = {path: key};
+
+                        // FIXME (bug 127186): Crash log URL will be incorrect if crash only happened on retry (e.g. "TEXT CRASH").
+                        // It should point to retries subdirectory, but the information about which attempt failed gets lost here.
+                        if (value.actual.contains("CRASH"))
+                            item.crash = true;
+                        if (value.actual.contains("TIMEOUT"))
+                            item.timeout = true;
+
+                        // FIXME (bug 127186): Similarly, we don't have a good way to present results for something like "TIMEOUT TEXT",
+                        // not even UI wise. For now, only show a diff link if the first attempt has the diff.
+                        if (value.actual.split(" ")[0].contains("TEXT"))
+                            item.has_diff = true;
+
+                        // FIXME (bug 127186): It is particularly unfortunate for image diffs, because we currently only check image results
+                        // on retry (except for reftests), so many times, you will see images on buildbot page, but not on the dashboard.
+                        // FIXME: Find a way to display expected mismatch reftest failures. 
+                        if (value.actual.split(" ")[0].contains("IMAGE") && value.reftest_type != "!=")
+                            item.has_image_diff = true;
+
+                        if (value.has_stderr)
+                            item.has_stderr = true;
+
+                        result.push(item);
+                    }
+
+                } else {
+                    var nestedTests = collectResults(value, predicate);
+                    for (var i = 0, end = nestedTests.length; i < end; ++i)
+                        nestedTests[i].path = key + "/" + nestedTests[i].path;
+                    result = result.concat(nestedTests);
+                }
+            }
+
+            return result;
+        }
+
+        this.hasPrettyPatch = data.has_pretty_patch;
+
+        this.regressions = collectResults(data.tests, function(info) { return info["report"] === "REGRESSION" });
+        console.assert(data.num_regressions === this.regressions.length);
+
+        this.flakyTests = collectResults(data.tests, function(info) { return info["report"] === "FLAKY" });
+        console.assert(data.num_flaky === this.flakyTests.length);
+
+        this.testsWithMissingResults = collectResults(data.tests, function(info) { return info["report"] === "MISSING" });
+        // data.num_missing is not always equal to the size of testsWithMissingResults array,
+        // because buildbot counts regressions that had missing pixel results on retry (e.g. "TEXT MISSING").
+        console.assert(data.num_missing >= this.testsWithMissingResults.length);
+    },
 };

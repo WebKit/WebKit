@@ -46,13 +46,9 @@ BuildbotIteration = function(queue, dataOrID, finished)
     this.openSourceRevision = null;
     this.internalRevision = null;
 
-    this.layoutTestResults = null;
-    this.javascriptTestResults = null;
-    this.apiTestResults = null;
-    this.platformAPITestResults = null;
-    this.pythonTestResults = null;
-    this.perlTestResults = null;
-    this.bindingTestResults = null;
+    this.layoutTestResults = null; // Layout test results can be needed even if all tests passed, e.g. for the leaks bot.
+
+    this.failedTestSteps = [];
 
     this._finished = finished;
 };
@@ -70,7 +66,6 @@ BuildbotIteration.RETRY = 5;
 // If none of these steps ran, then we didn't get any real results, and the iteration was not productive.
 BuildbotIteration.ProductiveSteps = {
     "compile-webkit": 1,
-    "build archive": 1,
     "build ASan archive": 1,
     "Build" : 1,
     "layout-test": 1,
@@ -80,10 +75,17 @@ BuildbotIteration.ProductiveSteps = {
     "webkitpy-test": 1,
     "webkitperl-test": 1,
     "bindings-generation-tests": 1,
-    "run Membuster OS Memory": 1,
-    "run scrollperf": 1,
-    "run PLT3": 1,
     "perf-test": 1
+};
+
+BuildbotIteration.TestSteps = {
+    "layout-test": "layout test",
+    "jscore-test": "javascript test",
+    "run-api-tests": "api test",
+    "API tests": "platform api test",
+    "webkitpy-test": "webkitpy test",
+    "webkitperl-test": "webkitperl test",
+    "bindings-generation-tests": "bindings tests",
 };
 
 BuildbotIteration.Event = {
@@ -185,60 +187,6 @@ BuildbotIteration.prototype = {
 
     _parseData: function(data)
     {
-        function collectTestResults(data, stepName)
-        {
-            var testStep = data.steps.findFirst(function(step) { return step.name === stepName; });
-            if (!testStep)
-                return null;
-
-            var testResults = {};
-
-            if (!testStep.isFinished) {
-                // The step never even ran, or hasn't finished running.
-                testResults.finished = false;
-                return testResults;
-            }
-
-            testResults.finished = true;
-
-            if (!testStep.results || testStep.results[0] === BuildbotIteration.SUCCESS) {
-                // All tests passed.
-                testResults.allPassed = true;
-                return testResults;
-            }
-
-            if (/Exiting early/.test(testStep.results[1][0]))
-                testResults.tooManyFailures = true;
-
-            function resultSummarizer(matchString, sum, outputLine)
-            {
-                var match = /^(\d+)\s/.exec(outputLine);
-                if (!match)
-                    return sum;
-                if (!outputLine.contains(matchString))
-                    return sum;
-                if (!sum || sum === -1)
-                    sum = 0;
-                return sum + parseInt(match[1], 10);
-            }
-
-            testResults.failureCount = testStep.results[1].reduce(resultSummarizer.bind(null, "fail"), undefined);
-            testResults.flakeyCount = testStep.results[1].reduce(resultSummarizer.bind(null, "flake"), undefined);
-            testResults.totalLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "total leak"), undefined);
-            testResults.uniqueLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "unique leak"), undefined);
-            testResults.newPassesCount = testStep.results[1].reduce(resultSummarizer.bind(null, "new pass"), undefined);
-            testResults.missingCount = testStep.results[1].reduce(resultSummarizer.bind(null, "missing"), undefined);
-            testResults.crashCount = testStep.results[1].reduce(resultSummarizer.bind(null, "crash"), undefined);
-
-            if (!testResults.failureCount && !testResults.flakyCount && !testResults.totalLeakCount && !testResults.uniqueLeakCount && !testResults.newPassesCount && !testResults.missingCount) {
-                // This step exited with a non-zero exit status, but we didn't find any output about the number of failed tests.
-                // Something must have gone wrong (e.g., timed out and was killed by buildbot).
-                testResults.errorOccurred = true;
-            }
-
-            return testResults;
-        }
-
         console.assert(!this.id || this.id === data.number);
         this.id = data.number;
 
@@ -286,26 +234,17 @@ BuildbotIteration.prototype = {
         this.startTime = new Date(data.times[0] * 1000);
         this.endTime = new Date(data.times[1] * 1000);
 
-        var layoutTestResults = collectTestResults.call(this, data, "layout-test");
-        this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
-
-        var javascriptTestResults = collectTestResults.call(this, data, "jscore-test");
-        this.javascriptTestResults = javascriptTestResults ? new BuildbotTestResults(this, javascriptTestResults) : null;
-
-        var apiTestResults = collectTestResults.call(this, data, "run-api-tests");
-        this.apiTestResults = apiTestResults ? new BuildbotTestResults(this, apiTestResults) : null;
-
-        var platformAPITestResults = collectTestResults.call(this, data, "API tests");
-        this.platformAPITestResults = platformAPITestResults ? new BuildbotTestResults(this, platformAPITestResults) : null;
-
-        var pythonTestResults = collectTestResults.call(this, data, "webkitpy-test");
-        this.pythonTestResults = pythonTestResults ? new BuildbotTestResults(this, pythonTestResults) : null;
-
-        var perlTestResults = collectTestResults.call(this, data, "webkitperl-test");
-        this.perlTestResults = perlTestResults ? new BuildbotTestResults(this, perlTestResults) : null;
-
-        var bindingTestResults = collectTestResults.call(this, data, "bindings-generation-tests");
-        this.bindingTestResults = bindingTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
+        this.failedTestSteps = [];
+        data.steps.forEach(function(step) {
+            if (!step.isFinished || !(step.name in BuildbotIteration.TestSteps))
+                return;
+            var results = new BuildbotTestResults(step);
+            if (step.name === "layout-test")
+                this.layoutTestResults = results;
+            if (results.allPassed)
+                return;
+            this.failedTestSteps.push(results);
+        }, this);
 
         var masterShellCommandStep = data.steps.findFirst(function(step) { return step.name === "MasterShellCommand"; });
         this.resultURLs = masterShellCommandStep ? masterShellCommandStep.urls : null;
@@ -391,83 +330,10 @@ BuildbotIteration.prototype = {
         if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
             return;
 
-        function collectResults(subtree, predicate)
-        {
-            // Results object is a trie:
-            // directory
-            //   subdirectory
-            //     test1.html
-            //       expected:"PASS"
-            //       actual: "IMAGE"
-            //       report: "REGRESSION"
-            //     test2.html
-            //       expected:"FAIL"
-            //       actual:"TEXT"
-
-            var result = [];
-            for (var key in subtree) {
-                var value = subtree[key];
-                console.assert(typeof value === "object");
-                var isIndividualTest = value.hasOwnProperty("actual") && value.hasOwnProperty("expected");
-                if (isIndividualTest) {
-                    // Possible values for actual and expected keys: PASS, FAIL, AUDIO, IMAGE, TEXT, IMAGE+TEXT, TIMEOUT, CRASH, MISSING.
-                    // Both actual and expected can be space separated lists. Actual contains two values when retrying a failed test
-                    // gives a different result (retrying may be disabled in tester configuration).
-                    // Possible values for report key (when present): REGRESSION, MISSING, FLAKY.
-
-                    if (predicate(value)) {
-                        var item = {path: key};
-
-                        // FIXME (bug 127186): Crash log URL will be incorrect if crash only happened on retry (e.g. "TEXT CRASH").
-                        // It should point to retries subdirectory, but the information about which attempt failed gets lost here.
-                        if (value.actual.contains("CRASH"))
-                            item.crash = true;
-                        if (value.actual.contains("TIMEOUT"))
-                            item.timeout = true;
-
-                        // FIXME (bug 127186): Similarly, we don't have a good way to present results for something like "TIMEOUT TEXT",
-                        // not even UI wise. For now, only show a diff link if the first attempt has the diff.
-                        if (value.actual.split(" ")[0].contains("TEXT"))
-                            item.has_diff = true;
-
-                        // FIXME (bug 127186): It is particularly unfortunate for image diffs, because we currently only check image results
-                        // on retry (except for reftests), so many times, you will see images on buidbot page, but not on the dashboard.
-                        // FIXME: Find a way to display expected mismatch reftest failures. 
-                        if (value.actual.split(" ")[0].contains("IMAGE") && value.reftest_type != "!=")
-                            item.has_image_diff = true;
-
-                        if (value.has_stderr)
-                            item.has_stderr = true;
-
-                        result.push(item);
-                    }
-
-                } else {
-                    var nestedTests = collectResults(value, predicate);
-                    for (var i = 0, end = nestedTests.length; i < end; ++i)
-                        nestedTests[i].path = key + "/" + nestedTests[i].path;
-                    result = result.concat(nestedTests);
-                }
-            }
-
-            return result;
-        }
-
         JSON.load(this.queue.buildbot.layoutTestFullResultsURLForIteration(this), function(data) {
             this.queue.buildbot.isAuthenticated = true;
-            this.hasPrettyPatch = data.has_pretty_patch;
 
-            this.layoutTestResults.regressions = collectResults(data.tests, function(info) { return info["report"] === "REGRESSION" });
-            console.assert(data.num_regressions === this.layoutTestResults.regressions.length);
-
-            this.layoutTestResults.flakyTests = collectResults(data.tests, function(info) { return info["report"] === "FLAKY" });
-            console.assert(data.num_flaky === this.layoutTestResults.flakyTests.length);
-
-            this.layoutTestResults.testsWithMissingResults = collectResults(data.tests, function(info) { return info["report"] === "MISSING" });
-            // data.num_missing is not always equal to the size of testsWithMissingResults array,
-            // because buildbot counts regressions that had missing pixel results on retry (e.g. "TEXT MISSING").
-            console.assert(data.num_missing >= this.layoutTestResults.testsWithMissingResults.length);
-
+            this.layoutTestResults.addFullLayoutTestResults(data);
             callback();
         }.bind(this),
         function(data) {

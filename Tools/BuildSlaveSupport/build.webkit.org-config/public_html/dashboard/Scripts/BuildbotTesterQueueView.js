@@ -64,14 +64,6 @@ BuildbotTesterQueueView.prototype = {
                 var willHaveAnotherStatusLine = i + 1 < queue.iterations.length && limit > 0 && !iteration.successful; // This is not 100% correct, as the remaining iterations may not be finished or loaded yet, but close enough.
                 var messageElement = this.revisionContentForIteration(iteration, (iteration.productive && willHaveAnotherStatusLine) ? iteration.previousProductiveIteration : null);
 
-                var layoutTestResults = iteration.layoutTestResults || {failureCount: 0};
-                var javascriptTestResults = iteration.javascriptTestResults || {failureCount: 0};
-                var apiTestResults = iteration.apiTestResults || {failureCount: 0};
-                var platformAPITestResults = iteration.platformAPITestResults || {failureCount: 0};
-                var pythonTestResults = iteration.pythonTestResults || {failureCount: 0};
-                var perlTestResults = iteration.perlTestResults || {errorOccurred: false};
-                var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
-
                 if (iteration.successful) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "all tests passed", undefined, url);
@@ -79,45 +71,36 @@ BuildbotTesterQueueView.prototype = {
                 } else if (!iteration.productive) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
-                } else if (queue.crashesOnly && !layoutTestResults.crashCount) {
-                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
-                    limit = 0;
-                } else if (queue.crashesOnly && layoutTestResults.crashCount) {
-                    var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.crashCount === 1 ? "crash found" : "crashes found", layoutTestResults.crashCount, url);
-                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
+                } else if (iteration.failedTestSteps.length === 0) {
                     // Something wrong happened, but it was not a test failure.
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
-                } else if (layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures", layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount, url);
-                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
-                } else if (!layoutTestResults.failureCount && javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.javascriptTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, javascriptTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures", javascriptTestResults.failureCount, url);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.apiTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, apiTestResults.failureCount === 1 ? "api test failure" : "api test failures", apiTestResults.failureCount, url);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.platformAPITestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, platformAPITestResults.failureCount === 1 ? "platform api test failure" : "api test failures", platformAPITestResults.failureCount, url);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && pythonTestResults.failureCount && !perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.webkitpyTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, pythonTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures", pythonTestResults.failureCount, url);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && perlTestResults.errorOccurred && !bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.webkitperlTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, "webkitperl test failed", undefined, url);
-                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !platformAPITestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.errorOccurred && bindingTestResults.errorOccurred) {
-                    var url = iteration.queue.buildbot.bindingsTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, "bindings tests failed", undefined, url);
+                } else if (queue.crashesOnly) {
+                    // A crashes-only queue is a queue where we are only interested in crashes, e.g. a GuardMalloc or an ASan one.
+                    // Currently, only layout tests are supported in such.
+                    var layoutTestResults = iteration.layoutTestResults;
+                    if (!layoutTestResults.crashCount) {
+                        var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "no crashes found", undefined, url);
+                        limit = 0;
+                    } else {
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.crashCount === 1 ? "crash found" : "crashes found", layoutTestResults.crashCount, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+                        new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
+                    }
+                } else if (iteration.failedTestSteps.length === 1) {
+                    var failedStep = iteration.failedTestSteps[0];
+                    if (failedStep.name === "layout-test") {
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.tooManyFailures ? failedStep.failureCount + "\uff0b" : failedStep.failureCount, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+                        new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
+                    } else {
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount ? failedStep.failureCount : undefined, failedStep.URL);
+                        new PopoverTracker(status.statusBubbleElement, this._presentPopoverForGenericTestFailures.bind(this), iteration);
+                    }
                 } else {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
-                    var totalFailures = layoutTestResults.failureCount + javascriptTestResults.failureCount + apiTestResults.failureCount + platformAPITestResults.failureCount + pythonTestResults.failureCount + perlTestResults.errorOccurred + bindingTestResults.errorOccurred;
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, totalFailures === 1 ? "test failure" : "test failures", totalFailures, url);
-                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForMultipleFailureKinds.bind(this), iteration);
+                    var failureDescriptions = iteration.failedTestSteps.map(function(failedStep) { return this._testStepFailureDescriptionWithCount(failedStep) }, this);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, failureDescriptions.join(", "), undefined, url);
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForGenericTestFailures.bind(this), iteration);
                 }
 
                 this.element.appendChild(status.element);
@@ -132,6 +115,27 @@ BuildbotTesterQueueView.prototype = {
 
         this.appendBuildStyle.call(this, this.releaseQueues, "Release", appendBuilderQueueStatus);
         this.appendBuildStyle.call(this, this.debugQueues, "Debug", appendBuilderQueueStatus);
+    },
+
+    _testStepFailureDescription: function(failedStep)
+    {
+        if (!failedStep.failureCount)
+            return BuildbotIteration.TestSteps[failedStep.name] + " failed";
+        if (failedStep.failureCount === 1)
+            return BuildbotIteration.TestSteps[failedStep.name] + " failure";
+        return BuildbotIteration.TestSteps[failedStep.name] + " failures";
+    },
+
+    _testStepFailureDescriptionWithCount: function(failedStep)
+    {
+        if (!failedStep.failureCount)
+            return this._testStepFailureDescription(failedStep);
+        if (failedStep.tooManyFailures) {
+            // E.g. "50+ layout test failures", preventing line breaks around the "+".
+            return failedStep.failureCount + "\ufeff\uff0b\u00a0" + this._testStepFailureDescription(failedStep);
+        }
+        // E.g. "1 layout test failure", preventing line break after the number.
+        return failedStep.failureCount + "\u00a0" + this._testStepFailureDescription(failedStep);
     },
 
     _popoverContentForLayoutTestRegressions: function(iteration)
@@ -263,7 +267,7 @@ BuildbotTesterQueueView.prototype = {
         return true;
     },
 
-    _presentPopoverForMultipleFailureKinds: function(element, popover, iteration)
+    _presentPopoverForGenericTestFailures: function(element, popover, iteration)
     {
         function addResultKind(message, url) {
             var line = document.createElement("a");
@@ -274,51 +278,18 @@ BuildbotTesterQueueView.prototype = {
             content.appendChild(line);            
         }
 
-        var layoutTestResults = iteration.layoutTestResults || {failureCount: 0};
-        var javascriptTestResults = iteration.javascriptTestResults || {failureCount: 0};
-        var apiTestResults = iteration.apiTestResults || {failureCount: 0};
-        var platformAPITestResults = iteration.platformAPITestResults || {failureCount: 0};
-        var pythonTestResults = iteration.pythonTestResults || {failureCount: 0};
-        var perlTestResults = iteration.perlTestResults || {errorOccurred: false};
-        var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
-
         var content = document.createElement("div");
         content.className = "test-results-popover";
 
         this._addIterationHeadingToPopover(iteration, content);
         this._addDividerToPopover(content);
 
-        if (layoutTestResults.failureCount) {
-            var message = (layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount) + "\u00a0" +
-                (layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures");
-            addResultKind(message, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
-        }
-
-        if (javascriptTestResults.failureCount) {
-            var message = javascriptTestResults.failureCount + "\u00a0" + (javascriptTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures");
-            addResultKind(message, iteration.queue.buildbot.javascriptTestResultsURLForIteration(iteration));
-        }
-
-        if (apiTestResults.failureCount) {
-            var message = apiTestResults.failureCount + "\u00a0" + (apiTestResults.failureCount === 1 ? "api test failure" : "api test failures");
-            addResultKind(message, iteration.queue.buildbot.apiTestResultsURLForIteration(iteration));
-        }
-
-        if (platformAPITestResults.failureCount) {
-            var message = platformAPITestResults.failureCount + "\u00a0" + (platformAPITestResults.failureCount === 1 ? "platform api test failure" : "platform api test failures");
-            addResultKind(message, iteration.queue.buildbot.platformAPITestResultsURLForIteration(iteration));
-        }
-
-        if (pythonTestResults.failureCount) {
-            var message = pythonTestResults.failureCount + "\u00a0" + (pythonTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures");
-            addResultKind(message, iteration.queue.buildbot.webkitpyTestResultsURLForIteration(iteration));
-        }
-
-        if (perlTestResults.errorOccurred)
-            addResultKind("webkitperl tests failed", iteration.queue.buildbot.webkitperlTestResultsURLForIteration(iteration));
-
-        if (bindingTestResults.errorOccurred)
-            addResultKind("bindings tests failed", iteration.queue.buildbot.bindingsTestResultsURLForIteration(iteration));
+        iteration.failedTestSteps.forEach(function(failedStep) {
+            if (failedStep.name === "layout-test")
+                addResultKind(this._testStepFailureDescriptionWithCount(failedStep), iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+            else
+                addResultKind(this._testStepFailureDescriptionWithCount(failedStep), failedStep.URL);
+        }, this);
 
         var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
         popover.content = content;

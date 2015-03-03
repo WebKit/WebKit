@@ -144,7 +144,7 @@ BuildbotQueueView.prototype = {
             return result;
         }
 
-        console.assert(trac.oldestRecordedRevisionNumber >= firstRevisionNumber);
+        console.assert(trac.oldestRecordedRevisionNumber <= firstRevisionNumber);
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
