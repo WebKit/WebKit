@@ -30,19 +30,16 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
-#include "DFGFunctionWhitelist.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {
 
-bool isSupported(CodeBlock* codeBlock)
+bool isSupported()
 {
     return Options::useDFGJIT()
-        && MacroAssembler::supportsFloatingPoint()
-        && Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
-        && FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock);
+        && MacroAssembler::supportsFloatingPoint();
 }
 
 bool isSupportedForInlining(CodeBlock* codeBlock)
@@ -53,22 +50,22 @@ bool isSupportedForInlining(CodeBlock* codeBlock)
 
 bool mightCompileEval(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock)
+    return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 bool mightCompileProgram(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock)
+    return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock)
+    return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock)
+    return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 

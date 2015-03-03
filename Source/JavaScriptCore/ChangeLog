@@ -1,3 +1,64 @@
+2015-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT debugging features that selectively disable the JITs for code blocks need to stay out of the way of the critical path of JIT management
+        https://bugs.webkit.org/show_bug.cgi?id=142234
+
+        Reviewed by Mark Lam and Benjamin Poulain.
+        
+        Long ago, we used to selectively disable compilation of CodeBlocks for debugging purposes by
+        adding hacks to DFGDriver.cpp.  This was all well and good.  It used the existing
+        CompilationFailed mode of the DFG driver to signal failure of CodeBlocks that we didn't want
+        to compile.  That's great because CompilationFailed is a well-supported return value on the
+        critical path, usually used for when we run out of JIT memory.
+
+        Later, this was moved into DFGCapabilities. This was basically incorrect. It introduced a bug
+        where disabling compiling of a CodeBlock meant that we stopped inlining it as well.  So if
+        you had a compiler bug that arose if foo was inlined into bar, and you bisected down to bar,
+        then foo would no longer get inlined and you wouldn't see the bug.  That's busted.
+
+        So then we changed the code in DFGCapabilities to mark bar as CanCompile and foo as
+        CanInline. Now, foo wouldn't get compiled alone but it would get inlined.
+
+        But then we removed CanCompile because that capability mode only existed for the purpose of
+        our old varargs hacks.  After that removal, "CanInline" became CannotCompile.  This means
+        that if you bisect down on bar in the "foo inlined into bar" case, you'll crash in the DFG
+        because the baseline JIT wouldn't have known to insert profiling on foo.
+
+        We could fix this by bringing back CanInline.
+
+        But this is all a pile of nonsense.  The debug support to selectively disable compilation of
+        some CodeBlocks shouldn't cross-cut our entire engine and should most certainly never involve
+        adding new capability modes.  This support is a hack at best and is for use by JSC hackers
+        only.  It should be as unintrusive as possible.
+
+        So, as in the ancient times, the only proper place to put this hack is in DFGDriver.cpp, and
+        return CompilationFailed.  This is correct not just because it takes capability modes out of
+        the picture (and obviates the need to introduce new ones), but also because it means that
+        disabling compilation doesn't change the profiling mode of other CodeBlocks in the Baseline
+        JIT.  Capability mode influences profiling mode which in turn influences code generation in
+        the Baseline JIT, sometimes in very significant ways - like, we sometimes do additional
+        double-to-int conversions in Baseline if we know that we might tier-up into the DFG, since
+        this buys us more precise profiling.
+        
+        This change reduces the intrusiveness of debugging hacks by making them use the very simple
+        CompilationFailed mechanism rather than trying to influence capability modes. Capability
+        modes have very subtle effects on the whole engine, while CompilationFailed just makes the
+        engine pretend like the DFG compilation will happen at timelike infinity. That makes these
+        hacks much more likely to continue working as we make other changes to the system.
+        
+        This brings back the ability to bisect down onto a function bar when bar inlines foo. Prior
+        to this change, we would crash in that case.
+
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupported):
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+
 2015-03-03  peavo@outlook.com  <peavo@outlook.com>
 
         [Win64] JSC compile error.

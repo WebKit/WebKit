@@ -30,6 +30,7 @@
 #include "JSString.h"
 
 #include "CodeBlock.h"
+#include "DFGFunctionWhitelist.h"
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
 #include "DFGThunks.h"
@@ -61,6 +62,10 @@ static CompilationResult compileImpl(
     PassRefPtr<DeferredCompilationCallback> callback)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
+    
+    if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
+        || !FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock))
+        return CompilationFailed;
     
     numCompilations++;
     
