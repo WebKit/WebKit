@@ -56,6 +56,11 @@ inline double currentTimeMS()
 // NTP or manual adjustments, so it is better suited for elapsed time measurement.
 WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
+inline double monotonicallyIncreasingTimeMS()
+{
+    return monotonicallyIncreasingTime() * 1000.0;
+}
+
 // Returns the current CPU time of the current thread.
 // Precision varies depending on platform but is usually as good or better
 // than a millisecond.
@@ -66,6 +71,7 @@ WTF_EXPORT_PRIVATE std::chrono::microseconds currentCPUTime();
 using WTF::currentTime;
 using WTF::currentTimeMS;
 using WTF::monotonicallyIncreasingTime;
+using WTF::monotonicallyIncreasingTimeMS;
 using WTF::currentCPUTime;
 
 #endif // CurrentTime_h

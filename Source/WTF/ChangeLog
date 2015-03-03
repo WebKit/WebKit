@@ -1,3 +1,17 @@
+2015-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG compile time measurements should really report milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=142209
+
+        Reviewed by Benjamin Poulain.
+        
+        This bug was introduced because currentTimeMS() calls were converted to
+        monotonicallyIncreasingTime() calls. Perhaps this bug would be less likely if there was a
+        monotonicallyIncreasingTimeMS() function available, so this patch adds it.
+
+        * wtf/CurrentTime.h:
+        (WTF::monotonicallyIncreasingTimeMS):
+
 2015-02-27  Darin Adler  <darin@apple.com>
 
         Remove unused PossiblyNull
