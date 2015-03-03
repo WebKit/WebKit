@@ -1,5 +1,18 @@
 2015-03-03  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: popover should use requestAnimationFrame to drive move/resize animations
+        https://bugs.webkit.org/show_bug.cgi?id=142218
+
+        Reviewed by Timothy Hatcher.
+
+        Remove setTimeout workaround now that Inspector runs in its own process.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover.prototype.drawBackground):
+        (WebInspector.Popover.prototype._animateFrame):
+
+2015-03-03  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: Console log level selector loses selection on reload
         https://bugs.webkit.org/show_bug.cgi?id=142199
 

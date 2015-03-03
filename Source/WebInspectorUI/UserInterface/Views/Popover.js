@@ -353,13 +353,8 @@ WebInspector.Popover.prototype = {
 
             this._drawBackground();
 
-            if (progress < 1) {
-                // FIXME: Revert to using window.requestAnimationFrame when Inspector is out of process.
-                // It can't currently use window.requestAnimationFrame because the callback passed into
-                // it won't fire while paused in the debugger inside the Inspector.
-                const animationRate60FPS = 17;
-                setTimeout(drawBackground.bind(this), animationRate60FPS);
-            }
+            if (progress < 1)
+                requestAnimationFrame(drawBackground.bind(this));
         }
 
         drawBackground.call(this);
