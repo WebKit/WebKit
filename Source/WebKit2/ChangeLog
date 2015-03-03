@@ -1,3 +1,46 @@
+2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r177075): WebProcess crashes when entering accelerating compositing mode before the WebView is realized
+        https://bugs.webkit.org/show_bug.cgi?id=142079
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that the texture mapper and native window handler
+        are initialized when the LayerTreeHost is initialized, assuming
+        the UI process has already sent the native window handler to the
+        web process, but that doesn't always happen since we moved the
+        redirected window creation to realize in r177075.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::nativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode): Call
+        LayerTreeHost::setNativeSurfaceHandleForCompositing if we
+        already have a native window handle at this point.
+        (WebKit::DrawingAreaImpl::setNativeSurfaceHandleForCompositing):
+        Call LayerTreeHost::setNativeSurfaceHandleForCompositing also when
+        not using threaded compositing.
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::makeContextCurrent): Helper function to
+        ensure a context and making it current.
+        (WebKit::LayerTreeHostGtk::ensureTextureMapper): Ensure a texture
+        is created for the current context.
+        (WebKit::LayerTreeHostGtk::initialize): Use makeContextCurrent()
+        and ensureTextureMapper(), and remove the LayerTreeContext
+        initialization since that's is now always initialized in
+        setNativeSurfaceHandleForCompositing().
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): Use
+        makeContextCurrent() helper function and also call
+        ensureTextureMapper() just in case the texture could not be
+        created during initialization because the native window handle was
+        not yet available.
+        (WebKit::LayerTreeHostGtk::flushAndRenderLayers): Use makeContextCurrent().
+        (WebKit::LayerTreeHostGtk::setNativeSurfaceHandleForCompositing):
+        Initialize the LayerTreeContext.
+        (WebKit::LayerTreeHostGtk::glContext): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2015-02-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r179429): Can't type comments in Facebook

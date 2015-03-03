@@ -456,6 +456,8 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(&m_webPage);
+    if (m_nativeSurfaceHandleForCompositing)
+        m_layerTreeHost->setNativeSurfaceHandleForCompositing(m_nativeSurfaceHandleForCompositing);
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
@@ -677,10 +679,8 @@ void DrawingAreaImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
     m_nativeSurfaceHandleForCompositing = handle;
     m_webPage.corePage()->settings().setAcceleratedCompositingEnabled(true);
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_layerTreeHost)
         m_layerTreeHost->setNativeSurfaceHandleForCompositing(handle);
-#endif
 }
 #endif
 

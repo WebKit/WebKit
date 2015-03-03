@@ -124,10 +124,6 @@ public:
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) { }
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
-    uint64_t nativeSurfaceHandleForCompositing() { return m_nativeSurfaceHandleForCompositing; }
-#endif
-
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 

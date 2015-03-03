@@ -78,17 +78,29 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
 {
 }
 
-GLContext* LayerTreeHostGtk::glContext()
+bool LayerTreeHostGtk::makeContextCurrent()
 {
-    if (m_context)
-        return m_context.get();
+    if (!m_context) {
+        if (!m_layerTreeContext.contextID)
+            return false;
 
-    uint64_t windowHandle = m_webPage->drawingArea()->nativeSurfaceHandleForCompositing();
-    if (!windowHandle)
-        return 0;
+        m_context = GLContext::createContextForWindow(m_layerTreeContext.contextID, GLContext::sharingContext());
+        if (!m_context)
+            return false;
+    }
 
-    m_context = GLContext::createContextForWindow(windowHandle, GLContext::sharingContext());
-    return m_context.get();
+    return m_context->makeContextCurrent();
+}
+
+void LayerTreeHostGtk::ensureTextureMapper()
+{
+    if (m_textureMapper)
+        return;
+
+    ASSERT(m_isValid);
+    m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 }
 
 void LayerTreeHostGtk::initialize()
@@ -113,19 +125,11 @@ void LayerTreeHostGtk::initialize()
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-    m_layerTreeContext.contextID = m_webPage->drawingArea()->nativeSurfaceHandleForCompositing();
-
-    GLContext* context = glContext();
-    if (!context)
+    // The creation of the TextureMapper needs an active OpenGL context.
+    if (!makeContextCurrent())
         return;
 
-    // The creation of the TextureMapper needs an active OpenGL context.
-    context->makeContextCurrent();
-
-    m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
-    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
-
+    ensureTextureMapper();
     scheduleLayerFlush();
 }
 
@@ -289,9 +293,10 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
 
 void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
 {
-    GLContext* context = glContext();
-    if (!context || !context->makeContextCurrent())
+    if (!makeContextCurrent())
         return;
+
+    ensureTextureMapper();
 
     // The window size may be out of sync with the page size at this point, and getting
     // the viewport parameters incorrect, means that the content will be misplaced. Thus
@@ -308,7 +313,7 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint();
     m_textureMapper->endPainting();
 
-    context->swapBuffers();
+    m_context->swapBuffers();
 }
 
 void LayerTreeHostGtk::flushAndRenderLayers()
@@ -321,8 +326,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
             return;
     }
 
-    GLContext* context = glContext();
-    if (!context || !context->makeContextCurrent())
+    if (!makeContextCurrent())
         return;
 
     if (!flushPendingLayerChanges())
@@ -378,6 +382,11 @@ void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverl
     m_viewOverlayRootLayer = viewOverlayRootLayer;
     if (m_viewOverlayRootLayer)
         m_rootLayer->addChild(m_viewOverlayRootLayer);
+}
+
+void LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(uint64_t handle)
+{
+    m_layerTreeContext.contextID = handle;
 }
 
 } // namespace WebKit

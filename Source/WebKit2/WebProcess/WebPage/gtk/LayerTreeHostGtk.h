@@ -61,6 +61,8 @@ protected:
     virtual void deviceOrPageScaleFactorChanged() override;
     virtual void pageBackgroundTransparencyChanged() override;
 
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
+
 private:
     // LayerTreeHost
     virtual const LayerTreeContext& layerTreeContext() override;
@@ -84,7 +86,8 @@ private:
 
     void layerFlushTimerFired();
 
-    WebCore::GLContext* glContext();
+    bool makeContextCurrent();
+    void ensureTextureMapper();
 
     LayerTreeContext m_layerTreeContext;
     bool m_isValid;
