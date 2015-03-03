@@ -233,11 +233,6 @@ private:
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void paintAttachmentLabelBackground(const RenderAttachment&, GraphicsContext&, AttachmentLayout&) const;
-    void paintAttachmentLabel(const RenderAttachment&, GraphicsContext&, AttachmentLayout&, bool useSelectedStyle) const;
-#endif
-
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;

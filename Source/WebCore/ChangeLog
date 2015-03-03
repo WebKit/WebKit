@@ -1,3 +1,45 @@
+2015-03-03  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> label can get very wide, doesn't wrap/truncate
+        https://bugs.webkit.org/show_bug.cgi?id=142214
+        <rdar://problem/19982499>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/attachment/attachment-label-highlight.html
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::labelTextColorForAttachment):
+        (WebCore::AttachmentLayout::addLine):
+        (WebCore::AttachmentLayout::layOutText):
+        (WebCore::AttachmentLayout::AttachmentLayout):
+        Make it possible to lay out multiple lines of label text.
+        We lay out the whole string normally, but then only draw N (where N=1 for now,
+        but is adjustable) of the lines. The remainder of the string is then
+        merged into a single line, which is middle-truncated with an ellipsis
+        and drawn in place of the N+1 line.
+
+        (WebCore::addAttachmentLabelBackgroundRightCorner):
+        (WebCore::addAttachmentLabelBackgroundLeftCorner):
+        (WebCore::paintAttachmentLabelBackground):
+        Wrap the label background around the multiple lines of text with curved edges.
+        We run first down the right side of the label, determining whether to use
+        concave or convex arcs based on the relative widths of adjacent lines.
+        Then, we run back up the left side of the label doing the same thing.
+
+        If the background rects of two lines are very similar (within the rounded rect radius),
+        they will be expanded to the larger of the two, because otherwise the arcs
+        look quite wrong.
+
+        (WebCore::paintAttachmentLabel):
+        Draw the label with CoreText directly instead of bothering with WebCore
+        text layout primitives. There's no need, and it makes wrapping much more complicated.
+
+        (WebCore::RenderThemeMac::paintAttachment):
+        (WebCore::RenderThemeMac::paintAttachmentLabelBackground): Deleted.
+        (WebCore::RenderThemeMac::paintAttachmentLabel): Deleted.
+
 2015-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid applying the clip-path when painting, if a layer also has a shape layer mask

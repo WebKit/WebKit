@@ -1,3 +1,20 @@
+2015-03-03  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> label can get very wide, doesn't wrap/truncate
+        https://bugs.webkit.org/show_bug.cgi?id=142214
+        <rdar://problem/19982499>
+
+        Reviewed by Simon Fraser.
+
+        * fast/attachment/attachment-label-highlight.html: Added.
+        * platform/mac/fast/attachment/attachment-label-highlight-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-label-highlight-expected.txt: Added.
+        Add a test for various <attachment> highlight cases.
+
+        * platform/mac/fast/attachment/attachment-rendering-expected.txt:
+        Update expected result for attachment-rendering, which changed size
+        because we now bail from text layout if we don't have any text.
+
 2015-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Document more debug assertions.

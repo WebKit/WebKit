@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+var attachmentShortLabel = document.createElement("attachment");
+var attachmentLongOnTopLabel = document.createElement("attachment");
+var attachmentLongOnBottomLabel = document.createElement("attachment");
+var attachmentWrappedLabel = document.createElement("attachment");
+var attachmentEqualSizeLabel = document.createElement("attachment");
+var attachmentNearlyEqualSizeLabel = document.createElement("attachment");
+
+if (window.internals) {
+    attachmentShortLabel.file = window.internals.createFile("short");
+    attachmentLongOnTopLabel.file = window.internals.createFile("short verylongword");
+    attachmentLongOnBottomLabel.file = window.internals.createFile("verylongword short");
+    attachmentWrappedLabel.file = window.internals.createFile("quite-a-long-filename-that-goes-on-without-an-end-in-sight");
+    attachmentEqualSizeLabel.file = window.internals.createFile("abunchofletters abunchofletters");
+    attachmentNearlyEqualSizeLabel.file = window.internals.createFile("abunchofletters abunchoflletters");
+}
+
+document.body.appendChild(attachmentShortLabel);
+document.body.appendChild(attachmentLongOnTopLabel);
+document.body.appendChild(attachmentLongOnBottomLabel);
+document.body.appendChild(attachmentWrappedLabel);
+document.body.appendChild(attachmentEqualSizeLabel);
+document.body.appendChild(attachmentNearlyEqualSizeLabel);
+
+document.execCommand("SelectAll");
+</script>
+</body>
+</html>
