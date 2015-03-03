@@ -1223,14 +1223,21 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     return _formAccessoryView.get();
 }
 
-- (NSArray *)inputAssistantButtonItems
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >90000
+- (UITextInputAssistantItem *)inputAssistantItem
 {
     if (!_formAccessoryView) {
         _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
         [_formAccessoryView setDelegate:self];
     }
-    return ([_formAccessoryView respondsToSelector:@selector(buttonItems)]) ? [_formAccessoryView buttonItems] : nil;
+    return ([_formAccessoryView respondsToSelector:@selector(inputAssistantItem)]) ? [_formAccessoryView inputAssistantItem] : nil;
 }
+
+- (UITextInputAssistantItem *)_inputAssistantItem
+{
+    return [self inputAssistantItem];
+}
+#endif
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection
 {
@@ -2340,18 +2347,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     return _traits.get();
 }
-
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 80300)
-- (UITextInputAssistantItem *)inputAssistantItem
-{
-    return nil;
-}
-
-- (UITextInputAssistantItem *)_inputAssistantItem
-{
-    return nil;
-}
-#endif
 
 - (UITextInteractionAssistant *)interactionAssistant
 {
