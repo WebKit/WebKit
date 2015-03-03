@@ -1,5 +1,11 @@
 2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Bump libsoup version to 2.49.91.1 to fix 32 bit build.
+
+        * gtk/jhbuild.modules:
+
+2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Synchronous XMLHttpRequests can time out when we reach the max connections limit
         https://bugs.webkit.org/show_bug.cgi?id=141508
 
