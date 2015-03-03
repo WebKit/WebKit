@@ -28,6 +28,8 @@
 
 #include "BAssert.h"
 #include <atomic>
+#include <mutex>
+#include <thread>
 
 // A fast replacement for std::mutex, for use in static storage.
 
@@ -51,6 +53,27 @@ private:
 
     std::atomic_flag m_flag;
 };
+
+static inline void sleep(
+    std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds duration)
+{
+    if (duration == std::chrono::milliseconds(0))
+        return;
+    
+    lock.unlock();
+    std::this_thread::sleep_for(duration);
+    lock.lock();
+}
+
+static inline void waitUntilFalse(
+    std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration,
+    bool& condition)
+{
+    while (condition) {
+        condition = false;
+        sleep(lock, sleepDuration);
+    }
+}
 
 inline void StaticMutex::init()
 {

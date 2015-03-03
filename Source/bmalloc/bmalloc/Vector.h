@@ -88,7 +88,8 @@ inline Vector<T>::Vector()
 template<typename T>
 Vector<T>::~Vector()
 {
-    vmDeallocate(m_buffer, vmSize(m_capacity * sizeof(T)));
+    if (m_buffer)
+        vmDeallocate(m_buffer, vmSize(m_capacity * sizeof(T)));
 }
 
 template<typename T>

@@ -43,6 +43,7 @@ public:
     enum DoNotValidateTag { DoNotValidate };
     LargeObject(DoNotValidateTag, void*);
     
+    operator bool() { return !!*this; }
     bool operator!() { return !m_object; }
 
     char* begin() const { return static_cast<char*>(m_object); }
