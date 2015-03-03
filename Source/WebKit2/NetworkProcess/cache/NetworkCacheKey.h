@@ -45,6 +45,10 @@ public:
     NetworkCacheKey(NetworkCacheKey&&);
     NetworkCacheKey(const String& method, const String& partition, const String& identifier);
 
+    NetworkCacheKey& operator=(const NetworkCacheKey&);
+
+    bool isNull() const { return m_identifier.isNull(); }
+
     const String& method() const { return m_method; }
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
@@ -66,7 +70,6 @@ public:
 
 private:
     HashType computeHash() const;
-    void operator=(const NetworkCacheKey&) = delete;
 
     String m_method;
     String m_partition;

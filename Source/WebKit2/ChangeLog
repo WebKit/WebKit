@@ -1,5 +1,40 @@
 2015-03-03  Antti Koivisto  <antti@apple.com>
 
+        Include key to NetworkCacheStorage::Entry
+        https://bugs.webkit.org/show_bug.cgi?id=142215
+
+        Reviewed by Chris Dumez.
+
+        This simplified code. The key is saved as part of the entry so it makes logical sense too.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::makeCacheKey):
+        (WebKit::encodeStorageEntry):
+        (WebKit::NetworkCache::retrieve):
+        (WebKit::NetworkCache::store):
+        (WebKit::NetworkCache::update):
+        (WebKit::NetworkCache::traverse):
+        (WebKit::entryAsJSON):
+        (WebKit::NetworkCache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCacheKey::operator=):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCacheKey::isNull):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::decodeEntry):
+        (WebKit::encodeEntryHeader):
+        (WebKit::retrieveFromMemory):
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::update):
+        (WebKit::NetworkCacheStorage::traverse):
+        (WebKit::NetworkCacheStorage::dispatchPendingWriteOperations):
+        (WebKit::NetworkCacheStorage::dispatchFullWriteOperation):
+        (WebKit::NetworkCacheStorage::dispatchHeaderWriteOperation):
+
+2015-03-03  Antti Koivisto  <antti@apple.com>
+
         Cache shrink leaves behind empty partition directories
         https://bugs.webkit.org/show_bug.cgi?id=142217
 

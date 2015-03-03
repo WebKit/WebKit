@@ -59,6 +59,15 @@ NetworkCacheKey::NetworkCacheKey(const String& method, const String& partition, 
 {
 }
 
+NetworkCacheKey& NetworkCacheKey::operator=(const NetworkCacheKey& other)
+{
+    m_method = other.m_method.isolatedCopy();
+    m_partition = other.m_partition.isolatedCopy();
+    m_identifier = other.m_identifier.isolatedCopy();
+    m_hash = other.m_hash;
+    return *this;
+}
+
 static void hashString(MD5& md5, const String& string)
 {
     const uint8_t zero = 0;
