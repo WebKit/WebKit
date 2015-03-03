@@ -56,6 +56,7 @@ typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFURLRequest *CFURLRequestRef;
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 #ifdef __BLOCKS__
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
