@@ -1,3 +1,17 @@
+2015-03-02  Jeremy Jones  <jeremyj@apple.com>
+
+        RenderVideo should not paint the video frame when video is fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=142097
+
+        Reviewed by Eric Carlson.
+
+        For performance and correctness, RenderVideo should not paint the current video frame
+        inline when video is fullscreen. This happens when snapshots are taken and can have a
+        negative performance impact.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+
 2015-03-02  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Airplay button should be blue when active
