@@ -695,6 +695,13 @@ void NetworkCacheStorage::shrinkIfNeeded()
                     m_contentsFilter.remove(shortHash);
             });
         });
+
+        // Let system figure out if they are really empty.
+        traverseDirectory(cachePath, DT_DIR, [&cachePath](const String& subdirName) {
+            auto partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
+            WebCore::deleteEmptyDirectory(partitionPath);
+        });
+
         m_shrinkInProgress = false;
 
         LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed approximateSize=%d", static_cast<size_t>(m_approximateSize));

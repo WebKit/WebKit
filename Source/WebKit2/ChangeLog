@@ -1,3 +1,21 @@
+2015-03-03  Antti Koivisto  <antti@apple.com>
+
+        Cache shrink leaves behind empty partition directories
+        https://bugs.webkit.org/show_bug.cgi?id=142217
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::traverseCacheFiles):
+
+            No need for std::function.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::shrinkIfNeeded):
+
+            After shrink traverse through the partition directories and try to delete them.
+            System knows if they are actually empty.
+
 2015-03-03  Anders Carlsson  <andersca@apple.com>
 
         Use the correct display name for website data for local files

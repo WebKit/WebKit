@@ -53,7 +53,8 @@ static void traverseDirectory(const String& path, uint8_t type, const Function& 
     closedir(dir);
 }
 
-inline void traverseCacheFiles(const String& cachePath, std::function<void (const String& fileName, const String& partitionPath)> function)
+template <typename Function>
+inline void traverseCacheFiles(const String& cachePath, const Function& function)
 {
     traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
         String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
