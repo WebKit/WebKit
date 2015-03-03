@@ -366,6 +366,7 @@ public:
     bool isPagePlayingAudio();
 
     RefPtr<File> createFile(const String&);
+    void queueMicroTask(int);
 
 private:
     explicit Internals(Document*);

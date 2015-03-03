@@ -1,3 +1,46 @@
+2015-03-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Add a microtask abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=137496
+
+        Reviewed by Sam Weinig.
+
+        This patch adds a microtask abstraction: https://html.spec.whatwg.org/multipage/webappapis.html#microtask
+        That abstraction is required in order to enable async loading of images,
+        which is in turn required to enable support for the picture element, as well as
+        to make sure that the order of properties set on HTMLImageElement has no implications.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add MicroTask.{h,cpp} to the project.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj: Add MicroTaskTest.{h,cpp} to the project.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Add MicroTask.{h,cpp} to the project.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters: Add MicroTaskTest.{h,cpp} to the project.
+        * WebCore.xcodeproj/project.pbxproj: Add MicroTask{,Test}.{h,cpp} to the project.
+        * dom/Document.h: Add WEBCORE_EXPORT to addConsoleMessage, so it can be used in MicroTaskTest that's in WebCoreTestSupport..
+        * dom/MicroTask.h: Add a MicroTask interface class. Add a MicroTaskQueue singleton.
+        (WebCore::MicroTask::~MicroTask):
+        (WebCore::MicroTask::run): Run the microtask.
+        * dom/MicroTask.cpp: Implement the MicroTaskQueue singleton.
+        (WebCore::MicroTaskQueue::singleton): Get a singleton instance of MicroTaskQueue.
+        (WebCore::MicroTaskQueue::queueMicroTask): Add a microtask to the queue.
+        (WebCore::MicroTaskQueue::runMicroTasks): Run all the microtasks in the queue and clear it.
+        * dom/ScriptRunner.cpp: Trigger running of all microtasks in queue.
+        (WebCore::ScriptRunner::timerFired):
+        * html/parser/HTMLScriptRunner.cpp: Trigger running of all microtasks in queue.
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing):
+        (WebCore::HTMLScriptRunner::runScript):
+        * testing/Internals.cpp: Add a method to queue a test microtask.
+        (WebCore::Internals::queueMicroTask):
+        * testing/Internals.h: Add a method to queue a test microtask.
+        (WebCore::Internals::queueMicroTask):
+        * testing/Internals.idl: Expose test microtask queueing to test JS.
+        * testing/MicroTaskTest.cpp: Add a test class that implements a microtask and prints to the console when it runs.
+        (WebCore::MicroTaskTest::run): Run the microtask
+        (WebCore::MicroTaskTest::create): Create a test microtask.
+        * testing/MicroTaskTest.h: Add a test class that implements a microtask.
+        (WebCore::MicroTaskTest::run):
+        (WebCore::MicroTaskTest::create):
+
 2015-03-02  Jeremy Jones  <jeremyj@apple.com>
 
         RenderVideo should not paint the video frame when video is fullscreen.
