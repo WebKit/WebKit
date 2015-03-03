@@ -1,3 +1,12 @@
+2015-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        `build-webkit --help` is wrong about how to build for the iOS simulator
+        <http://webkit.org/b/142223>
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/build-webkit: Fix help.
+
 2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump libsoup version to 2.49.91.1 to fix 32 bit build.
