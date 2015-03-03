@@ -1,3 +1,13 @@
+2015-03-03  Darin Adler  <darin@apple.com>
+
+        Test legacy event handler attributes (ones with names like "onclick")
+        https://bugs.webkit.org/show_bug.cgi?id=142221
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/legacy-event-handler-attributes-expected.txt: Added.
+        * fast/dom/legacy-event-handler-attributes.html: Added.
+
 2015-03-03  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> label can get very wide, doesn't wrap/truncate
