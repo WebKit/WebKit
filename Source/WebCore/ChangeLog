@@ -1,5 +1,21 @@
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r176554
+
+    2014-11-27  Antti Koivisto  <antti@apple.com>
+
+            CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::HTMLPlugInImageElement::updateSnapshot + 108
+            https://bugs.webkit.org/show_bug.cgi?id=139057
+
+            Reviewed by Anders Carlsson.
+
+            No test, don't know how to repro.
+
+            * html/HTMLPlugInImageElement.cpp:
+            (WebCore::HTMLPlugInImageElement::updateSnapshot): Null check the renderer.
+
+2015-03-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r181005
 
     2015-03-04  Jer Noble  <jer.noble@apple.com>
