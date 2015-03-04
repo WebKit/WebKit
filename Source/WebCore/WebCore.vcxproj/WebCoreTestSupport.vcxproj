@@ -275,6 +275,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="..\testing\MicroTaskTest.cpp" />
     <ClCompile Include="..\testing\MockPageOverlayClient.cpp" />
     <ClCompile Include="..\testing\InternalSettings.cpp" />
     <ClCompile Include="..\testing\js\WebCoreTestSupport.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="..\testing\js\WebCoreTestSupportPrefix.h" />
     <ClInclude Include="..\testing\MallocStatistics.h" />
     <ClInclude Include="..\testing\MemoryInfo.h" />
+    <ClInclude Include="..\testing\MicroTaskTest.h" />
     <ClInclude Include="..\testing\MockCDM.h" />
     <ClInclude Include="..\testing\MockPageOverlayClient.h" />
     <ClInclude Include="..\testing\TypeConversions.h" />

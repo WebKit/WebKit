@@ -13434,6 +13434,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\dom\MicroTask.cpp" />
     <ClCompile Include="..\dom\MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20624,6 +20625,7 @@
     <ClInclude Include="..\dom\MessageEvent.h" />
     <ClInclude Include="..\dom\MessagePort.h" />
     <ClInclude Include="..\dom\MessagePortChannel.h" />
+    <ClInclude Include="..\dom\MicroTask.h" />
     <ClInclude Include="..\dom\MouseEvent.h" />
     <ClInclude Include="..\dom\MouseRelatedEvent.h" />
     <ClInclude Include="..\dom\MutationEvent.h" />

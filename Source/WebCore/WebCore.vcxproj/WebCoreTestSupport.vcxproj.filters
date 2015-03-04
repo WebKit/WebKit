@@ -39,6 +39,9 @@
     <ClCompile Include="..\testing\js\WebCoreTestSupport.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\testing\MicroTaskTest.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
     <ClCompile Include="..\testing\MockCDM.cpp">
       <Filter>testing</Filter>
     </ClCompile>
@@ -90,6 +93,9 @@
       <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\testing\MicroTaskTest.h">
+      <Filter>testing</Filter>
+    </ClInclude>
     <ClInclude Include="..\testing\MockCDM.h">
       <Filter>testing</Filter>
     </ClInclude>

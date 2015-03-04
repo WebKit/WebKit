@@ -1,3 +1,20 @@
+2015-03-03   Yoav Weiss  <yoav@yoav.ws>
+
+        Add a microtask abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=137496
+
+        Reviewed by Sam Weinig.
+
+        Adding a test for microtask abstraction.
+        A similar patch was rolled back in r180914.
+
+        * fast/dom/microtask-detach.html: Added.
+        * fast/dom/microtask-detach-expected.txt: Added.
+        * fast/dom/microtask-inorder.html: Added.
+        * fast/dom/microtask-inorder-expected.txt: Added.
+        * fast/dom/microtask-reverse.html: Added.
+        * fast/dom/microtask-reverse-expected.txt: Added.
+
 2015-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Mark fast/css/object-fit/object-fit-canvas.html as a flakey
