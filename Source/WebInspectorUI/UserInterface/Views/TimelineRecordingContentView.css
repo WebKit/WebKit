@@ -30,7 +30,7 @@
     right: 0;
 }
 
-.content-view.timeline-recording > .view-container {
+.content-view.timeline-recording > .content-view-container {
     position: absolute;
     left: 0;
     right: 0;
@@ -38,12 +38,12 @@
     overflow: hidden;
 }
 
-.content-view.timeline-recording > .view-container > .timeline-view > .data-grid td {
+.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid td {
     height: 16px;
     line-height: 16px;
 }
 
-.content-view.timeline-recording > .view-container > .timeline-view > .data-grid table.data {
+.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid table.data {
     background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
     background-size: 100% 40px;
 }

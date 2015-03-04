@@ -1,3 +1,88 @@
+2015-03-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: TimelineViews should be displayed in a ContentViewContainer
+        https://bugs.webkit.org/show_bug.cgi?id=142290
+
+        Reviewed by Timothy Hatcher.
+
+        TimelineRecordingContentView has a bunch of logic to manage the currently visible TimelineView.
+        This could be delegated to a ContentViewContainer to simplify the logic. It also opens the possibility
+        for other views to be displayed beneath the timeline overview graphs when it makes sense to do so.
+
+        In order to be displayable in the container, TimelineView and its subclasses have been upgraded to
+        be ContentView subclasses. This also reduces some code duplication for basic view management.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView): Move base class instantiation pattern from TimelineView to here.
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/LayoutTimelineView.js: Use ContentView events and base methods.
+        (WebInspector.LayoutTimelineView.prototype.shown):
+        (WebInspector.LayoutTimelineView.prototype.hidden):
+        (WebInspector.LayoutTimelineView.prototype._dataGridNodeSelected):
+        * UserInterface/Views/NetworkTimelineView.js: Use ContentView events and base methods.
+        (WebInspector.NetworkTimelineView.prototype.shown):
+        (WebInspector.NetworkTimelineView.prototype.hidden):
+        (WebInspector.NetworkTimelineView.prototype._dataGridNodeSelected):
+        * UserInterface/Views/OverviewTimelineView.js: Use ContentView events and base methods.
+        (WebInspector.OverviewTimelineView.prototype.shown):
+        (WebInspector.OverviewTimelineView.prototype._dataGridNodeSelected):
+        (WebInspector.OverviewTimelineView.prototype._treeElementSelected):
+        * UserInterface/Views/ScriptTimelineView.js: Use ContentView events and base methods.
+        (WebInspector.ScriptTimelineView.prototype.shown):
+        (WebInspector.ScriptTimelineView.prototype.hidden):
+        (WebInspector.ScriptTimelineView.prototype._dataGridNodeSelected):
+        * UserInterface/Views/TimelineRecordingContentView.css: Use WebInspector.ContentViewContainer class.
+        (.content-view.timeline-recording > .content-view-container):
+        (.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid td):
+        (.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid table.data):
+        (.content-view.timeline-recording > .view-container): Deleted.
+        (.content-view.timeline-recording > .view-container > .timeline-view > .data-grid td): Deleted.
+        (.content-view.timeline-recording > .view-container > .timeline-view > .data-grid table.data): Deleted.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        Many of the changes here mirror the implementation of ClusterContentView. Searching is disabled since
+        none of the timeline views are currently searchable using ContentViewContainer's full-text search.
+
+        In cases where we update the current timeline view, the currentTimelineView accessor returns the
+        content view if a TimelineView is shown in the content view container, otherwise null.
+
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype.showOverviewTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.showTimelineViewForTimeline):
+        (WebInspector.TimelineRecordingContentView.prototype.get supplementalRepresentedObjects):
+        (WebInspector.TimelineRecordingContentView.prototype.get handleCopyEvent):
+        (WebInspector.TimelineRecordingContentView.prototype.get supportsSave):
+        (WebInspector.TimelineRecordingContentView.prototype.get saveData):
+        (WebInspector.TimelineRecordingContentView.prototype.get currentTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        (WebInspector.TimelineRecordingContentView.prototype.hidden):
+        (WebInspector.TimelineRecordingContentView.prototype.closed):
+        (WebInspector.TimelineRecordingContentView.prototype.canGoBack):
+        (WebInspector.TimelineRecordingContentView.prototype.canGoForward):
+        (WebInspector.TimelineRecordingContentView.prototype.goBack):
+        (WebInspector.TimelineRecordingContentView.prototype.goForward):
+        (WebInspector.TimelineRecordingContentView.prototype.updateLayout):
+        (WebInspector.TimelineRecordingContentView.prototype.saveToCookie):
+        (WebInspector.TimelineRecordingContentView.prototype.get filterDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSupplementalRepresentedObjectsDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineCountChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineRecordingContentView.prototype.filterDidChange): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._timelineViewSelectionPathComponentsDidChange): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._showTimelineView): Deleted.
+        * UserInterface/Views/TimelineView.js: Remove duplicated functionality and use ContentView equivalents instead.
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.filterUpdated):
+        (WebInspector.TimelineView.prototype.needsLayout):
+        (WebInspector.TimelineView.prototype.get representedObject): Deleted.
+        (WebInspector.TimelineView.prototype.get visible): Deleted.
+        (WebInspector.TimelineView.prototype.shown): Deleted.
+        (WebInspector.TimelineView.prototype.hidden): Deleted.
+
 2015-03-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: selecting overview timeline tree elements without source locations doesn't update selection components

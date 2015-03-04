@@ -83,7 +83,7 @@ WebInspector.OverviewTimelineView.prototype = {
 
     shown: function()
     {
-        WebInspector.TimelineView.prototype.shown.call(this);
+        WebInspector.ContentView.prototype.shown.call(this);
 
         this._treeOutlineDataGridSynchronizer.synchronize();
     },
@@ -322,7 +322,7 @@ WebInspector.OverviewTimelineView.prototype = {
 
     _dataGridNodeSelected: function(event)
     {
-        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
     _treeElementDeselected: function(treeElement)
@@ -352,7 +352,7 @@ WebInspector.OverviewTimelineView.prototype = {
 
         if (!treeElement.sourceCodeTimeline.sourceCodeLocation) {
             WebInspector.timelineSidebarPanel.showTimelineOverview();
-            this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
+            this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
             return;
         }
 

@@ -42,6 +42,18 @@ WebInspector.ContentView = function(representedObject)
         if (representedObject instanceof WebInspector.TimelineRecording)
             return new WebInspector.TimelineRecordingContentView(representedObject);
 
+        if (representedObject instanceof WebInspector.Timeline) {
+            var timelineType = representedObject.type;
+            if (timelineType === WebInspector.TimelineRecord.Type.Network)
+                return new WebInspector.NetworkTimelineView(representedObject);
+
+            if (timelineType === WebInspector.TimelineRecord.Type.Layout)
+                return new WebInspector.LayoutTimelineView(representedObject);
+
+            if (timelineType === WebInspector.TimelineRecord.Type.Script)
+                return new WebInspector.ScriptTimelineView(representedObject);
+        }
+
         if (representedObject instanceof WebInspector.DOMStorageObject)
             return new WebInspector.DOMStorageContentView(representedObject);
 
@@ -105,6 +117,8 @@ WebInspector.ContentView.isViewable = function(representedObject)
     if (representedObject instanceof WebInspector.Script)
         return true;
     if (representedObject instanceof WebInspector.TimelineRecording)
+        return true;
+    if (representedObject instanceof WebInspector.Timeline)
         return true;
     if (representedObject instanceof WebInspector.DOMStorageObject)
         return true;

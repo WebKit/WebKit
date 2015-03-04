@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +26,12 @@
 
 WebInspector.TimelineView = function(representedObject)
 {
-    if (this.constructor === WebInspector.TimelineView) {
-        // When instantiated directly return an instance of a type-based concrete subclass.
-
-        console.assert(representedObject && representedObject instanceof WebInspector.Timeline);
-
-        var timelineType = representedObject.type;
-        if (timelineType === WebInspector.TimelineRecord.Type.Network)
-            return new WebInspector.NetworkTimelineView(representedObject);
-
-        if (timelineType === WebInspector.TimelineRecord.Type.Layout)
-            return new WebInspector.LayoutTimelineView(representedObject);
-
-        if (timelineType === WebInspector.TimelineRecord.Type.Script)
-            return new WebInspector.ScriptTimelineView(representedObject);
-
-        throw Error("Can't make a Timeline for an unknown representedObject.");
-    }
-
-    // Concrete object instantiation.
+    // This class should not be instantiated directly. Create a concrete subclass instead.
     console.assert(this.constructor !== WebInspector.TimelineView && this instanceof WebInspector.TimelineView);
 
-    WebInspector.Object.call(this);
-
-    console.assert(representedObject instanceof WebInspector.Timeline || representedObject instanceof WebInspector.TimelineRecording);
-    this._representedObject = representedObject;
+    WebInspector.ContentView.call(this, representedObject);
 
     this._contentTreeOutline = WebInspector.timelineSidebarPanel.createContentTreeOutline();
-
-    this.element = document.createElement("div");
     this.element.classList.add(WebInspector.TimelineView.StyleClassName);
 
     this._zeroTime = 0;
@@ -64,20 +42,11 @@ WebInspector.TimelineView = function(representedObject)
 
 WebInspector.TimelineView.StyleClassName = "timeline-view";
 
-WebInspector.TimelineView.Event = {
-    SelectionPathComponentsDidChange: "timeline-view-selection-path-components-did-change"
-};
-
 WebInspector.TimelineView.prototype = {
     constructor: WebInspector.TimelineView,
-    __proto__: WebInspector.Object.prototype,
+    __proto__: WebInspector.ContentView.prototype,
 
     // Public
-
-    get representedObject()
-    {
-        return this._representedObject;
-    },
 
     get navigationSidebarTreeOutline()
     {
@@ -170,29 +139,11 @@ WebInspector.TimelineView.prototype = {
             this.needsLayout();
     },
 
-    get visible()
-    {
-        return this._visible;
-    },
-
     reset: function()
     {
         this._contentTreeOutline.removeChildren();
     },
 
-    shown: function()
-    {
-        this._visible = true;
-
-        // Implemented by sub-classes if needed.
-    },
-
-    hidden: function()
-    {
-        // Implemented by sub-classes if needed.
-
-        this._visible = false;
-    },
 
     filterDidChange: function()
     {
@@ -224,7 +175,7 @@ WebInspector.TimelineView.prototype = {
 
     filterUpdated: function()
     {
-        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
     // Protected
@@ -236,7 +187,7 @@ WebInspector.TimelineView.prototype = {
 
     needsLayout: function()
     {
-        if (!this._visible)
+        if (!this.visible)
             return;
 
         if (this._scheduledLayoutUpdateIdentifier)

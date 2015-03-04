@@ -91,7 +91,7 @@ WebInspector.ScriptTimelineView.prototype = {
 
     shown: function()
     {
-        WebInspector.TimelineView.prototype.shown.call(this);
+        WebInspector.ContentView.prototype.shown.call(this);
 
         this._dataGrid.shown();
     },
@@ -100,7 +100,7 @@ WebInspector.ScriptTimelineView.prototype = {
     {
         this._dataGrid.hidden();
 
-        WebInspector.TimelineView.prototype.hidden.call(this);
+        WebInspector.ContentView.prototype.hidden.call(this);
     },
 
     updateLayout: function()
@@ -243,7 +243,7 @@ WebInspector.ScriptTimelineView.prototype = {
 
     _dataGridNodeSelected: function(event)
     {
-        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
     _treeElementDeselected: function(treeElement)

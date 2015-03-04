@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +36,9 @@ WebInspector.TimelineRecordingContentView = function(recording)
     this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
     this.element.appendChild(this._timelineOverview.element);
 
-    this._viewContainerElement = document.createElement("div");
-    this._viewContainerElement.classList.add(WebInspector.TimelineRecordingContentView.ViewContainerStyleClassName);
-    this.element.appendChild(this._viewContainerElement);
+    this._contentViewContainer = new WebInspector.ContentViewContainer();
+    this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
+    this.element.appendChild(this._contentViewContainer.element);
 
     var trashImage;
     if (WebInspector.Platform.isLegacyMacOS)
@@ -53,9 +54,6 @@ WebInspector.TimelineRecordingContentView = function(recording)
 
     this._timelineViewMap = new Map;
     this._pathComponentMap = new Map;
-
-    this._currentTimelineView = null;
-    this._currentTimelineViewIdentifier = null;
 
     this._updating = false;
     this._currentTime = NaN;
@@ -73,6 +71,9 @@ WebInspector.TimelineRecordingContentView = function(recording)
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerPaused, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerResumed, this);
 
+    WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+    WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+
     for (var timeline of this._recording.timelines.values())
         this._timelineAdded(timeline);
 
@@ -80,7 +81,6 @@ WebInspector.TimelineRecordingContentView = function(recording)
 };
 
 WebInspector.TimelineRecordingContentView.StyleClassName = "timeline-recording";
-WebInspector.TimelineRecordingContentView.ViewContainerStyleClassName = "view-container";
 
 WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey = "timeline-recording-content-view-selected-timeline-type";
 WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue = "timeline-recording-content-view-overview-timeline-view";
@@ -93,7 +93,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     showOverviewTimelineView: function()
     {
-        this._showTimelineView(this._overviewTimelineView);
+        this._contentViewContainer.showContentView(this._overviewTimelineView);
     },
 
     showTimelineViewForTimeline: function(timeline)
@@ -103,7 +103,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (!this._timelineViewMap.has(timeline))
             return;
 
-        this._showTimelineView(this._timelineViewMap.get(timeline));
+        this._contentViewContainer.showContentView(this._timelineViewMap.get(timeline));
     },
 
     get allowedNavigationSidebarPanels()
@@ -119,11 +119,21 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     get selectionPathComponents()
     {
-        var pathComponents = [];
-        if (this._currentTimelineView.representedObject instanceof WebInspector.Timeline)
-            pathComponents.push(this._pathComponentMap.get(this._currentTimelineView.representedObject));
-        pathComponents = pathComponents.concat(this._currentTimelineView.selectionPathComponents || []);
+        if (!this._contentViewContainer.currentContentView)
+            return [];
+
+        var pathComponents = this._contentViewContainer.currentContentView.selectionPathComponents || [];
+        var representedObject = this._contentViewContainer.currentContentView.representedObject;
+        if (representedObject instanceof WebInspector.Timeline)
+            pathComponents.unshift(this._pathComponentMap.get(representedObject));
         return pathComponents;
+    },
+
+    get supplementalRepresentedObjects()
+    {
+        if (!this._contentViewContainer.currentContentView)
+            return [];
+        return this._contentViewContainer.currentContentView.supplementalRepresentedObjects;
     },
 
     get navigationItems()
@@ -131,18 +141,34 @@ WebInspector.TimelineRecordingContentView.prototype = {
         return [this._clearTimelineNavigationItem];
     },
 
+    get handleCopyEvent()
+    {
+        var currentContentView = this._contentViewContainer.currentContentView;
+        return currentContentView && typeof currentContentView.handleCopyEvent === "function" ? currentContentView.handleCopyEvent.bind(currentContentView) : null;
+    },
+
+    get supportsSave()
+    {
+        var currentContentView = this._contentViewContainer.currentContentView;
+        return currentContentView && currentContentView.supportsSave;
+    },
+
+    get saveData()
+    {
+        var currentContentView = this._contentViewContainer.currentContentView;
+        return currentContentView && currentContentView.saveData || null;
+    },
+
     get currentTimelineView()
     {
-        return this._currentTimelineView;
+        var contentView = this._contentViewContainer.currentContentView;
+        return (contentView instanceof WebInspector.TimelineView) ? contentView : null;
     },
 
     shown: function()
     {
-        if (!this._currentTimelineView)
-            return;
-
         this._timelineOverview.shown();
-        this._currentTimelineView.shown();
+        this._contentViewContainer.shown();
         this._clearTimelineNavigationItem.enabled = this._recording.isWritable();
 
         if (!this._updating && WebInspector.timelineManager.activeRecording === this._recording && WebInspector.timelineManager.isCapturing())
@@ -151,42 +177,59 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     hidden: function()
     {
-        if (!this._currentTimelineView)
-            return;
-
         this._timelineOverview.hidden();
-        this._currentTimelineView.hidden();
+        this._contentViewContainer.hidden();
 
         if (this._updating)
             this._stopUpdatingCurrentTime();
     },
 
-    filterDidChange: function()
+    closed: function()
     {
-        if (!this._currentTimelineView)
-            return;
+        this._contentViewContainer.closeAllContentViews();
 
-        this._currentTimelineView.filterDidChange();
+        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WebInspector.ContentView.removeEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+    },
+
+    canGoBack: function()
+    {
+        return this._contentViewContainer.canGoBack();
+    },
+
+    canGoForward: function()
+    {
+        return this._contentViewContainer.canGoForward();
+    },
+
+    goBack: function()
+    {
+        this._contentViewContainer.goBack();
+    },
+
+    goForward: function()
+    {
+        this._contentViewContainer.goForward();
     },
 
     updateLayout: function()
     {
         this._timelineOverview.updateLayoutForResize();
 
-        if (!this._currentTimelineView)
-            return;
-
-        this._currentTimelineView.updateLayout();
+        var currentContentView = this._contentViewContainer.currentContentView;
+        if (currentContentView)
+            currentContentView.updateLayout();
     },
 
     saveToCookie: function(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.Timelines;
 
-        if (!this._currentTimelineView || this._currentTimelineView === this._overviewTimelineView)
+        var currentContentView = this._contentViewContainer.currentContentView;
+        if (!currentContentView || currentContentView === this._overviewTimelineView)
             cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey] = WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue;
-        else
-            cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey] = this._currentTimelineView.representedObject.type;
+        else if (currentContentView.representedObject instanceof WebInspector.Timeline)
+            cookie[WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey] = this.currentTimelineView.representedObject.type;
     },
 
     restoreFromCookie: function(cookie)
@@ -199,9 +242,17 @@ WebInspector.TimelineRecordingContentView.prototype = {
             this.showTimelineViewForTimeline(this.representedObject.timelines.get(timelineType));
     },
 
+    filterDidChange: function()
+    {
+        if (!this.currentTimelineView)
+            return;
+
+        this.currentTimelineView.filterDidChange();
+    },
+
     matchTreeElementAgainstCustomFilters: function(treeElement)
     {
-        if (this._currentTimelineView && !this._currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))
+        if (this.currentTimelineView && !this.currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))
             return false;
 
         var startTime = this._timelineOverview.selectionStartTime;
@@ -257,51 +308,39 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     // Private
 
+    _currentContentViewDidChange: function(event)
+    {
+        var timelineView = this.currentTimelineView;
+        if (timelineView) {
+            WebInspector.timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
+            WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
+
+            timelineView.startTime = this._timelineOverview.selectionStartTime;
+            timelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+            timelineView.currentTime = this._currentTime;
+        }
+
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
+    },
+
     _pathComponentSelected: function(event)
     {
         WebInspector.timelineSidebarPanel.showTimelineViewForTimeline(event.data.pathComponent.representedObject);
     },
 
-    _timelineViewSelectionPathComponentsDidChange: function()
+    _contentViewSelectionPathComponentDidChange: function(event)
     {
+        if (event.target !== this._contentViewContainer.currentContentView)
+            return;
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
-    _showTimelineView: function(timelineView)
+    _contentViewSupplementalRepresentedObjectsDidChange: function(event)
     {
-        console.assert(timelineView instanceof WebInspector.TimelineView);
-        console.assert(timelineView.representedObject === this._recording || this._recording.timelines.has(timelineView.representedObject.type));
-
-        // If the content view is shown and then hidden, we must reattach the content tree outline and timeline view.
-        if (timelineView.visible && timelineView === this._currentTimelineView)
+        if (event.target !== this._contentViewContainer.currentContentView)
             return;
-
-        if (this._currentTimelineView) {
-            this._currentTimelineView.removeEventListener(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange, this._timelineViewSelectionPathComponentsDidChange, this);
-
-            this._currentTimelineView.hidden();
-            this._currentTimelineView.element.remove();
-        }
-
-        this._currentTimelineView = timelineView;
-
-        WebInspector.timelineSidebarPanel.contentTreeOutline = timelineView && timelineView.navigationSidebarTreeOutline;
-        WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView && timelineView.navigationSidebarTreeOutlineLabel;
-
-        if (this._currentTimelineView) {
-            this._currentTimelineView.addEventListener(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange, this._timelineViewSelectionPathComponentsDidChange, this);
-
-            this._viewContainerElement.appendChild(this._currentTimelineView.element);
-
-            this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
-            this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
-            this._currentTimelineView.currentTime = this._currentTime;
-
-            this._currentTimelineView.shown();
-            this._currentTimelineView.updateLayout();
-        }
-
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     },
 
     _update: function(timestamp)
@@ -350,13 +389,15 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
         this._currentTime = currentTime;
         this._timelineOverview.currentTime = currentTime;
-        this._currentTimelineView.currentTime = currentTime;
+        if (this.currentTimelineView)
+            this.currentTimelineView.currentTime = currentTime;
 
         WebInspector.timelineSidebarPanel.updateFilter();
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
-        this._currentTimelineView.updateLayoutIfNeeded();
+        if (this.currentTimelineView)
+            this.currentTimelineView.updateLayoutIfNeeded();
     },
 
     _startUpdatingCurrentTime: function()
@@ -455,7 +496,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
-        this._timelineViewMap.set(timeline, new WebInspector.TimelineView(timeline));
+        this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline));
 
         var pathComponent = new WebInspector.HierarchicalPathComponent(timeline.displayName, timeline.iconClassName, timeline);
         pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
@@ -471,7 +512,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         console.assert(this._timelineViewMap.has(timeline), timeline);
 
         var timelineView = this._timelineViewMap.take(timeline);
-        if (this._currentTimelineView === timelineView)
+        if (this.currentTimelineView === timelineView)
             this.showOverviewTimelineView();
 
         this._pathComponentMap.delete(timeline);
@@ -495,7 +536,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         const timelineHeight = 36;
         const extraOffset = 22;
         this._timelineOverview.element.style.height = (timelineCount * timelineHeight + extraOffset) + "px";
-        this._viewContainerElement.style.top = (timelineCount * timelineHeight + extraOffset) + "px";
+        this._contentViewContainer.element.style.top = (timelineCount * timelineHeight + extraOffset) + "px";
     },
 
     _recordingReset: function(event)
@@ -530,12 +571,14 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     _timeRangeSelectionChanged: function(event)
     {
-        this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
-        this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+        if (this.currentTimelineView) {
+            this.currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
+            this.currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+        }
 
         // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
         requestAnimationFrame(function() {
-            var selectedTreeElement = this._currentTimelineView && this._currentTimelineView.navigationSidebarTreeOutline ? this._currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement : null;
+            var selectedTreeElement = this.currentTimelineView && this.currentTimelineView.navigationSidebarTreeOutline ? this.currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement : null;
             var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
 
             WebInspector.timelineSidebarPanel.updateFilter();
