@@ -129,13 +129,7 @@ void* allocateCell(Heap& heap, size_t size)
 {
     ASSERT(!DisallowGC::isGCDisallowedOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = 0;
-    if (T::needsDestruction && T::hasImmortalStructure)
-        result = static_cast<JSCell*>(heap.allocateWithImmortalStructureDestructor(size));
-    else if (T::needsDestruction)
-        result = static_cast<JSCell*>(heap.allocateWithNormalDestructor(size));
-    else 
-        result = static_cast<JSCell*>(heap.allocateWithoutDestructor(size));
+    JSCell* result = static_cast<JSCell*>(heap.allocateObjectOfType<T>(size));
 #if ENABLE(GC_VALIDATION)
     ASSERT(!heap.vm()->isInitializingObject());
     heap.vm()->setInitializingObjectClass(T::info());

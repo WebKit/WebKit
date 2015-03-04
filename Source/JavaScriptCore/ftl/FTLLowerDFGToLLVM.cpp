@@ -5225,14 +5225,8 @@ private:
     template<typename ClassType>
     LValue allocateObject(Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
-        MarkedAllocator* allocator;
         size_t size = ClassType::allocationSize(0);
-        if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-            allocator = &vm().heap.allocatorForObjectWithImmortalStructureDestructor(size);
-        else if (ClassType::needsDestruction)
-            allocator = &vm().heap.allocatorForObjectWithNormalDestructor(size);
-        else
-            allocator = &vm().heap.allocatorForObjectWithoutDestructor(size);
+        MarkedAllocator* allocator = &vm().heap.allocatorForObjectOfType<ClassType>(size);
         return allocateObject(m_out.constIntPtr(allocator), structure, butterfly, slowPath);
     }
     

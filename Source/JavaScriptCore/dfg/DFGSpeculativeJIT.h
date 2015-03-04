@@ -2258,14 +2258,8 @@ public:
     void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage,
         GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
     {
-        MarkedAllocator* allocator = 0;
         size_t size = ClassType::allocationSize(0);
-        if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-            allocator = &m_jit.vm()->heap.allocatorForObjectWithImmortalStructureDestructor(size);
-        else if (ClassType::needsDestruction)
-            allocator = &m_jit.vm()->heap.allocatorForObjectWithNormalDestructor(size);
-        else
-            allocator = &m_jit.vm()->heap.allocatorForObjectWithoutDestructor(size);
+        MarkedAllocator* allocator = &m_jit.vm()->heap.allocatorForObjectOfType<ClassType>(size);
         m_jit.move(TrustedImmPtr(allocator), scratchGPR1);
         emitAllocateJSObject(resultGPR, scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }
@@ -2276,25 +2270,19 @@ public:
         static_assert(!(MarkedSpace::preciseStep & (MarkedSpace::preciseStep - 1)), "MarkedSpace::preciseStep must be a power of two.");
         static_assert(!(MarkedSpace::impreciseStep & (MarkedSpace::impreciseStep - 1)), "MarkedSpace::impreciseStep must be a power of two.");
 
-        MarkedSpace::Subspace* subspace;
-        if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
-            subspace = &m_jit.vm()->heap.subspaceForObjectsWithImmortalStructure();
-        else if (ClassType::needsDestruction)
-            subspace = &m_jit.vm()->heap.subspaceForObjectNormalDestructor();
-        else
-            subspace = &m_jit.vm()->heap.subspaceForObjectWithoutDestructor();
+        MarkedSpace::Subspace& subspace = m_jit.vm()->heap.subspaceForObjectOfType<ClassType>();
         m_jit.add32(TrustedImm32(MarkedSpace::preciseStep - 1), allocationSize);
         MacroAssembler::Jump notSmall = m_jit.branch32(MacroAssembler::AboveOrEqual, allocationSize, TrustedImm32(MarkedSpace::preciseCutoff));
         m_jit.rshift32(allocationSize, TrustedImm32(getLSBSet(MarkedSpace::preciseStep)), scratchGPR1);
         m_jit.mul32(TrustedImm32(sizeof(MarkedAllocator)), scratchGPR1, scratchGPR1);
-        m_jit.addPtr(MacroAssembler::TrustedImmPtr(&subspace->preciseAllocators[0]), scratchGPR1);
+        m_jit.addPtr(MacroAssembler::TrustedImmPtr(&subspace.preciseAllocators[0]), scratchGPR1);
 
         MacroAssembler::Jump selectedSmallSpace = m_jit.jump();
         notSmall.link(&m_jit);
         slowPath.append(m_jit.branch32(MacroAssembler::AboveOrEqual, allocationSize, TrustedImm32(MarkedSpace::impreciseCutoff)));
         m_jit.rshift32(allocationSize, TrustedImm32(getLSBSet(MarkedSpace::impreciseStep)), scratchGPR1);
         m_jit.mul32(TrustedImm32(sizeof(MarkedAllocator)), scratchGPR1, scratchGPR1);
-        m_jit.addPtr(MacroAssembler::TrustedImmPtr(&subspace->impreciseAllocators[0]), scratchGPR1);
+        m_jit.addPtr(MacroAssembler::TrustedImmPtr(&subspace.impreciseAllocators[0]), scratchGPR1);
 
         selectedSmallSpace.link(&m_jit);
 

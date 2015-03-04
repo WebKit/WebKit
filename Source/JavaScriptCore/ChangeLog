@@ -1,3 +1,27 @@
+2015-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Only Heap should be in charge of deciding how to select a subspace for a type
+        https://bugs.webkit.org/show_bug.cgi?id=142304
+
+        Reviewed by Mark Lam.
+        
+        This slightly reduces the code duplication for selecting subspace based on type, and what
+        duplication is left is at least localized in HeapInlines.h. The immediate effect is that
+        the DFG and FTL don't have to duplicate this pattern.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateVariableSizedJSObject):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::allocateObject):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::allocateObjectOfType):
+        (JSC::Heap::subspaceForObjectOfType):
+        (JSC::Heap::allocatorForObjectOfType):
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+
 2015-03-04  Andreas Kling  <akling@apple.com>
 
         Stale entries in WeakGCMaps are keeping tons of WeakBlocks alive unnecessarily.

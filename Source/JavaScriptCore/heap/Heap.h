@@ -140,9 +140,11 @@ public:
     MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
     MarkedSpace::Subspace& subspaceForObjectNormalDestructor() { return m_objectSpace.subspaceForObjectsWithNormalDestructor(); }
     MarkedSpace::Subspace& subspaceForObjectsWithImmortalStructure() { return m_objectSpace.subspaceForObjectsWithImmortalStructure(); }
+    template<typename ClassType> MarkedSpace::Subspace& subspaceForObjectOfType();
     MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
     MarkedAllocator& allocatorForObjectWithNormalDestructor(size_t bytes) { return m_objectSpace.normalDestructorAllocatorFor(bytes); }
     MarkedAllocator& allocatorForObjectWithImmortalStructureDestructor(size_t bytes) { return m_objectSpace.immortalStructureDestructorAllocatorFor(bytes); }
+    template<typename ClassType> MarkedAllocator& allocatorForObjectOfType(size_t bytes);
     CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
     CheckedBoolean tryAllocateStorage(JSCell* intendedOwner, size_t, void**);
     CheckedBoolean tryReallocateStorage(JSCell* intendedOwner, void**, size_t, size_t);
@@ -259,6 +261,7 @@ private:
     void* allocateWithImmortalStructureDestructor(size_t); // For use with special objects whose Structures never die.
     void* allocateWithNormalDestructor(size_t); // For use with objects that inherit directly or indirectly from JSDestructibleObject.
     void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
+    template<typename ClassType> void* allocateObjectOfType(size_t); // Chooses one of the methods above based on type.
 
     static const size_t minExtraCost = 256;
     static const size_t maxExtraCost = 1024 * 1024;

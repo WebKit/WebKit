@@ -205,6 +205,36 @@ inline void* Heap::allocateWithoutDestructor(size_t bytes)
     return m_objectSpace.allocateWithoutDestructor(bytes);
 }
 
+template<typename ClassType>
+void* Heap::allocateObjectOfType(size_t bytes)
+{
+    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
+        return allocateWithImmortalStructureDestructor(bytes);
+    if (ClassType::needsDestruction)
+        return allocateWithNormalDestructor(bytes);
+    return allocateWithoutDestructor(bytes);
+}
+
+template<typename ClassType>
+MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
+{
+    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
+        return subspaceForObjectsWithImmortalStructure();
+    if (ClassType::needsDestruction)
+        return subspaceForObjectNormalDestructor();
+    return subspaceForObjectWithoutDestructor();
+}
+
+template<typename ClassType>
+MarkedAllocator& Heap::allocatorForObjectOfType(size_t bytes)
+{
+    if (ClassType::needsDestruction && ClassType::hasImmortalStructure)
+        return allocatorForObjectWithImmortalStructureDestructor(bytes);
+    if (ClassType::needsDestruction)
+        return allocatorForObjectWithNormalDestructor(bytes);
+    return allocatorForObjectWithoutDestructor(bytes);
+}
+
 inline CheckedBoolean Heap::tryAllocateStorage(JSCell* intendedOwner, size_t bytes, void** outPtr)
 {
     CheckedBoolean result = m_storageSpace.tryAllocate(bytes, outPtr);
