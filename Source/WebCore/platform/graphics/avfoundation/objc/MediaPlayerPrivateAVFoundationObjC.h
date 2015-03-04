@@ -178,6 +178,7 @@ private:
     virtual void checkPlayability();
     virtual void setRateDouble(double) override;
     virtual double rate() const;
+    void setPreservesPitch(bool) override;
     virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
     virtual unsigned long long totalBytes() const;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;

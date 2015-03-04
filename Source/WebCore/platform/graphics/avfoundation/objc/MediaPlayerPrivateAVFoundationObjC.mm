@@ -182,6 +182,8 @@ SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
 SOFT_LINK_CLASS(CoreImage, CIContext)
 SOFT_LINK_CLASS(CoreImage, CIImage)
 
+SOFT_LINK_POINTER(AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicVisual, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeClosedCaption, NSString *)
@@ -206,6 +208,8 @@ SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NS
 #define AVAssetImageGenerator getAVAssetImageGeneratorClass()
 #define AVMetadataItem getAVMetadataItemClass()
 
+#define AVAudioTimePitchAlgorithmSpectral getAVAudioTimePitchAlgorithmSpectral()
+#define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
@@ -962,6 +966,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     for (NSString *keyName in itemKVOProperties())
         [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
 
+    [m_avPlayerItem setAudioTimePitchAlgorithm:(player()->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
+
     if (m_avPlayer)
         setAVPlayerItem(m_avPlayerItem.get());
 
@@ -969,7 +975,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     AtomicString value;
     if (player()->doesHaveAttribute("data-youtube-id", &value))
         [m_avPlayerItem.get() setDataYouTubeID: value];
- #endif
+#endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     const NSTimeInterval legibleOutputAdvanceInterval = 2;
@@ -1320,7 +1326,6 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
-
 {
     setDelayCallbacks(true);
     m_cachedRate = rate;
@@ -1334,6 +1339,12 @@ double MediaPlayerPrivateAVFoundationObjC::rate() const
         return 0;
 
     return m_cachedRate;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setPreservesPitch(bool preservesPitch)
+{
+    if (m_avPlayerItem)
+        [m_avPlayerItem setAudioTimePitchAlgorithm:(preservesPitch ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const

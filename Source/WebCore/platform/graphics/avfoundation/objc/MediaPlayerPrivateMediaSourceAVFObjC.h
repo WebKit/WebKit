@@ -131,6 +131,8 @@ private:
     virtual bool seeking() const override;
     virtual void setRateDouble(double) override;
 
+    void setPreservesPitch(bool) override;
+
     virtual std::unique_ptr<PlatformTimeRanges> seekable() const override;
     virtual MediaTime maxMediaTimeSeekable() const override;
     virtual MediaTime minMediaTimeSeekable() const override;

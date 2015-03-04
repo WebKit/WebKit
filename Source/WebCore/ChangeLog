@@ -1,5 +1,33 @@
 2015-03-04  Jer Noble  <jer.noble@apple.com>
 
+        [Mac] YouTube playback at 1.5x speed has audible distortion
+        https://bugs.webkit.org/show_bug.cgi?id=142280
+
+        Reviewed by Eric Carlson.
+
+        Use the high-quality AVAudioTimePitchAlgorithmSpectral algorithm for the 
+        AVSampleBufferAudioRenderer rather than its default value of 
+        AVAudioTimePitchAlgorithmTimeDomain.
+
+        Drive-by fix:
+
+        Might as well add support for MediaPlayer::setPreservesPitch() while we're
+        changing the audio pitch algorithm. If preservesPitch() is false use the
+        AVAudioTimePitchAlgorithmVarispeed algorithm in both AVFObjC-based media players
+        (MediaPlayerPrivateAVFoundationObjC & MediaPlayerPrivateMediaSourceAVFObjC).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setRateDouble): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer):
+
+2015-03-04  Jer Noble  <jer.noble@apple.com>
+
         [MSE][EME][Mac] Calling close on a MediaKeysSession will cause many decoding errors to be emitted
         https://bugs.webkit.org/show_bug.cgi?id=142285
 

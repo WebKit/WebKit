@@ -62,7 +62,12 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
 
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString*)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFStringRef)
+
+#define AVAudioTimePitchAlgorithmSpectral getAVAudioTimePitchAlgorithmSpectral()
+#define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
 #define kCMTimebaseNotification_EffectiveRateChanged getkCMTimebaseNotification_EffectiveRateChanged()
 
 #pragma mark -
@@ -91,6 +96,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFSt
 @interface AVSampleBufferAudioRenderer : NSObject
 - (void)setVolume:(float)volume;
 - (void)setMuted:(BOOL)muted;
+@property (nonatomic, copy) NSString *audioTimePitchAlgorithm;
 @end
 
 #pragma mark -
@@ -470,6 +476,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
         [m_synchronizer setRate:m_rate];
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
+{
+    NSString *algorithm = preservesPitch ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed;
+    for (auto& renderer : m_sampleBufferAudioRenderers)
+        [renderer setAudioTimePitchAlgorithm:algorithm];
+}
+
 MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() const
 {
     return m_networkState;
@@ -772,6 +785,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioR
 
     [audioRenderer setMuted:m_player->muted()];
     [audioRenderer setVolume:m_player->volume()];
+    [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
 
     [m_synchronizer addRenderer:audioRenderer];
     m_player->client().mediaPlayerRenderingModeChanged(m_player);
