@@ -314,7 +314,7 @@ bool MediaPlayerPrivateAVFoundation::seeking() const
     return m_seeking;
 }
 
-IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
+FloatSize MediaPlayerPrivateAVFoundation::naturalSize() const
 {
     if (!metaDataAvailable())
         return IntSize();
@@ -329,11 +329,11 @@ IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
     return m_cachedNaturalSize;
 }
 
-void MediaPlayerPrivateAVFoundation::setNaturalSize(IntSize size)
+void MediaPlayerPrivateAVFoundation::setNaturalSize(FloatSize size)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation:setNaturalSize(%p) - size = %d x %d", this, size.width(), size.height());
+    LOG(Media, "MediaPlayerPrivateAVFoundation:setNaturalSize(%p) - size = %f x %f", this, size.width(), size.height());
 
-    IntSize oldSize = m_cachedNaturalSize;
+    FloatSize oldSize = m_cachedNaturalSize;
     m_cachedNaturalSize = size;
     if (oldSize != m_cachedNaturalSize)
         m_player->sizeChanged();

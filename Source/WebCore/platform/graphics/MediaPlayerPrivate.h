@@ -74,7 +74,7 @@ public:
 
     virtual bool canSaveMediaData() const { return false; }
 
-    virtual IntSize naturalSize() const = 0;
+    virtual FloatSize naturalSize() const = 0;
 
     virtual bool hasVideo() const = 0;
     virtual bool hasAudio() const = 0;
@@ -135,9 +135,9 @@ public:
 
     virtual void setSize(const IntSize&) = 0;
 
-    virtual void paint(GraphicsContext*, const IntRect&) = 0;
+    virtual void paint(GraphicsContext*, const FloatRect&) = 0;
 
-    virtual void paintCurrentFrameInContext(GraphicsContext* c, const IntRect& r) { paint(c, r); }
+    virtual void paintCurrentFrameInContext(GraphicsContext* c, const FloatRect& r) { paint(c, r); }
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Dint, GC3Denum, GC3Denum, bool, bool) { return false; }
     virtual PassNativeImagePtr nativeImageForCurrentTime() { return nullptr; }
 

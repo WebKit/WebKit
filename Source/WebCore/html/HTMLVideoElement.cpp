@@ -165,14 +165,14 @@ unsigned HTMLVideoElement::videoWidth() const
 {
     if (!player())
         return 0;
-    return player()->naturalSize().width();
+    return clampToUnsigned(player()->naturalSize().width());
 }
 
 unsigned HTMLVideoElement::videoHeight() const
 {
     if (!player())
         return 0;
-    return player()->naturalSize().height();
+    return clampToUnsigned(player()->naturalSize().height());
 }
 
 bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
@@ -229,7 +229,7 @@ void HTMLVideoElement::updateDisplayState()
         setDisplayMode(Poster);
 }
 
-void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& destRect)
+void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& destRect)
 {
     MediaPlayer* player = HTMLMediaElement::player();
     if (!player)

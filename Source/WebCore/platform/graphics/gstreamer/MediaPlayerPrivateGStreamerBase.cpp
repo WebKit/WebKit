@@ -126,17 +126,17 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 }
 
 // Returns the size of the video
-IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
+FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
 {
     if (!hasVideo())
-        return IntSize();
+        return FloatSize();
 
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
     if (!caps)
-        return IntSize();
+        return FloatSize();
 
 
     // TODO: handle possible clean aperture data. See
@@ -150,7 +150,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     IntSize originalSize;
     GstVideoFormat format;
     if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
-        return IntSize();
+        return FloatSize();
 
     LOG_MEDIA_MESSAGE("Original video size: %dx%d", originalSize.width(), originalSize.height());
     LOG_MEDIA_MESSAGE("Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
@@ -181,7 +181,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     }
 
     LOG_MEDIA_MESSAGE("Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
-    m_videoSize = IntSize(static_cast<int>(width), static_cast<int>(height));
+    m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
     return m_videoSize;
 }
 
@@ -341,7 +341,7 @@ void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
     m_size = size;
 }
 
-void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const FloatRect& rect)
 {
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     if (client())

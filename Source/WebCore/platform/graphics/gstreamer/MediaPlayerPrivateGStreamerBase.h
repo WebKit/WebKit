@@ -57,7 +57,7 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 public:
     virtual ~MediaPlayerPrivateGStreamerBase();
 
-    IntSize naturalSize() const;
+    FloatSize naturalSize() const;
 
     void setVolume(float);
     float volume() const;
@@ -78,7 +78,7 @@ public:
     void sizeChanged();
 
     void triggerRepaint(GstBuffer*);
-    void paint(GraphicsContext*, const IntRect&);
+    void paint(GraphicsContext*, const FloatRect&);
 
     virtual bool hasSingleSecurityOrigin() const { return true; }
     virtual float maxTimeLoaded() const { return 0.0; }
@@ -125,7 +125,7 @@ protected:
     unsigned long m_repaintHandler;
     unsigned long m_volumeSignalHandler;
     unsigned long m_muteSignalHandler;
-    mutable IntSize m_videoSize;
+    mutable FloatSize m_videoSize;
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     PassRefPtr<BitmapTexture> updateTexture(TextureMapper*);
 #endif
