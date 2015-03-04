@@ -1,3 +1,19 @@
+2015-03-04  Matthew Mirman  <mmirman@apple.com>
+
+        Cleaned up BuildAndTestFactory to not be a near duplicate of TestFactory
+        https://bugs.webkit.org/show_bug.cgi?id=142230
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestFactory):
+        (TestFactory.getProduct): Added
+        (TestFactory.__init__): moved downloader to getProduct
+        (BuildAndTestFactory):        
+        (BuildAndTestFactory.getProduct): Added
+        (BuildAndTestFactory.__init__): made to call TestFactory.__init__ and append steps to the end.
+        (BuildAndTestWebKit2Factory): Deleted.  Wasn't used anywhere.
+
 2015-03-04  Debarshi Ray  <debarshir@gnome.org>
 
         [GTK] WebView should hold a reference on WebContext because non-default contexts are a reality
