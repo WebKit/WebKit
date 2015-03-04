@@ -86,7 +86,7 @@ protected:
 
 EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecState* exec)
 {
-    auto* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
+    JSTestNodeConstructor* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
     RefPtr<TestNode> object = TestNode::create();
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
@@ -159,7 +159,7 @@ JSValue JSTestNode::getConstructor(VM& vm, JSGlobalObject* globalObject)
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    auto* thisObject = jsCast<JSTestNode*>(cell);
+    JSTestNode* thisObject = jsCast<JSTestNode*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     thisObject->impl().visitJSEventListeners(visitor);

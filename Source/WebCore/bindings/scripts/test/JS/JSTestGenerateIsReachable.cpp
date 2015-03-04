@@ -160,7 +160,7 @@ static inline bool isObservable(JSTestGenerateIsReachable* jsTestGenerateIsReach
 
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
+    JSTestGenerateIsReachable* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
     if (!isObservable(jsTestGenerateIsReachable))
         return false;
     TestGenerateIsReachable* root = &jsTestGenerateIsReachable->impl();
@@ -169,8 +169,8 @@ bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
 
 void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSTestGenerateIsReachable* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestGenerateIsReachable->impl(), jsTestGenerateIsReachable);
     jsTestGenerateIsReachable->releaseImpl();
 }

@@ -154,7 +154,7 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJ
             return reportDeprecatedGetterError(*exec, "attribute", "readonly");
         return throwGetterTypeError(*exec, "attribute", "readonly");
     }
-    auto& impl = castedThis->impl();
+    attribute& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.readonly());
     return JSValue::encode(result);
 }
@@ -182,8 +182,8 @@ bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> hand
 
 void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSattribute* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsattribute->impl(), jsattribute);
     jsattribute->releaseImpl();
 }

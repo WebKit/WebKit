@@ -124,7 +124,7 @@ void JSTestNamedConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject
 
 EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* exec)
 {
-    auto* castedThis = jsCast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
+    JSTestNamedConstructorNamedConstructor* castedThis = jsCast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -230,7 +230,7 @@ JSValue JSTestNamedConstructor::getNamedConstructor(VM& vm, JSGlobalObject* glob
 
 bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
+    JSTestNamedConstructor* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
     if (jsTestNamedConstructor->impl().hasPendingActivity())
         return true;
     UNUSED_PARAM(visitor);
@@ -239,8 +239,8 @@ bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
 
 void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSTestNamedConstructor* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestNamedConstructor->impl(), jsTestNamedConstructor);
     jsTestNamedConstructor->releaseImpl();
 }

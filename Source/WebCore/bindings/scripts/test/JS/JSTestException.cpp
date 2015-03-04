@@ -158,7 +158,7 @@ JSTestException::~JSTestException()
 
 bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    auto* thisObject = jsCast<JSTestException*>(object);
+    JSTestException* thisObject = jsCast<JSTestException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestException, Base>(exec, JSTestExceptionTable, thisObject, propertyName, slot);
 }
@@ -168,8 +168,8 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJ
     UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestException*>(slotBase);
-    auto& impl = castedThis->impl();
+    JSTestException* castedThis = jsCast<JSTestException*>(slotBase);
+    TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());
     return JSValue::encode(result);
 }
@@ -197,8 +197,8 @@ bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
 
 void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestException = jsCast<JSTestException*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSTestException* jsTestException = jsCast<JSTestException*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestException->impl(), jsTestException);
     jsTestException->releaseImpl();
 }

@@ -1,3 +1,20 @@
+2015-03-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181001 and r181003.
+        https://bugs.webkit.org/show_bug.cgi?id=142307
+
+        Broke many tests (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Make JavaScript binding get and set legacy event listener
+        attributes directly"
+        https://bugs.webkit.org/show_bug.cgi?id=142282
+        http://trac.webkit.org/changeset/181001
+
+        "Update bindings tests after r181001."
+        http://trac.webkit.org/changeset/181003
+
 2015-03-04  Roger Fong  <roger_fong@apple.com>
 
         Update elapsed/remaining time displays on media inline controls on OSX.

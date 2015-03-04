@@ -173,7 +173,7 @@ JSTestEventTarget::~JSTestEventTarget()
 
 bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    auto* thisObject = jsCast<JSTestEventTarget*>(object);
+    JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     const HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<JSTestEventTarget>(exec, propertyName);
     if (entry) {
@@ -195,7 +195,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
 
 bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
 {
-    auto* thisObject = jsCast<JSTestEventTarget*>(object);
+    JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (index < thisObject->impl().length()) {
         unsigned attributes = DontDelete | ReadOnly;
@@ -220,7 +220,7 @@ EncodedJSValue jsTestEventTargetConstructor(ExecState* exec, JSObject*, EncodedJ
 
 void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    auto* thisObject = jsCast<JSTestEventTarget*>(object);
+    JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)
         propertyNames.add(Identifier::from(exec, i));
@@ -239,7 +239,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestEventTarget", "item");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    auto& impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int index(toUInt32(exec, exec->argument(0), NormalConversion));
@@ -260,7 +260,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestEventTarget", "addEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    auto& impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
     if (UNLIKELY(!listener.isObject()))
         return JSValue::encode(jsUndefined());
@@ -275,7 +275,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestEventTarget", "removeEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    auto& impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
     if (UNLIKELY(!listener.isObject()))
         return JSValue::encode(jsUndefined());
@@ -290,7 +290,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestEventTarget", "dispatchEvent");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    auto& impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -305,7 +305,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
 
 void JSTestEventTarget::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    auto* thisObject = jsCast<JSTestEventTarget*>(cell);
+    JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     thisObject->impl().visitJSEventListeners(visitor);
@@ -313,7 +313,7 @@ void JSTestEventTarget::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    auto* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
+    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
     if (jsTestEventTarget->impl().isFiringEventListeners())
         return true;
     UNUSED_PARAM(visitor);
@@ -322,8 +322,8 @@ bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
 
 void JSTestEventTargetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestEventTarget->impl(), jsTestEventTarget);
     jsTestEventTarget->releaseImpl();
 }

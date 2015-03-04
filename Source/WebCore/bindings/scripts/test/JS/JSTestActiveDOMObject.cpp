@@ -168,7 +168,7 @@ JSTestActiveDOMObject::~JSTestActiveDOMObject()
 
 bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    auto* thisObject = jsCast<JSTestActiveDOMObject*>(object);
+    JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
 }
@@ -178,10 +178,10 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSObject* slot
     UNUSED_PARAM(exec);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestActiveDOMObject*>(slotBase);
+    JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(slotBase);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->impl();
+    TestActiveDOMObject& impl = castedThis->impl();
     JSValue result = jsNumber(impl.excitingAttr());
     return JSValue::encode(result);
 }
@@ -211,7 +211,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->impl();
+    TestActiveDOMObject& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Node* nextChild(JSNode::toWrapped(exec->argument(0)));
@@ -228,7 +228,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestActiveDOMObject", "postMessage");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
-    auto& impl = castedThis->impl();
+    TestActiveDOMObject& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& message(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -247,8 +247,8 @@ bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
+    JSTestActiveDOMObject* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.slot()->asCell());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestActiveDOMObject->impl(), jsTestActiveDOMObject);
     jsTestActiveDOMObject->releaseImpl();
 }
