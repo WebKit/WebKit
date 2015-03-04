@@ -223,7 +223,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<Rende
 
 bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (is<RenderSnapshottedPlugIn>(renderer()) && !partOfSnapshotOverlay(&child))
+    if (is<RenderSnapshottedPlugIn>(renderer()) && !hasShadowRootParent(child))
         return false;
 
     return HTMLPlugInElement::childShouldCreateRenderer(child);
