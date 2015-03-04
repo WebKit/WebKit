@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2008, 2012, 2014, 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2008, 2012, 2014-2015 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -717,7 +717,11 @@ ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS
 endif
 
 ifeq ($(PLATFORM_FEATURE_DEFINES),)
+ifeq ($(OS), Windows*)
+PLATFORM_FEATURE_DEFINES = $(WEBKIT_LIBRARIES)/tools/vsprops/FeatureDefines.props
+else
 PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
+endif
 endif
 
 ifeq ($(WTF_PLATFORM_IOS), 1)

@@ -1,3 +1,20 @@
+2015-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Missing dependency checking in DerivedSources.make for FeatureDefines.props
+        https://bugs.webkit.org/show_bug.cgi?id=142284
+
+        Reviewed by David Kilzer.
+
+        Make DerivedSources.make understand its build dependency on FeatureDefines.props
+        when building on Windows:
+        1. Modify DerivedSources.make to declare a default dependency (on Windows)
+           to $(WEBKIT_LIBRARIES)/tools/vsprops/FeatureDefines.props.
+        2. Update the Windows script 'build-generated-files.pl' to specify the correct
+           FeatureDefines{Cairo}.props value to use, depending on build environment.
+
+        * DerivedSources.make:
+        * WebCore.vcxproj/build-generated-files.pl:
+
 2015-03-04  Darin Adler  <darin@apple.com>
 
         Make JavaScript binding get and set legacy event listener attributes directly
