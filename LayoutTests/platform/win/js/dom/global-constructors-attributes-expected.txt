@@ -313,6 +313,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLAreaElement').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAreaElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAreaElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAreaElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLAttachmentElement').value is HTMLAttachmentElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLAttachmentElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLAttachmentElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLAttachmentElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLAttachmentElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAudioElement').value is HTMLAudioElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAudioElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLAudioElement').hasOwnProperty('set') is false

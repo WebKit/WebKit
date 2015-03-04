@@ -1,3 +1,11 @@
+2015-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Rebaseline a few tests. Mark some failures.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/attachment/attachment-disabled-rendering-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2015-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement -apple-trailing-word: -apple-partially-balanced
