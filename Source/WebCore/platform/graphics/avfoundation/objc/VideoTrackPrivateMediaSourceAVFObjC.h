@@ -55,7 +55,7 @@ public:
 
     int trackID() { return m_trackID; }
 
-    IntSize naturalSize() const;
+    FloatSize naturalSize() const;
 
 private:
     explicit VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack*, SourceBufferPrivateAVFObjC* parent);

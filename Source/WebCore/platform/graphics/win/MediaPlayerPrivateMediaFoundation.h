@@ -44,7 +44,7 @@ public:
     virtual void play();
     virtual void pause();
 
-    virtual IntSize naturalSize() const;
+    virtual FloatSize naturalSize() const;
 
     virtual bool hasVideo() const;
     virtual bool hasAudio() const;
@@ -64,12 +64,10 @@ public:
 
     virtual void setSize(const IntSize&);
 
-    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const FloatRect&);
 
 private:
-
     MediaPlayer* m_player;
-
 };
 
 }

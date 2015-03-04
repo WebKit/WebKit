@@ -77,8 +77,8 @@ private:
     virtual MediaTime currentMediaTime() const override;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);
-    virtual void paint(GraphicsContext*, const IntRect&);
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const FloatRect&);
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
     virtual PlatformLayer* platformLayer() const;
     virtual bool supportsAcceleratedRendering() const { return true; }
     virtual MediaTime mediaTimeForTimeValue(const MediaTime&) const;

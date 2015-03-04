@@ -357,10 +357,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
         [*it setMuted:muted];
 }
 
-IntSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
+FloatSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 {
     if (!m_mediaSourcePrivate)
-        return IntSize();
+        return FloatSize();
 
     return m_mediaSourcePrivate->naturalSize();
 }
@@ -524,12 +524,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setSize(const IntSize&)
     // No-op.
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::paint(GraphicsContext*, const IntRect&)
+void MediaPlayerPrivateMediaSourceAVFObjC::paint(GraphicsContext*, const FloatRect&)
 {
     // FIXME(125157): Implement painting.
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsContext*, const IntRect&)
+void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsContext*, const FloatRect&)
 {
     // FIXME(125157): Implement painting.
 }
