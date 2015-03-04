@@ -1,3 +1,17 @@
+2015-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180683.
+        https://bugs.webkit.org/show_bug.cgi?id=142249
+
+        Broke fast/css/acid2-pixel.html (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Setting any of the <object> element plugin controlling
+        attributes does not have any affect."
+        https://bugs.webkit.org/show_bug.cgi?id=141936
+        http://trac.webkit.org/changeset/180683
+
 2015-03-03  Dean Jackson  <dino@apple.com>
 
         Controls panel should have system blurry background

@@ -85,7 +85,6 @@ private:
     
     bool shouldAllowQuickTimeClassIdQuirk();
     bool hasValidClassId();
-    void clearUseFallbackContent() { m_useFallbackContent = false; }
 
     virtual void refFormAssociatedElement() override { ref(); }
     virtual void derefFormAssociatedElement() override { deref(); }

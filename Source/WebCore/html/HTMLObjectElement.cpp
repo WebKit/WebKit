@@ -107,37 +107,28 @@ void HTMLObjectElement::collectStyleForPresentationAttribute(const QualifiedName
 
 void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    bool invalidateRenderer = false;
-
     if (name == formAttr)
         formAttributeChanged();
     else if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).lower();
-        invalidateRenderer = !fastHasAttribute(classidAttr);
         setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
+        setNeedsWidgetUpdate(true);
         document().updateStyleIfNeeded();
-        if (isImageType() && renderer()) {
-            if (!m_imageLoader)
-                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-            m_imageLoader->updateFromElementIgnoringPreviousError();
+        if (renderer()) {
+            if (isImageType()) {
+                if (!m_imageLoader)
+                    m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+                m_imageLoader->updateFromElementIgnoringPreviousError();
+            }
         }
-        invalidateRenderer = !fastHasAttribute(classidAttr);
+    } else if (name == classidAttr)
         setNeedsWidgetUpdate(true);
-    } else if (name == classidAttr) {
-        invalidateRenderer = true;
-        setNeedsWidgetUpdate(true);
-    } else if (name == onbeforeloadAttr)
+    else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else
         HTMLPlugInImageElement::parseAttribute(name, value);
-
-    if (!invalidateRenderer || !inDocument() || !renderer())
-        return;
-
-    clearUseFallbackContent();
-    setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
