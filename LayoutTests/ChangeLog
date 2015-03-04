@@ -1,3 +1,9 @@
+2015-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Add baseline for new legacy-event-handler test.
+
+        * platform/win/fast/dom/legacy-event-handler-attributes-expected.txt: Added.
+
 2015-03-03  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> label can get very wide, doesn't wrap/truncate
