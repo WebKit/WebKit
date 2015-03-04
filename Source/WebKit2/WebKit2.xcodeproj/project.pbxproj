@@ -1753,6 +1753,10 @@
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
+		E42E060F1AA7523400B11699 /* NetworkCacheIOChannelCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */; };
+		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
+		E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E06111AA75ABD00B11699 /* NetworkCacheData.h */; };
+		E42E06141AA75B7000B11699 /* NetworkCacheDataCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E42E06131AA75B7000B11699 /* NetworkCacheDataCocoa.mm */; };
 		E4436ECA1A0D03FA00EAD204 /* NetworkCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4436EBE1A0CFDB200EAD204 /* NetworkCache.cpp */; };
 		E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EBF1A0CFDB200EAD204 /* NetworkCache.h */; };
 		E4436ECD1A0D040B00EAD204 /* NetworkCacheKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */; };
@@ -3985,6 +3989,10 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E1FEF39A190F76F300731658 /* com.apple.WebKit.Databases.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb.in; sourceTree = "<group>"; };
 		E1FEF39C190F791C00731658 /* DatabaseProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessIOS.mm; sourceTree = "<group>"; };
+		E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheIOChannel.h; sourceTree = "<group>"; };
+		E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkCacheIOChannelCocoa.mm; sourceTree = "<group>"; };
+		E42E06111AA75ABD00B11699 /* NetworkCacheData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheData.h; sourceTree = "<group>"; };
+		E42E06131AA75B7000B11699 /* NetworkCacheDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkCacheDataCocoa.mm; sourceTree = "<group>"; };
 		E4436EBE1A0CFDB200EAD204 /* NetworkCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCache.cpp; sourceTree = "<group>"; };
 		E4436EBF1A0CFDB200EAD204 /* NetworkCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCache.h; sourceTree = "<group>"; };
 		E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheKey.cpp; sourceTree = "<group>"; };
@@ -7417,11 +7425,15 @@
 				E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */,
 				E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */,
 				E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */,
+				E42E06111AA75ABD00B11699 /* NetworkCacheData.h */,
+				E42E06131AA75B7000B11699 /* NetworkCacheDataCocoa.mm */,
 				E489D2861A0A2DB80078C06A /* NetworkCacheDecoder.cpp */,
 				E489D2871A0A2DB80078C06A /* NetworkCacheDecoder.h */,
 				E489D2881A0A2DB80078C06A /* NetworkCacheEncoder.cpp */,
 				E489D2891A0A2DB80078C06A /* NetworkCacheEncoder.h */,
 				834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */,
+				E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */,
+				E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */,
 				E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */,
 				E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */,
 				834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */,
@@ -7536,6 +7548,7 @@
 				3769079A18F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h in Headers */,
 				7C89D2B61A6B0DD9003A5FDE /* WKUserContentControllerPrivate.h in Headers */,
 				7CE4D2071A46776100C7F152 /* APILegacyContextHistoryClient.h in Headers */,
+				E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */,
 				1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */,
 				7CD3A4831A5D02FA009623B8 /* APINavigation.h in Headers */,
 				BCF69FA21176D01400471A52 /* APINavigationData.h in Headers */,
@@ -7849,6 +7862,7 @@
 				51654F00184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h in Headers */,
 				51654EFE184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h in Headers */,
 				515E773418402D510007203F /* UniqueIDBDatabaseIdentifier.h in Headers */,
+				E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
@@ -9607,6 +9621,7 @@
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
 				2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */,
+				E42E06141AA75B7000B11699 /* NetworkCacheDataCocoa.mm in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,
@@ -9854,6 +9869,7 @@
 				2D0730A219F9C7DA00E9D9C4 /* WKActionMenuController.mm in Sources */,
 				0FCB4E4918BBE044000FCFC9 /* WKActionSheet.mm in Sources */,
 				0FCB4E4B18BBE044000FCFC9 /* WKActionSheetAssistant.mm in Sources */,
+				E42E060F1AA7523400B11699 /* NetworkCacheIOChannelCocoa.mm in Sources */,
 				C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */,
 				512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */,
 				BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */,

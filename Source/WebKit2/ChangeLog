@@ -1,3 +1,21 @@
+2015-03-04  Antti Koivisto  <antti@apple.com>
+
+        Factor platform I/O out from NetworkCacheStorage
+        https://bugs.webkit.org/show_bug.cgi?id=142279
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/NetworkCacheData.h: Added.
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm: Added.
+
+            NetworkCacheStorage::Data -> NetworkCacheData
+            Move to files of its own.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h: Added.
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm: Added.
+
+            Add abstraction for dispatch IO channels.
+
 2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove WK_AVAILABLE and related macros when we cannot determine iOS/Mac version

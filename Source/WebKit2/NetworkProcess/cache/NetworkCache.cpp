@@ -93,7 +93,7 @@ static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
 #endif
     if (partition.isEmpty())
         partition = ASCIILiteral("No partition");
-    return NetworkCacheKey(request.httpMethod(), partition, request.url().string());
+    return { request.httpMethod(), partition, request.url().string()  };
 }
 
 static NetworkCacheStorage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
@@ -120,12 +120,12 @@ static NetworkCacheStorage::Entry encodeStorageEntry(const WebCore::ResourceRequ
     encoder.encodeChecksum();
 
     auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    NetworkCacheStorage::Data header(encoder.buffer(), encoder.bufferSize());
-    NetworkCacheStorage::Data body;
+    NetworkCacheData header(encoder.buffer(), encoder.bufferSize());
+    NetworkCacheData body;
     if (responseData)
-        body = NetworkCacheStorage::Data(reinterpret_cast<const uint8_t*>(responseData->data()), responseData->size());
+        body = { reinterpret_cast<const uint8_t*>(responseData->data()), responseData->size() };
 
-    return NetworkCacheStorage::Entry { makeCacheKey(request), timeStamp, header, body };
+    return { makeCacheKey(request), timeStamp, header, body };
 }
 
 static bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const WebCore::ResourceRequest& request)
@@ -343,7 +343,7 @@ void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const 
 
     auto storageEntry = encodeStorageEntry(originalRequest, response, WTF::move(responseData));
 
-    m_storage->store(storageEntry, [completionHandler](bool success, const NetworkCacheStorage::Data& bodyData) {
+    m_storage->store(storageEntry, [completionHandler](bool success, const NetworkCacheData& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (bodyData.isMap()) {
@@ -367,7 +367,7 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
 
     auto updateEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
 
-    m_storage->update(updateEntry, entry.storageEntry, [](bool success, const NetworkCacheStorage::Data&) {
+    m_storage->update(updateEntry, entry.storageEntry, [](bool success, const NetworkCacheData&) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }
