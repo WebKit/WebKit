@@ -91,7 +91,7 @@ protected:
 
 EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
 {
-    JSTestEventConstructorConstructor* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
+    auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
 
     ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
     if (!executionContext)
@@ -205,7 +205,7 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, 
             return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr1");
         return throwGetterTypeError(*exec, "TestEventConstructor", "attr1");
     }
-    TestEventConstructor& impl = castedThis->impl();
+    auto& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr1());
     return JSValue::encode(result);
 }
@@ -222,7 +222,7 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, JSObject* slotBase, 
             return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr2");
         return throwGetterTypeError(*exec, "TestEventConstructor", "attr2");
     }
-    TestEventConstructor& impl = castedThis->impl();
+    auto& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr2());
     return JSValue::encode(result);
 }
@@ -250,8 +250,8 @@ bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
 
 void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestEventConstructor* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.slot()->asCell());
-    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
+    auto* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.slot()->asCell());
+    auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestEventConstructor->impl(), jsTestEventConstructor);
     jsTestEventConstructor->releaseImpl();
 }
