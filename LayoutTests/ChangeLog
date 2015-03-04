@@ -1,3 +1,14 @@
+2015-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Track localized name follows locale instead of primary language
+        https://bugs.webkit.org/show_bug.cgi?id=142242
+        rdar://problem/20000365
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt: This
+        test now successfully switches to Japanese, as originally intended.
+
 2015-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to use CSS selectors in content extensions.

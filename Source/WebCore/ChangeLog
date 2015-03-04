@@ -1,3 +1,14 @@
+2015-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Track localized name follows locale instead of primary language
+        https://bugs.webkit.org/show_bug.cgi?id=142242
+        rdar://problem/20000365
+
+        Reviewed by Eric Carlson.
+
+        * page/CaptionUserPreferencesMediaAF.cpp: (WebCore::trackDisplayName): Use the
+        language for localization, as CFBundle does.
+
 2015-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed build fix.

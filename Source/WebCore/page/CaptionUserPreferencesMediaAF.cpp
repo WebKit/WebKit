@@ -592,7 +592,7 @@ static String trackDisplayName(TextTrack* track)
     String label = track->label();
     String trackLanguageIdentifier = track->language();
 
-    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCopyCurrent());
+    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
     RetainPtr<CFStringRef> localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
     RetainPtr<CFStringRef> languageCF = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
