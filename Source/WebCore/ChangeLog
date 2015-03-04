@@ -1,5 +1,12 @@
 2015-03-03  Alex Christensen  <achristensen@webkit.org>
 
+        [Win] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCoreIncludeCommon.props:
+        Include contentextensions subdirectory.
+
+2015-03-03  Alex Christensen  <achristensen@webkit.org>
+
         Prepare to use CSS selectors in content extensions.
         https://bugs.webkit.org/show_bug.cgi?id=142227
 
