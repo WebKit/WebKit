@@ -4352,12 +4352,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_dismissContentRelativeChildWindows
 {
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
-    if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
-        [lookupDefinitionModuleClass hideDefinition];
+    if ([[self window] isKeyWindow]) {
+        if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
+            [lookupDefinitionModuleClass hideDefinition];
 
-    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
-    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
-        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+        DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
+        if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
+            [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+    }
 
     [self _setTextIndicator:nullptr fadeOut:NO];
 
