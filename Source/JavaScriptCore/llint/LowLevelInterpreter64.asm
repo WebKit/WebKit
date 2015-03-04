@@ -1978,6 +1978,11 @@ _llint_op_next_pname:
 
 
 _llint_op_catch:
+    # Gotta restore the tag registers. We could be throwing from FTL, which may
+    # clobber them.
+    move TagTypeNumber, tagTypeNumber
+    move TagMask, tagMask
+    
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
