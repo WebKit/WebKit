@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "SourceBufferPrivate.h"
-#include <map>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
@@ -64,8 +63,8 @@ class VideoTrackPrivateMediaSourceAVFObjC;
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
     virtual ~SourceBufferPrivateAVFObjCErrorClient() { }
-    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *) = 0;
-    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) = 0;
+    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) = 0;
+    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) = 0;
 };
 
 class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
@@ -97,6 +96,8 @@ public:
 
     int protectedTrackID() const { return m_protectedTrackID; }
     AVStreamDataParser* parser() const { return m_parser.get(); }
+
+    void flush();
 
     void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
@@ -138,7 +139,7 @@ private:
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
-    std::map<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
+    HashMap<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
 
