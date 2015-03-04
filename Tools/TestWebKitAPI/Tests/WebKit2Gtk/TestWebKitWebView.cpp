@@ -64,6 +64,36 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 }
 
+static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
+{
+    WebKitWebContext* webContext = webkit_web_context_new();
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webContext));
+
+    GtkWidget* webView = webkit_web_view_new_with_context(webContext);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView));
+
+    g_object_ref_sink(webView);
+    g_object_unref(webContext);
+
+    // Check that the web view still has a valid context.
+    WebKitWebContext* tmpContext = webkit_web_view_get_context(WEBKIT_WEB_VIEW(webView));
+    g_assert_true(WEBKIT_IS_WEB_CONTEXT(tmpContext));
+    g_object_unref(webView);
+
+    WebKitWebContext* webContext2 = webkit_web_context_new();
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webContext2));
+
+    GtkWidget* webView2 = webkit_web_view_new_with_context(webContext2);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView2));
+
+    g_object_ref_sink(webView2);
+    g_object_unref(webView2);
+
+    // Check that the context is still valid.
+    g_assert_true(WEBKIT_IS_WEB_CONTEXT(webContext2));
+    g_object_unref(webContext2);
+}
+
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
 {
     g_assert(!webkit_web_view_get_custom_charset(test->m_webView));
@@ -809,6 +839,7 @@ void beforeAll()
     gServer->run(serverCallback);
 
     WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
+    WebViewTest::add("WebKitWebView", "web-context-lifetime", testWebViewWebContextLifetime);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
