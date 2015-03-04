@@ -3626,6 +3626,16 @@ void SpeculativeJIT::compileArithPow(Node* node)
     doubleResult(resultFpr, node);
 }
 
+void SpeculativeJIT::compileArithLog(Node* node)
+{
+    SpeculateDoubleOperand op1(this, node->child1());
+    FPRReg op1FPR = op1.fpr();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(log, result.fpr(), op1FPR);
+    doubleResult(result.fpr(), node);
+}
+
 // Returns true if the compare is fused with a subsequent branch.
 bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_JITOperation_EJJ operation)
 {

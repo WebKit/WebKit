@@ -133,6 +133,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithFRound:
     case ArithSin:
     case ArithCos:
+    case ArithLog:
     case GetScope:
     case SkipScope:
     case StringCharCodeAt:

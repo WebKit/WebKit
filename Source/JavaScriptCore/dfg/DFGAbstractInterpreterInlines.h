@@ -794,6 +794,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
         break;
     }
+
+    case ArithLog: {
+        JSValue child = forNode(node->child1()).value();
+        if (child && child.isNumber()) {
+            setConstant(node, jsDoubleNumber(log(child.asNumber())));
+            break;
+        }
+        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
+        break;
+    }
             
     case LogicalNot: {
         switch (booleanResult(node, forNode(node->child1()))) {

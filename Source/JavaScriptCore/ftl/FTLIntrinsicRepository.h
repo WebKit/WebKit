@@ -43,6 +43,7 @@ namespace JSC { namespace FTL {
     macro(doublePow, "llvm.pow.f64", functionType(doubleType, doubleType, doubleType)) \
     macro(doublePowi, "llvm.powi.f64", functionType(doubleType, doubleType, int32)) \
     macro(doubleSqrt, "llvm.sqrt.f64", functionType(doubleType, doubleType)) \
+    macro(doubleLog, "llvm.log.f64", functionType(doubleType, doubleType)) \
     macro(frameAddress, "llvm.frameaddress", functionType(pointerType(int8), int32)) \
     macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(mulWithOverflow64, "llvm.smul.with.overflow.i64", functionType(structType(m_context, int64, boolean), int64, int64)) \

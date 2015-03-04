@@ -510,6 +510,9 @@ private:
         case ArithSqrt:
             compileArithSqrt();
             break;
+        case ArithLog:
+            compileArithLog();
+            break;
         case ArithFRound:
             compileArithFRound();
             break;
@@ -1718,6 +1721,8 @@ private:
     }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }
+
+    void compileArithLog() { setDouble(m_out.doubleLog(lowDouble(m_node->child1()))); }
     
     void compileArithFRound()
     {

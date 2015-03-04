@@ -1834,10 +1834,11 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         
     case MaxIntrinsic:
         return handleMinMax(resultOperand, ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
-        
+
     case SqrtIntrinsic:
     case CosIntrinsic:
-    case SinIntrinsic: {
+    case SinIntrinsic:
+    case LogIntrinsic: {
         if (argumentCountIncludingThis == 1) {
             insertChecks();
             set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
@@ -1858,6 +1859,11 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         case SinIntrinsic:
             insertChecks();
             set(VirtualRegister(resultOperand), addToGraph(ArithSin, get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
+
+        case LogIntrinsic:
+            insertChecks();
+            set(VirtualRegister(resultOperand), addToGraph(ArithLog, get(virtualRegisterForArgument(1, registerOffset))));
             return true;
             
         default:

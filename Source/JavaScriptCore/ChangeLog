@@ -1,3 +1,57 @@
+2015-03-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add a node for Math.log()
+        https://bugs.webkit.org/show_bug.cgi?id=142126
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds the DFG node ArithLog for LogIntrinsic.
+
+        Having a direct call to log has very little value by itself, the implementation
+        in DFG and FTL is a simple function call.
+
+        What is useful in ArithLog is that we know the operation is pure.
+        This allow us to hoist it out of loops when the argument is independent
+        is an invariant of the loop.
+
+        Perf wise, this patch gives:
+        -Kraken's imaging-darkroom: definitely 1.2372x faster.
+        -AsmBench's Towers.c: definitely 1.0261x faster.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithLog):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithLog):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleLog):
+        * tests/stress/math-log-basics.js: Added.
+        * tests/stress/math-log-with-constants.js: Added.
+
 2015-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         Only Heap should be in charge of deciding how to select a subspace for a type

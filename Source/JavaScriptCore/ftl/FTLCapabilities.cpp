@@ -91,6 +91,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithCos:
     case ArithPow:
     case ArithSqrt:
+    case ArithLog:
     case ArithFRound:
     case ArithNegate:
     case UInt32ToNumber:

@@ -192,6 +192,11 @@ public:
         return call(doubleSqrtIntrinsic(), value);
     }
 
+    LValue doubleLog(LValue value)
+    {
+        return call(doubleLogIntrinsic(), value);
+    }
+
     static bool hasSensibleDoubleToInt() { return isX86(); }
     LValue sensibleDoubleToInt(LValue);
     

@@ -356,7 +356,8 @@ private:
         case ArithSqrt:
         case ArithFRound:
         case ArithSin:
-        case ArithCos: {
+        case ArithCos:
+        case ArithLog: {
             fixDoubleOrBooleanEdge(node->child1());
             node->setResult(NodeResultDouble);
             break;
