@@ -1,3 +1,10 @@
+2015-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark fast/css/object-fit/object-fit-canvas.html as a flakey
+        image failure, since it keeps breaking EWS.
+
+        * platform/mac/TestExpectations:
+
 2015-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] [Attachment] New Tests fail on Windows

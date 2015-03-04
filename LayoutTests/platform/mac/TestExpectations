@@ -309,10 +309,10 @@ webkit.org/b/78801 touchadjustment
 # <rdar://problem/11059777>
 webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
 
-# Needs BatteryClient implementation.
+# BatteryClient is not supported
 webkit.org/b/62698 batterystatus/
 
-# Proximity Events is not supported.
+# Proximity Events are not supported.
 proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
@@ -439,8 +439,8 @@ webkit.org/b/112620 [ Debug ] svg/custom/image-with-attr-change-after-delete-cra
 
 # Assorted failures that need investigation
 
-# https://bugs.webkit.org/show_bug.cgi?id=107118
-fast/canvas/canvas-quadratic-same-endpoint.html
+webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
+webkit.org/b/142258 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 
 # --- Compositing ----
 css3/filters/composited-during-transition-layertree.html
