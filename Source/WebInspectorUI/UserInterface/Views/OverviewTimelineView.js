@@ -352,6 +352,7 @@ WebInspector.OverviewTimelineView.prototype = {
 
         if (!treeElement.sourceCodeTimeline.sourceCodeLocation) {
             WebInspector.timelineSidebarPanel.showTimelineOverview();
+            this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
             return;
         }
 
