@@ -277,8 +277,6 @@ private:
                 JSFunction* callee = inlineCallFrame()->calleeConstant();
                 if (operand.offset() == JSStack::Callee)
                     return weakJSConstant(callee);
-                if (operand == m_inlineStackTop->m_codeBlock->scopeRegister())
-                    return weakJSConstant(callee->scope());
             }
         } else if (operand.offset() == JSStack::Callee)
             return addToGraph(GetCallee);
@@ -346,16 +344,6 @@ private:
     Node* getLocal(VirtualRegister operand)
     {
         unsigned local = operand.toLocal();
-
-        if (local < m_localWatchpoints.size()) {
-            if (VariableWatchpointSet* set = m_localWatchpoints[local]) {
-                if (JSValue value = set->inferredValue()) {
-                    addToGraph(FunctionReentryWatchpoint, OpInfo(m_codeBlock->symbolTable()));
-                    addToGraph(VariableWatchpoint, OpInfo(set));
-                    return weakJSConstant(value);
-                }
-            }
-        }
 
         Node* node = m_currentBlock->variablesAtTail.local(local);
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
@@ -890,8 +878,6 @@ private:
     unsigned m_numPassedVarArgs;
 
     HashMap<ConstantBufferKey, unsigned> m_constantBufferCache;
-    
-    Vector<VariableWatchpointSet*, 16> m_localWatchpoints;
     
     struct InlineStackEntry {
         ByteCodeParser* m_byteCodeParser;
@@ -3432,7 +3418,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 JSLexicalEnvironment* lexicalEnvironment = currentInstruction[6].u.lexicalEnvironment.get();
                 if (lexicalEnvironment
                     && lexicalEnvironment->symbolTable()->m_functionEnteredOnce.isStillValid()) {
-                    addToGraph(FunctionReentryWatchpoint, OpInfo(lexicalEnvironment->symbolTable()));
+                    m_graph.watchpoints().addLazily(lexicalEnvironment->symbolTable()->m_functionEnteredOnce);
                     addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
                     set(VirtualRegister(dst), weakJSConstant(lexicalEnvironment));
                     break;
@@ -3491,7 +3477,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks: {
                 addToGraph(Phantom, get(VirtualRegister(scope)));
-                SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
+                ConcurrentJITLocker locker(globalObject->symbolTable()->m_lock);
+                SymbolTableEntry entry = globalObject->symbolTable()->get(locker, uid);
                 VariableWatchpointSet* watchpointSet = entry.watchpointSet();
                 JSValue inferredValue =
                     watchpointSet ? watchpointSet->inferredValue() : JSValue();
@@ -3501,7 +3488,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     break;
                 }
                 
-                addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
+                m_graph.watchpoints().addLazily(watchpointSet);
                 set(VirtualRegister(dst), weakJSConstant(inferredValue));
                 break;
             }
@@ -3509,25 +3496,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
-                if (JSLexicalEnvironment* lexicalEnvironment = m_graph.tryGetActivation(scopeNode)) {
-                    SymbolTable* symbolTable = lexicalEnvironment->symbolTable();
-                    ConcurrentJITLocker locker(symbolTable->m_lock);
-                    SymbolTable::Map::iterator iter = symbolTable->find(locker, uid);
-                    ASSERT(iter != symbolTable->end(locker));
-                    VariableWatchpointSet* watchpointSet = iter->value.watchpointSet();
-                    if (watchpointSet) {
-                        if (JSValue value = watchpointSet->inferredValue()) {
-                            addToGraph(Phantom, scopeNode);
-                            addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
-                            set(VirtualRegister(dst), weakJSConstant(value));
-                            break;
-                        }
-                    }
+                if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, VirtualRegister(operand))) {
+                    addToGraph(Phantom, scopeNode);
+                    set(VirtualRegister(dst), weakJSConstant(value));
+                    break;
                 }
                 SpeculatedType prediction = getPrediction();
                 set(VirtualRegister(dst),
-                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), 
-                        addToGraph(GetClosureRegisters, scopeNode)));
+                    addToGraph(
+                        GetClosureVar, OpInfo(operand), OpInfo(prediction),
+                        scopeNode, addToGraph(GetClosureRegisters, scopeNode)));
                 break;
             }
             case Dynamic:
@@ -3643,7 +3621,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_scope: {
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetScope, get(VirtualRegister(JSStack::Callee))));
+            // Help the later stages a bit by doing some small constant folding here. Note that this
+            // only helps for the first basic block. It's extremely important not to constant fold
+            // loads from the scope register later, as that would prevent the DFG from tracking the
+            // bytecode-level liveness of the scope register.
+            Node* callee = get(VirtualRegister(JSStack::Callee));
+            Node* result;
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
+                result = weakJSConstant(function->scope());
+            else
+                result = addToGraph(GetScope, callee);
+            set(VirtualRegister(currentInstruction[1].u.operand), result);
             NEXT_OPCODE(op_get_scope);
         }
             
@@ -4126,22 +4114,6 @@ bool ByteCodeParser::parse()
             CallLinkStatus::computeDFGStatuses(m_dfgCodeBlock, m_callContextMap);
         if (Options::enablePolyvariantByIdInlining())
             m_dfgCodeBlock->getStubInfoMap(m_dfgStubInfos);
-    }
-    
-    if (m_codeBlock->captureCount()) {
-        SymbolTable* symbolTable = m_codeBlock->symbolTable();
-        ConcurrentJITLocker locker(symbolTable->m_lock);
-        SymbolTable::Map::iterator iter = symbolTable->begin(locker);
-        SymbolTable::Map::iterator end = symbolTable->end(locker);
-        for (; iter != end; ++iter) {
-            VariableWatchpointSet* set = iter->value.watchpointSet();
-            if (!set)
-                continue;
-            size_t index = static_cast<size_t>(VirtualRegister(iter->value.getIndex()).toLocal());
-            while (m_localWatchpoints.size() <= index)
-                m_localWatchpoints.append(nullptr);
-            m_localWatchpoints[index] = set;
-        }
     }
     
     InlineStackEntry inlineStackEntry(

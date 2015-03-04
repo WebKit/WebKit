@@ -741,7 +741,9 @@ public:
     JSValue tryGetConstantProperty(JSValue base, const StructureAbstractValue&, PropertyOffset);
     JSValue tryGetConstantProperty(const AbstractValue&, PropertyOffset);
     
-    JSLexicalEnvironment* tryGetActivation(Node*);
+    JSValue tryGetConstantClosureVar(JSValue base, VirtualRegister);
+    JSValue tryGetConstantClosureVar(const AbstractValue&, VirtualRegister);
+    JSValue tryGetConstantClosureVar(Node*, VirtualRegister);
     WriteBarrierBase<Unknown>* tryGetRegisters(Node*);
     
     JSArrayBufferView* tryGetFoldableView(Node*);

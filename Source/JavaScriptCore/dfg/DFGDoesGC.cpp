@@ -102,7 +102,6 @@ bool doesGC(Graph& graph, Node* node)
     case PutClosureVar:
     case GetGlobalVar:
     case PutGlobalVar:
-    case VariableWatchpoint:
     case VarInjectionWatchpoint:
     case CheckCell:
     case AllocationProfileWatchpoint:
@@ -168,7 +167,6 @@ bool doesGC(Graph& graph, Node* node)
     case StoreBarrierWithNullCheck:
     case InvalidationPoint:
     case NotifyWrite:
-    case FunctionReentryWatchpoint:
     case TypedArrayWatchpoint:
     case CheckInBounds:
     case ConstantStoragePointer:

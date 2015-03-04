@@ -1329,7 +1329,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->activationStructure());
         break;
         
-    case FunctionReentryWatchpoint:
     case TypedArrayWatchpoint:
         break;
     
@@ -1450,7 +1449,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
+    case GetScope:
+        if (JSValue base = forNode(node->child1()).m_value) {
+            if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
+                setConstant(node, *m_graph.freeze(function->scope()));
+                break;
+            }
+        }
         forNode(node).setType(SpecObjectOther);
         break;
 
@@ -1469,6 +1474,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case GetClosureVar:
+        if (JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), VirtualRegister(node->varNumber()))) {
+            setConstant(node, *m_graph.freeze(value));
+            break;
+        }
         forNode(node).makeHeapTop();
         break;
             
@@ -1968,7 +1977,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
         
-    case VariableWatchpoint:
     case VarInjectionWatchpoint:
     case PutGlobalVar:
     case NotifyWrite:

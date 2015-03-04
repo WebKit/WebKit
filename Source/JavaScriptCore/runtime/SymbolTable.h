@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -340,6 +340,7 @@ public:
     typedef HashMap<RefPtr<StringImpl>, GlobalVariableID> UniqueIDMap;
     typedef HashMap<RefPtr<StringImpl>, RefPtr<TypeSet>> UniqueTypeSetMap;
     typedef HashMap<int, RefPtr<StringImpl>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> RegisterToVariableMap;
+    typedef Vector<SymbolTableEntry*> LocalToEntryVec;
 
     static SymbolTable* create(VM& vm)
     {
@@ -425,6 +426,7 @@ public:
     
     Map::AddResult add(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
+        RELEASE_ASSERT(!m_localToEntry);
         return m_map.add(key, entry);
     }
     
@@ -436,6 +438,7 @@ public:
     
     Map::AddResult set(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
+        RELEASE_ASSERT(!m_localToEntry);
         return m_map.set(key, entry);
     }
     
@@ -455,6 +458,9 @@ public:
         ConcurrentJITLocker locker(m_lock);
         return contains(locker, key);
     }
+    
+    const LocalToEntryVec& localToEntry(const ConcurrentJITLocker&);
+    SymbolTableEntry* entryFor(const ConcurrentJITLocker&, VirtualRegister);
     
     GlobalVariableID uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm);
     GlobalVariableID uniqueIDForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm);
@@ -529,6 +535,7 @@ private:
     std::unique_ptr<SlowArgument[]> m_slowArguments;
     
     std::unique_ptr<WatchpointCleanup> m_watchpointCleanup;
+    std::unique_ptr<LocalToEntryVec> m_localToEntry;
 
 public:
     InlineWatchpointSet m_functionEnteredOnce;

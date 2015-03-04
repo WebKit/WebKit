@@ -1,3 +1,90 @@
+2015-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should constant fold GetScope, and accesses to the scope register in the ByteCodeParser should not pretend that it's a constant as that breaks OSR exit liveness tracking
+        https://bugs.webkit.org/show_bug.cgi?id=106202
+
+        Rubber stamped by Benjamin Poulain.
+        
+        This fixes a bug discovered by working on https://bugs.webkit.org/show_bug.cgi?id=142229,
+        which was in turn discovered by working on https://bugs.webkit.org/show_bug.cgi?id=141174.
+        Our way of dealing with scopes known to be constant is very sketchy, and only really works
+        when a function is inlined. When it is, we pretend that every load of the scopeRegister sees
+        a constant. But this breaks the DFG's tracking of the liveness of the scopeRegister. The way
+        this worked made us miss oppportunities for optimizing based on a constant scope, and it also
+        meant that in some cases - particularly like when we inline code that uses NewFuction and
+        friends, as I do in bug 142229 - it makes OSR exit think that the scope is dead even though
+        it's most definitely alive and it's a constant.
+        
+        The problem here is that we were doing too many optimizations in the ByteCodeParser, and not
+        later. Later optimization phases know how to preserve OSR exit liveness. They're actually
+        really good at it. Also, later phases know how to infer that any variable is a constant no
+        matter how that constant arose - rather than the inlining-specific thing in ByteCodeParser.
+        
+        This changes the ByteCodeParser to largely avoid doing constant folding on the scope, except
+        making the GetScope operation itself a constant. This is a compilation-time hack for small
+        functions, and it doesn't break the loads of local variables - so OSR exit liveness still
+        sees that the scopeRegister is in use. This then adds a vastly more powerful GetScope and
+        GetClosureVar constant folder in the AbstractInterpreter. This handles most general cases
+        including those that arise in complex control flow. This will catch cases where the scope
+        is constant for any number of reasons. Basically anytime that the callee is inferred constant
+        this will give us a constant scope. Also, we still have the parse-time constant folding of
+        ResolveScope based on the reentry watchpoint, which luckily did the right thing with respect
+        to OSR exit liveness (it splats a Phantom on its inputs, and it produces a constant result
+        which is then set() normally).
+        
+        This appears to be a broad speed-up, albeit a small one. But mainly it unblocks bug 142229,
+        which then should unblock bug 141174.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        (JSC::DFG::Graph::tryGetRegisters):
+        (JSC::DFG::Graph::tryGetActivation): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVariableWatchpointSet):
+        (JSC::DFG::Node::hasSymbolTable): Deleted.
+        (JSC::DFG::Node::symbolTable): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetClosureVar):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildren):
+        (JSC::SymbolTable::localToEntry):
+        (JSC::SymbolTable::entryFor):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::add):
+        (JSC::SymbolTable::set):
+        * tests/stress/function-expression-exit.js: Added.
+        * tests/stress/function-reentry-infer-on-self.js: Added.
+        (thingy):
+        * tests/stress/goofy-function-reentry-incorrect-inference.js: Added.
+
 2015-03-03  Anders Carlsson  <andersca@apple.com>
 
         Remove unused compression code

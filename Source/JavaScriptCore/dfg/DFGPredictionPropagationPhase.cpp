@@ -629,7 +629,6 @@ private:
         case PutStructure:
         case TearOffArguments:
         case CheckArgumentsNotCreated:
-        case VariableWatchpoint:
         case VarInjectionWatchpoint:
         case AllocationProfileWatchpoint:
         case Phantom:
@@ -639,7 +638,6 @@ private:
         case Unreachable:
         case LoopHint:
         case NotifyWrite:
-        case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
         case ConstantStoragePointer:
         case MovHint:

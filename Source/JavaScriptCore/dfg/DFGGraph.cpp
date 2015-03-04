@@ -1014,14 +1014,54 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
     return tryGetConstantProperty(base.m_value, base.m_structure, offset);
 }
 
-JSLexicalEnvironment* Graph::tryGetActivation(Node* node)
+JSValue Graph::tryGetConstantClosureVar(JSValue base, VirtualRegister reg)
 {
-    return node->dynamicCastConstant<JSLexicalEnvironment*>();
+    if (!base)
+        return JSValue();
+    
+    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(base);
+    if (!activation)
+        return JSValue();
+    
+    SymbolTable* symbolTable = activation->symbolTable();
+    ConcurrentJITLocker locker(symbolTable->m_lock);
+    
+    if (symbolTable->m_functionEnteredOnce.hasBeenInvalidated())
+        return JSValue();
+    
+    SymbolTableEntry* entry = symbolTable->entryFor(locker, reg);
+    if (!entry)
+        return JSValue();
+    
+    VariableWatchpointSet* set = entry->watchpointSet();
+    if (!set)
+        return JSValue();
+    
+    JSValue value = set->inferredValue();
+    if (!value)
+        return JSValue();
+    
+    watchpoints().addLazily(symbolTable->m_functionEnteredOnce);
+    watchpoints().addLazily(set);
+    
+    return value;
+}
+
+JSValue Graph::tryGetConstantClosureVar(const AbstractValue& value, VirtualRegister reg)
+{
+    return tryGetConstantClosureVar(value.m_value, reg);
+}
+
+JSValue Graph::tryGetConstantClosureVar(Node* node, VirtualRegister reg)
+{
+    if (!node->hasConstant())
+        return JSValue();
+    return tryGetConstantClosureVar(node->asJSValue(), reg);
 }
 
 WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
 {
-    JSLexicalEnvironment* lexicalEnvironment = tryGetActivation(node);
+    JSLexicalEnvironment* lexicalEnvironment = node->dynamicCastConstant<JSLexicalEnvironment*>();
     if (!lexicalEnvironment)
         return 0;
     return lexicalEnvironment->registers();

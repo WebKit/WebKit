@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +117,10 @@ void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     }
     
     visitor.addUnconditionalFinalizer(thisSymbolTable->m_watchpointCleanup.get());
+    
+    // Save some memory. This is O(n) to rebuild and we do so on the fly.
+    ConcurrentJITLocker locker(thisSymbolTable->m_lock);
+    thisSymbolTable->m_localToEntry = nullptr;
 }
 
 SymbolTable::WatchpointCleanup::WatchpointCleanup(SymbolTable* symbolTable)
@@ -135,6 +139,34 @@ void SymbolTable::WatchpointCleanup::finalizeUnconditionally()
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
             set->finalizeUnconditionally(detail);
     }
+}
+
+const SymbolTable::LocalToEntryVec& SymbolTable::localToEntry(const ConcurrentJITLocker&)
+{
+    if (UNLIKELY(!m_localToEntry)) {
+        unsigned size = 0;
+        for (auto& entry : m_map) {
+            VirtualRegister reg(entry.value.getIndex());
+            if (reg.isLocal())
+                size = std::max(size, static_cast<unsigned>(reg.toLocal()) + 1);
+        }
+    
+        m_localToEntry = std::make_unique<LocalToEntryVec>(size, nullptr);
+        for (auto& entry : m_map) {
+            VirtualRegister reg(entry.value.getIndex());
+            if (reg.isLocal())
+                m_localToEntry->at(reg.toLocal()) = &entry.value;
+        }
+    }
+    
+    return *m_localToEntry;
+}
+
+SymbolTableEntry* SymbolTable::entryFor(const ConcurrentJITLocker& locker, VirtualRegister reg)
+{
+    if (!reg.isLocal())
+        return nullptr;
+    return localToEntry(locker)[reg.toLocal()];
 }
 
 SymbolTable* SymbolTable::cloneCapturedNames(VM& vm)
