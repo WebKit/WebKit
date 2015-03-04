@@ -626,6 +626,11 @@ void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
+    // Gotta restore the tag registers. We could be throwing from FTL, which may
+    // clobber them.
+    move(TrustedImm64(TagTypeNumber), tagTypeNumberRegister);
+    move(TrustedImm64(TagMask), tagMaskRegister);
+    
     move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
 
