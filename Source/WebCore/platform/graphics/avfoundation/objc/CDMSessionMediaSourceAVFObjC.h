@@ -50,8 +50,8 @@ public:
     virtual void releaseKeys() override;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
-    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
-    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
+    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore);
+    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore);
 
     void setStreamSession(AVStreamSession *);
 
@@ -74,6 +74,7 @@ protected:
     Vector<int> m_protocolVersions;
     String m_sessionId;
     enum { Normal, KeyRelease } m_mode;
+    bool m_stopped = { false };
 };
 
 inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(CDMSession* session)

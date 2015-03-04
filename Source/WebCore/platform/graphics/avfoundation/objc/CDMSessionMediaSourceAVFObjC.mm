@@ -141,6 +141,10 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 void CDMSessionMediaSourceAVFObjC::releaseKeys()
 {
     if (m_streamSession) {
+        m_stopped = true;
+        for (auto& sourceBuffer : m_sourceBuffers)
+            sourceBuffer->flush();
+
         LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p) - expiring stream session", this);
         [m_streamSession expire];
 
@@ -282,20 +286,30 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     return true;
 }
 
-void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error)
+void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs(systemCodeForError(error)));
+    unsigned long code = std::abs(systemCodeForError(error));
+
+    // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
+    shouldIgnore = m_stopped && code == 12785;
+    if (!shouldIgnore)
+        m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
 }
 
-void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
+void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs(systemCodeForError(error)));
+    unsigned long code = std::abs(systemCodeForError(error));
+
+    // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
+    shouldIgnore = m_stopped && code == 12785;
+    if (!shouldIgnore)
+        m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 void CDMSessionMediaSourceAVFObjC::setStreamSession(AVStreamSession *streamSession)
