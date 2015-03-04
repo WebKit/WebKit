@@ -1,5 +1,11 @@
 2015-03-04  Beth Dakin  <bdakin@apple.com>
 
+        Attempted build fix.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+
+2015-03-04  Beth Dakin  <bdakin@apple.com>
+
         Message UI process when contentSize changes
         https://bugs.webkit.org/show_bug.cgi?id=142294
         -and corresponding-

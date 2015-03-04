@@ -139,8 +139,8 @@
 - (void)_completeImmediateActionAnimation;
 
 - (void)_dismissContentRelativeChildWindows;
-#endif
 
 - (void)_didChangeContentSize:(NSSize)newSize;
+#endif
 
 @end
