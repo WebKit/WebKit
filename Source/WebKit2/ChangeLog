@@ -1,3 +1,21 @@
+2015-03-04  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180782
+
+    2015-02-27  Beth Dakin  <bdakin@apple.com>
+
+            Lookup panel dismisses when pages are loading in other tabs/windows
+            https://bugs.webkit.org/show_bug.cgi?id=142104
+            -and corresponding-
+            rdar://problem/19882137
+
+            Reviewed by Tim Horton.
+
+            Until rdar://problem/13875766 is resolved, we should only call into Lookup and 
+            DataDetectors for key windows.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissContentRelativeChildWindows]):
+
 2015-02-20  Dana Burkart  <dburkart@apple.com>
 
         Merged r180293. <rdar://problem/19890148>
