@@ -1,5 +1,61 @@
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181005
+
+    2015-03-04  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][EME][Mac] Calling close on a MediaKeysSession will cause many decoding errors to be emitted
+            https://bugs.webkit.org/show_bug.cgi?id=142285
+
+            Reviewed by Eric Carlson.
+
+            When a MediaKeySession (backed by CDMSessionMediaSourceAVFObjC) is closed and the
+            underlying AVStreamSession is invalidated, the decryption context for in-flight
+            CMSampleBuffers is also invalidated, and the AVSampleBufferDisplayLayer will issue
+            one error for each enqueued and un-displayed sample in its image-queue. -flush-ing
+            the AVSampleBufferDisplayLayer is not enough, as the flush only takes effect
+            asynchronously the next time the layer needs new samples.
+
+            Add a workaround until framework-level support lands to fully flush enqueued and
+            encrypted frames.
+
+            When the CDMSessionMediaSOurceAVFObjC object recieves an error from the layer,
+            check to see if the session has been stopped. If so, and if the error in question is
+            one that indicates that the samples decryption context has been invalidated, suppress
+            the error and instruct the sender to suppress the error as well. This workaround will
+            be removed once real support for synchronous flushing lands in <rdar://problem/20027434.>
+
+            Still, we'll make our best effort to flush undisplayed frames when our CDM session is
+            invalidated. Move away from std::map and instead use HashMap to store the set of 
+            AVSampleBufferAudioRenderers. This allows us to use C++11 style loops against just
+            the HashMap's set of values.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys): Flush and set m_stopped.
+            (WebCore::CDMSessionMediaSourceAVFObjC::layerDidReceiveError): Check m_stopped and the
+                error code and bail before issuing the error.
+            (WebCore::CDMSessionMediaSourceAVFObjC::rendererDidReceiveError): Ditto.
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (-[WebAVSampleBufferErrorListener layerFailedToDecode:]): Drive-by fix. Check whether
+                the layer is in the set of listened-to layers only back in the main thread; the
+                listnener may have been unregistered by the time the main thread was called.
+            (WebCore::SourceBufferPrivateAVFObjC::destroyRenderers): std::map -> HashMap.
+            (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples): Ditto.
+            (WebCore::SourceBufferPrivateAVFObjC::flush): Added; call -flush on all the display
+                layers and audio renderers.
+            (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError): Check if any clients
+                asked to ignore the error, and if so, bail.
+            (WebCore::SourceBufferPrivateAVFObjC::rendererDidReceiveError): Ditto.
+
+2015-03-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r180065
 
     2015-02-13  Jer Noble  <jer.noble@apple.com>
