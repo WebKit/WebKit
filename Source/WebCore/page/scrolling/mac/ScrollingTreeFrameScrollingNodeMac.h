@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,39 +51,42 @@ private:
     virtual void handleWheelEvent(const PlatformWheelEvent&) override;
 
     // ScrollController member functions.
-    virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
-    virtual bool allowsVerticalStretching(const PlatformWheelEvent&) override;
-    virtual IntSize stretchAmount() override;
-    virtual bool pinnedInDirection(const FloatSize&) override;
-    virtual bool canScrollHorizontally() override;
-    virtual bool canScrollVertically() override;
-    virtual bool shouldRubberBandInDirection(ScrollDirection) override;
-    virtual IntPoint absoluteScrollPosition() override;
-    virtual void immediateScrollBy(const FloatSize&) override;
-    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
-    virtual void startSnapRubberbandTimer() override;
-    virtual void stopSnapRubberbandTimer() override;
-    virtual void adjustScrollPositionToBoundsIfNecessary() override;
+    bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
+    bool allowsVerticalStretching(const PlatformWheelEvent&) override;
+    IntSize stretchAmount() override;
+    bool pinnedInDirection(const FloatSize&) override;
+    bool canScrollHorizontally() override;
+    bool canScrollVertically() override;
+    bool shouldRubberBandInDirection(ScrollDirection) override;
+    IntPoint absoluteScrollPosition() override;
+    void immediateScrollBy(const FloatSize&) override;
+    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
+    void stopSnapRubberbandTimer() override;
+    void adjustScrollPositionToBoundsIfNecessary() override;
 
-    virtual FloatPoint scrollPosition() const override;
-    virtual void setScrollPosition(const FloatPoint&) override;
-    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
+    FloatPoint scrollPosition() const override;
+    void setScrollPosition(const FloatPoint&) override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
+    void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
 
-    virtual void setScrollLayerPosition(const FloatPoint&) override;
+    void setScrollLayerPosition(const FloatPoint&) override;
 
-    virtual FloatPoint minimumScrollPosition() const override;
-    virtual FloatPoint maximumScrollPosition() const override;
+    FloatPoint minimumScrollPosition() const override;
+    FloatPoint maximumScrollPosition() const override;
 
     void updateMainFramePinState(const FloatPoint& scrollPosition);
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+#endif
+
     void logExposedUnfilledArea();
 
     ScrollController m_scrollController;
-    RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../../resources/js-test-pre.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var pageScrollPositionBefore;
+            var pageScrollHeightBefore;
+            var continueCount = 5;
+
+            function checkForScrollOffset()
+            {
+                var pageScrollPositionAfter = document.body.scrollTop;
+                var pageScrollHeightAfter = document.body.scrollHeight;
+
+                if (pageScrollPositionAfter + 100 >= pageScrollPositionBefore)
+                    testFailed("Page did not properly handle rubber banding state.");
+                else
+                    testPassed("Page properly handled rubber banding state.");
+
+                testRunner.notifyDone();
+            }
+
+            var zoomOutCount = 0;
+            function zoomPageOut()
+            {
+                if (!zoomOutCount) {
+                    pageScrollPositionBefore = document.body.scrollTop;
+                    pageScrollHeightBefore = document.body.scrollHeight;
+                }
+
+                eventSender.zoomPageOut();
+                zoomOutCount = zoomOutCount + 1;
+                if (zoomOutCount >= 2)
+                    setTimeout(checkForScrollOffset, 100);
+                else
+                    setTimeout(zoomPageOut, 100);
+            }
+
+            function scrollDown()
+            {
+                // Scroll the #source until we reach the #target.
+                var selectTarget = document.getElementById('target');
+                var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+                var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the target div
+                eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the target div
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+                for (var i = 0; i < 40; ++i) {
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none', true);
+                }
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+                 
+                setTimeout(zoomPageOut, 700);
+            }
+
+            var zoomInCount = 0;
+            function zoomPageIn()
+            {
+                eventSender.zoomPageIn();
+                zoomInCount = zoomInCount + 1;
+                if (zoomInCount >= 2)
+                    setTimeout(scrollDown, 100);
+                else
+                    setTimeout(zoomPageIn, 100);
+            }
+
+            function startTest()
+            {
+                if (window.eventSender) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
+
+                    setTimeout(zoomPageIn, 0);
+                } else {
+                    var messageLocation = document.getElementById('parent');
+                    var message = document.createElement('div');
+                    message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+                        + "at the top of the page, perform two text zooms, scroll to the bottom of the page, then zoom back out.<br/>"
+                    + "The bottom of the test page should not be offset from the bottom of the web view.<\/p>";
+                    messageLocation.appendChild(message);
+                }
+            }
+
+            window.addEventListener('load', startTest, false);
+        </script>
+        <div id="parent" style="height: 2000px;">
+            <div id="source" style="height: 100px">
+                Put mouse here and do the following:
+                <ol>
+                    <li>Perform two text zooms (in). (Command+ in Safari)</li>
+                    <li>Scroll down to the bottom. Be sure to scroll far enough that a rubberband animation is triggered.</li>
+                    <li>Perform two text zooms (out).  (Commmand- in Safari)</li>
+                </ol>
+            </div>
+            <div id="target" style="height: 1000px; position: relative">
+               <div style="position: absolute; top: 0">TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP</div>
+               <div style="position: absolute; bottom: 0">END END END END END END END END END END END END END</div>
+            </div>
+        </div>
+        <div id="console"></div><script type="text/javascript">
+            description("Tests that scroll dimensions return to correct size after rubber banding while zoomed.");
+        </script>
+        <div id="bottom">This should be at the very bottom of the page.</div>
+        <script src="../../../../resources/js-test-post.js" type="text/javascript"></script>
+    </body>
+</html>

@@ -1,3 +1,87 @@
+2015-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Move scroll animating functions from ScrollAnimator to ScrollController
+        https://bugs.webkit.org/show_bug.cgi?id=142102
+        <rdar://problem/20007161>
+
+        Reviewed by Simon Fraser.
+
+        Tested by platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html.
+
+        Do some refactoring of the various scrolling classes:
+        1. Consolidate animation times to RunLoop::Timer instead of a combination of WebCore::Timer
+           and CFRunLoopTimers. Do this for Scroll Snap Point and Rubberband animations.
+        2. Move ScrollController from platform/mac to platform/cocoa to enable sharing with iOS.
+        3. Move code from ScrollAnimator{Mac} -> ScrollController.
+        4. Rename scrollOffsetInAxis -> scrollOffsetOnAxis
+        5. Rename immediateScrollInAxis -> immediateScrollOnAxis
+
+        * WebCore.xcodeproj/project.pbxproj: Move ScrollController to 'platform/cocoa'
+        * page/mac/EventHandlerMac.mm: Make sure the scroll controller is notified of end-of-scroll
+        events, just as is done for the "event not handled" case in EventHandler.cpp. 
+        (WebCore::EventHandler::platformCompleteWheelEvent):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h: Remove timer and some delegate
+        methods, now that ScrollController is controlling this state.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac): We no longer
+        need to clean up the CFRunLoopTimer.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer): Make sure scroll
+        state is updated after rubber band snap.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis): Add temporary stub needed
+        until Bug1973 is completed.).
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis): Ditto.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::startSnapRubberbandTimer): Deleted.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::processWheelEventForScrollSnap): Just call the ScrollController method.
+        (WebCore::ScrollAnimator::handleWheelEvent): Ditto.
+        (WebCore::ScrollAnimator::updateScrollAnimatorsAndTimers): Ditto.
+        (WebCore::ScrollAnimator::scrollOffsetOnAxis): Renamed from scrollOffsetInAxis.
+        (WebCore::ScrollAnimator::immediateScrollOnAxis): Renamed from immediateScrollInAxis.
+        (WebCore::ScrollAnimator::scrollOffsetInAxis): Deleted.
+        (WebCore::ScrollAnimator::immediateScrollInAxis): Deleted.
+        (WebCore::ScrollAnimator::startScrollSnapTimer): Deleted.
+        (WebCore::ScrollAnimator::stopScrollSnapTimer): Deleted.
+        (WebCore::ScrollAnimator::horizontalScrollSnapTimerFired): Deleted.
+        (WebCore::ScrollAnimator::verticalScrollSnapTimerFired): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/cocoa/ScrollController.h: Copied from platform/mac/ScrollController.h.
+        (WebCore::ScrollControllerClient::startSnapRubberbandTimer):
+        (WebCore::ScrollControllerClient::stopSnapRubberbandTimer):
+        (WebCore::ScrollControllerClient::startScrollSnapTimer):
+        (WebCore::ScrollControllerClient::stopScrollSnapTimer):
+        * platform/cocoa/ScrollController.mm: Copied from platform/mac/ScrollController.mm.
+        (WebCore::ScrollController::ScrollController): Update to initialize new timers.
+        (WebCore::ScrollController::handleWheelEvent): Update to handle Scroll Snap Point events.
+        (WebCore::ScrollController::startSnapRubberbandTimer): Added.
+        (WebCore::ScrollController::stopSnapRubberbandTimer): Manage animation timers locally, do not
+        require client to maintain timers.
+        (WebCore::ScrollController::snapRubberBand): Ditto.
+        (WebCore::ScrollController::processWheelEventForScrollSnap): Added. (Moved from ScrollAnimatorMac)
+        (WebCore::ScrollController::updateScrollAnimatorsAndTimers): Ditto. Also updated to use RunLoop::Timer.
+        (WebCore::ScrollController::startScrollSnapTimer): Ditto. Also updated to use RunLoop::Timer.
+        (WebCore::ScrollController::stopScrollSnapTimer): Ditto. Also updated to use RunLoop::Timer.
+        (WebCore::ScrollController::horizontalScrollSnapTimerFired): Ditto.
+        (WebCore::ScrollController::verticalScrollSnapTimerFired): Ditto.
+        (WebCore::ScrollController::scrollOffsetOnAxis): Moved from ScrollAnimatorMac.
+        (WebCore::ScrollController::immediateScrollOnAxis): Ditto.
+        * platform/mac/AxisScrollSnapAnimator.h: Rename methods from 'InAxis' to 'OnAxis'
+        * platform/mac/AxisScrollSnapAnimator.mm:
+        (WebCore::AxisScrollSnapAnimator::handleWheelEvent): Update for 'InAxis' to 'OnAxis' renaming.
+        (WebCore::AxisScrollSnapAnimator::scrollSnapAnimationUpdate): Ditto.
+        (WebCore::AxisScrollSnapAnimator::beginScrollSnapAnimation): Ditto.
+        (WebCore::AxisScrollSnapAnimator::computeSnapDelta): Ditto.
+        (WebCore::AxisScrollSnapAnimator::computeGlideDelta): Ditto.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac): Remove unused Rubberband timers (now that this is
+        controlled in the ScrollController)
+        (WebCore::ScrollAnimatorMac::startSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollAnimatorMac::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired): Deleted.
+        * platform/mac/ScrollController.h: Removed.
+        * platform/mac/ScrollController.mm: Removed.
+
 2015-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180683.

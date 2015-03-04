@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,16 @@
 #include "FloatSize.h"
 #include "ScrollTypes.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
+
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "AxisScrollSnapAnimator.h"
+#endif
 
 namespace WebCore {
 
 class PlatformWheelEvent;
+class ScrollableArea;
 
 class ScrollControllerClient {
 protected:
@@ -55,36 +61,74 @@ public:
 
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
-    virtual void startSnapRubberbandTimer() = 0;
-    virtual void stopSnapRubberbandTimer() = 0;
+    virtual void startSnapRubberbandTimer()
+    {
+        // Override to perform client-specific snap start logic
+    }
 
+    virtual void stopSnapRubberbandTimer()
+    {
+        // Override to perform client-specific snap end logic
+    }
+    
     // If the current scroll position is within the overhang area, this function will cause
     // the page to scroll to the nearest boundary point.
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
+
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) = 0;
+    virtual void immediateScrollOnAxis(ScrollEventAxis, float delta) = 0;
+    virtual void startScrollSnapTimer(ScrollEventAxis)
+    {
+        // Override to perform client-specific scroll snap point start logic
+    }
+
+    virtual void stopScrollSnapTimer(ScrollEventAxis)
+    {
+        // Override to perform client-specific scroll snap point end logic
+        
+    }
+#endif
 };
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+class ScrollController : public AxisScrollSnapAnimatorClient {
+#else
 class ScrollController {
+#endif
     WTF_MAKE_NONCOPYABLE(ScrollController);
 
 public:
     explicit ScrollController(ScrollControllerClient*);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
-    void snapRubberBandTimerFired();
 
     bool isRubberBandInProgress() const;
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
+    void updateScrollAnimatorsAndTimers(const ScrollableArea&);
+#endif
+
 private:
+    void startSnapRubberbandTimer();
     void stopSnapRubberbandTimer();
     void snapRubberBand();
+    void snapRubberBandTimerFired();
 
     bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&);
 
-    ScrollControllerClient* m_client;
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    void horizontalScrollSnapTimerFired();
+    void verticalScrollSnapTimerFired();
+    void startScrollSnapTimer(ScrollEventAxis) override;
+    void stopScrollSnapTimer(ScrollEventAxis) override;
 
-    bool m_inScrollGesture;
-    bool m_momentumScrollInProgress;
-    bool m_ignoreMomentumScrolls;
+    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+#endif
+
+    ScrollControllerClient* m_client;
     
     CFTimeInterval m_lastMomentumScrollTimestamp;
     FloatSize m_overflowScrollDelta;
@@ -96,7 +140,19 @@ private:
     FloatSize m_startStretch;
     FloatPoint m_origOrigin;
     FloatSize m_origVelocity;
+    RunLoop::Timer<ScrollController> m_snapRubberbandTimer;
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    // FIXME: Find a way to consolidate both timers into one variable.
+    std::unique_ptr<AxisScrollSnapAnimator> m_horizontalScrollSnapAnimator;
+    std::unique_ptr<AxisScrollSnapAnimator> m_verticalScrollSnapAnimator;
+    RunLoop::Timer<ScrollController> m_horizontalScrollSnapTimer;
+    RunLoop::Timer<ScrollController> m_verticalScrollSnapTimer;
+#endif
+
+    bool m_inScrollGesture;
+    bool m_momentumScrollInProgress;
+    bool m_ignoreMomentumScrolls;
     bool m_snapRubberbandTimerIsActive;
 };
 
