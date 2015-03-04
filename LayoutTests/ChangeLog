@@ -1,3 +1,13 @@
+2015-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] [Attachment] New Tests fail on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=142017
+
+        Unreviewed. Rebaseline tests for Windows display metrics.
+
+        * platform/win/fast/attachment/attachment-disabled-rendering-expected.txt:
+        * platform/win/fast/attachment/attachment-rendering-expected.txt:
+
 2015-03-03  Stephanie Lewis  <slewis@apple.com>
 
         Update TestExpectations after http://trac.webkit.org/changeset/180965 to skip new test on Mavericks.
