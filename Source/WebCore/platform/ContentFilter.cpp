@@ -23,17 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Rename to ContentFilter.cpp and move to platform/.
-
-#import "config.h"
-#import "ContentFilter.h"
+#include "config.h"
+#include "ContentFilter.h"
 
 #if ENABLE(CONTENT_FILTERING)
 
-#import "NetworkExtensionContentFilter.h"
-#import "ParentalControlsContentFilter.h"
-#import <wtf/NeverDestroyed.h>
-#import <wtf/Vector.h>
+#include "NetworkExtensionContentFilter.h"
+#include "ParentalControlsContentFilter.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

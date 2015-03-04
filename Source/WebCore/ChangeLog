@@ -1,3 +1,16 @@
+2015-03-04  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Rename ContentFilterMac.mm to ContentFilter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=142313
+
+        Reviewed by Anders Carlsson.
+
+        ContentFilterMac.mm no longer contains any Objective-C code, so rename it to ContentFilter.cpp. It is also no longer Mac-specific, so move it up to platform/.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ContentFilter.cpp: Renamed from Source/WebCore/platform/mac/ContentFilterMac.mm.
+        * platform/cocoa/NetworkExtensionContentFilter.h: Replaced NSInteger with long.
+
 2015-03-04  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r179597): Can't see power saver banner for plugins

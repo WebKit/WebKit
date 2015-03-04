@@ -51,7 +51,7 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
-    NSInteger m_neFilterSourceStatus;
+    long m_neFilterSourceStatus;
     RetainPtr<NEFilterSource> m_neFilterSource;
     dispatch_queue_t m_neFilterSourceQueue;
     RetainPtr<NSMutableData> m_originalData;
