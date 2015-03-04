@@ -118,7 +118,8 @@ for op, inv_replacement in [('==', 'NE'), ('!=', 'EQ'),
 _CONFIG_HEADER = 0
 _PRIMARY_HEADER = 1
 _OTHER_HEADER = 2
-_MOC_HEADER = 3
+_SOFT_LINK_HEADER = 3
+_MOC_HEADER = 4
 
 
 # A dictionary of items customize behavior for unit test. For example,
@@ -254,11 +255,13 @@ class _IncludeState(dict):
     _CONFIG_SECTION = 1
     _PRIMARY_SECTION = 2
     _OTHER_SECTION = 3
+    _SOFT_LINK_SECTION = 4
 
     _TYPE_NAMES = {
         _CONFIG_HEADER: 'WebCore config.h',
         _PRIMARY_HEADER: 'header this file implements',
         _OTHER_HEADER: 'other header',
+        _SOFT_LINK_HEADER: '*SoftLink.h header',
         _MOC_HEADER: 'moc file',
         }
     _SECTION_NAMES = {
@@ -266,16 +269,21 @@ class _IncludeState(dict):
         _CONFIG_SECTION: "WebCore config.h.",
         _PRIMARY_SECTION: 'a header this file implements.',
         _OTHER_SECTION: 'other header.',
+        _SOFT_LINK_SECTION: 'soft-link header section.',
         }
 
     def __init__(self):
         dict.__init__(self)
         self._section = self._INITIAL_SECTION
         self._visited_primary_section = False
-        self.header_types = dict();
+        self._visited_soft_link_section = False
+        self.header_types = dict()
 
     def visited_primary_section(self):
         return self._visited_primary_section
+
+    def visited_soft_link_section(self):
+        return self._visited_soft_link_section
 
     def check_next_include_order(self, header_type, filename, file_is_header, primary_header_exists):
         """Returns a non-empty error message if the next header is out of order.
@@ -302,7 +310,7 @@ class _IncludeState(dict):
             return ''
 
         error_message = ''
-        if self._section != self._OTHER_SECTION:
+        if self._section < self._OTHER_SECTION:
             before_error_message = ('Found %s before %s' %
                                     (self._TYPE_NAMES[header_type],
                                      self._SECTION_NAMES[self._section + 1]))
@@ -321,12 +329,21 @@ class _IncludeState(dict):
                 error_message = before_error_message
             self._section = self._PRIMARY_SECTION
             self._visited_primary_section = True
-        else:
-            assert header_type == _OTHER_HEADER
+        elif header_type == _OTHER_HEADER:
             if not file_is_header and self._section < self._PRIMARY_SECTION:
                 if primary_header_exists and not filename.endswith('SoftLink.cpp'):
                     error_message = before_error_message
             self._section = self._OTHER_SECTION
+        else:
+            assert header_type == _SOFT_LINK_HEADER
+            if file_is_header:
+                error_message = '{} should never be included in a header.'.format(
+                    self._TYPE_NAMES[header_type])
+            self._section = self._SOFT_LINK_SECTION
+            self._visited_soft_link_section = True
+
+        if not error_message and self.visited_soft_link_section() and header_type != _SOFT_LINK_HEADER:
+            error_message = '*SoftLink.h header should be included after all other headers.'
 
         return error_message
 
@@ -2880,11 +2897,15 @@ def _classify_include(filename, include, is_system, include_state):
     if include == "config.h":
         return _CONFIG_HEADER
 
+    # If the include is named *SoftLink.h, then it's a soft-link header.
+    if include.endswith('SoftLink.h'):
+        return _SOFT_LINK_HEADER
+
     # There cannot be primary includes in header files themselves. Only an
     # include exactly matches the header filename will be is flagged as
     # primary, so that it triggers the "don't include yourself" check.
     if filename.endswith('.h') and filename != include:
-        return _OTHER_HEADER;
+        return _OTHER_HEADER
 
     # If the target file basename starts with the include we're checking
     # then we consider it the primary header.
@@ -2987,6 +3008,11 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
                                                            file_extension == "h",
                                                            primary_header_exists)
 
+    # Check to make sure *SoftLink.h headers always appear last and never in a header.
+    if error_message and include_state.visited_soft_link_section():
+        error(line_number, 'build/include_order', 4, error_message)
+        return
+
     # Check to make sure we have a blank line after and none before primary header.
     if not error_message and header_type == _PRIMARY_HEADER:
         next_line = clean_lines.raw_lines[line_number + 1]
@@ -3001,15 +3027,15 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
     # Check to make sure all headers besides config.h and the primary header are
     # alphabetically sorted.
     if not error_message and header_type == _OTHER_HEADER:
-         previous_line_number = line_number - 1;
-         previous_line = clean_lines.lines[previous_line_number]
-         previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
-         while (not previous_match and previous_line_number > 0
-                and not search(r'\A(#if|#ifdef|#ifndef|#else|#elif|#endif)', previous_line)):
-            previous_line_number -= 1;
+        previous_line_number = line_number - 1
+        previous_line = clean_lines.lines[previous_line_number]
+        previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
+        while (not previous_match and previous_line_number > 0
+               and not search(r'\A(#if|#ifdef|#ifndef|#else|#elif|#endif)', previous_line)):
+            previous_line_number -= 1
             previous_line = clean_lines.lines[previous_line_number]
             previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
-         if previous_match:
+        if previous_match:
             previous_header_type = include_state.header_types[previous_line_number]
             if previous_header_type == _OTHER_HEADER:
                 if '<' in previous_line and '"' in line:

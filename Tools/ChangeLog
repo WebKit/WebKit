@@ -1,3 +1,31 @@
+2015-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: Add exception for FrameworkSoftLink.h header order
+        <http://webkit.org/b/141872>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Remove unneeded
+        semi-colons in various places and fix whitespace.
+        (_IncludeState): Add _SOFT_LINK_HEADER and _SOFT_LINK_SECTION
+        constants.
+        (_IncludeState.__init__): Add self._visited_soft_link_section
+        boolean state variable.
+        (_IncludeState.visited_soft_link_section): Getter for
+        self._visited_soft_link_section.
+        (_IncludeState.check_next_include_order): Update state machine
+        for soft-link headers.  Add check that soft-link headers always
+        appear last.
+        (_classify_include): Add check for soft-link header type.
+        (check_include_line): Return early if there is a soft-link
+        header error.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_public_primary_header): Add tests for
+        including soft-link headers.
+        (OrderOfIncludesTest.test_classify_include): Add test for
+        _SOFT_LINK_HEADER type.
+
 2015-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Don't repeatedly handle each test type

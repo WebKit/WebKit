@@ -2859,6 +2859,74 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "a.h"\n',
                                          'Bad include order. Mixing system and custom headers.  [build/include_order] [4]')
 
+        # *SoftLink.h header should never be included in other header files.
+        self.assert_language_rules_check('foo.h',
+                                         '#include "Bar.h"\n'
+                                         '\n'
+                                         '#include "FrameworkSoftLink.h"\n',
+                                         '*SoftLink.h header should never be included in a header.  [build/include_order] [4]')
+
+        # Complain about *SoftLink.h headers that are not last.
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Foo.h"\n'
+                                         '\n'
+                                         '#include "ALocalHeader.h"\n'
+                                         '#include "FrameworkSoftLink.h"\n'
+                                         '#include <Framework/Bar.h>\n',
+                                         '*SoftLink.h header should be included after all other headers.  [build/include_order] [4]')
+
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Foo.h"\n'
+                                         '\n'
+                                         '#include "ALocalHeader.h"\n'
+                                         '#include <Framework/Bar.h>\n'
+                                         '\n'
+                                         '#include "FrameworkSoftLink.h"\n'
+                                         '\n'
+                                         '#if PLATFORM(FOO)\n'
+                                         '#include "FooPlatform.h"\n'
+                                         '#endif // PLATFORM(FOO)\n',
+                                         '*SoftLink.h header should be included after all other headers.  [build/include_order] [4]')
+
+        # Don't complain about *SoftLink.h headers that are last.
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Foo.h"\n'
+                                         '\n'
+                                         '#include "ALocalHeader.h"\n'
+                                         '#include <Framework/Bar.h>\n'
+                                         '\n'
+                                         '#if PLATFORM(FOO)\n'
+                                         '#include "FooPlatform.h"\n'
+                                         '#endif // PLATFORM(FOO)\n'
+                                         '\n'
+                                         '#include "FrameworkSoftLink.h"\n',
+                                         '')
+
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Foo.h"\n'
+                                         '\n'
+                                         '#include "ALocalHeader.h"\n'
+                                         '#include <Framework/Bar.h>\n'
+                                         '\n'
+                                         '#if PLATFORM(FOO)\n'
+                                         '#include "FooPlatform.h"\n'
+                                         '#endif // PLATFORM(FOO)\n'
+                                         '\n'
+                                         '#include "FrameworkASoftLink.h"\n'
+                                         '#include "FrameworkBSoftLink.h"\n',
+                                         '')
+
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <Framework/Bar.h>\n'
+                                         '\n'
+                                         '#include "FrameworkSoftLink.h"\n',
+                                         '')
+
     def test_check_wtf_includes(self):
         self.assert_language_rules_check('foo.cpp',
                                          '#include "config.h"\n'
@@ -2918,6 +2986,10 @@ class OrderOfIncludesTest(CppStyleTestBase):
                          classify_include('foo.cpp',
                                           'public/foop.h',
                                           True, include_state))
+        self.assertEqual(cpp_style._SOFT_LINK_HEADER,
+                         classify_include('foo.cpp',
+                                          'BarSoftLink.h',
+                                          False, include_state))
         # Tricky example where both includes might be classified as primary.
         self.assert_language_rules_check('ScrollbarThemeWince.cpp',
                                          '#include "config.h"\n'
