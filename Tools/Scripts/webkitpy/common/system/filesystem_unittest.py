@@ -264,3 +264,17 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         self.assertEqual(fs.sep, os.sep)
         self.assertEqual(fs.join("foo", "bar"),
                           os.path.join("foo", "bar"))
+
+    def test_dirs_under(self):
+        fs = FileSystem()
+        parentDir = fs.normpath(fs.join(self._this_dir, ".."))
+
+        self.assertTrue(self._this_dir in fs.dirs_under(parentDir))
+
+        def filter_no_dir(fs, dirpath):
+            return False
+        self.assertEqual(len(fs.dirs_under(parentDir, filter_no_dir)), 0)
+
+        def filter_this_dir(fs, dirpath):
+            return dirpath != self._this_dir
+        self.assertFalse(self._this_dir in fs.dirs_under(parentDir, filter_this_dir))

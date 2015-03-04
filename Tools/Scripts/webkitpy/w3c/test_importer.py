@@ -161,11 +161,6 @@ class TestImporter(object):
                 self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
         self.import_tests()
 
-    def should_keep_subdir(self, root, subdir):
-        DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
-        should_skip = subdir.startswith('.') or (root == self.source_directory and subdir in DIRS_TO_SKIP)
-        return not should_skip
-
     def should_skip_file(self, filename):
         # For some reason the w3c repo contains random perl scripts we don't care about.
         if filename.endswith('.pl'):
@@ -175,18 +170,24 @@ class TestImporter(object):
         return False
 
     def find_importable_tests(self, directory):
-        # FIXME: use filesystem
-        for root, dirs, files in os.walk(directory):
+        def should_keep_subdir(filesystem, path):
+            subdir = path[len(directory):]
+            DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
+            should_skip = filesystem.basename(subdir).startswith('.') or (subdir in DIRS_TO_SKIP)
+            return not should_skip
+
+        directories = self.filesystem.dirs_under(directory, should_keep_subdir)
+        for root in directories:
             _log.info('Scanning ' + root + '...')
             total_tests = 0
             reftests = 0
             jstests = 0
 
-            dirs[:] = [subdir for subdir in dirs if self.should_keep_subdir(root, subdir)]
-
             copy_list = []
 
-            for filename in files:
+            for filename in self.filesystem.listdir(root):
+                if self.filesystem.isdir(self.filesystem.join(root, filename)):
+                    continue
                 # FIXME: This block should really be a separate function, but the early-continues make that difficult.
 
                 if self.should_skip_file(filename):

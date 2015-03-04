@@ -77,6 +77,24 @@ class FileSystem(object):
     def exists(self, path):
         return os.path.exists(path)
 
+    def dirs_under(self, path, dir_filter=None):
+        """Return the list of all directories under the given path in topdown order.
+
+        Args:
+            dir_filter: if not None, the filter will be invoked
+                with the filesystem object and the path of each dirfound.
+                The dir is included in the result if the callback returns True.
+        """
+        def filter_all(fs, dirpath):
+            return True
+        dir_filter = dir_filter or filter_all
+
+        dirs = []
+        for (dirpath, dirnames, filenames) in os.walk(path):
+            if dir_filter(self, dirpath):
+                dirs.append(dirpath)
+        return dirs
+
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
         """Return the list of all files under the given path in topdown order.
 

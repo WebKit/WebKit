@@ -74,4 +74,20 @@ class TestImporterTest(unittest.TestCase):
         finally:
             oc.restore_output()
 
+    def test_import_dir_with_empty_init_py(self):
+        FAKE_FILES = {
+            '/tests/csswg/test1/__init__.py': '',
+            '/tests/csswg/test2/__init__.py': 'NOTEMPTY',
+        }
+
+        host = MockHost()
+        host.filesystem = MockFileSystem(files=FAKE_FILES)
+
+        importer = TestImporter(host, FAKE_SOURCE_DIR, optparse.Values({"overwrite": False, 'destination': 'w3c', 'test_paths': ['/tests/csswg']}))
+        importer.do_import()
+
+        self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/test1/__init__.py"))
+        self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/test2/__init__.py"))
+        self.assertTrue(host.filesystem.getsize("/mock-checkout/LayoutTests/w3c/test1/__init__.py") > 0)
+
     # FIXME: Needs more tests.

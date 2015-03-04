@@ -123,6 +123,21 @@ class MockFileSystem(object):
     def exists(self, path):
         return self.isfile(path) or self.isdir(path)
 
+    def dirs_under(self, path, dirs_filter=None):
+        def filter_all(fs, dirpath):
+            return True
+
+        dirs_filter = dirs_filter or filter_all
+
+        dirs = []
+        for dirpath in self.dirs:
+            if not dirpath.startswith(path):
+                continue
+            if dirs_filter(self, dirpath):
+                dirs.append(dirpath)
+        return sorted(dirs)
+
+
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
         def filter_all(fs, dirpath, basename):
             return True
@@ -157,6 +172,11 @@ class MockFileSystem(object):
 
     def getcwd(self):
         return self.cwd
+
+    def getsize(self, path):
+        if not self.isfile(path):
+            raise OSError("%s is not a file" % path)
+        return len(self.files[path])
 
     def glob(self, glob_string):
         # FIXME: This handles '*', but not '?', '[', or ']'.

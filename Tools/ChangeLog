@@ -1,3 +1,41 @@
+2015-03-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should use filesystem instead of os.walk
+        https://bugs.webkit.org/show_bug.cgi?id=142085
+
+        Reviewed by Bem Jones-Bey.
+
+        Added FileSystem.dirs_under to remove the use of os.walk in test importer.
+        Added MockFileSystem.dirs_under and MockFileSystem.getsize to enable unit testing of test importer.
+        Added unit test for FileSystem.dirs_under and MockFileSystem.dirs_under.
+
+        Made use of FileSystem.dirs_under within TestImporter.find_importable_tests.
+        Added a unit test to check that test importer is now black-box testable using a Mock system.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.dirs_under): Returns a list of filtered sub-directories.
+        (FileSystem.dirs_under.filter_all):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.dirs_under):
+        (MockFileSystem.dirs_under.filter_all):
+        (MockFileSystem.getsize):
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py:
+        (MockFileSystemTest.test_dirs_under):
+        (MockFileSystemTest.test_dirs_under.filter_dir):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_sep):
+        (RealFileSystemTest):
+        (RealFileSystemTest.test_dirs_under):
+        (RealFileSystemTest.test_dirs_under.filter_this_dir):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.do_import):
+        (TestImporter.find_importable_tests.should_keep_subdir):
+        (TestImporter.find_importable_tests):
+        (TestImporter.should_keep_subdir): Deleted.
+        (TestImporter.should_skip_file): Deleted.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_empty_init_py): Added test to ensure empty __init__.py are no longer empty once imported.
+
 2015-03-04  Timothy Horton  <timothy_horton@apple.com>
 
         [WebEditingTester] Add support for the find and replace bar

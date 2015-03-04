@@ -82,3 +82,17 @@ class MockFileSystemTest(unittest.TestCase, filesystem_unittest.GenericFileSyste
                          'foo/../bar',
                          'foo/../bar/baz',
                          '../foo')
+
+    def test_dirs_under(self):
+        FAKE_FILES = {
+            '/tests/test1.txt': '',
+            '/tests/test3/test2/test.txt': 'test',
+            '/tests/test2/test.txt': 'test'}
+        fs = filesystem_mock.MockFileSystem(files=FAKE_FILES)
+
+        self.assertEquals(fs.dirs_under('/tests'), ['/tests', '/tests/test2', '/tests/test3', '/tests/test3/test2'])
+
+        def filter_dir(fs, dirpath):
+            return fs.basename(dirpath) != 'test2'
+
+        self.assertEquals(fs.dirs_under('/tests', filter_dir), ['/tests', '/tests/test3'])
