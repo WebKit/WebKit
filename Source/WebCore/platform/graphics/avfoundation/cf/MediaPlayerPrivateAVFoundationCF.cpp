@@ -107,7 +107,7 @@ public:
 
     void createImageGenerator();
     void destroyImageGenerator();
-    RetainPtr<CGImageRef> createImageForTimeInRect(const MediaTime&, const IntRect&);
+    RetainPtr<CGImageRef> createImageForTimeInRect(const MediaTime&, const FloatRect&);
 
     void createAssetForURL(const String& url, bool inheritURI);
     void setAsset(AVCFURLAssetRef);
@@ -836,7 +836,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationCF::as
     return MediaPlayerAVAssetStatusLoaded;
 }
 
-void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& rect)
 {
     ASSERT(isMainThread());
     if (!metaDataAvailable() || context->paintingDisabled())
@@ -851,7 +851,7 @@ void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContex
     paint(context, rect);
 }
 
-void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const FloatRect& rect)
 {
     ASSERT(isMainThread());
     if (!metaDataAvailable() || context->paintingDisabled() || !imageGenerator(m_avfWrapper))
@@ -866,7 +866,7 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const Int
         context->translate(rect.x(), rect.y() + rect.height());
         context->scale(FloatSize(1.0f, -1.0f));
         context->setImageInterpolationQuality(InterpolationLow);
-        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
+        FloatRect paintRect(FloatPoint(), rect.size());
         CGContextDrawImage(context->platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
         context->restore();
         image = 0;
@@ -1990,7 +1990,7 @@ void AVFWrapper::destroyImageGenerator()
     m_imageGenerator = 0;
 }
 
-RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(const MediaTime& time, const IntRect& rect)
+RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(const MediaTime& time, const FloatRect& rect)
 {
     if (!m_imageGenerator)
         return 0;

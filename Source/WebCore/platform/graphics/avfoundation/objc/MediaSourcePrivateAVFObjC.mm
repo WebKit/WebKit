@@ -198,9 +198,9 @@ MediaTime MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& t
     return seekTime;
 }
 
-IntSize MediaSourcePrivateAVFObjC::naturalSize() const
+FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 {
-    IntSize result;
+    FloatSize result;
 
     for (auto* sourceBuffer : m_activeSourceBuffers)
         result = result.expandedTo(sourceBuffer->naturalSize());

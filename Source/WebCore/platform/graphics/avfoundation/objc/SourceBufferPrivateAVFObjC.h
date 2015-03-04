@@ -93,7 +93,7 @@ public:
 
     void seekToTime(MediaTime);
     MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
-    IntSize naturalSize();
+    FloatSize naturalSize();
 
     int protectedTrackID() const { return m_protectedTrackID; }
     AVStreamDataParser* parser() const { return m_parser.get(); }

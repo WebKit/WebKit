@@ -1364,7 +1364,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     return MediaPlayerAVAssetStatusLoaded;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& rect)
 {
     if (!metaDataAvailable() || context->paintingDisabled())
         return;
@@ -1385,7 +1385,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     m_videoFrameHasDrawn = true;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const FloatRect& rect)
 {
     if (!metaDataAvailable() || context->paintingDisabled())
         return;
@@ -1401,7 +1401,7 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     paintCurrentFrameInContext(context, rect);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const FloatRect& rect)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(%p)", this);
 
@@ -1433,7 +1433,7 @@ static HashSet<String> mimeTypeCache()
     return cache;
 } 
 
-RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const IntRect& rect)
+RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const FloatRect& rect)
 {
     if (!m_imageGenerator)
         createImageGenerator();
@@ -1659,7 +1659,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         hasCaptions = [[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count];
 #endif
 
-        presentationSizeDidChange(firstEnabledVideoTrack ? IntSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : IntSize());
+        presentationSizeDidChange(firstEnabledVideoTrack ? FloatSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : FloatSize());
     } else {
         bool hasVideo = false;
         bool hasAudio = false;
@@ -1848,7 +1848,7 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
     if (!m_avAsset)
         return;
 
-    setNaturalSize(roundedIntSize(m_cachedPresentationSize));
+    setNaturalSize(m_cachedPresentationSize);
 }
     
 bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const 
@@ -2004,7 +2004,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
         m_lastImage = createImageFromPixelBuffer(pixelBuffer.get());
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& outputRect)
+void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const FloatRect& outputRect)
 {
     if (m_videoOutput && !m_lastImage && !videoOutputHasAvailableFrame())
         waitForVideoOutputMediaDataWillChange();
