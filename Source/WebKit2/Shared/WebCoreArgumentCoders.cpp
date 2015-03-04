@@ -365,7 +365,7 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-static void pathPointCountApplierFunction(void* info, const PathElement* element)
+static void pathPointCountApplierFunction(void* info, const PathElement*)
 {
     uint64_t* pointCount = static_cast<uint64_t*>(info);
     ++*pointCount;
