@@ -1,3 +1,13 @@
+2015-03-03  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> label can get very wide, doesn't wrap/truncate
+        https://bugs.webkit.org/show_bug.cgi?id=142214
+        <rdar://problem/19982499>
+
+        * fast/attachment/attachment-label-highlight-expected.png: Added.
+        * fast/attachment/attachment-label-highlight-expected.txt: Added.
+        Add (empty) platform independent baselines.
+
 2015-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         Move scroll animating functions from ScrollAnimator to ScrollController
