@@ -1,3 +1,19 @@
+2015-03-04  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> title text disappears when dragging
+        https://bugs.webkit.org/show_bug.cgi?id=142263
+        <rdar://problem/20035515>
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintAttachment):
+        We use NSColors with CoreText, which requires that Cocoa knows the current
+        CGContext out-of-band (through the NSGraphicsContext currentContext mechanism).
+        Otherwise, sometimes (especially when dragging), it will try to apply the
+        text foreground color to a null context, complain to the system log, and fail
+        to render the text.
+
 2015-03-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac] YouTube playback at 1.5x speed has audible distortion

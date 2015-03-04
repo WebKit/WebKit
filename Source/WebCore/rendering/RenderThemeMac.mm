@@ -2459,7 +2459,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     AttachmentLayout layout(attachment);
 
     GraphicsContext& context = *paintInfo.context;
-
+    LocalCurrentGraphicsContext localContext(&context);
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
