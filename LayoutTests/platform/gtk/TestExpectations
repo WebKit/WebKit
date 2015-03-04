@@ -600,6 +600,26 @@ webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.h
 
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
+webkit.org/b/142268 editing/pasteboard/copy-paste-attachment.html [ Failure ]
+webkit.org/b/142269 fast/attachment/attachment-dom.html [ Failure ]
+webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+webkit.org/b/142142 media/video-volume-slider.html [ Failure ]
+
+webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
+webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
+webkit.org/b/142286 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
+webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
+webkit.org/b/142289 fast/text/font-kerning.html [ ImageOnlyFailure ]
+webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
+webkit.org/b/142291 fast/regions/repaint/region-painting-in-composited-view.html [ ImageOnlyFailure ]
+webkit.org/b/142291 transforms/2d/perspective-not-fixed-container.html [ ImageOnlyFailure ]
+webkit.org/b/142291 transforms/hittest-translated-content-off-to-infinity-and-back.html [ ImageOnlyFailure ]
+webkit.org/b/142291 css3/calc/transforms-translate.html [ ImageOnlyFailure ]
+webkit.org/b/142291 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ ImageOnlyFailure ]
+webkit.org/b/142291 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
+webkit.org/b/142291 fast/regions/repaint/fixed-in-named-flow-cb-changed.html [ ImageOnlyFailure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1278,6 +1298,9 @@ webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Timeout ]
 webkit.org/b/139362 inspector/css/selector-specificity.html [ Timeout Pass ]
 
 webkit.org/b/139363 media/media-controls-timeline-updates.html [ Timeout ]
+
+webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
+webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
