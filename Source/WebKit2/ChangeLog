@@ -1,3 +1,21 @@
+2015-03-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r180967.
+
+    2015-03-03  Enrica Casucci  <enrica@apple.com>
+
+            Incomplete dictation results in text fields in a web page.
+            https://bugs.webkit.org/show_bug.cgi?id=142240
+            rdar://problem/19953432
+
+            Reviewed by Tim Horton.
+
+            The empty stub for insertDictationResult:withCorrectionIdentifier
+            must be removed. This way UIKit will call insertText and do the right thing.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView insertDictationResult:withCorrectionIdentifier:]): Deleted.
+
 2015-02-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179904

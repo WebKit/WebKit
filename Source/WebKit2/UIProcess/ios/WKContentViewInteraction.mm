@@ -2505,10 +2505,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return UITextGranularityCharacter;
 }
 
-- (void)insertDictationResult:(NSArray *)dictationResult withCorrectionIdentifier:(id)correctionIdentifier
-{
-}
-
 // Should return an array of NSDictionary objects that key/value paries for the final text, correction identifier and
 // alternative selection counts using the keys defined at the top of this header.
 - (NSArray *)metadataDictionariesForDictationResults
