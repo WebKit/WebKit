@@ -51,6 +51,13 @@ PASS circle1.transform.baseVal.insertItemBefore('aString', 0) threw exception Ty
 PASS circle1.transform.baseVal.insertItemBefore(circle1, 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.insertItemBefore must be an instance of SVGTransform.
 PASS circle1.transform.baseVal.insertItemBefore(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
+Test overlapping edge cases for removeItem()
+PASS circle1.setAttribute('transform', 'scale(2 2) translate(10 10)') is undefined.
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 20.0 20.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 20.0 20.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 40.0 40.0]"
+PASS circle1.transform.baseVal.numberOfItems is 0
+
 Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1
 PASS circle1.setAttribute('transform', 'rotate(90) scale(2 2) translate(10 10) skewX(45)') is undefined.
 PASS circle1.transform.baseVal.numberOfItems is 4

@@ -103,6 +103,21 @@
     shouldThrow("circle1.transform.baseVal.insertItemBefore(null, 0)");
 
     debug("");
+    debug("Test overlapping edge cases for removeItem()");
+    shouldBeUndefined("circle1.setAttribute('transform', 'scale(2 2) translate(10 10)')");
+    var matrix = circle1.transform.baseVal.getItem(1).matrix;
+    matrix.e *= 2;
+    matrix.f *= 2;
+    shouldBeEqualToString("dumpTransform(circle1.transform.baseVal.getItem(1))", "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 20.0 20.0]");
+    matrix = matrix.translate(20, 20);
+    shouldBeEqualToString("dumpTransform(circle1.transform.baseVal.getItem(1))", "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 20.0 20.0]");
+    circle1.transform.baseVal.getItem(1).setMatrix(matrix);
+    shouldBeEqualToString("dumpTransform(circle1.transform.baseVal.getItem(1))", "type=SVG_TRANSFORM_MATRIX matrix=[1.0 0.0 0.0 1.0 40.0 40.0]");
+    circle1.transform.baseVal.removeItem(0);
+    circle1.transform.baseVal.removeItem(0);
+    shouldBe("circle1.transform.baseVal.numberOfItems", "0");
+
+    debug("");
     debug("Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1");
     shouldBeUndefined("circle1.setAttribute('transform', 'rotate(90) scale(2 2) translate(10 10) skewX(45)')");
     shouldBe("circle1.transform.baseVal.numberOfItems", "4");

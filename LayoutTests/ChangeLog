@@ -1,3 +1,15 @@
+2015-03-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when accessing an item in SVGTransformList and then removing a previous item from this list.
+        https://bugs.webkit.org/show_bug.cgi?id=141550.
+
+        Reviewed by Darin Adler.
+
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/SVGTransformList-basics.xhtml: Add a new test case to this test. Have a
+        reference to an SVGMatrix of the last SVGTransform of an SVGTransformList and then
+        remove the items of this list from the beginning till the end.
+
 2015-02-25  Dana Burkart  <dburkart@apple.com>
 
         Merged r180364. <rdar://problem/19720096>
