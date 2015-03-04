@@ -38,8 +38,11 @@ function rewrite_headers () {
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
         IOS_VERSION="NA"
-    else
+    elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
         IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
+        OSX_VERSION="NA"
+    else
+        IOS_VERSION="9_0"
         OSX_VERSION="NA"
     fi
 

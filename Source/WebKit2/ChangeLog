@@ -1,3 +1,11 @@
+2015-03-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Build Fix: Add fall back handling in postprocess script for missing/unknown platform name.
+
+        Rubber-stamped by David Kilzer.
+
+        * mac/postprocess-framework-headers.sh:
+
 2015-03-03  Enrica Casucci  <enrica@apple.com>
 
         Build fix for iOS.
