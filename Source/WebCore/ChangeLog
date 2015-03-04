@@ -1,5 +1,25 @@
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r181038
+
+    2015-03-04  Dean Jackson  <dino@apple.com>
+
+            REGRESSION (r179597): Can't see power saver banner for plugins
+            https://bugs.webkit.org/show_bug.cgi?id=142312
+            <rdar://problem/20040517>
+
+            Reviewed by Brent Fulgham.
+
+            We were being a bit too restrictive when deciding a child
+            should not create a renderer. All shadow root children
+            of the snapshotted plugin need one.
+
+            * html/HTMLPlugInImageElement.cpp:
+            (WebCore::HTMLPlugInImageElement::childShouldCreateRenderer):
+            Test if we're part of the shadow tree.
+
+2015-03-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r176554
 
     2014-11-27  Antti Koivisto  <antti@apple.com>
