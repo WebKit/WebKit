@@ -1,3 +1,40 @@
+2015-03-04  Timothy Horton  <timothy_horton@apple.com>
+
+        [WebEditingTester] Add support for the find and replace bar
+        https://bugs.webkit.org/show_bug.cgi?id=142247
+
+        Reviewed by Enrica Casucci.
+
+        While it's not hooked up yet in WKWebView, adding support for the
+        find bar to WebEditingTester will help us implement that functionality.
+
+        * WebEditingTester/AppDelegate.h:
+        * WebEditingTester/AppDelegate.m:
+        (-[WebEditingAppDelegate performTextFinderAction:]):
+        * WebEditingTester/MainMenu.xib:
+        Receive performTextFinderAction: and forward it to the frontmost WebDocumentController.
+
+        * WebEditingTester/WK2WebDocumentController.m:
+        (-[WK2WebDocumentController awakeFromNib]):
+        (-[WK2WebDocumentController performTextFinderAction:]):
+        (-[WK2WebDocumentController findBarView]):
+        (-[WK2WebDocumentController setFindBarView:]):
+        (-[WK2WebDocumentController isFindBarVisible]):
+        (-[WK2WebDocumentController setFindBarVisible:]):
+        (-[WK2WebDocumentController findBarViewDidChangeHeight]):
+        (-[WK2WebDocumentController layout]):
+        Implement performTextFinderAction: for WebKit2, and have a NSTextFinder
+        pointing at the WKWebView (currently nothing will work, but the bar will
+        show up). Install and uninstall the bar as needed.
+
+        * WebEditingTester/WebDocument.xib:
+        Don't use a full-size content view. There's no need, and it makes find
+        bar layout harder.
+
+        * WebEditingTester/WebDocumentController.h:
+        * WebEditingTester/WebDocumentController.m:
+        (-[WebDocumentController performTextFinderAction:]):
+
 2015-03-03  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Split parsing and compiling of content extensions into their own files

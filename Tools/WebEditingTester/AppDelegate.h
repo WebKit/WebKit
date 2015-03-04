@@ -36,5 +36,7 @@
 - (IBAction)showOperations:(id)sender;
 - (IBAction)toggleUseWebKit2ByDefault:(id)sender;
 
+- (IBAction)performTextFinderAction:(id)sender;
+
 @end
 

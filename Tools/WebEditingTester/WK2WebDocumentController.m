@@ -34,11 +34,15 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKWebsiteDataStore.h>
 
-@interface WK2WebDocumentController () <WKUIDelegate>
+@interface WK2WebDocumentController () <WKUIDelegate, NSTextFinderBarContainer>
 @property (nonatomic, strong) WKWebView *webView;
 @end
 
-@implementation WK2WebDocumentController
+@implementation WK2WebDocumentController {
+    NSTextFinder *_textFinder;
+    NSView *_textFindBarView;
+    BOOL _findBarVisible;
+}
 
 static WKWebViewConfiguration *defaultConfiguration()
 {
@@ -67,11 +71,68 @@ static WKWebViewConfiguration *defaultConfiguration()
     
     [containerView addSubview:_webView];
     self.window.title = @"WebEditor [WK2]";
+
+    _textFinder = [[NSTextFinder alloc] init];
+    _textFinder.client = (id<NSTextFinderClient>)_webView;
+    _textFinder.findBarContainer = self;
 }
 
 - (void)loadHTMLString:(NSString *)content
 {
     [_webView loadHTMLString:content baseURL:nil];
+}
+
+- (void)performTextFinderAction:(id)sender
+{
+    [_textFinder performAction:[sender tag]];
+}
+
+- (NSView *)findBarView
+{
+    return _textFindBarView;
+}
+
+- (void)setFindBarView:(NSView *)findBarView
+{
+    if (_textFindBarView)
+        [_textFindBarView removeFromSuperview];
+    _textFindBarView = findBarView;
+    _findBarVisible = YES;
+    [containerView addSubview:_textFindBarView];
+    [self layout];
+}
+
+- (BOOL)isFindBarVisible
+{
+    return _findBarVisible;
+}
+
+- (void)setFindBarVisible:(BOOL)findBarVisible
+{
+    _findBarVisible = findBarVisible;
+    if (findBarVisible)
+        [containerView addSubview:_textFindBarView];
+    else
+        [_textFindBarView removeFromSuperview];
+
+    [self layout];
+}
+
+- (void)findBarViewDidChangeHeight
+{
+    [self layout];
+}
+
+- (void)layout
+{
+    CGRect containerBounds = [containerView bounds];
+
+    if (!_findBarVisible) {
+        _webView.frame = containerBounds;
+    } else {
+        _textFindBarView.frame = CGRectMake(containerBounds.origin.x, containerBounds.origin.y + containerBounds.size.height - _textFindBarView.frame.size.height, containerBounds.size.width, _textFindBarView.frame.size.height);
+        _webView.frame = CGRectMake(containerBounds.origin.x, containerBounds.origin.y, containerBounds.size.width, containerBounds.size.height - _textFindBarView.frame.size.height);
+    }
 }
 
 @end

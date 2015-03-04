@@ -38,5 +38,7 @@
 
 - (void)loadHTMLString:(NSString *)content;
 
+- (void)performTextFinderAction:(id)sender;
+
 @end
 

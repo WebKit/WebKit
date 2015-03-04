@@ -51,4 +51,8 @@
 {
 }
 
+- (void)performTextFinderAction:(id)sender
+{
+}
+
 @end

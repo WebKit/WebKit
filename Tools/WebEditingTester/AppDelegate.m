@@ -210,4 +210,12 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
     }
 }
 
+- (void)performTextFinderAction:(id)sender
+{
+    id keyWindowDelegate = [NSApplication sharedApplication].keyWindow.delegate;
+    if (![keyWindowDelegate isKindOfClass:[WebDocumentController class]])
+        return;
+    [(WebDocumentController *)keyWindowDelegate performTextFinderAction:sender];
+}
+
 @end
