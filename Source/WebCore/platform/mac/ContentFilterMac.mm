@@ -23,180 +23,142 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: Rename to ContentFilter.cpp and move to platform/.
+
 #import "config.h"
 #import "ContentFilter.h"
 
 #if ENABLE(CONTENT_FILTERING)
 
-#import "ResourceResponse.h"
-#import "SoftLinking.h"
-#import "WebFilterEvaluatorSPI.h"
-#import <objc/runtime.h>
-
-#if HAVE(NE_FILTER_SOURCE)
-#import "NEFilterSourceSPI.h"
-SOFT_LINK_FRAMEWORK(NetworkExtension);
-SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
-#endif
-
-SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
-SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+#import "NetworkExtensionContentFilter.h"
+#import "ParentalControlsContentFilter.h"
+#import <wtf/NeverDestroyed.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 
-ContentFilter::ContentFilter(const ResourceResponse& response)
-#if HAVE(NE_FILTER_SOURCE)
-    : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
-    , m_neFilterSourceQueue(0)
-#endif
-{
-    if ([getWebFilterEvaluatorClass() isManagedSession])
-        m_platformContentFilter = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]);
+struct ContentFilterType {
+    const std::function<bool(const ResourceResponse&)> canHandleResponse;
+    const std::function<std::unique_ptr<ContentFilter>(const ResourceResponse&)> create;
+};
 
+template <typename T>
+static inline ContentFilterType contentFilterType()
+{
+    return { T::canHandleResponse, T::create };
+}
+
+static const Vector<ContentFilterType>& contentFilterTypes()
+{
+    static NeverDestroyed<Vector<ContentFilterType>> types(
+        Vector<ContentFilterType>({
+            contentFilterType<ParentalControlsContentFilter>(),
 #if HAVE(NE_FILTER_SOURCE)
-    if ([getNEFilterSourceClass() filterRequired]) {
-        m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithURL:[response.nsURLResponse() URL] direction:NEFilterSourceDirectionInbound socketIdentifier:0]);
-        m_neFilterSourceQueue = dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL);
-        
-        long long expectedContentSize = [response.nsURLResponse() expectedContentLength];
-        if (expectedContentSize < 0)
-            m_originalData = adoptNS([[NSMutableData alloc] init]);
-        else
-            m_originalData = adoptNS([[NSMutableData alloc] initWithCapacity:(NSUInteger)expectedContentSize]);
+            contentFilterType<NetworkExtensionContentFilter>()
+#endif
+        })
+    );
+    return types;
+}
+
+class ContentFilterCollection final : public ContentFilter {
+public:
+    using Container = Vector<std::unique_ptr<ContentFilter>>;
+
+    explicit ContentFilterCollection(Container);
+
+    void addData(const char* data, int length) override;
+    void finishedAddingData() override;
+    bool needsMoreData() const override;
+    bool didBlockData() const override;
+    const char* getReplacementData(int& length) const override;
+    ContentFilterUnblockHandler unblockHandler() const override;
+
+private:
+    Container m_contentFilters;
+};
+
+std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceResponse& response)
+{
+    ContentFilterCollection::Container filters;
+    for (auto& type : contentFilterTypes()) {
+        if (type.canHandleResponse(response))
+            filters.append(type.create(response));
     }
-#endif
+
+    if (filters.isEmpty())
+        return nullptr;
+
+    return std::make_unique<ContentFilterCollection>(WTF::move(filters));
 }
 
-ContentFilter::~ContentFilter()
+ContentFilterCollection::ContentFilterCollection(Container contentFilters)
+    : m_contentFilters { WTF::move(contentFilters) }
 {
-#if HAVE(NE_FILTER_SOURCE)
-    if (m_neFilterSourceQueue)
-        dispatch_release(m_neFilterSourceQueue);
-#endif
+    ASSERT(!m_contentFilters.isEmpty());
 }
 
-bool ContentFilter::canHandleResponse(const ResourceResponse& response)
+void ContentFilterCollection::addData(const char* data, int length)
 {
-    if (!response.url().protocolIsInHTTPFamily())
-        return false;
+    ASSERT(needsMoreData());
 
-    if ([getWebFilterEvaluatorClass() isManagedSession]) {
-#if PLATFORM(MAC)
-        if (response.url().protocolIs("https"))
-#endif
+    for (auto& contentFilter : m_contentFilters)
+        contentFilter->addData(data, length);
+}
+    
+void ContentFilterCollection::finishedAddingData()
+{
+    ASSERT(needsMoreData());
+
+    for (auto& contentFilter : m_contentFilters)
+        contentFilter->finishedAddingData();
+
+    ASSERT(!needsMoreData());
+}
+
+bool ContentFilterCollection::needsMoreData() const
+{
+    for (auto& contentFilter : m_contentFilters) {
+        if (contentFilter->needsMoreData())
             return true;
     }
 
-#if HAVE(NE_FILTER_SOURCE)
-    return [getNEFilterSourceClass() filterRequired];
-#else
     return false;
-#endif
 }
 
-void ContentFilter::addData(const char* data, int length)
+bool ContentFilterCollection::didBlockData() const
 {
-    ASSERT(needsMoreData());
-
-    if (m_platformContentFilter) {
-        ASSERT(![m_replacementData.get() length]);
-        m_replacementData = [m_platformContentFilter addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
-        ASSERT(needsMoreData() || [m_replacementData.get() length]);
+    for (auto& contentFilter : m_contentFilters) {
+        if (contentFilter->didBlockData())
+            return true;
     }
 
-#if HAVE(NE_FILTER_SOURCE)
-    if (!m_neFilterSource)
-        return;
-
-    // FIXME: NEFilterSource doesn't buffer data like WebFilterEvaluator does,
-    // so we need to do it ourselves so getReplacementData() can return the
-    // original bytes back to the loader. We should find a way to remove this
-    // additional copy.
-    [m_originalData appendBytes:data length:length];
-
-    dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
-    [m_neFilterSource addData:[NSData dataWithBytes:(void*)data length:length] withCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
-        m_neFilterSourceStatus = status;
-        dispatch_semaphore_signal(neFilterSourceSemaphore);
-    }];
-
-    // FIXME: We have to block here since DocumentLoader expects to have a
-    // blocked/not blocked answer from the filter immediately after calling
-    // addData(). We should find a way to make this asynchronous.
-    dispatch_semaphore_wait(neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
-    dispatch_release(neFilterSourceSemaphore);
-#endif
-}
-    
-void ContentFilter::finishedAddingData()
-{
-    ASSERT(needsMoreData());
-
-    if (m_platformContentFilter) {
-        ASSERT(![m_replacementData.get() length]);
-        m_replacementData = [m_platformContentFilter dataComplete];
-    }
-
-#if HAVE(NE_FILTER_SOURCE)
-    if (!m_neFilterSource)
-        return;
-
-    dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
-    [m_neFilterSource dataCompleteWithCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
-        m_neFilterSourceStatus = status;
-        dispatch_semaphore_signal(neFilterSourceSemaphore);
-    }];
-
-    // FIXME: We have to block here since DocumentLoader expects to have a
-    // blocked/not blocked answer from the filter immediately after calling
-    // finishedAddingData(). We should find a way to make this asynchronous.
-    dispatch_semaphore_wait(neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
-    dispatch_release(neFilterSourceSemaphore);
-#endif
-
-    ASSERT(!needsMoreData());
+    return false;
 }
 
-bool ContentFilter::needsMoreData() const
-{
-    return [m_platformContentFilter filterState] == kWFEStateBuffering
-#if HAVE(NE_FILTER_SOURCE)
-        || (m_neFilterSource && m_neFilterSourceStatus == NEFilterSourceStatusNeedsMoreData)
-#endif
-    ;
-}
-
-bool ContentFilter::didBlockData() const
-{
-    return [m_platformContentFilter wasBlocked]
-#if HAVE(NE_FILTER_SOURCE)
-        || (m_neFilterSource && m_neFilterSourceStatus == NEFilterSourceStatusBlock)
-#endif
-    ;
-}
-
-const char* ContentFilter::getReplacementData(int& length) const
+const char* ContentFilterCollection::getReplacementData(int& length) const
 {
     ASSERT(!needsMoreData());
 
-    if (didBlockData()) {
-        length = [m_replacementData length];
-        return static_cast<const char*>([m_replacementData bytes]);
+    for (auto& contentFilter : m_contentFilters) {
+        if (contentFilter->didBlockData())
+            return contentFilter->getReplacementData(length);
     }
 
-    NSData *originalData = m_replacementData.get();
-#if HAVE(NE_FILTER_SOURCE)
-    if (!originalData)
-        originalData = m_originalData.get();
-#endif
-
-    length = [originalData length];
-    return static_cast<const char*>([originalData bytes]);
+    return m_contentFilters[0]->getReplacementData(length);
 }
 
-ContentFilterUnblockHandler ContentFilter::unblockHandler() const
+ContentFilterUnblockHandler ContentFilterCollection::unblockHandler() const
 {
-    return ContentFilterUnblockHandler { m_platformContentFilter.get() };
+    ASSERT(didBlockData());
+
+    for (auto& contentFilter : m_contentFilters) {
+        if (contentFilter->didBlockData())
+            return contentFilter->unblockHandler();
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 } // namespace WebCore

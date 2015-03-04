@@ -666,8 +666,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    if (ContentFilter::canHandleResponse(response))
-        m_contentFilter = std::make_unique<ContentFilter>(response);
+    m_contentFilter = ContentFilter::createIfNeeded(response);
 #endif
 
     frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {

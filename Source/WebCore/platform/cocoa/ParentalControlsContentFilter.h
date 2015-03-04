@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilter_h
-#define ContentFilter_h
+#ifndef ParentalControlsContentFilter_h
+#define ParentalControlsContentFilter_h
 
-#if ENABLE(CONTENT_FILTERING)
+#include "ContentFilter.h"
+#include <wtf/Compiler.h>
+#include <wtf/RetainPtr.h>
 
-#include "ContentFilterUnblockHandler.h"
-
-#define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
+OBJC_CLASS NSData;
+OBJC_CLASS WebFilterEvaluator;
 
 namespace WebCore {
 
-class ResourceResponse;
-
-class ContentFilter {
+class ParentalControlsContentFilter final : public ContentFilter {
 public:
-    static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&);
+    static bool canHandleResponse(const ResourceResponse&);
+    static std::unique_ptr<ParentalControlsContentFilter> create(const ResourceResponse&);
 
-    virtual ~ContentFilter() { }
+    explicit ParentalControlsContentFilter(const ResourceResponse&);
 
-    virtual void addData(const char* data, int length) = 0;
-    virtual void finishedAddingData() = 0;
-    virtual bool needsMoreData() const = 0;
-    virtual bool didBlockData() const = 0;
-    virtual const char* getReplacementData(int& length) const = 0;
-    virtual ContentFilterUnblockHandler unblockHandler() const = 0;
+    void addData(const char* data, int length) override;
+    void finishedAddingData() override;
+    bool needsMoreData() const override;
+    bool didBlockData() const override;
+    const char* getReplacementData(int& length) const override;
+    ContentFilterUnblockHandler unblockHandler() const override;
+
+private:
+    RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
+    RetainPtr<NSData> m_replacementData;
 };
-
+    
 } // namespace WebCore
 
-#endif // ENABLE(CONTENT_FILTERING)
-
-#endif // ContentFilter_h
+#endif // ParentalControlsContentFilter_h

@@ -1,3 +1,69 @@
+2015-03-03  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Make it easier to add new content filters
+        https://bugs.webkit.org/show_bug.cgi?id=142255
+
+        Reviewed by Sam Weinig.
+
+        ContentFilter was becoming a bit of a mess, with both the WebFilterEvaluator and NEFilterSource implementations
+        awkwardly living side-by-side. This patch cleans things up by moving these implementations into two separate
+        classes and turning ContentFilter itself into an abstract interface that each implements. A new class called
+        ContentFilterCollection, which also inherits from ContentFilter, manages the collection of individual content
+        filters and is vended to the rest of the system by ContentFilter::createIfNeeded().
+
+        This refactoring will make it easier to add a third type of content filter in a follow-on patch, namely a mock
+        content filter for testing purposes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Called ContentFilter::createIfNeeded() instead of instantiating a ContentFilter directly.
+        * platform/ContentFilter.h:
+        (WebCore::ContentFilter::~ContentFilter):
+        * platform/cocoa/NetworkExtensionContentFilter.h: Copied from Source/WebCore/platform/ContentFilter.h.
+        * platform/cocoa/NetworkExtensionContentFilter.mm: Added.
+        (WebCore::NetworkExtensionContentFilter::canHandleResponse): Moved NEFilterSource code from ContentFilterMac.mm to here.
+        (WebCore::NetworkExtensionContentFilter::create): Ditto.
+        (WebCore::NetworkExtensionContentFilter::NetworkExtensionContentFilter): Ditto.
+        (WebCore::NetworkExtensionContentFilter::~NetworkExtensionContentFilter): Ditto.
+        (WebCore::NetworkExtensionContentFilter::addData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::finishedAddingData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::needsMoreData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::didBlockData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::getReplacementData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::unblockHandler): Ditto.
+        * platform/cocoa/ParentalControlsContentFilter.h: Copied from Source/WebCore/platform/ContentFilter.h.
+        * platform/cocoa/ParentalControlsContentFilter.mm: Added.
+        (WebCore::ParentalControlsContentFilter::canHandleResponse): Moved WebFilterEvaluator code from ContentFilterMac.mm to here.
+        (WebCore::ParentalControlsContentFilter::create): Ditto.
+        (WebCore::ParentalControlsContentFilter::ParentalControlsContentFilter): Ditto.
+        (WebCore::ParentalControlsContentFilter::addData): Ditto.
+        (WebCore::ParentalControlsContentFilter::finishedAddingData): Ditto.
+        (WebCore::ParentalControlsContentFilter::needsMoreData): Ditto.
+        (WebCore::ParentalControlsContentFilter::didBlockData): Ditto.
+        (WebCore::ParentalControlsContentFilter::getReplacementData): Ditto.
+        (WebCore::ParentalControlsContentFilter::unblockHandler): Ditto.
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::contentFilterType): Added a helper function template that creates a new ContentFilterType.
+        (WebCore::contentFilterTypes): Registered a ContentFilterType for each type of content filter.
+        (WebCore::ContentFilter::createIfNeeded): Created a ContentFilterCollection containing each content filter that can handle the given response.
+        (WebCore::ContentFilterCollection::ContentFilterCollection): Constructs a ContentFilterCollection given a Vector of content filters.
+        (WebCore::ContentFilterCollection::addData): Forwarded the call to each content filter in m_contentFilters.
+        (WebCore::ContentFilterCollection::finishedAddingData): Ditto.
+        (WebCore::ContentFilterCollection::needsMoreData): Ditto.
+        (WebCore::ContentFilterCollection::didBlockData): Ditto.
+        (WebCore::ContentFilterCollection::getReplacementData): Returned replacement data for the first filter that blocked the load.
+        If no filter blocked the load, returned the first filter's replacement data.
+        (WebCore::ContentFilterCollection::unblockHandler): Returned the unblock handler for the first filter that blocked the load.
+        (WebCore::ContentFilter::ContentFilter): Deleted.
+        (WebCore::ContentFilter::~ContentFilter): Deleted.
+        (WebCore::ContentFilter::canHandleResponse): Deleted.
+        (WebCore::ContentFilter::addData): Deleted.
+        (WebCore::ContentFilter::finishedAddingData): Deleted.
+        (WebCore::ContentFilter::needsMoreData): Deleted.
+        (WebCore::ContentFilter::didBlockData): Deleted.
+        (WebCore::ContentFilter::getReplacementData): Deleted.
+        (WebCore::ContentFilter::unblockHandler): Deleted.
+
 2015-03-04  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining CoreMedia soft-linking in WebCore over to CoreMediaSoftLink.{cpp,h}
