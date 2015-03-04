@@ -97,20 +97,20 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
     ensureViewSupportsOptions(viewOptions.get());
 
-    if (!test.urlContains("usercontentfilter/"))
+    if (!test.urlContains("contentextensions/"))
         return;
 
     RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
     NSURL *filterURL = [(NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
     NSStringEncoding encoding;
-    NSString *contentFilterString = [NSString stringWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
-    if (!contentFilterString)
+    NSString *contentExtensionString = [NSString stringWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
+    if (!contentExtensionString)
         return;
 
-    WKRetainPtr<WKStringRef> name = adoptWK(WKStringCreateWithUTF8CString("TestContentFilter"));
-    WKRetainPtr<WKStringRef> contentFilterStringWK = adoptWK(WKStringCreateWithCFString((CFStringRef)contentFilterString));
-    WKRetainPtr<WKUserContentFilterRef> filter = adoptWK(WKUserContentFilterCreate(name.get(), contentFilterStringWK.get()));
+    WKRetainPtr<WKStringRef> name = adoptWK(WKStringCreateWithUTF8CString("TestContentExtensions"));
+    WKRetainPtr<WKStringRef> contentExtensionStringWK = adoptWK(WKStringCreateWithCFString((CFStringRef)contentExtensionString));
+    WKRetainPtr<WKUserContentFilterRef> filter = adoptWK(WKUserContentFilterCreate(name.get(), contentExtensionStringWK.get()));
 
     WKPageGroupAddUserContentFilter(WKPageGetPageGroup(TestController::singleton().mainWebView()->page()), filter.get());
 }

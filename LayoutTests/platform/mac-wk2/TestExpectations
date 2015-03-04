@@ -513,4 +513,4 @@ webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Ti
 ### END OF (7) New WebKit2-only failures in Yosemite
 ########################################
 
-http/tests/usercontentfilter [ Pass ]
+http/tests/contentextensions [ Pass ]
