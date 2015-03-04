@@ -1,3 +1,52 @@
+2015-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement -apple-trailing-word: -apple-partially-balanced
+        https://bugs.webkit.org/show_bug.cgi?id=142253
+
+        Reviewed by David Hyatt.
+
+        This patch implements a history mechanism for line breaking. In particular, this patch partitions
+        the updates to the current line breaking location into two kinds: conceptually new breaking locations,
+        and fixups to existing locations. Then, this patch remembers all the fixed up breaking locations, up
+        to a maximum number of remembered locations.
+
+        The patch then uses this memory to change the line-breaking selection based on the rules of
+        -apple-trailing-word.
+
+        Test: fast/text/trailing-word.html
+
+        * rendering/line/BreakingContextInlineHeaders.h:
+        Use InlineIteratorHistory as a proxy for the current breaking location. Note that all these functions
+        are inlined, so the overhead should be next to nothing when -apple-trailing-word is not in use.
+        (WebCore::BreakingContext::BreakingContext): Use InlineIteratorHistory instead of InlineIterator
+        (WebCore::BreakingContext::lineBreak): Ditto.
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine): Ditto
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth): Ditto
+        (WebCore::BreakingContext::InlineIteratorHistory::InlineIteratorHistory): Keeps track of historical
+        breaking locations
+        (WebCore::BreakingContext::InlineIteratorHistory::push): Remember a new breaking location
+        (WebCore::BreakingContext::InlineIteratorHistory::update): Update an existing breaking location
+        (WebCore::BreakingContext::InlineIteratorHistory::renderer): Forwarded to the current breaking location
+        (WebCore::BreakingContext::InlineIteratorHistory::offset): Ditto
+        (WebCore::BreakingContext::InlineIteratorHistory::atTextParagraphSeparator):  Ditto
+        (WebCore::BreakingContext::InlineIteratorHistory::previousInSameNode): Ditto
+        (WebCore::BreakingContext::InlineIteratorHistory::get): Get one of the remembered breaking locations
+        (WebCore::BreakingContext::InlineIteratorHistory::current): Get the current breaking location
+        (WebCore::BreakingContext::InlineIteratorHistory::historyLength):
+        (WebCore::BreakingContext::InlineIteratorHistory::moveTo): Forwarded to the current breaking location.
+        (WebCore::BreakingContext::InlineIteratorHistory::increment): Ditto
+        (WebCore::BreakingContext::InlineIteratorHistory::clear): Ditto
+        (WebCore::BreakingContext::handleBR): Use InlineIteratorHistory instead of InlineIterator
+        (WebCore::BreakingContext::handleFloat): Ditto
+        (WebCore::BreakingContext::handleText): Use InlineIteratorHistory instead of InlineIterator
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded): Style
+        (WebCore::checkMidpoints): Use InlineIteratorHistory instead of InlineIterator
+        (WebCore::BreakingContext::handleEndOfLine): If -apple-trailing-word is in effect, use
+        optimalLineBreakLocationForTrailingWord().
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord): Use the remembered breaking
+        locations and choose the optimal one.
+        (WebCore::BreakingContext::lineBreakRef): Deleted.
+
 2015-03-04  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> title text disappears when dragging
