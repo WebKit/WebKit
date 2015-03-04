@@ -1,3 +1,25 @@
+2015-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        [FTL] inlined GetMyArgumentByVal with no arguments passed causes instant crash
+        https://bugs.webkit.org/show_bug.cgi?id=141180
+        rdar://problem/19677552
+
+        Reviewed by Benjamin Poulain.
+        
+        If we do a GetMyArgumentByVal on an inlined call frame that has no arguments, then the
+        bounds check already terminates execution. This means we can skip the part where we
+        previously did an out-of-bound array access on the inlined call frame arguments vector.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::safelyInvalidateAfterTermination):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        (JSC::FTL::LowerDFGToLLVM::terminate):
+        (JSC::FTL::LowerDFGToLLVM::didAlreadyTerminate):
+        (JSC::FTL::LowerDFGToLLVM::crash):
+        * tests/stress/get-my-argument-by-val-inlined-no-formal-parameters.js: Added.
+        (foo):
+        (bar):
+
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180101
