@@ -225,7 +225,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<R
 
 bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (renderer()->isSnapshottedPlugIn() && !partOfSnapshotOverlay(&child)) 
+    if (renderer()->isSnapshottedPlugIn() && !hasShadowRootParent(child)) 
         return false;
 
     return HTMLPlugInElement::childShouldCreateRenderer(child);
