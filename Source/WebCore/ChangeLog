@@ -1,3 +1,24 @@
+2015-03-04  Roger Fong  <roger_fong@apple.com>
+
+        Update elapsed/remaining time displays on media inline controls on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142264.
+        <rdar://problem/19997487>
+
+        Reviewed by Dean Jackson.
+
+        Div surrounding times are set widths. A larger width is used for times that are
+        an hour or longer. Time elapsed is right justified. Time remaining is left justified.
+        Times are displayed in 11pt Helvetica Neue.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display.hour-long-time):
+        (audio::-webkit-media-controls-current-time-display.hour-long-time):
+        (audio::-webkit-media-controls-time-remaining-display.ten-hour-long-time):
+        (audio::-webkit-media-controls-current-time-display.ten-hour-long-time):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateDuration):
+
 2015-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement -apple-trailing-word: -apple-partially-balanced

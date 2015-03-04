@@ -77,6 +77,7 @@ Controller.prototype = {
         hidden: 'hidden',
         hiding: 'hiding',
         hourLongTime: 'hour-long-time',
+        tenHourLongTime: 'ten-hour-long-time',
         list: 'list',
         muteBox: 'mute-box',
         muted: 'muted',
@@ -967,6 +968,8 @@ Controller.prototype = {
 
         this.controls.currentTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
         this.controls.remainingTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
+        this.controls.currentTime.classList.toggle(this.ClassNames.tenHourLongTime, duration >= 60*60*10);
+        this.controls.remainingTime.classList.toggle(this.ClassNames.tenHourLongTime, duration >= 60*60*10);
     },
 
     progressFillStyle: function(context)
