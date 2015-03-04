@@ -1,5 +1,18 @@
 2015-03-03  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Crash logs can't be found on ios-simulator because WebKitTestRunner returns the wrong process name
+        <http://webkit.org/b/142243>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::webProcessName):
+        (WTR::TestController::networkProcessName):
+        - Return the same process name on iOS and Mac because they both
+          use the same process name for local engineering builds.
+
+2015-03-03  David Kilzer  <ddkilzer@apple.com>
+
         check-webkit-style: Add exception for FrameworkSoftLink.h header order
         <http://webkit.org/b/141872>
 
