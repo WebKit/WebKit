@@ -80,6 +80,8 @@ public:
         LayerTypeWebGLLayer,
         LayerTypeBackdropLayer,
         LayerTypeShapeLayer,
+        LayerTypeLightSystemBackdropLayer,
+        LayerTypeDarkSystemBackdropLayer,
         LayerTypeScrollingLayer,
         LayerTypeCustom
     };

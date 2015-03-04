@@ -226,6 +226,8 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
         layerClass = [CATransformLayer class];
         break;
     case LayerTypeBackdropLayer:
+    case LayerTypeLightSystemBackdropLayer:
+    case LayerTypeDarkSystemBackdropLayer:
 #if ENABLE(FILTERS_LEVEL_2)
         layerClass = [CABackdropLayer class];
 #else
@@ -908,6 +910,8 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
 #if ENABLE(RUBBER_BANDING)
     switch (appearance) {
     case GraphicsLayer::NoCustomAppearance:
+    case GraphicsLayer::LightBackdropAppearance:
+    case GraphicsLayer::DarkBackdropAppearance:
         ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
         ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
         break;

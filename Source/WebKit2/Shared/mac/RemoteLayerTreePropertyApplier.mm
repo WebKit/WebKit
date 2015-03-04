@@ -37,6 +37,7 @@
 
 #if PLATFORM(IOS)
 #import <UIKit/UIView.h>
+#import <UIKitSPI.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -112,6 +113,8 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #if ENABLE(RUBBER_BANDING)
     switch (customAppearance) {
     case GraphicsLayer::NoCustomAppearance:
+    case GraphicsLayer::DarkBackdropAppearance:
+    case GraphicsLayer::LightBackdropAppearance:
         ScrollbarThemeMac::removeOverhangAreaBackground(layer);
         ScrollbarThemeMac::removeOverhangAreaShadow(layer);
         break;
@@ -301,7 +304,12 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
             [children addObject:relatedLayers.get(child)];
         }
 
-        [view _web_setSubviews:children.get()];
+        if (properties.customAppearance == GraphicsLayer::LightBackdropAppearance || properties.customAppearance == GraphicsLayer::DarkBackdropAppearance) {
+            // This is a UIBackdropView, which should have children attached to
+            // its content view, not directly on its layers.
+            [[(_UIBackdropView*)view contentView] _web_setSubviews:children.get()];
+        } else
+            [view _web_setSubviews:children.get()];
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {

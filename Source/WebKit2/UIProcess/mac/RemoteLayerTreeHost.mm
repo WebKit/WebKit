@@ -229,6 +229,8 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         layer = adoptNS([[CATransformLayer alloc] init]);
         break;
     case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
 #if ENABLE(FILTERS_LEVEL_2)
         layer = adoptNS([[CABackdropLayer alloc] init]);
 #else

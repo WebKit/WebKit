@@ -564,6 +564,7 @@ struct _UIWebTouchEvent {
 
 typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
     _UIBackdropViewStyle_Light = 2020,
+    _UIBackdropViewStyle_Dark = 2030
 };
 
 @interface _UIBackdropView : UIView
@@ -571,6 +572,7 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 
 @interface _UIBackdropView (_UIBackdropViewDetails)
 - (instancetype)initWithPrivateStyle:(_UIBackdropViewStylePrivate)style;
+- (instancetype)initWithFrame:(CGRect)frame privateStyle:(_UIBackdropViewStylePrivate)style;
 @property (nonatomic, strong, readonly) UIView *contentView;
 @end
 

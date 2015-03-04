@@ -1270,6 +1270,12 @@ CString RemoteLayerTreeTransaction::description() const
             case PlatformCALayer::LayerTypeCustom:
                 ts << "custom-layer (context-id " << createdLayer.hostingContextID << ")";
                 break;
+            case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+                ts << "light-system-backdrop-layer";
+                break;
+            case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
+                ts << "dark-system-backdrop-layer";
+                break;
             }
             ts << " " << createdLayer.layerID << ")";
         }

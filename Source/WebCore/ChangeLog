@@ -1,3 +1,56 @@
+2015-03-03  Dean Jackson  <dino@apple.com>
+
+        Controls panel should have system blurry background
+        https://bugs.webkit.org/show_bug.cgi?id=142154
+        <rdar://problem/20000964>
+
+        Reviewed by Simon Fraser.
+
+        In order to replicate the system style of media controls
+        on OS X and iOS, we need to expose a special -webkit-appearance.
+        This patch adds the new property value, and implements
+        the iOS part of the appearance, which is a blurry shaded
+        background.
+
+        Test: compositing/media-controls-bar-appearance.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Map the new
+        keywords from ControlParts.
+
+        * css/CSSValueKeywords.in: Add media-controls-light-bar-background
+        and media-controls-dark-bar-background. Darin suggested they
+        be sorted, so I did this at the same time.
+        * platform/ThemeTypes.h: New ControlParts for the values, and
+        sort the values since they need to be in sync with
+        CSSValueKeywords.in.
+
+        * platform/graphics/GraphicsLayer.h: Expose two new custom appearance
+        values.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::layerTypeForCustomBackdropAppearance): Helper function.
+        (WebCore::isCustomBackdropLayerType): Ditto.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Merge setting
+        a system backdrop layer in with the code that swaps to/from tiled layers.
+        (WebCore::GraphicsLayerCA::changeLayerTypeTo): New method that does what
+        swapFromOrToTiledLayer implemented, but also allows us to change to a
+        system backdrop layer.
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
+        * platform/graphics/ca/PlatformCALayer.h: New layer types.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: For now expose these
+        as regular backdrop layers.
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::updateCustomAppearance):
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Make sure to update
+        custom appearance,
+        (WebCore::RenderLayerBacking::updateCustomAppearance): New method.
+        * rendering/RenderLayerBacking.h:
+
 2015-03-03  Chris Dumez  <cdumez@apple.com>
 
         Access ApplicationCacheStorage global instance via singleton() static member function

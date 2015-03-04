@@ -354,6 +354,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_isPageTiledBackingLayer(false)
     , m_needsFullRepaint(false)
+    , m_usingBackdropLayerType(false)
     , m_uncommittedChanges(0)
     , m_isCommittingChanges(false)
 {
@@ -1338,6 +1339,16 @@ bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(Platform
     return client().shouldTemporarilyRetainTileCohorts(this);
 }
 
+static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
+{
+    return appearance == GraphicsLayer::LightBackdropAppearance ? PlatformCALayer::LayerTypeLightSystemBackdropLayer : PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
+}
+
+static bool isCustomBackdropLayerType(PlatformCALayer::LayerType layerType)
+{
+    return layerType == PlatformCALayer::LayerTypeLightSystemBackdropLayer || layerType == PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
 {
     TemporaryChange<bool> committingChangesChange(m_isCommittingChanges, true);
@@ -1353,8 +1364,18 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-    if (needTiledLayer != m_usingTiledBacking)
-        swapFromOrToTiledLayer(needTiledLayer);
+    bool needBackdropLayerType = (customAppearance() == LightBackdropAppearance || customAppearance() == DarkBackdropAppearance);
+    PlatformCALayer::LayerType neededLayerType = m_layer->layerType();
+
+    if (needTiledLayer)
+        neededLayerType = PlatformCALayer::LayerTypeTiledBackingLayer;
+    else if (needBackdropLayerType)
+        neededLayerType = layerTypeForCustomBackdropAppearance(customAppearance());
+    else if (isCustomBackdropLayerType(m_layer->layerType()) || m_usingTiledBacking)
+        neededLayerType = PlatformCALayer::LayerTypeWebLayer;
+
+    if (neededLayerType != m_layer->layerType())
+        changeLayerTypeTo(neededLayerType);
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
     if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged | BackdropFiltersChanged))
@@ -3187,18 +3208,19 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 #endif
 }
 
-void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
+void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 {
-    ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTiledBackingLayer);
-    ASSERT(useTiledLayer != m_usingTiledBacking);
+    PlatformCALayer::LayerType oldLayerType = m_layer->layerType();
+    if (newLayerType == oldLayerType)
+        return;
+
     RefPtr<PlatformCALayer> oldLayer = m_layer;
 
-    PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer;
+    m_layer = createPlatformCALayer(newLayerType, this);
 
-    m_layer = createPlatformCALayer(layerType, this);
+    m_usingTiledBacking = newLayerType == PlatformCALayer::LayerTypeTiledBackingLayer;
+    m_usingBackdropLayerType = isCustomBackdropLayerType(newLayerType);
 
-    m_usingTiledBacking = useTiledLayer;
-    
     m_layer->adoptSublayers(*oldLayer);
 
 #ifdef VISIBLE_TILE_WASH
@@ -3238,7 +3260,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         m_uncommittedChanges |= VisibleRectChanged;
 
 #ifndef NDEBUG
-    String name = String::format("%sCALayer(%p) GraphicsLayer(%p, %llu) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this, primaryLayerID()) + m_name;
+    String name = String::format("%sCALayer(%p) GraphicsLayer(%p, %llu) ", (newLayerType == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this, primaryLayerID()) + m_name;
     m_layer->setName(name);
 #endif
 
@@ -3246,8 +3268,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     
     // need to tell new layer to draw itself
     setNeedsDisplay();
-    
-    client().tiledBackingUsageChanged(this, m_usingTiledBacking);
+
+    if (oldLayerType == PlatformCALayer::LayerTypeTiledBackingLayer || newLayerType == PlatformCALayer::LayerTypeTiledBackingLayer)
+        client().tiledBackingUsageChanged(this, m_usingTiledBacking);
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const

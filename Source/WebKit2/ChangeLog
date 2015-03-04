@@ -1,3 +1,38 @@
+2015-03-03  Dean Jackson  <dino@apple.com>
+
+        Controls panel should have system blurry background
+        https://bugs.webkit.org/show_bug.cgi?id=142154
+        <rdar://problem/20000964>
+
+        Reviewed by Simon Fraser.
+
+        In order to replicate the system style of media controls
+        on OS X and iOS, we need to expose a special -webkit-appearance.
+        This patch adds the new property value, and implements
+        the iOS part of the appearance, which is a blurry shaded
+        background.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext): Add entries for
+        the new layer types, even though they are not correct yet.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::updateCustomAppearance):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties): UIBackdropViews
+        have a defined hierarchy that we don't create. We need to make sure we add our
+        children to the right subview.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::description): Logging.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm: Rename existing WKBackdropView
+        to WKSimpleBackdropView, and add a new WKBackdropView that inherits
+        from UIBackdropView.
+        (-[WKBackdropView hitTest:withEvent:]):
+        (-[WKBackdropView description]):
+        (WebKit::RemoteLayerTreeHost::createLayer): Handle the new LayerTypes.
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
 2015-03-03  Chris Dumez  <cdumez@apple.com>
 
         Access ApplicationCacheStorage global instance via singleton() static member function

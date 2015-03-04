@@ -1,3 +1,20 @@
+2015-03-03  Dean Jackson  <dino@apple.com>
+
+        Controls panel should have system blurry background
+        https://bugs.webkit.org/show_bug.cgi?id=142154
+        <rdar://problem/20000964>
+
+        Reviewed by Simon Fraser.
+
+        Make sure content with a -webkit-appearance of
+        media-controls-light-bar-background or
+        media-controls-dark-bar-background doesn't get composited
+        unless explicitly requested. This avoids a
+        performance hit for a rarely used feature.
+
+        * compositing/media-controls-bar-appearance-expected.txt: Added.
+        * compositing/media-controls-bar-appearance.html: Added.
+
 2015-03-03  Daniel Bates  <dabates@apple.com>
 
         Convert ManualTests/svg-tooltip.svg to a DRT test

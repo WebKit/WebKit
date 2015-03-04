@@ -30,6 +30,7 @@
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIScrollView.h>
+#import <UIKitSPI.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -110,10 +111,11 @@ using namespace WebCore;
 
 @end
 
-@interface WKBackdropView : WKCompositingView
+@interface WKSimpleBackdropView : WKCompositingView
 @end
 
-@implementation WKBackdropView
+@implementation WKSimpleBackdropView
+
 + (Class)layerClass
 {
     return [CABackdropLayer self];
@@ -157,6 +159,25 @@ using namespace WebCore;
 
 @end
 
+@interface WKBackdropView : _UIBackdropView
+@end
+
+@implementation WKBackdropView
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _findDescendantViewAtPoint:point withEvent:event];
+}
+
+- (NSString *)description
+{
+    NSString *viewDescription = [super description];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    return [viewDescription stringByAppendingString:webKitDetails];
+}
+
+@end
+
 namespace WebKit {
 
 LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
@@ -176,7 +197,13 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         view = adoptNS([[WKCompositingView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeBackdropLayer:
-        view = adoptNS([[WKBackdropView alloc] init]);
+        view = adoptNS([[WKSimpleBackdropView alloc] init]);
+        break;
+    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+        view = adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]);
+        break;
+    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
+        view = adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         view = adoptNS([[WKTransformView alloc] init]);

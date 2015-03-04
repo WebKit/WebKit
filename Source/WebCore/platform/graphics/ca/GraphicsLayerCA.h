@@ -256,7 +256,7 @@ private:
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
 
     bool requiresTiledLayer(float pageScaleFactor) const;
-    void swapFromOrToTiledLayer(bool useTiledLayer);
+    void changeLayerTypeTo(PlatformCALayer::LayerType);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
 
@@ -493,6 +493,7 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_isPageTiledBackingLayer : 1;
     bool m_needsFullRepaint : 1;
+    bool m_usingBackdropLayerType : 1;
 
     Color m_contentsSolidColor;
 

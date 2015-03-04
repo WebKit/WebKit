@@ -311,6 +311,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(renderer().style());
 #endif
+    updateCustomAppearance(renderer().style());
 }
 
 #if PLATFORM(IOS)
@@ -402,6 +403,17 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
         m_graphicsLayer->setBlendMode(style.blendMode());
 }
 #endif
+
+void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
+{
+    ControlPart appearance = style.appearance();
+    if (appearance == MediaControlsLightBarBackgroundPart)
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::LightBackdropAppearance);
+    else if (appearance == MediaControlsDarkBarBackgroundPart)
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::DarkBackdropAppearance);
+    else
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::NoCustomAppearance);
+}
 
 // FIXME: the hasAcceleratedTouchScrolling()/needsCompositedScrolling() concepts need to be merged.
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
