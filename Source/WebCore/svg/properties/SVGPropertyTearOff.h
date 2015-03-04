@@ -51,10 +51,15 @@ public:
         return adoptRef(new Self(initialValue));
     }
 
-    PropertyType& propertyReference() { return *m_value; }
+    static PassRefPtr<Self> create(const PropertyType* initialValue)
+    {
+        return adoptRef(new Self(initialValue));
+    }
+
+    virtual PropertyType& propertyReference() { return *m_value; }
     SVGAnimatedProperty* animatedProperty() const { return m_animatedProperty; }
 
-    void setValue(PropertyType& value)
+    virtual void setValue(PropertyType& value)
     {
         if (m_valueIsCopy) {
             detachChildren();
@@ -134,9 +139,14 @@ protected:
     }
 
     SVGPropertyTearOff(const PropertyType& initialValue)
+        : SVGPropertyTearOff(&initialValue)
+    {
+    }
+
+    SVGPropertyTearOff(const PropertyType* initialValue)
         : m_animatedProperty(0)
         , m_role(UndefinedRole)
-        , m_value(new PropertyType(initialValue))
+        , m_value(initialValue ? new PropertyType(*initialValue) : nullptr)
         , m_valueIsCopy(true)
     {
     }

@@ -1,3 +1,35 @@
+2015-03-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when accessing an item in SVGTransformList and then removing a previous item from this list.
+        https://bugs.webkit.org/show_bug.cgi?id=141550.
+
+        Reviewed by Darin Adler.
+
+        Tests: LayoutTests/svg/dom/SVGTransformList-basics.xhtml: This test is modified to
+        include a new test case.
+
+        * svg/properties/SVGMatrixTearOff.h: m_value of SVGMatrixTearOff will be a null
+        pointer. There is no point in having SVGMatrixTearOff points to the parent and
+        the property of the parent at the same time.
+        
+        (WebCore::SVGMatrixTearOff::create): SVGMatrixTearOff will hold a pointer to
+        the parent SVGPropertyTearOff<SVGTransform>. But it should overrides setValue()
+        and propertyReference() so it can set and get the SVGMatrix from the SVGTransform
+        parent.
+        
+        (WebCore::SVGMatrixTearOff::SVGMatrixTearOff): Pass a nullptr to the base class.
+        SVGMatrixTearOff will act as a proxy of the parent. It does not hold any data by
+        itself but it knows what property to set and get from the parent.
+        
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::create): Add a create method which can take a pointer value.
+        
+        (WebCore::SVGPropertyTearOff::propertyReference):
+        (WebCore::SVGPropertyTearOff::setValue): Make these functions virtual so concrete classes
+        like SVGMatrixTearOff can override them.
+        
+        (WebCore::SVGPropertyTearOff::SVGPropertyTearOff): Add a new constructor.
+
 2015-02-25  Dana Burkart  <dburkart@apple.com>
 
         Merged r180364. <rdar://problem/19720096>
