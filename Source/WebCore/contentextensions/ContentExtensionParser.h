@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsManager_h
-#define ContentExtensionsManager_h
+#ifndef ContentExtensionParser_h
+#define ContentExtensionParser_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -37,16 +37,11 @@ namespace ContentExtensions {
 
 class ContentExtensionRule;
 
-// The ExtensionsManager loads serialized content extension rules directly into WebCore.
-namespace ExtensionsManager {
-
-Vector<ContentExtensionRule> createRuleList(const String& rules);
-
-} // namespace ExtensionsManager
+Vector<ContentExtensionRule> parseRuleList(const String& rules);
 
 } // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsManager_h
+#endif // ContentExtensionParser_h

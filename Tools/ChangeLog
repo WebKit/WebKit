@@ -1,3 +1,18 @@
+2015-03-03  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Split parsing and compiling of content extensions into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=142259
+
+        Reviewed by Anders Carlsson.
+
+        Add basic unit test for the content filter compiler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ContentFilter.cpp: Added.
+        (WebCore::ContentExtensions::operator<<):
+        (TestWebKitAPI::ContentFilterTest::SetUp):
+        (TestWebKitAPI::TEST_F):
+
 2015-03-04  Matthew Mirman  <mmirman@apple.com>
 
         Cleaned up BuildAndTestFactory to not be a near duplicate of TestFactory

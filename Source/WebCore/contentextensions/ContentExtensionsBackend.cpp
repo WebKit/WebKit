@@ -28,143 +28,37 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsDebugging.h"
-#include "DFABytecodeCompiler.h"
+#include "CompiledContentExtension.h"
 #include "DFABytecodeInterpreter.h"
-#include "NFA.h"
-#include "NFAToDFA.h"
 #include "URL.h"
-#include "URLFilterParser.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/DataLog.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
     
-Vector<unsigned> ContentExtensionsBackend::serializeActions(const Vector<ContentExtensionRule>& ruleList, Vector<SerializedActionByte>& actions)
-{
-    ASSERT(!actions.size());
-    
-    Vector<unsigned> actionLocations;
-        
-    for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
-        const ContentExtensionRule& rule = ruleList[ruleIndex];
-        actionLocations.append(actions.size());
-        
-        switch (rule.action().type()) {
-        case ActionType::InvalidAction:
-            RELEASE_ASSERT_NOT_REACHED();
-
-        case ActionType::BlockLoad:
-        case ActionType::BlockCookies:
-        case ActionType::IgnorePreviousRules:
-            actions.append(static_cast<SerializedActionByte>(rule.action().type()));
-            break;
-
-        case ActionType::CSSDisplayNone: {
-            const String& selector = rule.action().cssSelector();
-            // Append action type (1 byte).
-            actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNone));
-            // Append Selector length (4 bytes).
-            unsigned selectorLength = selector.length();
-            actions.resize(actions.size() + sizeof(unsigned));
-            *reinterpret_cast<unsigned*>(&actions[actions.size() - sizeof(unsigned)]) = selectorLength;
-            bool wideCharacters = !selector.is8Bit();
-            actions.append(wideCharacters);
-            // Append Selector.
-            if (wideCharacters) {
-                for (unsigned i = 0; i < selectorLength; i++) {
-                    actions.resize(actions.size() + sizeof(UChar));
-                    *reinterpret_cast<UChar*>(&actions[actions.size() - sizeof(UChar)]) = selector[i];
-                }
-            } else {
-                for (unsigned i = 0; i < selectorLength; i++)
-                    actions.append(selector[i]);
-            }
-            break;
-        }
-        }
-    }
-    return actionLocations;
-}
-
-void ContentExtensionsBackend::setRuleList(const String& identifier, const Vector<ContentExtensionRule>& ruleList)
+void ContentExtensionsBackend::addContentExtension(const String& identifier, RefPtr<CompiledContentExtension> compiledContentExtension)
 {
     ASSERT(!identifier.isEmpty());
     if (identifier.isEmpty())
         return;
 
-    if (ruleList.isEmpty()) {
-        removeRuleList(identifier);
+    if (!compiledContentExtension) {
+        removeContentExtension(identifier);
         return;
     }
 
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double nfaBuildTimeStart = monotonicallyIncreasingTime();
-#endif
-
-    Vector<SerializedActionByte> actions;
-    Vector<unsigned> actionLocations = serializeActions(ruleList, actions);
-
-    NFA nfa;
-    URLFilterParser urlFilterParser(nfa);
-    for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
-        const ContentExtensionRule& contentExtensionRule = ruleList[ruleIndex];
-        const Trigger& trigger = contentExtensionRule.trigger();
-        ASSERT(trigger.urlFilter.length());
-
-        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocations[ruleIndex]);
-
-        if (!error.isNull()) {
-            dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());
-            continue;
-        }
-    }
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double nfaBuildTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent building the NFA: %f\n", (nfaBuildTimeEnd - nfaBuildTimeStart));
-#endif
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    nfa.debugPrintDot();
-#endif
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double dfaBuildTimeStart = monotonicallyIncreasingTime();
-#endif
-
-    const DFA dfa = NFAToDFA::convert(nfa);
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double dfaBuildTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
-#endif
-
-    // FIXME: never add a DFA that only matches the empty set.
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    dfa.debugPrintDot();
-#endif
-
-    Vector<DFABytecode> bytecode;
-    DFABytecodeCompiler compiler(dfa, bytecode);
-    compiler.compile();
-    CompiledContentExtension compiledContentExtension = { bytecode, actions };
-    m_ruleLists.set(identifier, compiledContentExtension);
+    m_contentExtensions.set(identifier, compiledContentExtension);
 }
 
-void ContentExtensionsBackend::removeRuleList(const String& identifier)
+void ContentExtensionsBackend::removeContentExtension(const String& identifier)
 {
-    m_ruleLists.remove(identifier);
+    m_contentExtensions.remove(identifier);
 }
 
-void ContentExtensionsBackend::removeAllRuleLists()
+void ContentExtensionsBackend::removeAllContentExtensions()
 {
-    m_ruleLists.clear();
+    m_contentExtensions.clear();
 }
 
 Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
@@ -174,9 +68,8 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
     const CString& urlCString = urlString.utf8();
 
     Vector<Action> actions;
-    for (auto& ruleListSlot : m_ruleLists) {
-        const CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
-        DFABytecodeInterpreter interpreter(compiledContentExtension.bytecode);
+    for (auto& compiledContentExtension : m_contentExtensions.values()) {
+        DFABytecodeInterpreter interpreter(compiledContentExtension->bytecode());
         DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString);
         
         if (!triggeredActions.isEmpty()) {
@@ -188,7 +81,7 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
             
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
-                Action action = Action::deserialize(ruleListSlot.value.actions, actionLocations[i - 1]);
+                Action action = Action::deserialize(compiledContentExtension->actions(), actionLocations[i - 1]);
                 if (action.type() == ActionType::IgnorePreviousRules)
                     break;
                 actions.append(action);

@@ -1,3 +1,55 @@
+2015-03-03  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Split parsing and compiling of content extensions into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=142259
+
+        Reviewed by Anders Carlsson.
+
+        Added new unit test:
+            ContentFilterTest.Basic
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files (CompiledContentExtension.h/cpp, ContentExtensionCompiler.h/cpp, and ContentExtensionParser.h/cpp)
+
+        * contentextensions/CompiledContentExtension.cpp: Added.
+        * contentextensions/CompiledContentExtension.h: Added.
+        Add new class for holding onto the compiled content extension itself. Make it ThreadSafeRefCounted so it is easy
+        to move between threads which will be important in a subsequent patch where we enable compilation on a background
+        thread.
+
+        * contentextensions/ContentExtensionCompiler.cpp: Added.
+        (WebCore::ContentExtensions::serializeActions):
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h: Added.
+        Moving compilation to its own file. Was previously in ContentExtensionsBackend. This is necessary because
+        we will want to be able to compile without the need of a backend.
+
+        * contentextensions/ContentExtensionParser.cpp: Copied from contentextensions/ContentExtensionsManager.cpp.
+        * contentextensions/ContentExtensionParser.h: Copied from contentextensions/ContentExtensionsManager.h.
+        Renamed ContentExtensionsManager to ContentExtensionParser, since that is all it is doing.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::addContentExtension):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::removeContentExtension):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::removeAllContentExtensions):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::serializeActions): Deleted.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList): Deleted.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::removeRuleList): Deleted.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::removeAllRuleLists): Deleted.
+        * contentextensions/ContentExtensionsBackend.h:
+        Change the backend to use the new CompiledContentExtension and change the terminology to
+        reference content extensions, rather than rule lists.
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::addUserContentFilter):
+        (WebCore::UserContentController::removeUserContentFilter):
+        (WebCore::UserContentController::removeAllUserContentFilters):
+        Update for new names and change addUserContentFilter to explicitly compile the JSON
+        rule list before handing it to the backend. In subsequent changes, addUserContentFilter
+        should be changed to take the compiled content extension, and it should become the responsibility
+        of the called (WebKit) to create them.
+
 2015-03-04  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] the GST_SCHEDULING_FLAG_BANDWIDTH_LIMITED should be wrapped by a ifdef

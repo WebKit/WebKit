@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ContentExtensionsManager.h"
+#include "ContentExtensionParser.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -45,8 +45,6 @@ using namespace JSC;
 namespace WebCore {
 
 namespace ContentExtensions {
-
-namespace ExtensionsManager {
 
 static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
@@ -170,7 +168,7 @@ static Vector<ContentExtensionRule> loadEncodedRules(ExecState& exec, const Stri
     return Vector<ContentExtensionRule>();
 }
 
-Vector<ContentExtensionRule> createRuleList(const String& rules)
+Vector<ContentExtensionRule> parseRuleList(const String& rules)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionStartTime = monotonicallyIncreasingTime();
@@ -196,7 +194,6 @@ Vector<ContentExtensionRule> createRuleList(const String& rules)
     return ruleList;
 }
 
-} // namespace ExtensionsManager
 } // namespace ContentExtensions
 } // namespace WebCore
 
