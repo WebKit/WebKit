@@ -225,9 +225,6 @@
     <ClCompile Include="..\wtf\SixCharacterHash.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\Compression.cpp">
-      <Filter>wtf</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\gobject\GlibUtilities.cpp">
       <Filter>wtf\gobject</Filter>
     </ClCompile>
@@ -665,9 +662,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\SixCharacterHash.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Compression.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\FlipBytes.h">
