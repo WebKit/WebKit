@@ -141,4 +141,6 @@
 - (void)_dismissContentRelativeChildWindows;
 #endif
 
+- (void)_didChangeContentSize:(NSSize)newSize;
+
 @end

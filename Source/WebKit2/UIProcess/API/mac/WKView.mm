@@ -4405,6 +4405,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
 }
 
+- (void)_didChangeContentSize:(NSSize)newSize
+{
+
+}
+
 - (void)_dismissContentRelativeChildWindows
 {
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).

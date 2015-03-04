@@ -99,8 +99,9 @@ messages -> WebPageProxy {
     PageDidRequestScroll(WebCore::IntPoint point)
     PageTransitionViewportReady()
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
-    DidChangeContentSize(WebCore::IntSize newSize)
 #endif
+
+    DidChangeContentSize(WebCore::IntSize newSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)
     ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect);

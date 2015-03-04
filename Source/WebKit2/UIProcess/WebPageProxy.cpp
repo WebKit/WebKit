@@ -3660,12 +3660,10 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
     m_pageClient.handleDownloadRequest(download);
 }
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
     m_pageClient.didChangeContentSize(size);
 }
-#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect)

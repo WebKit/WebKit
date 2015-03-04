@@ -153,9 +153,7 @@ public:
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
 
-#if PLATFORM(EFL)
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
-#endif
 
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) = 0;

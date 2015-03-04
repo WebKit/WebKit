@@ -83,6 +83,7 @@ private:
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
     virtual void handleDownloadRequest(DownloadProxy*) override;
+    virtual void didChangeContentSize(const WebCore::IntSize&) override;
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;

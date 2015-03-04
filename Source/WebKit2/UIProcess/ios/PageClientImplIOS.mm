@@ -260,6 +260,11 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
     [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
 }
 
+void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)
+{
+    notImplemented();
+}
+
 void PageClientImpl::didChangeViewportMetaTagWidth(float newWidth)
 {
     [m_webView _setViewportMetaTagWidth:newWidth];

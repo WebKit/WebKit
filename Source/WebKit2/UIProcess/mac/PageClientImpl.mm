@@ -322,6 +322,11 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 #endif
 }
 
+void PageClientImpl::didChangeContentSize(const WebCore::IntSize& newSize)
+{
+    [m_wkView _didChangeContentSize:newSize];
+}
+
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: Would be nice to share this code with WebKit1's WebChromeClient.

@@ -101,6 +101,7 @@ private:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
     virtual void handleDownloadRequest(DownloadProxy*) override;
+    virtual void didChangeContentSize(const WebCore::IntSize&) override { }
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
 
     // Auxiliary Client Creation

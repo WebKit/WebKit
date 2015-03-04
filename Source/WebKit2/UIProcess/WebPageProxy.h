@@ -1148,8 +1148,9 @@ private:
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void pageTransitionViewportReady();
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
-    void didChangeContentSize(const WebCore::IntSize&);
 #endif
+
+    void didChangeContentSize(const WebCore::IntSize&);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorPicker(const WebCore::Color& initialColor, const WebCore::IntRect&);
