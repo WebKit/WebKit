@@ -114,7 +114,7 @@ private:
             break;
             
         case AllocationProfileWatchpoint:
-            addLazily(jsCast<JSFunction*>(m_node->cellOperand()->value())->allocationProfileWatchpointSet());
+            addLazily(m_node->castOperand<JSFunction*>()->allocationProfileWatchpointSet());
             break;
             
         case VarInjectionWatchpoint:

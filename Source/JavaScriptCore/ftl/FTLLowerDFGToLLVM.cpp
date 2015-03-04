@@ -1850,7 +1850,7 @@ private:
         
         speculate(
             BadCell, jsValueValue(cell), m_node->child1().node(),
-            m_out.notEqual(cell, weakPointer(m_node->cellOperand()->value().asCell())));
+            m_out.notEqual(cell, weakPointer(m_node->cellOperand()->cell())));
     }
     
     void compileCheckBadCell()
@@ -3770,7 +3770,7 @@ private:
         int numPassedArgs = m_node->numChildren() - 1;
         int numArgs = numPassedArgs;
 
-        JSFunction* knownFunction = jsCast<JSFunction*>(m_node->cellOperand()->value().asCell());
+        JSFunction* knownFunction = m_node->castOperand<JSFunction*>();
         NativeFunction function = knownFunction->nativeFunction();
 
         Dl_info info;

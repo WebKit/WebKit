@@ -205,6 +205,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_get_generic_property_enumerator:
     case op_next_enumerator_pname:
     case op_to_index_string:
+    case op_new_func:
+    case op_new_func_exp:
         return CanCompileAndInline;
 
     case op_put_to_scope: {
@@ -226,8 +228,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
 
     case op_new_regexp: 
     case op_create_lexical_environment:
-    case op_new_func:
-    case op_new_func_exp:
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.
         return CanCompile;
 

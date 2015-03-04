@@ -1,3 +1,74 @@
+2015-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG IR should refer to FunctionExecutables directly and not via the CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=142229
+
+        Reviewed by Mark Lam and Benjamin Poulain.
+        
+        Anytime a DFG IR node refers to something in CodeBlock, it has three effects:
+
+        - Cumbersome API for accessing the thing that the node refers to.
+        
+        - Not obvious how to create a new such node after bytecode parsing, especially if the
+          thing it refers to isn't already in the CodeBlock. We have done this in the past, but
+          it usually involves subtle changes to CodeBlock.
+        
+        - Not obvious how to inline code that ends up using such nodes. Again, when we have done
+          this, it involved subtle changes to CodeBlock.
+        
+        Prior to this change, the NewFunction* node types used an index into tables in CodeBlock.
+        For this reason, those operations were not inlineable. But the functin tables in CodeBlock
+        just point to FunctionExecutables, which are cells; this means that we can just abstract
+        these operands in DFG IR as cellOperands. cellOperands use DFG::FrozenValue, which means
+        that GC registration happens automagically. Even better, our dumping for cellOperand
+        already did FunctionExecutable dumping - so that functionality gets to be deduplicated.
+        
+        Because this change increases the number of users of cellOperand, it also adds some
+        convenience methods for using it. For example, whereas before you'd say things like:
+        
+            jsCast<Foo*>(node->cellOperand()->value())
+        
+        you can now just say:
+        
+            node->castOperand<Foo*>()
+        
+        This change also changes existing cellOperand users to use the new conveniance API when
+        applicable.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettisonFunctionDeclsAndExprs):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGFrozenValue.h:
+        (JSC::DFG::FrozenValue::cell):
+        (JSC::DFG::FrozenValue::dynamicCast):
+        (JSC::DFG::FrozenValue::cast):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::registerFrozenValues):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::castOperand):
+        (JSC::DFG::Node::hasFunctionDeclIndex): Deleted.
+        (JSC::DFG::Node::functionDeclIndex): Deleted.
+        (JSC::DFG::Node::hasFunctionExprIndex): Deleted.
+        (JSC::DFG::Node::functionExprIndex): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionNoCheck):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCheckCell):
+        (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct):
+
 2015-03-03  Michael Saboff  <msaboff@apple.com>
 
         DelayedReleaseScope drops locks during GC which can cause a thread switch and code reentry

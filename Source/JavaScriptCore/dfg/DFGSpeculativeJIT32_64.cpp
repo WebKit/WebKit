@@ -3749,7 +3749,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case CheckCell: {
         SpeculateCellOperand cell(this, node->child1());
-        speculationCheck(BadCell, JSValueSource::unboxedCell(cell.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, cell.gpr(), node->cellOperand()->value().asCell()));
+        speculationCheck(BadCell, JSValueSource::unboxedCell(cell.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, cell.gpr(), node->cellOperand()->cell()));
         noResult(node);
         break;
     }
@@ -4682,7 +4682,7 @@ void SpeculativeJIT::compile(Node* node)
         addSlowPathGenerator(
             slowPathCall(
                 notCreated, this, operationNewFunction, JSValueRegs(resultTagGPR, resultPayloadGPR), scopeGPR,
-                m_jit.codeBlock()->functionDecl(node->functionDeclIndex())));
+                node->castOperand<FunctionExecutable*>()));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
         break;

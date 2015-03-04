@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,19 @@ public:
     bool operator!() const { return !m_value; }
     
     JSValue value() const { return m_value; }
+    JSCell* cell() const { return m_value.asCell(); }
+    
+    template<typename T>
+    T dynamicCast()
+    {
+        return jsDynamicCast<T>(value());
+    }
+    template<typename T>
+    T cast()
+    {
+        return jsCast<T>(value());
+    }
+    
     Structure* structure() const { return m_structure; }
     
     void strengthenTo(ValueStrength strength)

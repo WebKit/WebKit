@@ -1183,6 +1183,9 @@ struct Node {
         case CheckCell:
         case NativeConstruct:
         case NativeCall:
+        case NewFunctionNoCheck:
+        case NewFunction:
+        case NewFunctionExpression:
             return true;
         default:
             return false;
@@ -1193,6 +1196,12 @@ struct Node {
     {
         ASSERT(hasCellOperand());
         return reinterpret_cast<FrozenValue*>(m_opInfo);
+    }
+    
+    template<typename T>
+    T castOperand()
+    {
+        return cellOperand()->cast<T>();
     }
     
     void setCellOperand(FrozenValue* value)
@@ -1339,29 +1348,6 @@ struct Node {
         default:
             return false;
         }
-    }
-    
-    bool hasFunctionDeclIndex()
-    {
-        return op() == NewFunction
-            || op() == NewFunctionNoCheck;
-    }
-    
-    unsigned functionDeclIndex()
-    {
-        ASSERT(hasFunctionDeclIndex());
-        return m_opInfo;
-    }
-    
-    bool hasFunctionExprIndex()
-    {
-        return op() == NewFunctionExpression;
-    }
-    
-    unsigned functionExprIndex()
-    {
-        ASSERT(hasFunctionExprIndex());
-        return m_opInfo;
     }
     
     bool hasArrayMode()
