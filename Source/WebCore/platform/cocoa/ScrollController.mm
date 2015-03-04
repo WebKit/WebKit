@@ -443,14 +443,24 @@ void ScrollController::updateScrollAnimatorsAndTimers(const ScrollableArea& scro
 {
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
     if (scrollableArea.horizontalSnapOffsets())
-        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, scrollableArea.horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
+        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, *scrollableArea.horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
     else if (m_horizontalScrollSnapAnimator)
         m_horizontalScrollSnapAnimator = nullptr;
 
     if (scrollableArea.verticalSnapOffsets())
-        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, scrollableArea.verticalSnapOffsets(), ScrollEventAxis::Vertical);
+        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, *scrollableArea.verticalSnapOffsets(), ScrollEventAxis::Vertical);
     else if (m_verticalScrollSnapAnimator)
         m_verticalScrollSnapAnimator = nullptr;
+}
+
+void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints)
+{
+    // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
+    if (axis == ScrollEventAxis::Horizontal)
+        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, snapPoints, ScrollEventAxis::Horizontal);
+
+    if (axis == ScrollEventAxis::Vertical)
+        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, snapPoints, ScrollEventAxis::Vertical);
 }
 
 void ScrollController::startScrollSnapTimer(ScrollEventAxis axis)

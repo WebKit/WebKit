@@ -68,6 +68,18 @@ ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 {
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+static inline Vector<LayoutUnit> convertToLayoutUnits(const Vector<float>& snapOffsetsAsFloat)
+{
+    Vector<LayoutUnit> snapOffsets;
+    snapOffsets.reserveInitialCapacity(snapOffsetsAsFloat.size());
+    for (auto offset : snapOffsetsAsFloat)
+        snapOffsets.append(offset);
+
+    return snapOffsets;
+}
+#endif
+
 void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeFrameScrollingNode::updateBeforeChildren(stateNode);
@@ -119,6 +131,14 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         if (scrollingTree().scrollingPerformanceLoggingEnabled())
             logWheelEventHandlerCountChanged(scrollingStateNode.wheelEventHandlerCount());
     }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalSnapOffsets))
+        m_scrollController.updateScrollSnapPoints(ScrollEventAxis::Horizontal, convertToLayoutUnits(scrollingStateNode.horizontalSnapOffsets()));
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalSnapOffsets))
+        m_scrollController.updateScrollSnapPoints(ScrollEventAxis::Vertical, convertToLayoutUnits(scrollingStateNode.verticalSnapOffsets()));
+#endif
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateAfterChildren(const ScrollingStateNode& stateNode)
@@ -521,15 +541,22 @@ void logWheelEventHandlerCountChanged(unsigned count)
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-LayoutUnit ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis(ScrollEventAxis)
+LayoutUnit ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis(ScrollEventAxis axis)
 {
-    // Temporary stub until http://webkit.org/b/141973.
-    return 0;
+    const FloatPoint& currentPosition = scrollPosition();
+    return axis == ScrollEventAxis::Horizontal ? currentPosition.x() : currentPosition.y();
 }
 
-void ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis(ScrollEventAxis, float)
+void ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
 {
-    // Temporary stub until http://webkit.org/b/141973.
+    const FloatPoint& currentPosition = scrollPosition();
+    FloatPoint change;
+    if (axis == ScrollEventAxis::Horizontal)
+        change = FloatPoint(currentPosition.x() + delta, currentPosition.y());
+    else
+        change = FloatPoint(currentPosition.x(), currentPosition.y() + delta);
+
+    immediateScrollBy(change - currentPosition);
 }
 #endif
 

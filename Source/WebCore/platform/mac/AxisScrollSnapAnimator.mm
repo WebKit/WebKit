@@ -60,12 +60,14 @@ static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase,
     if (momentumPhase == PlatformWheelEventPhaseNone) {
         switch (phase) {
         case PlatformWheelEventPhaseBegan:
+        case PlatformWheelEventPhaseMayBegin:
             return WheelEventStatus::UserScrollBegin;
 
         case PlatformWheelEventPhaseChanged:
             return WheelEventStatus::UserScrolling;
 
         case PlatformWheelEventPhaseEnded:
+        case PlatformWheelEventPhaseCancelled:
             return WheelEventStatus::UserScrollEnd;
 
         default:
@@ -82,7 +84,7 @@ static inline float projectedInertialScrollDistance(float initialWheelDelta)
     return inertialScrollPredictionFactor * initialWheelDelta;
 }
 
-AxisScrollSnapAnimator::AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient* client, const Vector<LayoutUnit>* snapOffsets, ScrollEventAxis axis)
+AxisScrollSnapAnimator::AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient* client, const Vector<LayoutUnit>& snapOffsets, ScrollEventAxis axis)
     : m_client(client)
     , m_snapOffsets(snapOffsets)
     , m_axis(axis)
@@ -150,6 +152,9 @@ bool AxisScrollSnapAnimator::shouldOverrideWheelEvent(const PlatformWheelEvent& 
 
 void AxisScrollSnapAnimator::scrollSnapAnimationUpdate()
 {
+    if (m_currentState == ScrollSnapState::DestinationReached)
+        return;
+
     ASSERT(m_currentState == ScrollSnapState::Gliding || m_currentState == ScrollSnapState::Snapping);
     float delta = m_currentState == ScrollSnapState::Snapping ? computeSnapDelta() : computeGlideDelta();
     if (delta)
@@ -164,9 +169,12 @@ void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
     LayoutUnit offset = m_client->scrollOffsetOnAxis(m_axis);
     float initialWheelDelta = newState == ScrollSnapState::Gliding ? averageInitialWheelDelta() : 0;
     LayoutUnit projectedScrollDestination = newState == ScrollSnapState::Gliding ? m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
-    projectedScrollDestination = std::min(std::max(projectedScrollDestination, m_snapOffsets->first()), m_snapOffsets->last());
+    if (m_snapOffsets.isEmpty())
+        return;
+
+    projectedScrollDestination = std::min(std::max(projectedScrollDestination, m_snapOffsets.first()), m_snapOffsets.last());
     m_initialOffset = offset;
-    m_targetOffset = closestSnapOffset<LayoutUnit, float>(*m_snapOffsets, projectedScrollDestination, initialWheelDelta);
+    m_targetOffset = closestSnapOffset<LayoutUnit, float>(m_snapOffsets, projectedScrollDestination, initialWheelDelta);
     if (m_initialOffset == m_targetOffset)
         return;
 

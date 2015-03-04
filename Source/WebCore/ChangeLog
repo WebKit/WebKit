@@ -1,3 +1,40 @@
+2015-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll snap points are not supported on the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=141973
+        <rdar://problem/19938393>
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Tests will be added when the animation behavior is finalized. Manual tests are attached to the bug.
+
+        Update the ScrollingTreeFrameScrollingNodeMac class to implement the delegate interface needed by the
+        ScrollController. This involves the following:
+        1. Implement scrollOffsetOnAxis: Used by the AxisScrollAnimator to determine the current position of the ScrollableArea.
+        2. Implement immediateScrollOnAxis: Used by the AxisScrollAnimator to scroll the ScrollableArea
+
+        We also need to hold a copy of the snap points vector to send to the scrolling thread.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::convertToLayoutUnits): Added helper function to match Scroll Snap Points API.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren): Recognize and react to changes to
+        Scroll Snap Points on top-level frames.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis): Implement delegate method needed by the ScrollController.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis): Ditto.
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::updateScrollAnimatorsAndTimers): Pass snap offsets to AxisScrollSnapAnimator constructor as references.
+        (WebCore::ScrollController::updateScrollSnapPoints): Added. Used by ScrollingTreeFrameScrollingNodeMac to update scroll snap point
+        settings in the scrolling thread.
+        * platform/mac/AxisScrollSnapAnimator.h:
+        * platform/mac/AxisScrollSnapAnimator.mm:
+        (WebCore::toWheelEventStatus): Don't ignore the "MayBegin" or "Cancelled" event phases.
+        (WebCore::AxisScrollSnapAnimator::AxisScrollSnapAnimator): Revise signature to take a reference to the layout units.
+        (WebCore::AxisScrollSnapAnimator::scrollSnapAnimationUpdate): Handle the case where this method gets called from a thread
+        when the scrollable area has already reached its final destination.
+        (WebCore::AxisScrollSnapAnimator::beginScrollSnapAnimation): Handle the possibility that the snap offset point vector might be
+        empty. Update method to account for m_snapOffsets being a value, instead of a pointer.
+
 2015-03-03  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Separate unblock handling into its own class

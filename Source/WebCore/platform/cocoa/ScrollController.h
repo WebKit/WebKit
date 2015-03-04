@@ -108,6 +108,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
     void updateScrollAnimatorsAndTimers(const ScrollableArea&);
+    void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&);
 #endif
 
 private:
