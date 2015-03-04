@@ -1584,7 +1584,7 @@ ApplicationCacheStorage::ApplicationCacheStorage()
 {
 }
 
-ApplicationCacheStorage& cacheStorage()
+ApplicationCacheStorage& ApplicationCacheStorage::singleton()
 {
     static NeverDestroyed<ApplicationCacheStorage> storage;
     return storage;

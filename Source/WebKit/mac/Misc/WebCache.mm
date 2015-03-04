@@ -119,7 +119,7 @@
     [WebView _setCacheModel:cacheModel];
 
     // Empty the application cache.
-    WebCore::cacheStorage().empty();
+    WebCore::ApplicationCacheStorage::singleton().empty();
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::singleton().empty();

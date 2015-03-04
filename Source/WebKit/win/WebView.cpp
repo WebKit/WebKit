@@ -2702,7 +2702,7 @@ static void WebKitSetApplicationCachePathIfNecessary()
 #endif
 
     if (!path.isNull())
-        cacheStorage().setCacheDirectory(path);
+        ApplicationCacheStorage::singleton().setCacheDirectory(path);
 
     initialized = true;
 }

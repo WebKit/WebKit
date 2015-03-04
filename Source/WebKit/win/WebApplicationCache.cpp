@@ -95,14 +95,15 @@ HRESULT WebApplicationCache::maximumSize(long long* size)
     if (!size)
         return E_POINTER;
 
-    *size = WebCore::cacheStorage().maximumSize();
+    *size = WebCore::ApplicationCacheStorage::singleton().maximumSize();
     return S_OK;
 }
 
 HRESULT WebApplicationCache::setMaximumSize(long long size)
 {
-    WebCore::cacheStorage().deleteAllEntries();
-    WebCore::cacheStorage().setMaximumSize(size);
+    auto& cacheStorage = WebCore::ApplicationCacheStorage::singleton();
+    cacheStorage.deleteAllEntries();
+    cacheStorage.setMaximumSize(size);
     return S_OK;
 }
 
@@ -111,13 +112,13 @@ HRESULT WebApplicationCache::defaultOriginQuota(long long* quota)
     if (!quota)
         return E_POINTER;
 
-    *quota = WebCore::cacheStorage().defaultOriginQuota();
+    *quota = WebCore::ApplicationCacheStorage::singleton().defaultOriginQuota();
     return S_OK;
 }
 
 HRESULT WebApplicationCache::setDefaultOriginQuota(long long quota)
 {
-    WebCore::cacheStorage().setDefaultOriginQuota(quota);
+    WebCore::ApplicationCacheStorage::singleton().setDefaultOriginQuota(quota);
     return S_OK;
 }
 
@@ -160,7 +161,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
         return E_POINTER;
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> coreOrigins;
-    WebCore::cacheStorage().getOriginsWithCache(coreOrigins);
+    WebCore::ApplicationCacheStorage::singleton().getOriginsWithCache(coreOrigins);
 
     RetainPtr<CFMutableArrayRef> arrayItem = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, coreOrigins.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
 

@@ -301,7 +301,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
     if (!parameters.applicationCacheDirectory.isEmpty())
-        cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
+        ApplicationCacheStorage::singleton().setCacheDirectory(parameters.applicationCacheDirectory);
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
@@ -729,7 +729,7 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
 void WebProcess::clearApplicationCache()
 {
     // Empty the application cache.
-    cacheStorage().empty();
+    ApplicationCacheStorage::singleton().empty();
 }
 
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)

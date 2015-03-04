@@ -53,7 +53,7 @@ using namespace WebCore;
     
     SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
-    cacheStorage().setCacheDirectory([NSString _webkit_localCacheDirectoryWithBundleIdentifier:bundleIdentifier]);
+    ApplicationCacheStorage::singleton().setCacheDirectory([NSString _webkit_localCacheDirectoryWithBundleIdentifier:bundleIdentifier]);
     
     initialized = YES;
 }
@@ -61,23 +61,24 @@ using namespace WebCore;
 
 + (long long)maximumSize
 {
-    return cacheStorage().maximumSize();
+    return ApplicationCacheStorage::singleton().maximumSize();
 }
 
 + (void)setMaximumSize:(long long)size
 {
-    cacheStorage().deleteAllEntries();
-    cacheStorage().setMaximumSize(size);
+    auto& cacheStorage = ApplicationCacheStorage::singleton();
+    cacheStorage.deleteAllEntries();
+    cacheStorage.setMaximumSize(size);
 }
 
 + (long long)defaultOriginQuota
 {
-    return cacheStorage().defaultOriginQuota();
+    return ApplicationCacheStorage::singleton().defaultOriginQuota();
 }
 
 + (void)setDefaultOriginQuota:(long long)size
 {
-    cacheStorage().setDefaultOriginQuota(size);
+    ApplicationCacheStorage::singleton().setDefaultOriginQuota(size);
 }
 
 + (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
@@ -98,7 +99,7 @@ using namespace WebCore;
 + (NSArray *)originsWithCache
 {
     HashSet<RefPtr<SecurityOrigin>> coreOrigins;
-    cacheStorage().getOriginsWithCache(coreOrigins);
+    ApplicationCacheStorage::singleton().getOriginsWithCache(coreOrigins);
     
     NSMutableArray *webOrigins = [[[NSMutableArray alloc] initWithCapacity:coreOrigins.size()] autorelease];
     

@@ -53,6 +53,8 @@ public:
         DiskOrOperationFailure
     };
 
+    WEBCORE_EXPORT static ApplicationCacheStorage& singleton();
+
     WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() const;
     
@@ -101,6 +103,7 @@ public:
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
 private:
     ApplicationCacheStorage();
+
     PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
     ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
     
@@ -149,8 +152,6 @@ private:
 
     friend class WTF::NeverDestroyed<ApplicationCacheStorage>;
 };
-
-WEBCORE_EXPORT ApplicationCacheStorage& cacheStorage();
 
 } // namespace WebCore
 
