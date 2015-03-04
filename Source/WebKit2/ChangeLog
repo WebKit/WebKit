@@ -1,3 +1,16 @@
+2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove WK_AVAILABLE and related macros when we cannot determine iOS/Mac version
+        https://bugs.webkit.org/show_bug.cgi?id=142252
+        rdar://problem/19983833
+
+        Reviewed by David Kilzer.
+
+        When mac / ios version was unable to be determined strip the WK_AVAILABLE
+        and WK_DEPRECATED macros to avoid outputing a broken macro.
+
+        * mac/postprocess-framework-headers.sh:
+
 2015-03-04  Debarshi Ray  <debarshir@gnome.org>
 
         [GTK] WebView should hold a reference on WebContext because non-default contexts are a reality
