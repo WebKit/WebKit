@@ -1280,3 +1280,6 @@ webkit.org/b/142142 fast/layers/video-layer.html [ Skip ]
 webkit.org/b/142142 media/video-empty-source.html [ Skip ]
 webkit.org/b/142142 media/audio-delete-while-slider-thumb-clicked.html [ Skip ]
 webkit.org/b/142142 media/controls-after-reload.html [ Skip ]
+
+# Test uses Yosemite blurs
+[ Mavericks ] compositing/media-controls-bar-appearance.html [ Skip ]

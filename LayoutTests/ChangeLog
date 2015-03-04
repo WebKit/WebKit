@@ -1,3 +1,11 @@
+2015-03-03  Stephanie Lewis  <slewis@apple.com>
+
+        Update TestExpectations after http://trac.webkit.org/changeset/180965 to skip new test on Mavericks.
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
 2015-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Track localized name follows locale instead of primary language
