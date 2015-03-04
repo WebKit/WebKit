@@ -45,7 +45,6 @@
 #include "URL.h"
 #include "Logging.h"
 #include "PlatformCALayerWin.h"
-#include "SoftLinking.h"
 #include "TimeRanges.h"
 #include "WebCoreAVCFResourceLoader.h"
 

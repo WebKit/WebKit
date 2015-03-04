@@ -29,29 +29,26 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "CDMSessionMediaSourceAVFObjC.h"
-#import "CoreMediaSoftLink.h"
 #import "FileSystem.h"
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformClockCM.h"
-#import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVTime.h>
-#import <CoreMedia/CMSync.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-#pragma mark -
-#pragma mark Soft Linking
+#pragma mark - Soft Linking
+
+#import "CoreMediaSoftLink.h"
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
@@ -64,11 +61,9 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFStringRef)
 
 #define AVAudioTimePitchAlgorithmSpectral getAVAudioTimePitchAlgorithmSpectral()
 #define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
-#define kCMTimebaseNotification_EffectiveRateChanged getkCMTimebaseNotification_EffectiveRateChanged()
 
 #pragma mark -
 #pragma mark AVSampleBufferDisplayLayer
@@ -209,7 +204,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
     return AVFoundationLibrary()
-        && CoreMediaLibrary()
+        && isCoreMediaFrameworkAvailable()
         && getAVStreamDataParserClass()
         && getAVSampleBufferAudioRendererClass()
         && getAVSampleBufferRenderSynchronizerClass()

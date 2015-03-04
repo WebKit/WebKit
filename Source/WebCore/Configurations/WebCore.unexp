@@ -31,20 +31,6 @@ _AudioConverterNew
 _MTAudioProcessingTapGetSourceAudio
 _MTAudioProcessingTapGetStorage
 
-# Source/WebCore/platform/mac/PlatformClockCM.mm
-_CMAudioDeviceClockCreate
-_CMTimebaseCreateWithMasterClock
-_CMTimebaseSetRate
-_CMTimebaseSetTime
-
-# Source/WebCore/platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
-_CMBlockBufferCopyDataBytes
-_CMBlockBufferGetDataLength
-_CMFormatDescriptionGetExtensions
-_CMSampleBufferGetDataBuffer
-_CMSampleBufferGetFormatDescription
-_CMSampleBufferGetSampleTimingInfo
-
 # Source/WebCore/page/CaptionUserPreferencesMediaAF.cpp
 _MACaptionAppearanceAddSelectedLanguage
 _MACaptionAppearanceCopyBackgroundColor
@@ -73,22 +59,6 @@ _CVPixelBufferLockBaseAddress
 _CVPixelBufferUnlockBaseAddress
 _VTPixelTransferSessionCreate
 _VTPixelTransferSessionTransferImage
-
-# Function marked ALWAYS_INLINE in header, but may not be inlined in a
-# Debug build.
-
-# Source/WebCore/platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
-_CMFormatDescriptionGetMediaSubType
-_CMFormatDescriptionGetMediaType
-_CMSampleBufferCreateCopy
-_CMSampleBufferCreateCopyWithNewTiming
-_CMSampleBufferGetDecodeTimeStamp
-_CMSampleBufferGetDuration
-_CMSampleBufferGetPresentationTimeStamp
-_CMSampleBufferGetSampleAttachmentsArray
-_CMSampleBufferGetSampleTimingInfoArray
-_CMSampleBufferGetTotalSampleSize
-_CMVideoFormatDescriptionGetPresentationDimensions
 
 # Source/WebCore/platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 _DDDFAScannerCreateFromCache

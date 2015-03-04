@@ -33,8 +33,6 @@
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
 #include "MediaTimeAVFoundation.h"
-#include "SoftLinking.h"
-#include <CoreMedia/CoreMedia.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/DataView.h>
 #include <runtime/Int8Array.h>
@@ -47,109 +45,7 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/StringPrintStream.h>
 
-#if !PLATFORM(WIN)
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_FRAMEWORK_OPTIONAL(Lib)
-#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_POINTER_OPTIONAL(Lib, Name, Type)
-#else
-#ifdef DEBUG_ALL
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_DEBUG_LIBRARY(Lib)
-#else
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_LIBRARY(Lib)
-#endif
-
-#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(Lib, Name, Type)
-#endif
-
-SOFT_LINK_AVF_FRAMEWORK(CoreMedia)
-
-#if !PLATFORM(WIN)
-SOFT_LINK(CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))
-SOFT_LINK(CoreMedia, CMBlockBufferGetDataLength, size_t, (CMBlockBufferRef theBuffer), (theBuffer))
-SOFT_LINK(CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
-SOFT_LINK(CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
-SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
-#else
-typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
-typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
-typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
-
-#ifndef CMSAMPLEBUFFER_H
-extern "C" {
-#pragma pack(push, 4)
-#ifndef CMTIME_H
-    typedef struct {
-        int64_t value;
-        int32_t timescale;
-        uint32_t flags;
-        int64_t epoch;
-    } CMTime;
-#endif
-
-    typedef struct {
-        CMTime duration;
-        CMTime presentationTimeStamp;
-        CMTime decodeTimeStamp;
-    } CMSampleTimingInfo;
-#pragma pack(pop)
-}
-#endif
-
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, __cdecl, (CMSampleBufferRef sbuf), (sbuf))
-#define CMSampleBufferGetDataBuffer softLink_CMSampleBufferGetDataBuffer
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, __cdecl, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))
-#define CMBlockBufferCopyDataBytes softLink_CMBlockBufferCopyDataBytes
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMBlockBufferGetDataLength, size_t, __cdecl, (CMBlockBufferRef theBuffer), (theBuffer))
-#define CMBlockBufferGetDataLength softLink_CMBlockBufferGetDataLength
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, __cdecl, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
-#define CMSampleBufferGetSampleTimingInfo softLink_CMSampleBufferGetSampleTimingInfo
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, __cdecl, (CMFormatDescriptionRef desc), (desc))
-#define CMFormatDescriptionGetExtensions softLink_CMFormatDescriptionGetExtensions
-SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, __cdecl, (CMSampleBufferRef sbuf), (sbuf))
-#define CMSampleBufferGetFormatDescription softLink_CMSampleBufferGetFormatDescription
-#endif
-
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_Alignment, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_Start, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_Middle, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_End, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BoldStyle, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_ItalicStyle, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_UnderlineStyle, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_WritingDirectionSizePercentage, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_VerticalLayout, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextVerticalLayout_LeftToRight, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_ForegroundColorARGB, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, CFStringRef)
-SOFT_LINK_AVF_POINTER(CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
-
-#define kCMTextMarkupAttribute_Alignment getkCMTextMarkupAttribute_Alignment()
-#define kCMTextMarkupAlignmentType_Start getkCMTextMarkupAlignmentType_Start()
-#define kCMTextMarkupAlignmentType_Middle getkCMTextMarkupAlignmentType_Middle()
-#define kCMTextMarkupAlignmentType_End getkCMTextMarkupAlignmentType_End()
-#define kCMTextMarkupAttribute_BoldStyle getkCMTextMarkupAttribute_BoldStyle()
-#define kCMTextMarkupAttribute_ItalicStyle getkCMTextMarkupAttribute_ItalicStyle()
-#define kCMTextMarkupAttribute_UnderlineStyle getkCMTextMarkupAttribute_UnderlineStyle()
-#define kCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection getkCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection()
-#define kCMTextMarkupAttribute_WritingDirectionSizePercentage getkCMTextMarkupAttribute_WritingDirectionSizePercentage()
-#define kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection getkCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection()
-#define kCMTextMarkupAttribute_VerticalLayout getkCMTextMarkupAttribute_VerticalLayout()
-#define kCMTextVerticalLayout_LeftToRight getkCMTextVerticalLayout_LeftToRight()
-#define kCMTextVerticalLayout_RightToLeft getkCMTextVerticalLayout_RightToLeft()
-#define kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight getkCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight()
-#define kCMTextMarkupAttribute_RelativeFontSize getkCMTextMarkupAttribute_RelativeFontSize()
-#define kCMTextMarkupAttribute_FontFamilyName getkCMTextMarkupAttribute_FontFamilyName()
-#define kCMTextMarkupAttribute_ForegroundColorARGB getkCMTextMarkupAttribute_ForegroundColorARGB()
-#define kCMTextMarkupAttribute_BackgroundColorARGB getkCMTextMarkupAttribute_BackgroundColorARGB()
-#define kCMTextMarkupAttribute_CharacterBackgroundColorARGB getkCMTextMarkupAttribute_CharacterBackgroundColorARGB()
-#define kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms getkCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()
+#include "CoreMediaSoftLink.h"
 
 namespace JSC {
 class ArrayBuffer;

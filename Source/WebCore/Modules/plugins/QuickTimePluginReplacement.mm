@@ -29,7 +29,6 @@
 
 #import "QuickTimePluginReplacement.h"
 
-#import "CoreMediaSoftLink.h"
 #import "Event.h"
 #import "HTMLPlugInElement.h"
 #import "HTMLVideoElement.h"
@@ -43,7 +42,6 @@
 #import "RenderElement.h"
 #import "ScriptController.h"
 #import "ScriptSourceCode.h"
-#import "SoftLinking.h"
 #import "UserAgentScripts.h"
 #import <objc/runtime.h>
 #import <AVFoundation/AVFoundation.h>
@@ -51,6 +49,8 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/APICast.h>
 #import <wtf/text/Base64.h>
+
+#import "CoreMediaSoftLink.h"
 
 typedef AVMetadataItem AVMetadataItemType;
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

@@ -38,7 +38,6 @@
 #import <AVFoundation/AVTime.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
@@ -65,13 +64,6 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
 SOFT_LINK_CLASS(UIKit, UIView)
 SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
-
-SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
-SOFT_LINK(CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
-SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))
-SOFT_LINK(CoreMedia, CMTimeMaximum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
-SOFT_LINK(CoreMedia, CMTimeMinimum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 
 #define kCMTimeIndefinite getkCMTimeIndefinite()
 

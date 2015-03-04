@@ -31,14 +31,14 @@
 
 #import "AVCaptureDeviceManager.h"
 #import "BlockExceptions.h"
-#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "MediaStreamSourceStates.h"
 #import "NotImplemented.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
+
+#import "CoreMediaSoftLink.h"
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
@@ -47,7 +47,6 @@ typedef AVCaptureOutput AVCaptureOutputType;
 typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
@@ -73,10 +72,6 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
 #define AVCaptureSessionPreset640x480 getAVCaptureSessionPreset640x480()
 #define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
 #define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
-
-SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf));
-SOFT_LINK(CoreMedia, CMSampleBufferGetPresentationTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf));
-SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetDimensions, CMVideoDimensions, (CMVideoFormatDescriptionRef videoDesc), (videoDesc));
 
 namespace WebCore {
 

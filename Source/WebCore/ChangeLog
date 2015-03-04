@@ -1,3 +1,45 @@
+2015-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining CoreMedia soft-linking in WebCore over to CoreMediaSoftLink.{cpp,h}
+        <http://webkit.org/b/141870>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/WebCore.unexp:
+        - Remove all weak symbols for CoreMedia.framework as they should
+          no longer appear.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * platform/graphics/avfoundation/MediaTimeAVFoundation.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        - Clean up headers.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        - Add soft-link functions and constants from remaining source
+          files.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/mac/PlatformClockCM.mm:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        - Switch to using CoreMediaSoftLink.h.
+
+        * platform/mac/SoftLinking.h:
+        * platform/win/SoftLinking.h:
+        - Remove 'const' from SOFT_LINK_CONSTANT_{HEADER,SOURCE}()
+          macros since it won't work with const structs.
+
+        * platform/spi/cf/CoreMediaSPI.h:
+        - Add SPI declarations for Windows originally from
+          InbandTextTrackPrivateAVF.cpp.
+
 2015-03-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181001 and r181003.

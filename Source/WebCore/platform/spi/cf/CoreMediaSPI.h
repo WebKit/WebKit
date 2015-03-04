@@ -29,7 +29,7 @@
 #if PLATFORM(COCOA)
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <CoreMedia/CMNotificationCenter.h>
+#include <CoreMedia/CMNotificationCenter.h>
 #else
 typedef struct opaqueCMNotificationCenter *CMNotificationCenterRef;
 typedef void (*CMNotificationCallback)(CMNotificationCenterRef inCenter, const void *inListener, CFStringRef inNotificationName, const void *inNotifyingObject, CFTypeRef inNotificationPayload);
@@ -42,5 +42,25 @@ OSStatus CMNotificationCenterRemoveListener(CMNotificationCenterRef inCenter, co
 WTF_EXTERN_C_END
 
 #endif // PLATFORM(COCOA)
+
+#if PLATFORM(WIN)
+#include <CoreMedia/CMTime.h>
+
+typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
+
+#ifndef CMSAMPLEBUFFER_H
+WTF_EXTERN_C_BEGIN
+#pragma pack(push, 4)
+typedef struct {
+    CMTime duration;
+    CMTime presentationTimeStamp;
+    CMTime decodeTimeStamp;
+} CMSampleTimingInfo;
+#pragma pack(pop)
+WTF_EXTERN_C_END
+#endif
+#endif // PLATFORM(WIN)
 
 #endif // CoreMediaSPI_h

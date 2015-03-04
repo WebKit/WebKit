@@ -45,7 +45,6 @@
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import <AVFoundation/AVAssetTrack.h>
-#import <CoreMedia/CMSampleBuffer.h>
 #import <QuartzCore/CALayer.h>
 #import <objc/runtime.h>
 #import <wtf/text/AtomicString.h>
@@ -54,11 +53,11 @@
 #import <wtf/WeakPtr.h>
 #import <map>
 
-#pragma mark -
-#pragma mark Soft Linking
+#pragma mark - Soft Linking
+
+#import "CoreMediaSoftLink.h"
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser)
@@ -70,50 +69,17 @@ SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeText, NSString *)
 
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime);
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimeInvalid, CMTime);
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleAttachmentKey_DoNotDisplay, CFStringRef)
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleAttachmentKey_NotSync, CFStringRef)
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleBufferAttachmentKey_DrainAfterDecoding, CFStringRef)
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleBufferAttachmentKey_ResetDecoderBeforeDecoding, CFStringRef)
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleBufferAttachmentKey_EmptyMedia, CFStringRef)
-SOFT_LINK_CONSTANT(CoreMedia, kCMSampleBufferAttachmentKey_DisplayEmptyMediaImmediately, CFStringRef)
-
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicVisual, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicAudible, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*)
 
-SOFT_LINK(CoreMedia, CMFormatDescriptionGetMediaType, CMMediaType, (CMFormatDescriptionRef desc), (desc))
-SOFT_LINK(CoreMedia, CMSampleBufferCreate, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, Boolean dataReady, CMSampleBufferMakeDataReadyCallback makeDataReadyCallback, void *makeDataReadyRefcon, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo *sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t *sampleSizeArray, CMSampleBufferRef *sBufOut), (allocator, dataBuffer, dataReady, makeDataReadyCallback, makeDataReadyRefcon, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sBufOut))
-SOFT_LINK(CoreMedia, CMSampleBufferCreateCopy, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef sbuf, CMSampleBufferRef *sbufCopyOut), (allocator, sbuf, sbufCopyOut))
-SOFT_LINK(CoreMedia, CMSampleBufferCreateCopyWithNewTiming, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef originalSBuf, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo *sampleTimingArray, CMSampleBufferRef *sBufCopyOut), (allocator, originalSBuf, numSampleTimingEntries, sampleTimingArray, sBufCopyOut))
-SOFT_LINK(CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (*callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
-SOFT_LINK(CoreMedia, CMSampleBufferGetDecodeTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMSampleBufferGetDuration, CMTime, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMSampleBufferGetPresentationTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMSampleBufferGetSampleAttachmentsArray, CFArrayRef, (CMSampleBufferRef sbuf, Boolean createIfNecessary), (sbuf, createIfNecessary))
-SOFT_LINK(CoreMedia,  CMSampleBufferGetSampleTimingInfoArray, OSStatus, (CMSampleBufferRef sbuf, CMItemCount timingArrayEntries, CMSampleTimingInfo *timingArrayOut, CMItemCount *timingArrayEntriesNeededOut), (sbuf, timingArrayEntries, timingArrayOut, timingArrayEntriesNeededOut))
-SOFT_LINK(CoreMedia, CMSampleBufferGetTotalSampleSize, size_t, (CMSampleBufferRef sbuf), (sbuf))
-SOFT_LINK(CoreMedia, CMFormatDescriptionGetMediaSubType, FourCharCode, (CMFormatDescriptionRef desc), (desc))
-SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStringRef key, CFTypeRef value, CMAttachmentMode attachmentMode), (target, key, value, attachmentMode))
-SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, (CMVideoFormatDescriptionRef videoDesc, Boolean usePixelAspectRatio, Boolean useCleanAperture), (videoDesc, usePixelAspectRatio, useCleanAperture))
-
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 #define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVMediaTypeText getAVMediaTypeText()
 #define AVSampleBufferDisplayLayerFailedToDecodeNotification getAVSampleBufferDisplayLayerFailedToDecodeNotification()
 #define AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey getAVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey()
-#define kCMTimeZero getkCMTimeZero()
-#define kCMTimeInvalid getkCMTimeInvalid()
-#define kCMSampleAttachmentKey_NotSync getkCMSampleAttachmentKey_NotSync()
-#define kCMSampleAttachmentKey_DoNotDisplay getkCMSampleAttachmentKey_DoNotDisplay()
-#define kCMSampleBufferAttachmentKey_ResetDecoderBeforeDecoding getkCMSampleBufferAttachmentKey_ResetDecoderBeforeDecoding()
-#define kCMSampleBufferAttachmentKey_DrainAfterDecoding getkCMSampleBufferAttachmentKey_DrainAfterDecoding()
-#define kCMSampleBufferAttachmentKey_EmptyMedia getkCMSampleBufferAttachmentKey_EmptyMedia()
-#define kCMSampleBufferAttachmentKey_DisplayEmptyMediaImmediately getkCMSampleBufferAttachmentKey_DisplayEmptyMediaImmediately()
 
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()

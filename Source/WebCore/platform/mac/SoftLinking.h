@@ -322,7 +322,7 @@
     extern const variableType variableName; \
     WTF_EXTERN_C_END \
     namespace functionNamespace { \
-    const variableType get_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName(); \
     }
 
 #define SOFT_LINK_CONSTANT_SOURCE(functionNamespace, framework, variableName, variableType) \
@@ -330,8 +330,8 @@
     extern const variableType variableName; \
     WTF_EXTERN_C_END \
     namespace functionNamespace { \
-    const variableType get_##framework##_##variableName(); \
-    const variableType get_##framework##_##variableName() \
+    variableType get_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName() \
     { \
         static variableType constant##framework##variableName; \
         static dispatch_once_t once; \

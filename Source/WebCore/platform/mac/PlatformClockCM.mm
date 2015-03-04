@@ -29,25 +29,9 @@
 
 #import "PlatformClockCM.h"
 
-#import "CoreMediaSoftLink.h"
 #import "MediaTimeAVFoundation.h"
-#import "SoftLinking.h"
-#if PLATFORM(IOS)
-#import <CoreMedia/CMAudioClock.h>
-#else
-#import <CoreMedia/CMAudioDeviceClock.h>
-#endif
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
-
-#if PLATFORM(IOS)
-SOFT_LINK(CoreMedia, CMAudioClockCreate, OSStatus, (CFAllocatorRef allocator, CMClockRef *clockOut), (allocator, clockOut))
-#else
-SOFT_LINK(CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
-#endif
-SOFT_LINK(CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
-SOFT_LINK(CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
-SOFT_LINK(CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
+#import "CoreMediaSoftLink.h"
 
 using namespace WebCore;
 

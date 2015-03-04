@@ -39,6 +39,8 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
+#import "CoreMediaSoftLink.h"
+
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
 typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
@@ -48,7 +50,6 @@ typedef AVCaptureAudioDataOutput AVCaptureAudioDataOutputType;
 typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS(AVFoundation, AVCaptureAudioDataOutput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
@@ -83,9 +84,6 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionDidStopRunningNotification, NSSt
 #define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
 #define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
 #define AVCaptureSessionDidStopRunningNotification getAVCaptureSessionDidStopRunningNotification()
-
-SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf));
-SOFT_LINK(CoreMedia, CMSampleBufferGetPresentationTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf));
 
 using namespace WebCore;
 
