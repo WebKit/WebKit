@@ -51,5 +51,6 @@
 #include "Operations.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
+#include "WeakGCMapInlines.h"
 
 #endif // JSCInlines_h

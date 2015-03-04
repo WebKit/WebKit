@@ -83,6 +83,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
+#include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
 #include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
@@ -153,6 +154,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
+    , stringCache(*this)
+    , prototypeMap(*this)
     , keywords(std::make_unique<Keywords>(*this))
     , interpreter(0)
     , jsArrayClassInfo(JSArray::info())
