@@ -1,3 +1,19 @@
+2015-03-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Fix memory leak in _getCookieHeadersForTask
+        https://bugs.webkit.org/show_bug.cgi?id=142245
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix memory leak in _getCookieHeadersForTask. We are leaking the CFDictionary
+        returned by webKitCookieStorageCopyRequestHeaderFieldsForURL().
+
+        This patch addresses the issue by storing the return CFDictionary in a
+        RetainPtr<CFDictionaryRef>.
+
+        * Shared/mac/CookieStorageShim.mm:
+        (-[WKNSURLSessionLocal _getCookieHeadersForTask:completionHandler:]):
+
 2015-03-03  Enrica Casucci  <enrica@apple.com>
 
         Incomplete dictation results in text fields in a web page.
