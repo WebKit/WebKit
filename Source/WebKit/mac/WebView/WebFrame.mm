@@ -1005,17 +1005,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)_contentFilterDidHandleNavigationAction:(const WebCore::ResourceRequest &)request
 {
 #if PLATFORM(IOS)
-    if (ContentFilter *contentFilter = _private->contentFilterForBlockedLoad.get()) {
-        RetainPtr<WebFrame> retainedMainFrame = [[self webView] mainFrame];
-        return contentFilter->handleUnblockRequestAndDispatchIfSuccessful(request, [retainedMainFrame] {
-            WebThreadRun(^ {
-                [retainedMainFrame reload];
-            });
+    RetainPtr<WebFrame> retainedMainFrame = [[self webView] mainFrame];
+    return _private->contentFilterUnblockHandler.handleUnblockRequestAndDispatchIfSuccessful(request, [retainedMainFrame] {
+        WebThreadRun(^ {
+            [retainedMainFrame reload];
         });
-    }
-#endif
-
+    });
+#else
     return NO;
+#endif
 }
 
 @end

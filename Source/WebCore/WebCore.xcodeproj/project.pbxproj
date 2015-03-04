@@ -1044,12 +1044,11 @@
 		26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */; };
 		26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */; };
 		26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4CB1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h */; };
-		2903716516BA11BC00FEFDF0 /* ContentFilterIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2903716416BA11BC00FEFDF0 /* ContentFilterIOS.mm */; };
 		2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */; };
 		2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */; };
-		2919A1E916B3376600787213 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2919A1E816B3376600787213 /* ContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2919A1E916B3376600787213 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2919A1E816B3376600787213 /* ContentFilter.h */; };
 		2919A1EB16B3378900787213 /* ContentFilterMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2919A1EA16B3378900787213 /* ContentFilterMac.mm */; };
 		2934940A16C02C0700901318 /* PlatformSpeechSynthesisVoice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2527CC9316BF92EC009DDAC0 /* PlatformSpeechSynthesisVoice.cpp */; };
 		2934940B16C02C0A00901318 /* PlatformSpeechSynthesisUtterance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */; };
@@ -3764,6 +3763,8 @@
 		A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */ = {isa = PBXBuildFile; fileRef = A12A104E166444DC008FA311 /* GridTrackSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */; };
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
+		A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */; };
+		A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328C187F508700DA63A6 /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = A148328D187F508700DA63A6 /* WAKAppKitStubs.m */; };
 		A14832B2187F61ED00DA63A6 /* WAKClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328E187F508700DA63A6 /* WAKClipView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8086,7 +8087,6 @@
 		26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleCFURLConnectionDelegate.h; sourceTree = "<group>"; };
 		26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousResourceHandleCFURLConnectionDelegate.cpp; sourceTree = "<group>"; };
 		26FAE4CB1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronousResourceHandleCFURLConnectionDelegate.h; sourceTree = "<group>"; };
-		2903716416BA11BC00FEFDF0 /* ContentFilterIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ContentFilterIOS.mm; path = ios/ContentFilterIOS.mm; sourceTree = "<group>"; };
 		2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerFlushScheduler.cpp; path = ca/LayerFlushScheduler.cpp; sourceTree = "<group>"; };
 		2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerFlushScheduler.h; path = ca/LayerFlushScheduler.h; sourceTree = "<group>"; };
 		2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerFlushSchedulerClient.h; path = ca/LayerFlushSchedulerClient.h; sourceTree = "<group>"; };
@@ -10984,6 +10984,8 @@
 		A12A104E166444DC008FA311 /* GridTrackSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridTrackSize.h; path = style/GridTrackSize.h; sourceTree = "<group>"; };
 		A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEventThrottle.cpp; sourceTree = "<group>"; };
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
+		A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFilterUnblockHandlerCocoa.mm; sourceTree = "<group>"; };
+		A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFilterUnblockHandler.h; sourceTree = "<group>"; };
 		A148328C187F508700DA63A6 /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
 		A148328D187F508700DA63A6 /* WAKAppKitStubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WAKAppKitStubs.m; path = ios/wak/WAKAppKitStubs.m; sourceTree = "<group>"; };
 		A148328E187F508700DA63A6 /* WAKClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKClipView.h; path = ios/wak/WAKClipView.h; sourceTree = "<group>"; };
@@ -18618,7 +18620,6 @@
 			isa = PBXGroup;
 			children = (
 				A148328B187F506800DA63A6 /* wak */,
-				2903716416BA11BC00FEFDF0 /* ContentFilterIOS.mm */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */,
 				31EAF97D121435A400E7C1BF /* DeviceMotionClientIOS.mm */,
@@ -18691,6 +18692,7 @@
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
 				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */,
 				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */,
 				1A4832B21A953BA6008B4DFE /* LocalizedStringsCocoa.mm */,
@@ -21476,6 +21478,7 @@
 				C37CDEBC149EF2030042090D /* ColorChooserClient.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				2919A1E816B3376600787213 /* ContentFilter.h */,
+				A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */,
 				41D015C90F4B5C71004A662F /* ContentType.cpp */,
 				41D015C80F4B5C71004A662F /* ContentType.h */,
 				93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */,
@@ -24179,6 +24182,7 @@
 				85E711C10AC5D5350053270F /* DOMHTMLParagraphElementInternal.h in Headers */,
 				85ECBEF70AA7626900544F0B /* DOMHTMLParamElement.h in Headers */,
 				85E711C20AC5D5350053270F /* DOMHTMLParamElementInternal.h in Headers */,
+				A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */,
 				85183B480AA6926100F19FA3 /* DOMHTMLPreElement.h in Headers */,
 				85E711C30AC5D5350053270F /* DOMHTMLPreElementInternal.h in Headers */,
 				A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */,
@@ -27420,6 +27424,7 @@
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
+				A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */,
 				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
 				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
@@ -27446,7 +27451,6 @@
 				A7A78CD51532BA62006C21E4 /* ContainerNodeAlgorithms.cpp in Sources */,
 				BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */,
 				57B791A314C6A62900F202D1 /* ContentDistributor.cpp in Sources */,
-				2903716516BA11BC00FEFDF0 /* ContentFilterIOS.mm in Sources */,
 				2919A1EB16B3378900787213 /* ContentFilterMac.mm in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,

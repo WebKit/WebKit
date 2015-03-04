@@ -44,14 +44,6 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-ContentFilter::ContentFilter()
-#if HAVE(NE_FILTER_SOURCE)
-    : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
-    , m_neFilterSourceQueue(0)
-#endif
-{
-}
-
 ContentFilter::ContentFilter(const ResourceResponse& response)
 #if HAVE(NE_FILTER_SOURCE)
     : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
@@ -202,25 +194,9 @@ const char* ContentFilter::getReplacementData(int& length) const
     return static_cast<const char*>([originalData bytes]);
 }
 
-static NSString * const platformContentFilterKey = @"platformContentFilter";
-
-void ContentFilter::encode(NSKeyedArchiver *archiver) const
+ContentFilterUnblockHandler ContentFilter::unblockHandler() const
 {
-    if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
-        [archiver encodeObject:m_platformContentFilter.get() forKey:platformContentFilterKey];
-}
-
-bool ContentFilter::decode(NSKeyedUnarchiver *unarchiver, ContentFilter& contentFilter)
-{
-    @try {
-        if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
-            contentFilter.m_platformContentFilter = (WebFilterEvaluator *)[unarchiver decodeObjectOfClass:getWebFilterEvaluatorClass() forKey:platformContentFilterKey];
-        return true;
-    } @catch (NSException *exception) {
-        LOG_ERROR("The platform content filter being decoded is not a WebFilterEvaluator.");
-    }
-
-    return false;
+    return ContentFilterUnblockHandler { m_platformContentFilter.get() };
 }
 
 } // namespace WebCore

@@ -31,7 +31,7 @@
 #import "DataReference.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/ContentFilter.h>
+#import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/Credential.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MachSendRight.h>
@@ -407,17 +407,17 @@ bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCo
     return true;
 }
 
-void ArgumentCoder<ContentFilter>::encode(ArgumentEncoder& encoder, const ContentFilter& contentFilter)
+void ArgumentCoder<ContentFilterUnblockHandler>::encode(ArgumentEncoder& encoder, const ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
     [archiver setRequiresSecureCoding:YES];
-    contentFilter.encode(archiver.get());
+    contentFilterUnblockHandler.encode(archiver.get());
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 }
 
-bool ArgumentCoder<ContentFilter>::decode(ArgumentDecoder& decoder, ContentFilter& contentFilter)
+bool ArgumentCoder<ContentFilterUnblockHandler>::decode(ArgumentDecoder& decoder, ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
@@ -425,7 +425,7 @@ bool ArgumentCoder<ContentFilter>::decode(ArgumentDecoder& decoder, ContentFilte
 
     RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
     [unarchiver setRequiresSecureCoding:YES];
-    if (!ContentFilter::decode(unarchiver.get(), contentFilter))
+    if (!ContentFilterUnblockHandler::decode(unarchiver.get(), contentFilterUnblockHandler))
         return false;
 
     [unarchiver finishDecoding];

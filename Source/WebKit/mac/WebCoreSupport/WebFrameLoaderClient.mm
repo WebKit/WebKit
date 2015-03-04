@@ -662,7 +662,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     ASSERT(!m_webFrame->_private->provisionalURL);
     m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
-    m_webFrame->_private->contentFilterForBlockedLoad = nullptr;
+    m_webFrame->_private->contentFilterUnblockHandler.clear();
 
     WebView *webView = getWebView(m_webFrame.get());
 #if !PLATFORM(IOS)
@@ -2239,9 +2239,9 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 }
 #endif
 
-void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
+void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler)
 {
-    m_webFrame->_private->contentFilterForBlockedLoad = WTF::move(contentFilter);
+    m_webFrame->_private->contentFilterUnblockHandler = WTF::move(unblockHandler);
 }
 
 @implementation WebFramePolicyListener

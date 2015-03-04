@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,63 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilter_h
-#define ContentFilter_h
+#ifndef ContentFilterUnblockHandler_h
+#define ContentFilterUnblockHandler_h
 
 #if ENABLE(CONTENT_FILTERING)
 
-#include "ContentFilterUnblockHandler.h"
-#include <wtf/PassRefPtr.h>
+#include <functional>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS NSData;
+OBJC_CLASS NSKeyedArchiver;
+OBJC_CLASS NSKeyedUnarchiver;
 OBJC_CLASS WebFilterEvaluator;
-#endif
-
-#define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
-
-#if HAVE(NE_FILTER_SOURCE)
-#import <dispatch/dispatch.h>
-OBJC_CLASS NEFilterSource;
-OBJC_CLASS NSMutableData;
-#endif
 
 namespace WebCore {
 
 class ResourceRequest;
-class ResourceResponse;
 
-class ContentFilter {
+class ContentFilterUnblockHandler {
 public:
-    static bool canHandleResponse(const ResourceResponse&);
+    ContentFilterUnblockHandler() = default;
+    explicit ContentFilterUnblockHandler(WebFilterEvaluator *evaluator) : m_webFilterEvaluator { evaluator } { }
 
-    explicit ContentFilter(const ResourceResponse&);
-    WEBCORE_EXPORT ~ContentFilter();
+    void clear() { m_webFilterEvaluator = nullptr; }
+    WEBCORE_EXPORT void encode(NSKeyedArchiver *) const;
+    WEBCORE_EXPORT static bool decode(NSKeyedUnarchiver *, ContentFilterUnblockHandler&);
 
-    void addData(const char* data, int length);
-    void finishedAddingData();
-    bool needsMoreData() const;
-    bool didBlockData() const;
-    const char* getReplacementData(int& length) const;
-    ContentFilterUnblockHandler unblockHandler() const;
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT bool handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest&, std::function<void()>);
+#endif
 
 private:
-#if PLATFORM(COCOA)
-    RetainPtr<WebFilterEvaluator> m_platformContentFilter;
-    RetainPtr<NSData> m_replacementData;
-#endif
-
-#if HAVE(NE_FILTER_SOURCE)
-    long m_neFilterSourceStatus;
-    RetainPtr<NEFilterSource> m_neFilterSource;
-    dispatch_queue_t m_neFilterSourceQueue;
-    RetainPtr<NSMutableData> m_originalData;
-#endif
+    RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_FILTERING)
 
-#endif // ContentFilter_h
+#endif // ContentFilterUnblockHandler_h

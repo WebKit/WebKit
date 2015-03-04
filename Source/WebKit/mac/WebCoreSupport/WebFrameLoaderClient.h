@@ -239,7 +239,7 @@ private:
     virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
 #endif
 
-    virtual void contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter>) override;
+    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler) override;
 
     RetainPtr<WebFrame> m_webFrame;
 

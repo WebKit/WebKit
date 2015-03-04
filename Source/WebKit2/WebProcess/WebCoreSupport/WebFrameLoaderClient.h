@@ -232,7 +232,7 @@ private:
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    virtual void contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter>) override;
+    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler) override;
 #endif
 
     WebFrame* m_frame;

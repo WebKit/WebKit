@@ -111,7 +111,7 @@ struct ViewportArguments;
 
 #if ENABLE(CONTENT_FILTERING)
 namespace WebCore {
-class ContentFilter;
+class ContentFilterUnblockHandler;
 }
 #endif
 
@@ -443,9 +443,9 @@ template<> struct ArgumentCoder<WebCore::BlobPart> {
 };
 
 #if ENABLE(CONTENT_FILTERING)
-template<> struct ArgumentCoder<WebCore::ContentFilter> {
-    static void encode(ArgumentEncoder&, const WebCore::ContentFilter&);
-    static bool decode(ArgumentDecoder&, WebCore::ContentFilter&);
+template<> struct ArgumentCoder<WebCore::ContentFilterUnblockHandler> {
+    static void encode(ArgumentEncoder&, const WebCore::ContentFilterUnblockHandler&);
+    static bool decode(ArgumentDecoder&, WebCore::ContentFilterUnblockHandler&);
 };
 #endif
 

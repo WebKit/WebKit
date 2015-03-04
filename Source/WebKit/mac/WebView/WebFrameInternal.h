@@ -30,7 +30,7 @@
 
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
-#import <WebCore/ContentFilter.h>
+#import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameSelection.h>
@@ -92,7 +92,7 @@ WebView *getWebView(WebFrame *webFrame);
 #if PLATFORM(IOS)
     BOOL isCommitting;
 #endif
-    std::unique_ptr<WebCore::ContentFilter> contentFilterForBlockedLoad;
+    WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler;
 }
 @end
 

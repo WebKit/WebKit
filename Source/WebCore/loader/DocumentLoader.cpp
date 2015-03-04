@@ -412,8 +412,10 @@ void DocumentLoader::finishedLoading(double finishTime)
         if (data)
             dataReceived(m_mainResource.get(), data, length);
 
-        if (m_contentFilter->didBlockData())
-            frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
+        if (m_contentFilter->didBlockData()) {
+            frameLoader()->client().contentFilterDidBlockLoad(m_contentFilter->unblockHandler());
+            m_contentFilter = nullptr;
+        }
     }
 #endif
 
@@ -874,8 +876,10 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         data = m_contentFilter->getReplacementData(length);
         loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
 
-        if (loadWasBlockedBeforeFinishing)
-            frameLoader()->client().contentFilterDidBlockLoad(WTF::move(m_contentFilter));
+        if (loadWasBlockedBeforeFinishing) {
+            frameLoader()->client().contentFilterDidBlockLoad(m_contentFilter->unblockHandler());
+            m_contentFilter = nullptr;
+        }
     }
 #endif
 

@@ -414,7 +414,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    ContentFilterDidBlockLoadForFrame(WebCore::ContentFilter contentFilter, uint64_t frameID)
+    ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, uint64_t frameID)
 #endif
 
     IsPlayingAudioDidChange(bool newIsPlayingAudio)

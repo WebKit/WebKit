@@ -72,10 +72,10 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& search
     }
 }
 
-void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilter& contentFilter, uint64_t frameID)
+void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
 {
     if (WebFrameProxy* frame = m_process->webFrame(frameID))
-        frame->setContentFilterForBlockedLoad(std::make_unique<WebCore::ContentFilter>(contentFilter));
+        frame->setContentFilterUnblockHandler(unblockHandler);
 }
 
 }

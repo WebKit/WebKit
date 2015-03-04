@@ -36,7 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
-#include <WebCore/ContentFilter.h>
+#include <WebCore/ContentFilterUnblockHandler.h>
 #endif
 
 namespace API {
@@ -123,7 +123,7 @@ public:
     WebFormSubmissionListenerProxy& setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
 #if ENABLE(CONTENT_FILTERING)
-    void setContentFilterForBlockedLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter) { m_contentFilterForBlockedLoad = WTF::move(contentFilter); }
+    void setContentFilterUnblockHandler(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTF::move(contentFilterUnblockHandler); }
     bool contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest&);
 #endif
 
@@ -142,7 +142,7 @@ private:
     uint64_t m_frameID;
 
 #if ENABLE(CONTENT_FILTERING)
-    std::unique_ptr<WebCore::ContentFilter> m_contentFilterForBlockedLoad;
+    WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif
 };
 

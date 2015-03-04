@@ -24,36 +24,65 @@
  */
 
 #import "config.h"
-#import "ContentFilter.h"
+#import "ContentFilterUnblockHandler.h"
 
-#if PLATFORM(IOS) && ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 
 #import "ResourceRequest.h"
-#import "WebCoreThreadRun.h"
+#import "SoftLinking.h"
 #import "WebFilterEvaluatorSPI.h"
+#import <objc/runtime.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
+SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-static inline const char* scheme()
+static NSString * const platformContentFilterKey = @"platformContentFilter";
+
+void ContentFilterUnblockHandler::encode(NSKeyedArchiver *archiver) const
 {
-    static const char contentFilterScheme[] = "x-apple-content-filter";
-    return contentFilterScheme;
+    if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
+        [archiver encodeObject:m_webFilterEvaluator.get() forKey:platformContentFilterKey];
 }
 
-bool ContentFilter::handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest& request, std::function<void()> function)
+bool ContentFilterUnblockHandler::decode(NSKeyedUnarchiver *unarchiver, ContentFilterUnblockHandler& unblockHandler)
 {
+    @try {
+        if ([getWebFilterEvaluatorClass() conformsToProtocol:@protocol(NSSecureCoding)])
+            unblockHandler.m_webFilterEvaluator = (WebFilterEvaluator *)[unarchiver decodeObjectOfClass:getWebFilterEvaluatorClass() forKey:platformContentFilterKey];
+        return true;
+    } @catch (NSException *exception) {
+        LOG_ERROR("The platform content filter being decoded is not a WebFilterEvaluator.");
+    }
+    
+    return false;
+}
+
+#if PLATFORM(IOS)
+static inline const char* scheme()
+{
+    return "x-apple-content-filter";
+}
+
+bool ContentFilterUnblockHandler::handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest& request, std::function<void()> function)
+{
+    if (!m_webFilterEvaluator)
+        return false;
+
     if (!request.url().protocolIs(scheme()))
         return false;
 
     if (!equalIgnoringCase(request.url().host(), "unblock"))
         return false;
 
-    [m_platformContentFilter unblockWithCompletion:^(BOOL unblocked, NSError *) {
+    [m_webFilterEvaluator unblockWithCompletion:^(BOOL unblocked, NSError *) {
         if (unblocked)
             function();
     }];
     return true;
 }
+#endif
 
 } // namespace WebCore
 
