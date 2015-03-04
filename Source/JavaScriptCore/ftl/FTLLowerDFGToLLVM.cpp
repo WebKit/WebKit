@@ -1964,9 +1964,14 @@ private:
         }
         
         TypedPointer base;
-        if (codeOrigin.inlineCallFrame)
-            base = addressFor(codeOrigin.inlineCallFrame->arguments[1].virtualRegister());
-        else
+        if (codeOrigin.inlineCallFrame) {
+            VirtualRegister reg;
+            if (codeOrigin.inlineCallFrame->arguments.size() <= 1)
+                reg = virtualRegisterForLocal(0); // Doesn't matter what we do since we would have exited anyway.
+            else
+                reg = codeOrigin.inlineCallFrame->arguments[1].virtualRegister();
+            base = addressFor(reg);
+        } else
             base = addressFor(virtualRegisterForArgument(1));
         
         LValue pointer = m_out.baseIndex(
