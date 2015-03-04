@@ -1,3 +1,44 @@
+2015-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to use CSS selectors in content extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=142227
+
+        Reviewed by Benjamin Poulain.
+
+        Test: http/tests/usercontentfilter/css-display-none.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionActions.h: Added.
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::Action):
+        (WebCore::ContentExtensions::Action::type):
+        (WebCore::ContentExtensions::Action::cssSelector):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::serializeActions):
+        Put action descriptions into a compact format in a Vector 
+        to be able to be put into one block of shared read-only memory.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        Put an index of the beginning of the description into the NFA instead of the index of the rule
+        because we will be sharing the descriptions of the actions and not the rules.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionForURL): Deleted.
+        Return a vector of actions to be able to do multiple actions for one URL.
+        * contentextensions/ContentExtensionsBackend.h:
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadTrigger):
+        (WebCore::ContentExtensions::ExtensionsManager::loadAction):
+        Added the css-display-none action type, which requires a selector.
+        (WebCore::ContentExtensions::ExtensionsManager::loadRule):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::actionsForURL):
+        (WebCore::UserContentController::actionForURL): Deleted.
+        * page/UserContentController.h:
+
 2015-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         Move scroll animating functions from ScrollAnimator to ScrollController

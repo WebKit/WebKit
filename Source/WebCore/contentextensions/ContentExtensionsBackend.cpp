@@ -43,6 +43,53 @@
 namespace WebCore {
 
 namespace ContentExtensions {
+    
+Vector<unsigned> ContentExtensionsBackend::serializeActions(const Vector<ContentExtensionRule>& ruleList, Vector<SerializedActionByte>& actions)
+{
+    ASSERT(!actions.size());
+    
+    Vector<unsigned> actionLocations;
+        
+    for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
+        const ContentExtensionRule& rule = ruleList[ruleIndex];
+        actionLocations.append(actions.size());
+        
+        switch (rule.action().type()) {
+        case ActionType::InvalidAction:
+            RELEASE_ASSERT_NOT_REACHED();
+
+        case ActionType::BlockLoad:
+        case ActionType::BlockCookies:
+        case ActionType::IgnorePreviousRules:
+            actions.append(static_cast<SerializedActionByte>(rule.action().type()));
+            break;
+
+        case ActionType::CSSDisplayNone: {
+            const String& selector = rule.action().cssSelector();
+            // Append action type (1 byte).
+            actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNone));
+            // Append Selector length (4 bytes).
+            unsigned selectorLength = selector.length();
+            actions.resize(actions.size() + sizeof(unsigned));
+            *reinterpret_cast<unsigned*>(&actions[actions.size() - sizeof(unsigned)]) = selectorLength;
+            bool wideCharacters = !selector.is8Bit();
+            actions.append(wideCharacters);
+            // Append Selector.
+            if (wideCharacters) {
+                for (unsigned i = 0; i < selectorLength; i++) {
+                    actions.resize(actions.size() + sizeof(UChar));
+                    *reinterpret_cast<UChar*>(&actions[actions.size() - sizeof(UChar)]) = selector[i];
+                }
+            } else {
+                for (unsigned i = 0; i < selectorLength; i++)
+                    actions.append(selector[i]);
+            }
+            break;
+        }
+        }
+    }
+    return actionLocations;
+}
 
 void ContentExtensionsBackend::setRuleList(const String& identifier, const Vector<ContentExtensionRule>& ruleList)
 {
@@ -59,14 +106,17 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     double nfaBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
+    Vector<SerializedActionByte> actions;
+    Vector<unsigned> actionLocations = serializeActions(ruleList, actions);
+
     NFA nfa;
     URLFilterParser urlFilterParser(nfa);
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = ruleList[ruleIndex];
-        const ContentExtensionRule::Trigger& trigger = contentExtensionRule.trigger();
+        const Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
-        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, ruleIndex);
+        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocations[ruleIndex]);
 
         if (!error.isNull()) {
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());
@@ -103,7 +153,7 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     Vector<DFABytecode> bytecode;
     DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
-    CompiledContentExtension compiledContentExtension = { bytecode, ruleList };
+    CompiledContentExtension compiledContentExtension = { bytecode, actions };
     m_ruleLists.set(identifier, compiledContentExtension);
 }
 
@@ -117,32 +167,37 @@ void ContentExtensionsBackend::removeAllRuleLists()
     m_ruleLists.clear();
 }
 
-ContentFilterAction ContentExtensionsBackend::actionForURL(const URL& url)
+Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
 {
     const String& urlString = url.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const CString& urlCString = urlString.utf8();
 
+    Vector<Action> actions;
     for (auto& ruleListSlot : m_ruleLists) {
         const CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
         DFABytecodeInterpreter interpreter(compiledContentExtension.bytecode);
         DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString);
-        // FIXME: We should eventually do something with each action rather than just returning a bool.
+        
         if (!triggeredActions.isEmpty()) {
-            Vector<uint64_t> sortedActions;
-            copyToVector(triggeredActions, sortedActions);
-            std::sort(sortedActions.begin(), sortedActions.end());
-            size_t lastAction = static_cast<size_t>(sortedActions.last());
-            ExtensionActionType type = compiledContentExtension.ruleList[lastAction].action().type;
-
-            if (type == ExtensionActionType::BlockLoad)
-                return ContentFilterAction::Block;
-            if (type == ExtensionActionType::BlockCookies)
-                return ContentFilterAction::BlockCookies;
+            Vector<unsigned> actionLocations;
+            actionLocations.reserveInitialCapacity(triggeredActions.size());
+            for (auto actionLocation : triggeredActions)
+                actionLocations.append(static_cast<unsigned>(actionLocation));
+            std::sort(actionLocations.begin(), actionLocations.end());
+            
+            // Add actions in reverse order to properly deal with IgnorePreviousRules.
+            for (unsigned i = actionLocations.size(); i; i--) {
+                Action action = Action::deserialize(ruleListSlot.value.actions, actionLocations[i - 1]);
+                if (action.type() == ActionType::IgnorePreviousRules)
+                    break;
+                actions.append(action);
+                if (action.type() == ActionType::BlockLoad)
+                    break;
+            }
         }
     }
-
-    return ContentFilterAction::Load;
+    return actions;
 }
 
 } // namespace ContentExtensions

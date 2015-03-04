@@ -203,12 +203,12 @@ void UserContentController::removeAllUserContentFilters()
     m_contentExtensionBackend->removeAllRuleLists();
 }
 
-ContentFilterAction UserContentController::actionForURL(const URL& url)
+Vector<ContentExtensions::Action> UserContentController::actionsForURL(const URL& url)
 {
     if (!m_contentExtensionBackend)
-        return ContentFilterAction::Load;
+        return Vector<ContentExtensions::Action>();
 
-    return m_contentExtensionBackend->actionForURL(url);
+    return m_contentExtensionBackend->actionsForURL(url);
 }
 
 #endif

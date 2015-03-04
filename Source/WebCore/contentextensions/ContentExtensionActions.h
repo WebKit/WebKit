@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsBackend_h
-#define ContentExtensionsBackend_h
+#ifndef ContentExtensionActions_h
+#define ContentExtensionActions_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "DFA.h"
-#include "DFABytecode.h"
-#include "UserContentController.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
-
-class URL;
-
+    
 namespace ContentExtensions {
 
-// The ContentExtensionsBackend is the internal model of all the content extensions.
-//
-// It provides two services:
-// 1) It stores the rules for each content extension.
-// 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
-class ContentExtensionsBackend {
-public:
-    // - Rule management interface. This can be used by upper layer.
-
-    // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
-    // The identifier cannot be empty.
-    void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-    void removeRuleList(const String& identifier);
-    void removeAllRuleLists();
-
-    // - Internal WebCore Interface.
-    Vector<Action> actionsForURL(const URL&);
-
-private:
-    struct CompiledContentExtension {
-        Vector<DFABytecode> bytecode;
-        Vector<SerializedActionByte> actions;
-    };
-
-    Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& ruleList, Vector<SerializedActionByte>& actions);
-
-    HashMap<String, CompiledContentExtension> m_ruleLists;
+typedef uint8_t SerializedActionByte;
+    
+enum class ActionType : uint8_t {
+    BlockLoad,
+    BlockCookies,
+    CSSDisplayNone,
+    IgnorePreviousRules,
+    InvalidAction,
 };
 
 } // namespace ContentExtensions
-
+    
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // ContentExtensionsBackend_h
+#endif // ContentExtensionActions_h

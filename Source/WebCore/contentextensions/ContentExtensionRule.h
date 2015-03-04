@@ -28,33 +28,51 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionActions.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-enum class ExtensionActionType {
-    BlockLoad,
-    BlockCookies,
-    IgnorePreviousRules
-};
-
 // A ContentExtensionRule is the smallest unit in a ContentExtension.
 //
 // It is composed of a trigger and an action. The trigger defines on what kind of content this extension should apply.
 // The action defines what to perform on that content.
+
+struct Trigger {
+    String urlFilter;
+    bool urlFilterIsCaseSensitive { false };
+};
+    
+struct Action {
+    Action()
+        : m_type(ActionType::InvalidAction)
+    {
+    }
+    Action(ActionType type, const String& cssSelector)
+        : m_type(type)
+        , m_cssSelector(cssSelector)
+    {
+        ASSERT(type == ActionType::CSSDisplayNone);
+    }
+    Action(ActionType type)
+        : m_type(type)
+    {
+        ASSERT(type != ActionType::CSSDisplayNone);
+    }
+    static Action deserialize(const Vector<SerializedActionByte>&, unsigned location);
+
+    ActionType type() const { return m_type; }
+    const String& cssSelector() const { return m_cssSelector; }
+        
+private:
+    ActionType m_type;
+    String m_cssSelector;
+};
+    
 class ContentExtensionRule {
 public:
-    struct Trigger {
-        String urlFilter;
-        bool urlFilterIsCaseSensitive = false;
-    };
-
-    struct Action {
-        ExtensionActionType type;
-    };
-
     ContentExtensionRule(const Trigger&, const Action&);
 
     const Trigger& trigger() const { return m_trigger; }

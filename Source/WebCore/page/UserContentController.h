@@ -47,13 +47,8 @@ class UserMessageHandlerDescriptor;
 
 namespace ContentExtensions {
 class ContentExtensionsBackend;
+struct Action;
 }
-
-enum class ContentFilterAction {
-    Load,
-    Block,
-    BlockCookies
-};
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
@@ -91,7 +86,7 @@ public:
     WEBCORE_EXPORT void removeAllUserContentFilters();
     
     // FIXME: Consider putting this (and other future content filter predicates) in its own class.
-    ContentFilterAction actionForURL(const URL&);
+    Vector<ContentExtensions::Action> actionsForURL(const URL&);
 #endif
 
 private:

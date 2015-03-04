@@ -2147,6 +2147,7 @@
 		5CD9F5661AA0F73C00DA45FF /* DFABytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305D1AA0F6A90029C816 /* DFABytecode.h */; };
 		5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */; };
 		5CD9F5681AA0F74600DA45FF /* DFABytecodeInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */; };
+		5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */; };
 		5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */; };
 		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
@@ -9302,6 +9303,7 @@
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTShaderTextureLOD.idl; path = canvas/EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
 		5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
+		5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionActions.h; sourceTree = "<group>"; };
 		5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerLockController.cpp; sourceTree = "<group>"; };
 		5CFC434F192406A900A0D3B5 /* PointerLockController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerLockController.h; sourceTree = "<group>"; };
 		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
@@ -15397,6 +15399,7 @@
 		26F0C8901A2D79CB002794F8 /* contentextensions */ = {
 			isa = PBXGroup;
 			children = (
+				5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */,
 				26F0C8991A2EC110002794F8 /* ContentExtensionRule.cpp */,
 				26F0C89A1A2EC110002794F8 /* ContentExtensionRule.h */,
 				26F0C89D1A2EC3BE002794F8 /* ContentExtensionsBackend.cpp */,
@@ -23749,6 +23752,7 @@
 				FD31602912B0267600C1A359 /* ConvolverNode.h in Headers */,
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
+				5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */,
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 				CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */,

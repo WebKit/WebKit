@@ -48,7 +48,7 @@ namespace ContentExtensions {
 
 namespace ExtensionsManager {
 
-static bool loadTrigger(ExecState& exec, JSObject& ruleObject, ContentExtensionRule::Trigger& trigger)
+static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
     JSValue triggerObject = ruleObject.get(&exec, Identifier(&exec, "trigger"));
     if (!triggerObject || exec.hadException() || !triggerObject.isObject()) {
@@ -76,7 +76,7 @@ static bool loadTrigger(ExecState& exec, JSObject& ruleObject, ContentExtensionR
     return true;
 }
 
-static bool loadAction(ExecState& exec, JSObject& ruleObject, ContentExtensionRule::Action& action)
+static bool loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
 {
     JSValue actionObject = ruleObject.get(&exec, Identifier(&exec, "action"));
     if (!actionObject || exec.hadException() || !actionObject.isObject()) {
@@ -93,12 +93,19 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, ContentExtensionRu
     String actionType = typeObject.toWTFString(&exec);
 
     if (actionType == "block")
-        action.type = ExtensionActionType::BlockLoad;
+        action = ActionType::BlockLoad;
     else if (actionType == "ignore-previous-rules")
-        action.type = ExtensionActionType::IgnorePreviousRules;
+        action = ActionType::IgnorePreviousRules;
     else if (actionType == "block-cookies")
-        action.type = ExtensionActionType::BlockCookies;
-    else if (actionType != "block" && actionType != "") {
+        action = ActionType::BlockCookies;
+    else if (actionType == "css-display-none") {
+        JSValue selector = actionObject.get(&exec, Identifier(&exec, "selector"));
+        if (!selector || exec.hadException() || !selector.isString()) {
+            WTFLogAlways("css-display-none action type requires a selector");
+            return false;
+        }
+        action = Action(ActionType::CSSDisplayNone, selector.toWTFString(&exec));
+    } else {
         WTFLogAlways("Unrecognized action: \"%s\"", actionType.utf8().data());
         return false;
     }
@@ -108,11 +115,11 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, ContentExtensionRu
 
 static void loadRule(ExecState& exec, JSObject& ruleObject, Vector<ContentExtensionRule>& ruleList)
 {
-    ContentExtensionRule::Trigger trigger;
+    Trigger trigger;
     if (!loadTrigger(exec, ruleObject, trigger))
         return;
 
-    ContentExtensionRule::Action action;
+    Action action;
     if (!loadAction(exec, ruleObject, action))
         return;
 

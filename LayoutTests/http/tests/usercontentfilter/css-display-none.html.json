@@ -1,0 +1,20 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_\u017D"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    }
+]

@@ -38,6 +38,7 @@
 #include "CachedXSLStyleSheet.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContentExtensionRule.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
@@ -464,16 +465,22 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ContentFilterAction action = ContentFilterAction::Load;
+    Vector<ContentExtensions::Action> actions;
 
-    if (frame() && frame()->page() && frame()->page()->userContentController()) {
-        action = frame()->page()->userContentController()->actionForURL(url);
-        if (action == ContentFilterAction::Block)
+    if (frame() && frame()->page() && frame()->page()->userContentController())
+        actions = frame()->page()->userContentController()->actionsForURL(url);
+
+    for (const auto& action : actions) {
+        if (action.type() == ContentExtensions::ActionType::BlockLoad)
             return nullptr;
+        if (action.type() == ContentExtensions::ActionType::BlockCookies)
+            request.mutableResourceRequest().setAllowCookies(false);
+        else if (action.type() == ContentExtensions::ActionType::CSSDisplayNone) {
+            // action.cssSelector() is the css to use here.
+            // FIXME: That css selector should be used to apply display:none.
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
     }
-
-    if (action == ContentFilterAction::BlockCookies)
-        request.mutableResourceRequest().setAllowCookies(false);
 #endif
 
     auto& memoryCache = MemoryCache::singleton();

@@ -39,6 +39,33 @@ ContentExtensionRule::ContentExtensionRule(const Trigger& trigger, const Action&
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
 
+Action Action::deserialize(const Vector<SerializedActionByte>& actions, unsigned location)
+{
+    switch (static_cast<ActionType>(actions[location])) {
+    case ActionType::BlockCookies:
+        return ActionType::BlockCookies;
+    case ActionType::BlockLoad:
+        return ActionType::BlockLoad;
+    case ActionType::IgnorePreviousRules:
+        return ActionType::IgnorePreviousRules;
+    case ActionType::InvalidAction:
+        RELEASE_ASSERT_NOT_REACHED();
+    case ActionType::CSSDisplayNone: {
+        unsigned stringStartIndex = location + sizeof(ActionType) + sizeof(unsigned) + sizeof(bool);
+        RELEASE_ASSERT(actions.size() >= stringStartIndex);
+        unsigned selectorLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
+        bool wideCharacters = actions[location + sizeof(ActionType) + sizeof(unsigned)];
+        
+        if (wideCharacters) {
+            RELEASE_ASSERT(actions.size() >= stringStartIndex + selectorLength * sizeof(UChar));
+            return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength));
+        }
+        RELEASE_ASSERT(actions.size() >= stringStartIndex + selectorLength * sizeof(LChar));
+        return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength));
+    }
+    }
+}
+
 }
 
 } // namespace WebCore
