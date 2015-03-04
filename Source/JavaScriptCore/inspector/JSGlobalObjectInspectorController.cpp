@@ -48,6 +48,11 @@
 #include <dlfcn.h>
 #include <execinfo.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include "JSGlobalObjectDebuggable.h"
+#include "RemoteInspector.h"
+#endif
+
 using namespace JSC;
 
 namespace Inspector {
@@ -173,6 +178,19 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
 ConsoleClient* JSGlobalObjectInspectorController::consoleClient() const
 {
     return m_consoleClient.get();
+}
+
+bool JSGlobalObjectInspectorController::developerExtrasEnabled() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!RemoteInspector::shared().enabled())
+        return false;
+
+    if (!m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
+        return false;
+#endif
+
+    return true;
 }
 
 InspectorFunctionCallHandler JSGlobalObjectInspectorController::functionCallHandler() const
