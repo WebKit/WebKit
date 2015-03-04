@@ -368,10 +368,25 @@ void Heap::lastChanceToFinalize()
 void Heap::releaseDelayedReleasedObjects()
 {
 #if USE(CF)
+    // We need to guard against the case that releasing an object can create more objects due to the
+    // release calling into JS. When those JS call(s) exit and all locks are being dropped we end up
+    // back here and could try to recursively release objects. We guard that with a recursive entry
+    // count. Only the initial call will release objects, recursive calls simple return and let the
+    // the initial call to the function take care of any objects created during release time.
+    // This also means that we need to loop until there are no objects in m_delayedReleaseObjects
+    // and use a temp Vector for the actual releasing.
     if (!m_delayedReleaseRecursionCount++) {
         while (!m_delayedReleaseObjects.isEmpty()) {
-            RetainPtr<CFTypeRef> objectToRelease = m_delayedReleaseObjects.takeLast();
-            objectToRelease.clear();
+            ASSERT(m_vm->currentThreadIsHoldingAPILock());
+
+            Vector<RetainPtr<CFTypeRef>> objectsToRelease = WTF::move(m_delayedReleaseObjects);
+
+            {
+                // We need to drop locks before calling out to arbitrary code.
+                JSLock::DropAllLocks dropAllLocks(m_vm);
+
+                objectsToRelease.clear();
+            }
         }
     }
     m_delayedReleaseRecursionCount--;

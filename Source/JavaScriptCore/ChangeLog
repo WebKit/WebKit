@@ -1,3 +1,64 @@
+2015-03-03  Michael Saboff  <msaboff@apple.com>
+
+        DelayedReleaseScope drops locks during GC which can cause a thread switch and code reentry
+        https://bugs.webkit.org/show_bug.cgi?id=141275
+
+        Reviewed by Geoffrey Garen.
+
+        The original issue is that the CodeCache uses an unsafe method to add new UnlinkedCodeBlocks.
+        It basically adds a null UnlinkedCodeBlock if there isn't a cached entry and then later
+        updates the null entry to the result of the compilation.  If during that compilation and
+        related processing we need to garbage collect, the DelayedReleaseScope would drop locks
+        possibly allowing another thread to try to get the same source out of the CodeCache.
+        This second thread would find the null entry and crash.  The fix is to move the processing of
+        DelayedReleaseScope to when we drop locks and not drop locks during GC.  That was done in
+        the original patch with the new function releaseDelayedReleasedObjects().
+
+        Updated releaseDelayedReleasedObjects() so that objects are released with all locks
+        dropped.  Now its processing follows these steps
+            Increment recursion counter and do recursion check and exit if recursing
+            While there are objects to release
+                ASSERT that lock is held by current thread
+                Take all items from delayed release Vector and put into temporary Vector
+                Release API lock
+                Release and clear items from temporary vector
+                Reaquire API lock
+        This meets the requirement that we release while the API lock is released and it is
+        safer processing of the delayed release Vector.
+
+        Added new regression test to testapi.
+
+        Also added comment describing how recursion into releaseDelayedReleasedObjects() is
+        prevented.
+
+        * API/tests/Regress141275.h: Added.
+        * API/tests/Regress141275.mm: Added.
+        (+[JSTEvaluatorTask evaluatorTaskWithEvaluateBlock:completionHandler:]):
+        (-[JSTEvaluator init]):
+        (-[JSTEvaluator initWithScript:]):
+        (-[JSTEvaluator _accessPendingTasksWithBlock:]):
+        (-[JSTEvaluator insertSignPostWithCompletion:]):
+        (-[JSTEvaluator evaluateScript:completion:]):
+        (-[JSTEvaluator evaluateBlock:completion:]):
+        (-[JSTEvaluator waitForTasksDoneAndReportResults]):
+        (__JSTRunLoopSourceScheduleCallBack):
+        (__JSTRunLoopSourcePerformCallBack):
+        (__JSTRunLoopSourceCancelCallBack):
+        (-[JSTEvaluator _jsThreadMain]):
+        (-[JSTEvaluator _sourceScheduledOnRunLoop:]):
+        (-[JSTEvaluator _setupEvaluatorThreadContextIfNeeded]):
+        (-[JSTEvaluator _callCompletionHandler:ifNeededWithError:]):
+        (-[JSTEvaluator _sourcePerform]):
+        (-[JSTEvaluator _sourceCanceledOnRunLoop:]):
+        (runRegress141275):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::releaseDelayedReleasedObjects):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::unlock):
+
 2015-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should constant fold GetScope, and accesses to the scope register in the ByteCodeParser should not pretend that it's a constant as that breaks OSR exit liveness tracking

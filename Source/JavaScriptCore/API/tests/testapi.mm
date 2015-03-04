@@ -28,6 +28,7 @@
 #import "CurrentThisInsideBlockGetterTest.h"
 #import "DateTests.h"
 #import "JSExportTests.h"
+#import "Regress141275.h"
 #import "Regress141809.h"
 
 #import <pthread.h>
@@ -486,7 +487,6 @@ static void* threadMain(void* contextPtr)
 void testObjectiveCAPI()
 {
     NSLog(@"Testing Objective-C API");
-
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
@@ -1386,6 +1386,7 @@ void testObjectiveCAPI()
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();
+    runRegress141275();
     runRegress141809();
 }
 
