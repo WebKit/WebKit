@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #import "CurrentThisInsideBlockGetterTest.h"
 #import "DateTests.h"
 #import "JSExportTests.h"
+#import "Regress141809.h"
 
 #import <pthread.h>
 
@@ -1385,6 +1386,7 @@ void testObjectiveCAPI()
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();
+    runRegress141809();
 }
 
 #else
