@@ -23,6 +23,7 @@
 #include "BeforeUnloadEvent.h"
 #include "Event.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
@@ -168,6 +169,51 @@ Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState& state, JSC::JSO
     // FIXME: This abstraction is no longer needed. It was part of support for SVGElementInstance.
     // We should remove it and simplify the bindings generation scripts.
     return JSEventListener::create(&listener, &wrapper, false, currentWorld(&state));
+}
+
+static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener, ScriptExecutionContext& context)
+{
+    if (!abstractListener)
+        return jsNull();
+
+    auto* listener = JSEventListener::cast(abstractListener);
+    if (!listener)
+        return jsNull();
+
+    auto* function = listener->jsFunction(&context);
+    if (!function)
+        return jsNull();
+
+    return function;
+}
+
+static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribute(JSC::ExecState& state, JSC::JSValue listener, JSC::JSObject& wrapper)
+{
+    if (!listener.isObject())
+        return nullptr;
+    return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(&state));
+}
+
+JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomicString& eventType)
+{
+    return eventHandlerAttribute(target.getAttributeEventListener(eventType), *target.scriptExecutionContext());
+}
+
+void setEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, EventTarget& target, const AtomicString& eventType, JSC::JSValue value)
+{
+    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, wrapper));
+}
+
+JSC::JSValue windowForwardedEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
+{
+    auto& document = element.document();
+    return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType), document);
+}
+
+void setWindowForwardedEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
+{
+    ASSERT(wrapper.globalObject());
+    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *wrapper.globalObject()));
 }
 
 } // namespace WebCore
