@@ -2,7 +2,7 @@ Properties of Object(5)
   __proto__ object Number
   foo string cat
 Properties of array
-  __proto__ object Array[0]
+  __proto__ object Array
   0 string red
   1 string green
   2 string blue
@@ -16,7 +16,7 @@ Properties of Bound function
   length number 0
   name string Number
 Internal properties
-  boundArgs object Array[1]
+  boundArgs object Array
   boundThis object Object
   targetFunction function function Number() {
     [native code]

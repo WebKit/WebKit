@@ -375,7 +375,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         if (value.subtype === "regexp")
             return "RegExp";
 
-        return value.description.replace(/\[\d+\]$/, "").replace(/Prototype$/, "");
+        return value.description.replace(/Prototype$/, "");
     },
 
     _propertyPathString: function(propertyPath)

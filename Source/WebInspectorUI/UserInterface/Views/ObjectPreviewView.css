@@ -38,3 +38,8 @@
 .object-preview .name {
     color: rgb(136, 19, 145);
 }
+
+.object-preview > .size {
+    font-style: normal;
+    color: hsl(0, 0%, 67%);
+}

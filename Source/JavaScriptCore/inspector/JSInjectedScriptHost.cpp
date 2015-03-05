@@ -253,6 +253,19 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
     return jsUndefined();
 }
 
+JSValue JSInjectedScriptHost::weakMapSize(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->uncheckedArgument(0);
+    JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(value);
+    if (!weakMap)
+        return jsUndefined();
+
+    return jsNumber(weakMap->weakMapData()->size());
+}
+
 JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
 {
     if (exec->argumentCount() < 1)

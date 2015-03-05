@@ -1,3 +1,48 @@
+2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Array/Collection Sizes should be visible and distinct
+        https://bugs.webkit.org/show_bug.cgi?id=142254
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ObjectPreview.js:
+        (WebInspector.ObjectPreview):
+        (WebInspector.ObjectPreview.fromPayload):
+        (WebInspector.ObjectPreview.prototype.get size):
+        (WebInspector.ObjectPreview.prototype.hasSize):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get size):
+        (WebInspector.RemoteObject.prototype.hasSize):
+        Check if this type has a size and get the size.
+        Gracefully handle construction for legacy protocols.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview > .size):
+        * UserInterface/Views/FormattedValue.css:
+        (:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap) > .size):
+        Style the array/collection size.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView):
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+        (WebInspector.FormattedValue.createElementForRemoteObject):
+        (WebInspector.FormattedValue.createElementForObjectPreview):
+        (WebInspector.FormattedValue.createElementForPropertyPreview):
+        Add an element showing the array/collection size.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype):
+        Remove special handling for Array sizes now that this is handled earlier.
+
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager.prototype.processData):
+        (WebInspector.StorageManager.prototype.requestIndexedDatabaseData):
+        Fix what looks like broken RemoteObject construction.
+
 2015-03-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: TimelineViews should be displayed in a ContentViewContainer

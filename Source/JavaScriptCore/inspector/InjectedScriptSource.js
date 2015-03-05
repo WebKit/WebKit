@@ -768,11 +768,8 @@ InjectedScript.prototype = {
         }
 
         var className = InjectedScriptHost.internalConstructorName(obj);
-        if (subtype === "array") {
-            if (typeof obj.length === "number")
-                className += "[" + obj.length + "]";
+        if (subtype === "array")
             return className;
-        }
 
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof obj === "function")
@@ -904,6 +901,13 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
     this.className = InjectedScriptHost.internalConstructorName(object);
     this.description = injectedScript._describe(object);
 
+    if (subtype === "array")
+        this.size = typeof object.length === "number" ? object.length : 0;
+    else if (subtype === "set" || subtype === "map")
+        this.size = object.size;
+    else if (subtype === "weakmap")
+        this.size = InjectedScriptHost.weakMapSize(object);
+
     if (generatePreview && this.type === "object")
         this.preview = this._generatePreview(object, undefined, columnNames);
 }
@@ -924,6 +928,9 @@ InjectedScript.RemoteObject.prototype = {
                 preview.properties = [];
             }
         }
+
+        if ("size" in this)
+            preview.size = this.size;
 
         return preview;
     },

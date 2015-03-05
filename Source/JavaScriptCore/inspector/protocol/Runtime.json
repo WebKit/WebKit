@@ -18,6 +18,7 @@
                 { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                 { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
                 { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
+                { "name": "size", "type": "integer", "optional": true, "description": "Size of the array/collection. Specified for array/map/set/weakmap object type values only." },
                 { "name": "preview", "$ref": "ObjectPreview", "optional": true, "description": "Preview containing abbreviated property values. Specified for <code>object</code> type values only." }
             ]
         },
@@ -32,7 +33,8 @@
                 { "name": "lossless", "type": "boolean", "description": "Determines whether preview is lossless (contains all information of the original object)." },
                 { "name": "overflow", "type": "boolean", "optional": true, "description": "True iff some of the properties of the original did not fit." },
                 { "name": "properties", "type": "array", "items": { "$ref": "PropertyPreview" }, "optional": true, "description": "List of the properties." },
-                { "name": "entries", "type": "array", "items": { "$ref": "EntryPreview" }, "optional": true, "description": "List of the entries. Specified for <code>map</code> and <code>set</code> subtype values only." }
+                { "name": "entries", "type": "array", "items": { "$ref": "EntryPreview" }, "optional": true, "description": "List of the entries. Specified for <code>map</code> and <code>set</code> subtype values only." },
+                { "name": "size", "type": "integer", "optional": true, "description": "Size of the array/collection. Specified for array/map/set/weakmap object type values only." }
             ]
         },
         {

@@ -1,3 +1,15 @@
+2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Array/Collection Sizes should be visible and distinct
+        https://bugs.webkit.org/show_bug.cgi?id=142254
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/runtime/getProperties-expected.txt:
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Update tests now that RemoteObjects and Previews may have an explicit size.
+
 2015-03-04  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> should show the file size as detail text below the icon

@@ -44,6 +44,12 @@ WebInspector.ObjectPreviewView = function(preview, mode)
     this._titleElement.hidden = true;
     this._initTitleElement();
 
+    if (this._preview.hasSize()) {
+        var sizeElement = this._element.appendChild(document.createElement("span"));
+        sizeElement.className = "size";
+        sizeElement.textContent = " (" + this._preview.size + ")";
+    }
+
     if (this._lossless)
         this._element.classList.add("lossless");
 };

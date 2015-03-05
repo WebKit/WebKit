@@ -150,9 +150,9 @@ WebInspector.StorageManager.prototype = {
 
             for (var entryPayload of entryPayloads) {
                 var entry = {};
-                entry.primaryKey = new WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                entry.key = new WebInspector.RemoteObject.fromPayload(entryPayload.key);
-                entry.value = new WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                entry.primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                entry.key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
+                entry.value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
                 entries.push(entry);
             }
 

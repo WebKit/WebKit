@@ -30,6 +30,11 @@
     color: black;
 }
 
+:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap) > .size {
+    font-style: normal;
+    color: hsl(0, 0%, 67%);
+}
+
 .formatted-node > ol {
     display: block !important;
 }

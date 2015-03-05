@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPreview = function(type, subtype, description, lossless, overflow, properties, entries)
+WebInspector.ObjectPreview = function(type, subtype, description, lossless, overflow, properties, entries, size)
 {
     WebInspector.Object.call(this);
 
@@ -37,6 +37,7 @@ WebInspector.ObjectPreview = function(type, subtype, description, lossless, over
     this._description = description || "";
     this._lossless = lossless;
     this._overflow = overflow || false;
+    this._size = size;
 
     this._properties = properties || null;
     this._entries = entries || null;
@@ -50,7 +51,17 @@ WebInspector.ObjectPreview.fromPayload = function(payload)
     if (payload.entries)
         payload.entries = payload.entries.map(function(entry) { return WebInspector.CollectionEntryPreview.fromPayload(entry); });
 
-    return new WebInspector.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries);
+    if (payload.subtype === "array") {
+        // COMPATIBILITY (iOS 8): Runtime.ObjectPreview did not have size property,
+        // instead it was tacked onto the end of the description, like "Array[#]".
+        var match = payload.description.match(/\[(\d+)\]$/);
+        if (match) {
+            payload.size = parseInt(match[1]);
+            payload.description = payload.description.replace(/\[\d+\]$/, "");
+        }
+    }
+
+    return new WebInspector.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries, payload.size);
 };
 
 WebInspector.ObjectPreview.prototype = {
@@ -92,5 +103,15 @@ WebInspector.ObjectPreview.prototype = {
     get collectionEntryPreviews()
     {
         return this._entries;
+    },
+
+    get size()
+    {
+        return this._size;
+    },
+
+    hasSize: function()
+    {
+        return this._size !== undefined && (this._subtype === "array" || this._subtype === "set" || this._subtype === "map" || this._subtype === "weakmap");
     }
 };

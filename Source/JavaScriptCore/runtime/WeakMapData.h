@@ -67,6 +67,8 @@ public:
     MapType::const_iterator begin() const { return m_map.begin(); }
     MapType::const_iterator end() const { return m_map.end(); }
 
+    int size() const { return m_map.size(); }
+
 private:
     WeakMapData(VM&);
     static void destroy(JSCell*);

@@ -116,12 +116,6 @@ function test()
         {expression: "error = null; try { eval('if()'); } catch (e) { error = e; }; error"},
         {expression: "error = null; try { document.createTextNode('').splitText(100); } catch (e) { error = e; }; error"},
 
-    // Improveable:
-
-        // Sealed / Frozen objects.
-        {expression: "Object.seal({})"},
-        {expression: "Object.freeze({})"},
-
         // Map / WeakMap
         {expression: "new Map"},
         {expression: "map = new Map; map.set(1, 2); map.set('key', 'value'); map"},
@@ -142,6 +136,11 @@ function test()
         {expression: "Promise.resolve()"},
         {expression: "Promise.resolve({result:1})"},
 
+    // Improveable:
+
+        // Sealed / Frozen objects.
+        {expression: "Object.seal({})"},
+        {expression: "Object.freeze({})"},
     ];
 
     if (!window.WebInspector) {

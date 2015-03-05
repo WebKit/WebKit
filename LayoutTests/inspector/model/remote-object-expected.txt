@@ -517,13 +517,15 @@ EXPRESSION: []
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[0]",
+  "_description": "Array",
+  "_size": 0,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[0]",
+    "_description": "Array",
     "_lossless": true,
     "_overflow": false,
+    "_size": 0,
     "_properties": [],
     "_entries": null
   }
@@ -535,13 +537,15 @@ EXPRESSION: [1, 2]
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[2]",
+  "_description": "Array",
+  "_size": 2,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[2]",
+    "_description": "Array",
     "_lossless": true,
     "_overflow": false,
+    "_size": 2,
     "_properties": [
       {
         "_name": "0",
@@ -564,31 +568,33 @@ EXPRESSION: [[1],[2],[3]]
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[3]",
+  "_description": "Array",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[3]",
+    "_description": "Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
-        "_value": "Array[1]"
+        "_value": "Array"
       },
       {
         "_name": "1",
         "_type": "object",
         "_subtype": "array",
-        "_value": "Array[1]"
+        "_value": "Array"
       },
       {
         "_name": "2",
         "_type": "object",
         "_subtype": "array",
-        "_value": "Array[1]"
+        "_value": "Array"
       }
     ],
     "_entries": null
@@ -601,13 +607,15 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[5]",
+  "_description": "Array",
+  "_size": 5,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[5]",
+    "_description": "Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 5,
     "_properties": [
       {
         "_name": "0",
@@ -646,13 +654,15 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[3]",
+  "_description": "Array",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[3]",
+    "_description": "Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
@@ -680,19 +690,21 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[1]",
+  "_description": "Array",
+  "_size": 1,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[1]",
+    "_description": "Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 1,
     "_properties": [
       {
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
-        "_value": "Array[3]"
+        "_value": "Array"
       }
     ],
     "_entries": null
@@ -705,13 +717,15 @@ EXPRESSION: arr = []; arr.length = 100; arr
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[100]",
+  "_description": "Array",
+  "_size": 100,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[100]",
+    "_description": "Array",
     "_lossless": true,
     "_overflow": false,
+    "_size": 100,
     "_properties": [],
     "_entries": null
   }
@@ -723,13 +737,15 @@ EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[100]",
+  "_description": "Array",
+  "_size": 100,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[100]",
+    "_description": "Array",
     "_lossless": true,
     "_overflow": false,
+    "_size": 100,
     "_properties": [
       {
         "_name": "0",
@@ -1242,13 +1258,15 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Array[100]",
+  "_description": "Array",
+  "_size": 100,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Array[100]",
+    "_description": "Array",
     "_lossless": true,
     "_overflow": false,
+    "_size": 100,
     "_properties": [
       {
         "_name": "10",
@@ -1266,13 +1284,15 @@ EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Arguments[3]",
+  "_description": "Arguments",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Arguments[3]",
+    "_description": "Arguments",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
@@ -1301,13 +1321,15 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Int32Array[4]",
+  "_description": "Int32Array",
+  "_size": 4,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Int32Array[4]",
+    "_description": "Int32Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 4,
     "_properties": [
       {
         "_name": "0",
@@ -1355,13 +1377,15 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "Int32Array[4]",
+  "_description": "Int32Array",
+  "_size": 4,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "Int32Array[4]",
+    "_description": "Int32Array",
     "_lossless": false,
     "_overflow": false,
+    "_size": 4,
     "_properties": [
       {
         "_name": "0",
@@ -1894,13 +1918,15 @@ EXPRESSION: document.head.children
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "HTMLCollection[3]",
+  "_description": "HTMLCollection",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "HTMLCollection[3]",
+    "_description": "HTMLCollection",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
@@ -1941,13 +1967,15 @@ EXPRESSION: document.getElementsByClassName('my-test')
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "NodeList[3]",
+  "_description": "NodeList",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "NodeList[3]",
+    "_description": "NodeList",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
@@ -1988,13 +2016,15 @@ EXPRESSION: document.querySelectorAll('.my-test')
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
-  "_description": "NodeList[3]",
+  "_description": "NodeList",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
-    "_description": "NodeList[3]",
+    "_description": "NodeList",
     "_lossless": false,
     "_overflow": false,
+    "_size": 3,
     "_properties": [
       {
         "_name": "0",
@@ -2152,50 +2182,20 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
 }
 
 -----------------------------------------------------
-EXPRESSION: Object.seal({})
-{
-  "_type": "object",
-  "_objectId": "<filtered>",
-  "_description": "Object",
-  "_preview": {
-    "_type": "object",
-    "_description": "Object",
-    "_lossless": true,
-    "_overflow": false,
-    "_properties": [],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: Object.freeze({})
-{
-  "_type": "object",
-  "_objectId": "<filtered>",
-  "_description": "Object",
-  "_preview": {
-    "_type": "object",
-    "_description": "Object",
-    "_lossless": true,
-    "_overflow": false,
-    "_properties": [],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
 EXPRESSION: new Map
 {
   "_type": "object",
   "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
+  "_size": 0,
   "_preview": {
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
     "_lossless": true,
     "_overflow": false,
+    "_size": 0,
     "_properties": [],
     "_entries": []
   }
@@ -2208,12 +2208,14 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
   "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
+  "_size": 2,
   "_preview": {
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
     "_lossless": true,
     "_overflow": false,
+    "_size": 2,
     "_properties": [],
     "_entries": [
       {
@@ -2263,12 +2265,14 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
   "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
+  "_size": 2,
   "_preview": {
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
     "_lossless": true,
     "_overflow": false,
+    "_size": 2,
     "_properties": [],
     "_entries": [
       {
@@ -2340,9 +2344,10 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
         "_value": {
           "_type": "object",
           "_subtype": "array",
-          "_description": "Array[2]",
+          "_description": "Array",
           "_lossless": true,
           "_overflow": false,
+          "_size": 2,
           "_properties": [
             {
               "_name": "0",
@@ -2369,12 +2374,14 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
   "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
+  "_size": 101,
   "_preview": {
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
     "_lossless": false,
     "_overflow": true,
+    "_size": 101,
     "_properties": [],
     "_entries": [
       {
@@ -2478,12 +2485,14 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
   "_subtype": "weakmap",
   "_objectId": "<filtered>",
   "_description": "WeakMap",
+  "_size": 1,
   "_preview": {
     "_type": "object",
     "_subtype": "weakmap",
     "_description": "WeakMap",
     "_lossless": true,
     "_overflow": false,
+    "_size": 1,
     "_properties": [],
     "_entries": [
       {
@@ -2504,9 +2513,10 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
         "_value": {
           "_type": "object",
           "_subtype": "array",
-          "_description": "Array[2]",
+          "_description": "Array",
           "_lossless": true,
           "_overflow": false,
+          "_size": 2,
           "_properties": [
             {
               "_name": "0",
@@ -2533,12 +2543,14 @@ EXPRESSION: new Set
   "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
+  "_size": 0,
   "_preview": {
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
     "_lossless": true,
     "_overflow": false,
+    "_size": 0,
     "_properties": [],
     "_entries": []
   }
@@ -2551,12 +2563,14 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
   "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
     "_lossless": true,
     "_overflow": false,
+    "_size": 3,
     "_properties": [],
     "_entries": [
       {
@@ -2600,12 +2614,14 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
   "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
+  "_size": 3,
   "_preview": {
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
     "_lossless": true,
     "_overflow": false,
+    "_size": 3,
     "_properties": [],
     "_entries": [
       {
@@ -2665,9 +2681,10 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
         "_value": {
           "_type": "object",
           "_subtype": "array",
-          "_description": "Array[2]",
+          "_description": "Array",
           "_lossless": true,
           "_overflow": false,
+          "_size": 2,
           "_properties": [
             {
               "_name": "0",
@@ -2694,12 +2711,14 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
   "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
+  "_size": 101,
   "_preview": {
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
     "_lossless": false,
     "_overflow": true,
+    "_size": 101,
     "_properties": [],
     "_entries": [
       {
@@ -2891,6 +2910,38 @@ EXPRESSION: Promise.resolve({result:1})
         "_internal": true
       }
     ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.seal({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.freeze({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
     "_entries": null
   }
 }

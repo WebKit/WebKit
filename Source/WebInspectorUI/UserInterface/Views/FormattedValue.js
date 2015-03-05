@@ -69,7 +69,7 @@ WebInspector.FormattedValue.createElementForNode = function(object)
     return span;
 };
 
-WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subtype, displayString, isPreview, hadException)
+WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subtype, displayString, size, isPreview, hadException)
 {
     var span = document.createElement("span");
     span.classList.add(WebInspector.FormattedValue.classNameForTypes(type, subtype));
@@ -94,22 +94,30 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
 
     // Everything else, the description/value string.
     span.textContent = displayString;
+
+    // If there is a size, include it.
+    if (size !== undefined && (subtype === "array" || subtype === "set" || subtype === "map" || subtype === "weakmap")) {
+        var sizeElement = span.appendChild(document.createElement("span"));
+        sizeElement.className = "size";
+        sizeElement.textContent = " (" + size + ")";
+    }
+
     return span;
 };
 
 WebInspector.FormattedValue.createElementForRemoteObject = function(object, hadException)
 {
-    return WebInspector.FormattedValue.createElementForTypesAndValue(object.type, object.subtype, object.description, false, hadException);
+    return WebInspector.FormattedValue.createElementForTypesAndValue(object.type, object.subtype, object.description, object.size, false, hadException);
 };
 
 WebInspector.FormattedValue.createElementForObjectPreview = function(objectPreview)
 {
-    return WebInspector.FormattedValue.createElementForTypesAndValue(objectPreview.type, objectPreview.subtype, objectPreview.description, true, false);
+    return WebInspector.FormattedValue.createElementForTypesAndValue(objectPreview.type, objectPreview.subtype, objectPreview.description, objectPreview.size, true, false);
 };
 
 WebInspector.FormattedValue.createElementForPropertyPreview = function(propertyPreview)
 {
-    return WebInspector.FormattedValue.createElementForTypesAndValue(propertyPreview.type, propertyPreview.subtype, propertyPreview.value, true, false);
+    return WebInspector.FormattedValue.createElementForTypesAndValue(propertyPreview.type, propertyPreview.subtype, propertyPreview.value, undefined, true, false);
 };
 
 WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = function(object, propertyPath)
