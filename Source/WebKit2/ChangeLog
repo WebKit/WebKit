@@ -1,3 +1,28 @@
+2015-03-05  Antti Koivisto  <antti@apple.com>
+
+        Switch NetworkCacheStorage to WorkQueue abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=142337
+
+        Reviewed by Anders Carlsson.
+
+        Don't use dispatch_async directly.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCacheStorage::ioQueue):
+        (WebKit::NetworkCacheStorage::backgroundIOQueue):
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::NetworkCacheStorage):
+        (WebKit::NetworkCacheStorage::initialize):
+        (WebKit::NetworkCacheStorage::removeEntry):
+        (WebKit::NetworkCacheStorage::dispatchReadOperation):
+        (WebKit::retrieveFromMemory):
+        (WebKit::NetworkCacheStorage::traverse):
+        (WebKit::NetworkCacheStorage::dispatchFullWriteOperation):
+        (WebKit::NetworkCacheStorage::dispatchHeaderWriteOperation):
+        (WebKit::NetworkCacheStorage::clear):
+        (WebKit::NetworkCacheStorage::shrinkIfNeeded):
+        (WebKit::NetworkCacheStorage::deleteOldVersions):
+
 2015-03-05  Lukasz Bialek  <l.bialek@samsung.com>
 
         [EFL][WK2] Crash when "Download Linked File" from MiniBrowser context menu is clicked

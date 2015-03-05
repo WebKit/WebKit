@@ -69,11 +69,9 @@ static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
 NetworkCacheStorage::NetworkCacheStorage(const String& baseDirectoryPath)
     : m_baseDirectoryPath(baseDirectoryPath)
     , m_directoryPath(makeVersionedDirectoryPath(baseDirectoryPath))
-    , m_ioQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage", DISPATCH_QUEUE_CONCURRENT)))
-    , m_backgroundIOQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Storage.Background", DISPATCH_QUEUE_CONCURRENT)))
+    , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
+    , m_backgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent, WorkQueue::QOS::Background))
 {
-    dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
-
     deleteOldVersions();
     initialize();
 }
@@ -84,14 +82,14 @@ void NetworkCacheStorage::initialize()
 
     StringCapture cachePathCapture(m_directoryPath);
 
-    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture] {
+    backgroundIOQueue().dispatch([this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
         traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
             unsigned shortHash = NetworkCacheKey::toShortHash(hash);
-            dispatch_async(dispatch_get_main_queue(), [this, shortHash] {
+            RunLoop::main().dispatch([this, shortHash] {
                 m_contentsFilter.add(shortHash);
             });
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
@@ -292,7 +290,7 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
         m_contentsFilter.remove(key.shortHash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
-    dispatch_async(m_backgroundIOQueue.get(), [this, filePathCapture] {
+    backgroundIOQueue().dispatch([this, filePathCapture] {
         WebCore::deleteFile(filePathCapture.string());
     });
 }
@@ -303,10 +301,9 @@ void NetworkCacheStorage::dispatchReadOperation(const ReadOperation& read)
     ASSERT(m_activeReadOperations.contains(&read));
 
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_ioQueue.get(), [this, &read, cachePathCapture] {
+    ioQueue().dispatch([this, &read, cachePathCapture] {
         auto channel = openFileForKey(read.key, NetworkCacheIOChannel::Type::Read, cachePathCapture.string());
         int fd = channel->fileDescriptor();
-
         channel->read(0, std::numeric_limits<size_t>::max(), [this, &read, fd](NetworkCacheData& fileData, int error) {
             if (error) {
                 removeEntry(read.key);
@@ -354,7 +351,7 @@ template <class T> bool retrieveFromMemory(const T& operations, const NetworkCac
         if (operation->entry.key == key) {
             LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
             auto entry = operation->entry;
-            dispatch_async(dispatch_get_main_queue(), [entry, completionHandler] {
+            RunLoop::main().dispatch([entry, completionHandler] {
                 completionHandler(std::make_unique<NetworkCacheStorage::Entry>(entry));
             });
             return true;
@@ -425,7 +422,7 @@ void NetworkCacheStorage::update(const Entry& updateEntry, const Entry& existing
 void NetworkCacheStorage::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_ioQueue.get(), [this, cachePathCapture, traverseHandler] {
+    ioQueue().dispatch([this, cachePathCapture, traverseHandler] {
         String cachePath = cachePathCapture.string();
         auto semaphore = adoptDispatch(dispatch_semaphore_create(0));
         traverseCacheFiles(cachePath, [this, &semaphore, &traverseHandler](const String& fileName, const String& partitionPath) {
@@ -443,7 +440,7 @@ void NetworkCacheStorage::traverse(std::function<void (const Entry*)>&& traverse
             });
             dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
         });
-        dispatch_async(dispatch_get_main_queue(), [this, traverseHandler] {
+        RunLoop::main().dispatch([this, traverseHandler] {
             traverseHandler(nullptr);
         });
     });
@@ -481,7 +478,7 @@ void NetworkCacheStorage::dispatchFullWriteOperation(const WriteOperation& write
         m_contentsFilter.add(write.entry.key.shortHash());
 
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [this, &write, cachePathCapture] {
+    backgroundIOQueue().dispatch([this, &write, cachePathCapture] {
         auto encodedHeader = encodeEntryHeader(write.entry);
         auto headerAndBodyData = adoptDispatch(dispatch_data_create_concat(encodedHeader.dispatchData(), write.entry.body.dispatchData()));
 
@@ -526,14 +523,14 @@ void NetworkCacheStorage::dispatchHeaderWriteOperation(const WriteOperation& wri
 
     // Try to update the header of an existing entry.
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [this, &write, cachePathCapture] {
+    backgroundIOQueue().dispatch([this, &write, cachePathCapture] {
         auto headerData = encodeEntryHeader(write.entry);
         auto existingHeaderData = encodeEntryHeader(write.existingEntry.value());
 
         bool pageRoundedHeaderSizeChanged = headerData.size() != existingHeaderData.size();
         if (pageRoundedHeaderSizeChanged) {
             LOG(NetworkCacheStorage, "(NetworkProcess) page-rounded header size changed, storing full entry");
-            dispatch_async(dispatch_get_main_queue(), [this, &write] {
+            RunLoop::main().dispatch([this, &write] {
                 dispatchFullWriteOperation(write);
             });
             return;
@@ -573,7 +570,7 @@ void NetworkCacheStorage::clear()
 
     StringCapture directoryPathCapture(m_directoryPath);
 
-    dispatch_async(m_ioQueue.get(), [directoryPathCapture] {
+    ioQueue().dispatch([directoryPathCapture] {
         String directoryPath = directoryPathCapture.string();
         traverseDirectory(directoryPath, DT_DIR, [&directoryPath](const String& subdirName) {
             String subdirPath = WebCore::pathByAppendingComponent(directoryPath, subdirName);
@@ -602,7 +599,7 @@ void NetworkCacheStorage::shrinkIfNeeded()
     m_approximateSize = 0;
 
     StringCapture cachePathCapture(m_directoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture] {
+    backgroundIOQueue().dispatch([this, cachePathCapture] {
         String cachePath = cachePathCapture.string();
         traverseCacheFiles(cachePath, [this](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
@@ -620,7 +617,7 @@ void NetworkCacheStorage::shrinkIfNeeded()
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
             unsigned shortHash = NetworkCacheKey::toShortHash(hash);
-            dispatch_async(dispatch_get_main_queue(), [this, shortHash] {
+            RunLoop::main().dispatch([this, shortHash] {
                 if (m_contentsFilter.mayContain(shortHash))
                     m_contentsFilter.remove(shortHash);
             });
@@ -642,7 +639,7 @@ void NetworkCacheStorage::deleteOldVersions()
 {
     // Delete V1 cache.
     StringCapture cachePathCapture(m_baseDirectoryPath);
-    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture] {
+    backgroundIOQueue().dispatch([cachePathCapture] {
         String cachePath = cachePathCapture.string();
         traverseDirectory(cachePath, DT_DIR, [&cachePath](const String& subdirName) {
             if (subdirName.startsWith(versionDirectoryPrefix))

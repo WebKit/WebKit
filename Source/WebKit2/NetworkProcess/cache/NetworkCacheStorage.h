@@ -34,6 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -102,6 +103,9 @@ private:
     void dispatchHeaderWriteOperation(const WriteOperation&);
     void dispatchPendingWriteOperations();
 
+    WorkQueue& ioQueue() { return m_ioQueue.get(); }
+    WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
+
     const String m_baseDirectoryPath;
     const String m_directoryPath;
 
@@ -118,10 +122,8 @@ private:
     Deque<std::unique_ptr<const WriteOperation>> m_pendingWriteOperations;
     HashSet<std::unique_ptr<const WriteOperation>> m_activeWriteOperations;
 
-#if PLATFORM(COCOA)
-    mutable DispatchPtr<dispatch_queue_t> m_ioQueue;
-    mutable DispatchPtr<dispatch_queue_t> m_backgroundIOQueue;
-#endif
+    Ref<WorkQueue> m_ioQueue;
+    Ref<WorkQueue> m_backgroundIOQueue;
 };
 
 }
