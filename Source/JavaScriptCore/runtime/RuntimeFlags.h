@@ -30,26 +30,28 @@
 
 namespace JSC {
 
+// macro(name, isEnabledFlag)
 #define JSC_RUNTIME_FLAG(macro) \
-    macro(SymbolEnabled)
+    macro(SymbolEnabled, true)\
+    macro(PromiseDisabled, false)
 
 
 class RuntimeFlags {
 private:
     enum RuntimeFlagShiftValue : unsigned {
-#define JSC_DECLARE_RUNTIME_FLAG_SHIFT_VALUE(name) shiftValueFor##name,
+#define JSC_DECLARE_RUNTIME_FLAG_SHIFT_VALUE(name, isEnabledFlag) shiftValueFor##name,
         JSC_RUNTIME_FLAG(JSC_DECLARE_RUNTIME_FLAG_SHIFT_VALUE)
 #undef JSC_DECLARE_RUNTIME_FLAG_SHIFT_VALUE
     };
 
 public:
     enum RuntimeFlag : unsigned {
-#define JSC_DECLARE_RUNTIME_FLAG(name) name = 1u << (shiftValueFor##name),
+#define JSC_DECLARE_RUNTIME_FLAG(name, isEnabledFlag) name = 1u << (shiftValueFor##name),
         JSC_RUNTIME_FLAG(JSC_DECLARE_RUNTIME_FLAG)
 #undef JSC_DECLARE_RUNTIME_FLAG
     };
 
-#define JSC_DECLARE_RUNTIME_FLAG_ACCESSOR(name) \
+#define JSC_DECLARE_RUNTIME_FLAG_ACCESSOR(name, isEnabledFlag) \
     void set##name(bool value)\
     {\
         if (value)\
@@ -83,11 +85,12 @@ public:
 
     static RuntimeFlags createAllEnabled()
     {
-        return {
-#define JSC_USE_RUNTIME_FLAG(name) name,
+        return RuntimeFlags(
+#define JSC_USE_RUNTIME_FLAG(name, isEnabledFlag) ((isEnabledFlag) ? name : 0u) |
             JSC_RUNTIME_FLAG(JSC_USE_RUNTIME_FLAG)
 #undef JSC_USE_RUNTIME_FLAG
-        };
+            0u
+        );
     }
 
 private:

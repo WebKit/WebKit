@@ -51,6 +51,7 @@ typedef enum WKEditableLinkBehavior WKEditableLinkBehavior;
 
 enum WKJavaScriptRuntimeFlags {
     kWKJavaScriptRuntimeFlagsSymbolEnabled = 1 << 0,
+    kWKJavaScriptRuntimeFlagsPromiseDisabled = 1 << 1,
     kWKJavaScriptRuntimeFlagsAllEnabled = kWKJavaScriptRuntimeFlagsSymbolEnabled
 };
 typedef unsigned WKJavaScriptRuntimeFlagSet;

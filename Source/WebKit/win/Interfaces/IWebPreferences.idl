@@ -59,11 +59,6 @@ typedef enum WebCacheModel {
     WebCacheModelPrimaryWebBrowser = 2
 } WebCacheModel;
 
-typedef enum WebKitJavaScriptRuntimeFlags {
-    WebKitJavaScriptRuntimeFlagsSymbolEnabled = 1,  // 1u << 0
-    WebKitJavaScriptRuntimeFlagsAllEnabled = WebKitJavaScriptRuntimeFlagsSymbolEnabled
-} WebKitJavaScriptRuntimeFlags;
-
 [
     object,
     oleautomation,

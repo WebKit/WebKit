@@ -514,6 +514,13 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        checkResult(@"Promise is not exposed", [context[@"Promise"] isUndefined]);
+        JSValue *result = [context evaluateScript:@"typeof Promise"];
+        checkResult(@"typeof Promise is 'undefined'", [result isString] && [result isEqualToObject:@"undefined"]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         JSValue *result = [context evaluateScript:@"({ x:42 })"];
         checkResult(@"({ x:42 })", [result isObject] && [result[@"x"] isEqualToObject:@42]);
         id obj = [result toObject];

@@ -54,6 +54,7 @@ typedef enum {
 
 typedef enum {
     WebKitJavaScriptRuntimeFlagsSymbolEnabled = 1u << 0,
+    WebKitJavaScriptRuntimeFlagsPromiseDisabled = 1u << 1,
     WebKitJavaScriptRuntimeFlagsAllEnabled = WebKitJavaScriptRuntimeFlagsSymbolEnabled
 } WebKitJavaScriptRuntimeFlags;
 

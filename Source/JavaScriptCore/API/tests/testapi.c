@@ -1891,6 +1891,28 @@ int main(int argc, char* argv[])
         free(scriptUTF8);
     }
 
+    // Check Promise is not exposed.
+    {
+        JSObjectRef globalObject = JSContextGetGlobalObject(context);
+        {
+            JSStringRef promiseProperty = JSStringCreateWithUTF8CString("Promise");
+            ASSERT(!JSObjectHasProperty(context, globalObject, promiseProperty));
+            JSStringRelease(promiseProperty);
+        }
+        {
+            JSStringRef script = JSStringCreateWithUTF8CString("typeof Promise");
+            JSStringRef undefined = JSStringCreateWithUTF8CString("undefined");
+            JSValueRef value = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
+            ASSERT(JSValueIsString(context, value));
+            JSStringRef valueAsString = JSValueToStringCopy(context, value, NULL);
+            ASSERT(JSStringIsEqual(valueAsString, undefined));
+            JSStringRelease(valueAsString);
+            JSStringRelease(undefined);
+            JSStringRelease(script);
+        }
+        printf("PASS: Promise is not exposed under JSContext API.\n");
+    }
+
 #if OS(DARWIN)
     JSStringRef currentCPUTimeStr = JSStringCreateWithUTF8CString("currentCPUTime");
     JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr, currentCPUTime_callAsFunction);

@@ -293,9 +293,9 @@ protected:
 public:
     typedef JSSegmentedVariableObject Base;
 
-    static JSGlobalObject* create(VM& vm, Structure* structure)
+    static JSGlobalObject* create(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable = nullptr)
     {
-        JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
+        JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure, globalObjectMethodTable);
         globalObject->finishCreation(vm);
         vm.heap.addFinalizer(globalObject, destroy);
         return globalObject;
