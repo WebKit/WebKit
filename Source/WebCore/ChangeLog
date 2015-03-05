@@ -1,3 +1,47 @@
+2015-03-04  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Use a blurry background for media controls
+        https://bugs.webkit.org/show_bug.cgi?id=142316
+        <rdar://problem/14911098>
+
+        Reviewed by Eric Carlson.
+
+        Start using the -webkit-appearance media-controls-light-bar-background
+        in order to get the blurry background of media controls.
+
+        * Modules/mediacontrols/mediaControlsApple.js: Keep the panel and the
+        panel background in sync when it comes to hiding and showing. It would
+        be better if this could be done on a container element in the future.
+        (Controller.prototype.handlePanelTransitionEnd):
+        (Controller.prototype.setPlaying):
+        (Controller.prototype.showControls):
+        (Controller.prototype.hideControls):
+
+        * Modules/mediacontrols/mediaControlsiOS.css: New background container
+        with the special appearance. I also renamed "composited-parent" to
+        "container", which makes more sense.
+        (video::-webkit-media-controls-panel-container):
+        (audio::-webkit-media-controls-panel-container):
+        (video::-webkit-media-controls-panel-background):
+        (audio::-webkit-media-controls-panel-background):
+        (video::-webkit-media-controls-panel-background.paused):
+        (video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-panel.paused):
+        (audio::-webkit-media-controls-optimized-fullscreen-button):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (video::-webkit-media-controls-panel-composited-parent): Deleted.
+        (video::-webkit-media-controls-panel:hover): Deleted.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Create the new background element.
+        (ControllerIOS.prototype.addControls):
+        (ControllerIOS.prototype.set pageScaleFactor): Temporarily disable
+        this because the background disappears when the zoom factor
+        is too high - we start tiling the background. This will be addressed
+        by https://bugs.webkit.org/show_bug.cgi?id=142317.
+
 2015-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Mechanical text-related cleanup

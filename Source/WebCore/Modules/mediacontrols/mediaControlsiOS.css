@@ -93,10 +93,40 @@ audio::-webkit-media-text-track-container {
     -webkit-flex: 1 1 auto;
 }
 
-video::-webkit-media-controls-panel-composited-parent {
+video::-webkit-media-controls-panel-container {
     -webkit-transform: translateZ(0);
     width: 100%;
     direction: ltr;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+}
+
+audio::-webkit-media-controls-panel-container {
+    -webkit-transform: translateZ(0);
+    width: 100%;
+    direction: ltr;
+    height: 39px;
+    position: absolute;
+    bottom: 0;
+}
+
+video::-webkit-media-controls-panel-background {
+    -webkit-transform: translateZ(0);
+    width: 101%; /* Due to some rounding issues we make this a little bit wider than should be necessary. */
+    height: 51px; /* And taller. */
+    -webkit-appearance: media-controls-light-bar-background;
+    transition: opacity 0.25s linear;
+    opacity: 0;
+}
+
+audio::-webkit-media-controls-panel-background {
+    display: none;
+}
+
+video::-webkit-media-controls-panel-background.show,
+video::-webkit-media-controls-panel-background.paused {
+    opacity: 1;
 }
 
 audio::-webkit-media-controls-panel,
@@ -104,6 +134,8 @@ video::-webkit-media-controls-panel {
     box-sizing: border-box;
     position: absolute;
     bottom: 0;
+    width: 100%;
+    padding: 0;
 
     -webkit-user-select: none;
 
@@ -124,22 +156,17 @@ audio::-webkit-media-controls-panel .hidden {
 
 video::-webkit-media-controls-panel {
     height: 50px;
-    width: 100%;
     opacity: 0;
-    padding: 0;
-    background-color: rgba(255, 255, 255, 0.6);
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 audio::-webkit-media-controls-panel {
     height: 39px;
-    width: 100%;
-    padding: 0;
     background-color: rgba(228, 228, 228, 1);
 }
 
 video::-webkit-media-controls-panel.show,
-video::-webkit-media-controls-panel.paused,
-video::-webkit-media-controls-panel:hover {
+video::-webkit-media-controls-panel.paused {
     opacity: 1;
 }
 
@@ -203,6 +230,7 @@ audio::-webkit-media-controls-optimized-fullscreen-button {
     background-position: 50% 50%;
     mix-blend-mode: plus-darker;
     opacity: 0.55;
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 video::-webkit-media-controls-play-button:active,
@@ -332,6 +360,7 @@ audio::-webkit-media-controls-timeline {
     border: none !important;
     border-radius: 0 !important;
     box-sizing: content-box !important;
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 audio::-webkit-media-controls-timeline::-webkit-slider-runnable-track,
@@ -352,10 +381,6 @@ audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     background-position: 0px 18px;
     background-color: transparent !important;
     border: none !important;
-
-    /* rotateZ() forces the layer into compositing mode. Slider
-       thumbs are small, so forcing a compositing layer is inexpensive,
-       and it keeps the slider from having to repaint while sliding. */
     -webkit-transform: rotateZ(0deg);
 }
 

@@ -158,8 +158,11 @@ ControllerIOS.prototype = {
     createControls: function() {
         Controller.prototype.createControls.call(this);
 
-        var panelCompositedParent = this.controls.panelCompositedParent = document.createElement('div');
-        panelCompositedParent.setAttribute('pseudo', '-webkit-media-controls-panel-composited-parent');
+        var panelContainer = this.controls.panelContainer = document.createElement('div');
+        panelContainer.setAttribute('pseudo', '-webkit-media-controls-panel-container');
+
+        var panelBackground = this.controls.panelBackground = document.createElement('div');
+        panelBackground.setAttribute('pseudo', '-webkit-media-controls-panel-background');
 
         var spacer = this.controls.spacer = document.createElement('div');
         spacer.setAttribute('pseudo', '-webkit-media-controls-spacer');
@@ -272,8 +275,9 @@ ControllerIOS.prototype = {
 
     addControls: function() {
         this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
-        this.base.appendChild(this.controls.panelCompositedParent);
-        this.controls.panelCompositedParent.appendChild(this.controls.panel);
+        this.base.appendChild(this.controls.panelContainer);
+        this.controls.panelContainer.appendChild(this.controls.panelBackground);
+        this.controls.panelContainer.appendChild(this.controls.panel);
         this.setNeedsTimelineMetricsUpdate();
     },
 
@@ -649,22 +653,11 @@ ControllerIOS.prototype = {
 
         this._pageScaleFactor = newScaleFactor;
 
-        if (newScaleFactor) {
-            var scaleValue = 1 / newScaleFactor;
-            var scaleTransform = "scale(" + scaleValue + ")";
-            if (this.controls.startPlaybackButton)
-                this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
-            if (this.controls.panel) {
-                var bottomAligment = -2 * scaleValue;
-                this.controls.panel.style.bottom = bottomAligment + "px";
-                this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
-                this.controls.panel.style.width = Math.ceil(newScaleFactor * 100) + "%";
-                this.controls.panel.style.webkitTransform = scaleTransform;
-                this.setNeedsTimelineMetricsUpdate();
-                this.updateProgress();
-                this.scheduleUpdateLayoutForDisplayedWidth();
-            }
-        }
+        // FIXME: this should react to the scale change by
+        // unscaling the controls panel. However, this
+        // hits a bug with the backdrop blur layer getting
+        // too big and moving to a tiled layer.
+        // https://bugs.webkit.org/show_bug.cgi?id=142317
     },
 
     handlePresentationModeChange: function(event)
