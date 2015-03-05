@@ -1,3 +1,18 @@
+2015-03-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [buildbot] Add regression test to check which builder runs which tests
+        https://bugs.webkit.org/show_bug.cgi?id=142166
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (BuildStepsConstructorTest.createTest):
+        (BuildStepsTest):
+        (BuildStepsTest.generateTests):
+        (BuildStepsTest.createTest):
+        (BuildStepsTest.createTest.doTest):
+        (BuildStepsTest.test_unnecessary_expected_results):
+
 2015-03-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181054.
