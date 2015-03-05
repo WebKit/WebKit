@@ -1,3 +1,16 @@
+2015-03-05  David Hyatt  <hyatt@apple.com>
+
+        Caps lock indicator in text fields is laying out in the wrong place.
+        https://bugs.webkit.org/show_bug.cgi?id=142352
+
+        Reviewed by Dean Jackson.
+
+        * css/html.css:
+        (input::-webkit-caps-lock-indicator):
+        Change the CSS to give the SVG image an intrinsic size, and to use align-self:stretch so that
+        the image always stretches to fill the height of the text box. Get rid of height:100%, as that
+        just resolves to auto in strict mode and was not ever going to work there.
+
 2015-03-04  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Use a blurry background for media controls
