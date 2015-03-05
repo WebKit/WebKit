@@ -109,7 +109,7 @@
                       "slavenames": ["bot200", "bot152"]
                     },
                     {
-                      "name": "Apple Mavericks Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mavericks-release-perf-tests",
+                      "name": "Apple Mavericks Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "mavericks-release-perf-tests",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot135"]
                     },
@@ -160,7 +160,7 @@
                       "slavenames": ["bot192", "bot193"]
                     },
                     {
-                      "name": "Apple Yosemite Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
+                      "name": "Apple Yosemite Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "yosemite-release-perf-tests",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot194"]
                     },

@@ -1,3 +1,16 @@
+2015-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Mac Perf bots should use WebKitTestRunner instead of DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=142314
+        <rdar://problem/20046835>
+
+        Reviewed by Ryosuke Niwa.
+
+        Mac Perf bots should use WebKitTestRunner instead of DumpRenderTree
+        to get WK2 code coverage.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2015-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Move content extensions test to properly named directory.
