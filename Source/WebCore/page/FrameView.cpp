@@ -2440,7 +2440,6 @@ void FrameView::layoutTimerFired()
     if (!frame().document()->ownerElement())
         printf("Layout timer fired at %lld\n", frame().document()->elapsedTime().count());
 #endif
-    frame().document()->updateStyleIfNeeded();
     layout();
 }
 
