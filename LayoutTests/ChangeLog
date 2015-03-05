@@ -1,3 +1,12 @@
+2015-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r181013
+
+        Unreviewed.
+
+        * platform/mac/fast/text/trailing-word-expected.html: Renamed from LayoutTests/fast/text/trailing-word-expected.html.
+        * platform/mac/fast/text/trailing-word.html: Renamed from LayoutTests/fast/text/trailing-word.html.
+
 2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Array/Collection Sizes should be visible and distinct
