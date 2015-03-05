@@ -1,5 +1,22 @@
 2015-03-04  David Kilzer  <ddkilzer@apple.com>
 
+        [Windows] Build fix: Make sure to include <CoreMedia/CoreMedia.h> before redefining CMSampleBuffer
+
+        More fallout from:
+
+        Switch remaining CoreMedia soft-linking in WebCore over to CoreMediaSoftLink.{cpp,h}
+        <http://webkit.org/b/141870>
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        - Remove include of <CoreMedia/CoreMedia.h> here.  These already
+          include CoreMediaSPI.h.
+        * platform/spi/cf/CoreMediaSPI.h:
+        - Add include of <CoreMedia/CoreMedia.h> here.
+        - Remove redundant include of <CoreMedia/CMTime.h> for Windows.
+
+2015-03-04  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Fix build with newer clang due to duplicate macro definition
 
         Fallout from:

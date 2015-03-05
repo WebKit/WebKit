@@ -30,7 +30,6 @@
 
 #include "CoreMediaSPI.h"
 #include "SoftLinking.h"
-#include <CoreMedia/CoreMedia.h>
 
 SOFT_LINK_FRAMEWORK_HEADER(WebCore, CoreMedia)
 

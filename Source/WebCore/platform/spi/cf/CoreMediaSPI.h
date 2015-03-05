@@ -26,6 +26,8 @@
 #ifndef CoreMediaSPI_h
 #define CoreMediaSPI_h
 
+#include <CoreMedia/CoreMedia.h>
+
 #if PLATFORM(COCOA)
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -44,7 +46,6 @@ WTF_EXTERN_C_END
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(WIN)
-#include <CoreMedia/CMTime.h>
 
 typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
