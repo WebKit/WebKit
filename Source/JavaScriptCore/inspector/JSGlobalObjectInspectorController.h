@@ -71,7 +71,7 @@ public:
 
     JSC::ConsoleClient* consoleClient() const;
 
-    virtual bool developerExtrasEnabled() const override { return true; }
+    virtual bool developerExtrasEnabled() const override;
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
     virtual InspectorFunctionCallHandler functionCallHandler() const override;
     virtual InspectorEvaluateHandler evaluateHandler() const override;
