@@ -337,7 +337,7 @@
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             void* constant = dlsym(framework##Library(), #variableName); \
-            ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
+            RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
             constant##framework##variableName = *static_cast<variableType*>(constant); \
         }); \
         return constant##framework##variableName; \
@@ -368,7 +368,7 @@
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
-            ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
+            RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
         }); \
         return softLink##framework##functionName parameterNames; \
     } \

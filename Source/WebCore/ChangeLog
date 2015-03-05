@@ -1,3 +1,19 @@
+2015-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        Switch new soft-linking debug asserts to release asserts
+        <http://webkit.org/b/142176>
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_CONSTANT_SOURCE): Switch to release assert.
+        (SOFT_LINK_FUNCTION_SOURCE): Ditto.
+        * platform/win/SoftLinking.h:
+        (SOFT_LINK_CONSTANT_SOURCE): Ditto.
+        (SOFT_LINK_FUNCTION_SOURCE): Ditto.  Note that this method is
+        effectively only called once because the function pointer is
+        replaced after the first time it's called.
+
 2015-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Optimize content extensions.

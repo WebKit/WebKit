@@ -213,7 +213,7 @@
     namespace functionNamespace { \
     static void init##framework##variableName(void* context) { \
         variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #variableName)); \
-        ASSERT(ptr); \
+        RELEASE_ASSERT(ptr); \
         *static_cast<variableType*>(context) = *ptr; \
     } \
     variableType get_##framework##_##variableName(); \
@@ -242,7 +242,7 @@
     static resultType __cdecl init##framework##functionName parameterDeclarations \
     { \
         softLink##framework##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #functionName)); \
-        ASSERT(softLink##framework##functionName); \
+        RELEASE_ASSERT(softLink##framework##functionName); \
         return softLink##framework##functionName parameterNames; \
     } \
     }
