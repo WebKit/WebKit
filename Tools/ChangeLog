@@ -1,3 +1,16 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Ensure build target directory exists when launching MSBuild
+        https://bugs.webkit.org/show_bug.cgi?id=142360
+
+        Reviewed by Dean Jackson.
+
+        Create the build output directory (if it doesn't exist) before
+        launching MSBuild so that it can immediately begin writing logs.
+
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject):
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         run-webkit-tests and run-perf-tests should use WebKitTestRunner by default

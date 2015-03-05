@@ -38,7 +38,7 @@ use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
 use File::Find;
-use File::Path qw(mkpath rmtree);
+use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::stat;
 use List::Util;
@@ -1684,10 +1684,13 @@ sub buildVisualStudioProject
     }
 
     my $platform = "/p:Platform=" . (isWin64() ? "x64" : "Win32");
-    my $logFile = File::Spec->catdir($baseProductDir, $configuration, "BuildOutput.htm");
+    my $logPath = File::Spec->catdir($baseProductDir, $configuration);
+    File::Path->make_path($logPath) unless -d $logPath;
+
+    my $logFile = File::Spec->catfile($logPath, "BuildOutput.htm");
     chomp($logFile = `cygpath -w "$logFile"`) if isCygwin();
     my $logging = "/flp:LogFile=" . $logFile . ";Verbosity=minimal";
-    
+
     my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $logging);
 
     print join(" ", @command), "\n";
