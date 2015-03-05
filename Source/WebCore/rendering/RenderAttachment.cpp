@@ -64,7 +64,7 @@ void RenderAttachment::layout()
     RenderReplaced::layout();
 }
 
-void RenderAttachment::representedFileChanged()
+void RenderAttachment::invalidate()
 {
     setNeedsLayout();
     repaint();

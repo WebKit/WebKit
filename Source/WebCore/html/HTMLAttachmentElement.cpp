@@ -69,7 +69,17 @@ void HTMLAttachmentElement::setFile(File* file)
     if (!is<RenderAttachment>(renderer))
         return;
 
-    downcast<RenderAttachment>(*renderer).representedFileChanged();
+    downcast<RenderAttachment>(*renderer).invalidate();
+}
+
+void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name == subtitleAttr && is<RenderAttachment>(renderer())) {
+        downcast<RenderAttachment>(*renderer()).invalidate();
+        return;
+    }
+
+    HTMLElement::parseAttribute(name, value);
 }
 
 } // namespace WebCore

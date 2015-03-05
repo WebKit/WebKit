@@ -1,3 +1,63 @@
+2015-03-04  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> should show the file size as detail text below the icon
+        https://bugs.webkit.org/show_bug.cgi?id=142261
+        <rdar://problem/20009570>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/attachment/attachment-subtitle.html
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::setFile):
+        (WebCore::HTMLAttachmentElement::parseAttribute):
+        * html/HTMLAttachmentElement.h:
+        Let RenderAttachment know when the subtitle attribute changes.
+
+        * html/HTMLAttributeNames.in:
+        Add a subtitle attribute.
+
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::invalidate):
+        (WebCore::RenderAttachment::representedFileChanged): Deleted.
+        * rendering/RenderAttachment.h:
+        Rename representedFileChanged to invalidate; it will cause layout and
+        repaint of the attachment. Mostly for use from HTMLAttachmentElement,
+        when properties that affect the display and/or intrinsic size change.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::attachmentTitleInactiveBackgroundColor):
+        (WebCore::attachmentTitleInactiveTextColor):
+        (WebCore::attachmentSubtitleTextColor):
+        (WebCore::titleTextColorForAttachment):
+        (WebCore::AttachmentLayout::addTitleLine):
+        (WebCore::AttachmentLayout::layOutTitle):
+        (WebCore::AttachmentLayout::layOutSubtitle):
+        (WebCore::AttachmentLayout::AttachmentLayout):
+        (WebCore::addAttachmentTitleBackgroundRightCorner):
+        (WebCore::addAttachmentTitleBackgroundLeftCorner):
+        (WebCore::paintAttachmentTitleBackground):
+        (WebCore::paintAttachmentTitle):
+        (WebCore::paintAttachmentSubtitle):
+        (WebCore::RenderThemeMac::paintAttachment):
+        (WebCore::attachmentLabelInactiveBackgroundColor): Deleted.
+        (WebCore::attachmentLabelInactiveTextColor): Deleted.
+        (WebCore::labelTextColorForAttachment): Deleted.
+        (WebCore::AttachmentLayout::addLine): Deleted.
+        (WebCore::AttachmentLayout::layOutLabel): Deleted.
+        (WebCore::addAttachmentLabelBackgroundRightCorner): Deleted.
+        (WebCore::addAttachmentLabelBackgroundLeftCorner): Deleted.
+        (WebCore::paintAttachmentLabelBackground): Deleted.
+        (WebCore::paintAttachmentLabel): Deleted.
+        Rename everything "label" to "title" (except LabelLine, which is not
+        specifically about the title). We're going to use "title" for the
+        main text below the icon, and "subtitle" for the secondary text below that.
+
+        Avoid keeping the CTFonts on the AttachmentLayout; there's no need for it.
+
+        Add layOutSubtitle and paintAttachmentSubtitle, which orient and paint
+        the subtitle (below the title, in blue, smaller than the label).
+
 2015-03-04  David Kilzer  <ddkilzer@apple.com>
 
         [Windows] Build fix: Make sure to include <CoreMedia/CoreMedia.h> before redefining CMSampleBuffer

@@ -2078,19 +2078,22 @@ const CGFloat attachmentIconBackgroundPadding = 6;
 const CGFloat attachmentIconBackgroundSize = attachmentIconSize + attachmentIconBackgroundPadding;
 const CGFloat attachmentIconSelectionBorderThickness = 1;
 const CGFloat attachmentIconBackgroundRadius = 3;
-const CGFloat attachmentIconToLabelMargin = 2;
+const CGFloat attachmentIconToTitleMargin = 2;
 
 static Color attachmentIconBackgroundColor() { return Color(0, 0, 0, 30); }
 static Color attachmentIconBorderColor() { return Color(255, 255, 255, 125); }
 
-const CGFloat attachmentLabelFontSize = 12;
-const CGFloat attachmentLabelBackgroundRadius = 3;
-const CGFloat attachmentLabelBackgroundPadding = 3;
-const CGFloat attachmentLabelMaximumWidth = 100 - (attachmentLabelBackgroundPadding * 2);
-const CFIndex attachmentLabelMaximumLineCount = 2;
+const CGFloat attachmentTitleFontSize = 12;
+const CGFloat attachmentTitleBackgroundRadius = 3;
+const CGFloat attachmentTitleBackgroundPadding = 3;
+const CGFloat attachmentTitleMaximumWidth = 100 - (attachmentTitleBackgroundPadding * 2);
+const CFIndex attachmentTitleMaximumLineCount = 2;
 
-static Color attachmentLabelInactiveBackgroundColor() { return Color(204, 204, 204, 255); }
-static Color attachmentLabelInactiveTextColor() { return Color(100, 100, 100, 255); }
+static Color attachmentTitleInactiveBackgroundColor() { return Color(204, 204, 204, 255); }
+static Color attachmentTitleInactiveTextColor() { return Color(100, 100, 100, 255); }
+
+const CGFloat attachmentSubtitleFontSize = 10;
+static Color attachmentSubtitleTextColor() { return Color(82, 145, 214, 255); }
 
 const CGFloat attachmentMargin = 3;
 
@@ -2111,25 +2114,28 @@ struct AttachmentLayout {
 
     int baseline;
 
-    RetainPtr<CTFontRef> labelFont;
+    RetainPtr<CTLineRef> subtitleLine;
+    FloatRect subtitleTextRect;
 
 private:
-    void layOutLabel(const RenderAttachment&);
-    void addLine(CTLineRef, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment&);
+    void layOutTitle(const RenderAttachment&);
+    void layOutSubtitle(const RenderAttachment&);
+
+    void addTitleLine(CTLineRef, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment&);
 };
 
-static NSColor *labelTextColorForAttachment(const RenderAttachment& attachment)
+static NSColor *titleTextColorForAttachment(const RenderAttachment& attachment)
 {
     if (attachment.isSelected()) {
         if (attachment.frame().selection().isFocusedAndActive())
             return [NSColor alternateSelectedControlTextColor];    
-        return (NSColor *)cachedCGColor(attachmentLabelInactiveTextColor(), ColorSpaceDeviceRGB);
+        return (NSColor *)cachedCGColor(attachmentTitleInactiveTextColor(), ColorSpaceDeviceRGB);
     }
 
     return [NSColor blackColor];
 }
 
-void AttachmentLayout::addLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment& attachment)
+void AttachmentLayout::addTitleLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment& attachment)
 {
     CGRect lineBounds = CTLineGetBoundsWithOptions(line, 0);
     CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
@@ -2146,14 +2152,14 @@ void AttachmentLayout::addLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint>
     labelLine.origin = FloatPoint(xOffset, yOffset + lineHeight - origins.last().y);
     labelLine.line = line;
     labelLine.backgroundRect = FloatRect(xOffset, yOffset, lineWidthIgnoringTrailingWhitespace, lineHeight);
-    labelLine.backgroundRect.inflateX(attachmentLabelBackgroundPadding);
+    labelLine.backgroundRect.inflateX(attachmentTitleBackgroundPadding);
     labelLine.backgroundRect = encloseRectToDevicePixels(labelLine.backgroundRect, attachment.document().deviceScaleFactor());
 
     // If the text rects are close in size, the curved enclosing background won't
     // look right, so make them the same exact size.
     if (!lines.isEmpty()) {
         float previousBackgroundRectWidth = lines.last().backgroundRect.width();
-        if (fabs(labelLine.backgroundRect.width() - previousBackgroundRectWidth) < attachmentLabelBackgroundRadius * 4) {
+        if (fabs(labelLine.backgroundRect.width() - previousBackgroundRectWidth) < attachmentTitleBackgroundRadius * 4) {
             float newBackgroundRectWidth = std::max(previousBackgroundRectWidth, labelLine.backgroundRect.width());
             labelLine.backgroundRect.inflateX((newBackgroundRectWidth - labelLine.backgroundRect.width()) / 2);
             lines.last().backgroundRect.inflateX((newBackgroundRectWidth - previousBackgroundRectWidth) / 2);
@@ -2163,45 +2169,51 @@ void AttachmentLayout::addLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint>
     lines.append(labelLine);
 }
 
-void AttachmentLayout::layOutLabel(const RenderAttachment& attachment)
+void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 {
-    File* file = attachment.attachmentElement().file();
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontSystemFontType, attachmentTitleFontSize, nullptr));
+    baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToTitleMargin + CTFontGetAscent(font.get()));
 
-    labelFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontSystemFontType, attachmentLabelFontSize, nullptr));
-    String filename = file ? file->name() : String();
+    File* file = attachment.attachmentElement().file();
+    if (!file)
+        return;
+    String filename = file->name();
+    if (filename.isEmpty())
+        return;
+
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)labelFont.get(),
-        (id)kCTForegroundColorAttributeName: labelTextColorForAttachment(attachment)
+        (id)kCTFontAttributeName: (id)font.get(),
+        (id)kCTForegroundColorAttributeName: titleTextColorForAttachment(attachment)
     };
     RetainPtr<NSAttributedString> attributedFilename = adoptNS([[NSAttributedString alloc] initWithString:filename attributes:textAttributes]);
-    RetainPtr<CTFramesetterRef> labelFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedFilename.get()));
+    RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedFilename.get()));
 
     CFRange fitRange;
-    CGSize labelTextSize = CTFramesetterSuggestFrameSizeWithConstraints(labelFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(attachmentLabelMaximumWidth, CGFLOAT_MAX), &fitRange);
+    CGSize titleTextSize = CTFramesetterSuggestFrameSizeWithConstraints(titleFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(attachmentTitleMaximumWidth, CGFLOAT_MAX), &fitRange);
 
-    RetainPtr<CGPathRef> labelPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, labelTextSize.width, labelTextSize.height), nullptr));
-    RetainPtr<CTFrameRef> labelFrame = adoptCF(CTFramesetterCreateFrame(labelFramesetter.get(), fitRange, labelPath.get(), nullptr));
+    RetainPtr<CGPathRef> titlePath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, titleTextSize.width, titleTextSize.height), nullptr));
+    RetainPtr<CTFrameRef> titleFrame = adoptCF(CTFramesetterCreateFrame(titleFramesetter.get(), fitRange, titlePath.get(), nullptr));
 
-    CFArrayRef ctLines = CTFrameGetLines(labelFrame.get());
+    CFArrayRef ctLines = CTFrameGetLines(titleFrame.get());
     CFIndex lineCount = CFArrayGetCount(ctLines);
     if (!lineCount)
         return;
 
     Vector<CGPoint> origins(lineCount);
-    CTFrameGetLineOrigins(labelFrame.get(), CFRangeMake(0, 0), origins.data());
+    CTFrameGetLineOrigins(titleFrame.get(), CFRangeMake(0, 0), origins.data());
 
-    // Lay out and record the first (attachmentLabelMaximumLineCount - 1) lines.
+    // Lay out and record the first (attachmentTitleMaximumLineCount - 1) lines.
     CFIndex lineIndex = 0;
-    CGFloat yOffset = attachmentIconBackgroundSize + attachmentIconToLabelMargin;
-    for (; lineIndex < std::min(attachmentLabelMaximumLineCount - 1, lineCount); ++lineIndex) {
+    CGFloat yOffset = attachmentIconBackgroundSize + attachmentIconToTitleMargin;
+    for (; lineIndex < std::min(attachmentTitleMaximumLineCount - 1, lineCount); ++lineIndex) {
         CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-        addLine(line, yOffset, origins, lineIndex, attachment);
+        addTitleLine(line, yOffset, origins, lineIndex, attachment);
     }
 
     if (lineIndex == lineCount)
         return;
 
-    // We had text that didn't fit in the first (attachmentLabelMaximumLineCount - 1) lines.
+    // We had text that didn't fit in the first (attachmentTitleMaximumLineCount - 1) lines.
     // Combine it into one last line, and center-truncate it.
     CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
     CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
@@ -2210,19 +2222,48 @@ void AttachmentLayout::layOutLabel(const RenderAttachment& attachment)
     RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
     RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
     RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), attachmentLabelMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
+    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), attachmentTitleMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
 
     if (!truncatedLine)
         truncatedLine = remainingLine;
 
-    addLine(truncatedLine.get(), yOffset, origins, lineIndex, attachment);
+    addTitleLine(truncatedLine.get(), yOffset, origins, lineIndex, attachment);
+}
+
+void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
+{
+    String subtitleText = attachment.attachmentElement().fastGetAttribute(subtitleAttr);
+
+    if (subtitleText.isEmpty())
+        return;
+
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontSystemFontType, attachmentSubtitleFontSize, nullptr));
+    NSDictionary *textAttributes = @{
+        (id)kCTFontAttributeName: (id)font.get(),
+        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(attachmentSubtitleTextColor(), ColorSpaceDeviceRGB)
+    };
+    RetainPtr<NSAttributedString> attributedSubtitleText = adoptNS([[NSAttributedString alloc] initWithString:subtitleText attributes:textAttributes]);
+    subtitleLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedSubtitleText.get()));
+
+    CGRect lineBounds = CTLineGetBoundsWithOptions(subtitleLine.get(), 0);
+
+    // Center the line relative to the icon.
+    CGFloat xOffset = (attachmentIconBackgroundSize / 2) - (lineBounds.size.width / 2);
+    CGFloat yOffset = 0;
+
+    if (!lines.isEmpty())
+        yOffset = lines.last().backgroundRect.maxY();
+    else
+        yOffset = attachmentIconBackgroundSize + attachmentIconToTitleMargin;
+
+    LabelLine labelLine;
+    subtitleTextRect = FloatRect(xOffset, yOffset, lineBounds.size.width, lineBounds.size.height);
 }
 
 AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
 {
-    layOutLabel(attachment);
-
-    baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToLabelMargin + CTFontGetAscent(labelFont.get()));
+    layOutTitle(attachment);
+    layOutSubtitle(attachment);
 
     iconBackgroundRect = FloatRect(0, 0, attachmentIconBackgroundSize, attachmentIconBackgroundSize);
 
@@ -2233,6 +2274,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
     attachmentRect = iconBackgroundRect;
     for (const auto& line : lines)
         attachmentRect.unite(line.backgroundRect);
+    attachmentRect.unite(subtitleTextRect);
     attachmentRect.inflate(attachmentMargin);
     attachmentRect = encloseRectToDevicePixels(attachmentRect, attachment.document().deviceScaleFactor());
 }
@@ -2296,10 +2338,10 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     context.drawNativeImage(icon.get(), iconSizeInPoints, ColorSpaceDeviceRGB, layout.iconRect, FloatRect(FloatPoint(), iconSizeInPoints));
 }
 
-static void addAttachmentLabelBackgroundRightCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect)
+static void addAttachmentTitleBackgroundRightCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect)
 {
-    FloatSize horizontalRadius(attachmentLabelBackgroundRadius, 0);
-    FloatSize verticalRadius(0, attachmentLabelBackgroundRadius);
+    FloatSize horizontalRadius(attachmentTitleBackgroundRadius, 0);
+    FloatSize verticalRadius(0, attachmentTitleBackgroundRadius);
 
     if (!fromRect) {
         // For the first (top) rect:
@@ -2310,7 +2352,7 @@ static void addAttachmentLabelBackgroundRightCorner(Path& path, const FloatRect*
         path.addLineTo(toRect->maxXMinYCorner() - horizontalRadius);
 
         // Arc the top corner.
-        path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentLabelBackgroundRadius);
+        path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentTitleBackgroundRadius);
 
         // Down the right.
         path.addLineTo(toRect->maxXMaxYCorner() - verticalRadius);
@@ -2318,7 +2360,7 @@ static void addAttachmentLabelBackgroundRightCorner(Path& path, const FloatRect*
         // For the last rect:
 
         // Arc the bottom corner.
-        path.addArcTo(fromRect->maxXMaxYCorner(), fromRect->maxXMaxYCorner() - horizontalRadius, attachmentLabelBackgroundRadius);
+        path.addArcTo(fromRect->maxXMaxYCorner(), fromRect->maxXMaxYCorner() - horizontalRadius, attachmentTitleBackgroundRadius);
     } else {
         // For middle rects:
 
@@ -2331,22 +2373,22 @@ static void addAttachmentLabelBackgroundRightCorner(Path& path, const FloatRect*
 
         if (widthDifference < 0) {
             // Arc the outer corner.
-            path.addArcTo(FloatPoint(fromRect->maxX(), toRect->y()), FloatPoint(fromRect->maxX(), toRect->y()) - horizontalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(FloatPoint(fromRect->maxX(), toRect->y()), FloatPoint(fromRect->maxX(), toRect->y()) - horizontalRadius, attachmentTitleBackgroundRadius);
 
             // Across the bottom, towards the left.
             path.addLineTo(toRect->maxXMinYCorner() + horizontalRadius);
 
             // Arc the inner corner.
-            path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentTitleBackgroundRadius);
         } else {
             // Arc the inner corner.
-            path.addArcTo(FloatPoint(fromRect->maxX(), toRect->y()), FloatPoint(fromRect->maxX(), toRect->y()) + horizontalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(FloatPoint(fromRect->maxX(), toRect->y()), FloatPoint(fromRect->maxX(), toRect->y()) + horizontalRadius, attachmentTitleBackgroundRadius);
 
             // Across the bottom, towards the right.
             path.addLineTo(toRect->maxXMinYCorner() - horizontalRadius);
 
             // Arc the outer corner.
-            path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, attachmentTitleBackgroundRadius);
         }
 
         // Down the right.
@@ -2354,10 +2396,10 @@ static void addAttachmentLabelBackgroundRightCorner(Path& path, const FloatRect*
     }
 }
 
-static void addAttachmentLabelBackgroundLeftCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect)
+static void addAttachmentTitleBackgroundLeftCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect)
 {
-    FloatSize horizontalRadius(attachmentLabelBackgroundRadius, 0);
-    FloatSize verticalRadius(0, attachmentLabelBackgroundRadius);
+    FloatSize horizontalRadius(attachmentTitleBackgroundRadius, 0);
+    FloatSize verticalRadius(0, attachmentTitleBackgroundRadius);
 
     if (!fromRect) {
         // For the first (bottom) rect:
@@ -2366,7 +2408,7 @@ static void addAttachmentLabelBackgroundLeftCorner(Path& path, const FloatRect* 
         path.addLineTo(toRect->minXMaxYCorner() + horizontalRadius);
 
         // Arc the bottom corner.
-        path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentLabelBackgroundRadius);
+        path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentTitleBackgroundRadius);
 
         // Up the left.
         path.addLineTo(toRect->minXMinYCorner() + verticalRadius);
@@ -2374,7 +2416,7 @@ static void addAttachmentLabelBackgroundLeftCorner(Path& path, const FloatRect* 
         // For the last (top) rect:
 
         // Arc the top corner.
-        path.addArcTo(fromRect->minXMinYCorner(), fromRect->minXMinYCorner() + horizontalRadius, attachmentLabelBackgroundRadius);
+        path.addArcTo(fromRect->minXMinYCorner(), fromRect->minXMinYCorner() + horizontalRadius, attachmentTitleBackgroundRadius);
     } else {
         // For middle rects:
         float widthDifference = toRect->width() - fromRect->width();
@@ -2386,22 +2428,22 @@ static void addAttachmentLabelBackgroundLeftCorner(Path& path, const FloatRect* 
 
         if (widthDifference < 0) {
             // Arc the inner corner.
-            path.addArcTo(FloatPoint(fromRect->x(), toRect->maxY()), FloatPoint(fromRect->x(), toRect->maxY()) + horizontalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(FloatPoint(fromRect->x(), toRect->maxY()), FloatPoint(fromRect->x(), toRect->maxY()) + horizontalRadius, attachmentTitleBackgroundRadius);
 
             // Across the bottom, towards the right.
             path.addLineTo(toRect->minXMaxYCorner() - horizontalRadius);
 
             // Arc the outer corner.
-            path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentTitleBackgroundRadius);
         } else {
             // Arc the outer corner.
-            path.addArcTo(FloatPoint(fromRect->x(), toRect->maxY()), FloatPoint(fromRect->x(), toRect->maxY()) - horizontalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(FloatPoint(fromRect->x(), toRect->maxY()), FloatPoint(fromRect->x(), toRect->maxY()) - horizontalRadius, attachmentTitleBackgroundRadius);
 
             // Across the bottom, towards the left.
             path.addLineTo(toRect->minXMaxYCorner() + horizontalRadius);
 
             // Arc the inner corner.
-            path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentLabelBackgroundRadius);
+            path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, attachmentTitleBackgroundRadius);
         }
         
         // Up the right.
@@ -2409,7 +2451,7 @@ static void addAttachmentLabelBackgroundLeftCorner(Path& path, const FloatRect* 
     }
 }
 
-static void paintAttachmentLabelBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+static void paintAttachmentTitleBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     if (layout.lines.isEmpty())
         return;
@@ -2417,11 +2459,11 @@ static void paintAttachmentLabelBackground(const RenderAttachment& attachment, G
     Path backgroundPath;
 
     for (size_t i = 0; i <= layout.lines.size(); ++i)
-        addAttachmentLabelBackgroundRightCorner(backgroundPath, i ? &layout.lines[i - 1].backgroundRect : nullptr, i < layout.lines.size() ? &layout.lines[i].backgroundRect : nullptr);
+        addAttachmentTitleBackgroundRightCorner(backgroundPath, i ? &layout.lines[i - 1].backgroundRect : nullptr, i < layout.lines.size() ? &layout.lines[i].backgroundRect : nullptr);
 
     for (size_t i = 0; i <= layout.lines.size(); ++i) {
         size_t reverseIndex = layout.lines.size() - i;
-        addAttachmentLabelBackgroundLeftCorner(backgroundPath, reverseIndex < layout.lines.size() ? &layout.lines[reverseIndex].backgroundRect : nullptr, reverseIndex ? &layout.lines[reverseIndex - 1].backgroundRect : nullptr);
+        addAttachmentTitleBackgroundLeftCorner(backgroundPath, reverseIndex < layout.lines.size() ? &layout.lines[reverseIndex].backgroundRect : nullptr, reverseIndex ? &layout.lines[reverseIndex - 1].backgroundRect : nullptr);
     }
 
     backgroundPath.closeSubpath();
@@ -2430,13 +2472,13 @@ static void paintAttachmentLabelBackground(const RenderAttachment& attachment, G
     if (attachment.frame().selection().isFocusedAndActive())
         backgroundColor = convertNSColorToColor([NSColor alternateSelectedControlColor]);
     else
-        backgroundColor = attachmentLabelInactiveBackgroundColor();
+        backgroundColor = attachmentTitleInactiveBackgroundColor();
 
     context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
     context.fillPath(backgroundPath);
 }
 
-static void paintAttachmentLabel(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout) 
+static void paintAttachmentTitle(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
 {
     for (const auto& line : layout.lines) {
         GraphicsContextStateSaver saver(context);
@@ -2447,6 +2489,17 @@ static void paintAttachmentLabel(const RenderAttachment&, GraphicsContext& conte
         CGContextSetTextMatrix(context.platformContext(), CGAffineTransformIdentity);
         CTLineDraw(line.line.get(), context.platformContext());
     }
+}
+
+static void paintAttachmentSubtitle(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
+{
+    GraphicsContextStateSaver saver(context);
+
+    context.translate(toFloatSize(layout.subtitleTextRect.minXMaxYCorner()));
+    context.scale(FloatSize(1, -1));
+
+    CGContextSetTextMatrix(context.platformContext(), CGAffineTransformIdentity);
+    CTLineDraw(layout.subtitleLine.get(), context.platformContext());
 }
 
 bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
@@ -2471,8 +2524,9 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         paintAttachmentIconBackground(attachment, context, layout);
     paintAttachmentIcon(attachment, context, layout);
     if (useSelectedStyle)
-        paintAttachmentLabelBackground(attachment, context, layout);
-    paintAttachmentLabel(attachment, context, layout);
+        paintAttachmentTitleBackground(attachment, context, layout);
+    paintAttachmentTitle(attachment, context, layout);
+    paintAttachmentSubtitle(attachment, context, layout);
 
     return true;
 }

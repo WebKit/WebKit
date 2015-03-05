@@ -1,3 +1,19 @@
+2015-03-04  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> should show the file size as detail text below the icon
+        https://bugs.webkit.org/show_bug.cgi?id=142261
+        <rdar://problem/20009570>
+
+        Reviewed by Dean Jackson.
+
+        * fast/attachment/attachment-subtitle.html: Added.
+        * platform/mac/fast/attachment/attachment-subtitle-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-subtitle-expected.txt: Added.
+        Add a test of the rendering of attachment subtitles, and results for Mac.
+
+        * platform/mac-mavericks/fast/attachment/attachment-subtitle-expected.txt: Added.
+        Add Mavericks baselines.
+
 2015-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed gardening.

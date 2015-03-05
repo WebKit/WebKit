@@ -40,7 +40,7 @@ public:
 
     HTMLAttachmentElement& attachmentElement() const;
 
-    void representedFileChanged();
+    void invalidate();
 
     bool isSelected() const;
 
