@@ -419,7 +419,7 @@ static void testWebResourceMimeType(SingleResourceLoadTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/image.html").data());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
-    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "image/vnd.microsoft.icon");
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "image/x-icon");
 
     test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();

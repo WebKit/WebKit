@@ -1,5 +1,16 @@
 2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix /webkit2/WebKitWebResource/mime-type after r180927.
+
+        In r180927 we updated the libsoup version used by the jhbuild. In
+        this new version the sniffer uses image/x-icon instead of
+        image/vnd.microsoft.icon for blank.ico resource.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (testWebResourceMimeType):
+
+2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Check TLS errors as soon as they are set in the SoupMessage
         https://bugs.webkit.org/show_bug.cgi?id=142244
 
