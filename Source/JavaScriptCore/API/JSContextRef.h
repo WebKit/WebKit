@@ -48,7 +48,7 @@ extern "C" {
  synchronization is required.
 @result The created JSContextGroup.
 */
-JS_EXPORT JSContextGroupRef JSContextGroupCreate() CF_AVAILABLE(10_6, 7_0);
+JS_EXPORT JSContextGroupRef JSContextGroupCreate(void) CF_AVAILABLE(10_6, 7_0);
 
 /*!
 @function
