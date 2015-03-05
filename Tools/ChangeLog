@@ -1,3 +1,58 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        run-webkit-tests and run-perf-tests should use WebKitTestRunner by default
+        https://bugs.webkit.org/show_bug.cgi?id=142325
+
+        Reviewed by Csaba Osztrogonác.
+
+        run-webkit-tests and run-perf-tests now use WebKitTestRunner by default.
+        As a result, "--webkit-test-runner / -2" parameters are replaced by
+        "--dump-render-tree / -1" so developers can run DumpRenderTree rather
+        than WebKitTestRunner.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKit1Tests):
+        (RunWebKit1Tests.start):
+        (RunWebKit1LeakTests):
+        (RunWebKit1LeakTests.start):
+        (RunAndUploadPerfTestsWebKit1):
+        (RunAndUploadPerfTestsWebKit1.start):
+        (TestFactory):
+        (TestWebKit1LeaksFactory):
+        (TestWebKit1LeaksFactory.__init__):
+        (TestWebKit1Factory):
+        (TestWebKit1AllButJSCFactory):
+        (TestAllButJSCFactory):
+        (BuildAndPerfTestWebKit1Factory):
+        (BuildAndPerfTestWebKit1Factory.__init__):
+        (BuildAndPerfTestFactory):
+        (BuildAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestWebKit1Factory):
+        (DownloadAndPerfTestWebKit1Factory.__init__):
+        (DownloadAndPerfTestFactory):
+        (DownloadAndPerfTestFactory.__init__):
+        (RunWebKitLeakTests): Deleted.
+        (RunWebKitLeakTests.start): Deleted.
+        (RunWebKit2Tests): Deleted.
+        (RunWebKit2Tests.start): Deleted.
+        (RunAndUploadPerfTestsWebKit2): Deleted.
+        (RunAndUploadPerfTestsWebKit2.start): Deleted.
+        (TestLeaksFactory): Deleted.
+        (TestLeaksFactory.__init__): Deleted.
+        (TestWebKit2Factory): Deleted.
+        (TestWebKit2AndJSCFactory): Deleted.
+        (BuildAndPerfTestWebKit2Factory): Deleted.
+        (BuildAndPerfTestWebKit2Factory.__init__): Deleted.
+        (DownloadAndPerfTestWebKit2Factory): Deleted.
+        (DownloadAndPerfTestWebKit2Factory.__init__): Deleted.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_build_driver):
+
 2015-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r178679. rdar://problem/19448129
