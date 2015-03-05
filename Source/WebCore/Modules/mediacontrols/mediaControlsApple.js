@@ -459,9 +459,9 @@ Controller.prototype = {
 
     configureInlineControls: function()
     {
+        this.controls.panel.appendChild(this.controls.playButton);
         if (!this.isLive)
             this.controls.panel.appendChild(this.controls.rewindButton);
-        this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
         if (!this.isLive) {
             this.controls.panel.appendChild(this.controls.timelineBox);
@@ -833,6 +833,7 @@ Controller.prototype = {
         this.video.muted = !this.video.muted;
         if (this.video.muted)
             this.controls.muteButton.setAttribute('aria-label', this.UIString('Unmute'));
+        this.drawVolumeBackground();
         return true;
     },
 
@@ -1564,6 +1565,7 @@ Controller.prototype = {
             this.controls.muteButton.classList.remove(this.ClassNames.muted);
             this.controls.volume.value = this.video.volume;
         }
+        this.drawVolumeBackground();
     },
 
     isAudio: function()
