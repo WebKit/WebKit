@@ -761,6 +761,7 @@
     <ClCompile Include="..\runtime\JSSet.cpp" />
     <ClCompile Include="..\runtime\JSSetIterator.cpp" />
     <ClCompile Include="..\runtime\JSString.cpp" />
+    <ClCompile Include="..\runtime\JSStringIterator.cpp" />
     <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
@@ -814,6 +815,8 @@
     <ClCompile Include="..\runtime\StrictEvalActivation.cpp" />
     <ClCompile Include="..\runtime\StringConstructor.cpp" />
     <ClCompile Include="..\runtime\StringObject.cpp" />
+    <ClCompile Include="..\runtime\StringIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\StringIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\StringPrototype.cpp" />
     <ClCompile Include="..\runtime\StringRecursionChecker.cpp" />
     <ClCompile Include="..\runtime\Structure.cpp" />
@@ -1554,6 +1557,7 @@
     <ClInclude Include="..\runtime\JSSetIterator.h" />
     <ClInclude Include="..\runtime\JSString.h" />
     <ClInclude Include="..\runtime\JSStringBuilder.h" />
+    <ClInclude Include="..\runtime\JSStringIterator.h" />
     <ClInclude Include="..\runtime\JSStringJoiner.h" />
     <ClInclude Include="..\runtime\JSSymbolTableObject.h" />
     <ClInclude Include="..\runtime\JSType.h" />
@@ -1626,6 +1630,8 @@
     <ClInclude Include="..\runtime\StackAlignment.h" />
     <ClInclude Include="..\runtime\StrictEvalActivation.h" />
     <ClInclude Include="..\runtime\StringConstructor.h" />
+    <ClInclude Include="..\runtime\StringIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\StringIteratorPrototype.h" />
     <ClInclude Include="..\runtime\StringObject.h" />
     <ClInclude Include="..\runtime\StringPrototype.h" />
     <ClInclude Include="..\runtime\StringRecursionChecker.h" />

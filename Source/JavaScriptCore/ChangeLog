@@ -1,3 +1,52 @@
+2015-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement ES6 StringIterator
+        https://bugs.webkit.org/show_bug.cgi?id=142080
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces ES6 String Iterator.
+        It enumerates code points instead of elements in String.
+        So surrogate pairs should be handled correctly.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/StringIterator.prototype.js: Added.
+        (next):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSStringIterator.cpp: Added.
+        (JSC::JSStringIterator::finishCreation):
+        * runtime/JSStringIterator.h: Added.
+        (JSC::JSStringIterator::createStructure):
+        (JSC::JSStringIterator::create):
+        (JSC::JSStringIterator::JSStringIterator):
+        * runtime/StringIteratorConstructor.cpp: Added.
+        (JSC::StringIteratorConstructor::finishCreation):
+        * runtime/StringIteratorConstructor.h: Added.
+        (JSC::StringIteratorConstructor::create):
+        (JSC::StringIteratorConstructor::createStructure):
+        (JSC::StringIteratorConstructor::StringIteratorConstructor):
+        * runtime/StringIteratorPrototype.cpp: Added.
+        (JSC::StringIteratorPrototype::finishCreation):
+        (JSC::StringIteratorPrototype::getOwnPropertySlot):
+        (JSC::stringIteratorPrototypeIterator):
+        * runtime/StringIteratorPrototype.h: Added.
+        (JSC::StringIteratorPrototype::create):
+        (JSC::StringIteratorPrototype::createStructure):
+        (JSC::StringIteratorPrototype::StringIteratorPrototype):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncIterator):
+        * tests/stress/string-iterators.js: Added.
+        (testSurrogatePair):
+        (increment):
+        (for):
+
 2015-03-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Fix the FTL build on Aarch64 Linux after r177421

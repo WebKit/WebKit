@@ -241,6 +241,9 @@
     macro(arrayIterationKindKey) \
     macro(arrayIterationKindValue) \
     macro(arrayIterationKindKeyValue) \
+    macro(charCodeAt) \
+    macro(iteratedString) \
+    macro(stringIteratorNextIndex) \
     macro(resolve) \
     macro(reject) \
     macro(promise) \

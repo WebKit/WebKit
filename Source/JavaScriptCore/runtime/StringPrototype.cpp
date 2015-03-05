@@ -34,6 +34,7 @@
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
+#include "JSStringIterator.h"
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
@@ -87,6 +88,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState*);
 
 const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
 
@@ -140,6 +142,9 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("startsWith", stringProtoFuncStartsWith, DontEnum, 0);
     JSC_NATIVE_FUNCTION("endsWith", stringProtoFuncEndsWith, DontEnum, 0);
     JSC_NATIVE_FUNCTION("includes", stringProtoFuncIncludes, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, stringProtoFuncIterator, DontEnum, 0);
+
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->charCodeAtPrivateName, stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
 
     // The constructor will be added later, after StringConstructor has been built
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
@@ -1702,5 +1707,14 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
 
     return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
 }
-    
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+    JSString* string = thisValue.toString(exec);
+    return JSValue::encode(JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), string));
+}
+
 } // namespace JSC
