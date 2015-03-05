@@ -61,7 +61,7 @@
 
                   ],
 
-    "builders":   [ { "name": "Apple Yosemite (Leaks)", "type": "TestLeaks", "builddir": "yosemite-leaks",
+    "builders":   [ { "name": "Apple Yosemite (Leaks)", "type": "TestWebKit1Leaks", "builddir": "yosemite-leaks",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot148"]
@@ -75,12 +75,12 @@
                       "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
                       "slavenames": ["bot101", "bot105"]
                     },
-                    { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "Test", "builddir": "mavericks-debug-tests-wk1",
+                    { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "TestWebKit1", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot124", "bot108"]
                     },
-                    { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
+                    { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot144", "bot198"]
@@ -98,18 +98,18 @@
                       "triggers": ["mavericks-release-tests-wk1", "mavericks-release-tests-wk2", "mavericks-release-perf"],
                       "slavenames": ["bot301", "bot306"]
                     },
-                    { "name": "Apple Mavericks Release WK1 (Tests)", "type": "Test", "builddir": "mavericks-release-tests-wk1",
+                    { "name": "Apple Mavericks Release WK1 (Tests)", "type": "TestWebKit1", "builddir": "mavericks-release-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot199", "bot151"]
                     },
-                    { "name": "Apple Mavericks Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-release-tests-wk2",
+                    { "name": "Apple Mavericks Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mavericks-release-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot200", "bot152"]
                     },
                     {
-                      "name": "Apple Mavericks Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "mavericks-release-perf-tests",
+                      "name": "Apple Mavericks Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "mavericks-release-perf-tests",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot135"]
                     },
@@ -122,12 +122,12 @@
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot155"]
                     },
-                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-debug-tests-wk1",
+                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "yosemite-debug-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot182", "bot183"]
                     },
-                    { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-debug-tests-wk2",
+                    { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-debug-tests-wk2",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot184", "bot185"]
@@ -149,18 +149,18 @@
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot157"]
                     },
-                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-release-tests-wk1",
+                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "yosemite-release-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot190", "bot191"]
                     },
-                    { "name": "Apple Yosemite Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-release-tests-wk2",
+                    { "name": "Apple Yosemite Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-release-tests-wk2",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot192", "bot193"]
                     },
                     {
-                      "name": "Apple Yosemite Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "yosemite-release-perf-tests",
+                      "name": "Apple Yosemite Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot194"]
                     },
@@ -171,7 +171,7 @@
                       "slavenames": ["bot514"]
                     },
                     {
-                      "name": "Apple Win 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
+                      "name": "Apple Win 7 Release (Tests)", "type": "TestWebKit1", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot511", "bot501"]
                     },
@@ -182,7 +182,7 @@
                       "slavenames": ["bot516"]
                     },
                     {
-                      "name": "Apple Win 7 Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "name": "Apple Win 7 Debug (Tests)", "type": "TestWebKit1", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot507", "bot504"]
                     },
@@ -198,7 +198,7 @@
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2AndJSC", "builddir": "gtk-linux-64-release-tests",
+                      "name": "GTK Linux 64-bit Release (Tests)", "type": "Test", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-6"]
                     },
@@ -209,7 +209,7 @@
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2AndJSC", "builddir": "gtk-linux-64-debug-tests",
+                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "Test", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
                     },
@@ -219,7 +219,7 @@
                       "slavenames": ["gtk-linux-slave-5"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "gtk-linux-64-release-perf-tests",
+                      "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-8"]
                     },
@@ -246,7 +246,7 @@
                       "slavenames": ["efl-linux-szeged-slave-2"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTest", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-3"]
