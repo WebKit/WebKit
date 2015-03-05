@@ -1,3 +1,34 @@
+2015-03-05  Pawel Forysiuk  <p.forysiuk@samsung.com>
+
+        [EFL] REGRESSION (r178685): ASSERTION FAILED: !parameters.mediaKeyStorageDirectory.isEmpty()
+        https://bugs.webkit.org/show_bug.cgi?id=141154
+
+        Reviewed by Jer Noble.
+
+        Unlike GTK, EFL port enables ENABLE_ENCRYPTED_MEDIA_V2 build option by default.
+
+        For the sake of completeness WebKitTestRunner should specify temporary
+        folder for MediaKeysStorageDirecory as well as IndexedDB, LocalStorage, etc.
+
+        Default non legacy paths are set up in ProcessPoolConfiguration constructor.
+        They use WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation
+        to get data storage paths. Only Mac port has an actual implementation of it.
+        However, WebKitTestRunner overrides them in favour of unique temporary dir
+        which is taken from libraryPathForTesting().
+
+        Since WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation
+        is not implemented for EFL and GTK ports it returns an empty string.
+        All default data folders besides MediaKeys are overridden in TestRunner
+        code with unique temporary folders derived from DUMPRENDERTREE_TEMP
+        env variable.
+
+        GTK port does not enable encrypted keys by default so
+        WebMediaKeyStorageManager::initialize() code path is never triggered.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Set MediaKeysStorageDirectory for all
+        WebKit ports.
+
 2015-03-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [buildbot] Add regression test to check which builder runs which tests
