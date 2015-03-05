@@ -31,11 +31,6 @@
  * - "back,forward,list,changed", void: reports that the view's back / forward list had changed.
  * - "cancel,vibration", void: request to cancel the vibration.
  * - "contents,size,changed", Ewk_CSS_Size*: reports that contents size was changed.
- * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
- * - "download,failed", Ewk_Download_Job_Error*: reports that a download failed with the given error.
- * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.
- * - "download,request", Ewk_Download_Job*: reports that a new download has been requested. The client should set the
- *   destination path by calling ewk_download_job_destination_set() or the download will fail.
  * - "file,chooser,request", Ewk_File_Chooser_Request*: reports that a request has been made for the user to choose
  *   a file (or several) on the file system. Call ewk_file_chooser_request_ref() on the request object to process it
  *   asynchronously.
@@ -79,7 +74,6 @@
 #include "ewk_context.h"
 #include "ewk_context_menu.h"
 #include "ewk_download_job.h"
-#include "ewk_error.h"
 #include "ewk_page_group.h"
 #include "ewk_popup_menu.h"
 #include "ewk_security_origin.h"
@@ -241,17 +235,6 @@ struct Ewk_View_Smart_Data {
         Eina_Bool size:1;
         Eina_Bool position:1;
     } changed;
-};
-
-/// Creates a type name for Ewk_Download_Job_Error.
-typedef struct Ewk_Download_Job_Error Ewk_Download_Job_Error;
-
-/**
- * @brief Structure containing details about a download failure.
- */
-struct Ewk_Download_Job_Error {
-    Ewk_Download_Job *download_job; /**< download that failed */
-    Ewk_Error *error; /**< download error */
 };
 
 /// Creates a type name for Ewk_CSS_Size.

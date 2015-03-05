@@ -1,3 +1,51 @@
+2015-03-05  Lukasz Bialek  <l.bialek@samsung.com>
+
+        [EFL][WK2] Crash when "Download Linked File" from MiniBrowser context menu is clicked
+        https://bugs.webkit.org/show_bug.cgi?id=131162
+
+        Reviewed by Gyuyoung Kim.
+
+        "Download Linked File" crashes because of null-pointer exception of Download Job.
+        Due to architectural difficulties, easy fix is not possible (EwkView is needed in
+        DownloadManager to create DownloadJobs and it is only used to notify the client 
+        about download (finished, error, cancel) via smart callback using EwkView (Evas_Object).
+
+        Propose a new callbacks which are view independent and detach EFL's DownloadManager
+        from EwkView. It makes DownloadManagerEFL consistent with WKContextDownload.
+        Fix the crash and restore download functionality.
+
+        * PlatformEfl.cmake:
+        Enable newly reimplemented tests
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        Remove old callback mechanism
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_download_callbacks_set):
+        * UIProcess/API/efl/ewk_context.h:
+        Declare new callback functions and registration functions
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (EwkDownloadJob::EwkDownloadJob):
+        (EwkDownloadJob::view): Deleted.
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (EwkDownloadJob::create):
+        Remove EwkView dependency
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        Alter tests to new callback mechanism
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didStart):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        (WebKit::DownloadManagerEfl::DownloadManagerEfl):
+        (WebKit::DownloadManagerEfl::registerDownloadJob):
+        (WebKit::DownloadManagerEfl::setCallbacks):
+        * UIProcess/efl/DownloadManagerEfl.h:
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::handleDownloadRequest):
+        Add support of new callback mechanism
+
 2015-03-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Disable RC4

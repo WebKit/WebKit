@@ -507,6 +507,7 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_context_history_callbacks
     test_ewk2_cookie_manager
     test_ewk2_database_manager
+    test_ewk2_download_job
     test_ewk2_eina_shared_string
     test_ewk2_favicon_database
     test_ewk2_file_chooser_request
@@ -524,7 +525,6 @@ set(EWK2UnitTests_BINARIES
 #
 # webkit.org/b/107422: test_ewk2_auth_request
 # webkit.org/b/132980: test_ewk2_context_menu
-# webkit.org/b/132981: test_ewk2_download_job
 # webkit.org/b/141249: test_ewk2_storage_manager
 
 if (ENABLE_API_TESTS)

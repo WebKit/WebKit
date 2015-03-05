@@ -1,3 +1,17 @@
+2015-03-05  Lukasz Bialek  <l.bialek@samsung.com>
+
+        [EFL][WK2] Crash when "Download Linked File" from MiniBrowser context menu is clicked
+        https://bugs.webkit.org/show_bug.cgi?id=131162
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_download_request):
+        (on_download_finished):
+        (on_download_failed):
+        (window_create):
+        Adapt download callbacks to new callback mechanism
+
 2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix /webkit2/WebKitWebResource/mime-type after r180927.

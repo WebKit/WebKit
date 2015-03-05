@@ -488,6 +488,13 @@ void ewk_context_history_callbacks_set(Ewk_Context* ewkContext, Ewk_History_Navi
     impl->historyClient()->setCallbacks(navigate, clientRedirect, serverRedirect, titleUpdate, populateVisitedLinks, data);
 }
 
+void ewk_context_download_callbacks_set(Ewk_Context* ewkContext, Ewk_Download_Requested_Cb requested, Ewk_Download_Failed_Cb failed, Ewk_Download_Cancelled_Cb cancelled,  Ewk_Download_Finished_Cb finished, void* data)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
+
+    impl->downloadManager()->setClientCallbacks(requested, failed, cancelled, finished, data);
+}
+
 void ewk_context_visited_link_add(Ewk_Context* ewkContext, const char* visitedURL)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);

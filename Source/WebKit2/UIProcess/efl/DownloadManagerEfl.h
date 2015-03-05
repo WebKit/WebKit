@@ -26,6 +26,7 @@
 #ifndef DownloadManagerEfl_h
 #define DownloadManagerEfl_h
 
+#include "ewk_context.h"
 #include "ewk_download_job_private.h"
 #include <WebKit/WKRetainPtr.h>
 #include <wtf/HashMap.h>
@@ -33,12 +34,21 @@
 
 namespace WebKit {
 
+struct ClientDownloadCallbacks {
+    Ewk_Download_Requested_Cb m_requested;
+    Ewk_Download_Failed_Cb m_failed;
+    Ewk_Download_Cancelled_Cb m_cancelled;
+    Ewk_Download_Finished_Cb m_finished;
+    void* m_userData;
+};
+
 class DownloadManagerEfl {
 public:
     explicit DownloadManagerEfl(WKContextRef);
     ~DownloadManagerEfl();
 
-    void registerDownloadJob(WKDownloadRef, EwkView*);
+    void registerDownloadJob(WKDownloadRef);
+    void setClientCallbacks(Ewk_Download_Requested_Cb, Ewk_Download_Failed_Cb, Ewk_Download_Cancelled_Cb, Ewk_Download_Finished_Cb, void* userData);
 
 private:
     EwkDownloadJob* ewkDownloadJob(WKDownloadRef);
@@ -49,11 +59,14 @@ private:
     static void didCreateDestination(WKContextRef, WKDownloadRef, WKStringRef path, const void* clientInfo);
     static void didReceiveData(WKContextRef, WKDownloadRef, uint64_t length, const void* clientInfo);
     static void didFail(WKContextRef, WKDownloadRef, WKErrorRef, const void* clientInfo);
+    static void didStart(WKContextRef, WKDownloadRef, const void* clientInfo);
     static void didCancel(WKContextRef, WKDownloadRef, const void* clientInfo);
     static void didFinish(WKContextRef, WKDownloadRef, const void* clientInfo);
 
     WKRetainPtr<WKContextRef> m_context;
     HashMap<uint64_t, RefPtr<EwkDownloadJob> > m_downloadJobs;
+
+    ClientDownloadCallbacks m_clientCallbacks;
 };
 
 } // namespace WebKit

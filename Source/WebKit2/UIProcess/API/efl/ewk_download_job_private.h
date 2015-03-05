@@ -42,9 +42,9 @@ class EwkDownloadJob : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkDownloadJob)
 
-    static PassRefPtr<EwkDownloadJob> create(WKDownloadRef download, EwkView* viewImpl)
+    static PassRefPtr<EwkDownloadJob> create(WKDownloadRef download)
     {
-        return adoptRef(new EwkDownloadJob(download, viewImpl));
+        return adoptRef(new EwkDownloadJob(download));
     }
 
     uint64_t id() const;
@@ -71,10 +71,9 @@ public:
     uint64_t receivedDataSize() const;
 
 private:
-    EwkDownloadJob(WKDownloadRef download, EwkView* view);
+    explicit EwkDownloadJob(WKDownloadRef download);
 
     WKRetainPtr<WKDownloadRef> m_download;
-    EwkView* m_viewImpl;
     Ewk_Download_Job_State m_state;
     mutable RefPtr<EwkUrlRequest> m_request;
     RefPtr<EwkUrlResponse> m_response;

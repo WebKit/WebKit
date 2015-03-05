@@ -40,6 +40,8 @@
 #include "ewk_application_cache_manager.h"
 #include "ewk_cookie_manager.h"
 #include "ewk_database_manager.h"
+#include "ewk_download_job.h"
+#include "ewk_error.h"
 #include "ewk_favicon_database.h"
 #include "ewk_navigation_data.h"
 #include "ewk_storage_manager.h"
@@ -49,6 +51,17 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/// Creates a type name for Ewk_Download_Job_Error.
+typedef struct Ewk_Download_Job_Error Ewk_Download_Job_Error;
+
+/**
+ * @brief Structure containing details about a download failure.
+ */
+struct Ewk_Download_Job_Error {
+    Ewk_Download_Job *download_job; /**< download that failed */
+    Ewk_Error *error; /**< download error */
+};
 
 /**
  * Declare Ewk_Context as Ewk_Object.
@@ -129,6 +142,30 @@ typedef void (*Ewk_History_Server_Redirection_Cb)(const Evas_Object *view, const
  * @brief Type definition for a function that will be called back when history title is updated.
  */
 typedef void (*Ewk_History_Title_Update_Cb)(const Evas_Object *view, const char *title, const char *url, void *user_data);
+
+/**
+ * @typedef Ewk_Download_Requested_Cb Ewk_Download_Requested_Cb
+ * @brief Type definition for a function that will be called back when new download job is requested.
+ */
+typedef void (*Ewk_Download_Requested_Cb)(Ewk_Download_Job *download, void *user_data);
+
+/**
+ * @typedef Ewk_Download_Failed_Cb Ewk_Download_Failed_Cb
+ * @brief Type definition for a function that will be called back when a download job has failed.
+ */
+typedef void (*Ewk_Download_Failed_Cb)(Ewk_Download_Job_Error *error, void *user_data);
+
+/**
+ * @typedef Ewk_Download_Cancelled_Cb Ewk_Download_Cancelled_Cb
+ * @brief Type definition for a function that will be called back when a download job is cancelled.
+ */
+typedef void (*Ewk_Download_Cancelled_Cb)(Ewk_Download_Job *download, void *user_data);
+
+/**
+ * @typedef Ewk_Download_Finished_Cb Ewk_Download_Finished_Cb
+ * @brief Type definition for a function that will be called back when a download job is finished.
+ */
+typedef void (*Ewk_Download_Finished_Cb)(Ewk_Download_Job *download, void *user_data);
 
 /**
  * @typedef Ewk_Context_History_Client_Visited_Links_Populate_Cb Ewk_Context_History_Client_Visited_Links_Populate_Cb
@@ -314,6 +351,26 @@ EAPI void ewk_context_history_callbacks_set(Ewk_Context *context,
                                             Ewk_History_Title_Update_Cb title_update_func,
                                             Ewk_History_Populate_Visited_Links_Cb populate_visited_links_func,
                                             void *data);
+
+/**
+ * Sets download callbacks for the given @a context.
+ *
+ * To stop listening for download events, you may call this function with @c
+ * NULL for the callbacks.
+ *
+ * @param context context object to set download callbacks
+ * @param download_requested_func the function to call when new download is requested (may be @c NULL).
+ * @param download_failed_func the function to call when a download job has failed (may be @c NULL).
+ * @param download_cancelled_func the function to call when a download job is cancelled (may be @c NULL).
+ * @param download_finished_func the function to call when a download job is finished (may be @c NULL).
+ * @param data User data (may be @c NULL).
+ */
+EAPI void ewk_context_download_callbacks_set(Ewk_Context *context,
+                                             Ewk_Download_Requested_Cb download_requested_func,
+                                             Ewk_Download_Failed_Cb download_failed_func,
+                                             Ewk_Download_Cancelled_Cb download_cancelled_func,
+                                             Ewk_Download_Finished_Cb download_finished_func,
+                                             void* data);
 
 /**
  * Registers the given @a visited_url as visited link in @a context visited link cache.

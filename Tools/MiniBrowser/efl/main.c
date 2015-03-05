@@ -732,9 +732,8 @@ on_error(void *user_data, Evas_Object *ewk_view, void *event_info)
 }
 
 static void
-on_download_request(void *user_data, Evas_Object *ewk_view, void *event_info)
+on_download_request(Ewk_Download_Job *download, void *user_data)
 {
-    Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
     Browser_Window *window = (Browser_Window *)user_data;
 
     Eina_Strbuf *destination_path = eina_strbuf_new();
@@ -842,16 +841,17 @@ on_file_chooser_request(void *user_data, Evas_Object *ewk_view, void *event_info
 }
 
 static void
-on_download_finished(void *user_data, Evas_Object *ewk_view, void *event_info)
+on_download_finished(Ewk_Download_Job *download, void *user_data)
 {
-    Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
     INFO("Download finished: %s",  ewk_download_job_destination_get(download));
 }
 
 static void
-on_download_failed(void *user_data, Evas_Object *ewk_view, void *event_info)
+on_download_failed(Ewk_Download_Job_Error *download_error, void *user_data)
 {
-    INFO("Download failed!");
+    Ewk_Error *error = download_error->error;
+
+    INFO("Download failed! Error code: %d, Error description: %s, Error URL: %s", ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
 }
 
 static void
@@ -2257,11 +2257,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
     ewk_text_checker_continuous_spell_checking_enabled_set(spell_checking_enabled);
     ewk_settings_web_security_enabled_set(settings, web_security_enabled);
-
     evas_object_smart_callback_add(window->ewk_view, "authentication,request", on_authentication_request, window);
-    evas_object_smart_callback_add(window->ewk_view, "download,failed", on_download_failed, window);
-    evas_object_smart_callback_add(window->ewk_view, "download,finished", on_download_finished, window);
-    evas_object_smart_callback_add(window->ewk_view, "download,request", on_download_request, window);
     evas_object_smart_callback_add(window->ewk_view, "file,chooser,request", on_file_chooser_request, window);
     evas_object_smart_callback_add(window->ewk_view, "load,error", on_error, window);
     evas_object_smart_callback_add(window->ewk_view, "load,provisional,failed", on_error, window);
@@ -2426,6 +2422,9 @@ elm_main(int argc, char *argv[])
     window = window_create(NULL, 0, 0);
     if (!window)
         return quit(EINA_FALSE, "Could not create browser window.");
+
+    // Set callbacks for download events.
+    ewk_context_download_callbacks_set(context, on_download_request, on_download_failed, 0, on_download_finished, window);
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);

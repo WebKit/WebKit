@@ -96,7 +96,7 @@ public:
         eina_file_close(f);
     }
 
-    static void on_download_requested(void* userData, Evas_Object* webview, void* eventInfo)
+    static void on_download_requested(EwkObject* eventInfo, void* userData)
     {
         DownloadTestData* testData = static_cast<DownloadTestData*>(userData);
         Ewk_Download_Job* download = static_cast<Ewk_Download_Job*>(eventInfo);
@@ -120,22 +120,21 @@ public:
         EXPECT_STREQ(testData->destinationPath, ewk_download_job_destination_get(download));
     }
 
-    static void on_download_cancelled(void* userData, Evas_Object* webview, void* eventInfo)
+    static void on_download_cancelled(EwkObject*, void*)
     {
         fprintf(stderr, "Download was cancelled.\n");
         ecore_main_loop_quit();
         FAIL();
     }
 
-    static void on_download_failed(void* userData, Evas_Object* webview, void* eventInfo)
+    static void on_download_failed(Ewk_Download_Job_Error* downloadError, void* userData)
     {
-        Ewk_Download_Job_Error* downloadError = static_cast<Ewk_Download_Job_Error*>(eventInfo);
         fprintf(stderr, "Download error: %s\n", ewk_error_description_get(downloadError->error));
         ecore_main_loop_quit();
         FAIL();
     }
 
-    static void on_download_finished(void* userData, Evas_Object* webview, void* eventInfo)
+    static void on_download_finished(EwkObject* eventInfo, void* userData)
     {
         DownloadTestData* testData = static_cast<DownloadTestData*>(userData);
         Ewk_Download_Job* download = static_cast<Ewk_Download_Job*>(eventInfo);
@@ -166,10 +165,8 @@ TEST_F(EWK2DownloadJobTest, ewk_download)
     DownloadTestData userData = { fileUrl.data(), destinationPath };
     ASSERT_FALSE(fileExists(destinationPath));
 
-    evas_object_smart_callback_add(webView(), "download,request", on_download_requested, &userData);
-    evas_object_smart_callback_add(webView(), "download,cancel", on_download_cancelled, &userData);
-    evas_object_smart_callback_add(webView(), "download,failed", on_download_failed, &userData);
-    evas_object_smart_callback_add(webView(), "download,finished", on_download_finished, &userData);
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_download_callbacks_set(context, on_download_requested, on_download_failed, on_download_cancelled, on_download_finished, &userData);
 
     // Download test pdf
     ewk_view_url_set(webView(), fileUrl.data());

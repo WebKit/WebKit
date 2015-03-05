@@ -48,10 +48,6 @@ enum CallbackType {
     BackForwardListChange,
     CancelVibration,
     ContentsSizeChanged,
-    DownloadJobCancelled,
-    DownloadJobFailed,
-    DownloadJobFinished,
-    DownloadJobRequested,
     FileChooserRequest,
     FocusNotFound,
     NewFormSubmissionRequest,
@@ -176,10 +172,6 @@ DECLARE_EWK_VIEW_CALLBACK(AuthenticationRequest, "authentication,request", Ewk_A
 DECLARE_EWK_VIEW_CALLBACK(BackForwardListChange, "back,forward,list,changed", void);
 DECLARE_EWK_VIEW_CALLBACK(CancelVibration, "cancel,vibration", void);
 DECLARE_EWK_VIEW_CALLBACK(ContentsSizeChanged, "contents,size,changed", Ewk_CSS_Size*);
-DECLARE_EWK_VIEW_CALLBACK(DownloadJobCancelled, "download,cancelled", Ewk_Download_Job*);
-DECLARE_EWK_VIEW_CALLBACK(DownloadJobFailed, "download,failed", Ewk_Download_Job_Error*);
-DECLARE_EWK_VIEW_CALLBACK(DownloadJobFinished, "download,finished", Ewk_Download_Job*);
-DECLARE_EWK_VIEW_CALLBACK(DownloadJobRequested, "download,request", Ewk_Download_Job*);
 DECLARE_EWK_VIEW_CALLBACK(FileChooserRequest, "file,chooser,request", Ewk_File_Chooser_Request*);
 DECLARE_EWK_VIEW_CALLBACK(FocusNotFound, "focus,notfound", Ewk_Focus_Direction);
 DECLARE_EWK_VIEW_CALLBACK(NewFormSubmissionRequest, "form,submission,request", Ewk_Form_Submission_Request*);

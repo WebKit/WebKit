@@ -114,7 +114,7 @@ void WebViewEfl::updateTextInputState()
 void WebViewEfl::handleDownloadRequest(DownloadProxy* download)
 {
     EwkContext* context = m_ewkView->ewkContext();
-    context->downloadManager()->registerDownloadJob(toAPI(download), m_ewkView);
+    context->downloadManager()->registerDownloadJob(toAPI(download));
 }
 
 void WebViewEfl::setThemePath(const String& theme)

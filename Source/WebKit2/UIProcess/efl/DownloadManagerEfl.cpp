@@ -45,14 +45,16 @@ static inline DownloadManagerEfl* toDownloadManagerEfl(const void* clientInfo)
 
 WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* /*allowOverwrite*/, const void* clientInfo)
 {
-    EwkDownloadJob* download = toDownloadManagerEfl(clientInfo)->ewkDownloadJob(wkDownload);
+    DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
+    EwkDownloadJob* download = downloadManager->ewkDownloadJob(wkDownload);
     ASSERT(download);
 
     download->setSuggestedFileName(toImpl(filename)->string().utf8().data());
 
-    // We send the new download signal on the Ewk_View only once we have received the response
+    // We call DownloadRequested callback only once we have received the response
     // and the suggested file name.
-    download->view()->smartCallback<DownloadJobRequested>().call(download);
+    if (downloadManager->m_clientCallbacks.m_requested)
+        downloadManager->m_clientCallbacks.m_requested(download, downloadManager->m_clientCallbacks.m_userData);
 
     // DownloadSoup expects the destination to be a URL.
     String destination = ASCIILiteral("file://") + String::fromUTF8(download->destination());
@@ -82,6 +84,12 @@ void DownloadManagerEfl::didReceiveData(WKContextRef, WKDownloadRef wkDownload, 
     download->incrementReceivedData(length);
 }
 
+void DownloadManagerEfl::didStart(WKContextRef, WKDownloadRef wkDownload, const void* clientInfo)
+{
+    DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
+    downloadManager->registerDownloadJob(wkDownload);
+}
+
 void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, const void* clientInfo)
 {
     DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
@@ -91,7 +99,8 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
     auto ewkError = std::make_unique<EwkError>(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
     Ewk_Download_Job_Error downloadError = { download, ewkError.get() };
-    download->view()->smartCallback<DownloadJobFailed>().call(&downloadError);
+    if (downloadManager->m_clientCallbacks.m_failed)
+        downloadManager->m_clientCallbacks.m_failed(&downloadError, downloadManager->m_clientCallbacks.m_userData);
     downloadManager->unregisterDownloadJob(wkDownload);
 }
 
@@ -102,7 +111,8 @@ void DownloadManagerEfl::didCancel(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
-    download->view()->smartCallback<DownloadJobCancelled>().call(download);
+    if (downloadManager->m_clientCallbacks.m_cancelled)
+        downloadManager->m_clientCallbacks.m_cancelled(download, downloadManager->m_clientCallbacks.m_userData);
     downloadManager->unregisterDownloadJob(wkDownload);
 }
 
@@ -113,13 +123,16 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
-    download->view()->smartCallback<DownloadJobFinished>().call(download);
+    if (downloadManager->m_clientCallbacks.m_finished)
+        downloadManager->m_clientCallbacks.m_finished(download, downloadManager->m_clientCallbacks.m_userData);
     downloadManager->unregisterDownloadJob(wkDownload);
 }
 
 DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     : m_context(context)
 {
+    memset(&m_clientCallbacks, 0, sizeof(ClientDownloadCallbacks));
+
     WKContextDownloadClientV0 wkDownloadClient;
     memset(&wkDownloadClient, 0, sizeof(WKContextDownloadClient));
 
@@ -130,6 +143,7 @@ DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     wkDownloadClient.didCreateDestination = didCreateDestination;
     wkDownloadClient.didReceiveResponse = didReceiveResponse;
     wkDownloadClient.didReceiveData = didReceiveData;
+    wkDownloadClient.didStart = didStart;
     wkDownloadClient.didFail = didFail;
     wkDownloadClient.didFinish = didFinish;
 
@@ -141,13 +155,13 @@ DownloadManagerEfl::~DownloadManagerEfl()
     WKContextSetDownloadClient(m_context.get(), 0);
 }
 
-void DownloadManagerEfl::registerDownloadJob(WKDownloadRef download, EwkView* viewImpl)
+void DownloadManagerEfl::registerDownloadJob(WKDownloadRef download)
 {
     uint64_t downloadId = WKDownloadGetID(download);
     if (m_downloadJobs.contains(downloadId))
         return;
 
-    RefPtr<EwkDownloadJob> ewkDownload = EwkDownloadJob::create(download, viewImpl);
+    RefPtr<EwkDownloadJob> ewkDownload = EwkDownloadJob::create(download);
     m_downloadJobs.add(downloadId, ewkDownload);
 }
 
@@ -159,6 +173,15 @@ EwkDownloadJob* DownloadManagerEfl::ewkDownloadJob(WKDownloadRef wkDownload)
 void DownloadManagerEfl::unregisterDownloadJob(WKDownloadRef wkDownload)
 {
     m_downloadJobs.remove(WKDownloadGetID(wkDownload));
+}
+
+void DownloadManagerEfl::setClientCallbacks(Ewk_Download_Requested_Cb requested, Ewk_Download_Failed_Cb failed, Ewk_Download_Cancelled_Cb cancelled,  Ewk_Download_Finished_Cb finished, void* userData)
+{
+    m_clientCallbacks.m_requested = requested;
+    m_clientCallbacks.m_failed = failed;
+    m_clientCallbacks.m_cancelled = cancelled;
+    m_clientCallbacks.m_finished = finished;
+    m_clientCallbacks.m_userData = userData;
 }
 
 } // namespace WebKit

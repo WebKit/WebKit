@@ -36,9 +36,8 @@
 
 using namespace WebKit;
 
-EwkDownloadJob::EwkDownloadJob(WKDownloadRef download, EwkView* viewImpl)
+EwkDownloadJob::EwkDownloadJob(WKDownloadRef download)
     : m_download(download)
-    , m_viewImpl(viewImpl)
     , m_state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
     , m_startTime(-1)
     , m_endTime(-1)
@@ -52,16 +51,6 @@ EwkDownloadJob::EwkDownloadJob(WKDownloadRef download, EwkView* viewImpl)
 uint64_t EwkDownloadJob::id() const
 {
     return WKDownloadGetID(m_download.get());
-}
-
-/**
- * @internal
- * Returns the view this download is attached to.
- * The view is needed to send notification signals.
- */
-EwkView* EwkDownloadJob::view() const
-{
-    return m_viewImpl;
 }
 
 Ewk_Download_Job_State ewk_download_job_state_get(const Ewk_Download_Job* download)
