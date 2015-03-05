@@ -93,6 +93,9 @@ static Inspector::Protocol::Replay::SessionState buildInspectorObjectForSessionS
     case WebCore::SessionState::Inactive: return Inspector::Protocol::Replay::SessionState::Inactive;
     case WebCore::SessionState::Replaying: return Inspector::Protocol::Replay::SessionState::Replaying;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Replay::SessionState::Inactive;
 }
 
 static Inspector::Protocol::Replay::SegmentState buildInspectorObjectForSegmentState(WebCore::SegmentState segmentState)
@@ -103,6 +106,9 @@ static Inspector::Protocol::Replay::SegmentState buildInspectorObjectForSegmentS
     case WebCore::SegmentState::Loaded: return Inspector::Protocol::Replay::SegmentState::Loaded;
     case WebCore::SegmentState::Dispatching: return Inspector::Protocol::Replay::SegmentState::Dispatching;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Replay::SegmentState::Unloaded;
 }
 
 class SerializeInputToJSONFunctor {
