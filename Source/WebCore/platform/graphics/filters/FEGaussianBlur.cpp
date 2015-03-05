@@ -345,7 +345,7 @@ inline void standardBoxBlur(Uint8ClampedArray* src, Uint8ClampedArray* dst, unsi
         if (kernelSizeX) {
             kernelPosition(i, kernelSizeX, dxLeft, dxRight);
 #if HAVE(ARM_NEON_INTRINSICS)
-            if (!isAlphaImage())
+            if (!isAlphaImage)
                 boxBlurNEON(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height());
             else
                 boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), true, edgeMode);
@@ -358,7 +358,7 @@ inline void standardBoxBlur(Uint8ClampedArray* src, Uint8ClampedArray* dst, unsi
         if (kernelSizeY) {
             kernelPosition(i, kernelSizeY, dyLeft, dyRight);
 #if HAVE(ARM_NEON_INTRINSICS)
-            if (!isAlphaImage())
+            if (!isAlphaImage)
                 boxBlurNEON(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width());
             else
                 boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), true, edgeMode);
