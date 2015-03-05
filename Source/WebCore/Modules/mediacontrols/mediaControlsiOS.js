@@ -141,11 +141,11 @@ ControllerIOS.prototype = {
             this.controls.wirelessPlaybackStatus.setAttribute('aria-label', deviceType + ", " + deviceName);
 
             this.controls.wirelessPlaybackStatus.classList.remove(this.ClassNames.hidden);
-            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.active);
-         } else {
+            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.playing);
+        } else {
             this.controls.wirelessPlaybackStatus.classList.add(this.ClassNames.hidden);
-            this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.active);
-         }
+            this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.playing);
+        }
     },
 
     updateWirelessTargetAvailable: function() {

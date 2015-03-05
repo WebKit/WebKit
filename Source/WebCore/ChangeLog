@@ -1,5 +1,26 @@
 2015-03-05  Dean Jackson  <dino@apple.com>
 
+        Merge r180906. <rdar://problem/20058845>
+
+    2015-03-02  Dean Jackson  <dino@apple.com>
+
+            [iOS Media] Airplay button should be blue when active
+            https://bugs.webkit.org/show_bug.cgi?id=142193
+
+            Reviewed by Brent Fulgham.
+
+            Add a blue form of the Airplay button that is used
+            when we are actively displaying on another screen.
+
+            * Modules/mediacontrols/mediaControlsiOS.css:
+            (video::-webkit-media-controls-wireless-playback-picker-button):
+            (video::-webkit-media-controls-wireless-playback-picker-button:active):
+            (video::-webkit-media-controls-wireless-playback-picker-button.playing):
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.updateWirelessPlaybackStatus):
+
+2015-03-05  Dean Jackson  <dino@apple.com>
+
         Merge r181085. <rdar://problem/20058743>
 
     2015-03-04  Dean Jackson  <dino@apple.com>
