@@ -276,15 +276,13 @@ void MachineThreads::removeThreadIfFound(PlatformThread platformThread)
     }
 }
     
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& registers)
+void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters)
 {
-    void* registersBegin = &registers;
-    void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&registers + 1)));
+    void* registersBegin = &calleeSavedRegisters;
+    void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&calleeSavedRegisters + 1)));
     conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
 
-    void* stackBegin = stackCurrent;
-    void* stackEnd = wtfThreadData().stack().origin();
-    conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
+    conservativeRoots.add(stackTop, stackOrigin, jitStubRoutines, codeBlocks);
 }
 
 static inline bool suspendThread(const PlatformThread& platformThread)
@@ -614,9 +612,9 @@ static void growBuffer(size_t size, void** buffer, size_t* capacity)
     *buffer = fastMalloc(*capacity);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& currentThreadRegisters)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters)
 {
-    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent, currentThreadRegisters);
+    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackOrigin, stackTop, calleeSavedRegisters);
 
     size_t size;
     size_t capacity = 0;

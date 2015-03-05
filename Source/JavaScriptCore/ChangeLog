@@ -1,3 +1,31 @@
+2015-03-04  Andreas Kling  <akling@apple.com>
+
+        GC should compute stack bounds and dump registers at the earliest opportunity.
+        <https://webkit.org/b/142310>
+        <rdar://problem/20045624>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Heap::collect() a wrapper function around a collectImpl() where the work is actually done.
+        The wrapper function that grabs a snapshot of the current stack boundaries and register values
+        on entry, and sanitizes the stack on exit.
+
+        This is a speculative fix for what appears to be overly conservative behavior in the garbage
+        collector following r178364 which caused a measurable regression in memory usage on Membuster.
+        The theory being that we were putting pointers to dead things on the stack before scanning it,
+        and by doing that ended up marking things that we'd otherwise discover to be garbage.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectImpl):
+        * heap/Heap.h:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * heap/MachineStackMarker.h:
+
 2015-03-04  Debarshi Ray  <debarshir@gnome.org>
 
         Silence GCC's -Wstrict-prototypes
