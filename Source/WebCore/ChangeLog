@@ -1,3 +1,20 @@
+2015-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Optimize content extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=142295
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        There is no need to add duplicate sequential actions.
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::operator==):
+        Added to compare actions.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL):
+        Return early if a block action is found instead of moving to the next extension.
+
 2015-03-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181046.

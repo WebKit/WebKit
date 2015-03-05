@@ -86,7 +86,7 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
                     break;
                 actions.append(action);
                 if (action.type() == ActionType::BlockLoad)
-                    break;
+                    return actions;
             }
         }
     }

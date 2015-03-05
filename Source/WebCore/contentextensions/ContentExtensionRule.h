@@ -61,6 +61,11 @@ struct Action {
     {
         ASSERT(type != ActionType::CSSDisplayNone);
     }
+    bool operator==(const Action& other) const
+    {
+        return m_type == other.m_type
+            && m_cssSelector == other.m_cssSelector;
+    }
     static Action deserialize(const Vector<SerializedActionByte>&, unsigned location);
 
     ActionType type() const { return m_type; }

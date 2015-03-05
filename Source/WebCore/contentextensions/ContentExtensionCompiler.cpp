@@ -52,6 +52,12 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& rule = ruleList[ruleIndex];
+        
+        // Identical sequential actions should not be rewritten.
+        if (ruleIndex && rule.action() == ruleList[ruleIndex - 1].action()) {
+            actionLocations.append(actionLocations[ruleIndex - 1]);
+            continue;
+        }
         actionLocations.append(actions.size());
         
         switch (rule.action().type()) {
