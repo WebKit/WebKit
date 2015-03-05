@@ -21,17 +21,16 @@
 #ifndef Icon_h
 #define Icon_h
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #include "NativeImagePtr.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <wtf/RetainPtr.h>
 #elif PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
 OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
 typedef struct HICON__* HICON;
@@ -42,7 +41,7 @@ typedef struct _GdkPixbuf GdkPixbuf;
 namespace WebCore {
 
 class GraphicsContext;
-class IntRect;
+class FloatRect;
     
 class Icon : public RefCounted<Icon> {
 public:
@@ -50,7 +49,7 @@ public:
 
     WEBCORE_EXPORT ~Icon();
 
-    void paint(GraphicsContext*, const IntRect&);
+    void paint(GraphicsContext&, const FloatRect&);
 
 #if PLATFORM(WIN)
     static PassRefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }

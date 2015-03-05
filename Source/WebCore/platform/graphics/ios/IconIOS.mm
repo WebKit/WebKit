@@ -55,21 +55,20 @@ PassRefPtr<Icon> Icon::createIconForImage(NativeImagePtr imageRef)
     return adoptRef(new Icon(imageRef));
 }
 
-void Icon::paint(GraphicsContext* context, const IntRect& destRect)
+void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
 
     float width = CGImageGetWidth(m_cgImage.get());
     float height = CGImageGetHeight(m_cgImage.get());
     FloatSize size(width, height);
-    FloatRect srcRect(0, 0, width, height);
-    ColorSpace colorSpace = ColorSpaceDeviceRGB;
+    FloatRect srcRect(FloatPoint(), size);
 
-    context->setImageInterpolationQuality(InterpolationHigh);
-    context->drawNativeImage(m_cgImage.get(), size, colorSpace, destRect, srcRect);
+    context.setImageInterpolationQuality(InterpolationHigh);
+    context.drawNativeImage(m_cgImage.get(), size, ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 }

@@ -49,7 +49,7 @@ Icon::~Icon()
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
-        return 0;
+        return nullptr;
 
     bool useIconFromFirstFile;
     useIconFromFirstFile = filenames.size() == 1;
@@ -57,31 +57,29 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         // Don't pass relative filenames -- we don't want a result that depends on the current directory.
         // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
         if (filenames[0].isEmpty() || filenames[0][0U] != '/')
-            return 0;
+            return nullptr;
 
-        NSImage* image = [[NSWorkspace sharedWorkspace] iconForFile:filenames[0]];
+        NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:filenames[0]];
         if (!image)
-            return 0;
+            return nullptr;
 
         return adoptRef(new Icon(image));
     }
-    NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
+    NSImage *image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
-        return 0;
+        return nullptr;
 
     return adoptRef(new Icon(image));
 }
 
-void Icon::paint(GraphicsContext* context, const IntRect& rect)
+void Icon::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
-    LocalCurrentGraphicsContext localCurrentGC(context);
+    LocalCurrentGraphicsContext localCurrentGC(&context);
 
-    [m_nsImage.get() drawInRect:rect
-        fromRect:NSMakeRect(0, 0, [m_nsImage.get() size].width, [m_nsImage.get() size].height)
-        operation:NSCompositeSourceOver fraction:1.0f];
+    [m_nsImage drawInRect:rect fromRect:NSMakeRect(0, 0, [m_nsImage size].width, [m_nsImage size].height) operation:NSCompositeSourceOver fraction:1.0f];
 }
 
 }

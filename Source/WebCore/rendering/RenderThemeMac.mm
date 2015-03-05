@@ -42,10 +42,9 @@
 #import "HTMLMediaElement.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInImageElement.h"
-#import "IconServicesSPI.h"
+#import "Icon.h"
 #import "Image.h"
 #import "ImageBuffer.h"
-#import "LaunchServicesSPI.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
@@ -2322,20 +2321,13 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
 
 static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    File* file = attachment.attachmentElement().file();
-    RetainPtr<LSBindingRef> lsBinding = adoptCF(_LSBindingCreateWithURL(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:file ? file->path() : String()]));
-    if (!lsBinding)
-        return;
-
-    // FIXME: This should take transforms and page scale into account, not just deviceScaleFactor.
-    FloatSize iconSizeInPoints(attachmentIconSize, attachmentIconSize);
-    iconSizeInPoints.scale(attachment.document().deviceScaleFactor());
-
-    RetainPtr<CGImageRef> icon = adoptCF(_ISCreateCGImageFromBindingWithSizeScaleAndOptions(lsBinding.get(), iconSizeInPoints, 1, nil));
+    Vector<String> filenames;
+    if (File* file = attachment.attachmentElement().file())
+        filenames.append(file->path());
+    RefPtr<Icon> icon = Icon::createIconForFiles(filenames);
     if (!icon)
         return;
-
-    context.drawNativeImage(icon.get(), iconSizeInPoints, ColorSpaceDeviceRGB, layout.iconRect, FloatRect(FloatPoint(), iconSizeInPoints));
+    icon->paint(context, layout.iconRect);
 }
 
 static void addAttachmentTitleBackgroundRightCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect)

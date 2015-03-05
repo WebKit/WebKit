@@ -113,13 +113,13 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     return 0;
 }
 
-void Icon::paint(GraphicsContext* context, const IntRect& rect)
+void Icon::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
     // TODO: Scale/clip the image if necessary.
-    cairo_t* cr = context->platformContext()->cr();
+    cairo_t* cr = context.platformContext()->cr();
     cairo_save(cr);
     gdk_cairo_set_source_pixbuf(cr, m_icon, rect.x(), rect.y());
     cairo_paint(cr);

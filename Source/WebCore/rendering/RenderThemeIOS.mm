@@ -1054,7 +1054,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
 
     // Foreground picture frame and icon.
     paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
-    icon->paint(paintInfo.context, thumbnailRect);
+    icon->paint(*paintInfo.context, thumbnailRect);
 
     return false;
 }

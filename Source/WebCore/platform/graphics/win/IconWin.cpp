@@ -73,12 +73,12 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     return adoptRef(new Icon(hIcon));
 }
 
-void Icon::paint(GraphicsContext* context, const IntRect& r)
+void Icon::paint(GraphicsContext& context, const FloatRect& r)
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
-    LocalWindowsContext windowContext(context, r);
+    LocalWindowsContext windowContext(&context, enclosingIntRect(r));
     DrawIconEx(windowContext.hdc(), r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
 }
 

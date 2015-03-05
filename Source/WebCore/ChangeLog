@@ -1,3 +1,49 @@
+2015-03-04  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> icons are low-resolution when transformed or under page scale
+        https://bugs.webkit.org/show_bug.cgi?id=142262
+        <rdar://problem/20035480>
+
+        Reviewed by Dean Jackson.
+
+        We should use Icon::createIconForFiles, just like <input type="file"> does,
+        instead of directly talking to IconServices. This results both in less code
+        and in NSImage's multiresolution magic making the icons sharp even under
+        the influence of transforms and page scale.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/mac/IconServicesSPI.h: Removed.
+        * platform/spi/mac/LaunchServicesSPI.h: Removed.
+        Get rid of IconServicesSPI.h and LaunchServicesSPI.h.
+
+        * platform/graphics/Icon.h:
+        Include RetainPtr just once.
+        paint() should take a GraphicsContext reference (null is not an option)
+        and a FloatRect (after all, it just turns around and converts to NSRect).
+
+        * platform/graphics/ios/IconIOS.mm:
+        (WebCore::Icon::paint):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/efl/IconEfl.cpp:
+        (WebCore::Icon::paint):
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::paint):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::paint):
+        Adapt to the paint() signature changes, fix some style, etc.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+        Adapt to the paint() signature changes.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::paintAttachmentIcon):
+        Use Icon::createIconForFiles instead of IconServices.
+
 2015-03-04  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> should not appear selected when the cursor is adjacent to it
