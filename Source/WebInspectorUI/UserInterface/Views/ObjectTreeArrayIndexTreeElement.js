@@ -23,94 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This should share more code with ObjectTreePropertyTreeElement. (getters, resolved values, context menus)
-
 WebInspector.ObjectTreeArrayIndexTreeElement = function(property, propertyPath)
 {
-    console.assert(property instanceof WebInspector.PropertyDescriptor);
-    console.assert(propertyPath instanceof WebInspector.PropertyPath);
     console.assert(property.isIndexProperty(), "ArrayIndexTreeElement expects numeric property names");
 
-    this._property = property;
-    this._propertyPath = propertyPath;
+    WebInspector.ObjectTreeBaseTreeElement.call(this, property, propertyPath, property);
 
-    var classNames = ["object-tree-property", "object-tree-array-index"];
-    if (!this._property.hasValue())
-        classNames.push("accessor");
+    this.mainTitle = this._titleFragment();
+    this.addClassName("object-tree-property");
+    this.addClassName("object-tree-array-index");
 
-    WebInspector.GeneralTreeElement.call(this, classNames, this._titleFragment(), null, this._property, false);
-
-    this.small = true;
-    this.toggleOnClick = false;
-    this.selectable = false;
-    this.tooltipHandledSeparately = true;
-    this.hasChildren = false;
+    if (!this.property.hasValue())
+        this.addClassName("accessor");
 };
 
 WebInspector.ObjectTreeArrayIndexTreeElement.prototype = {
     constructor: WebInspector.ObjectTreeArrayIndexTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+    __proto__: WebInspector.ObjectTreeBaseTreeElement.prototype,
 
-    // Public
+    // Protected
 
-    get property()
-    {
-        return this._property;
-    },
-
-    // Private
-
-    _resolvedValue: function()
-    {
-        if (this._getterValue)
-            return this._getterValue;
-        if (this._property.hasValue())
-            return this._property.value;
-        return null;
-    },
-
-    _propertyPathType: function()
-    {
-        if (this._getterValue || this._property.hasValue())
-            return WebInspector.PropertyPath.Type.Value;
-        if (this._property.hasGetter())
-            return WebInspector.PropertyPath.Type.Getter;
-        if (this._property.hasSetter())
-            return WebInspector.PropertyPath.Type.Setter;
-        return WebInspector.PropertyPath.Type.Value;
-    },
-
-    _resolvedValuePropertyPath: function()
-    {
-        if (this._getterValue)
-            return this._propertyPath.appendPropertyDescriptor(this._getterValue, this._property, WebInspector.PropertyPath.Type.Value);
-        if (this._property.hasValue())
-            return this._propertyPath.appendPropertyDescriptor(this._property.value, this._property, WebInspector.PropertyPath.Type.Value);
-        return null;
-    },
-
-    _thisPropertyPath: function()
-    {
-        return this._propertyPath.appendPropertyDescriptor(null, this._property, this._propertyPathType());
-    },
-
-    _propertyPathString: function(propertyPath)
-    {
-        if (propertyPath.isFullPathImpossible())
-            return WebInspector.UIString("Unable to determine path to property from root");
-
-        return propertyPath.displayPath(this._propertyPathType());
-    },
-
-    _updateTitle: function()
+    invokedGetter: function()
     {
         this.mainTitle = this._titleFragment();
 
-        if (this._getterValue)
-            this.removeClassName("accessor");
-
-        this._updateHasChildren();
+        this.removeClassName("accessor");
     },
+
+    // Private
 
     _titleFragment: function()
     {
@@ -119,56 +59,28 @@ WebInspector.ObjectTreeArrayIndexTreeElement.prototype = {
         // Array index name.
         var nameElement = container.appendChild(document.createElement("span"));
         nameElement.className = "index-name";
-        nameElement.textContent = this._property.name;
-        nameElement.title = this._propertyPathString(this._thisPropertyPath());
+        nameElement.textContent = this.property.name;
+        nameElement.title = this.propertyPathString(this.thisPropertyPath());
 
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";
 
-        var resolvedValue = this._resolvedValue();
+        var resolvedValue = this.resolvedValue();
         if (resolvedValue)
-            valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(resolvedValue, this._resolvedValuePropertyPath()));
+            valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(resolvedValue, this.resolvedValuePropertyPath()));
         else {
-            if (this._property.hasGetter())
-                container.appendChild(this._createInteractiveGetterElement());
-            if (!this._property.hasSetter())
-                container.appendChild(this._createReadOnlyIconElement());
+            if (this.property.hasGetter())
+                container.appendChild(this.createInteractiveGetterElement());
+            if (!this.property.hasSetter())
+                container.appendChild(this.createReadOnlyIconElement());
             // FIXME: What if just a setter?
         }
 
         valueElement.classList.add("value");
-        if (this._property.wasThrown || this._getterHadError)
+        if (this.hadError())
             valueElement.classList.add("error");
 
         return container;
-    },
-
-    _createInteractiveGetterElement: function()
-    {
-        var getterElement = document.createElement("img");
-        getterElement.className = "getter";
-        getterElement.title = WebInspector.UIString("Invoke getter");
-
-        getterElement.addEventListener("click", function(event) {
-            event.stopPropagation();
-            var lastNonPrototypeObject = this._propertyPath.lastNonPrototypeObject;
-            var getterObject = this._property.get;
-            lastNonPrototypeObject.invokeGetter(getterObject, function(error, result, wasThrown) {
-                this._getterHadError = !!(error || wasThrown);
-                this._getterValue = result;
-                this._updateTitle();
-            }.bind(this));
-        }.bind(this));
-
-        return getterElement;
-    },
-
-    _createReadOnlyIconElement: function()
-    {
-        var readOnlyElement = document.createElement("img");
-        readOnlyElement.className = "read-only";
-        readOnlyElement.title = WebInspector.UIString("Read only");
-        return readOnlyElement;
-    },
+    }
 };

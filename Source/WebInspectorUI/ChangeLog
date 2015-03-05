@@ -1,3 +1,84 @@
+2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add ObjectTreeBaseTreeElement to share functionality
+        https://bugs.webkit.org/show_bug.cgi?id=142323
+
+        Reviewed by Timothy Hatcher.
+
+        By making this change:
+
+          - Share lots of duplicated code.
+          - Array / Set / Map tree elements get context menu support
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js: Added.
+        (WebInspector.ObjectTreeBaseTreeElement):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.get property):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.get propertyPath):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.oncontextmenu):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.resolvedValue):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.resolvedValuePropertyPath):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.thisPropertyPath):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.hadError):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.propertyPathType):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.propertyPathString):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createInteractiveGetterElement):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.createReadOnlyIconElement):
+        New file, copying most of the code from PropertyTreeElement so it can be shared.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        (WebInspector.ObjectTreeArrayIndexTreeElement):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype.invokedGetter):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype.get property): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._resolvedValue): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._propertyPathType): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._resolvedValuePropertyPath): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._thisPropertyPath): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._propertyPathString): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._updateTitle): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._createInteractiveGetterElement.): Deleted.
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._createReadOnlyIconElement): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype.invokedGetter):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateHasChildren):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateTooltips):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitlePrototype):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitlePropertyStyle):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitleAPIStyle):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._alwaysDisplayAsProperty):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateChildren):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateChildrenInternal):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateEntries):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateProperties):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype.get property): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype.oncontextmenu): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._resolvedValue): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._propertyPathType): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._resolvedValuePropertyPath): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._thisPropertyPath): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateTitleAndIcon): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createInteractiveGetterElement.): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createReadOnlyIconElement): Deleted.
+        (WebInspector.ObjectTreePropertyTreeElement.prototype): Deleted.
+        Subclass ObjectTreeBaseTreeElement and eliminate the code now
+        automatically handled by the base class.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        (WebInspector.ObjectTreeMapEntryTreeElement):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype.resolvedValue):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype._propertyPathString): Deleted.
+        * UserInterface/Views/ObjectTreeSetIndexTreeElement.js:
+        (WebInspector.ObjectTreeSetIndexTreeElement):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype.resolvedValue):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._resolvedValuePropertyPath): Deleted.
+        Override resolved value since these are not about PropertyDescriptors.
+        This will make context menus work automatically.
+
 2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve display of previews with overflow

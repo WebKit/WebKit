@@ -26,24 +26,20 @@
 WebInspector.ObjectTreeMapEntryTreeElement = function(object, propertyPath)
 {
     console.assert(object instanceof WebInspector.RemoteObject);
-    console.assert(propertyPath instanceof WebInspector.PropertyPath);
 
     this._object = object;
-    this._propertyPath = propertyPath;
 
     // Treat the same as an array-index just with different strings and widths.
-    WebInspector.GeneralTreeElement.call(this, ["object-tree-array-index", "object-tree-map-entry"], this._titleFragment(), null, this._object, false);
+    WebInspector.ObjectTreeBaseTreeElement.call(this, this._object, propertyPath);
 
-    this.small = true;
-    this.toggleOnClick = false;
-    this.selectable = false;
-    this.tooltipHandledSeparately = true;
-    this.hasChildren = false;
+    this.mainTitle = this._titleFragment();
+    this.addClassName("object-tree-array-index");
+    this.addClassName("object-tree-map-entry");
 };
 
 WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
     constructor: WebInspector.ObjectTreeMapEntryTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+    __proto__: WebInspector.ObjectTreeBaseTreeElement.prototype,
 
     // Public
 
@@ -52,15 +48,14 @@ WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
         return this._object;
     },
 
-    // Private
+    // Protected
 
-    _propertyPathString: function(propertyPath)
+    resolvedValue: function()
     {
-        if (propertyPath.isFullPathImpossible())
-            return WebInspector.UIString("Unable to determine path to property from root");
-
-        return propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
+        return this._object;
     },
+
+    // Private
 
     _titleFragment: function()
     {
@@ -72,7 +67,7 @@ WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
         var nameElement = container.appendChild(document.createElement("span"));
         nameElement.className = "index-name";
         nameElement.textContent = this.displayPropertyName();
-        nameElement.title = this._propertyPathString(propertyPath);
+        nameElement.title = this.propertyPathString(propertyPath);
 
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
@@ -88,7 +83,7 @@ WebInspector.ObjectTreeMapKeyTreeElement = function(object, propertyPath)
 {
     WebInspector.ObjectTreeMapEntryTreeElement.call(this, object, propertyPath);
     this.addClassName("key");
-}
+};
 
 WebInspector.ObjectTreeMapKeyTreeElement.prototype = {
     constructor: WebInspector.ObjectTreeMapKeyTreeElement,
@@ -113,7 +108,7 @@ WebInspector.ObjectTreeMapValueTreeElement = function(object, propertyPath, key)
     this._key = key;
     WebInspector.ObjectTreeMapEntryTreeElement.call(this, object, propertyPath);
     this.addClassName("value");
-}
+};
 
 WebInspector.ObjectTreeMapValueTreeElement.prototype = {
     constructor: WebInspector.ObjectTreeMapValueTreeElement,

@@ -28,21 +28,17 @@ WebInspector.ObjectTreeSetIndexTreeElement = function(object, propertyPath)
     console.assert(object instanceof WebInspector.RemoteObject);
 
     this._object = object;
-    this._propertyPath = propertyPath;
 
-    // Treat the same as an array-index just with a different character.
-    WebInspector.GeneralTreeElement.call(this, ["object-tree-array-index"], this._titleFragment(), null, this._object, false);
+    // Treat the same as an array-index just with different strings and widths.
+    WebInspector.ObjectTreeBaseTreeElement.call(this, this._object, propertyPath);
 
-    this.small = true;
-    this.toggleOnClick = false;
-    this.selectable = false;
-    this.tooltipHandledSeparately = true;
-    this.hasChildren = false;
+    this.mainTitle = this._titleFragment();
+    this.addClassName("object-tree-array-index");
 };
 
 WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
     constructor: WebInspector.ObjectTreeSetIndexTreeElement,
-    __proto__: WebInspector.GeneralTreeElement.prototype,
+    __proto__: WebInspector.ObjectTreeBaseTreeElement.prototype,
 
     // Public
 
@@ -51,16 +47,20 @@ WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
         return this._object;
     },
 
-    // Private
+    // Protected
 
-    _resolvedValuePropertyPath: function()
+    resolvedValue: function()
     {
-        return this._propertyPath.appendSetIndex(this._object);
+        return this._object;
     },
+
+    // Private
 
     _titleFragment: function()
     {
         var container = document.createDocumentFragment();
+
+        var propertyPath = this.propertyPath.appendSetIndex(this._object);
 
         // Set bullet.
         var nameElement = container.appendChild(document.createElement("span"));
@@ -71,7 +71,7 @@ WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";
-        valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(this._object, this._resolvedValuePropertyPath()));
+        valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(this._object, propertyPath));
 
         return container;
     }
