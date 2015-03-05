@@ -1,3 +1,15 @@
+2015-03-05  Anders Carlsson  <andersca@apple.com>
+
+        WKWebView Encoder for remote object communication does not implement encodeInt32:forKey:
+        https://bugs.webkit.org/show_bug.cgi?id=142356
+        rdar://problem/20058952
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder encodeInt32:forKey:]):
+        (-[WKRemoteObjectDecoder decodeInt32ForKey:]):
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         NetworkCache efficacy logging is using too much CPU
