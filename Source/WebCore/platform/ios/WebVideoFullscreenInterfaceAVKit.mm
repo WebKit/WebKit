@@ -65,8 +65,6 @@ SOFT_LINK_CLASS(UIKit, UIView)
 SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
 
-#define kCMTimeIndefinite getkCMTimeIndefinite()
-
 @class WebAVMediaSelectionOption;
 
 @interface WebAVPlayerController : NSObject <AVPlayerViewControllerDelegate>

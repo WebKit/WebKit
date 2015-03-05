@@ -1,3 +1,15 @@
+2015-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build with newer clang due to duplicate macro definition
+
+        Fallout from:
+
+        Switch remaining CoreMedia soft-linking in WebCore over to CoreMediaSoftLink.{cpp,h}
+        <http://webkit.org/b/141870>
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        Remove duplicate kCMTimeIndefinite macro.
+
 2015-03-04  Roger Fong  <roger_fong@apple.com>
 
         Update inline media control icons for OSX.
