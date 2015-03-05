@@ -121,14 +121,13 @@ class DeprecatedPort(object):
 class MacPort(DeprecatedPort):
     port_flag_name = "mac"
 
+    def run_webkit_tests_command(self):
+        command = super(MacPort, self).run_webkit_tests_command()
+        command.append("--dump-render-tree")
+        return command
 
 class MacWK2Port(DeprecatedPort):
     port_flag_name = "mac-wk2"
-
-    def run_webkit_tests_command(self):
-        command = super(MacWK2Port, self).run_webkit_tests_command()
-        command.append("-2")
-        return command
 
 
 class WinPort(DeprecatedPort):
@@ -136,6 +135,11 @@ class WinPort(DeprecatedPort):
 
     def run_bindings_tests_command(self):
         return None
+
+    def run_webkit_tests_command(self):
+        command = super(WinPort, self).run_webkit_tests_command()
+        command.append("--dump-render-tree")
+        return command
 
 
 class GtkWK2Port(DeprecatedPort):
@@ -152,7 +156,6 @@ class GtkWK2Port(DeprecatedPort):
     def run_webkit_tests_command(self):
         command = super(GtkWK2Port, self).run_webkit_tests_command()
         command.append("--gtk")
-        command.append("-2")
         return command
 
 
