@@ -62,6 +62,23 @@ static dispatch_qos_class_t dispatchQOSClass(WorkQueue::QOS qos)
         return QOS_CLASS_BACKGROUND;
     }
 }
+#else
+static dispatch_queue_t targetQueueForQOSClass(WorkQueue::QOS qos)
+{
+    switch (qos) {
+    case WorkQueue::QOS::UserInteractive:
+    case WorkQueue::QOS::UserInitiated:
+        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    case WorkQueue::QOS::Utility:
+        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+    case WorkQueue::QOS::Background:
+        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    case WorkQueue::QOS::Default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    ASSERT_NOT_REACHED();
+}
 #endif
 
 void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
@@ -73,6 +90,10 @@ void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
     UNUSED_PARAM(qos);
 #endif
     m_dispatchQueue = dispatch_queue_create(name, attr);
+#if !HAVE(QOS_CLASSES)
+    if (qos != WorkQueue::QOS::Default)
+        dispatch_set_target_queue(m_dispatchQueue, targetQueueForQOSClass(qos));
+#endif
     dispatch_set_context(m_dispatchQueue, this);
 }
 

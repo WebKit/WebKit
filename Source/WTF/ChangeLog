@@ -1,3 +1,19 @@
+2015-03-05  Antti Koivisto  <antti@apple.com>
+
+        Support WorkQueue QOS classes on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=142328
+
+        Reviewed by Anders Carlsson.
+
+        "The priority of a dispatch queue is inherited from its target queue.  In order to
+        change the priority of a queue created with dispatch_queue_create(), use the
+        dispatch_get_global_queue() function to obtain a target queue of the desired prior-
+        ity."
+
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::targetQueueForQOSClass):
+        (WTF::WorkQueue::platformInitialize):
+
 2015-03-03  Anders Carlsson  <andersca@apple.com>
 
         Remove unused compression code
