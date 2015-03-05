@@ -54,6 +54,10 @@ PASS '1e+100 bar'.startsWith(1e+100) is true
 PASS '1e100 bar'.startsWith(1e100) is false
 PASS 'フーバー'.startsWith('フー') is true
 PASS 'フーバー'.startsWith('バー') is false
+PASS 'フーバー'.startsWith('abc') is false
+PASS 'フーバー'.startsWith('abc', 1) is false
+PASS 'foo bar'.startsWith('フー') is false
+PASS 'foo bar'.startsWith('フー', 1) is false
 PASS 'foo bar'.endsWith('bar') is true
 PASS 'foo bar'.endsWith('ba', 6) is true
 PASS 'foo bar'.endsWith(' ba', 6) is true
@@ -80,6 +84,10 @@ PASS 'foo 1e+100'.endsWith(1e+100) is true
 PASS 'foo 1e100'.endsWith(1e100) is false
 PASS 'フーバー'.endsWith('バー') is true
 PASS 'フーバー'.endsWith('フー') is false
+PASS 'フーバー'.endsWith('abc') is false
+PASS 'フーバー'.endsWith('abc') is false
+PASS 'foo bar'.endsWith('フー') is false
+PASS 'foo bar'.endsWith('フー', 3) is false
 PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: Type error.

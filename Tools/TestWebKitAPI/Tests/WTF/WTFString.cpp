@@ -260,4 +260,25 @@ TEST(WTF, StringToDouble)
     EXPECT_FALSE(ok);
 }
 
+TEST(WTF, StringhasInfixStartingAt)
+{
+    EXPECT_TRUE(String("Test").is8Bit());
+    EXPECT_TRUE(String("Te").is8Bit());
+    EXPECT_TRUE(String("st").is8Bit());
+    EXPECT_TRUE(String("Test").hasInfixStartingAt(String("Te"), 0));
+    EXPECT_FALSE(String("Test").hasInfixStartingAt(String("Te"), 2));
+    EXPECT_TRUE(String("Test").hasInfixStartingAt(String("st"), 2));
+    EXPECT_FALSE(String("Test").hasInfixStartingAt(String("ST"), 2));
+
+    EXPECT_FALSE(String::fromUTF8("中国").is8Bit());
+    EXPECT_FALSE(String::fromUTF8("中").is8Bit());
+    EXPECT_FALSE(String::fromUTF8("国").is8Bit());
+    EXPECT_TRUE(String::fromUTF8("中国").hasInfixStartingAt(String::fromUTF8("中"), 0));
+    EXPECT_FALSE(String::fromUTF8("中国").hasInfixStartingAt(String::fromUTF8("中"), 1));
+    EXPECT_TRUE(String::fromUTF8("中国").hasInfixStartingAt(String::fromUTF8("国"), 1));
+
+    EXPECT_FALSE(String::fromUTF8("中国").hasInfixStartingAt(String("Te"), 0));
+    EXPECT_FALSE(String("Test").hasInfixStartingAt(String::fromUTF8("中"), 2));
+}
+
 } // namespace TestWebKitAPI
