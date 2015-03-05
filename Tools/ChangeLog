@@ -1,3 +1,25 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch to MSBuild so we get more useful stdout logging in buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=140845
+
+        Reviewed by David Kilzer.
+
+        Update 'webkitdirs.pm' to locate the MSBuild used with Visual Studio 2013
+        and generate suitable build commands to drive a full build from our
+        existing solution files.
+
+        * Scripts/webkitdirs.pm:
+        (msBuildInstallDir): Added.
+        (determineConfigurationForVisualStudio): Revise to use MSBuild command
+        line arguments to drive the build.
+        (setupCygwinEnv): Warn user if MSBuild cannot be located.
+        (buildVisualStudioProject): Revise to use MSBuild command line arguments
+        to specify build architecture.
+        * win/AssembleBuildLogs/AssembleLogs.cmd: MSBuild doesn't produce individual
+        output logs, so don't attempt to consolidate them. Also: Drive-by fix: Don't
+        bother looking for CoreUI or SafariTheme build logs.
+
 2015-03-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [buildbot] mastercfg_unittest.py should be runnable easily

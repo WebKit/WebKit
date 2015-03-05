@@ -34,6 +34,8 @@ type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\libEGL\BuildLog.htm"    
 
 :SkipANGLEProjects
 
+if not exist "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WTF\BuildLog.htm" GOTO SkipIndividualBuilds
+
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING WTF...                                          >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
@@ -115,16 +117,6 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 echo COMPILING WebKitQuartzCoreAdditions...                    >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebKitQuartzCoreAdditions\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING CoreUI...                                       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\CoreUI\BuildLog.htm"       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING SafariTheme...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\SafariTheme\BuildLog.htm"  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 :SkipInternalProjects
 
@@ -212,3 +204,6 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 echo COMPILING TestWebKitAPI...                                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\TestWebKitAPI\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+:SkipIndividualBuilds
+echo "No individual build logs to address"
