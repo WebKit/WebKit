@@ -2352,7 +2352,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
 
     Range* rangeToCheck = shouldMarkGrammar ? grammarRange : spellingRange;
     TextCheckingParagraph paragraphToCheck(rangeToCheck);
-    if (paragraphToCheck.isRangeEmpty() || paragraphToCheck.isEmpty())
+    if (paragraphToCheck.isEmpty())
         return;
     RefPtr<Range> paragraphRange = paragraphToCheck.paragraphRange();
 

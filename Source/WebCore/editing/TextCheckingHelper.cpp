@@ -184,7 +184,7 @@ bool TextCheckingParagraph::isEmpty() const
 {
     // Both predicates should have same result, but we check both just for sure.
     // We need to investigate to remove this redundancy.
-    return isRangeEmpty() || isTextEmpty();
+    return checkingStart() >= checkingEnd() || text().isEmpty();
 }
 
 PassRefPtr<Range> TextCheckingParagraph::offsetAsRange() const
