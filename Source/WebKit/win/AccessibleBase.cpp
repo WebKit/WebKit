@@ -848,6 +848,8 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::RadioButtonRole:
             return ROLE_SYSTEM_RADIOBUTTON;
         case WebCore::CheckBoxRole:
+        case WebCore::ToggleButtonRole:
+        case WebCore::SwitchRole:
             return ROLE_SYSTEM_CHECKBUTTON;
         case WebCore::SliderRole:
             return ROLE_SYSTEM_SLIDER;
@@ -914,8 +916,6 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::SpinButtonRole:
             return ROLE_SYSTEM_SPINBUTTON;
         case WebCore::SpinButtonPartRole:
-            return ROLE_SYSTEM_PUSHBUTTON;
-        case WebCore::ToggleButtonRole:
             return ROLE_SYSTEM_PUSHBUTTON;
         case WebCore::ToolbarRole:
             return ROLE_SYSTEM_TOOLBAR;
