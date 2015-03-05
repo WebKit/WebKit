@@ -137,7 +137,7 @@
                       "slavenames": ["apple-windows-2"]
                     },
                     {
-                      "name": "Apple Win 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
+                      "name": "Apple Win 7 Release (Tests)", "type": "TestWebKit1", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["apple-windows-5", "apple-windows-6"]
                     },
@@ -148,7 +148,7 @@
                       "slavenames": ["apple-windows-1"]
                     },
                     {
-                      "name": "Apple Win 7 Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "name": "Apple Win 7 Debug (Tests)", "type": "TestWebKit1", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-windows-3", "apple-windows-4"]
                     },
@@ -185,7 +185,7 @@
                       "slavenames": ["gtk-linux-slave-5"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "gtk-linux-64-release-perf-tests",
+                      "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-8"]
                     },
@@ -212,7 +212,7 @@
                       "slavenames": ["efl-linux-szeged-slave-2"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTest", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-3"]
