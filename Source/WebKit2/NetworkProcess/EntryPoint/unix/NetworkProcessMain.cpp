@@ -37,9 +37,9 @@ int main(int argc, char** argv)
     // This workaround will stop working if glib-networking switches away from
     // GnuTLS or simply stops parsing this variable. We intentionally do not
     // overwrite this priority string if it's already set by the user.
-    // Keep this in sync with WebProcessMain.cpp.
     // https://bugzilla.gnome.org/show_bug.cgi?id=738633
-    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:%LATEST_RECORD_VERSION:!VERS-SSL3.0", 0);
+    // WARNING: This needs to be KEPT IN SYNC with WebProcessMain.cpp.
+    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:%LATEST_RECORD_VERSION:!VERS-SSL3.0:!ARCFOUR-128", 0);
 
     return NetworkProcessMainUnix(argc, argv);
 }
