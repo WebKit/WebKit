@@ -42,8 +42,6 @@ public:
 
     void invalidate();
 
-    bool isSelected() const;
-
 private:
     void element() const = delete;
     virtual bool isAttachment() const override { return true; }

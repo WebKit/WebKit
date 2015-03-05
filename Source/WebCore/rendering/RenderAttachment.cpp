@@ -51,12 +51,6 @@ HTMLAttachmentElement& RenderAttachment::attachmentElement() const
     return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());
 }
 
-bool RenderAttachment::isSelected() const
-{
-    RefPtr<Range> selectionRange = frame().selection().selection().firstRange();
-    return selectionRange && selectionRange->intersectsNode(&nodeForNonAnonymous(), ASSERT_NO_EXCEPTION);
-}
-
 void RenderAttachment::layout()
 {
     setIntrinsicSize(document().page()->theme().attachmentIntrinsicSize(*this));

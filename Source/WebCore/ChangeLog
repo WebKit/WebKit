@@ -1,3 +1,22 @@
+2015-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> should not appear selected when the cursor is adjacent to it
+        https://bugs.webkit.org/show_bug.cgi?id=142311
+        <rdar://problem/20045862>
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::isSelected): Deleted.
+        * rendering/RenderAttachment.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::titleTextColorForAttachment):
+        (WebCore::RenderThemeMac::paintAttachment):
+        (WebCore::labelTextColorForAttachment): Deleted.
+        We were using the wrong (and far too complicated) mechanism to determine
+        if the attachment is selected (to decide which highlight color to use).
+        Instead, just check selectionState().
+
 2015-03-04  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> should show the file size as detail text below the icon

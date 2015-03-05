@@ -2126,7 +2126,7 @@ private:
 
 static NSColor *titleTextColorForAttachment(const RenderAttachment& attachment)
 {
-    if (attachment.isSelected()) {
+    if (attachment.selectionState() != RenderObject::SelectionNone) {
         if (attachment.frame().selection().isFocusedAndActive())
             return [NSColor alternateSelectedControlTextColor];    
         return (NSColor *)cachedCGColor(attachmentTitleInactiveTextColor(), ColorSpaceDeviceRGB);
@@ -2518,7 +2518,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     context.translate(toFloatSize(paintRect.location()));
     context.translate(FloatSize((layout.attachmentRect.width() - attachmentIconBackgroundSize) / 2, 0));
 
-    bool useSelectedStyle = attachment.isSelected();
+    bool useSelectedStyle = attachment.selectionState() != RenderObject::SelectionNone;
 
     if (useSelectedStyle)
         paintAttachmentIconBackground(attachment, context, layout);
