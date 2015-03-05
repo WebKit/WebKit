@@ -1,3 +1,13 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reneable aria 'switch' tests after r18078.
+
+        Add a Windows rebaseline. Also document another batch of debug assertions.
+
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/aria-toggle-button-with-title-expected.txt: Added.
+        * platform/win/fast/attachment/attachment-subtitle-expected.txt: Added.
+
 2015-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r181013
