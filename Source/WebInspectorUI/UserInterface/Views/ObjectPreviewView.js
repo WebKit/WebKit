@@ -165,7 +165,7 @@ WebInspector.ObjectPreviewView.prototype = {
         }
 
         if (preview.overflow)
-            element.appendChild(document.createTextNode("\u2026"));
+            element.appendChild(document.createTextNode(", \u2026"));
         element.appendChild(document.createTextNode("}"));
 
         return lossless;
@@ -213,7 +213,7 @@ WebInspector.ObjectPreviewView.prototype = {
         }
 
         if (preview.overflow)
-            element.appendChild(document.createTextNode("\u2026"));
+            element.appendChild(document.createTextNode(", \u2026"));
 
         element.appendChild(document.createTextNode(isArray ? "]" : "}"));
 

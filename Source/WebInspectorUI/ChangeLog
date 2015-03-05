@@ -1,5 +1,16 @@
 2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve display of previews with overflow
+        https://bugs.webkit.org/show_bug.cgi?id=142321
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendEntryPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+
+2015-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Array/Collection Sizes should be visible and distinct
         https://bugs.webkit.org/show_bug.cgi?id=142254
 
