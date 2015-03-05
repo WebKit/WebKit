@@ -630,6 +630,9 @@
     <ClCompile Include="..\runtime\InternalFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\IteratorOperations.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSLexicalEnvironment.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2661,6 +2664,9 @@
     <ClInclude Include="..\runtime\Intrinsic.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\IteratorOperations.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSLexicalEnvironment.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3062,6 +3068,9 @@
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\StringConstructor.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayIteratorPrototype.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h">

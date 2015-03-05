@@ -20,13 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "ArrayIteratorPrototype.h"
 
+namespace JSC {
+
+static EncodedJSValue JSC_HOST_CALL arrayIteratorProtoFuncIterator(ExecState*);
+
+}
+
+#include "ArrayIteratorPrototype.lut.h"
+
+#include "IteratorOperations.h"
 #include "JSArrayIterator.h"
+#include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
@@ -35,22 +45,33 @@
 
 namespace JSC {
 
-const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(ExecState*);
+const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, &arrayIteratorPrototypeTable, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
+
+/* Source for ArrayIteratorPrototype.lut.h
+@begin arrayIteratorPrototypeTable
+  next      arrayIteratorProtoFuncNext  DontEnum|Function 0
+@end
+*/
 
 void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
-
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorPrototypeIterate, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorProtoFuncIterator, DontEnum, 0);
 }
 
-EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(CallFrame* callFrame)
+bool ArrayIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return JSValue::encode(callFrame->thisValue());
+    return getStaticFunctionSlot<Base>(exec, arrayIteratorPrototypeTable, jsCast<ArrayIteratorPrototype*>(object), propertyName, slot);
 }
 
+// ------------------------------ Array Functions ----------------------------
+
+EncodedJSValue JSC_HOST_CALL arrayIteratorProtoFuncIterator(ExecState* exec)
+{
+    return JSValue::encode(exec->thisValue());
 }
+
+} // namespace JSC

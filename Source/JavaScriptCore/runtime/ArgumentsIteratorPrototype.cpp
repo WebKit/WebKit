@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArgumentsIteratorPrototype.h"
 
+#include "IteratorOperations.h"
 #include "JSArgumentsIterator.h"
 #include "JSCInlines.h"
 
@@ -43,7 +44,7 @@ void ArgumentsIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, argumentsIteratorPrototypeFuncIterator, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorNextPrivateName, argumentsIteratorPrototypeFuncNext, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->next, argumentsIteratorPrototypeFuncNext, DontEnum, 0);
 }
 
 EncodedJSValue JSC_HOST_CALL argumentsIteratorPrototypeFuncIterator(CallFrame* callFrame)
@@ -55,8 +56,8 @@ EncodedJSValue JSC_HOST_CALL argumentsIteratorPrototypeFuncNext(CallFrame* callF
 {
     JSValue result;
     if (jsCast<JSArgumentsIterator*>(callFrame->thisValue())->next(callFrame, result))
-        return JSValue::encode(result);
-    return JSValue::encode(callFrame->vm().iterationTerminator.get());
+        return JSValue::encode(createIterResultObject(callFrame, result, false));
+    return JSValue::encode(createIterResultObject(callFrame, jsUndefined(), true));
 }
 
 }

@@ -33,11 +33,7 @@ namespace JSC {
 enum ArrayIterationKind : uint32_t {
     ArrayIterateKey,
     ArrayIterateValue,
-    ArrayIterateKeyValue,
-    ArrayIterateSparseTag = 4,
-    ArrayIterateSparseKey,
-    ArrayIterateSparseValue,
-    ArrayIterateSparseKeyValue
+    ArrayIterateKeyValue
 };
 
 class JSArrayIterator : public JSNonFinalObject {
@@ -59,30 +55,14 @@ public:
         return instance;
     }
 
-    ArrayIterationKind iterationKind() const { return m_iterationKind; }
-    JSObject* iteratedObject() const { return m_iteratedObject.get(); }
-    size_t nextIndex() const { return m_nextIndex; }
-    void setNextIndex(size_t nextIndex) { m_nextIndex = nextIndex; }
-    void finish() { m_nextIndex = std::numeric_limits<uint32_t>::max(); }
-    
     using JSNonFinalObject::arrayStorageOrNull;
-    static ptrdiff_t offsetOfIterationKind() { return OBJECT_OFFSETOF(JSArrayIterator, m_iterationKind); }
-    static ptrdiff_t offsetOfIteratedObject() { return OBJECT_OFFSETOF(JSArrayIterator, m_iteratedObject); }
-    static ptrdiff_t offsetOfNextIndex() { return OBJECT_OFFSETOF(JSArrayIterator, m_nextIndex); }
-
 private:
     JSArrayIterator(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_nextIndex(0)
     {
     }
 
     void finishCreation(VM&, JSGlobalObject*, ArrayIterationKind, JSObject* iteratedObject);
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
-    ArrayIterationKind m_iterationKind;
-    WriteBarrier<JSObject> m_iteratedObject;
-    uint32_t m_nextIndex;
 };
 
 }

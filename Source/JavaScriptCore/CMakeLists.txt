@@ -438,7 +438,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
     runtime/ExceptionFuzz.cpp
-    runtime/ExceptionHelpers.cpp 
+    runtime/ExceptionHelpers.cpp
     runtime/Executable.cpp
     runtime/FunctionConstructor.cpp
     runtime/FunctionExecutableDump.cpp
@@ -450,6 +450,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/InitializeThreading.cpp
     runtime/IntendedStructureChain.cpp
     runtime/InternalFunction.cpp
+    runtime/IteratorOperations.cpp
     runtime/JSAPIValueWrapper.cpp
     runtime/JSLexicalEnvironment.cpp
     runtime/JSArgumentsIterator.cpp
@@ -579,6 +580,7 @@ list(APPEND JavaScriptCore_SOURCES
 
 set(JavaScriptCore_LUT_FILES
     runtime/ArrayConstructor.cpp
+    runtime/ArrayIteratorPrototype.cpp
     runtime/ArrayPrototype.cpp
     runtime/BooleanPrototype.cpp
     runtime/DateConstructor.cpp

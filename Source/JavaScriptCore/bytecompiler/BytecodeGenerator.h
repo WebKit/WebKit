@@ -529,6 +529,9 @@ namespace JSC {
         RegisterID* emitNextEnumeratorPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
         RegisterID* emitToIndexString(RegisterID* dst, RegisterID* index);
 
+        RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
+        RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
+
         void emitReadOnlyExceptionIfNeeded();
 
         // Start a try block. 'start' must have been emitted.
@@ -543,6 +546,7 @@ namespace JSC {
         }
 
         void emitThrowReferenceError(const String& message);
+        void emitThrowTypeError(const String& message);
 
         void emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
         void emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);

@@ -1905,16 +1905,8 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 
     if (isConstructor() && src->index() != m_thisRegister.index()) {
         RefPtr<Label> isObjectLabel = newLabel();
-        RefPtr<RegisterID> isObjectRegister = newTemporary();
 
-        emitOpcode(op_is_object);
-        instructions().append(isObjectRegister->index());
-        instructions().append(src->index());
-
-        size_t begin = instructions().size();
-        emitOpcode(op_jtrue);
-        instructions().append(isObjectRegister->index());
-        instructions().append(isObjectLabel->bind(begin, instructions().size()));
+        emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
 
         emitUnaryNoDstOp(op_ret, &m_thisRegister);
 
@@ -2352,6 +2344,13 @@ void BytecodeGenerator::emitThrowReferenceError(const String& message)
     instructions().append(true);
 }
 
+void BytecodeGenerator::emitThrowTypeError(const String& message)
+{
+    emitOpcode(op_throw_static_error);
+    instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, message)))->index());
+    instructions().append(false);
+}
+
 void BytecodeGenerator::emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
 {
     emitOpcode(op_push_name_scope);
@@ -2551,28 +2550,81 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     emitNode(subject.get(), subjectNode);
     RefPtr<RegisterID> iterator = emitGetById(newTemporary(), subject.get(), propertyNames().iteratorPrivateName);
     {
-        CallArguments args(*this, 0);
+        CallArguments args(*this, nullptr);
         emitMove(args.thisRegister(), subject.get());
         emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, node->divot(), node->divotStart(), node->divotEnd());
     }
-    RefPtr<RegisterID> iteratorNext = emitGetById(newTemporary(), iterator.get(), propertyNames().iteratorNextPrivateName);
     RefPtr<RegisterID> value = newTemporary();
     emitLoad(value.get(), jsUndefined());
     
     emitJump(scope->continueTarget());
     
     RefPtr<Label> loopStart = newLabel();
+    RefPtr<Label> iteratorDone = newLabel();
     emitLabel(loopStart.get());
     emitLoopHint();
+
+    RefPtr<Label> tryStartLabel = newLabel();
+    emitLabel(tryStartLabel.get());
+    TryData* tryData = pushTry(tryStartLabel.get());
     callBack(*this, value.get());
+    RefPtr<Label> catchHere = emitLabel(newLabel().get());
+
     emitLabel(scope->continueTarget());
-    CallArguments nextArguments(*this, 0, 1);
-    emitMove(nextArguments.thisRegister(), iterator.get());
-    emitMove(nextArguments.argumentRegister(0), value.get());
-    emitCall(value.get(), iteratorNext.get(), NoExpectedFunction, nextArguments, node->divot(), node->divotStart(), node->divotEnd());
-    RefPtr<RegisterID> result = newTemporary();
-    emitJumpIfFalse(emitEqualityOp(op_stricteq, result.get(), value.get(), emitLoad(0, JSValue(vm()->iterationTerminator.get()))), loopStart.get());
+    {
+        RefPtr<RegisterID> next = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
+        CallArguments nextArguments(*this, nullptr);
+        emitMove(nextArguments.thisRegister(), iterator.get());
+        emitCall(value.get(), next.get(), NoExpectedFunction, nextArguments, node->divot(), node->divotStart(), node->divotEnd());
+    }
+    {
+        RefPtr<Label> typeIsObject = newLabel();
+        emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), typeIsObject.get());
+        emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+        emitLabel(typeIsObject.get());
+    }
+    emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), iteratorDone.get());
+    emitGetById(value.get(), value.get(), propertyNames().value);
+    emitJump(loopStart.get());
+
+    // IteratorClose sequence for throw-ed control flow.
+    {
+        RefPtr<RegisterID> exceptionRegister = popTryAndEmitCatch(tryData, newTemporary(), catchHere.get());
+        RefPtr<Label> rethrow = newLabel();
+
+        RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
+        emitJumpIfTrue(emitIsUndefined(newTemporary(), returnMethod.get()), rethrow.get());
+
+        RefPtr<Label> returnCallTryStart = newLabel();
+        emitLabel(returnCallTryStart.get());
+        TryData* returnCallTryData = pushTry(returnCallTryStart.get());
+
+        CallArguments returnArguments(*this, nullptr);
+        emitMove(returnArguments.thisRegister(), iterator.get());
+        emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd());
+
+        RefPtr<Label> returnCallCatchHere = emitLabel(newLabel().get());
+        emitJump(rethrow.get());
+
+        popTryAndEmitCatch(returnCallTryData, newTemporary(), returnCallCatchHere.get());
+        emitLabel(rethrow.get());
+        emitThrow(exceptionRegister.get());
+    }
+
+    // IteratorClose sequence for break-ed control flow.
     emitLabel(scope->breakTarget());
+    {
+        RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
+        emitJumpIfTrue(emitIsUndefined(newTemporary(), returnMethod.get()), iteratorDone.get());
+
+        CallArguments returnArguments(*this, nullptr);
+        emitMove(returnArguments.thisRegister(), iterator.get());
+        emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd());
+        emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), iteratorDone.get());
+        emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+    }
+
+    emitLabel(iteratorDone.get());
 }
 
 RegisterID* BytecodeGenerator::emitGetEnumerableLength(RegisterID* dst, RegisterID* base)
@@ -2646,6 +2698,23 @@ RegisterID* BytecodeGenerator::emitToIndexString(RegisterID* dst, RegisterID* in
     emitOpcode(op_to_index_string);
     instructions().append(dst->index());
     instructions().append(index->index());
+    return dst;
+}
+
+
+RegisterID* BytecodeGenerator::emitIsObject(RegisterID* dst, RegisterID* src)
+{
+    emitOpcode(op_is_object);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitIsUndefined(RegisterID* dst, RegisterID* src)
+{
+    emitOpcode(op_is_undefined);
+    instructions().append(dst->index());
+    instructions().append(src->index());
     return dst;
 }
 

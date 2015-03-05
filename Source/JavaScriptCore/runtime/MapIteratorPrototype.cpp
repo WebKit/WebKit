@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MapIteratorPrototype.h"
 
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSMapIterator.h"
@@ -46,7 +47,7 @@ void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, MapIteratorPrototypeFuncIterator, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorNextPrivateName, MapIteratorPrototypeFuncNext, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->next, MapIteratorPrototypeFuncNext, DontEnum, 0);
 }
 
 EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncIterator(CallFrame* callFrame)
@@ -59,12 +60,12 @@ EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(CallFrame* callFrame)
     JSMapIterator* iterator = jsDynamicCast<JSMapIterator*>(callFrame->thisValue());
     if (!iterator)
         return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot call MapIterator.next() on a non-MapIterator object")));
-    
+
     JSValue result;
     if (iterator->next(callFrame, result))
-        return JSValue::encode(result);
+        return JSValue::encode(createIterResultObject(callFrame, result, false));
     iterator->finish();
-    return JSValue::encode(callFrame->vm().iterationTerminator.get());
+    return JSValue::encode(createIterResultObject(callFrame, jsUndefined(), true));
 }
 
 

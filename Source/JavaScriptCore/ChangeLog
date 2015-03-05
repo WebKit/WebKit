@@ -1,3 +1,145 @@
+2015-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Upgrade ES6 Iterator interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=141351
+
+        Reviewed by Filip Pizlo.
+
+        This patch upgrades the exising ES6 iterator to align the latest spec.
+        In the latest spec,
+        1. `Iterator.next` returns object that implements IteratorResult interface { value: value, done, boolean }.
+        2. `Iterator.return` is introduced. When the iteration is terminated by the abrupt completion,
+        it is called to close iterator state.
+        3. Iterator.next of Array is moved from an iterator object to `%ArrayIteratorPrototype%`.
+
+        To upgrade it, we changes the bytecode that represents for-of loops.
+        And to embody the efficient iteration with an iterator object,
+        we implemented %ArrayIteratorPrototype%.next in JavaScript and
+        it is located in builtins/ArrayIterator.prototype.js.
+        Implementing it in JavaScript encourages inlining and
+        utilizes escape analysis for an iterator result object in DFG JIT.
+        And we dropped the intrinsic version of %ArrayIteratorPrototype%.next.
+
+        And we introduced IteratorOperations that is defined in the spec.
+        It aligns the iteration in the runtime to the latest spec.
+        Currently, Promise.all and Promise.race uses an iterable object.
+        However, Promise.all and Promise.race implementation is also based on the old spec.
+        Subsequent patches will upgrade it.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayIterator.prototype.js: Copied from Source/JavaScriptCore/runtime/ArrayIteratorPrototype.h.
+        (next):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIsObject):
+        (JSC::BytecodeGenerator::emitIsUndefined):
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::arrayIteratorNextThunkGenerator): Deleted.
+        (JSC::arrayIteratorNextKeyThunkGenerator): Deleted.
+        (JSC::arrayIteratorNextValueThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        * runtime/ArgumentsIteratorPrototype.cpp:
+        (JSC::ArgumentsIteratorPrototype::finishCreation):
+        (JSC::argumentsIteratorPrototypeFuncNext):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::ArrayIteratorPrototype::getOwnPropertySlot):
+        (JSC::arrayIteratorProtoFuncIterator):
+        (JSC::arrayIteratorPrototypeIterate): Deleted.
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/IteratorOperations.cpp: Added.
+        (JSC::iteratorNext):
+        (JSC::iteratorValue):
+        (JSC::iteratorComplete):
+        (JSC::iteratorStep):
+        (JSC::iteratorClose):
+        (JSC::createIterResultObject):
+        * runtime/IteratorOperations.h: Copied from Source/JavaScriptCore/runtime/ArrayIteratorPrototype.cpp.
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::finishCreation):
+        (JSC::JSArrayIterator::visitChildren): Deleted.
+        (JSC::createIteratorResult): Deleted.
+        (JSC::arrayIteratorNext): Deleted.
+        (JSC::arrayIteratorNextKey): Deleted.
+        (JSC::arrayIteratorNextValue): Deleted.
+        (JSC::arrayIteratorNextGeneric): Deleted.
+        * runtime/JSArrayIterator.h:
+        (JSC::JSArrayIterator::JSArrayIterator):
+        (JSC::JSArrayIterator::iterationKind): Deleted.
+        (JSC::JSArrayIterator::iteratedObject): Deleted.
+        (JSC::JSArrayIterator::nextIndex): Deleted.
+        (JSC::JSArrayIterator::setNextIndex): Deleted.
+        (JSC::JSArrayIterator::finish): Deleted.
+        (JSC::JSArrayIterator::offsetOfIterationKind): Deleted.
+        (JSC::JSArrayIterator::offsetOfIteratedObject): Deleted.
+        (JSC::JSArrayIterator::offsetOfNextIndex): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::performPromiseRaceLoop):
+        (JSC::JSPromiseConstructorFuncRace):
+        (JSC::performPromiseAll):
+        (JSC::JSPromiseConstructorFuncAll):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        (JSC::MapIteratorPrototypeFuncNext):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        (JSC::SetIteratorPrototypeFuncNext):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        * tests/stress/array-iterators-next-with-call.js: Added.
+        (increment):
+        (for):
+        * tests/stress/array-iterators-next.js: Added.
+
+        Revive the older Array iterator tests that manually call 'next' method.
+
+        * tests/stress/custom-iterators.js: Added.
+        (iter.next):
+        (iter.Symbol.iterator):
+        (iter.return):
+        (iter.get next):
+        (iter.get return):
+        (iteratorInterfaceErrorTest.iter.next):
+        (iteratorInterfaceErrorTest.iter.Symbol.iterator):
+        (iteratorInterfaceErrorTest.iter.return):
+        (iteratorInterfaceErrorTest):
+        (iteratorInterfaceErrorTestReturn.iter.next):
+        (iteratorInterfaceErrorTestReturn.iter.Symbol.iterator):
+        (iteratorInterfaceErrorTestReturn.iter.return):
+        (iteratorInterfaceErrorTestReturn):
+        (iteratorInterfaceBreakTestReturn.iter.next):
+        (iteratorInterfaceBreakTestReturn.iter.Symbol.iterator):
+        (iteratorInterfaceBreakTestReturn.iter.return):
+        (iteratorInterfaceBreakTestReturn):
+
+        This tests the behavior of custom iterators.
+        'next' and 'return' of iterator work with for-of.
+
+        * tests/stress/iterators-shape.js: Added.
+        (iteratorShape):
+        (sameNextMethods):
+        (set var):
+
+        This tests the shape of iterators; iterators of Array have 'next' method in %ArrayIteratorPrototype%.
+
+        * tests/stress/map-iterators-next.js: Added.
+        (set var):
+        (.get if):
+        (otherKey):
+        * tests/stress/set-iterators-next.js: Added.
+        (otherKey):
+
 2015-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Hide Promise with runtime flags under Cocoa JSContext API

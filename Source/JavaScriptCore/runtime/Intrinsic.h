@@ -52,10 +52,7 @@ enum Intrinsic {
     StringPrototypeValueOfIntrinsic,
     IMulIntrinsic,
     FRoundIntrinsic,
-    ArrayIteratorNextValueIntrinsic,
-    ArrayIteratorNextKeyIntrinsic,
-    ArrayIteratorNextGenericIntrinsic,
-    
+
     // Debugging intrinsics. These are meant to be used as testing hacks within
     // jsc.cpp and should never be exposed to users.
     DFGTrueIntrinsic,

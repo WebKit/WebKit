@@ -718,6 +718,7 @@
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
     <ClCompile Include="..\runtime\IntendedStructureChain.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
+    <ClCompile Include="..\runtime\IteratorOperations.cpp" />
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
     <ClCompile Include="..\runtime\JSLexicalEnvironment.cpp" />
     <ClCompile Include="..\runtime\JSArgumentsIterator.cpp" />
@@ -854,6 +855,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayIteratorPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DateConstructor.lut.h" />
@@ -1492,6 +1494,7 @@
     <ClInclude Include="..\runtime\IntendedStructureChain.h" />
     <ClInclude Include="..\runtime\InternalFunction.h" />
     <ClInclude Include="..\runtime\Intrinsic.h" />
+    <ClInclude Include="..\runtime\IteratorOperations.h" />
     <ClInclude Include="..\runtime\JSAPIValueWrapper.h" />
     <ClInclude Include="..\runtime\JSLexicalEnvironment.h" />
     <ClInclude Include="..\runtime\JSArgumentsIterator.h" />

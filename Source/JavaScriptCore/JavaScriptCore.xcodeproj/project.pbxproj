@@ -944,6 +944,8 @@
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
 		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
 		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		70113D4B1A8DB093003848C4 /* IteratorOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70113D491A8DB093003848C4 /* IteratorOperations.cpp */; };
+		70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 70113D4A1A8DB093003848C4 /* IteratorOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		705B41AB1A6E501E00716757 /* Symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A31A6E501E00716757 /* Symbol.cpp */; };
 		705B41AC1A6E501E00716757 /* Symbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 705B41A41A6E501E00716757 /* Symbol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		705B41AD1A6E501E00716757 /* SymbolConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705B41A51A6E501E00716757 /* SymbolConstructor.cpp */; };
@@ -2626,6 +2628,8 @@
 		65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrame.h; sourceTree = "<group>"; };
 		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
+		70113D491A8DB093003848C4 /* IteratorOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorOperations.cpp; sourceTree = "<group>"; };
+		70113D4A1A8DB093003848C4 /* IteratorOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorOperations.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		705B41A31A6E501E00716757 /* Symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Symbol.cpp; sourceTree = "<group>"; };
 		705B41A41A6E501E00716757 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
@@ -4338,6 +4342,8 @@
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
+				70113D491A8DB093003848C4 /* IteratorOperations.cpp */,
+				70113D4A1A8DB093003848C4 /* IteratorOperations.h */,
 				A76140CB182982CB00750624 /* JSArgumentsIterator.cpp */,
 				A76140CC182982CB00750624 /* JSArgumentsIterator.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
@@ -5887,6 +5893,7 @@
 				BC11667B0E199C05008066DD /* InternalFunction.h in Headers */,
 				1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
+				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				0F2B9CF519D0BAC100B1D1B5 /* FTLExitPropertyValue.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
@@ -7093,6 +7100,7 @@
 				A78853F917972629001440E4 /* IntendedStructureChain.cpp in Sources */,
 				147F39CF107EC37600427A48 /* InternalFunction.cpp in Sources */,
 				1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */,
+				70113D4B1A8DB093003848C4 /* IteratorOperations.cpp in Sources */,
 				A503FA19188E0FB000110F14 /* JavaScriptCallFrame.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
 				86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */,

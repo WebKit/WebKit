@@ -48,12 +48,17 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
+protected:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
+
 private:
     ArrayIteratorPrototype(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
+
     void finishCreation(VM&, JSGlobalObject*);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 }

@@ -36,6 +36,7 @@ VPATH = \
 .PHONY : all
 all : \
     ArrayConstructor.lut.h \
+    ArrayIteratorPrototype.lut.h \
     ArrayPrototype.lut.h \
     BooleanPrototype.lut.h \
     DateConstructor.lut.h \

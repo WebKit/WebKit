@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSArrayIterator.h"
+#ifndef IteratorOperations_h
+#define IteratorOperations_h
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "JSCJSValue.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-const ClassInfo JSArrayIterator::s_info = { "ArrayIterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayIterator) };
-
-void JSArrayIterator::finishCreation(VM& vm, JSGlobalObject*, ArrayIterationKind kind, JSObject* iteratedObject)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    putDirect(vm, vm.propertyNames->iteratedObjectPrivateName, iteratedObject);
-    putDirect(vm, vm.propertyNames->arrayIteratorNextIndexPrivateName, jsNumber(0));
-    putDirect(vm, vm.propertyNames->arrayIterationKindPrivateName, jsNumber(kind));
-}
+JSValue iteratorNext(ExecState*, JSValue iterator, JSValue);
+JSValue iteratorNext(ExecState*, JSValue iterator);
+JSValue iteratorValue(ExecState*, JSValue iterResult);
+bool iteratorComplete(ExecState*, JSValue iterResult);
+JSValue iteratorStep(ExecState*, JSValue iterator);
+void iteratorClose(ExecState*, JSValue iterator);
+JSObject* createIterResultObject(ExecState*, JSValue, bool done);
 
 }
+
+#endif // !defined(IteratorOperations_h)

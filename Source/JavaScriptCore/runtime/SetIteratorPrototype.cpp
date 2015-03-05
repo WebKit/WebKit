@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SetIteratorPrototype.h"
 
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSSetIterator.h"
@@ -46,7 +47,7 @@ void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, SetIteratorPrototypeFuncIterator, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorNextPrivateName, SetIteratorPrototypeFuncNext, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->next, SetIteratorPrototypeFuncNext, DontEnum, 0);
 }
 
 EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncIterator(CallFrame* callFrame)
@@ -62,10 +63,9 @@ EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
         return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot call SetIterator.next() on a non-SetIterator object")));
 
     if (iterator->next(callFrame, result))
-        return JSValue::encode(result);
+        return JSValue::encode(createIterResultObject(callFrame, result, false));
     iterator->finish();
-    return JSValue::encode(callFrame->vm().iterationTerminator.get());
+    return JSValue::encode(createIterResultObject(callFrame, jsUndefined(), true));
 }
-
 
 }
