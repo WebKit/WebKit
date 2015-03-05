@@ -57,7 +57,7 @@ class AutoInstaller(object):
 
     """Supports automatically installing Python packages from an URL.
 
-    Supports uncompressed files, .tar.gz, and .zip formats.
+    Supports uncompressed files, .tar.gz, .tar.bz2 and .zip formats.
 
     Basic usage:
 
@@ -70,12 +70,14 @@ class AutoInstaller(object):
 
     """
 
-    def __init__(self, append_to_search_path=False, make_package=True,
+    def __init__(self, append_to_search_path=False, prepend_to_search_path=False, make_package=True,
                  target_dir=None, temp_dir=None):
         """Create an AutoInstaller instance, and set up the target directory.
 
         Args:
           append_to_search_path: A boolean value of whether to append the
+                                 target directory to the sys.path search path.
+          prepend_to_search_path: A boolean value of whether to prepend the
                                  target directory to the sys.path search path.
           make_package: A boolean value of whether to make the target
                         directory a package.  This adds an __init__.py file
@@ -98,7 +100,7 @@ class AutoInstaller(object):
             target_dir = os.path.join(this_dir, "autoinstalled")
 
         # Ensure that the target directory exists.
-        self._set_up_target_dir(target_dir, append_to_search_path, make_package)
+        self._set_up_target_dir(target_dir, append_to_search_path, prepend_to_search_path, make_package)
 
         self._target_dir = target_dir
         self._temp_dir = temp_dir
@@ -107,13 +109,14 @@ class AutoInstaller(object):
         with codecs.open(path, "w", encoding) as filehandle:
             filehandle.write(text)
 
-    def _set_up_target_dir(self, target_dir, append_to_search_path,
-                           make_package):
+    def _set_up_target_dir(self, target_dir, append_to_search_path, prepend_to_search_path, make_package):
         """Set up a target directory.
 
         Args:
           target_dir: The path to the target directory to set up.
           append_to_search_path: A boolean value of whether to append the
+                                 target directory to the sys.path search path.
+          prepend_to_search_path: A boolean value of whether to prepend the
                                  target directory to the sys.path search path.
           make_package: A boolean value of whether to make the target
                         directory a package.  This adds an __init__.py file
@@ -127,6 +130,9 @@ class AutoInstaller(object):
 
         if append_to_search_path:
             sys.path.append(target_dir)
+
+        if prepend_to_search_path:
+            sys.path.insert(0, target_dir)
 
         if make_package:
             self._make_package(target_dir)
@@ -196,9 +202,17 @@ class AutoInstaller(object):
         version_path = self._url_downloaded_path(target_name)
         self._write_file(version_path, url, "utf-8")
 
-    def _extract_targz(self, path, scratch_dir):
-        # tarfile.extractall() extracts to a path without the trailing ".tar.gz".
-        target_basename = os.path.basename(path[:-len(".tar.gz")])
+    def _extract_tar(self, path, scratch_dir):
+        # tarfile.extractall() extracts to a path without the trailing ".tar.gz" or ".tar.bz2".
+
+        if path.endswith(".tar.gz"):
+            tarFileSuffix = ".tar.gz"
+        elif path.endswith(".tar.bz2"):
+            tarFileSuffix = ".tar.bz2"
+        else:
+            raise Exception("...")
+
+        target_basename = os.path.basename(path[:-len(tarFileSuffix)])
         target_path = os.path.join(scratch_dir, target_basename)
 
         try:
@@ -290,8 +304,8 @@ class AutoInstaller(object):
         # FIXME: Add other natural extensions.
         if path.endswith(".zip"):
             new_path = self._unzip(path, scratch_dir)
-        elif path.endswith(".tar.gz"):
-            new_path = self._extract_targz(path, scratch_dir)
+        elif path.endswith(".tar.gz") or path.endswith(".tar.bz2"):
+            new_path = self._extract_tar(path, scratch_dir)
         elif _CACHE_ENV_VAR in os.environ:
             new_path = path
             if os.path.dirname(path) == os.path.normpath(os.environ[_CACHE_ENV_VAR]):
