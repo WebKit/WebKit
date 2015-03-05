@@ -424,23 +424,23 @@ audio::-webkit-media-controls-time-remaining-display {
     -webkit-justify-content: flex-start;
 }
 
-video::-webkit-media-controls-time-remaining-display.hour-long-time,
-audio::-webkit-media-controls-time-remaining-display.hour-long-time {
+video::-webkit-media-controls-time-remaining-display.five-digit-time,
+audio::-webkit-media-controls-time-remaining-display.five-digit-time {
     min-width: 41px;
 }
 
-video::-webkit-media-controls-current-time-display.hour-long-time,
-audio::-webkit-media-controls-current-time-display.hour-long-time {
+video::-webkit-media-controls-current-time-display.five-digit-time,
+audio::-webkit-media-controls-current-time-display.five-digit-time {
     min-width: 37px;
 }
 
-video::-webkit-media-controls-time-remaining-display.ten-hour-long-time,
-audio::-webkit-media-controls-time-remaining-display.ten-hour-long-time {
+video::-webkit-media-controls-time-remaining-display.six-digit-time,
+audio::-webkit-media-controls-time-remaining-display.six-digit-time {
     min-width: 48px;
 }
 
-video::-webkit-media-controls-current-time-display.ten-hour-long-time,
-audio::-webkit-media-controls-current-time-display.ten-hour-long-time {
+video::-webkit-media-controls-current-time-display.six-digit-time,
+audio::-webkit-media-controls-current-time-display.six-digit-time {
     min-width: 44px;
 }
 
