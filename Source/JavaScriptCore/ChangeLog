@@ -1,3 +1,13 @@
+2015-03-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Fix the FTL build on Aarch64 Linux after r177421
+        https://bugs.webkit.org/show_bug.cgi?id=142040
+
+        Reviewed by Mark Lam.
+
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
 2015-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Upgrade ES6 Iterator interfaces

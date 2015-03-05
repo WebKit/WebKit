@@ -82,7 +82,7 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
     LLVMInitializeX86AsmPrinter();
     LLVMInitializeX86Disassembler();
 #elif CPU(ARM64)
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED > 80200) || OS(LINUX)
     LLVMInitializeAArch64TargetInfo();
     LLVMInitializeAArch64Target();
     LLVMInitializeAArch64TargetMC();
