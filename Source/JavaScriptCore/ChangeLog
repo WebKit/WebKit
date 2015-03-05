@@ -1,3 +1,12 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Confirmed with JSC that warning 4611 (interaction between '_setjmp' and C++ object
+        destruction is non-portable) should be ignored in the JavaScriptCore project.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props: Silence warning 4611.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
