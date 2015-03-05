@@ -1,3 +1,14 @@
+2015-03-05  Roger Fong  <roger_fong@apple.com>
+
+        Update inline media control icons for OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142305.
+        <rdar://problem/19997484>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations: Skip two failing tests caused by this patch.
+        See https://bugs.webkit.org/show_bug.cgi?id=142142
+
 2015-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reneable aria 'switch' tests after r18078.

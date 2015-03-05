@@ -1,3 +1,29 @@
+2015-03-05  Roger Fong  <roger_fong@apple.com>
+
+        Update inline media control icons for OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142305.
+        <rdar://problem/19997484>
+
+        Reviewed by Dean Jackson.
+
+        Changes include: new volume button, new full screen button, new play/pause button.
+        Repositioning of 30 second and play buttons.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel button):
+        (audio::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-play-button.paused):
+        (audio::-webkit-media-controls-panel .mute-box):
+        (video::-webkit-media-controls-volume-max-button):
+        (video::-webkit-media-controls-volume-min-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-current-time-display):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.configureInlineControls): Swap positions of rewind and play buttons.
+        (Controller.prototype.handleMuteButtonClicked): Remember to update volume slider when necessary.
+        (Controller.prototype.updateVolume): Ditto
+
 2015-03-05  David Hyatt  <hyatt@apple.com>
 
         Caps lock indicator in text fields is laying out in the wrong place.
