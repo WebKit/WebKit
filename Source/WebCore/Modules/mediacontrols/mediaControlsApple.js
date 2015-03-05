@@ -74,7 +74,10 @@ Controller.prototype = {
         failed: 'failed',
         hidden: 'hidden',
         hiding: 'hiding',
-        hourLongTime: 'hour-long-time',
+        threeDigitTime: 'three-digit-time',
+        fourDigitTime: 'four-digit-time',
+        fiveDigitTime: 'five-digit-time',
+        sixDigitTime: 'six-digit-time',
         list: 'list',
         muteBox: 'mute-box',
         muted: 'muted',
@@ -937,8 +940,29 @@ Controller.prototype = {
 
         this.setIsLive(duration === Number.POSITIVE_INFINITY);
 
-        this.controls.currentTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
-        this.controls.remainingTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
+        // Reset existing style.
+        this.controls.currentTime.classList.remove(this.ClassNames.threeDigitTime);
+        this.controls.currentTime.classList.remove(this.ClassNames.fourDigitTime);
+        this.controls.currentTime.classList.remove(this.ClassNames.fiveDigitTime);
+        this.controls.currentTime.classList.remove(this.ClassNames.sixDigitTime);
+        this.controls.remainingTime.classList.remove(this.ClassNames.threeDigitTime);
+        this.controls.remainingTime.classList.remove(this.ClassNames.fourDigitTime);
+        this.controls.remainingTime.classList.remove(this.ClassNames.fiveDigitTime);
+        this.controls.remainingTime.classList.remove(this.ClassNames.sixDigitTime);
+
+        if (duration >= 60*60*10) {
+            this.controls.currentTime.classList.add(this.ClassNames.sixDigitTime);
+            this.controls.remainingTime.classList.add(this.ClassNames.sixDigitTime);
+        } else if (duration >= 60*60) {
+            this.controls.currentTime.classList.add(this.ClassNames.fiveDigitTime);
+            this.controls.remainingTime.classList.add(this.ClassNames.fiveDigitTime);
+        } else if (duration >= 60*10) {
+            this.controls.currentTime.classList.add(this.ClassNames.fourDigitTime);
+            this.controls.remainingTime.classList.add(this.ClassNames.fourDigitTime);
+        } else {
+            this.controls.currentTime.classList.add(this.ClassNames.threeDigitTime);
+            this.controls.remainingTime.classList.add(this.ClassNames.threeDigitTime);
+        }
     },
 
     progressFillStyle: function(context)

@@ -1,3 +1,48 @@
+2015-03-05  Dean Jackson  <dino@apple.com>
+
+        Merge r181085. <rdar://problem/20058743>
+
+    2015-03-04  Dean Jackson  <dino@apple.com>
+
+            [iOS Media] Small inline controls can clip the time widgets
+            https://bugs.webkit.org/show_bug.cgi?id=142319
+
+            Reviewed by Eric Carlson.
+
+            Start counting the number of digits in a duration so that
+            we can assign classes to the time widgets that specify
+            a minimum width.
+
+            * Modules/mediacontrols/mediaControlsApple.css: Replace the hour-long and ten-hour-long
+            classes with number of digits.
+            (audio::-webkit-media-controls-time-remaining-display.five-digit-time):
+            (audio::-webkit-media-controls-current-time-display.five-digit-time):
+            (audio::-webkit-media-controls-time-remaining-display.six-digit-time):
+            (audio::-webkit-media-controls-current-time-display.six-digit-time):
+            (audio::-webkit-media-controls-time-remaining-display.hour-long-time): Deleted.
+            (audio::-webkit-media-controls-current-time-display.hour-long-time): Deleted.
+            (audio::-webkit-media-controls-time-remaining-display.ten-hour-long-time): Deleted.
+            (audio::-webkit-media-controls-current-time-display.ten-hour-long-time): Deleted.
+
+            * Modules/mediacontrols/mediaControlsApple.js: Add some new class names.
+            (Controller.prototype.updateDuration): Set the class of the time
+            widgets when we know how long the media runs.
+
+            * Modules/mediacontrols/mediaControlsiOS.css: Values for iOS that
+            are big enough to avoid clipping.
+            (video::-webkit-media-controls-current-time-display):
+            (video::-webkit-media-controls-time-remaining-display):
+            (video::-webkit-media-controls-current-time-display.three-digit-time):
+            (video::-webkit-media-controls-time-remaining-display.three-digit-time):
+            (video::-webkit-media-controls-current-time-display.four-digit-time):
+            (video::-webkit-media-controls-time-remaining-display.four-digit-time):
+            (video::-webkit-media-controls-current-time-display.five-digit-time):
+            (video::-webkit-media-controls-time-remaining-display.five-digit-time):
+            (video::-webkit-media-controls-current-time-display.six-digit-time):
+            (video::-webkit-media-controls-time-remaining-display.six-digit-time):
+            (audio::-webkit-media-controls-timeline-container): Deleted.
+            (video::-webkit-media-text-track-container): Deleted.
+
 2015-03-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r180910. rdar://problem/19395137

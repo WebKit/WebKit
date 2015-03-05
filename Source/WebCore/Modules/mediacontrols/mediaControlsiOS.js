@@ -355,9 +355,9 @@ ControllerIOS.prototype = {
         var sign = time < 0 ? '-' : String();
 
         if (intHours > 0)
-            return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
+             return sign + intHours + ':' + String('0' + intMinutes).slice(-2) + ":" + String('0' + intSeconds).slice(-2);
 
-        return sign + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
+        return sign + String('0' + intMinutes).slice(intMinutes >= 10 ? -2 : -1) + ":" + String('0' + intSeconds).slice(-2);
     },
 
     handleTimelineChange: function(event) {

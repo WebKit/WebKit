@@ -375,14 +375,14 @@ audio::-webkit-media-controls-time-remaining-display {
 audio::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-current-time-display {
     min-width: 32px;
-    -webkit-justify-content: left;
+    -webkit-justify-content: right;
     padding-right: 6px;
 }
 
 audio::-webkit-media-controls-time-remaining-display,
 video::-webkit-media-controls-time-remaining-display {
     min-width: 38px;
-    -webkit-justify-content: right;
+    -webkit-justify-content: left;
     padding-left: 6px;
     margin-right: 6px;
 }
@@ -403,9 +403,44 @@ audio::-webkit-media-controls-timeline-container {
     padding-right: 10px;
 }
 
-video::-webkit-media-controls-timeline-container .hour-long-time,
-audio::-webkit-media-controls-timeline-container .hour-long-time {
-    min-width: 67px;
+audio::-webkit-media-controls-current-time-display.three-digit-time,
+video::-webkit-media-controls-current-time-display.three-digit-time {
+    min-width: 31px;
+}
+
+audio::-webkit-media-controls-time-remaining-display.three-digit-time,
+video::-webkit-media-controls-time-remaining-display.three-digit-time {
+    min-width: 40px;
+}
+
+audio::-webkit-media-controls-current-time-display.four-digit-time,
+video::-webkit-media-controls-current-time-display.four-digit-time {
+    min-width: 40px;
+}
+
+audio::-webkit-media-controls-time-remaining-display.four-digit-time,
+video::-webkit-media-controls-time-remaining-display.four-digit-time {
+    min-width: 49px;
+}
+
+audio::-webkit-media-controls-current-time-display.five-digit-time,
+video::-webkit-media-controls-current-time-display.five-digit-time {
+    min-width: 51px;
+}
+
+audio::-webkit-media-controls-time-remaining-display.five-digit-time,
+video::-webkit-media-controls-time-remaining-display.five-digit-time {
+    min-width: 60px;
+}
+
+audio::-webkit-media-controls-current-time-display.six-digit-time,
+video::-webkit-media-controls-current-time-display.six-digit-time {
+    min-width: 60px;
+}
+
+audio::-webkit-media-controls-time-remaining-display.six-digit-time,
+video::-webkit-media-controls-time-remaining-display.six-digit-time {
+    min-width: 69px;
 }
 
 /* ================== STATUS DISPLAY ====================== */

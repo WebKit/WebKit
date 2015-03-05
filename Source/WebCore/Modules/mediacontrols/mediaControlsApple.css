@@ -484,9 +484,44 @@ audio::-webkit-media-controls-time-remaining-display {
     text-decoration: none;
 }
 
-video::-webkit-media-controls-timeline-container .hour-long-time,
-audio::-webkit-media-controls-timeline-container .hour-long-time {
-    min-width: 67px;
+video::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-current-time-display {
+    margin-left: 16px;
+    margin-right: 8px;
+    width: 28px;
+    min-width: 28px;
+    -webkit-align-items: flex-end;
+    -webkit-justify-content: flex-end;
+}
+
+video::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-time-remaining-display {
+    margin-left: 8px;
+    margin-right: 16px;
+    width: 32px;
+    min-width: 32px;
+    -webkit-align-items: flex-start;
+    -webkit-justify-content: flex-start;
+}
+
+video::-webkit-media-controls-time-remaining-display.five-digit-time,
+audio::-webkit-media-controls-time-remaining-display.five-digit-time {
+    min-width: 41px;
+}
+
+video::-webkit-media-controls-current-time-display.five-digit-time,
+audio::-webkit-media-controls-current-time-display.five-digit-time {
+    min-width: 37px;
+}
+
+video::-webkit-media-controls-time-remaining-display.six-digit-time,
+audio::-webkit-media-controls-time-remaining-display.six-digit-time {
+    min-width: 48px;
+}
+
+video::-webkit-media-controls-current-time-display.six-digit-time,
+audio::-webkit-media-controls-current-time-display.six-digit-time {
+    min-width: 44px;
 }
 
 video::-webkit-media-controls-timeline-container,
