@@ -1,3 +1,15 @@
+2015-03-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add basic support for character sets to the URL Filter parser
+        https://bugs.webkit.org/show_bug.cgi?id=142257
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/usercontentfilter/character-set-basic-support-expected.txt: Added.
+        * http/tests/usercontentfilter/character-set-basic-support.html: Added.
+        * http/tests/usercontentfilter/character-set-basic-support.html.json: Added.
+        * http/tests/usercontentfilter/resources/url-blocking-test.js: Added.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()

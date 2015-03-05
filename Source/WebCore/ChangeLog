@@ -1,3 +1,45 @@
+2015-03-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add basic support for character sets to the URL Filter parser
+        https://bugs.webkit.org/show_bug.cgi?id=142257
+
+        Reviewed by Alex Christensen.
+
+        This patch is a first step toward making the URL filter parser a bit
+        more powerful: it adds support for character set atom.
+
+        I did not attempt to integrate that into the prefix tree in this patch,
+        instead, the GraphBuilder gets a two modes of generating the NFA:
+        PrefixTree and DirectGeneration.
+
+        As long as we only see trivial atoms, we use the PrefixTree generation
+        to minimize the number of nodes we need. As soon as we start a character
+        class, we switch to DirectGeneration and we generate the NFA from the input
+        without merging with previously seen patterns.
+
+        To differentiate between Trivial atoms and CharacterSet, we also gain
+        an AtomType state.
+
+        The character set themself are very simple: each character is represented by
+        a bit in a 16bytes bit vector.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::quantifyTrivialAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::atomBuiltInCharacterClass):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomBackReference):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassRange):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassEnd):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBuiltIn):
+        (WebCore::ContentExtensions::GraphBuilder::sinkAtom):
+        (WebCore::ContentExtensions::GraphBuilder::generateTransition):
+        (WebCore::ContentExtensions::GraphBuilder::sinkTrivialAtom):
+        (WebCore::ContentExtensions::GraphBuilder::sinkCharacterSet):
+        (WebCore::ContentExtensions::GraphBuilder::sinkPendingAtomIfNecessary):
+
 2015-03-05  Roger Fong  <roger_fong@apple.com>
 
         Minor touchups to inline media control icons.
