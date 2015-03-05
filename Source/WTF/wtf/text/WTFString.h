@@ -638,14 +638,16 @@ private:
 // FIXME: Remove when we can use C++14 initialized lambda capture: [string = string.isolatedCopy()].
 class StringCapture {
 public:
-    explicit StringCapture(const String& string) : m_string(string) { }
+    StringCapture() { }
+    StringCapture(const String& string) : m_string(string) { }
     explicit StringCapture(String&& string) : m_string(string) { }
     StringCapture(const StringCapture& other) : m_string(other.m_string.isolatedCopy()) { }
     const String& string() const { return m_string; }
     String releaseString() { return WTF::move(m_string); }
 
+    void operator=(const StringCapture& other) { m_string = other.m_string.isolatedCopy(); }
+
 private:
-    void operator=(const StringCapture&) = delete;
     String m_string;
 };
 

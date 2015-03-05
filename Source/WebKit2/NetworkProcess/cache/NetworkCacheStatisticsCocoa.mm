@@ -43,6 +43,7 @@
 namespace WebKit {
 
 static const char* networkCacheStatisticsDatabaseName = "WebKitCacheStatistics.db";
+static const std::chrono::milliseconds mininumWriteInterval = std::chrono::milliseconds(10000);
 
 static bool executeSQLCommand(WebCore::SQLiteDatabase& database, const String& sql)
 {
@@ -63,11 +64,12 @@ static bool executeSQLStatement(WebCore::SQLiteStatement& statement)
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
     ASSERT(statement.database().isOpen());
 
-    bool result = statement.executeCommand();
-    if (!result)
+    if (statement.step() != WebCore::SQLResultDone) {
         LOG_ERROR("Network cache statistics: failed to execute statement \"%s\" error \"%s\"", statement.query().utf8().data(), statement.database().lastErrorMsg());
+        return false;
+    }
 
-    return result;
+    return true;
 }
 
 std::unique_ptr<NetworkCacheStatistics> NetworkCacheStatistics::open(const String& cachePath)
@@ -80,6 +82,7 @@ std::unique_ptr<NetworkCacheStatistics> NetworkCacheStatistics::open(const Strin
 
 NetworkCacheStatistics::NetworkCacheStatistics(const String& databasePath)
     : m_backgroundIOQueue(adoptDispatch(dispatch_queue_create("com.apple.WebKit.Cache.Statistics.Background", DISPATCH_QUEUE_SERIAL)))
+    , m_writeTimer(*this, &NetworkCacheStatistics::writeTimerFired)
 {
     dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
 
@@ -141,14 +144,18 @@ void NetworkCacheStatistics::bootstrapFromNetworkCache(const String& networkCach
 
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
-    WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
-    WebCore::SQLiteTransaction bootstrapTransaction(m_database);
-    bootstrapTransaction.begin();
-
-    traverseCacheFiles(networkCachePath, [this](const String& hash, const String&) {
-        addHashToDatabase(hash);
+    Vector<StringCapture> hashes;
+    traverseCacheFiles(networkCachePath, [&hashes](const String& hash, const String&) {
+        hashes.append(hash);
     });
-    bootstrapTransaction.commit();
+
+    WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
+    WebCore::SQLiteTransaction writeTransaction(m_database);
+    writeTransaction.begin();
+
+    addHashesToDatabase(hashes);
+
+    writeTransaction.commit();
 }
 
 void NetworkCacheStatistics::shrinkIfNeeded()
@@ -174,18 +181,9 @@ void NetworkCacheStatistics::recordNotCachingResponse(const NetworkCacheKey& key
 {
     ASSERT(storeDecision != NetworkCache::StoreDecision::Yes);
 
-    StringCapture hashCapture(key.hashAsString());
-    dispatch_async(m_backgroundIOQueue.get(), [this, hashCapture, storeDecision] {
-        if (!m_database.isOpen())
-            return;
-        WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"));
-        if (statement.prepare() != WebCore::SQLResultOk)
-            return;
-
-        statement.bindText(1, hashCapture.string());
-        statement.bindInt(2, static_cast<int>(storeDecision));
-        executeSQLStatement(statement);
-    });
+    m_storeDecisionsToAdd.set(key.hashAsString(), storeDecision);
+    if (!m_writeTimer.isActive())
+        m_writeTimer.startOneShot(mininumWriteInterval);
 }
 
 static String retrieveDecisionToDiagnosticKey(NetworkCache::RetrieveDecision retrieveDecision)
@@ -212,7 +210,7 @@ void NetworkCacheStatistics::recordNotUsingCacheForRequest(uint64_t webPageID, c
 
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID, retrieveDecision](bool wasEverRequested, const Optional<NetworkCache::StoreDecision>&) {
+    queryWasEverRequested(hash, NeedUncachedReason::No, [this, hash, requestURL, webPageID, retrieveDecision](bool wasEverRequested, const Optional<NetworkCache::StoreDecision>&) {
         if (wasEverRequested) {
             String diagnosticKey = retrieveDecisionToDiagnosticKey(retrieveDecision);
             LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously requested but we are not using the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -246,7 +244,7 @@ void NetworkCacheStatistics::recordRetrievalFailure(uint64_t webPageID, const Ne
 {
     String hash = key.hashAsString();
     WebCore::URL requestURL = request.url();
-    queryWasEverRequested(hash, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested, const Optional<NetworkCache::StoreDecision>& storeDecision) {
+    queryWasEverRequested(hash, NeedUncachedReason::Yes, [this, hash, requestURL, webPageID](bool wasPreviouslyRequested, const Optional<NetworkCache::StoreDecision>& storeDecision) {
         if (wasPreviouslyRequested) {
             String diagnosticKey = storeDecisionToDiagnosticKey(storeDecision.value());
             LOG(NetworkCache, "(NetworkProcess) webPageID %llu: %s was previously request but is not in the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
@@ -290,34 +288,77 @@ void NetworkCacheStatistics::markAsRequested(const String& hash)
 {
     ASSERT(RunLoop::isMain());
 
-    StringCapture hashCapture(hash);
-    dispatch_async(m_backgroundIOQueue.get(), [this, hashCapture] {
-        WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
-        if (m_database.isOpen())
-            addHashToDatabase(hashCapture.string());
-    });
-
-    shrinkIfNeeded();
+    m_hashesToAdd.add(hash);
+    if (!m_writeTimer.isActive())
+        m_writeTimer.startOneShot(mininumWriteInterval);
 }
 
-void NetworkCacheStatistics::queryWasEverRequested(const String& hash, const RequestedCompletionHandler& completionHandler)
+void NetworkCacheStatistics::writeTimerFired()
 {
     ASSERT(RunLoop::isMain());
 
-    auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, completionHandler });
+    Vector<StringCapture> hashesToAdd;
+    copyToVector(m_hashesToAdd, hashesToAdd);
+    m_hashesToAdd.clear();
+
+    Vector<std::pair<StringCapture, NetworkCache::StoreDecision>> storeDecisionsToAdd;
+    copyToVector(m_storeDecisionsToAdd, storeDecisionsToAdd);
+    m_storeDecisionsToAdd.clear();
+
+    shrinkIfNeeded();
+
+    dispatch_async(m_backgroundIOQueue.get(), [this, hashesToAdd, storeDecisionsToAdd] {
+        if (!m_database.isOpen())
+            return;
+
+        WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
+        WebCore::SQLiteTransaction writeTransaction(m_database);
+        writeTransaction.begin();
+
+        addHashesToDatabase(hashesToAdd);
+        addStoreDecisionsToDatabase(storeDecisionsToAdd);
+
+        writeTransaction.commit();
+    });
+}
+
+void NetworkCacheStatistics::queryWasEverRequested(const String& hash, NeedUncachedReason needUncachedReason, const RequestedCompletionHandler& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    // Query pending writes first.
+    bool wasAlreadyRequested = m_hashesToAdd.contains(hash);
+    if (wasAlreadyRequested && needUncachedReason == NeedUncachedReason::No) {
+        completionHandler(true, Nullopt);
+        return;
+    }
+    if (needUncachedReason == NeedUncachedReason::Yes && m_storeDecisionsToAdd.contains(hash)) {
+        completionHandler(true, m_storeDecisionsToAdd.get(hash));
+        return;
+    }
+
+    // Query the database.
+    auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, needUncachedReason == NeedUncachedReason::Yes, completionHandler });
     auto& query = *everRequestedQuery;
     m_activeQueries.add(WTF::move(everRequestedQuery));
-    dispatch_async(m_backgroundIOQueue.get(), [this, &query] {
+    dispatch_async(m_backgroundIOQueue.get(), [this, wasAlreadyRequested, &query] () mutable {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
-        bool wasAlreadyRequested = false;
         Optional<NetworkCache::StoreDecision> storeDecision;
         if (m_database.isOpen()) {
-            WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT AlreadyRequested.hash, reason FROM AlreadyRequested LEFT OUTER JOIN UncachedReason ON AlreadyRequested.hash=UncachedReason.hash WHERE AlreadyRequested.hash=?"));
-            if (statement.prepare() == WebCore::SQLResultOk) {
-                statement.bindText(1, query.hash);
-                if (statement.step() == WebCore::SQLResultRow) {
-                    wasAlreadyRequested = true;
-                    storeDecision = statement.isColumnNull(1) ? NetworkCache::StoreDecision::Yes : static_cast<NetworkCache::StoreDecision>(statement.getColumnInt(1));
+            if (!wasAlreadyRequested) {
+                WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT hash FROM AlreadyRequested WHERE hash=?"));
+                if (statement.prepare() == WebCore::SQLResultOk) {
+                    statement.bindText(1, query.hash);
+                    wasAlreadyRequested = (statement.step() == WebCore::SQLResultRow);
+                }
+            }
+            if (wasAlreadyRequested && query.needUncachedReason) {
+                WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT reason FROM UncachedReason WHERE hash=?"));
+                storeDecision = NetworkCache::StoreDecision::Yes;
+                if (statement.prepare() == WebCore::SQLResultOk) {
+                    statement.bindText(1, query.hash);
+                    if (statement.step() == WebCore::SQLResultRow)
+                        storeDecision = static_cast<NetworkCache::StoreDecision>(statement.getColumnInt(0));
                 }
             }
         }
@@ -345,7 +386,7 @@ void NetworkCacheStatistics::clear()
     });
 }
 
-void NetworkCacheStatistics::addHashToDatabase(const String& hash)
+void NetworkCacheStatistics::addHashesToDatabase(const Vector<StringCapture>& hashes)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
@@ -355,11 +396,30 @@ void NetworkCacheStatistics::addHashToDatabase(const String& hash)
     if (statement.prepare() != WebCore::SQLResultOk)
         return;
 
-    statement.bindText(1, hash);
-    if (!executeSQLStatement(statement))
+    for (auto& hash : hashes) {
+        statement.bindText(1, hash.string());
+        if (executeSQLStatement(statement))
+            ++m_approximateEntryCount;
+        statement.reset();
+    }
+}
+
+void NetworkCacheStatistics::addStoreDecisionsToDatabase(const Vector<std::pair<StringCapture, NetworkCache::StoreDecision>>& storeDecisions)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
+    ASSERT(m_database.isOpen());
+
+    WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"));
+    if (statement.prepare() != WebCore::SQLResultOk)
         return;
 
-    ++m_approximateEntryCount;
+    for (auto& pair : storeDecisions) {
+        statement.bindText(1, pair.first.string());
+        statement.bindInt(2, static_cast<int>(pair.second));
+        executeSQLStatement(statement);
+        statement.reset();
+    }
 }
 
 } // namespace WebKit

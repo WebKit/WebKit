@@ -1,3 +1,22 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        NetworkCache efficacy logging is using too much CPU
+        https://bugs.webkit.org/show_bug.cgi?id=142186
+        <rdar://problem/19632080>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/HashMap.h:
+        (WTF::copyToVector):
+        Add copyToVector() utility function for HashMap that uses an std::pair<key, value>
+        as element type.
+
+        * wtf/text/WTFString.h:
+        (WTF::StringCapture::StringCapture):
+        (WTF::StringCapture::operator=):
+        Add default constructor and assignment operator to StringCapture so that
+        it can be used in a Vector.
+
 2015-03-05  Antti Koivisto  <antti@apple.com>
 
         Support WorkQueue QOS classes on Mavericks

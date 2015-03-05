@@ -32,6 +32,7 @@
 #include "NetworkCacheKey.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/SQLiteDatabase.h>
+#include <WebCore/Timer.h>
 
 namespace WebCore {
 class ResourceRequest;
@@ -57,14 +58,18 @@ private:
     void bootstrapFromNetworkCache(const String& networkCachePath);
     void shrinkIfNeeded();
 
-    void addHashToDatabase(const String& hash);
+    void addHashesToDatabase(const Vector<StringCapture>& hashes);
+    void addStoreDecisionsToDatabase(const Vector<std::pair<StringCapture, NetworkCache::StoreDecision>>&);
+    void writeTimerFired();
 
     typedef std::function<void (bool wasEverRequested, const Optional<NetworkCache::StoreDecision>&)> RequestedCompletionHandler;
-    void queryWasEverRequested(const String&, const RequestedCompletionHandler&);
+    enum class NeedUncachedReason { No, Yes };
+    void queryWasEverRequested(const String&, NeedUncachedReason, const RequestedCompletionHandler&);
     void markAsRequested(const String& hash);
 
     struct EverRequestedQuery {
         String hash;
+        bool needUncachedReason;
         RequestedCompletionHandler completionHandler;
     };
 
@@ -75,6 +80,9 @@ private:
 #endif
     mutable HashSet<std::unique_ptr<const EverRequestedQuery>> m_activeQueries;
     WebCore::SQLiteDatabase m_database;
+    HashSet<String> m_hashesToAdd;
+    HashMap<String, NetworkCache::StoreDecision> m_storeDecisionsToAdd;
+    WebCore::Timer m_writeTimer;
 };
 
 } // namespace WebKit
