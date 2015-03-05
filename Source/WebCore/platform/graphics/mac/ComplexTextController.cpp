@@ -53,7 +53,7 @@ public:
     TextLayout(RenderText* text, const FontCascade& font, float xPos)
         : m_font(font)
         , m_run(constructTextRun(text, font, xPos))
-        , m_controller(std::make_unique<ComplexTextController>(&m_font, m_run, true))
+        , m_controller(std::make_unique<ComplexTextController>(m_font, m_run, true))
     {
     }
 
@@ -116,8 +116,8 @@ static inline CGFloat ceilCGFloat(CGFloat f)
     return static_cast<CGFloat>(ceil(f));
 }
 
-ComplexTextController::ComplexTextController(const FontCascade* font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const Font*>* fallbackFonts, bool forTextEmphasis)
-    : m_font(*font)
+ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const Font*>* fallbackFonts, bool forTextEmphasis)
+    : m_font(font)
     , m_run(run)
     , m_isLTROnly(true)
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)

@@ -50,7 +50,7 @@ enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 // complex scripts on OS X.
 class ComplexTextController {
 public:
-    ComplexTextController(const FontCascade*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const Font*>* fallbackFonts = 0, bool forTextEmphasis = false);
+    ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const Font*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     // Advance and emit glyphs up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const Font*>* fallbackFonts = 0);

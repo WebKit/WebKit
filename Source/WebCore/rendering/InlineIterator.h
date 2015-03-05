@@ -37,8 +37,8 @@ namespace WebCore {
 class InlineIterator {
 public:
     InlineIterator()
-        : m_root(0)
-        , m_renderer(0)
+        : m_root(nullptr)
+        , m_renderer(nullptr)
         , m_nextBreakablePosition(-1)
         , m_pos(0)
         , m_refersToEndOfPreviousNode(false)
@@ -54,7 +54,7 @@ public:
     {
     }
 
-    void clear() { moveTo(0, 0); }
+    void clear() { moveTo(nullptr, 0); }
 
     void moveToStartOf(RenderObject* object)
     {
@@ -79,7 +79,7 @@ public:
     void setRefersToEndOfPreviousNode();
 
     void fastIncrementInTextNode();
-    void increment(InlineBidiResolver* = 0);
+    void increment(InlineBidiResolver* = nullptr);
     void fastDecrement();
     bool atEnd() const;
 
@@ -212,7 +212,7 @@ static bool isEmptyInline(const RenderInline& renderer)
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
 template <class Observer>
-static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* current, Observer* observer = nullptr, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = nullptr)
 {
     RenderObject* next = nullptr;
     // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
@@ -278,13 +278,13 @@ static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, Re
 // This makes callers cleaner as they don't have to specify a type for the observer when not providing one.
 static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current)
 {
-    InlineBidiResolver* observer = 0;
+    InlineBidiResolver* observer = nullptr;
     return bidiNextSkippingEmptyInlines(root, current, observer);
 }
 
-static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement& root, RenderObject* current, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement& root, RenderObject* current, bool* endOfInlinePtr = nullptr)
 {
-    InlineBidiResolver* observer = 0; // Callers who include empty inlines, never use an observer.
+    InlineBidiResolver* observer = nullptr; // Callers who include empty inlines, never use an observer.
     return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
 }
 
@@ -353,7 +353,7 @@ class InlineWalker {
 public:
     InlineWalker(RenderElement& root)
         : m_root(root)
-        , m_current(0)
+        , m_current(nullptr)
         , m_atEndOfInline(false)
     {
         // FIXME: This class should be taught how to do the SkipEmptyInlines codepath as well.
@@ -387,7 +387,7 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         if (m_pos < downcast<RenderText>(*m_renderer).textLength())
             return;
     }
-    // bidiNext can return 0, so use moveTo instead of moveToStartOf
+    // bidiNext can return nullptr, so use moveTo instead of moveToStartOf
     moveTo(bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver), 0);
 }
 

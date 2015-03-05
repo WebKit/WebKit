@@ -589,7 +589,7 @@ bool FontCascade::primaryFontIsSystemFont() const
 
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
-    ComplexTextController controller(this, run);
+    ComplexTextController controller(*this, run);
     controller.advance(from);
     float beforeWidth = controller.runWidthSoFar();
     controller.advance(to);
@@ -606,7 +606,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int fr
 {
     float initialAdvance;
 
-    ComplexTextController controller(this, run, false, 0, forTextEmphasis);
+    ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
     controller.advance(from);
     float beforeWidth = controller.runWidthSoFar();
     controller.advance(to, &glyphBuffer);
@@ -656,7 +656,7 @@ void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* context, cons
 
 float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
-    ComplexTextController controller(this, run, true, fallbackFonts);
+    ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
         glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
         glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
@@ -668,7 +668,7 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
 
 int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    ComplexTextController controller(this, run);
+    ComplexTextController controller(*this, run);
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
 

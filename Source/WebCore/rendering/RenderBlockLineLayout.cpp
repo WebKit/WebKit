@@ -455,13 +455,13 @@ void RenderBlockFlow::setMarginsForRubyRun(BidiRun* run, RenderRubyRun& renderer
     setMarginEndForChild(renderer, -endOverhang);
 }
 
-static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
+static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
     GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
     HashSet<const Font*> fallbackFonts;
     GlyphOverflow glyphOverflow;
 
-    const FontCascade& font = lineStyle(*renderer->parent(), lineInfo).fontCascade();
+    const FontCascade& font = lineStyle(*renderer.parent(), lineInfo).fontCascade();
     // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
     if (lineBox->fitsToGlyphs()) {
         // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
@@ -483,7 +483,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     float measuredWidth = 0;
 
     bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
-    bool canUseSimpleFontCodePath = renderer->canUseSimpleFontCodePath();
+    bool canUseSimpleFontCodePath = renderer.canUseSimpleFontCodePath();
     
     // Since we don't cache glyph overflows, we need to re-measure the run if
     // the style is linebox-contain: glyph.
@@ -494,18 +494,18 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
             WordMeasurement& wordMeasurement = wordMeasurements[i];
             if (wordMeasurement.width <= 0 || wordMeasurement.startOffset == wordMeasurement.endOffset)
                 continue;
-            if (wordMeasurement.renderer != renderer || wordMeasurement.startOffset != lastEndOffset || wordMeasurement.endOffset > run->m_stop)
+            if (wordMeasurement.renderer != &renderer || wordMeasurement.startOffset != lastEndOffset || wordMeasurement.endOffset > run->m_stop)
                 continue;
 
             lastEndOffset = wordMeasurement.endOffset;
             if (kerningIsEnabled && lastEndOffset == run->m_stop) {
                 int wordLength = lastEndOffset - wordMeasurement.startOffset;
                 GlyphOverflow overflow;
-                measuredWidth += renderer->width(wordMeasurement.startOffset, wordLength, xPos + measuredWidth, lineInfo.isFirstLine(),
+                measuredWidth += renderer.width(wordMeasurement.startOffset, wordLength, xPos + measuredWidth, lineInfo.isFirstLine(),
                     &wordMeasurement.fallbackFonts, &overflow);
-                UChar c = renderer->characterAt(wordMeasurement.startOffset);
+                UChar c = renderer.characterAt(wordMeasurement.startOffset);
                 if (i > 0 && wordLength == 1 && (c == ' ' || c == '\t'))
-                    measuredWidth += renderer->style().fontCascade().wordSpacing();
+                    measuredWidth += renderer.style().fontCascade().wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;
             if (!wordMeasurement.fallbackFonts.isEmpty()) {
@@ -522,7 +522,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
 
     if (!measuredWidth)
-        measuredWidth = renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
+        measuredWidth = renderer.width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
 
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
@@ -534,7 +534,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
 
     // Include text decoration visual overflow as part of the glyph overflow.
-    if (renderer->style().textDecorationsInEffect() != TextDecorationNone)
+    if (renderer.style().textDecorationsInEffect() != TextDecorationNone)
         glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), downcast<InlineTextBox>(run->box())));
 
     if (!glyphOverflow.isEmpty()) {
@@ -747,7 +747,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
                 needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1)) && run->m_stop == length;
             }
 
-            setLogicalWidthForTextRun(lineBox, run, &renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
+            setLogicalWidthForTextRun(lineBox, run, renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             bool encounteredJustifiedRuby = false;
             if (is<RenderRubyRun>(run->renderer()) && textAlign == JUSTIFY && run != trailingSpaceRun && downcast<RenderRubyRun>(run->renderer()).rubyBase()) {

@@ -1,3 +1,42 @@
+2015-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Mechanical text-related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=142326
+
+        Reviewed by Andreas Kling.
+
+        Use nullptr instead of 0.
+        Use references instead of pointers.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::adjustSelectionRectForComplexText):
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText):
+        (WebCore::FontCascade::floatWidthForComplexText):
+        (WebCore::FontCascade::offsetForPositionForComplexText):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::TextLayout::TextLayout):
+        (WebCore::ComplexTextController::ComplexTextController):
+        * platform/graphics/mac/ComplexTextController.h:
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::InlineIterator::clear):
+        (WebCore::bidiNextShared):
+        (WebCore::bidiNextSkippingEmptyInlines):
+        (WebCore::bidiNextIncludingEmptyInlines):
+        (WebCore::InlineWalker::InlineWalker):
+        (WebCore::InlineIterator::increment):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::measureHyphenWidth):
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord):
+
 2015-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         Move AxisScrollSnapAnimator logic to ScrollController
