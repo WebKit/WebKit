@@ -284,7 +284,7 @@
                       "builderNames": ["Apple Mavericks Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "mavericks-release-perf",
-                      "builderNames": ["Apple Mavericks Release (Perf)"]
+                      "builderNames": ["Apple Mavericks Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "yosemite-release-tests-jsc",
                       "builderNames": ["Apple Yosemite Release JSC (Tests)"]
@@ -305,7 +305,7 @@
                       "builderNames": ["Apple Yosemite Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "yosemite-release-perf",
-                      "builderNames": ["Apple Yosemite Release (Perf)"]
+                      "builderNames": ["Apple Yosemite Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]
