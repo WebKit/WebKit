@@ -1,5 +1,19 @@
 2015-03-05  Roger Fong  <roger_fong@apple.com>
 
+        Minor touchups to inline media control icons.
+        https://bugs.webkit.org/show_bug.cgi?id=142354.
+        <rdar://problem/20058854>.
+
+        Reviewed by Brent Fulgham.
+
+        Increase sizes of play/pause and fullscreen buttons slightly.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-play-button.paused):
+        (audio::-webkit-media-controls-fullscreen-button):
+
+2015-03-05  Roger Fong  <roger_fong@apple.com>
+
         Update inline media control icons for OSX.
         https://bugs.webkit.org/show_bug.cgi?id=142305.
         <rdar://problem/19997484>
