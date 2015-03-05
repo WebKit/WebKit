@@ -1,3 +1,82 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Move AxisScrollSnapAnimator logic to ScrollController
+        https://bugs.webkit.org/show_bug.cgi?id=142293
+        <rdar://problem/20039867>
+
+        Reviewed by Dean Jackson.
+
+        No change in function.
+
+        Move the animation logic out of 'AxisScrollSnapAnimator' into 'ScrollController'. Rename the remaining
+        bits of 'AxisScrollSnapAnimator' as 'ScrollSnapAnimatorState'. Remove a number of delegate methods required
+        by 'AxisScrollSnapAnimatorClient' that are no longer needed.
+
+        Also, break up some of the Scroll Snap Point math to be a little easier to understand.
+
+        * WebCore.xcodeproj/project.pbxproj: Rename 'platform/mac/AxisScrollSnapAnimator.{h,mm}' -> 'platform/cocoa/ScrollSnapAnimatorState.h'
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h: Mark 'scrollOffsetOnAxis' as const.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis): Make 'const'
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scrollOffsetOnAxis): Make 'const'
+        * platform/ScrollAnimator.h:
+        * platform/cocoa/ScrollController.h: No longer subclass from AxisScrollSnapAnimatorClient.
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::scrollSnapPointState): Added accessors (const and non-const) for the individual
+        Scroll Snap State of each axis.
+        (WebCore::toWheelEventStatus): Moved from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): Added helper function containing the snap wheel handler code
+        from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::shouldOverrideWheelEvent): Moved from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::processWheelEventForScrollSnap): Update to use new methods moved from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::updateScrollAnimatorsAndTimers): Update for new ScrollSnapAnimatorState class.
+        (WebCore::ScrollController::updateScrollSnapPoints): Ditto.
+        (WebCore::ScrollController::startScrollSnapTimer): Call client (delegate) method.
+        (WebCore::ScrollController::stopScrollSnapTimer): Ditto.
+        (WebCore::ScrollController::horizontalScrollSnapTimerFired): Call new 'scrollSnapAnimationUpdate' method passing the
+        correct axis to animate.
+        (WebCore::ScrollController::verticalScrollSnapTimerFired): Ditto.
+        (WebCore::ScrollController::scrollSnapAnimationUpdate): Moved from AxisScrollSnapAnimator.
+        (WebCore::projectedInertialScrollDistance): Moved from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::initializeGlideParameters): Ditto.
+        (WebCore::ScrollController::beginScrollSnapAnimation): Ditto.
+        (WebCore::ScrollController::endScrollSnapAnimation): Ditto.
+        (WebCore::snapProgress): Created a new function for this calculation to make reasoning about the 'computeSnapDelta' and
+        'computeGlideDelta' easier.
+        (WebCore::clampedSnapMagnitude): Ditto.
+        (WebCore::ScrollController::computeSnapDelta): Moved from AxisScrollSnapAnimator.
+        (WebCore::snapGlide): Created a new function for this calculation to make reasoning about the 'computeGlideDelta' easier.
+        (WebCore::ScrollController::computeGlideDelta): Moved from AxisScrollSnapAnimator.
+        (WebCore::ScrollController::scrollOffsetOnAxis): Deleted.
+        (WebCore::ScrollController::immediateScrollOnAxis): Deleted.
+        * platform/cocoa/ScrollSnapAnimatorState.h: Copied from platform/mac/AxisScrollSnapAnimator.h.
+        (WebCore::AxisScrollSnapAnimatorClient::~AxisScrollSnapAnimatorClient): Deleted.
+        * platform/cocoa/ScrollSnapAnimatorState.mm: Copied from platform/mac/AxisScrollSnapAnimator.mm.
+        (WebCore::ScrollSnapAnimatorState::ScrollSnapAnimatorState):
+        (WebCore::ScrollSnapAnimatorState::pushInitialWheelDelta):
+        (WebCore::ScrollSnapAnimatorState::averageInitialWheelDelta):
+        (WebCore::ScrollSnapAnimatorState::clearInitialWheelDeltaWindow):
+        (WebCore::toWheelEventStatus): Deleted.
+        (WebCore::projectedInertialScrollDistance): Deleted.
+        (WebCore::AxisScrollSnapAnimator::AxisScrollSnapAnimator): Deleted.
+        (WebCore::AxisScrollSnapAnimator::handleWheelEvent): Deleted.
+        (WebCore::AxisScrollSnapAnimator::shouldOverrideWheelEvent): Deleted.
+        (WebCore::AxisScrollSnapAnimator::scrollSnapAnimationUpdate): Deleted.
+        (WebCore::AxisScrollSnapAnimator::beginScrollSnapAnimation): Deleted.
+        (WebCore::AxisScrollSnapAnimator::endScrollSnapAnimation): Deleted.
+        (WebCore::AxisScrollSnapAnimator::computeSnapDelta): Deleted.
+        (WebCore::AxisScrollSnapAnimator::computeGlideDelta): Deleted.
+        (WebCore::AxisScrollSnapAnimator::initializeGlideParameters): Deleted.
+        (WebCore::AxisScrollSnapAnimator::pushInitialWheelDelta): Deleted.
+        (WebCore::AxisScrollSnapAnimator::averageInitialWheelDelta): Deleted.
+        (WebCore::AxisScrollSnapAnimator::clearInitialWheelDeltaWindow): Deleted.
+        * platform/mac/AxisScrollSnapAnimator.h: Removed.
+        * platform/mac/AxisScrollSnapAnimator.mm: Removed.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection): Removed.
+
 2015-03-04  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Small inline controls can clip the time widgets

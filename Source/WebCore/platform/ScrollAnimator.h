@@ -120,7 +120,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
     void updateScrollAnimatorsAndTimers();
-    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
+    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
 #endif
 

@@ -32,7 +32,7 @@
 #include <sys/time.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#include "AxisScrollSnapAnimator.h"
+#include "ScrollSnapAnimatorState.h"
 #include "ScrollableArea.h"
 #endif
 
@@ -67,6 +67,31 @@ namespace WebCore {
 static const float scrollVelocityZeroingTimeout = 0.10f;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
+
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+static const float snapMagnitudeMax = 25;
+static const float snapMagnitudeMin = 5;
+static const float snapThresholdHigh = 1000;
+static const float snapThresholdLow = 50;
+
+static const float inertialScrollPredictionFactor = 16.7;
+static const float initialToFinalMomentumFactor = 1.0 / 40.0;
+
+static const float glideBoostMultiplier = 3.5;
+
+static const float maxTargetWheelDelta = 7;
+static const float minTargetWheelDelta = 3.5;
+#endif
+
+enum class WheelEventStatus {
+    UserScrollBegin,
+    UserScrolling,
+    UserScrollEnd,
+    InertialScrollBegin,
+    InertialScrolling,
+    InertialScrollEnd,
+    Unknown
+};
 
 static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
 {
@@ -423,16 +448,123 @@ bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheel
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+ScrollSnapAnimatorState& ScrollController::scrollSnapPointState(ScrollEventAxis axis)
+{
+    ASSERT(axis != ScrollEventAxis::Horizontal || m_horizontalScrollSnapState);
+    ASSERT(axis != ScrollEventAxis::Vertical || m_verticalScrollSnapState);
+
+    return (axis == ScrollEventAxis::Horizontal) ? *m_horizontalScrollSnapState : *m_verticalScrollSnapState;
+}
+
+const ScrollSnapAnimatorState& ScrollController::scrollSnapPointState(ScrollEventAxis axis) const
+{
+    ASSERT(axis != ScrollEventAxis::Horizontal || m_horizontalScrollSnapState);
+    ASSERT(axis != ScrollEventAxis::Vertical || m_verticalScrollSnapState);
+    
+    return (axis == ScrollEventAxis::Horizontal) ? *m_horizontalScrollSnapState : *m_verticalScrollSnapState;
+}
+
+static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
+{
+    if (phase == PlatformWheelEventPhaseNone) {
+        switch (momentumPhase) {
+        case PlatformWheelEventPhaseBegan:
+            return WheelEventStatus::InertialScrollBegin;
+                
+        case PlatformWheelEventPhaseChanged:
+            return WheelEventStatus::InertialScrolling;
+                
+        case PlatformWheelEventPhaseEnded:
+            return WheelEventStatus::InertialScrollEnd;
+                
+        default:
+            return WheelEventStatus::Unknown;
+        }
+    }
+    if (momentumPhase == PlatformWheelEventPhaseNone) {
+        switch (phase) {
+        case PlatformWheelEventPhaseBegan:
+        case PlatformWheelEventPhaseMayBegin:
+            return WheelEventStatus::UserScrollBegin;
+                
+        case PlatformWheelEventPhaseChanged:
+            return WheelEventStatus::UserScrolling;
+                
+        case PlatformWheelEventPhaseEnded:
+        case PlatformWheelEventPhaseCancelled:
+            return WheelEventStatus::UserScrollEnd;
+                
+        default:
+            return WheelEventStatus::Unknown;
+        }
+    }
+    return WheelEventStatus::Unknown;
+}
+
+void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis, const PlatformWheelEvent& event)
+{
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    float wheelDelta = axis == ScrollEventAxis::Horizontal ? -event.deltaX() : -event.deltaY();
+    WheelEventStatus wheelStatus = toWheelEventStatus(event.phase(), event.momentumPhase());
+    
+    switch (wheelStatus) {
+    case WheelEventStatus::UserScrollBegin:
+    case WheelEventStatus::UserScrolling:
+        endScrollSnapAnimation(axis, ScrollSnapState::UserInteraction);
+        break;
+            
+    case WheelEventStatus::UserScrollEnd:
+        beginScrollSnapAnimation(axis, ScrollSnapState::Snapping);
+        break;
+        
+    case WheelEventStatus::InertialScrollBegin:
+        // Begin tracking wheel deltas for glide prediction.
+        endScrollSnapAnimation(axis, ScrollSnapState::UserInteraction);
+        snapState.pushInitialWheelDelta(wheelDelta);
+        snapState.m_beginTrackingWheelDeltaOffset = m_client->scrollOffsetOnAxis(axis);
+        break;
+            
+    case WheelEventStatus::InertialScrolling:
+        // This check for DestinationReached ensures that we don't receive another set of momentum events after ending the last glide.
+        if (snapState.m_currentState != ScrollSnapState::Gliding && snapState.m_currentState != ScrollSnapState::DestinationReached) {
+            if (snapState.m_numWheelDeltasTracked < snapState.wheelDeltaWindowSize)
+                snapState.pushInitialWheelDelta(wheelDelta);
+            
+            if (snapState.m_numWheelDeltasTracked == snapState.wheelDeltaWindowSize)
+                beginScrollSnapAnimation(axis, ScrollSnapState::Gliding);
+        }
+        break;
+        
+    case WheelEventStatus::InertialScrollEnd:
+        beginScrollSnapAnimation(axis, ScrollSnapState::Snapping);
+        snapState.clearInitialWheelDeltaWindow();
+        snapState.m_shouldOverrideWheelEvent = false;
+        break;
+        
+    case WheelEventStatus::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+bool ScrollController::shouldOverrideWheelEvent(ScrollEventAxis axis, const PlatformWheelEvent& event) const
+{
+    const ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    return snapState.m_shouldOverrideWheelEvent && toWheelEventStatus(event.phase(), event.momentumPhase()) == WheelEventStatus::InertialScrolling;
+}
+
 bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
 {
-    if (m_verticalScrollSnapAnimator) {
-        m_verticalScrollSnapAnimator->handleWheelEvent(wheelEvent);
-        if (m_verticalScrollSnapAnimator->shouldOverrideWheelEvent(wheelEvent))
+    if (m_verticalScrollSnapState) {
+        processWheelEventForScrollSnapOnAxis(ScrollEventAxis::Vertical, wheelEvent);
+        if (shouldOverrideWheelEvent(ScrollEventAxis::Vertical, wheelEvent))
             return false;
     }
-    if (m_horizontalScrollSnapAnimator) {
-        m_horizontalScrollSnapAnimator->handleWheelEvent(wheelEvent);
-        if (m_horizontalScrollSnapAnimator->shouldOverrideWheelEvent(wheelEvent))
+    if (m_horizontalScrollSnapState) {
+        processWheelEventForScrollSnapOnAxis(ScrollEventAxis::Horizontal, wheelEvent);
+        if (shouldOverrideWheelEvent(ScrollEventAxis::Horizontal, wheelEvent))
             return false;
     }
 
@@ -443,59 +575,223 @@ void ScrollController::updateScrollAnimatorsAndTimers(const ScrollableArea& scro
 {
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
     if (scrollableArea.horizontalSnapOffsets())
-        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, *scrollableArea.horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
-    else if (m_horizontalScrollSnapAnimator)
-        m_horizontalScrollSnapAnimator = nullptr;
+        m_horizontalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Horizontal, *scrollableArea.horizontalSnapOffsets());
+    else if (m_horizontalScrollSnapState)
+        m_horizontalScrollSnapState = nullptr;
 
     if (scrollableArea.verticalSnapOffsets())
-        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, *scrollableArea.verticalSnapOffsets(), ScrollEventAxis::Vertical);
-    else if (m_verticalScrollSnapAnimator)
-        m_verticalScrollSnapAnimator = nullptr;
+        m_verticalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Vertical, *scrollableArea.verticalSnapOffsets());
+    else if (m_verticalScrollSnapState)
+        m_verticalScrollSnapState = nullptr;
 }
 
 void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints)
 {
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
     if (axis == ScrollEventAxis::Horizontal)
-        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, snapPoints, ScrollEventAxis::Horizontal);
+        m_horizontalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Horizontal, snapPoints);
 
     if (axis == ScrollEventAxis::Vertical)
-        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, snapPoints, ScrollEventAxis::Vertical);
+        m_verticalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Vertical, snapPoints);
 }
 
 void ScrollController::startScrollSnapTimer(ScrollEventAxis axis)
 {
     RunLoop::Timer<ScrollController>& scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer : m_verticalScrollSnapTimer;
-    if (!scrollSnapTimer.isActive())
+    if (!scrollSnapTimer.isActive()) {
+        m_client->startScrollSnapTimer(axis);
         scrollSnapTimer.startRepeating(1.0 / 60.0);
+    }
 }
 
 void ScrollController::stopScrollSnapTimer(ScrollEventAxis axis)
 {
+    m_client->stopScrollSnapTimer(axis);
     RunLoop::Timer<ScrollController>& scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer : m_verticalScrollSnapTimer;
     scrollSnapTimer.stop();
 }
 
 void ScrollController::horizontalScrollSnapTimerFired()
 {
-    if (m_horizontalScrollSnapAnimator)
-        m_horizontalScrollSnapAnimator->scrollSnapAnimationUpdate();
+    scrollSnapAnimationUpdate(ScrollEventAxis::Horizontal);
 }
 
 void ScrollController::verticalScrollSnapTimerFired()
 {
-    if (m_verticalScrollSnapAnimator)
-        m_verticalScrollSnapAnimator->scrollSnapAnimationUpdate();
+    scrollSnapAnimationUpdate(ScrollEventAxis::Vertical);
 }
 
-LayoutUnit ScrollController::scrollOffsetOnAxis(ScrollEventAxis axis)
+void ScrollController::scrollSnapAnimationUpdate(ScrollEventAxis axis)
 {
-    return m_client->scrollOffsetOnAxis(axis);
+    if (axis == ScrollEventAxis::Horizontal && !m_horizontalScrollSnapState)
+        return;
+
+    if (axis == ScrollEventAxis::Vertical && !m_verticalScrollSnapState)
+        return;
+
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+    if (snapState.m_currentState == ScrollSnapState::DestinationReached)
+        return;
+    
+    ASSERT(snapState.m_currentState == ScrollSnapState::Gliding || snapState.m_currentState == ScrollSnapState::Snapping);
+    float delta = snapState.m_currentState == ScrollSnapState::Snapping ? computeSnapDelta(axis) : computeGlideDelta(axis);
+    if (delta)
+        m_client->immediateScrollOnAxis(axis, delta);
+    else
+        endScrollSnapAnimation(axis, ScrollSnapState::DestinationReached);
 }
 
-void ScrollController::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
+static inline float projectedInertialScrollDistance(float initialWheelDelta)
 {
-    m_client->immediateScrollOnAxis(axis, delta);
+    // FIXME: Experiments with inertial scrolling show a fairly consistent linear relationship between initial wheel delta and total distance scrolled.
+    // In the future, we'll want to find a more accurate way of inertial scroll prediction.
+    return inertialScrollPredictionFactor * initialWheelDelta;
+}
+
+void ScrollController::initializeGlideParameters(ScrollEventAxis axis, bool shouldIncreaseInitialWheelDelta)
+{
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+    
+    // FIXME: Glide boost is a hacky way to speed up natural scrolling velocity. We should find a better way to accomplish this.
+    if (shouldIncreaseInitialWheelDelta)
+        snapState.m_glideInitialWheelDelta *= glideBoostMultiplier;
+    
+    // FIXME: There must be a better way to determine a good target delta than multiplying by a factor and clamping to min/max values.
+    float targetFinalWheelDelta = initialToFinalMomentumFactor * (snapState.m_glideInitialWheelDelta < 0 ? -snapState.m_glideInitialWheelDelta : snapState.m_glideInitialWheelDelta);
+    targetFinalWheelDelta = (snapState.m_glideInitialWheelDelta > 0 ? 1 : -1) * std::min(std::max(targetFinalWheelDelta, minTargetWheelDelta), maxTargetWheelDelta);
+    snapState.m_glideMagnitude = (snapState.m_glideInitialWheelDelta + targetFinalWheelDelta) / 2;
+    snapState.m_glidePhaseShift = acos((snapState.m_glideInitialWheelDelta - targetFinalWheelDelta) / (snapState.m_glideInitialWheelDelta + targetFinalWheelDelta));
+}
+
+void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnapState newState)
+{
+    ASSERT(newState == ScrollSnapState::Gliding || newState == ScrollSnapState::Snapping);
+    
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(axis);
+    float initialWheelDelta = newState == ScrollSnapState::Gliding ? snapState.averageInitialWheelDelta() : 0;
+    LayoutUnit projectedScrollDestination = newState == ScrollSnapState::Gliding ? snapState.m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
+    if (snapState.m_snapOffsets.isEmpty())
+        return;
+
+    projectedScrollDestination = std::min(std::max(projectedScrollDestination, snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
+    snapState.m_initialOffset = offset;
+    snapState.m_targetOffset = closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta);
+    if (snapState.m_initialOffset == snapState.m_targetOffset)
+        return;
+    
+    snapState.m_currentState = newState;
+    if (newState == ScrollSnapState::Gliding) {
+        snapState.m_shouldOverrideWheelEvent = true;
+        snapState.m_glideInitialWheelDelta = initialWheelDelta;
+        bool glideRequiresBoost;
+        if (initialWheelDelta > 0)
+            glideRequiresBoost = projectedScrollDestination - offset < snapState.m_targetOffset - projectedScrollDestination;
+        else
+            glideRequiresBoost = offset - projectedScrollDestination < projectedScrollDestination - snapState.m_targetOffset;
+        
+        initializeGlideParameters(axis, glideRequiresBoost);
+        snapState.clearInitialWheelDeltaWindow();
+    }
+    startScrollSnapTimer(axis);
+}
+
+void ScrollController::endScrollSnapAnimation(ScrollEventAxis axis, ScrollSnapState newState)
+{
+    ASSERT(newState == ScrollSnapState::DestinationReached || newState == ScrollSnapState::UserInteraction);
+
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    if (snapState.m_currentState == ScrollSnapState::Gliding)
+        snapState.clearInitialWheelDeltaWindow();
+    
+    snapState.m_currentState = newState;
+    stopScrollSnapTimer(axis);
+}
+
+static inline float snapProgress(const LayoutUnit& offset, const ScrollSnapAnimatorState& snapState)
+{
+    const float distanceTraveled = static_cast<float>(offset - snapState.m_initialOffset);
+    const float totalDistance = static_cast<float>(snapState.m_targetOffset - snapState.m_initialOffset);
+
+    return distanceTraveled / totalDistance;
+}
+
+static inline float clampedSnapMagnitude(float thresholdedDistance)
+{
+    return snapMagnitudeMin + (snapMagnitudeMax - snapMagnitudeMin) * (thresholdedDistance - snapThresholdLow) / (snapThresholdHigh - snapThresholdLow);
+}
+
+// Computes the amount to scroll by when performing a "snap" operation, i.e. when a user releases the trackpad without flicking. The snap delta
+// is a function of progress t, where t is equal to DISTANCE_TRAVELED / TOTAL_DISTANCE, DISTANCE_TRAVELED is the distance from the initialOffset
+// to the current offset, and TOTAL_DISTANCE is the distance from initialOffset to targetOffset. The snapping equation is as follows:
+// delta(t) = MAGNITUDE * sin(PI * t). MAGNITUDE indicates the top speed reached near the middle of the animation (t = 0.5), and is a linear
+// relationship of the distance traveled, clamped by arbitrary min and max values.
+float ScrollController::computeSnapDelta(ScrollEventAxis axis) const
+{
+    const ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(axis);
+    bool canComputeSnap =  (snapState.m_initialOffset <= offset && offset < snapState.m_targetOffset) || (snapState.m_targetOffset < offset && offset <= snapState.m_initialOffset);
+    if (snapState.m_currentState != ScrollSnapState::Snapping || !canComputeSnap)
+        return 0;
+    
+    float progress = snapProgress(offset, snapState);
+
+    // Threshold the distance before computing magnitude, so only distances within a certain range are considered.
+    int sign = snapState.m_initialOffset < snapState.m_targetOffset ? 1 : -1;
+    float thresholdedDistance = std::min(std::max<float>((snapState.m_targetOffset - snapState.m_initialOffset) * sign, snapThresholdLow), snapThresholdHigh);
+
+    float magnitude = clampedSnapMagnitude(thresholdedDistance);
+
+    float rawSnapDelta = std::max<float>(1, magnitude * std::sin(piFloat * progress));
+    if ((snapState.m_targetOffset < offset && offset - rawSnapDelta < snapState.m_targetOffset) || (snapState.m_targetOffset > offset && offset + rawSnapDelta > snapState.m_targetOffset))
+        return snapState.m_targetOffset - offset;
+    
+    return sign * rawSnapDelta;
+}
+
+static inline float snapGlide(float progress, const ScrollSnapAnimatorState& snapState)
+{
+    // FIXME: We might want to investigate why -m_glidePhaseShift results in the behavior we want.
+    return ceil(snapState.m_glideMagnitude * (1.0f + std::cos(piFloat * progress - snapState.m_glidePhaseShift)));
+}
+
+// Computes the amount to scroll by when performing a "glide" operation, i.e. when a user releases the trackpad with an initial velocity. Here,
+// we want the scroll offset to animate directly to the snap point.
+//
+// The snap delta is a function of progress t, where: (1) t is equal to DISTANCE_TRAVELED / TOTAL_DISTANCE, (2) DISTANCE_TRAVELED is the distance
+// from the initialOffset to the current offset, and (3) TOTAL_DISTANCE is the distance from initialOffset to targetOffset.
+//
+// The general model of our gliding equation is delta(t) = MAGNITUDE * (1 + cos(PI * t + PHASE_SHIFT)). This was determined after examining the
+// momentum velocity curve as a function of progress. To compute MAGNITUDE and PHASE_SHIFT, we use initial velocity V0 and the final velocity VF,
+// both as wheel deltas (pixels per timestep). VF should be a small value (< 10) chosen based on the initial velocity and TOTAL_DISTANCE.
+// We also enforce the following constraints for the gliding equation:
+//   1. delta(0) = V0, since we want the initial velocity of the gliding animation to match the user's scroll velocity. The exception to this is
+//      when the glide velocity is not enough to naturally reach the next snap point, and thus requires a boost (see initializeGlideParameters)
+//   2. delta(1) = VF, since at t=1, the animation has completed and we want the last wheel delta to match the final velocity VF. Note that this
+//      doesn't guarantee that the final velocity will be exactly VF. However, assuming that the initial velocity is much less than TOTAL_DISTANCE,
+//      the last wheel delta will be very close, if not the same, as VF.
+// For MAGNITUDE = (V0 + VF) / 2 and PHASE_SHIFT = arccos((V0 - VF) / (V0 + VF)), observe that delta(0) and delta(1) evaluate respectively to V0
+// and VF. Thus, we can express our gliding equation all in terms of V0, VF and t.
+float ScrollController::computeGlideDelta(ScrollEventAxis axis) const
+{
+    const ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+
+    LayoutUnit offset = m_client->scrollOffsetOnAxis(axis);
+    bool canComputeGlide = (snapState.m_initialOffset <= offset && offset < snapState.m_targetOffset) || (snapState.m_targetOffset < offset && offset <= snapState.m_initialOffset);
+    if (snapState.m_currentState != ScrollSnapState::Gliding || !canComputeGlide)
+        return 0;
+
+    const float progress = snapProgress(offset, snapState);
+    const float rawGlideDelta = snapGlide(progress, snapState);
+
+    float glideDelta = snapState.m_initialOffset < snapState.m_targetOffset ? std::max<float>(rawGlideDelta, 1) : std::min<float>(rawGlideDelta, -1);
+    if ((snapState.m_initialOffset < snapState.m_targetOffset && offset + glideDelta > snapState.m_targetOffset) || (snapState.m_initialOffset > snapState.m_targetOffset && offset + glideDelta < snapState.m_targetOffset))
+        return snapState.m_targetOffset - offset;
+    
+    return glideDelta;
 }
 #endif
 

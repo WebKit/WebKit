@@ -178,7 +178,7 @@ void ScrollAnimator::updateScrollAnimatorsAndTimers()
     m_scrollController.updateScrollAnimatorsAndTimers(m_scrollableArea);
 }
 
-LayoutUnit ScrollAnimator::scrollOffsetOnAxis(ScrollEventAxis axis)
+LayoutUnit ScrollAnimator::scrollOffsetOnAxis(ScrollEventAxis axis) const
 {
     return axis == ScrollEventAxis::Horizontal ? m_currentPosX : m_currentPosY;
 }

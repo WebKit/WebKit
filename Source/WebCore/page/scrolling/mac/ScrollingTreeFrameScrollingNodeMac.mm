@@ -541,7 +541,7 @@ void logWheelEventHandlerCountChanged(unsigned count)
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-LayoutUnit ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis(ScrollEventAxis axis)
+LayoutUnit ScrollingTreeFrameScrollingNodeMac::scrollOffsetOnAxis(ScrollEventAxis axis) const
 {
     const FloatPoint& currentPosition = scrollPosition();
     return axis == ScrollEventAxis::Horizontal ? currentPosition.x() : currentPosition.y();

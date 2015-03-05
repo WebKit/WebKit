@@ -147,8 +147,6 @@ private:
     virtual void immediateScrollBy(const FloatSize&) override;
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
-    bool pinnedInDirection(float deltaX, float deltaY);
-
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 #endif
 

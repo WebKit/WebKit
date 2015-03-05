@@ -35,7 +35,7 @@
 #include <wtf/RunLoop.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#include "AxisScrollSnapAnimator.h"
+#include "ScrollSnapAnimatorState.h"
 #endif
 
 namespace WebCore {
@@ -76,7 +76,7 @@ public:
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) = 0;
+    virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const = 0;
     virtual void immediateScrollOnAxis(ScrollEventAxis, float delta) = 0;
     virtual void startScrollSnapTimer(ScrollEventAxis)
     {
@@ -91,11 +91,7 @@ public:
 #endif
 };
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-class ScrollController : public AxisScrollSnapAnimatorClient {
-#else
 class ScrollController {
-#endif
     WTF_MAKE_NONCOPYABLE(ScrollController);
 
 public:
@@ -122,11 +118,23 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     void horizontalScrollSnapTimerFired();
     void verticalScrollSnapTimerFired();
-    void startScrollSnapTimer(ScrollEventAxis) override;
-    void stopScrollSnapTimer(ScrollEventAxis) override;
+    void startScrollSnapTimer(ScrollEventAxis);
+    void stopScrollSnapTimer(ScrollEventAxis);
 
-    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+    LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const;
+    void processWheelEventForScrollSnapOnAxis(ScrollEventAxis, const PlatformWheelEvent&);
+    bool shouldOverrideWheelEvent(ScrollEventAxis, const PlatformWheelEvent&) const;
+
+    void beginScrollSnapAnimation(ScrollEventAxis, ScrollSnapState);
+    void scrollSnapAnimationUpdate(ScrollEventAxis);
+    void endScrollSnapAnimation(ScrollEventAxis, ScrollSnapState);
+
+    void initializeGlideParameters(ScrollEventAxis, bool);
+    float computeSnapDelta(ScrollEventAxis) const;
+    float computeGlideDelta(ScrollEventAxis) const;
+
+    ScrollSnapAnimatorState& scrollSnapPointState(ScrollEventAxis);
+    const ScrollSnapAnimatorState& scrollSnapPointState(ScrollEventAxis) const;
 #endif
 
     ScrollControllerClient* m_client;
@@ -145,8 +153,8 @@ private:
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     // FIXME: Find a way to consolidate both timers into one variable.
-    std::unique_ptr<AxisScrollSnapAnimator> m_horizontalScrollSnapAnimator;
-    std::unique_ptr<AxisScrollSnapAnimator> m_verticalScrollSnapAnimator;
+    std::unique_ptr<ScrollSnapAnimatorState> m_horizontalScrollSnapState;
+    std::unique_ptr<ScrollSnapAnimatorState> m_verticalScrollSnapState;
     RunLoop::Timer<ScrollController> m_horizontalScrollSnapTimer;
     RunLoop::Timer<ScrollController> m_verticalScrollSnapTimer;
 #endif

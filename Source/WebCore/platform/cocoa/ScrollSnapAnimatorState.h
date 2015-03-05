@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AxisScrollSnapAnimator_h
-#define AxisScrollSnapAnimator_h
+#ifndef ScrollSnapAnimatorState_h
+#define ScrollSnapAnimatorState_h
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
@@ -42,49 +42,15 @@ enum class ScrollSnapState {
     UserInteraction
 };
 
-enum class WheelEventStatus {
-    UserScrollBegin,
-    UserScrolling,
-    UserScrollEnd,
-    InertialScrollBegin,
-    InertialScrolling,
-    InertialScrollEnd,
-    Unknown
-};
+struct ScrollSnapAnimatorState {
+    ScrollSnapAnimatorState(ScrollEventAxis, const Vector<LayoutUnit>&);
 
-class AxisScrollSnapAnimatorClient {
-protected:
-    virtual ~AxisScrollSnapAnimatorClient() { }
-
-public:
-    virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) = 0;
-    virtual void immediateScrollOnAxis(ScrollEventAxis, float velocity) = 0;
-    virtual void startScrollSnapTimer(ScrollEventAxis) = 0;
-    virtual void stopScrollSnapTimer(ScrollEventAxis) = 0;
-};
-
-class AxisScrollSnapAnimator {
-public:
-    AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient*, const Vector<LayoutUnit>&, ScrollEventAxis);
-    void handleWheelEvent(const PlatformWheelEvent&);
-    bool shouldOverrideWheelEvent(const PlatformWheelEvent&) const;
-    void scrollSnapAnimationUpdate();
-
-private:
-    void beginScrollSnapAnimation(ScrollSnapState);
-    void endScrollSnapAnimation(ScrollSnapState);
-
-    float computeSnapDelta() const;
-    float computeGlideDelta() const;
-
-    void initializeGlideParameters(bool);
     void pushInitialWheelDelta(float);
     float averageInitialWheelDelta() const;
     void clearInitialWheelDeltaWindow();
 
     static const int wheelDeltaWindowSize = 3;
 
-    AxisScrollSnapAnimatorClient* m_client;
     Vector<LayoutUnit> m_snapOffsets;
     ScrollEventAxis m_axis;
     // Used to track both snapping and gliding behaviors.
@@ -105,4 +71,4 @@ private:
 
 #endif // ENABLE(CSS_SCROLL_SNAP)
 
-#endif // AxisScrollSnapAnimator_h
+#endif // ScrollSnapAnimatorState_h
