@@ -263,37 +263,35 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
 {
     // If transform changed, and we are not composited, need to do a layout.
     if (contextSensitiveProperties & ContextSensitivePropertyTransform) {
-        // Text nodes share style with their parents but transforms don't apply to them,
-        // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
         if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited()) {
-            // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
-            // then we actually need SimplifiedLayoutAndPositionedMovement.
             if (!hasLayer())
-                diff = StyleDifferenceLayout; // FIXME: Do this for now since SimplifiedLayout cannot handle updating floating objects lists.
-            else if (diff < StyleDifferenceLayoutPositionedMovementOnly)
-                diff = StyleDifferenceSimplifiedLayout;
-            else if (diff < StyleDifferenceSimplifiedLayout)
-                diff = StyleDifferenceSimplifiedLayoutAndPositionedMovement;
-        } else if (diff < StyleDifferenceRecompositeLayer)
-            diff = StyleDifferenceRecompositeLayer;
+                diff = std::max(diff, StyleDifferenceLayout);
+            else {
+                // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
+                // then we actually need SimplifiedLayoutAndPositionedMovement.
+                diff = std::max(diff, (diff == StyleDifferenceLayoutPositionedMovementOnly) ? StyleDifferenceSimplifiedLayoutAndPositionedMovement : StyleDifferenceSimplifiedLayout);
+            }
+        
+        } else
+            diff = std::max(diff, StyleDifferenceRecompositeLayer);
     }
 
     // If opacity changed, and we are not composited, need to repaint (also
     // ignoring text nodes)
     if (contextSensitiveProperties & ContextSensitivePropertyOpacity) {
         if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited())
-            diff = StyleDifferenceRepaintLayer;
-        else if (diff < StyleDifferenceRecompositeLayer)
-            diff = StyleDifferenceRecompositeLayer;
+            diff = std::max(diff, StyleDifferenceRepaintLayer);
+        else
+            diff = std::max(diff, StyleDifferenceRecompositeLayer);
     }
 
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
-            diff = StyleDifferenceRepaintLayer;
-        else if (diff < StyleDifferenceRecompositeLayer)
-            diff = StyleDifferenceRecompositeLayer;
+            diff = std::max(diff, StyleDifferenceRepaintLayer);
+        else
+            diff = std::max(diff, StyleDifferenceRecompositeLayer);
     }
     
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual

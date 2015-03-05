@@ -1,3 +1,23 @@
+2015-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Clarify RenderElement::adjustStyleDifference()
+        https://bugs.webkit.org/show_bug.cgi?id=142256
+
+        Reviewed by David Hyatt.
+
+        Make RenderElement::adjustStyleDifference() clearer in two ways.
+        
+        First, replace lots of if (diff < X) diff = X with
+        diff = std::max(diff, X). I did this even in cases where diff was
+        being set unconditionally, because it's never correct to change the diff
+        to a lesser value.
+        
+        Second the "set at least SimplifiedLayout, but if we have PositionedMovementOnly
+        set it to SimplifiedLayoutAndPositionedMovement" was confusingly written.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference):
+
 2015-03-04  David Kilzer  <ddkilzer@apple.com>
 
         Switch new soft-linking debug asserts to release asserts
