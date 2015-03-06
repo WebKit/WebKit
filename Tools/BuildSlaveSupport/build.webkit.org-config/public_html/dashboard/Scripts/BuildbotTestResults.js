@@ -73,6 +73,10 @@ BuildbotTestResults.prototype = {
         function resultSummarizer(matchString, sum, outputLine)
         {
             var match = /^(\d+)\s/.exec(outputLine);
+            if (!match) {
+                var regex = new RegExp("(\\d+)\\s" + matchString);
+                match = regex.exec(outputLine);
+            }
             if (!match)
                 return sum;
             if (!outputLine.contains(matchString))

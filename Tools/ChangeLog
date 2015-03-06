@@ -1,3 +1,16 @@
+2015-03-05  David Kilzer  <ddkilzer@apple.com>
+
+        Dashboard has trouble parsing iOS test output
+        <http://webkit.org/b/142364>
+
+        Reviewed by Alex Christensen.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults.prototype._parseResults.resultSummarizer):
+        Add fallback path to build a regex using 'matchString' so that
+        it matches anywhere in the line.  In practice, 'matchString' is
+        a prefix for the label following the number.
+
 2015-03-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix linker warnings in TestWebKitAPI.
