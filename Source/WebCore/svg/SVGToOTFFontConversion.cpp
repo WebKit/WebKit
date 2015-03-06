@@ -1036,7 +1036,8 @@ template <typename V>
 static void writeCFFEncodedNumber(V& vector, float number)
 {
     vector.append(0xFF);
-    append32(vector, number * 0x10000);
+    // Convert to 16.16 fixed-point
+    append32(vector, clampTo<int32_t>(number * 0x10000));
 }
 
 static const char rLineTo = 0x05;
