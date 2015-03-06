@@ -1,3 +1,19 @@
+2015-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Process all actions when blocking a URL.
+        https://bugs.webkit.org/show_bug.cgi?id=142363
+
+        Reviewed by Darin Adler.
+
+        This can only be tested once we implement css selectors.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL):
+        Do not return early when adding a block action.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        Process all actions before returning.
+
 2015-03-05  Darin Adler  <darin@apple.com>
 
         Make JavaScript binding get and set legacy event listener attributes directly

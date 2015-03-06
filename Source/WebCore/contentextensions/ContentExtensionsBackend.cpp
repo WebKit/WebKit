@@ -85,8 +85,6 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
                 if (action.type() == ActionType::IgnorePreviousRules)
                     break;
                 actions.append(action);
-                if (action.type() == ActionType::BlockLoad)
-                    return actions;
             }
         }
     }

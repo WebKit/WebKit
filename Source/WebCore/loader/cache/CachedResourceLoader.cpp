@@ -510,10 +510,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (frame() && frame()->page() && frame()->page()->userContentController())
         actions = frame()->page()->userContentController()->actionsForURL(url);
 
+    bool willBlockLoad = false;
     for (const auto& action : actions) {
         if (action.type() == ContentExtensions::ActionType::BlockLoad)
-            return nullptr;
-        if (action.type() == ContentExtensions::ActionType::BlockCookies)
+            willBlockLoad = true;
+        else if (action.type() == ContentExtensions::ActionType::BlockCookies)
             request.mutableResourceRequest().setAllowCookies(false);
         else if (action.type() == ContentExtensions::ActionType::CSSDisplayNone) {
             // action.cssSelector() is the css to use here.
@@ -521,6 +522,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         } else
             RELEASE_ASSERT_NOT_REACHED();
     }
+    if (willBlockLoad)
+        return nullptr;
 #endif
 
     auto& memoryCache = MemoryCache::singleton();
