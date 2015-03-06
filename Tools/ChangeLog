@@ -1,3 +1,16 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Provide tiered logging from MSBuild -- Errors on top, Warnings after
+        https://bugs.webkit.org/show_bug.cgi?id=142370
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject): Tell MSBuild to output log files to two separate
+        logs, one for warnings, the other for errors.
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Combine the error and warning logs
+        into the standard BuildOutput.htm document.
+
 2015-03-05  David Kilzer  <ddkilzer@apple.com>
 
         Dashboard has trouble parsing iOS test output

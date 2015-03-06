@@ -1687,11 +1687,15 @@ sub buildVisualStudioProject
     my $logPath = File::Spec->catdir($baseProductDir, $configuration);
     File::Path->make_path($logPath) unless -d $logPath;
 
-    my $logFile = File::Spec->catfile($logPath, "BuildOutput.htm");
-    chomp($logFile = `cygpath -w "$logFile"`) if isCygwin();
-    my $logging = "/flp:LogFile=" . $logFile . ";ErrorsOnly";
+    my $errorLogFile = File::Spec->catfile($logPath, "webkit_errors.log");
+    chomp($errorLogFile = `cygpath -w "$errorLogFile"`) if isCygwin();
+    my $errorLogging = "/flp:LogFile=" . $errorLogFile . ";ErrorsOnly";
 
-    my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $logging);
+    my $warningLogFile = File::Spec->catfile($logPath, "webkit_warnings.log");
+    chomp($warningLogFile = `cygpath -w "$warningLogFile"`) if isCygwin();
+    my $warningLogging = "/flp1:LogFile=" . $warningLogFile . ";WarningsOnly";
+
+    my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $errorLogging, "/fl1", $warningLogging);
 
     print join(" ", @command), "\n";
     return system @command;

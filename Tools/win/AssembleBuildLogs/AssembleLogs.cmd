@@ -206,4 +206,19 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\TestWebKitAPI\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 :SkipIndividualBuilds
-echo "No individual build logs to address"
+
+if not exist "%CONFIGURATIONBUILDDIR%\webkit_warnings.log" GOTO SkipMSBuildFiles
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo Build ERRORS...                                           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\webkit_errors.log" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo Build WARNINGS...                                         >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\webkit_warnings.log" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+:SkipIndividualBuilds
+
+echo "Completed."
