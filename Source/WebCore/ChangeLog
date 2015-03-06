@@ -1,3 +1,18 @@
+2015-03-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181139.
+        https://bugs.webkit.org/show_bug.cgi?id=142394
+
+        "Caused many crashes in API tests and layout tests in Debug
+        builds on bots." (Requested by ddkilzer on #webkit).
+
+        Reverted changeset:
+
+        "Allow tree dumping functions to be used in release builds by
+        switching a flag"
+        https://bugs.webkit.org/show_bug.cgi?id=142379
+        http://trac.webkit.org/changeset/181139
+
 2015-03-05  Philippe Normand  <pnormand@igalia.com>
 
         [MediaStream] new load method for MediaStreamPrivate objects

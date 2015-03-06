@@ -63,7 +63,7 @@ Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText&, const Layout&, boo
 LayoutUnit lineHeightFromFlow(const RenderBlockFlow&);
 LayoutUnit baselineFromFlow(const RenderBlockFlow&);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void showLineLayoutForFlow(const RenderBlockFlow&, const Layout&, int depth);
 #endif
 

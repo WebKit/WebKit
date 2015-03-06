@@ -488,7 +488,7 @@ public:
     //
     virtual void removedFrom(ContainerNode& insertionPoint);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 
     void showNode(const char* prefix = "") const;
@@ -496,7 +496,7 @@ public:
     void showNodePathForThis() const;
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = nullptr, const char* markedLabel2 = nullptr) const;
     void showTreeForThisAcrossFrame() const;
-#endif // ENABLE(TREE_DEBUGGING)
+#endif
 
     void invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName = nullptr, Element* attributeOwnerElement = nullptr);
     NodeListsNodeData* nodeLists();
@@ -733,7 +733,7 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::Node*);
 void showNodePath(const WebCore::Node*);

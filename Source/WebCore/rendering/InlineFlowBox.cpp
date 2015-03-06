@@ -1687,7 +1687,7 @@ void InlineFlowBox::computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, 
     }
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 const char* InlineFlowBox::boxName() const
 {
@@ -1700,10 +1700,6 @@ void InlineFlowBox::showLineTreeAndMark(const InlineBox* markedBox, int depth) c
     for (const InlineBox* box = firstChild(); box; box = box->nextOnLine())
         box->showLineTreeAndMark(markedBox, depth + 1);
 }
-
-#endif
-
-#ifndef NDEBUG
 
 void InlineFlowBox::checkConsistency() const
 {

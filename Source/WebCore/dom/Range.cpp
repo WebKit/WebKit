@@ -1919,7 +1919,7 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
 }
 #endif
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void Range::formatForDebugger(char* buffer, unsigned length) const
 {
     StringBuilder result;
@@ -2251,7 +2251,7 @@ FloatRect Range::boundingRect() const
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 void showTree(const WebCore::Range* range)
 {

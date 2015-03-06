@@ -1685,7 +1685,7 @@ void Element::finishParsingChildren()
         styleResolver->popParentElement(this);
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void Element::formatForDebugger(char* buffer, unsigned length) const
 {
     StringBuilder result;

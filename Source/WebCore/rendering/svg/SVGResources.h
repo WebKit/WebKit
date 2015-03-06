@@ -71,7 +71,7 @@ public:
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) const;
     void resourceDestroyed(RenderSVGResourceContainer&);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     void dump(const RenderObject*);
 #endif
 

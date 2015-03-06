@@ -67,7 +67,7 @@ private:
 
     virtual Ref<Text> virtualCreate(const String&);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const override;
 #endif
 };

@@ -350,7 +350,7 @@ void CounterNode::removeChild(CounterNode* oldChild)
         next->recount();
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 static void showTreeAndMark(const CounterNode* node)
 {
@@ -374,7 +374,7 @@ static void showTreeAndMark(const CounterNode* node)
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 void showCounterTree(const WebCore::CounterNode* counter)
 {

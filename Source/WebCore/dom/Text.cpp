@@ -216,7 +216,7 @@ Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, un
     return result;
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void Text::formatForDebugger(char* buffer, unsigned length) const
 {
     StringBuilder result;

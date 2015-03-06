@@ -1346,7 +1346,6 @@ TextDirection Position::primaryDirection() const
     return LTR;
 }
 
-#if ENABLE(TREE_DEBUGGING)
 
 void Position::debugPosition(const char* msg) const
 {
@@ -1355,6 +1354,8 @@ void Position::debugPosition(const char* msg) const
     else
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
 }
+
+#ifndef NDEBUG
 
 void Position::formatForDebugger(char* buffer, unsigned length) const
 {
@@ -1408,9 +1409,11 @@ void Position::showTreeForThis() const
 
 #endif
 
+
+
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 void showTree(const WebCore::Position& pos)
 {

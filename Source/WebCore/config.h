@@ -135,8 +135,3 @@ typedef float CGFloat;
 
 #endif
 
-#ifdef NDEBUG
-#define ENABLE_TREE_DEBUGGING 0
-#else
-#define ENABLE_TREE_DEBUGGING 1
-#endif

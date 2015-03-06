@@ -724,7 +724,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
     }
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void DocumentMarkerController::showMarkers() const
 {
     fprintf(stderr, "%d nodes have markers:\n", m_markers.size());
@@ -745,7 +745,7 @@ void DocumentMarkerController::showMarkers() const
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void showDocumentMarkers(const WebCore::DocumentMarkerController* controller)
 {
     if (controller)

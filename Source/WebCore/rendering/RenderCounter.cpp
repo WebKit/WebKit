@@ -35,7 +35,7 @@
 #include "RenderView.h"
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 #include <stdio.h>
 #endif
 
@@ -600,7 +600,7 @@ void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderSt
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* counterName)
 {

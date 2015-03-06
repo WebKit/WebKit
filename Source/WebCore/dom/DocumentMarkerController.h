@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     void showMarkers() const;
 #endif
 
@@ -108,7 +108,7 @@ private:
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void showDocumentMarkers(const WebCore::DocumentMarkerController*);
 #endif
 

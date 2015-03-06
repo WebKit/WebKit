@@ -1152,7 +1152,7 @@ Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
     return 0;
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 const char* RootInlineBox::boxName() const
 {
     return "RootInlineBox";

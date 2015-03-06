@@ -31,7 +31,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 #include <stdio.h>
 #endif
 
@@ -612,7 +612,7 @@ void SVGResources::resetLinkedResource()
     m_linkedResource = 0;
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void SVGResources::dump(const RenderObject* object)
 {
     ASSERT(object);

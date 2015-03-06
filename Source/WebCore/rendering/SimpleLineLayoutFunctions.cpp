@@ -179,7 +179,7 @@ Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText& textRenderer, const
     return quads;
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 static void printPrefix(int& printedCharacters, int depth)
 {
     fprintf(stderr, "------- --");

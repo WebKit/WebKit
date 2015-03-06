@@ -169,7 +169,7 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
 
     std::unique_ptr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     graphicsLayer->setName(name);
 #else
     UNUSED_PARAM(name);
@@ -275,7 +275,7 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
     String layerName;
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     layerName = m_owningLayer.name();
 #endif
     
@@ -1366,7 +1366,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
     if (needsForegroundLayer) {
         if (!m_foregroundLayer) {
             String layerName;
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
             layerName = m_owningLayer.name() + " (foreground)";
 #endif
             m_foregroundLayer = createGraphicsLayer(layerName);
@@ -1395,7 +1395,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     if (needsBackgroundLayer) {
         if (!m_backgroundLayer) {
             String layerName;
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
             layerName = m_owningLayer.name() + " (background)";
 #endif
             m_backgroundLayer = createGraphicsLayer(layerName);
@@ -1407,7 +1407,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
         
         if (!m_contentsContainmentLayer) {
             String layerName;
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
             layerName = m_owningLayer.name() + " (contents containment)";
 #endif
             m_contentsContainmentLayer = createGraphicsLayer(layerName);

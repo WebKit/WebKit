@@ -73,7 +73,7 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     void showNodeTreeForThis() const;
     void showLineTreeForThis() const;
     
@@ -446,7 +446,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::InlineBox& box) { return box.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showNodeTree(const WebCore::InlineBox*);
 void showLineTree(const WebCore::InlineBox*);

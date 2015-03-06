@@ -70,7 +70,7 @@ public:
     virtual ~InlineFlowBox();
 #endif
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     virtual void showLineTreeAndMark(const InlineBox* markedBox, int depth) const override;
     virtual const char* boxName() const override;
 #endif
@@ -367,7 +367,7 @@ inline void InlineFlowBox::setHasBadChildList()
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineFlowBox, isInlineFlowBox())
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::InlineFlowBox*);
 #endif

@@ -1393,7 +1393,7 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCasc
     return run;
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 
 const char* InlineTextBox::boxName() const
 {

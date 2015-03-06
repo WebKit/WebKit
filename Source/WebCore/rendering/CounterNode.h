@@ -93,7 +93,7 @@ private:
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showCounterTree(const WebCore::CounterNode*);
 #endif

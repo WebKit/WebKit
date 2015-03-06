@@ -202,7 +202,7 @@ public:
     
     void debugPosition(const char* msg = "") const;
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
     void showAnchorTypeAndOffset() const;
     void showTreeForThis() const;
@@ -342,7 +342,7 @@ inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::Position&);
 void showTree(const WebCore::Position*);

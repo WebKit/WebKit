@@ -3556,7 +3556,7 @@ void RenderBlockFlow::ensureLineBoxes()
         clearNeedsLayout();
 }
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 void RenderBlockFlow::showLineTreeAndMark(const InlineBox* markedBox, int depth) const
 {
     for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())

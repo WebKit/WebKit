@@ -63,7 +63,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isCounter())
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showCounterRendererTree(const WebCore::RenderObject*, const char* counterName = 0);
 #endif

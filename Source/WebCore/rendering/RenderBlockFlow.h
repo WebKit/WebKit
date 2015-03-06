@@ -363,7 +363,7 @@ public:
     void deleteLineBoxesBeforeSimpleLineLayout();
     void ensureLineBoxes();
 
-#if ENABLE(TREE_DEBUGGING)
+#ifndef NDEBUG
     void showLineTreeAndMark(const InlineBox* markedBox, int depth) const;
 #endif
 
