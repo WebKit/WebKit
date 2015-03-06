@@ -26,7 +26,7 @@
 
 #include "AXObjectCache.h"
 #include "BidiResolver.h"
-#include "BreakingContextInlineHeaders.h"
+#include "BreakingContext.h"
 #include "FloatingObjects.h"
 #include "InlineElementBox.h"
 #include "InlineIterator.h"

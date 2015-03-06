@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef BreakingContextInlineHeaders_h
-#define BreakingContextInlineHeaders_h
+#ifndef BreakingContext_h
+#define BreakingContext_h
 
 #include "Hyphenation.h"
 #include "LineBreaker.h"
@@ -1199,4 +1199,4 @@ inline InlineIterator BreakingContext::optimalLineBreakLocationForTrailingWord()
 
 }
 
-#endif // BreakingContextInlineHeaders_h
+#endif // BreakingContext_h

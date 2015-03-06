@@ -20345,7 +20345,7 @@
     <ClInclude Include="..\rendering\RenderSelectionInfo.h" />
     <ClInclude Include="..\rendering\RenderSlider.h" />
     <ClInclude Include="..\rendering\RenderSnapshottedPlugIn.h" />
-    <ClInclude Include="..\rendering\line\BreakingContextInlineHeaders.h" />
+    <ClInclude Include="..\rendering\line\BreakingContext.h" />
     <ClInclude Include="..\rendering\line\LineBreaker.h" />
     <ClInclude Include="..\rendering\line\LineInfo.h" />
     <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />

@@ -14408,7 +14408,7 @@
     <ClInclude Include="..\rendering\BorderEdge.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\line\BreakingContextInlineHeaders.h">
+    <ClInclude Include="..\rendering\line\BreakingContext.h">
       <Filter>rendering\line</Filter>
     </ClInclude>
     <ClInclude Include="..\page\ContextMenuContext.h">

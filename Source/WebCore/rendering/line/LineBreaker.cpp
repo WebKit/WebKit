@@ -25,7 +25,7 @@
 #include "config.h"
 #include "LineBreaker.h"
 
-#include "BreakingContextInlineHeaders.h"
+#include "BreakingContext.h"
 #include "RenderCombineText.h"
 
 namespace WebCore {

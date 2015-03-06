@@ -1,3 +1,70 @@
+2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename BreakingContextInlineHeaders.h to BreakingContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=142404
+
+        Reviewed by Simon Fraser.
+
+        No point naming it "InlineHeaders" when there are no non-inline-headers files.
+
+        No new tests because this is just a rename of a file.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/line/BreakingContext.h: Renamed from Source/WebCore/rendering/line/BreakingContextInlineHeaders.h.
+        (WebCore::WordMeasurement::WordMeasurement):
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::currentObject):
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::lineWidth):
+        (WebCore::BreakingContext::atEnd):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::InlineIteratorHistory::InlineIteratorHistory):
+        (WebCore::BreakingContext::InlineIteratorHistory::push):
+        (WebCore::BreakingContext::InlineIteratorHistory::update):
+        (WebCore::BreakingContext::InlineIteratorHistory::renderer):
+        (WebCore::BreakingContext::InlineIteratorHistory::offset):
+        (WebCore::BreakingContext::InlineIteratorHistory::atTextParagraphSeparator):
+        (WebCore::BreakingContext::InlineIteratorHistory::previousInSameNode):
+        (WebCore::BreakingContext::InlineIteratorHistory::get):
+        (WebCore::BreakingContext::InlineIteratorHistory::current):
+        (WebCore::BreakingContext::InlineIteratorHistory::historyLength):
+        (WebCore::BreakingContext::InlineIteratorHistory::moveTo):
+        (WebCore::BreakingContext::InlineIteratorHistory::increment):
+        (WebCore::BreakingContext::InlineIteratorHistory::clear):
+        (WebCore::BreakingContext::initializeForCurrentObject):
+        (WebCore::BreakingContext::increment):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::borderPaddingMarginStart):
+        (WebCore::borderPaddingMarginEnd):
+        (WebCore::shouldAddBorderPaddingMargin):
+        (WebCore::previousInFlowSibling):
+        (WebCore::inlineLogicalWidth):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::firstPositiveWidth):
+        (WebCore::iteratorIsBeyondEndOfRenderCombineText):
+        (WebCore::nextCharacter):
+        (WebCore::updateCounterIfNeeded):
+        (WebCore::measureHyphenWidth):
+        (WebCore::textWidth):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::textBeginsWithBreakablePosition):
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        (WebCore::checkMidpoints):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord):
+        * rendering/line/LineBreaker.cpp:
+
 2015-03-06  Dan Bernstein  <mitz@apple.com>
 
         Expose some of the functionality of extract-localizable-strings.pl as a module
