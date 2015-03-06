@@ -29,32 +29,33 @@
 #if ENABLE(NETWORK_CACHE)
 
 namespace WebKit {
+namespace NetworkCache {
 
-NetworkCacheEncoder::NetworkCacheEncoder()
+Encoder::Encoder()
     : m_checksum(0)
 {
 }
 
-NetworkCacheEncoder::~NetworkCacheEncoder()
+Encoder::~Encoder()
 {
 }
 
-uint8_t* NetworkCacheEncoder::grow(size_t size)
+uint8_t* Encoder::grow(size_t size)
 {
     size_t newPosition = m_buffer.size();
     m_buffer.grow(m_buffer.size() + size);
     return m_buffer.data() + newPosition;
 }
 
-void NetworkCacheEncoder::updateChecksumForData(unsigned& checksum, const uint8_t* data, size_t size)
+void Encoder::updateChecksumForData(unsigned& checksum, const uint8_t* data, size_t size)
 {
     // FIXME: hashMemory should not require alignment.
     size_t hashSize = size - size % 2;
-    unsigned hash = StringHasher::hashMemory(data, hashSize) ^ NetworkCacheEncoder::Salt<uint8_t*>::value;
+    unsigned hash = StringHasher::hashMemory(data, hashSize) ^ Encoder::Salt<uint8_t*>::value;
     checksum = WTF::pairIntHash(checksum, hash);
 }
 
-void NetworkCacheEncoder::encodeFixedLengthData(const uint8_t* data, size_t size)
+void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 {
     updateChecksumForData(m_checksum, data, size);
 
@@ -63,64 +64,65 @@ void NetworkCacheEncoder::encodeFixedLengthData(const uint8_t* data, size_t size
 }
 
 template<typename Type>
-void NetworkCacheEncoder::encodeNumber(Type value)
+void Encoder::encodeNumber(Type value)
 {
-    NetworkCacheEncoder::updateChecksumForNumber(m_checksum, value);
+    Encoder::updateChecksumForNumber(m_checksum, value);
 
     uint8_t* buffer = grow(sizeof(Type));
     memcpy(buffer, &value, sizeof(Type));
 }
 
-void NetworkCacheEncoder::encode(bool value)
+void Encoder::encode(bool value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(uint8_t value)
+void Encoder::encode(uint8_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(uint16_t value)
+void Encoder::encode(uint16_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(uint32_t value)
+void Encoder::encode(uint32_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(uint64_t value)
+void Encoder::encode(uint64_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(int32_t value)
+void Encoder::encode(int32_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(int64_t value)
+void Encoder::encode(int64_t value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(float value)
+void Encoder::encode(float value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encode(double value)
+void Encoder::encode(double value)
 {
     encodeNumber(value);
 }
 
-void NetworkCacheEncoder::encodeChecksum()
+void Encoder::encodeChecksum()
 {
     encodeNumber(m_checksum);
 }
 
+}
 }
 
 #endif

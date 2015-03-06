@@ -31,12 +31,13 @@
 #include "NetworkCacheCoder.h"
 
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheDecoder {
+class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NetworkCacheDecoder(const uint8_t* buffer, size_t bufferSize);
-    virtual ~NetworkCacheDecoder();
+    Decoder(const uint8_t* buffer, size_t bufferSize);
+    virtual ~Decoder();
 
     size_t length() const { return m_bufferEnd - m_buffer; }
     size_t currentOffset() const { return m_bufferPosition - m_buffer; }
@@ -72,7 +73,7 @@ public:
 
     template<typename T> bool decode(T& t)
     {
-        return NetworkCacheCoder<T>::decode(*this, t);
+        return Coder<T>::decode(*this, t);
     }
 
     template<typename T>
@@ -98,6 +99,7 @@ private:
 };
 
 } 
+}
 
 #endif
 #endif

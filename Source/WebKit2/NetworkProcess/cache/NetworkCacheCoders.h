@@ -39,14 +39,15 @@
 #include <wtf/Vector.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-template<typename T, typename U> struct NetworkCacheCoder<std::pair<T, U>> {
-    static void encode(NetworkCacheEncoder& encoder, const std::pair<T, U>& pair)
+template<typename T, typename U> struct Coder<std::pair<T, U>> {
+    static void encode(Encoder& encoder, const std::pair<T, U>& pair)
     {
         encoder << pair.first << pair.second;
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, std::pair<T, U>& pair)
+    static bool decode(Decoder& decoder, std::pair<T, U>& pair)
     {
         T first;
         if (!decoder.decode(first))
@@ -62,14 +63,14 @@ template<typename T, typename U> struct NetworkCacheCoder<std::pair<T, U>> {
     }
 };
 
-template<typename Rep, typename Period> struct NetworkCacheCoder<std::chrono::duration<Rep, Period>> {
-    static void encode(NetworkCacheEncoder& encoder, const std::chrono::duration<Rep, Period>& duration)
+template<typename Rep, typename Period> struct Coder<std::chrono::duration<Rep, Period>> {
+    static void encode(Encoder& encoder, const std::chrono::duration<Rep, Period>& duration)
     {
         static_assert(std::is_integral<Rep>::value && std::is_signed<Rep>::value && sizeof(Rep) <= sizeof(int64_t), "Serialization of this Rep type is not supported yet. Only signed integer type which can be fit in an int64_t is currently supported.");
         encoder << static_cast<int64_t>(duration.count());
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, std::chrono::duration<Rep, Period>& result)
+    static bool decode(Decoder& decoder, std::chrono::duration<Rep, Period>& result)
     {
         int64_t count;
         if (!decoder.decode(count))
@@ -79,13 +80,13 @@ template<typename Rep, typename Period> struct NetworkCacheCoder<std::chrono::du
     }
 };
 
-template<typename KeyType, typename ValueType> struct NetworkCacheCoder<WTF::KeyValuePair<KeyType, ValueType>> {
-    static void encode(NetworkCacheEncoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
+template<typename KeyType, typename ValueType> struct Coder<WTF::KeyValuePair<KeyType, ValueType>> {
+    static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         encoder << pair.key << pair.value;
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
+    static bool decode(Decoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         KeyType key;
         if (!decoder.decode(key))
@@ -101,17 +102,17 @@ template<typename KeyType, typename ValueType> struct NetworkCacheCoder<WTF::Key
     }
 };
 
-template<bool fixedSizeElements, typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder;
+template<bool fixedSizeElements, typename T, size_t inlineCapacity> struct VectorCoder;
 
-template<typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder<false, T, inlineCapacity> {
-    static void encode(NetworkCacheEncoder& encoder, const Vector<T, inlineCapacity>& vector)
+template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineCapacity> {
+    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         for (size_t i = 0; i < vector.size(); ++i)
             encoder << vector[i];
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, Vector<T, inlineCapacity>& vector)
+    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t size;
         if (!decoder.decode(size))
@@ -132,14 +133,14 @@ template<typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder<false
     }
 };
 
-template<typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder<true, T, inlineCapacity> {
-    static void encode(NetworkCacheEncoder& encoder, const Vector<T, inlineCapacity>& vector)
+template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCapacity> {
+    static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
     }
     
-    static bool decode(NetworkCacheDecoder& decoder, Vector<T, inlineCapacity>& vector)
+    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t size;
         if (!decoder.decode(size))
@@ -163,19 +164,19 @@ template<typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder<true,
     }
 };
 
-template<typename T, size_t inlineCapacity> struct NetworkCacheCoder<Vector<T, inlineCapacity>> : VectorNetworkCacheCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
+template<typename T, size_t inlineCapacity> struct Coder<Vector<T, inlineCapacity>> : VectorCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct NetworkCacheCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct Coder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 
-    static void encode(NetworkCacheEncoder& encoder, const HashMapType& hashMap)
+    static void encode(Encoder& encoder, const HashMapType& hashMap)
     {
         encoder << static_cast<uint64_t>(hashMap.size());
         for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
             encoder << *it;
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, HashMapType& hashMap)
+    static bool decode(Decoder& decoder, HashMapType& hashMap)
     {
         uint64_t hashMapSize;
         if (!decoder.decode(hashMapSize))
@@ -202,17 +203,17 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     }
 };
 
-template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct NetworkCacheCoder<HashSet<KeyArg, HashArg, KeyTraitsArg>> {
+template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<HashSet<KeyArg, HashArg, KeyTraitsArg>> {
     typedef HashSet<KeyArg, HashArg, KeyTraitsArg> HashSetType;
 
-    static void encode(NetworkCacheEncoder& encoder, const HashSetType& hashSet)
+    static void encode(Encoder& encoder, const HashSetType& hashSet)
     {
         encoder << static_cast<uint64_t>(hashSet.size());
         for (typename HashSetType::const_iterator it = hashSet.begin(), end = hashSet.end(); it != end; ++it)
             encoder << *it;
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, HashSetType& hashSet)
+    static bool decode(Decoder& decoder, HashSetType& hashSet)
     {
         uint64_t hashSetSize;
         if (!decoder.decode(hashSetSize))
@@ -236,32 +237,32 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Networ
     }
 };
 
-template<> struct NetworkCacheCoder<AtomicString> {
-    static void encode(NetworkCacheEncoder&, const AtomicString&);
-    static bool decode(NetworkCacheDecoder&, AtomicString&);
+template<> struct Coder<AtomicString> {
+    static void encode(Encoder&, const AtomicString&);
+    static bool decode(Decoder&, AtomicString&);
 };
 
-template<> struct NetworkCacheCoder<CString> {
-    static void encode(NetworkCacheEncoder&, const CString&);
-    static bool decode(NetworkCacheDecoder&, CString&);
+template<> struct Coder<CString> {
+    static void encode(Encoder&, const CString&);
+    static bool decode(Decoder&, CString&);
 };
 
-template<> struct NetworkCacheCoder<String> {
-    static void encode(NetworkCacheEncoder&, const String&);
-    static bool decode(NetworkCacheDecoder&, String&);
+template<> struct Coder<String> {
+    static void encode(Encoder&, const String&);
+    static bool decode(Decoder&, String&);
 };
 
-template<> struct NetworkCacheCoder<WebCore::CertificateInfo> {
-    static void encode(NetworkCacheEncoder&, const WebCore::CertificateInfo&);
-    static bool decode(NetworkCacheDecoder&, WebCore::CertificateInfo&);
+template<> struct Coder<WebCore::CertificateInfo> {
+    static void encode(Encoder&, const WebCore::CertificateInfo&);
+    static bool decode(Decoder&, WebCore::CertificateInfo&);
 };
 
-template<> struct NetworkCacheCoder<MD5::Digest> {
-    static void encode(NetworkCacheEncoder&, const MD5::Digest&);
-    static bool decode(NetworkCacheDecoder&, MD5::Digest&);
+template<> struct Coder<MD5::Digest> {
+    static void encode(Encoder&, const MD5::Digest&);
+    static bool decode(Decoder&, MD5::Digest&);
 };
 
 }
-
+}
 #endif
 #endif

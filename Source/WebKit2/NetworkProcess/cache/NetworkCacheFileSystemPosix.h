@@ -34,6 +34,7 @@
 #include <wtf/text/CString.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
 template <typename Function>
 static void traverseDirectory(const String& path, uint8_t type, const Function& function)
@@ -59,14 +60,15 @@ inline void traverseCacheFiles(const String& cachePath, const Function& function
     traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
         String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
         traverseDirectory(partitionPath, DT_REG, [&function, &partitionPath](const String& fileName) {
-            if (fileName.length() != NetworkCacheKey::hashStringLength())
+            if (fileName.length() != Key::hashStringLength())
                 return;
             function(fileName, partitionPath);
         });
     });
 }
 
-} // namespace WebKit
+}
+}
 
 #endif // ENABLE(NETWORK_CACHE)
 

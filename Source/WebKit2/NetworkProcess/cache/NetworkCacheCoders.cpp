@@ -33,13 +33,14 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-void NetworkCacheCoder<AtomicString>::encode(NetworkCacheEncoder& encoder, const AtomicString& atomicString)
+void Coder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
 {
     encoder << atomicString.string();
 }
 
-bool NetworkCacheCoder<AtomicString>::decode(NetworkCacheDecoder& decoder, AtomicString& atomicString)
+bool Coder<AtomicString>::decode(Decoder& decoder, AtomicString& atomicString)
 {
     String string;
     if (!decoder.decode(string))
@@ -49,7 +50,7 @@ bool NetworkCacheCoder<AtomicString>::decode(NetworkCacheDecoder& decoder, Atomi
     return true;
 }
 
-void NetworkCacheCoder<CString>::encode(NetworkCacheEncoder& encoder, const CString& string)
+void Coder<CString>::encode(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -62,7 +63,7 @@ void NetworkCacheCoder<CString>::encode(NetworkCacheEncoder& encoder, const CStr
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length);
 }
 
-bool NetworkCacheCoder<CString>::decode(NetworkCacheDecoder& decoder, CString& result)
+bool Coder<CString>::decode(Decoder& decoder, CString& result)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -90,7 +91,7 @@ bool NetworkCacheCoder<CString>::decode(NetworkCacheDecoder& decoder, CString& r
 }
 
 
-void NetworkCacheCoder<String>::encode(NetworkCacheEncoder& encoder, const String& string)
+void Coder<String>::encode(Encoder& encoder, const String& string)
 {
     // Special case the null string.
     if (string.isNull()) {
@@ -110,7 +111,7 @@ void NetworkCacheCoder<String>::encode(NetworkCacheEncoder& encoder, const Strin
 }
 
 template <typename CharacterType>
-static inline bool decodeStringText(NetworkCacheDecoder& decoder, uint32_t length, String& result)
+static inline bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length)) {
@@ -127,7 +128,7 @@ static inline bool decodeStringText(NetworkCacheDecoder& decoder, uint32_t lengt
     return true;    
 }
 
-bool NetworkCacheCoder<String>::decode(NetworkCacheDecoder& decoder, String& result)
+bool Coder<String>::decode(Decoder& decoder, String& result)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -148,7 +149,7 @@ bool NetworkCacheCoder<String>::decode(NetworkCacheDecoder& decoder, String& res
     return decodeStringText<UChar>(decoder, length, result);
 }
 
-void NetworkCacheCoder<WebCore::CertificateInfo>::encode(NetworkCacheEncoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     // FIXME: Cocoa CertificateInfo is a CF object tree. Generalize CF type coding so we don't need to use ArgumentCoder here.
     IPC::ArgumentEncoder argumentEncoder;
@@ -157,7 +158,7 @@ void NetworkCacheCoder<WebCore::CertificateInfo>::encode(NetworkCacheEncoder& en
     encoder.encodeFixedLengthData(argumentEncoder.buffer(), argumentEncoder.bufferSize());
 }
 
-bool NetworkCacheCoder<WebCore::CertificateInfo>::decode(NetworkCacheDecoder& decoder, WebCore::CertificateInfo& certificateInfo)
+bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
 {
     uint64_t certificateSize;
     if (!decoder.decode(certificateSize))
@@ -173,16 +174,17 @@ bool NetworkCacheCoder<WebCore::CertificateInfo>::decode(NetworkCacheDecoder& de
     return true;
 }
 
-void NetworkCacheCoder<MD5::Digest>::encode(NetworkCacheEncoder& encoder, const MD5::Digest& digest)
+void Coder<MD5::Digest>::encode(Encoder& encoder, const MD5::Digest& digest)
 {
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest));
 }
 
-bool NetworkCacheCoder<MD5::Digest>::decode(NetworkCacheDecoder& decoder, MD5::Digest& digest)
+bool Coder<MD5::Digest>::decode(Decoder& decoder, MD5::Digest& digest)
 {
     return decoder.decodeFixedLengthData(digest.data(), sizeof(digest));
 }
 
+}
 }
 
 #endif

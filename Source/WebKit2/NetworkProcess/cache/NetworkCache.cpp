@@ -49,19 +49,20 @@
 #endif
 
 namespace WebKit {
+namespace NetworkCache {
 
-NetworkCache& NetworkCache::singleton()
+Cache& singleton()
 {
-    static NeverDestroyed<NetworkCache> instance;
+    static NeverDestroyed<Cache> instance;
     return instance;
 }
 
-bool NetworkCache::initialize(const String& cachePath, bool enableEfficacyLogging)
+bool Cache::initialize(const String& cachePath, bool enableEfficacyLogging)
 {
-    m_storage = NetworkCacheStorage::open(cachePath);
+    m_storage = Storage::open(cachePath);
 
     if (enableEfficacyLogging)
-        m_statistics = NetworkCacheStatistics::open(cachePath);
+        m_statistics = Statistics::open(cachePath);
 
 #if PLATFORM(COCOA)
     // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
@@ -77,14 +78,14 @@ bool NetworkCache::initialize(const String& cachePath, bool enableEfficacyLoggin
     return !!m_storage;
 }
 
-void NetworkCache::setMaximumSize(size_t maximumSize)
+void Cache::setMaximumSize(size_t maximumSize)
 {
     if (!m_storage)
         return;
     m_storage->setMaximumSize(maximumSize);
 }
 
-static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
+static Key makeCacheKey(const WebCore::ResourceRequest& request)
 {
 #if ENABLE(CACHE_PARTITIONING)
     String partition = request.cachePartition();
@@ -96,9 +97,9 @@ static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
     return { request.httpMethod(), partition, request.url().string()  };
 }
 
-static NetworkCacheStorage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
+static Storage::Entry encodeStorageEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PassRefPtr<WebCore::SharedBuffer> responseData)
 {
-    NetworkCacheEncoder encoder;
+    Encoder encoder;
     encoder << response;
 
     String varyValue = response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
@@ -120,8 +121,8 @@ static NetworkCacheStorage::Entry encodeStorageEntry(const WebCore::ResourceRequ
     encoder.encodeChecksum();
 
     auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    NetworkCacheData header(encoder.buffer(), encoder.bufferSize());
-    NetworkCacheData body;
+    Data header(encoder.buffer(), encoder.bufferSize());
+    Data body;
     if (responseData)
         body = { reinterpret_cast<const uint8_t*>(responseData->data()), responseData->size() };
 
@@ -155,39 +156,39 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCacheStorage::Entry& storageEntry, const WebCore::ResourceRequest& request, NetworkCache::CachedEntryReuseFailure& failure)
+static std::unique_ptr<Entry> decodeStorageEntry(const Storage::Entry& storageEntry, const WebCore::ResourceRequest& request, CachedEntryReuseFailure& failure)
 {
-    NetworkCacheDecoder decoder(storageEntry.header.data(), storageEntry.header.size());
+    Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
 
     WebCore::ResourceResponse cachedResponse;
     if (!decoder.decode(cachedResponse)) {
         LOG(NetworkCache, "(NetworkProcess) response decoding failed\n");
-        failure = NetworkCache::CachedEntryReuseFailure::Other;
+        failure = CachedEntryReuseFailure::Other;
         return nullptr;
     }
 
     bool hasVaryingRequestHeaders;
     if (!decoder.decode(hasVaryingRequestHeaders)) {
-        failure = NetworkCache::CachedEntryReuseFailure::Other;
+        failure = CachedEntryReuseFailure::Other;
         return nullptr;
     }
 
     if (hasVaryingRequestHeaders) {
         Vector<std::pair<String, String>> varyingRequestHeaders;
         if (!decoder.decode(varyingRequestHeaders)) {
-            failure = NetworkCache::CachedEntryReuseFailure::Other;
+            failure = CachedEntryReuseFailure::Other;
             return nullptr;
         }
 
         if (!verifyVaryingRequestHeaders(varyingRequestHeaders, request)) {
             LOG(NetworkCache, "(NetworkProcess) varying header mismatch\n");
-            failure = NetworkCache::CachedEntryReuseFailure::VaryingHeaderMismatch;
+            failure = CachedEntryReuseFailure::VaryingHeaderMismatch;
             return nullptr;
         }
     }
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
-        failure = NetworkCache::CachedEntryReuseFailure::Other;
+        failure = CachedEntryReuseFailure::Other;
         return nullptr;
     }
 
@@ -202,12 +203,12 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
         bool hasValidatorFields = cachedResponse.hasCacheValidatorFields();
         LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasValidatorFields=%d isExpired=%d age=%f lifetime=%f", isExpired, hasValidatorFields, age, lifetime);
         if (!hasValidatorFields) {
-            failure = NetworkCache::CachedEntryReuseFailure::MissingValidatorFields;
+            failure = CachedEntryReuseFailure::MissingValidatorFields;
             return nullptr;
         }
     }
 
-    auto entry = std::make_unique<NetworkCache::Entry>();
+    auto entry = std::make_unique<Entry>();
     entry->storageEntry = storageEntry;
     entry->needsRevalidation = needsRevalidation;
 
@@ -227,29 +228,29 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     return entry;
 }
 
-static NetworkCache::RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
+static RetrieveDecision canRetrieve(const WebCore::ResourceRequest& request)
 {
     if (!request.url().protocolIsInHTTPFamily())
-        return NetworkCache::RetrieveDecision::NoDueToProtocol;
+        return RetrieveDecision::NoDueToProtocol;
     // FIXME: Support HEAD and OPTIONS requests.
     if (request.httpMethod() != "GET")
-        return NetworkCache::RetrieveDecision::NoDueToHTTPMethod;
+        return RetrieveDecision::NoDueToHTTPMethod;
     // FIXME: We should be able to validate conditional requests using cache.
     if (request.isConditional())
-        return NetworkCache::RetrieveDecision::NoDueToConditionalRequest;
+        return RetrieveDecision::NoDueToConditionalRequest;
     if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData)
-        return NetworkCache::RetrieveDecision::NoDueToReloadIgnoringCache;
+        return RetrieveDecision::NoDueToReloadIgnoringCache;
 
-    return NetworkCache::RetrieveDecision::Yes;
+    return RetrieveDecision::Yes;
 }
 
-void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
 {
     ASSERT(isEnabled());
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
 
-    NetworkCacheKey storageKey = makeCacheKey(originalRequest);
+    Key storageKey = makeCacheKey(originalRequest);
     RetrieveDecision retrieveDecision = canRetrieve(originalRequest);
     if (retrieveDecision != RetrieveDecision::Yes) {
         if (m_statistics)
@@ -262,7 +263,7 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
     auto startTime = std::chrono::system_clock::now();
     unsigned priority = originalRequest.priority();
 
-    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<NetworkCacheStorage::Entry> entry) {
+    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Entry> entry) {
         if (!entry) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
@@ -289,19 +290,19 @@ void NetworkCache::retrieve(const WebCore::ResourceRequest& originalRequest, uin
     });
 }
 
-static NetworkCache::StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
+static StoreDecision canStore(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP()) {
         LOG(NetworkCache, "(NetworkProcess) not HTTP");
-        return NetworkCache::StoreDecision::NoDueToProtocol;
+        return StoreDecision::NoDueToProtocol;
     }
     if (originalRequest.httpMethod() != "GET") {
         LOG(NetworkCache, "(NetworkProcess) method %s", originalRequest.httpMethod().utf8().data());
-        return NetworkCache::StoreDecision::NoDueToHTTPMethod;
+        return StoreDecision::NoDueToHTTPMethod;
     }
     if (response.isAttachment()) {
         LOG(NetworkCache, "(NetworkProcess) attachment");
-        return NetworkCache::StoreDecision::NoDueToAttachmentResponse;
+        return StoreDecision::NoDueToAttachmentResponse;
     }
 
     switch (response.httpStatusCode()) {
@@ -314,17 +315,17 @@ static NetworkCache::StoreDecision canStore(const WebCore::ResourceRequest& orig
     case 410: // Gone
         if (response.cacheControlContainsNoStore()) {
             LOG(NetworkCache, "(NetworkProcess) Cache-control:no-store");
-            return NetworkCache::StoreDecision::NoDueToNoStoreResponse;
+            return StoreDecision::NoDueToNoStoreResponse;
         }
-        return NetworkCache::StoreDecision::Yes;
+        return StoreDecision::Yes;
     default:
         LOG(NetworkCache, "(NetworkProcess) status code %d", response.httpStatusCode());
     }
 
-    return NetworkCache::StoreDecision::NoDueToHTTPStatusCode;
+    return StoreDecision::NoDueToHTTPStatusCode;
 }
 
-void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
+void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(responseData);
@@ -343,7 +344,7 @@ void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const 
 
     auto storageEntry = encodeStorageEntry(originalRequest, response, WTF::move(responseData));
 
-    m_storage->store(storageEntry, [completionHandler](bool success, const NetworkCacheData& bodyData) {
+    m_storage->store(storageEntry, [completionHandler](bool success, const Data& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (bodyData.isMap()) {
@@ -358,7 +359,7 @@ void NetworkCache::store(const WebCore::ResourceRequest& originalRequest, const 
     });
 }
 
-void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const Entry& entry, const WebCore::ResourceResponse& validatingResponse)
+void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& entry, const WebCore::ResourceResponse& validatingResponse)
 {
     LOG(NetworkCache, "(NetworkProcess) updating %s", originalRequest.url().string().latin1().data());
 
@@ -367,25 +368,25 @@ void NetworkCache::update(const WebCore::ResourceRequest& originalRequest, const
 
     auto updateEntry = encodeStorageEntry(originalRequest, response, entry.buffer);
 
-    m_storage->update(updateEntry, entry.storageEntry, [](bool success, const NetworkCacheData&) {
+    m_storage->update(updateEntry, entry.storageEntry, [](bool success, const Data&) {
         LOG(NetworkCache, "(NetworkProcess) updated, success=%d", success);
     });
 }
 
-void NetworkCache::traverse(std::function<void (const Entry*)>&& traverseHandler)
+void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse([traverseHandler](const NetworkCacheStorage::Entry* entry) {
+    m_storage->traverse([traverseHandler](const Storage::Entry* entry) {
         if (!entry) {
             traverseHandler(nullptr);
             return;
         }
 
-        NetworkCache::Entry cacheEntry;
+        Entry cacheEntry;
         cacheEntry.storageEntry = *entry;
 
-        NetworkCacheDecoder decoder(cacheEntry.storageEntry.header.data(), cacheEntry.storageEntry.header.size());
+        Decoder decoder(cacheEntry.storageEntry.header.data(), cacheEntry.storageEntry.header.size());
         if (!decoder.decode(cacheEntry.response))
             return;
 
@@ -393,14 +394,14 @@ void NetworkCache::traverse(std::function<void (const Entry*)>&& traverseHandler
     });
 }
 
-String NetworkCache::dumpFilePath() const
+String Cache::dumpFilePath() const
 {
     return WebCore::pathByAppendingComponent(m_storage->baseDirectoryPath(), "dump.json");
 }
 
-static bool entryAsJSON(StringBuilder& json, const NetworkCacheStorage::Entry& entry)
+static bool entryAsJSON(StringBuilder& json, const Storage::Entry& entry)
 {
-    NetworkCacheDecoder decoder(entry.header.data(), entry.header.size());
+    Decoder decoder(entry.header.data(), entry.header.size());
     WebCore::ResourceResponse cachedResponse;
     if (!decoder.decode(cachedResponse))
         return false;
@@ -433,7 +434,7 @@ static bool entryAsJSON(StringBuilder& json, const NetworkCacheStorage::Entry& e
     return true;
 }
 
-void NetworkCache::dumpContentsToFile()
+void Cache::dumpContentsToFile()
 {
     if (!m_storage)
         return;
@@ -441,7 +442,7 @@ void NetworkCache::dumpContentsToFile()
     if (!dumpFileHandle)
         return;
     WebCore::writeToFile(dumpFileHandle, "[\n", 2);
-    m_storage->traverse([dumpFileHandle](const NetworkCacheStorage::Entry* entry) {
+    m_storage->traverse([dumpFileHandle](const Storage::Entry* entry) {
         if (!entry) {
             WebCore::writeToFile(dumpFileHandle, "{}\n]\n", 5);
             auto handle = dumpFileHandle;
@@ -457,7 +458,7 @@ void NetworkCache::dumpContentsToFile()
     });
 }
 
-void NetworkCache::clear()
+void Cache::clear()
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
     if (m_storage) {
@@ -473,11 +474,12 @@ void NetworkCache::clear()
         m_statistics->clear();
 }
 
-String NetworkCache::storagePath() const
+String Cache::storagePath() const
 {
     return m_storage ? m_storage->directoryPath() : String();
 }
 
+}
 }
 
 #endif

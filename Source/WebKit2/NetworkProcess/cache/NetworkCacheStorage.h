@@ -37,33 +37,25 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class SharedBuffer;
-}
-
-namespace IPC {
-class ArgumentEncoder;
-class ArgumentDecoder;
-}
-
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheStorage {
-    WTF_MAKE_NONCOPYABLE(NetworkCacheStorage);
+class Storage {
+    WTF_MAKE_NONCOPYABLE(Storage);
 public:
-    static std::unique_ptr<NetworkCacheStorage> open(const String& cachePath);
+    static std::unique_ptr<Storage> open(const String& cachePath);
 
     struct Entry {
-        NetworkCacheKey key;
+        Key key;
         std::chrono::milliseconds timeStamp;
-        NetworkCacheData header;
-        NetworkCacheData body;
+        Data header;
+        Data body;
     };
     // This may call completion handler synchronously on failure.
     typedef std::function<bool (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
-    void retrieve(const NetworkCacheKey&, unsigned priority, RetrieveCompletionHandler&&);
+    void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
-    typedef std::function<void (bool success, const NetworkCacheData& mappedBody)> StoreCompletionHandler;
+    typedef std::function<void (bool success, const Data& mappedBody)> StoreCompletionHandler;
     void store(const Entry&, StoreCompletionHandler&&);
     void update(const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&&);
 
@@ -79,16 +71,16 @@ public:
     const String& directoryPath() const { return m_directoryPath; }
 
 private:
-    NetworkCacheStorage(const String& directoryPath);
+    Storage(const String& directoryPath);
 
     void initialize();
     void deleteOldVersions();
     void shrinkIfNeeded();
 
-    void removeEntry(const NetworkCacheKey&);
+    void removeEntry(const Key&);
 
     struct ReadOperation {
-        NetworkCacheKey key;
+        Key key;
         RetrieveCompletionHandler completionHandler;
     };
     void dispatchReadOperation(const ReadOperation&);
@@ -126,6 +118,7 @@ private:
     Ref<WorkQueue> m_backgroundIOQueue;
 };
 
+}
 }
 #endif
 #endif

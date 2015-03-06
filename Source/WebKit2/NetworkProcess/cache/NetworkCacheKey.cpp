@@ -34,8 +34,9 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-NetworkCacheKey::NetworkCacheKey(const NetworkCacheKey& o)
+Key::Key(const Key& o)
     : m_method(o.m_method.isolatedCopy())
     , m_partition(o.m_partition.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
@@ -43,7 +44,7 @@ NetworkCacheKey::NetworkCacheKey(const NetworkCacheKey& o)
 {
 }
 
-NetworkCacheKey::NetworkCacheKey(NetworkCacheKey&& o)
+Key::Key(Key&& o)
     : m_method(WTF::move(o.m_method))
     , m_partition(WTF::move(o.m_partition))
     , m_identifier(WTF::move(o.m_identifier))
@@ -51,7 +52,7 @@ NetworkCacheKey::NetworkCacheKey(NetworkCacheKey&& o)
 {
 }
 
-NetworkCacheKey::NetworkCacheKey(const String& method, const String& partition, const String& identifier)
+Key::Key(const String& method, const String& partition, const String& identifier)
     : m_method(method.isolatedCopy())
     , m_partition(partition.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
@@ -59,7 +60,7 @@ NetworkCacheKey::NetworkCacheKey(const String& method, const String& partition, 
 {
 }
 
-NetworkCacheKey& NetworkCacheKey::operator=(const NetworkCacheKey& other)
+Key& Key::operator=(const Key& other)
 {
     m_method = other.m_method.isolatedCopy();
     m_partition = other.m_partition.isolatedCopy();
@@ -81,7 +82,7 @@ static void hashString(MD5& md5, const String& string)
     md5.addBytes(&zero, 1);
 }
 
-NetworkCacheKey::HashType NetworkCacheKey::computeHash() const
+Key::HashType Key::computeHash() const
 {
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // MD5 just happens to be suitably sized, fast and available.
@@ -94,7 +95,7 @@ NetworkCacheKey::HashType NetworkCacheKey::computeHash() const
     return hash;
 }
 
-String NetworkCacheKey::hashAsString() const
+String Key::hashAsString() const
 {
     StringBuilder builder;
     builder.reserveCapacity(hashStringLength());
@@ -105,7 +106,7 @@ String NetworkCacheKey::hashAsString() const
     return builder.toString();
 }
 
-template <typename CharType> bool hexDigitsToHash(CharType* characters, NetworkCacheKey::HashType& hash)
+template <typename CharType> bool hexDigitsToHash(CharType* characters, Key::HashType& hash)
 {
     for (unsigned i = 0; i < sizeof(hash); ++i) {
         auto high = characters[2 * i];
@@ -117,7 +118,7 @@ template <typename CharType> bool hexDigitsToHash(CharType* characters, NetworkC
     return true;
 }
 
-bool NetworkCacheKey::stringToHash(const String& string, HashType& hash)
+bool Key::stringToHash(const String& string, HashType& hash)
 {
     if (string.length() != hashStringLength())
         return false;
@@ -126,12 +127,12 @@ bool NetworkCacheKey::stringToHash(const String& string, HashType& hash)
     return hexDigitsToHash(string.characters16(), hash);
 }
 
-bool NetworkCacheKey::operator==(const NetworkCacheKey& other) const
+bool Key::operator==(const Key& other) const
 {
     return m_hash == other.m_hash && m_method == other.m_method && m_partition == other.m_partition && m_identifier == other.m_identifier;
 }
 
-void NetworkCacheKey::encode(NetworkCacheEncoder& encoder) const
+void Key::encode(Encoder& encoder) const
 {
     encoder << m_method;
     encoder << m_partition;
@@ -139,11 +140,12 @@ void NetworkCacheKey::encode(NetworkCacheEncoder& encoder) const
     encoder << m_hash;
 }
 
-bool NetworkCacheKey::decode(NetworkCacheDecoder& decoder, NetworkCacheKey& key)
+bool Key::decode(Decoder& decoder, Key& key)
 {
     return decoder.decode(key.m_method) && decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_hash);
 }
 
+}
 }
 
 #endif

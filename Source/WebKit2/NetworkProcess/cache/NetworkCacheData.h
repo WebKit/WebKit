@@ -34,6 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
 #if PLATFORM(COCOA)
 template <typename T> class DispatchPtr;
@@ -92,14 +93,14 @@ template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject)
 }
 #endif
 
-class NetworkCacheData {
+class Data {
 public:
-    NetworkCacheData() { }
-    NetworkCacheData(const uint8_t*, size_t);
+    Data() { }
+    Data(const uint8_t*, size_t);
 
     enum class Backing { Buffer, Map };
 #if PLATFORM(COCOA)
-    NetworkCacheData(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
+    Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
     bool isNull() const;
 
@@ -119,6 +120,7 @@ private:
     bool m_isMap { false };
 };
 
+}
 }
 
 #endif

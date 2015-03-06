@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,62 +40,65 @@ class URL;
 }
 
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheStatistics;
+class Cache;
+class Statistics;
 
-class NetworkCache {
-    WTF_MAKE_NONCOPYABLE(NetworkCache);
-    friend class WTF::NeverDestroyed<NetworkCache>;
+Cache& singleton();
+
+struct MappedBody {
+#if ENABLE(SHAREABLE_RESOURCE)
+    RefPtr<ShareableResource> shareableResource;
+    ShareableResource::Handle shareableResourceHandle;
+#endif
+};
+
+struct Entry {
+    Storage::Entry storageEntry;
+    WebCore::ResourceResponse response;
+    RefPtr<WebCore::SharedBuffer> buffer;
+#if ENABLE(SHAREABLE_RESOURCE)
+    ShareableResource::Handle shareableResourceHandle;
+#endif
+    bool needsRevalidation;
+};
+
+enum class RetrieveDecision {
+    Yes,
+    NoDueToProtocol,
+    NoDueToHTTPMethod,
+    NoDueToConditionalRequest,
+    NoDueToReloadIgnoringCache
+};
+
+enum class StoreDecision {
+    Yes,
+    NoDueToProtocol,
+    NoDueToHTTPMethod,
+    NoDueToAttachmentResponse,
+    NoDueToNoStoreResponse,
+    NoDueToHTTPStatusCode
+};
+
+enum class CachedEntryReuseFailure {
+    None,
+    VaryingHeaderMismatch,
+    MissingValidatorFields,
+    Other,
+};
+
+class Cache {
+    WTF_MAKE_NONCOPYABLE(Cache);
+    friend class WTF::NeverDestroyed<Cache>;
 public:
-    enum class RetrieveDecision {
-        Yes,
-        NoDueToProtocol,
-        NoDueToHTTPMethod,
-        NoDueToConditionalRequest,
-        NoDueToReloadIgnoringCache
-    };
-
-    enum class StoreDecision {
-        Yes,
-        NoDueToProtocol,
-        NoDueToHTTPMethod,
-        NoDueToAttachmentResponse,
-        NoDueToNoStoreResponse,
-        NoDueToHTTPStatusCode
-    };
-
-    enum class CachedEntryReuseFailure {
-        None,
-        VaryingHeaderMismatch,
-        MissingValidatorFields,
-        Other,
-    };
-
-    static NetworkCache& singleton();
-
     bool initialize(const String& cachePath, bool enableEfficacyLogging);
     void setMaximumSize(size_t);
 
     bool isEnabled() const { return !!m_storage; }
 
-    struct Entry {
-        NetworkCacheStorage::Entry storageEntry;
-        WebCore::ResourceResponse response;
-        RefPtr<WebCore::SharedBuffer> buffer;
-#if ENABLE(SHAREABLE_RESOURCE)
-        ShareableResource::Handle shareableResourceHandle;
-#endif
-        bool needsRevalidation;
-    };
     // Completion handler may get called back synchronously on failure.
     void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)>);
-
-    struct MappedBody {
-#if ENABLE(SHAREABLE_RESOURCE)
-        RefPtr<ShareableResource> shareableResource;
-        ShareableResource::Handle shareableResourceHandle;
-#endif
-    };
     void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
     void update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
@@ -108,15 +111,16 @@ public:
     String storagePath() const;
 
 private:
-    NetworkCache() = default;
-    ~NetworkCache() = delete;
+    Cache() = default;
+    ~Cache() = delete;
 
     String dumpFilePath() const;
 
-    std::unique_ptr<NetworkCacheStorage> m_storage;
-    std::unique_ptr<NetworkCacheStatistics> m_statistics;
+    std::unique_ptr<Storage> m_storage;
+    std::unique_ptr<Statistics> m_statistics;
 };
 
+}
 }
 #endif
 #endif

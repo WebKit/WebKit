@@ -32,20 +32,21 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheEncoder;
-class NetworkCacheDecoder;
+class Encoder;
+class Decoder;
 
-class NetworkCacheKey {
+class Key {
 public:
     typedef MD5::Digest HashType;
 
-    NetworkCacheKey() { }
-    NetworkCacheKey(const NetworkCacheKey&);
-    NetworkCacheKey(NetworkCacheKey&&);
-    NetworkCacheKey(const String& method, const String& partition, const String& identifier);
+    Key() { }
+    Key(const Key&);
+    Key(Key&&);
+    Key(const String& method, const String& partition, const String& identifier);
 
-    NetworkCacheKey& operator=(const NetworkCacheKey&);
+    Key& operator=(const Key&);
 
     bool isNull() const { return m_identifier.isNull(); }
 
@@ -62,11 +63,11 @@ public:
     static size_t hashStringLength() { return 2 * sizeof(m_hash); }
     String hashAsString() const;
 
-    void encode(NetworkCacheEncoder&) const;
-    static bool decode(NetworkCacheDecoder&, NetworkCacheKey&);
+    void encode(Encoder&) const;
+    static bool decode(Decoder&, Key&);
 
-    bool operator==(const NetworkCacheKey&) const;
-    bool operator!=(const NetworkCacheKey& other) const { return !(*this == other); }
+    bool operator==(const Key&) const;
+    bool operator!=(const Key& other) const { return !(*this == other); }
 
 private:
     HashType computeHash() const;
@@ -77,6 +78,7 @@ private:
     HashType m_hash;
 };
 
+}
 }
 
 #endif

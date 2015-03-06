@@ -29,22 +29,24 @@
 #if ENABLE(NETWORK_CACHE)
 
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheDecoder;
-class NetworkCacheEncoder;
+class Decoder;
+class Encoder;
     
-template<typename T> struct NetworkCacheCoder {
-    static void encode(NetworkCacheEncoder& encoder, const T& t)
+template<typename T> struct Coder {
+    static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);
     }
 
-    static bool decode(NetworkCacheDecoder& decoder, T& t)
+    static bool decode(Decoder& decoder, T& t)
     {
         return T::decode(decoder, t);
     }
 };
 
+}
 }
 
 #endif

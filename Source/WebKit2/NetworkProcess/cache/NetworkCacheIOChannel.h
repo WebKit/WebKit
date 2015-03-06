@@ -34,19 +34,20 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-class NetworkCacheIOChannel : public ThreadSafeRefCounted<NetworkCacheIOChannel> {
+class IOChannel : public ThreadSafeRefCounted<IOChannel> {
 public:
     enum class Type { Read, Write, Create };
-    static Ref<NetworkCacheIOChannel> open(const String& file, Type);
+    static Ref<IOChannel> open(const String& file, Type);
 
-    void read(size_t offset, size_t, std::function<void (NetworkCacheData&, int error)>);
-    void write(size_t offset, const NetworkCacheData&, std::function<void (int error)>);
+    void read(size_t offset, size_t, std::function<void (Data&, int error)>);
+    void write(size_t offset, const Data&, std::function<void (int error)>);
 
     int fileDescriptor() const { return m_fileDescriptor; }
 
 private:
-    NetworkCacheIOChannel(int fd);
+    IOChannel(int fd);
 
 #if PLATFORM(COCOA)
     DispatchPtr<dispatch_io_t> m_dispatchIO;
@@ -54,6 +55,7 @@ private:
     int m_fileDescriptor { 0 };
 };
 
+}
 }
 
 #endif

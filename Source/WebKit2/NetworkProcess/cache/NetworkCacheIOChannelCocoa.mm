@@ -37,8 +37,9 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-NetworkCacheIOChannel::NetworkCacheIOChannel(int fd)
+IOChannel::IOChannel(int fd)
     : m_fileDescriptor(fd)
 {
     m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd](int) {
@@ -49,7 +50,7 @@ NetworkCacheIOChannel::NetworkCacheIOChannel(int fd)
     dispatch_io_set_low_water(m_dispatchIO.get(), std::numeric_limits<size_t>::max());
 }
 
-Ref<NetworkCacheIOChannel> NetworkCacheIOChannel::open(const String& filePath, NetworkCacheIOChannel::Type type)
+Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
 {
     int oflag;
     mode_t mode;
@@ -71,31 +72,31 @@ Ref<NetworkCacheIOChannel> NetworkCacheIOChannel::open(const String& filePath, N
     CString path = WebCore::fileSystemRepresentation(filePath);
     int fd = ::open(path.data(), oflag, mode);
 
-    return adoptRef(*new NetworkCacheIOChannel(fd));
+    return adoptRef(*new IOChannel(fd));
 }
 
-void NetworkCacheIOChannel::read(size_t offset, size_t size, std::function<void ( NetworkCacheData&, int error)> completionHandler)
+void IOChannel::read(size_t offset, size_t size, std::function<void ( Data&, int error)> completionHandler)
 {
-    RefPtr<NetworkCacheIOChannel> channel(this);
+    RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
     dispatch_io_read(m_dispatchIO.get(), offset, size, dispatch_get_main_queue(), [channel, completionHandler, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         if (done) {
             if (!didCallCompletionHandler) {
-                NetworkCacheData nullData;
+                Data nullData;
                 completionHandler(nullData, error);
             }
             return;
         }
         ASSERT(!didCallCompletionHandler);
-        NetworkCacheData data(fileData);
+        Data data(fileData);
         completionHandler(data, error);
         didCallCompletionHandler = true;
     });
 }
 
-void NetworkCacheIOChannel::write(size_t offset, const NetworkCacheData& data, std::function<void (int error)> completionHandler)
+void IOChannel::write(size_t offset, const Data& data, std::function<void (int error)> completionHandler)
 {
-    RefPtr<NetworkCacheIOChannel> channel(this);
+    RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();
     dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatch_get_main_queue(), [channel, completionHandler](bool done, dispatch_data_t fileData, int error) {
         ASSERT_UNUSED(done, done);
@@ -104,4 +105,6 @@ void NetworkCacheIOChannel::write(size_t offset, const NetworkCacheData& data, s
 }
 
 }
+}
+
 #endif

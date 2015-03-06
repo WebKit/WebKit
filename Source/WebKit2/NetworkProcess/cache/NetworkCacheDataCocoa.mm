@@ -24,21 +24,22 @@
  */
 
 #include "config.h"
-#include "NetworkCachedata.h"
+#include "NetworkCacheData.h"
 
 #if ENABLE(NETWORK_CACHE)
 
 #include <dispatch/dispatch.h>
 
 namespace WebKit {
+namespace NetworkCache {
 
-NetworkCacheData::NetworkCacheData(const uint8_t* data, size_t size)
+Data::Data(const uint8_t* data, size_t size)
     : m_dispatchData(adoptDispatch(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
     , m_size(size)
 {
 }
 
-NetworkCacheData::NetworkCacheData(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
+Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
 {
     if (!dispatchData)
         return;
@@ -48,7 +49,7 @@ NetworkCacheData::NetworkCacheData(DispatchPtr<dispatch_data_t> dispatchData, Ba
     m_isMap = m_size && backing == Backing::Map;
 }
 
-const uint8_t* NetworkCacheData::data() const
+const uint8_t* Data::data() const
 {
     if (!m_data) {
         const void* data;
@@ -60,11 +61,12 @@ const uint8_t* NetworkCacheData::data() const
     return m_data;
 }
 
-bool NetworkCacheData::isNull() const
+bool Data::isNull() const
 {
     return !m_dispatchData;
 }
 
+}
 }
 
 #endif
