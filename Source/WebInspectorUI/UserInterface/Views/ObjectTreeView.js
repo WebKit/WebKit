@@ -156,7 +156,7 @@ WebInspector.ObjectTreeView.prototype = {
         return this._expanded;
     },
 
-    expand: function()
+    expand()
     {
         if (this._expanded)
             return;
@@ -172,7 +172,7 @@ WebInspector.ObjectTreeView.prototype = {
         this.update();
     },
 
-    collapse: function()
+    collapse()
     {
         if (!this._expanded)
             return;
@@ -186,7 +186,7 @@ WebInspector.ObjectTreeView.prototype = {
         this._untrackWeakEntries();
     },
 
-    appendTitleSuffix: function(suffixElement)
+    appendTitleSuffix(suffixElement)
     {
         if (this._previewView)
             this._previewView.element.appendChild(suffixElement);
@@ -196,7 +196,7 @@ WebInspector.ObjectTreeView.prototype = {
 
     // Protected
 
-    update: function()
+    update()
     {
         if (this._object.isCollectionType() && this._mode === WebInspector.ObjectTreeView.Mode.Properties)
             this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
@@ -206,7 +206,7 @@ WebInspector.ObjectTreeView.prototype = {
 
     // Private
 
-    _updateChildren: function(handler, list)
+    _updateChildren(handler, list)
     {
         this._outline.removeChildren();
 
@@ -219,7 +219,7 @@ WebInspector.ObjectTreeView.prototype = {
         handler.call(this, list, this._propertyPath);
     },
 
-    _updateEntries: function(entries, propertyPath)
+    _updateEntries(entries, propertyPath)
     {
         for (var entry of entries) {
             if (entry.key) {
@@ -241,7 +241,7 @@ WebInspector.ObjectTreeView.prototype = {
         }.bind(this));
     },
 
-    _updateProperties: function(properties, propertyPath)
+    _updateProperties(properties, propertyPath)
     {
         properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
 
@@ -264,7 +264,7 @@ WebInspector.ObjectTreeView.prototype = {
         }
     },
 
-    _handlePreviewOrTitleElementClick: function(event)
+    _handlePreviewOrTitleElementClick(event)
     {
         if (this._hasLosslessPreview)
             return;
@@ -277,7 +277,7 @@ WebInspector.ObjectTreeView.prototype = {
         event.stopPropagation();
     },
 
-    _trackWeakEntries: function()
+    _trackWeakEntries()
     {
         if (this._trackingEntries)
             return;
@@ -294,7 +294,7 @@ WebInspector.ObjectTreeView.prototype = {
         }
     },
 
-    _untrackWeakEntries: function()
+    _untrackWeakEntries()
     {
         if (!this._trackingEntries)
             return;

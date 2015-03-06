@@ -129,22 +129,22 @@ WebInspector.PropertyDescriptor.prototype = {
         return this._internal;
     },
 
-    hasValue: function()
+    hasValue()
     {
         return this._hasValue;
     },
 
-    hasGetter: function()
+    hasGetter()
     {
         return this._get && this._get.type === "function";
     },
 
-    hasSetter: function()
+    hasSetter()
     {
         return this._set && this._set.type === "function";
     },
 
-    isIndexProperty: function()
+    isIndexProperty()
     {
         return !isNaN(Number(this._name));
     },

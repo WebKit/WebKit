@@ -49,19 +49,19 @@ WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
 
     // Protected
 
-    resolvedValue: function()
+    resolvedValue()
     {
         return this._object;
     },
 
-    resolvedValuePropertyPath: function()
+    resolvedValuePropertyPath()
     {
         return this.propertyPath.appendSetIndex(this._object);
     },
 
     // Private
 
-    _titleFragment: function()
+    _titleFragment()
     {
         var container = document.createDocumentFragment();
 

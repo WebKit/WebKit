@@ -58,12 +58,12 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
 
     // Protected
 
-    oncontextmenu: function(event)
+    oncontextmenu(event)
     {
         this._contextMenuHandler(event);
     },
 
-    resolvedValue: function()
+    resolvedValue()
     {
         console.assert(this._property);
         if (this._getterValue)
@@ -73,7 +73,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         return null;
     },
 
-    resolvedValuePropertyPath: function()
+    resolvedValuePropertyPath()
     {
         console.assert(this._property);
         if (this._getterValue)
@@ -83,19 +83,19 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         return null;
     },
 
-    thisPropertyPath: function()
+    thisPropertyPath()
     {
         console.assert(this._property);
         return this._propertyPath.appendPropertyDescriptor(null, this._property, this.propertyPathType());
     },
 
-    hadError: function()
+    hadError()
     {
         console.assert(this._property);
         return this._property.wasThrown || this._getterHadError;
     },
 
-    propertyPathType: function()
+    propertyPathType()
     {
         console.assert(this._property);
         if (this._getterValue || this._property.hasValue())
@@ -107,7 +107,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         return WebInspector.PropertyPath.Type.Value;
     },
 
-    propertyPathString: function(propertyPath)
+    propertyPathString(propertyPath)
     {
         if (propertyPath.isFullPathImpossible())
             return WebInspector.UIString("Unable to determine path to property from root");
@@ -115,7 +115,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         return propertyPath.displayPath(this.propertyPathType());
     },
 
-    createInteractiveGetterElement: function()
+    createInteractiveGetterElement()
     {
         var getterElement = document.createElement("img");
         getterElement.className = "getter";
@@ -136,7 +136,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         return getterElement;
     },
 
-    createReadOnlyIconElement: function()
+    createReadOnlyIconElement()
     {
         var readOnlyElement = document.createElement("img");
         readOnlyElement.className = "read-only";
@@ -146,7 +146,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
 
     // Private
 
-    _logValue: function(value)
+    _logValue(value)
     {
         var resolvedValue = value || this.resolvedValue();
         if (!resolvedValue)
@@ -162,7 +162,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
         WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue);
     },
 
-    _contextMenuHandler: function(event)
+    _contextMenuHandler(event)
     {
         var resolvedValue = this.resolvedValue();
         if (!resolvedValue)
@@ -186,7 +186,7 @@ WebInspector.ObjectTreeBaseTreeElement.prototype = {
             contextMenu.show();
     },
 
-    _appendMenusItemsForObject: function(contextMenu, resolvedValue)
+    _appendMenusItemsForObject(contextMenu, resolvedValue)
     {
         if (resolvedValue.type === "function") {
             // FIXME: We should better handle bound functions.

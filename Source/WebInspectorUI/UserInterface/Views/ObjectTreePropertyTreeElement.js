@@ -55,24 +55,24 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
 
     // Protected
 
-    onpopulate: function()
+    onpopulate()
     {
         this._updateChildren();
     },
 
-    onexpand: function()
+    onexpand()
     {
         if (this._previewView)
             this._previewView.showTitle();
     },
 
-    oncollapse: function()
+    oncollapse()
     {
         if (this._previewView)
             this._previewView.showPreview();
     },
 
-    invokedGetter: function()
+    invokedGetter()
     {
         this.mainTitle = this._titleFragment();
 
@@ -89,7 +89,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
 
     // Private
 
-    _updateHasChildren: function()
+    _updateHasChildren()
     {
         var resolvedValue = this.resolvedValue();
         var valueHasChildren = (resolvedValue && resolvedValue.hasChildren);
@@ -101,7 +101,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             this.hasChildren = !wasThrown && valueHasChildren && (this.property.name === "__proto__" || this._alwaysDisplayAsProperty());
     },
 
-    _updateTooltips: function()
+    _updateTooltips()
     {
         var attributes = [];
 
@@ -115,7 +115,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         this.iconElement.title = attributes.join(" ");
     },
 
-    _titleFragment: function()
+    _titleFragment()
     {
         if (this.property.name === "__proto__")
             return this._createTitlePrototype();
@@ -126,7 +126,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             return this._createTitleAPIStyle();
     },
 
-    _createTitlePrototype: function()
+    _createTitlePrototype()
     {
         console.assert(this.property.hasValue());
         console.assert(this.property.name === "__proto__");
@@ -138,7 +138,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return nameElement;
     },
 
-    _createTitlePropertyStyle: function()
+    _createTitlePropertyStyle()
     {
         var container = document.createDocumentFragment();
 
@@ -186,7 +186,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return container;
     },
 
-    _createTitleAPIStyle: function()
+    _createTitleAPIStyle()
     {
         // Fixed values and special properties display like a property.
         if (this._alwaysDisplayAsProperty())
@@ -222,7 +222,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return container;
     },
 
-    _alwaysDisplayAsProperty: function()
+    _alwaysDisplayAsProperty()
     {
         // Constructor, though a function, is often better treated as an expandable object.
         if (this.property.name === "constructor")
@@ -239,12 +239,12 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return false;
     },
 
-    _functionPropertyString: function()
+    _functionPropertyString()
     {
         return "function" + this._functionParameterString();
     },
 
-    _functionParameterString: function()
+    _functionParameterString()
     {
         var resolvedValue = this.resolvedValue();
         console.assert(resolvedValue.type === "function");
@@ -276,7 +276,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return match ? match[1] : "()";
     },
 
-    _sanitizedPrototypeString: function(value)
+    _sanitizedPrototypeString(value)
     {
         // FIXME: <https://webkit.org/b/141610> For many X, X.prototype is an X when it must be a plain object
         if (value.type === "function")
@@ -289,7 +289,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         return value.description.replace(/Prototype$/, "");
     },
 
-    _updateChildren: function()
+    _updateChildren()
     {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
@@ -303,7 +303,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
             resolvedValue.getDisplayablePropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, this._mode));
     },
 
-    _updateChildrenInternal: function(handler, mode, list)
+    _updateChildrenInternal(handler, mode, list)
     {
         this.removeChildren();
 
@@ -316,7 +316,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         handler.call(this, list, this.resolvedValuePropertyPath(), mode);
     },
 
-    _updateEntries: function(entries, propertyPath, mode)
+    _updateEntries(entries, propertyPath, mode)
     {
         for (var entry of entries) {
             if (entry.key) {
@@ -339,7 +339,7 @@ WebInspector.ObjectTreePropertyTreeElement.prototype = {
         }.bind(this));
     },
 
-    _updateProperties: function(properties, propertyPath, mode)
+    _updateProperties(properties, propertyPath, mode)
     {
         properties.sort(WebInspector.ObjectTreeView.ComparePropertyDescriptors);
 

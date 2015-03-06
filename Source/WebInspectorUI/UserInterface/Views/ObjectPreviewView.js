@@ -85,13 +85,13 @@ WebInspector.ObjectPreviewView.prototype = {
         return this._lossless;
     },
 
-    showTitle: function()
+    showTitle()
     {
         this._titleElement.hidden = false;
         this._previewElement.hidden = true;
     },
 
-    showPreview: function()
+    showPreview()
     {
         this._titleElement.hidden = true;
         this._previewElement.hidden = false;
@@ -99,7 +99,7 @@ WebInspector.ObjectPreviewView.prototype = {
 
     // Private
 
-    _initTitleElement: function()
+    _initTitleElement()
     {
         // Display null / regexps as simple formatted values even in title.
         if (this._preview.subtype === "regexp" || this._preview.subtype === "null")
@@ -108,12 +108,12 @@ WebInspector.ObjectPreviewView.prototype = {
             this._titleElement.textContent = this._preview.description || "";
     },
 
-    _numberOfPropertiesToShowInMode: function()
+    _numberOfPropertiesToShowInMode()
     {
         return this._mode === WebInspector.ObjectPreviewView.Mode.Brief ? 3 : Infinity;
     },
 
-    _appendPreview: function(element, preview)
+    _appendPreview(element, preview)
     {
         var displayObjectAsValue = false;
         if (preview.type === "object") {
@@ -140,7 +140,7 @@ WebInspector.ObjectPreviewView.prototype = {
         return this._appendValuePreview(bodyElement, preview);
     },
 
-    _appendEntryPreviews: function(element, preview)
+    _appendEntryPreviews(element, preview)
     {
         var lossless = preview.lossless && !preview.propertyPreviews.length;
 
@@ -171,7 +171,7 @@ WebInspector.ObjectPreviewView.prototype = {
         return lossless;
     },
 
-    _appendPropertyPreviews: function(element, preview)
+    _appendPropertyPreviews(element, preview)
     {
         // Do not show Error properties in previews. They are more useful in full views.
         if (preview.subtype === "error")
@@ -220,7 +220,7 @@ WebInspector.ObjectPreviewView.prototype = {
         return preview.lossless;
     },
 
-    _appendValuePreview: function(element, preview)
+    _appendValuePreview(element, preview)
     {
         element.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(preview));
         return true;

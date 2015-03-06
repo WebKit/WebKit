@@ -43,7 +43,7 @@ WebInspector.ObjectTreeArrayIndexTreeElement.prototype = {
 
     // Protected
 
-    invokedGetter: function()
+    invokedGetter()
     {
         this.mainTitle = this._titleFragment();
 
@@ -52,7 +52,7 @@ WebInspector.ObjectTreeArrayIndexTreeElement.prototype = {
 
     // Private
 
-    _titleFragment: function()
+    _titleFragment()
     {
         var container = document.createDocumentFragment();
 

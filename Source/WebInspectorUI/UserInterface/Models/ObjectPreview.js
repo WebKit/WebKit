@@ -110,7 +110,7 @@ WebInspector.ObjectPreview.prototype = {
         return this._size;
     },
 
-    hasSize: function()
+    hasSize()
     {
         return this._size !== undefined && (this._subtype === "array" || this._subtype === "set" || this._subtype === "map" || this._subtype === "weakmap");
     }

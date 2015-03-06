@@ -138,22 +138,22 @@ WebInspector.PropertyPath.prototype = {
         return components.join("");        
     },
 
-    displayPath: function(type)
+    displayPath(type)
     {
         return type === WebInspector.PropertyPath.Type.Value ? this.reducedPath : this.fullPath;
     },
 
-    isRoot: function()
+    isRoot()
     {
         return !this._parent;
     },
 
-    isPathComponentImpossible: function()
+    isPathComponentImpossible()
     {
         return this._pathComponent && this._pathComponent.startsWith("@");
     },
 
-    isFullPathImpossible: function()
+    isFullPathImpossible()
     {
         if (this.isPathComponentImpossible())
             return true;
@@ -164,50 +164,50 @@ WebInspector.PropertyPath.prototype = {
         return false;
     },
 
-    appendPropertyName: function(object, propertyName)
+    appendPropertyName(object, propertyName)
     {
         var isPrototype = propertyName === "__proto__";
         var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
         return new WebInspector.PropertyPath(object, component, this, isPrototype);
     },
 
-    appendPropertySymbol: function(object, symbolName)
+    appendPropertySymbol(object, symbolName)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.SymbolPropertyName + (symbolName.length ? "(" + symbolName + ")" : "");
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendInternalPropertyName: function(object, propertyName)
+    appendInternalPropertyName(object, propertyName)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.InternalPropertyName + "[" + propertyName + "]";
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendGetterPropertyName: function(object, propertyName)
+    appendGetterPropertyName(object, propertyName)
     {
         var component = ".__lookupGetter__(" + doubleQuotedString(propertyName) + ")";
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendSetterPropertyName: function(object, propertyName)
+    appendSetterPropertyName(object, propertyName)
     {
         var component = ".__lookupSetter__(" + doubleQuotedString(propertyName) + ")";
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendArrayIndex: function(object, indexString)
+    appendArrayIndex(object, indexString)
     {
         var component = "[" + indexString + "]";
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendMapKey: function(object)
+    appendMapKey(object)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.MapKey;
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendMapValue: function(object, keyObject)
+    appendMapValue(object, keyObject)
     {
         console.assert(!keyObject || keyObject instanceof WebInspector.RemoteObject);
 
@@ -225,13 +225,13 @@ WebInspector.PropertyPath.prototype = {
         return new WebInspector.PropertyPath(object, component, this);
     },
 
-    appendSetIndex: function(object)
+    appendSetIndex(object)
     {
         var component = WebInspector.PropertyPath.SpecialPathComponent.SetIndex;
         return new WebInspector.PropertyPath(object, component, this);
     },
     
-    appendPropertyDescriptor: function(object, descriptor, type)
+    appendPropertyDescriptor(object, descriptor, type)
     {
         if (descriptor.isInternalProperty)
             return this.appendInternalPropertyName(object, descriptor.name);
@@ -253,7 +253,7 @@ WebInspector.PropertyPath.prototype = {
 
     // Private
 
-    _canPropertyNameBeDotAccess: function(propertyName)
+    _canPropertyNameBeDotAccess(propertyName)
     {
         return /^(?![0-9])\w+$/.test(propertyName);
     }

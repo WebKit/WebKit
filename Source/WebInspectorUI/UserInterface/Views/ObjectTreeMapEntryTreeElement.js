@@ -50,19 +50,19 @@ WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
 
     // Protected
 
-    resolvedValue: function()
+    resolvedValue()
     {
         return this._object;
     },
 
-    propertyPathType: function()
+    propertyPathType()
     {
         return WebInspector.PropertyPath.Type.Value;
     },
 
     // Private
 
-    _titleFragment: function()
+    _titleFragment()
     {
         var container = document.createDocumentFragment();
 
@@ -96,12 +96,12 @@ WebInspector.ObjectTreeMapKeyTreeElement.prototype = {
 
     // Protected
 
-    displayPropertyName: function()
+    displayPropertyName()
     {
         return WebInspector.UIString("key");
     },
 
-    resolvedValuePropertyPath: function()
+    resolvedValuePropertyPath()
     {
         return this._propertyPath.appendMapKey(this._object);
     }
@@ -121,12 +121,12 @@ WebInspector.ObjectTreeMapValueTreeElement.prototype = {
 
     // Protected
 
-    displayPropertyName: function()
+    displayPropertyName()
     {
         return WebInspector.UIString("value");
     },
 
-    resolvedValuePropertyPath: function()
+    resolvedValuePropertyPath()
     {
         return this._propertyPath.appendMapValue(this._object, this._key);
     }
