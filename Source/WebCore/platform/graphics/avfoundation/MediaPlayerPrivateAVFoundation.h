@@ -153,6 +153,9 @@ protected:
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String&, MediaSourcePrivateClient*);
 #endif
+#if ENABLE(MEDIA_STREAM)
+    virtual void load(MediaStreamPrivate*) { }
+#endif
     virtual void cancelLoad() = 0;
 
     virtual void prepareToPlay() override;

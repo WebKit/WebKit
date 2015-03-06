@@ -1221,6 +1221,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         }
     } else
 #endif
+#if ENABLE(MEDIA_STREAM)
+        if (m_mediaStreamSrcObject)
+            m_player->load(m_mediaStreamSrcObject->privateStream());
+        else
+#endif
     if (!m_player->load(url, contentType, keySystem))
         mediaLoadingFailed(MediaPlayer::FormatError);
 

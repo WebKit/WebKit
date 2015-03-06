@@ -86,6 +86,9 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String&, MediaSourcePrivateClient*);
 #endif
+#if ENABLE(MEDIA_STREAM)
+    virtual void load(MediaStreamPrivate*) { }
+#endif
     void cancelLoad();
     void loadInternal(const String& url);
     void resumeLoad();

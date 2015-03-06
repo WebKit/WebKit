@@ -48,6 +48,9 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String& url, MediaSourcePrivateClient*) = 0;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    virtual void load(MediaStreamPrivate*) = 0;
+#endif
     virtual void cancelLoad() = 0;
     
     virtual void prepareToPlay() { }

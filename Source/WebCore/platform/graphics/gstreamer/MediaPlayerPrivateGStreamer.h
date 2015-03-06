@@ -76,6 +76,9 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     void load(const String& url, MediaSourcePrivateClient*);
 #endif
+#if ENABLE(MEDIA_STREAM)
+    void load(MediaStreamPrivate*);
+#endif
     void commitLoad();
     void cancelLoad();
 

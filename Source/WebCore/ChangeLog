@@ -1,5 +1,40 @@
 2015-03-05  Philippe Normand  <pnormand@igalia.com>
 
+        [MediaStream] new load method for MediaStreamPrivate objects
+        https://bugs.webkit.org/show_bug.cgi?id=142346
+
+        Reviewed by Eric Carlson.
+
+        No new tests, existing mediastream tests cover this use-case.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Use new load method for MediaStreams.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::load): New stub.
+        (WebCore::MediaPlayer::load): New load method for
+        MediaStreamPrivate.
+        (WebCore::MediaPlayer::nextBestMediaEngine): Set a new boolean on
+        the MediaEngineSupportParameters to differenciate with MSE and
+        normal video resources.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Defer loading of
+        the MediaStream to the MediaPlayerPrivate backend.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaEngineSupportParameters::MediaEngineSupportParameters):
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::load): New empty load
+        method for MediaStreamPrivate objects.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (WebCore::MediaPlayerPrivateQTKit::load): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+
+2015-03-05  Philippe Normand  <pnormand@igalia.com>
+
         Rename MediaStreamSource to RealtimeMediaSource
         https://bugs.webkit.org/show_bug.cgi?id=142330
 
