@@ -55,6 +55,11 @@ WebInspector.ObjectTreeMapEntryTreeElement.prototype = {
         return this._object;
     },
 
+    propertyPathType: function()
+    {
+        return WebInspector.PropertyPath.Type.Value;
+    },
+
     // Private
 
     _titleFragment: function()

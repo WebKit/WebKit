@@ -1,3 +1,16 @@
+2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Follow-up fixes to ObjectTreeBaseTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=142367
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype.propertyPathType):
+        * UserInterface/Views/ObjectTreeSetIndexTreeElement.js:
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype.resolvedValuePropertyPath):
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._titleFragment):
+
 2015-03-05  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: console.debug/info should show up in Log Console Filter

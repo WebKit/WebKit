@@ -54,13 +54,18 @@ WebInspector.ObjectTreeSetIndexTreeElement.prototype = {
         return this._object;
     },
 
+    resolvedValuePropertyPath: function()
+    {
+        return this.propertyPath.appendSetIndex(this._object);
+    },
+
     // Private
 
     _titleFragment: function()
     {
         var container = document.createDocumentFragment();
 
-        var propertyPath = this.propertyPath.appendSetIndex(this._object);
+        var propertyPath = this.resolvedValuePropertyPath();
 
         // Set bullet.
         var nameElement = container.appendChild(document.createElement("span"));
