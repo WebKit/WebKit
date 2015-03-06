@@ -32,7 +32,6 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheFileSystemPosix.h"
 #include "NetworkCacheIOChannel.h"
-#include <dispatch/dispatch.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
@@ -409,21 +408,19 @@ void Storage::traverse(std::function<void (const Entry*)>&& traverseHandler)
     StringCapture cachePathCapture(m_directoryPath);
     ioQueue().dispatch([this, cachePathCapture, traverseHandler] {
         String cachePath = cachePathCapture.string();
-        auto semaphore = adoptDispatch(dispatch_semaphore_create(0));
-        traverseCacheFiles(cachePath, [this, &semaphore, &traverseHandler](const String& fileName, const String& partitionPath) {
+        traverseCacheFiles(cachePath, [this, &traverseHandler](const String& fileName, const String& partitionPath) {
             auto filePath = WebCore::pathByAppendingComponent(partitionPath, fileName);
             auto channel = IOChannel::open(filePath, IOChannel::Type::Read);
             const size_t headerReadSize = 16 << 10;
-            channel->read(0, headerReadSize, [this, &semaphore, &traverseHandler](Data& fileData, int) {
+            // FIXME: Traversal is slower than it should be due to lack of parallelism.
+            channel->readSync(0, headerReadSize, [this, &traverseHandler](Data& fileData, int) {
                 EntryMetaData metaData;
                 Data headerData;
                 if (decodeEntryHeader(fileData, metaData, headerData)) {
                     Entry entry { metaData.key, metaData.timeStamp, headerData, { } };
                     traverseHandler(&entry);
                 }
-                dispatch_semaphore_signal(semaphore.get());
             });
-            dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
         });
         RunLoop::main().dispatch([this, traverseHandler] {
             traverseHandler(nullptr);

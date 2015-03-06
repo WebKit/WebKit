@@ -42,6 +42,7 @@ public:
     static Ref<IOChannel> open(const String& file, Type);
 
     void read(size_t offset, size_t, std::function<void (Data&, int error)>);
+    void readSync(size_t offset, size_t, std::function<void (Data&, int error)>);
     void write(size_t offset, const Data&, std::function<void (int error)>);
 
     int fileDescriptor() const { return m_fileDescriptor; }
