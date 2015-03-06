@@ -96,9 +96,9 @@ WebInspector.CodeMirrorDragToAdjustNumberController.prototype = {
 
         var containsNumber = token.type.indexOf("number") !== -1;
         this._hoveredTokenInfo = {
-            token: token,
+            token,
             line: position.line,
-            containsNumber: containsNumber,
+            containsNumber,
             startPosition: {
                 ch: token.start,
                 line: position.line

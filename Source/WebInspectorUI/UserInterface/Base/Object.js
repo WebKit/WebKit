@@ -65,7 +65,7 @@ WebInspector.Object.addEventListener = function(eventType, listener, thisObject)
             return;
     }
 
-    listeners.push({thisObject: thisObject, listener: listener});
+    listeners.push({thisObject, listener});
 };
 
 WebInspector.Object.removeEventListener = function(eventType, listener, thisObject)

@@ -61,7 +61,7 @@ WebInspector.IssueManager.prototype = {
         var issue = new WebInspector.IssueMessage(source, level, text, url, modifiedLineNumber, parameters);
         this._issues.push(issue);
 
-        this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue: issue});
+        this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue});
     },
 
     issuesForSourceCode: function(sourceCode)

@@ -211,7 +211,7 @@ WebInspector.DOMTree.prototype = {
             // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
             // in iOS 6. Fallback to including the frame identifier (frameId).
             var contextId = this._frame.pageExecutionContext ? this._frame.pageExecutionContext.id : undefined;
-            RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId: contextId, frameId: this._frame.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
+            RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, frameId: this._frame.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
         }
     },
 
@@ -314,7 +314,7 @@ WebInspector.DOMTree.prototype = {
         console.assert(!this._flowMap.hasOwnProperty(flowId));
         this._flowMap[flowId] = flow;
 
-        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow: flow});
+        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow});
     },
 
     _contentFlowWasRemoved: function(event)
@@ -327,7 +327,7 @@ WebInspector.DOMTree.prototype = {
         console.assert(this._flowMap.hasOwnProperty(flowId));
         delete this._flowMap[flowId];
 
-        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow: flow});
+        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow});
     }
 };
 

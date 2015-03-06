@@ -77,7 +77,7 @@ WebInspector.StorageManager.prototype = {
         var domStorage = new WebInspector.DOMStorageObject(id, host, isLocalStorage);
 
         this._domStorageObjects.push(domStorage);
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage: domStorage});
+        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
     },
 
     databaseWasAdded: function(id, host, name, version)
@@ -85,7 +85,7 @@ WebInspector.StorageManager.prototype = {
         var database = new WebInspector.DatabaseObject(id, host, name, version);
 
         this._databaseObjects.push(database);
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database: database});
+        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database});
     },
 
     domStorageWasUpdated: function(id)
@@ -119,7 +119,7 @@ WebInspector.StorageManager.prototype = {
         console.assert(database);
         if (!database)
             return;
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasInspected, {database: database});
+        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasInspected, {database});
     },
 
     inspectDOMStorage: function(id)
@@ -128,7 +128,7 @@ WebInspector.StorageManager.prototype = {
         console.assert(domStorage);
         if (!domStorage)
             return;
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage: domStorage});
+        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage});
     },
 
     // Protected
@@ -256,7 +256,7 @@ WebInspector.StorageManager.prototype = {
             var indexedDatabase = new WebInspector.IndexedDatabase(databasePayload.name, securityOrigin, databasePayload.version, objectStores);
 
             this._indexedDatabases.push(indexedDatabase);
-            this.dispatchEventToListeners(WebInspector.StorageManager.Event.IndexedDatabaseWasAdded, {indexedDatabase: indexedDatabase});
+            this.dispatchEventToListeners(WebInspector.StorageManager.Event.IndexedDatabaseWasAdded, {indexedDatabase});
         }
 
         function processKeyPath(keyPathPayload)

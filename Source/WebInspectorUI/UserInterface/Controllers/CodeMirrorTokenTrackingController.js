@@ -174,7 +174,7 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         this.removeHighlightedRange();
 
         var className = this._classNameForHighlightedRange || "";
-        this._codeMirrorMarkedText = this._codeMirror.markText(range.start, range.end, {className: className});
+        this._codeMirrorMarkedText = this._codeMirror.markText(range.start, range.end, {className});
 
         window.addEventListener("mousemove", this, true);
     },
@@ -326,9 +326,9 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         var innerMode = CodeMirror.innerMode(this._codeMirror.getMode(), token.state);
         var codeMirrorModeName = innerMode.mode.alternateName || innerMode.mode.name;
         this._hoveredTokenInfo = {
-            token: token,
-            position: position,
-            innerMode: innerMode,
+            token,
+            position,
+            innerMode,
             modeName: codeMirrorModeName
         };
 
@@ -499,7 +499,7 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         return {
             hoveredToken: this._hoveredTokenInfo.token,
             hoveredTokenRange: {start: startPosition, end: endPosition},
-            expression: expression,
+            expression,
             expressionRange: {start: expressionStartPosition, end: endPosition},
         };
     },

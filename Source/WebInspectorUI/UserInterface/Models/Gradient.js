@@ -104,7 +104,7 @@ WebInspector.Gradient = {
                 if (!color)
                     continue;
 
-                var stop = {color: color};
+                var stop = {color};
                 if (component.length && component[0].substr(-1) === "%")
                     stop.offset = parseFloat(component.shift()) / 100;
                 return stop;

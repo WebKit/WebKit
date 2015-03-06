@@ -141,7 +141,7 @@ WebInspector.ScriptContentView.prototype = {
     get saveData()
     {
         var url = this._script.url || "web-inspector:///" + encodeURI(this._script.displayName) + ".js";
-        return {url: url, content: this._textEditor.string};
+        return {url, content: this._textEditor.string};
     },
 
     get supportsSearch()

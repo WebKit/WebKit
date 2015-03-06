@@ -329,7 +329,7 @@ WebInspector.DebuggerManager.prototype = {
 
     continueToLocation: function(scriptIdentifier, lineNumber, columnNumber)
     {
-        DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber});
+        DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber, columnNumber});
     },
 
     addBreakpoint: function(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
@@ -362,7 +362,7 @@ WebInspector.DebuggerManager.prototype = {
             this._setBreakpoint(breakpoint, shouldSpeculativelyResolve ? speculativelyResolveBreakpoint.bind(null, breakpoint) : null);
 
         if (!skipEventDispatch)
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint: breakpoint});
+            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint});
     },
 
     removeBreakpoint: function(breakpoint)
@@ -402,7 +402,7 @@ WebInspector.DebuggerManager.prototype = {
         breakpoint.disabled = true;
         breakpoint.clearActions();
 
-        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint: breakpoint});
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
     },
 
     breakpointResolved: function(breakpointIdentifier, location)
@@ -550,7 +550,7 @@ WebInspector.DebuggerManager.prototype = {
             scripts.push(script);
         }
 
-        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script: script});
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script});
     },
 
     isBreakpointRemovable: function(breakpoint)
@@ -714,13 +714,13 @@ WebInspector.DebuggerManager.prototype = {
                 urlRegex: undefined,
                 columnNumber: breakpoint.sourceCodeLocation.columnNumber,
                 condition: breakpoint.condition,
-                options: options
+                options
             }, didSetBreakpoint.bind(this));
         } else if (breakpoint.scriptIdentifier) {
             DebuggerAgent.setBreakpoint.invoke({
                 location: {scriptId: breakpoint.scriptIdentifier, lineNumber: breakpoint.sourceCodeLocation.lineNumber, columnNumber: breakpoint.sourceCodeLocation.columnNumber},
                 condition: breakpoint.condition,
-                options: options
+                options
             }, didSetBreakpoint.bind(this));
         }
     },
@@ -766,7 +766,7 @@ WebInspector.DebuggerManager.prototype = {
             // Add the breakpoint at its new lineNumber and get a new id.
             this._setBreakpoint(breakpoint);
 
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointMoved, {breakpoint: breakpoint});
+            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointMoved, {breakpoint});
         }
     },
 

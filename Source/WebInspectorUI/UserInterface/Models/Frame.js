@@ -108,10 +108,10 @@ WebInspector.Frame.prototype = {
             this._dispatchMainResourceDidChangeEvent(oldMainResource);
 
         if (this._securityOrigin !== oldSecurityOrigin)
-            this.dispatchEventToListeners(WebInspector.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin: oldSecurityOrigin});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin});
 
         if (this._name !== oldName)
-            this.dispatchEventToListeners(WebInspector.Frame.Event.NameDidChange, {oldName: oldName});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.NameDidChange, {oldName});
     },
 
     startProvisionalLoad: function(provisionalMainResource)
@@ -163,7 +163,7 @@ WebInspector.Frame.prototype = {
             this._dispatchMainResourceDidChangeEvent(oldMainResource);
 
         if (this._securityOrigin !== oldSecurityOrigin)
-            this.dispatchEventToListeners(WebInspector.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin: oldSecurityOrigin});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin});
     },
 
     clearProvisionalLoad: function(skipProvisionalLoadClearedEvent)
@@ -358,7 +358,7 @@ WebInspector.Frame.prototype = {
 
         childFrame._parentFrame = null;
 
-        this.dispatchEventToListeners(WebInspector.Frame.Event.ChildFrameWasRemoved, {childFrame: childFrame});
+        this.dispatchEventToListeners(WebInspector.Frame.Event.ChildFrameWasRemoved, {childFrame});
     },
 
     removeAllChildFrames: function()
@@ -427,10 +427,10 @@ WebInspector.Frame.prototype = {
 
         if (this._isProvisionalResource(resource)) {
             this._provisionalResourceCollection.addResource(resource);
-            this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalResourceWasAdded, {resource: resource});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalResourceWasAdded, {resource});
         } else {
             this._resourceCollection.addResource(resource);
-            this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasAdded, {resource: resource});
+            this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasAdded, {resource});
         }
     },
 
@@ -444,7 +444,7 @@ WebInspector.Frame.prototype = {
 
         this._disassociateWithResource(resource);
 
-        this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasRemoved, {resource: resource});
+        this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasRemoved, {resource});
     },
 
     removeAllResources: function()
@@ -496,7 +496,7 @@ WebInspector.Frame.prototype = {
 
     _dispatchMainResourceDidChangeEvent: function(oldMainResource)
     {
-        this.dispatchEventToListeners(WebInspector.Frame.Event.MainResourceDidChange, {oldMainResource: oldMainResource});
+        this.dispatchEventToListeners(WebInspector.Frame.Event.MainResourceDidChange, {oldMainResource});
     }
 };
 

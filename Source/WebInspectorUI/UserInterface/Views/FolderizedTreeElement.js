@@ -66,11 +66,11 @@ WebInspector.FolderizedTreeElement.prototype = {
         console.assert(typeof treeElementConstructor === "function");
 
         var settings = {
-            type: type,
-            folderDisplayName: folderDisplayName,
-            validateRepresentedObjectCallback: validateRepresentedObjectCallback,
-            countChildrenCallback: countChildrenCallback,
-            treeElementConstructor: treeElementConstructor
+            type,
+            folderDisplayName,
+            validateRepresentedObjectCallback,
+            countChildrenCallback,
+            treeElementConstructor
         };
 
         this._folderizeSettingsMap.set(type, settings);

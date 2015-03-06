@@ -935,8 +935,8 @@ WebInspector.LogContentView.prototype = {
 
         matchRanges.forEach(function (range, index) {
             this._searchMatches.push({
-                message: message,
-                range: range,
+                message,
+                range,
                 highlight: highlightedElements[index]
             });
 

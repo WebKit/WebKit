@@ -172,7 +172,7 @@ WebInspector.FrameResourceManager.prototype = {
 
         frame.clearExecutionContexts();
 
-        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.FrameWasRemoved, {frame: frame});
+        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.FrameWasRemoved, {frame});
 
         if (this._mainFrame !== oldMainFrame)
             this._mainFrameDidChange(oldMainFrame);
@@ -575,7 +575,7 @@ WebInspector.FrameResourceManager.prototype = {
 
     _dispatchFrameWasAddedEvent: function(frame)
     {
-        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.FrameWasAdded, {frame: frame});
+        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.FrameWasAdded, {frame});
     },
 
     _mainFrameDidChange: function(oldMainFrame)
@@ -584,7 +584,7 @@ WebInspector.FrameResourceManager.prototype = {
             oldMainFrame.unmarkAsMainFrame();
         if (this._mainFrame)
             this._mainFrame.markAsMainFrame();
-        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.MainFrameDidChange, {oldMainFrame: oldMainFrame});
+        this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.MainFrameDidChange, {oldMainFrame});
     },
 
     _extraDomainsActivated: function(event)

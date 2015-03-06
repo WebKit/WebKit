@@ -221,7 +221,7 @@ WebInspector.Popover.prototype = {
         for (var edgeName in WebInspector.RectEdge) {
             var edge = WebInspector.RectEdge[edgeName];
             var item = {
-                edge: edge,
+                edge,
                 metrics: this._bestMetricsForEdge(this._preferredSize, targetFrame, containerFrame, edge)
             };
             var preferredIndex = preferredEdges.indexOf(edge);

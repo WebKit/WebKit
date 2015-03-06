@@ -67,7 +67,7 @@ WebInspector.RuntimeManager.prototype = {
         if (WebInspector.debuggerManager.activeCallFrame) {
             // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
             // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, returnByValue: returnByValue, generatePreview: generatePreview, saveResult: saveResult}, evalCallback.bind(this));
+            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
             return;
         }
 
@@ -76,7 +76,7 @@ WebInspector.RuntimeManager.prototype = {
         // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
         // COMPATIBILITY (iOS 8): "saveResult" did not exist.
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
-        RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue, generatePreview: generatePreview, saveResult: saveResult}, evalCallback.bind(this));
+        RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, frameId: contextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
     },
 
     saveResult: function(remoteObject, callback)

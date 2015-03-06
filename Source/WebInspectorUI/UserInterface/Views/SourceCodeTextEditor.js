@@ -867,7 +867,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         // Paused. Add Continue to Here option only if we have a script identifier for the location.
         if (WebInspector.debuggerManager.paused) {
-            var editorLineInfo = {lineNumber:lineNumber, columnNumber:columnNumber};
+            var editorLineInfo = {lineNumber, columnNumber};
             var unformattedLineInfo = this._unformattedLineInfoForEditorLineInfo(editorLineInfo);
             var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(unformattedLineInfo.lineNumber, unformattedLineInfo.columnNumber);
 
@@ -964,7 +964,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!this._supportsDebugging)
             return null;
 
-        var editorLineInfo = {lineNumber:lineNumber, columnNumber:columnNumber};
+        var editorLineInfo = {lineNumber, columnNumber};
         var unformattedLineInfo = this._unformattedLineInfoForEditorLineInfo(editorLineInfo);
         var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(unformattedLineInfo.lineNumber, unformattedLineInfo.columnNumber);
         var breakpoint = new WebInspector.Breakpoint(sourceCodeLocation);
@@ -993,7 +993,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!this._supportsDebugging)
             return;
 
-        var lineInfo = {lineNumber: lineNumber, columnNumber: columnNumber};
+        var lineInfo = {lineNumber, columnNumber};
         var breakpoint = this._breakpointForEditorLineInfo(lineInfo);
         console.assert(breakpoint);
         if (!breakpoint)
@@ -1039,7 +1039,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!this._supportsDebugging)
             return;
 
-        var breakpoint = this._breakpointForEditorLineInfo({lineNumber: lineNumber, columnNumber: columnNumber});
+        var breakpoint = this._breakpointForEditorLineInfo({lineNumber, columnNumber});
         console.assert(breakpoint);
         if (!breakpoint)
             return;
@@ -1282,7 +1282,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         var allRequests = [{
             typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
-            sourceID: sourceID,
+            sourceID,
             divot: offset
         }];
 

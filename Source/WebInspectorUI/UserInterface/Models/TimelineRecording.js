@@ -144,7 +144,7 @@ WebInspector.TimelineRecording.prototype = {
         this._timelines.set(timeline.type, timeline);
 
         timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineAdded, {timeline: timeline});
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineAdded, {timeline});
     },
 
     removeTimeline: function(timeline)
@@ -156,7 +156,7 @@ WebInspector.TimelineRecording.prototype = {
         this._timelines.delete(timeline.type);
 
         timeline.removeEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineRemoved, {timeline: timeline});
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineRemoved, {timeline});
     },
 
     addEventMarker: function(eventMarker)
@@ -200,7 +200,7 @@ WebInspector.TimelineRecording.prototype = {
         sourceCodeTimeline.addRecord(record);
 
         if (newTimeline)
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline: sourceCodeTimeline});
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline});
     },
 
     computeElapsedTime: function(timestamp)

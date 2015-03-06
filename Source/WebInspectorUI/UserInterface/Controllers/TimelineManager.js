@@ -429,7 +429,7 @@ WebInspector.TimelineManager.prototype = {
 
         this._legacyFirstRecordedTimestamp = NaN;
         this._activeRecording = newRecording;
-        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording: oldRecording});
+        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording});
     },
 
     _callFramesFromPayload: function(payload)

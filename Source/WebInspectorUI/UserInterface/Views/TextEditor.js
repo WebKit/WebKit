@@ -673,7 +673,7 @@ WebInspector.TextEditor.prototype = {
             endOffset = this._codeMirror.getDoc().indexFromPos({line: visibleRange.to, ch: 0});
         }
 
-        return {startOffset: startOffset, endOffset: endOffset};
+        return {startOffset, endOffset};
     },
 
     originalOffsetToCurrentPosition: function(offset)
@@ -884,7 +884,7 @@ WebInspector.TextEditor.prototype = {
 
         var start = {line: textRange.startLine, ch: textRange.startColumn};
         var end = {line: textRange.endLine, ch: textRange.endColumn};
-        return {start: start, end: end};
+        return {start, end};
     },
 
     _revealPendingPositionIfPossible: function()
@@ -1260,7 +1260,7 @@ WebInspector.TextEditor.prototype = {
         if (this._delegate && typeof this._delegate.textEditorGutterContextMenu === "function") {
             var breakpoints = [];
             for (var columnNumber in this._breakpoints[lineNumber])
-                breakpoints.push({lineNumber:lineNumber, columnNumber:columnNumber});
+                breakpoints.push({lineNumber, columnNumber});
 
             this._delegate.textEditorGutterContextMenu(this, lineNumber, 0, breakpoints, event);
         }

@@ -477,7 +477,7 @@ WebInspector.Resource.prototype = {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             delete this._urlComponents;
 
-            this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL: oldURL});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL});
         }
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.RequestHeadersDidChange);
@@ -516,18 +516,18 @@ WebInspector.Resource.prototype = {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             delete this._urlComponents;
 
-            this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL: oldURL});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL});
         }
 
         if (oldMIMEType !== mimeType) {
             // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
             delete this._mimeTypeComponents;
 
-            this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType: oldMIMEType});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType});
         }
 
         if (oldType !== type)
-            this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType});
 
         console.assert(isNaN(this._size));
         console.assert(isNaN(this._transferSize));
@@ -573,7 +573,7 @@ WebInspector.Resource.prototype = {
 
         this._lastDataReceivedTimestamp = elapsedTime || NaN;
 
-        this.dispatchEventToListeners(WebInspector.Resource.Event.SizeDidChange, {previousSize: previousSize});
+        this.dispatchEventToListeners(WebInspector.Resource.Event.SizeDidChange, {previousSize});
 
         // The transferSize is based off of size when status is not 304 or Content-Length is missing.
         if (isNaN(this._transferSize) && this._statusCode !== 304 && !this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
@@ -709,7 +709,7 @@ WebInspector.Resource.prototype = {
         if (this._type === WebInspector.Resource.Type.Other) {
             var oldType = this._type;
             this._type = WebInspector.Resource.Type.Script;
-            this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType});
         }
     },
 

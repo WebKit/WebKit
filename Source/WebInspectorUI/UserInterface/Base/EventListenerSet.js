@@ -48,7 +48,7 @@ WebInspector.EventListenerSet.prototype = {
         if (!emitterIsValid || !type || !callback)
             return;
 
-        this._listeners.push({listener: new WebInspector.EventListener(thisObject || this._defaultThisObject), emitter: emitter, type: type, callback: callback, usesCapture: usesCapture});
+        this._listeners.push({listener: new WebInspector.EventListener(thisObject || this._defaultThisObject), emitter, type, callback, usesCapture});
     },
 
     unregister: function()

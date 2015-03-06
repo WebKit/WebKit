@@ -108,7 +108,7 @@ WebInspector.TextContentView.prototype = {
     get saveData()
     {
         var url = "web-inspector:///" + encodeURI(WebInspector.UIString("Untitled")) + ".txt";
-        return {url: url, content: this._textEditor.string, forceSaveAs: true};
+        return {url, content: this._textEditor.string, forceSaveAs: true};
     },
 
     get supportsSearch()

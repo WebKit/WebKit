@@ -496,7 +496,7 @@ WebInspector.ReplayManager.prototype = {
                 throw error;
             });
 
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionAdded, {sessionId: sessionId});
+        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionAdded, {sessionId});
     },
 
     sessionModified: function(sessionId)
@@ -528,7 +528,7 @@ WebInspector.ReplayManager.prototype = {
                 manager._sessionPromises.delete(sessionId);
                 var removedSession = manager._sessions.take(sessionId);
                 console.assert(removedSession);
-                manager.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionRemoved, {removedSession: removedSession});
+                manager.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionRemoved, {removedSession});
             });
     },
 
@@ -589,7 +589,7 @@ WebInspector.ReplayManager.prototype = {
                 manager._segmentPromises.delete(segmentId);
                 var removedSegment = manager._segments.take(segmentId);
                 console.assert(removedSegment);
-                manager.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionSegmentRemoved, {removedSegment: removedSegment});
+                manager.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionSegmentRemoved, {removedSegment});
             });
     },
 

@@ -605,12 +605,12 @@ InjectedScript.prototype = {
         function createFakeValueDescriptor(name, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             try {
-                var descriptor = {name: name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
+                var descriptor = {name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
                 if (possibleNativeBindingGetter)
                     descriptor.nativeGetter = true;
                 return descriptor;
             } catch (e) {
-                var errorDescriptor = {name: name, value: e, wasThrown: true};
+                var errorDescriptor = {name, value: e, wasThrown: true};
                 if (isOwnProperty)
                     errorDescriptor.isOwn = true;
                 return errorDescriptor;
@@ -795,7 +795,7 @@ InjectedScript.prototype = {
                 continue;
             }
 
-            entries.push({value: value});
+            entries.push({value});
 
             if (numberToFetch && entries.length === numberToFetch)
                 break;
@@ -814,7 +814,7 @@ InjectedScript.prototype = {
                 continue;
             }
 
-            entries.push({key: key, value: value});
+            entries.push({key, value});
 
             if (numberToFetch && entries.length === numberToFetch)
                 break;
@@ -1022,14 +1022,14 @@ InjectedScript.RemoteObject.prototype = {
             // Getter/setter.
             if (!("value" in descriptor)) {
                 preview.lossless = false;
-                this._appendPropertyPreview(preview, internal, {name: name, type: "accessor"}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name, type: "accessor"}, propertiesThreshold);
                 continue;
             }
 
             // Null value.
             var value = descriptor.value;
             if (value === null) {
-                this._appendPropertyPreview(preview, internal, {name: name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
                 continue;
             }
 
@@ -1049,7 +1049,7 @@ InjectedScript.RemoteObject.prototype = {
                     value = this._abbreviateString(value, maxLength, true);
                     preview.lossless = false;
                 }
-                this._appendPropertyPreview(preview, internal, {name: name, type: type, value: toString(value)}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name, type, value: toString(value)}, propertiesThreshold);
                 continue;
             }
 
@@ -1060,12 +1060,12 @@ InjectedScript.RemoteObject.prototype = {
                     symbolString = this._abbreviateString(symbolString, maxLength, true);
                     preview.lossless = false;
                 }
-                this._appendPropertyPreview(preview, internal, {name: name, type: type, value: symbolString}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name, type, value: symbolString}, propertiesThreshold);
                 return;
             }
 
             // Object.
-            var property = {name: name, type: type};
+            var property = {name, type};
             var subtype = injectedScript._subtype(value);
             if (subtype)
                 property.subtype = subtype;

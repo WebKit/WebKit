@@ -141,8 +141,8 @@ WebInspector.DOMTreeManager.prototype = {
         if (!node)
             return;
         node._setAttribute(name, value);
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, { node: node, name: name });
-        node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name: name});
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, {node, name});
+        node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name});
     },
 
     _attributeRemoved: function(nodeId, name)
@@ -151,8 +151,8 @@ WebInspector.DOMTreeManager.prototype = {
         if (!node)
             return;
         node._removeAttribute(name);
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeRemoved, { node: node, name: name });
-        node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeRemoved, {name: name});
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeRemoved, {node, name});
+        node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeRemoved, {name});
     },
 
     _inlineStyleInvalidated: function(nodeIds)
@@ -175,7 +175,7 @@ WebInspector.DOMTreeManager.prototype = {
             var node = this._idToDOMNode[nodeId];
             if (node) {
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, { node: node, name: "style" });
+                this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, { node, name: "style" });
                 node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name: "style"});
             }
         }
@@ -193,7 +193,7 @@ WebInspector.DOMTreeManager.prototype = {
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.CharacterDataModified, {node: node});
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.CharacterDataModified, {node});
     },
 
     nodeForId: function(nodeId)
@@ -245,7 +245,7 @@ WebInspector.DOMTreeManager.prototype = {
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeInserted, {node: node, parent: parent});
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeInserted, {node, parent});
     },
 
     _childNodeRemoved: function(parentId, nodeId)
@@ -254,7 +254,7 @@ WebInspector.DOMTreeManager.prototype = {
         var node = this._idToDOMNode[nodeId];
         parent._removeChild(node);
         this._unbind(node);
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeRemoved, {node:node, parent: parent});
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeRemoved, {node:node, parent});
     },
 
     _unbind: function(node)
@@ -275,7 +275,7 @@ WebInspector.DOMTreeManager.prototype = {
     {
         var node = this._idToDOMNode[nodeId];
         if (node)
-            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, {node: node});
+            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, {node});
 
         this._inspectModeEnabled = false;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.InspectModeStateChanged);
@@ -360,7 +360,7 @@ WebInspector.DOMTreeManager.prototype = {
 
         this._highlightedDOMNodeId = nodeId;
         if (nodeId)
-            DOMAgent.highlightNode.invoke({nodeId: nodeId, highlightConfig: this._buildHighlightConfig(mode)});
+            DOMAgent.highlightNode.invoke({nodeId, highlightConfig: this._buildHighlightConfig(mode)});
         else
             DOMAgent.hideHighlight();
     },
@@ -374,7 +374,7 @@ WebInspector.DOMTreeManager.prototype = {
             height: rect.height,
             color: {r: 111, g: 168, b: 220, a: 0.66},
             outlineColor: {r: 255, g: 229, b: 153, a: 0.66},
-            usePageCoordinates: usePageCoordinates
+            usePageCoordinates
         });
     },
 
@@ -468,7 +468,7 @@ WebInspector.DOMTreeManager.prototype = {
                 }
                 contentFlows.push(contentFlow);
             }
-            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier: documentNodeIdentifier, flows: contentFlows});
+            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier, flows: contentFlows});
         }
 
         if (window.CSSAgent && CSSAgent.getNamedFlowCollection)

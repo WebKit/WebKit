@@ -192,7 +192,7 @@ WebInspector.ApplicationCacheManager.prototype = {
 
         delete this._applicationCacheObjects[frame.id];
 
-        this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.FrameManifestRemoved, {frame: frame});
+        this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.FrameManifestRemoved, {frame});
     }
 };
 

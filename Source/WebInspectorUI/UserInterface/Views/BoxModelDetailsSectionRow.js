@@ -76,7 +76,7 @@ WebInspector.BoxModelDetailsSectionRow.prototype = {
         var top = this._getPropertyValueAsPx(computedStyle, componentName + "-top" + suffix);
         var right = this._getPropertyValueAsPx(computedStyle, componentName + "-right" + suffix);
         var bottom = this._getPropertyValueAsPx(computedStyle, componentName + "-bottom" + suffix);
-        return { left: left, top: top, right: right, bottom: bottom };
+        return {left, top, right, bottom};
     },
 
     _highlightDOMNode: function(showHighlight, mode, event)
@@ -264,7 +264,7 @@ WebInspector.BoxModelDetailsSectionRow.prototype = {
         if (targetElement.title)
             targetElement.textContent = targetElement.title;
 
-        var context = {box: box, styleProperty: styleProperty};
+        var context = {box, styleProperty};
         var boundKeyDown = this._handleKeyDown.bind(this, context, styleProperty);
         context.keyDownHandler = boundKeyDown;
         targetElement.addEventListener("keydown", boundKeyDown, false);

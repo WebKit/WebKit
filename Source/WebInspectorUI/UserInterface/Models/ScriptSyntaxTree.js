@@ -218,7 +218,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 for (var param of node.params) {
                     allRequests.push({
                         typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
-                        sourceID: sourceID,
+                        sourceID,
                         divot: param.range[0]
                     });
                     allRequestNodes.push(param);
@@ -226,7 +226,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
 
                 allRequests.push({
                     typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
-                    sourceID: sourceID,
+                    sourceID,
                     divot: node.body.range[0]
                 });
                 allRequestNodes.push(node);
@@ -235,7 +235,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 for (var identifier of this.gatherIdentifiersInVariableDeclaration(node)) {
                     allRequests.push({
                         typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
-                        sourceID: sourceID,
+                        sourceID,
                         divot: identifier.range[0]
                     });
                     allRequestNodes.push(identifier);

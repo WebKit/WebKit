@@ -67,7 +67,7 @@ function parseSecurityOrigin(securityOrigin)
     var host = match[2].toLowerCase();
     var port = Number(match[3]) || null;
 
-    return {scheme: scheme, host: host, port: port};
+    return {scheme, host, port};
 }
 
 function parseURL(url)
@@ -106,7 +106,7 @@ function parseURL(url)
             lastPathComponent = path.substring(lastSlashIndex + 1, path.length - endOffset);
     }
 
-    return {scheme: scheme, host: host, port: port, path: path, queryString: queryString, fragment: fragment, lastPathComponent: lastPathComponent};
+    return {scheme, host, port, path, queryString, fragment, lastPathComponent};
 }
 
 function absoluteURL(partialURL, baseURL)

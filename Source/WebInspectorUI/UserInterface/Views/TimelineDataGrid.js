@@ -367,7 +367,7 @@ WebInspector.TimelineDataGrid.prototype = {
         this._updateScopeBarForcedVisibility();
 
         var columnIdentifier = event.target.columnIdentifier;
-        this.dispatchEventToListeners(WebInspector.TimelineDataGrid.Event.FiltersDidChange, {columnIdentifier: columnIdentifier});
+        this.dispatchEventToListeners(WebInspector.TimelineDataGrid.Event.FiltersDidChange, {columnIdentifier});
     },
 
     _dataGridSelectedNodeChanged: function(event)

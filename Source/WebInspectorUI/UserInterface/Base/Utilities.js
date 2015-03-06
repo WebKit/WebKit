@@ -525,12 +525,12 @@ Object.defineProperty(String, "tokenizeFormatString",
 
         function addStringToken(str)
         {
-            tokens.push({ type: "string", value: str });
+            tokens.push({type: "string", value: str});
         }
 
         function addSpecifierToken(specifier, precision, substitutionIndex)
         {
-            tokens.push({ type: "specifier", specifier: specifier, precision: precision, substitutionIndex: substitutionIndex });
+            tokens.push({type: "specifier", specifier, precision, substitutionIndex});
         }
 
         var index = 0;
@@ -655,7 +655,7 @@ Object.defineProperty(String, "format",
     value: function(format, substitutions, formatters, initialValue, append)
     {
         if (!format || !substitutions || !substitutions.length)
-            return { formattedResult: append(initialValue, format), unusedSubstitutions: substitutions };
+            return {formattedResult: append(initialValue, format), unusedSubstitutions: substitutions};
 
         function prettyFunctionName()
         {
@@ -716,7 +716,7 @@ Object.defineProperty(String, "format",
             unusedSubstitutions.push(substitutions[i]);
         }
 
-        return {formattedResult: result, unusedSubstitutions: unusedSubstitutions};
+        return {formattedResult: result, unusedSubstitutions};
     }
 });
 
@@ -910,7 +910,7 @@ function parseMIMEType(fullMimeType)
             encoding = subparts[1].replace("^\"|\"$", ""); // Trim quotes.
     }
 
-    return {type: type, boundary: boundary || null, encoding: encoding || null};
+    return {type, boundary: boundary || null, encoding: encoding || null};
 }
 
 function simpleGlobStringToRegExp(globString, regExpFlags)

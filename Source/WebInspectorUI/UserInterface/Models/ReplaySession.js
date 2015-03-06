@@ -76,7 +76,7 @@ WebInspector.ReplaySession.prototype = {
         Promise.all(pendingSegments).then(
             function(segmentsArray) {
                 session._segments = segmentsArray;
-                session.dispatchEventToListeners(WebInspector.ReplaySession.Event.SegmentsChanged, {oldSegments: oldSegments});
+                session.dispatchEventToListeners(WebInspector.ReplaySession.Event.SegmentsChanged, {oldSegments});
             },
             function(error) {
                 console.error("Problem resolving segments: ", error);

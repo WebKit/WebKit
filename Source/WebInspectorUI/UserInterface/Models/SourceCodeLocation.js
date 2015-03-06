@@ -434,14 +434,14 @@ WebInspector.SourceCodeLocation.prototype = {
 
         if (displayLocationChanged || anyLocationChanged) {
             var oldData = {
-                oldSourceCode: oldSourceCode,
-                oldLineNumber: oldLineNumber,
-                oldColumnNumber: oldColumnNumber,
-                oldFormattedLineNumber: oldFormattedLineNumber,
-                oldFormattedColumnNumber: oldFormattedColumnNumber,
-                oldDisplaySourceCode: oldDisplaySourceCode,
-                oldDisplayLineNumber: oldDisplayLineNumber,
-                oldDisplayColumnNumber: oldDisplayColumnNumber
+                oldSourceCode,
+                oldLineNumber,
+                oldColumnNumber,
+                oldFormattedLineNumber,
+                oldFormattedColumnNumber,
+                oldDisplaySourceCode,
+                oldDisplayLineNumber,
+                oldDisplayColumnNumber
             };
             if (displayLocationChanged)
                 this.dispatchEventToListeners(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, oldData);

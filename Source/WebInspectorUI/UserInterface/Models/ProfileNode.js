@@ -175,7 +175,7 @@ WebInspector.ProfileNode.prototype = {
         var selfTime = totalTime - childNodesTotalTime;
         var averageTime = selfTime / callCount;
 
-        return {startTime: startTime, endTime: endTime, totalTime: totalTime, selfTime: selfTime, callCount: callCount, averageTime: averageTime};
+        return {startTime, endTime, totalTime, selfTime, callCount, averageTime};
     },
 
     traverseNextProfileNode: function(stayWithin)

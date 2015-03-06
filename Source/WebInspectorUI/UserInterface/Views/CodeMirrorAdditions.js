@@ -465,17 +465,17 @@
 
             var startChar = line === range.start.line ? range.start.ch : (lineContent.length - lineContent.trimLeft().length);
             var endChar = line === range.end.line ? range.end.ch : lineContent.length;
-            var firstCharCoords = this.cursorCoords({ch: startChar, line: line});
-            var endCharCoords = this.cursorCoords({ch: endChar, line: line});
+            var firstCharCoords = this.cursorCoords({ch: startChar, line});
+            var endCharCoords = this.cursorCoords({ch: endChar, line});
 
             // Handle line wrapping.
             if (firstCharCoords.bottom !== endCharCoords.bottom) {
                 var maxY = -Number.MAX_VALUE;
                 for (var ch = startChar; ch <= endChar; ++ch) {
-                    var coords = this.cursorCoords({ch: ch, line: line});
+                    var coords = this.cursorCoords({ch, line});
                     if (coords.bottom > maxY) {
                         if (ch > startChar) {
-                            var maxX = Math.ceil(this.cursorCoords({ch: ch - 1, line: line}).right);
+                            var maxX = Math.ceil(this.cursorCoords({ch: ch - 1, line}).right);
                             lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
                         }
                         var minX = Math.floor(coords.left);

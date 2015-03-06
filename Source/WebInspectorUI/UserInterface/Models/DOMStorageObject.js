@@ -114,19 +114,19 @@ WebInspector.DOMStorageObject.prototype = {
     itemRemoved: function(key)
     {
         this._entries.delete(key);
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {key: key});
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {key});
     },
 
     itemAdded: function(key, value)
     {
         this._entries.set(key, value);
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {key: key, value: value});
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {key, value});
     },
 
     itemUpdated: function(key, oldValue, value)
     {
         this._entries.set(key, value);
-        var data = {key: key, oldValue: oldValue, value: value};
+        var data = {key, oldValue, value};
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemUpdated, data);
     }
 };

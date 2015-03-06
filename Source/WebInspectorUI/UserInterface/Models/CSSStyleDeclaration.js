@@ -171,7 +171,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
 
         function delayed()
         {
-            this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, {addedProperties: addedProperties, removedProperties: removedProperties});
+            this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, {addedProperties, removedProperties});
         }
 
         // Delay firing the PropertiesChanged event so DOMNodeStyles has a chance to mark overridden and associated properties.

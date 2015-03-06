@@ -93,9 +93,9 @@ WebInspector.SourceMapResource.prototype = {
             this.markAsFailed();
             return Promise.resolve({
                 error: WebInspector.UIString("An error occurred trying to load the resource."),
-                content: content,
-                mimeType: mimeType,
-                statusCode: statusCode
+                content,
+                mimeType,
+                statusCode
             });
         }
 
@@ -122,10 +122,10 @@ WebInspector.SourceMapResource.prototype = {
             this.markAsFinished();
 
             return Promise.resolve({
-                content: content,
-                mimeType: mimeType,
-                base64encoded: base64encoded,
-                statusCode: statusCode
+                content,
+                mimeType,
+                base64encoded,
+                statusCode
             });
         }
 

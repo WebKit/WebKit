@@ -142,7 +142,7 @@ WebInspector.ConsolePrompt.prototype = {
 
     pushHistoryItem: function(text)
     {
-        this._commitHistoryEntry({text: text});
+        this._commitHistoryEntry({text});
     },
 
     // Protected

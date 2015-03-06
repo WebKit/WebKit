@@ -119,11 +119,7 @@ WebInspector.LayerTreeManager.prototype = {
                 return !nodeIdsInNewLayers.contains(nodeId) && !layerIdsInNewLayers.contains(layer.layerId);
         });
 
-        return {
-            preserved: preserved,
-            additions: additions,
-            removals: removals
-        };
+        return {preserved, additions, removals};
     },
 
     layersForNode: function(node, callback)

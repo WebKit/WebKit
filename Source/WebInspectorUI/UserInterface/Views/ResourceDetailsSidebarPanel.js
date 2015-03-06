@@ -354,7 +354,7 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
                 addDataGridNode(data[i]);
         } else {
             for (var name in data)
-                addDataGridNode({name: name, value: data[name] || ""});
+                addDataGridNode({name, value: data[name] || ""});
         }
 
         dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, sortDataGrid, this);

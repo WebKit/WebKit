@@ -75,7 +75,7 @@ WebInspector.LogManager.prototype = {
     {
         // Called from WebInspector.ConsoleObserver.
 
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, {count: count});
+        this.dispatchEventToListeners(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, {count});
     },
 
     requestClearMessages: function()

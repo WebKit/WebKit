@@ -517,11 +517,7 @@ WebInspector.DOMNode.prototype = {
 
     _addAttribute: function(name, value)
     {
-        var attr = {
-            name: name,
-            value: value,
-            _node: this
-        };
+        var attr = {name, value, _node: this};
         this._attributesMap[name] = attr;
         this._attributes.push(attr);
     },

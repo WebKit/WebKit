@@ -432,7 +432,7 @@ WebInspector.CodeMirrorCompletionController.prototype = {
             startOffset = tempEndOffset;
         }
 
-        return {string: string.substring(startOffset, endOffset), startOffset: startOffset, endOffset: endOffset};
+        return {string: string.substring(startOffset, endOffset), startOffset, endOffset};
     },
 
     _completeAtCurrentPosition: function(force)

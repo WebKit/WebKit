@@ -117,7 +117,7 @@ WebInspector.Timeline.prototype = {
 
         this._updateTimesIfNeeded(record);
 
-        this.dispatchEventToListeners(WebInspector.Timeline.Event.RecordAdded, {record: record});
+        this.dispatchEventToListeners(WebInspector.Timeline.Event.RecordAdded, {record});
     },
 
     saveIdentityToCookie: function(cookie)

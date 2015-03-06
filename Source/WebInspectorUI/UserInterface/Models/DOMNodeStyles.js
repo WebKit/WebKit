@@ -240,7 +240,7 @@ WebInspector.DOMNodeStyles.prototype = {
             // Delete the previous saved significant change flag so we rescan for a significant change next time.
             delete this._previousSignificantChange;
 
-            this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange: significantChange});
+            this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange});
         }
 
         CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, fetchedMatchedStyles.bind(this));
@@ -262,7 +262,7 @@ WebInspector.DOMNodeStyles.prototype = {
 
         selector = this._node.appropriateSelectorFor(true);
 
-        CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector: selector}, addedRule.bind(this));
+        CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
     },
 
     get matchedRules()

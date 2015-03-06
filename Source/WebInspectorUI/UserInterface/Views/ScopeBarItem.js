@@ -74,7 +74,7 @@ WebInspector.ScopeBarItem.prototype = {
 
         this._selectedSetting.value = selected;
 
-        this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier: withModifier});
+        this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
     },
 
     // Private

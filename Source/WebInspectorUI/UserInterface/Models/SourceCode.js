@@ -204,9 +204,9 @@ WebInspector.SourceCode.prototype = {
         delete this._ignoreRevisionContentDidChangeEvent;
 
         return Promise.resolve({
-            error: error,
+            error,
             sourceCode: this,
-            content: content,
+            content,
         });
     }
 };

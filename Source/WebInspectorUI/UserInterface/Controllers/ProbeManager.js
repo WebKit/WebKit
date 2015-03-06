@@ -160,7 +160,7 @@ WebInspector.ProbeManager.prototype = {
             if (!probeSet.probes.length) {
                 this._probeSetsByBreakpoint.delete(probeSet.breakpoint);
                 probeSet.willRemove();
-                this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, {probeSet: probeSet});
+                this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, {probeSet});
             }
         }, this);
     },
