@@ -1762,7 +1762,7 @@
 		E4436ECD1A0D040B00EAD204 /* NetworkCacheKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */; };
 		E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */; };
 		E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */; };
-		E4436ED01A0D040B00EAD204 /* NetworkCacheStorageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4436EC31A0CFDB200EAD204 /* NetworkCacheStorageCocoa.mm */; };
+		E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */; };
 		E489D28A1A0A2DB80078C06A /* NetworkCacheCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */; };
 		E489D28B1A0A2DB80078C06A /* NetworkCacheCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */; };
 		E489D28C1A0A2DB80078C06A /* NetworkCacheCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */; };
@@ -3998,7 +3998,7 @@
 		E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheKey.cpp; sourceTree = "<group>"; };
 		E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheKey.h; sourceTree = "<group>"; };
 		E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStorage.h; sourceTree = "<group>"; };
-		E4436EC31A0CFDB200EAD204 /* NetworkCacheStorageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkCacheStorageCocoa.mm; sourceTree = "<group>"; };
+		E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStorage.cpp; sourceTree = "<group>"; };
 		E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheCoder.h; sourceTree = "<group>"; };
 		E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheCoders.cpp; sourceTree = "<group>"; };
 		E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheCoders.h; sourceTree = "<group>"; };
@@ -7438,8 +7438,8 @@
 				E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */,
 				834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */,
 				834B25111A842C8700CFB150 /* NetworkCacheStatisticsCocoa.mm */,
+				E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */,
 				E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */,
-				E4436EC31A0CFDB200EAD204 /* NetworkCacheStorageCocoa.mm */,
 			);
 			name = cache;
 			path = NetworkProcess/cache;
@@ -9464,7 +9464,7 @@
 				E489D28D1A0A2DB80078C06A /* NetworkCacheDecoder.cpp in Sources */,
 				E489D28F1A0A2DB80078C06A /* NetworkCacheEncoder.cpp in Sources */,
 				E4436ECD1A0D040B00EAD204 /* NetworkCacheKey.cpp in Sources */,
-				E4436ED01A0D040B00EAD204 /* NetworkCacheStorageCocoa.mm in Sources */,
+				E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */,
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,
 				7C89D2B91A6B0F2C003A5FDE /* _WKUserContentFilter.mm in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,

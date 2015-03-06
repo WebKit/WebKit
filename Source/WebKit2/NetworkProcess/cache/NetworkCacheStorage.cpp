@@ -573,7 +573,7 @@ void Storage::shrinkIfNeeded()
         return;
     m_shrinkInProgress = true;
 
-    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%d, m_maximumSize=%d", static_cast<size_t>(m_approximateSize), m_maximumSize);
+    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu, m_maximumSize=%zu", static_cast<size_t>(m_approximateSize), m_maximumSize);
 
     m_approximateSize = 0;
 
@@ -610,7 +610,7 @@ void Storage::shrinkIfNeeded()
 
         m_shrinkInProgress = false;
 
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed approximateSize=%d", static_cast<size_t>(m_approximateSize));
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed approximateSize=%zu", static_cast<size_t>(m_approximateSize));
     });
 }
 
