@@ -461,6 +461,11 @@ webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
 # EFL port doesn't fully support EME yet.
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
 
+# Need to have baseline since r181114.
+Bug(EFL) fast/attachment/attachment-progress.html [ Missing ]
+Bug(EFL) fast/attachment/attachment-subtitle.html [ Missing ]
+Bug(EFL) fast/attachment/attachment-title.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -622,7 +627,6 @@ webkit.org/b/131729 http/tests/globalhistory/history-delegate-basic-title.html [
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-pushstate.html [ Failure ]
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-replacestate.html [ Failure ]
 webkit.org/b/131729 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
-webkit.org/b/131729 http/tests/local/file-url-sent-as-referer.html [ Failure ]
 webkit.org/b/131729 http/tests/misc/acid3.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/image-blocked-src-change.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
