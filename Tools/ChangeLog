@@ -1,3 +1,13 @@
+2015-03-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix linker warnings in TestWebKitAPI.
+        https://bugs.webkit.org/show_bug.cgi?id=141912
+
+        Reviewed by David Kilzer.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        Do not export TearDownTestCase or SetUpTestCase symbols.
+
 2015-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed EWS fix.
