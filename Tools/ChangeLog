@@ -1,3 +1,15 @@
+2015-03-06  Carlos Alberto Lopez Perez <clopez@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Layout tests imported/w3c/web-platform-tests certificates should not be tracked on WebKit VCS
+        https://bugs.webkit.org/show_bug.cgi?id=142083
+
+        Reviewed by Simon Fraser.
+
+        Modifying on the fly wpt config.json to set the directory where to generate/read certificates as a subfolder of the layout test results folder.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._copy_webkit_test_files):
+
 2015-03-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         setup-git-clone fails due to the failure to download python-irclib-0.4.8

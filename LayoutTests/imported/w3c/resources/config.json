@@ -9,7 +9,7 @@
          "encrypt_after_connect": false,
          "openssl": {
              "openssl_binary": "openssl",
-             "base_path": "_certs",
+             "base_path": "%CERTS_DIR%",
              "force_regenerate": false
          },
          "pregenerated": {

@@ -1,3 +1,24 @@
+2015-03-06  Carlos Alberto Lopez Perez <clopez@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Layout tests imported/w3c/web-platform-tests certificates should not be tracked on WebKit VCS
+        https://bugs.webkit.org/show_bug.cgi?id=142083
+
+        Reviewed by Simon Fraser.
+
+        * resources/config.json: Replaced the _certs directory by a string to be replaced when copying this file to the web-platform-tests directory.
+        * web-platform-tests/.gitignore: Updated to stop ignoring _certs.
+        * web-platform-tests/_certs/01.pem: Removed.
+        * web-platform-tests/_certs/02.pem: Removed.
+        * web-platform-tests/_certs/cacert.pem: Removed.
+        * web-platform-tests/_certs/cakey.pem: Removed.
+        * web-platform-tests/_certs/index.txt.attr: Removed.
+        * web-platform-tests/_certs/index.txt.attr.old: Removed.
+        * web-platform-tests/_certs/index.txt.old: Removed.
+        * web-platform-tests/_certs/localhost.key: Removed.
+        * web-platform-tests/_certs/localhost.pem: Removed.
+        * web-platform-tests/_certs/serial: Removed.
+        * web-platform-tests/_certs/serial.old: Removed.
+
 2015-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Remove svn:keywords property.
