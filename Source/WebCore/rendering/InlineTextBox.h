@@ -94,7 +94,7 @@ public:
 
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     virtual void showLineBox(bool mark, int depth) const override final;
     virtual const char* boxName() const override final;
 #endif

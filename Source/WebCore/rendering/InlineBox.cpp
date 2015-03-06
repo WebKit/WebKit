@@ -30,7 +30,7 @@
 #include "RenderLineBreak.h"
 #include "RootInlineBox.h"
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
 #endif
 
@@ -84,7 +84,7 @@ void InlineBox::removeFromParent()
         parent()->removeChild(this);
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 const char* InlineBox::boxName() const
 {
@@ -119,7 +119,7 @@ void InlineBox::showLineBox(bool mark, int depth) const
     fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p)\n", boxName(), x(), y(), width(), height(), this);
 }
 
-#endif
+#endif // ENABLE(TREE_DEBUGGING)
 
 float InlineBox::logicalHeight() const
 {
@@ -328,7 +328,7 @@ LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showNodeTree(const WebCore::InlineBox* inlineBox)
 {

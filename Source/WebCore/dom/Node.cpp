@@ -1486,7 +1486,7 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
 {
@@ -1654,7 +1654,7 @@ void Node::showTreeForThisAcrossFrame() const
     showSubTreeAcrossFrame(rootNode, this, "");
 }
 
-#endif
+#endif // ENABLE(TREE_DEBUGGING)
 
 // --------
 
@@ -2222,7 +2222,7 @@ bool Node::inRenderedDocument() const
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showTree(const WebCore::Node* node)
 {
@@ -2236,4 +2236,4 @@ void showNodePath(const WebCore::Node* node)
         node->showNodePathForThis();
 }
 
-#endif
+#endif // ENABLE(TREE_DEBUGGING)

@@ -1172,7 +1172,7 @@ void makeMatrixRenderable(TransformationMatrix&, bool has3DRendering);
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showLayerTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);

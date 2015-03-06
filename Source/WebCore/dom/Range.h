@@ -151,7 +151,7 @@ public:
     Ref<ClientRectList> getClientRects() const;
     Ref<ClientRect> getBoundingClientRect() const;
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void formatForDebugger(char* buffer, unsigned length) const;
 #endif
 
@@ -187,7 +187,7 @@ bool rangesOverlap(const Range*, const Range*);
 
 } // namespace
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::Range*);
 #endif

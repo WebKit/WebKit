@@ -1351,7 +1351,7 @@ void RenderObject::computeFloatRectForRepaint(const RenderLayerModelObject*, Flo
     ASSERT_NOT_REACHED();
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 static void showRenderTreeLegend()
 {
@@ -2497,7 +2497,7 @@ void RenderObject::calculateBorderStyleColor(const EBorderStyle& style, const Bo
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showNodeTree(const WebCore::RenderObject* object)
 {

@@ -190,7 +190,7 @@ public:
     Node* getLogicalStartBoxWithNode(InlineBox*&) const;
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     virtual const char* boxName() const override final;
 #endif
 private:
