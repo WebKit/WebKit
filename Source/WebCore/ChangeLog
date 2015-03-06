@@ -1,3 +1,31 @@
+2015-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Expose some of the functionality of extract-localizable-strings.pl as a module
+        https://bugs.webkit.org/show_bug.cgi?id=142038
+
+        Reviewed by Sam Weinig.
+
+        * LocalizableStrings.pm: Copied from Source/WebCore/extract-localizable-strings.pl.
+        (setTreatWarningsAsErrors): Added this setter for the variable moved here.
+        (sawError): Added a getter.
+        (emitError): Added. Emits the error message and sets $sawError.
+        (unescapeHexSequence): Moved from extract-localizable-strings.pl and renamed to start with
+        a lowercase letter.
+        (keyCollisionCount): Added this getter.
+        (localizedCount): Added this getter.
+        (HandleUIString): Moved from extract-localizable-strings.pl and made it increment the
+        localized string count.
+        (writeStringsFile): Moved code from extract-localizable-strings.pl into this new subroutine.
+        (verifyStringsFile): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Added LocalizableStrings.pm to the Copy Scripts build
+        phase.
+
+        * extract-localizable-strings.pl:
+        (emitWarning): Moved to the module.
+        (UnescapeHexSequence): Ditto.
+        (HandleUIString): Ditto.
+
 2015-03-06  Darin Adler  <darin@apple.com>
 
         Remove unused C++ DOM event handler attribute functions
