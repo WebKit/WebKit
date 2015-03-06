@@ -74,7 +74,7 @@ void HTMLAttachmentElement::setFile(File* file)
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == subtitleAttr && is<RenderAttachment>(renderer())) {
+    if ((name == progressAttr || name == subtitleAttr) && is<RenderAttachment>(renderer())) {
         downcast<RenderAttachment>(*renderer()).invalidate();
         return;
     }

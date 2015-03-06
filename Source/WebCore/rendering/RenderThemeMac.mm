@@ -2094,6 +2094,14 @@ static Color attachmentTitleInactiveTextColor() { return Color(100, 100, 100, 25
 const CGFloat attachmentSubtitleFontSize = 10;
 static Color attachmentSubtitleTextColor() { return Color(82, 145, 214, 255); }
 
+const CGFloat attachmentProgressBarWidth = 30;
+const CGFloat attachmentProgressBarHeight = 5;
+const CGFloat attachmentProgressBarOffset = -9;
+const CGFloat attachmentProgressBarBorderWidth = 1;
+static Color attachmentProgressBarBackgroundColor() { return Color(0, 0, 0, 89); }
+static Color attachmentProgressBarFillColor() { return Color(Color::white); }
+static Color attachmentProgressBarBorderColor() { return Color(0, 0, 0, 128); }
+
 const CGFloat attachmentMargin = 3;
 
 struct AttachmentLayout {
@@ -2300,17 +2308,13 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
     if (paintBorder)
         backgroundRect.inflate(-attachmentIconSelectionBorderThickness);
 
-    FloatSize iconBackgroundRadiusSize(attachmentIconBackgroundRadius, attachmentIconBackgroundRadius);
-
-    Path backgroundPath;
-    backgroundPath.addRoundedRect(backgroundRect, iconBackgroundRadiusSize);
-    context.setFillColor(attachmentIconBackgroundColor(), ColorSpaceDeviceRGB);
-    context.fillPath(backgroundPath);
+    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), attachmentIconBackgroundColor(), ColorSpaceDeviceRGB);
 
     if (paintBorder) {
         FloatRect borderRect = layout.iconBackgroundRect;
         borderRect.inflate(-attachmentIconSelectionBorderThickness / 2);
 
+        FloatSize iconBackgroundRadiusSize(attachmentIconBackgroundRadius, attachmentIconBackgroundRadius);
         Path borderPath;
         borderPath.addRoundedRect(borderRect, iconBackgroundRadiusSize);
         context.setStrokeColor(attachmentIconBorderColor(), ColorSpaceDeviceRGB);
@@ -2494,6 +2498,47 @@ static void paintAttachmentSubtitle(const RenderAttachment&, GraphicsContext& co
     CTLineDraw(layout.subtitleLine.get(), context.platformContext());
 }
 
+static void paintAttachmentProgress(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+{
+    String progressString = attachment.attachmentElement().fastGetAttribute(progressAttr);
+    if (progressString.isEmpty())
+        return;
+    bool validProgress;
+    float progress = progressString.toFloat(&validProgress);
+    if (!validProgress)
+        return;
+
+    GraphicsContextStateSaver saver(context);
+
+    FloatRect progressBounds((attachmentIconBackgroundSize - attachmentProgressBarWidth) / 2, layout.iconBackgroundRect.maxY() + attachmentProgressBarOffset - attachmentProgressBarHeight, attachmentProgressBarWidth, attachmentProgressBarHeight);
+
+    FloatRect borderRect = progressBounds;
+    borderRect.inflate(-0.5);
+    FloatRect backgroundRect = borderRect;
+    backgroundRect.inflate(-attachmentProgressBarBorderWidth / 2);
+
+    FloatRoundedRect backgroundRoundedRect(backgroundRect, FloatRoundedRect::Radii(backgroundRect.height() / 2));
+    context.fillRoundedRect(backgroundRoundedRect, attachmentProgressBarBackgroundColor(), ColorSpaceDeviceRGB);
+
+    {
+        GraphicsContextStateSaver clipSaver(context);
+        context.clipRoundedRect(backgroundRoundedRect);
+
+        FloatRect progressRect = progressBounds;
+        progressRect.setWidth(progressRect.width() * progress);
+        progressRect = encloseRectToDevicePixels(progressRect, attachment.document().deviceScaleFactor());
+
+        context.fillRect(progressRect, attachmentProgressBarFillColor(), ColorSpaceDeviceRGB);
+    }
+
+    Path borderPath;
+    float borderRadius = borderRect.height() / 2;
+    borderPath.addRoundedRect(borderRect, FloatSize(borderRadius, borderRadius));
+    context.setStrokeColor(attachmentProgressBarBorderColor(), ColorSpaceDeviceRGB);
+    context.setStrokeThickness(attachmentProgressBarBorderWidth);
+    context.strokePath(borderPath);
+}
+
 bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
     if (!is<RenderAttachment>(renderer))
@@ -2519,6 +2564,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         paintAttachmentTitleBackground(attachment, context, layout);
     paintAttachmentTitle(attachment, context, layout);
     paintAttachmentSubtitle(attachment, context, layout);
+    paintAttachmentProgress(attachment, context, layout);
 
     return true;
 }
