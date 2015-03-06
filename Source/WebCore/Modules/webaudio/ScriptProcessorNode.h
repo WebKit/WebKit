@@ -77,6 +77,10 @@ private:
     static void fireProcessEventDispatch(void* userData);
     void fireProcessEvent();
 
+    bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
+    void removeAllEventListeners() override;
+
     // Double buffering
     unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }

@@ -85,7 +85,6 @@ namespace WebCore {
         void setOnmessage(PassRefPtr<EventListener> listener)
         {
             setAttributeEventListener(eventNames().messageEvent, listener);
-            start();
         }
         EventListener* onmessage() { return getAttributeEventListener(eventNames().messageEvent); }
 
@@ -99,6 +98,8 @@ namespace WebCore {
 
         // A port gets neutered when it is transferred to a new owner via postMessage().
         bool isNeutered() { return !m_entangledChannel; }
+
+        bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
 
     private:
         explicit MessagePort(ScriptExecutionContext&);

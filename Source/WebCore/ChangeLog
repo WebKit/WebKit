@@ -1,3 +1,80 @@
+2015-03-05  Darin Adler  <darin@apple.com>
+
+        Make JavaScript binding get and set legacy event listener attributes directly
+        https://bugs.webkit.org/show_bug.cgi?id=142282
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/dom/legacy-event-handler-attributes.html
+
+        This patch changes the JavaScript getters and setters for these attributes
+        to work directly without requiring any functions in the C++ DOM implementation.
+        A subsequent patch will remove the now-unused C++ DOM implementation.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::setOnended): Remove code to set
+        m_hasEndedListener; this was incorrect since it only detected event listeners
+        set up with the event handler attribute, not with addEventListener.
+        (WebCore::AudioScheduledSourceNode::addEventListener): Added code to update
+        m_hasEndedListener after making changes to the event listeners.
+        (WebCore::AudioScheduledSourceNode::removeEventListener): Ditto.
+        (WebCore::AudioScheduledSourceNode::removeAllEventListeners): Ditto.
+        * Modules/webaudio/AudioScheduledSourceNode.h: Added above overrides.
+
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::setOnaudioprocess): Remove code to set
+        m_hasAudioProcessListener; this was incorrect since it only detected event listeners
+        set up with the event handler attribute, not with addEventListener.
+        (WebCore::ScriptProcessorNode::addEventListener): Added code to update
+        m_hasAudioProcessListener after making changes to the event listeners.
+        (WebCore::ScriptProcessorNode::removeEventListener): Ditto.
+        (WebCore::ScriptProcessorNode::removeAllEventListeners): Ditto.
+        * Modules/webaudio/ScriptProcessorNode.h: Added above overrides.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::legacyEventListenerAttribute): Added.
+        (WebCore::createEventListenerForLegacyAttribute): Added.
+        (WebCore::setLegacyEventListenerAttribute): Added.
+        (WebCore::legacyWindowEventListenerAttribute): Added.
+        (WebCore::setLegacyWindowEventListenerAttribute): Added.
+
+        * bindings/js/JSEventListener.h:
+        (WebCore::createJSEventListenerForAttribute): Deleted.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeEventListenerCall): Deleted.
+        (LegacyEventListenerAttributeEventName): Added.
+        (LegacyEventListenerAttributePrefix): Added.
+        (GenerateImplementation): Use "auto" in lots of places to simplify the code
+        generation. Replaced the old inlined code to deal with legacy event listener
+        attributes with code that simply calls the new functions from JSEventLister.h.
+        (GenerateCallWith): Use "auto".
+        (GenerateConstructorDefinition): Ditto.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp: Updated expected
+        results since these now use auto.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestException.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestNode.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp: Ditto.
+        * bindings/scripts/test/JS/JSattribute.cpp: Ditto.
+        * bindings/scripts/test/JS/JSreadonly.cpp: Ditto.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::addEventListener): Moved logic that calls the start
+        function in here from setOnmessage, since the latter will no longer be called.
+        * dom/MessagePort.h: Ditto.
+
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] SVG fonts are garbled

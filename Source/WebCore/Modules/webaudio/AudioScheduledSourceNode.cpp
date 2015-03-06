@@ -198,7 +198,6 @@ void AudioScheduledSourceNode::noteOff(double when, ExceptionCode& ec)
 
 void AudioScheduledSourceNode::setOnended(PassRefPtr<EventListener> listener)
 {
-    m_hasEndedListener = listener;
     setAttributeEventListener(eventNames().endedEvent, listener);
 }
 
@@ -229,6 +228,28 @@ void AudioScheduledSourceNode::notifyEnded()
     RefPtr<Event> event = Event::create(eventNames().endedEvent, FALSE, FALSE);
     event->setTarget(this);
     listener->handleEvent(context()->scriptExecutionContext(), event.get());
+}
+
+bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+{
+    bool success = AudioNode::addEventListener(eventType, listener, useCapture);
+    if (success && eventType == eventNames().endedEvent)
+        m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
+    return success;
+}
+
+bool AudioScheduledSourceNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+{
+    bool success = AudioNode::removeEventListener(eventType, listener, useCapture);
+    if (success && eventType == eventNames().endedEvent)
+        m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
+    return success;
+}
+
+void AudioScheduledSourceNode::removeAllEventListeners()
+{
+    m_hasEndedListener = false;
+    AudioNode::removeAllEventListeners();
 }
 
 } // namespace WebCore

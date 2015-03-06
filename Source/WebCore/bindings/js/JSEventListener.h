@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+    class EventTarget;
+    class HTMLElement;
     class JSDOMGlobalObject;
 
     class JSEventListener : public EventListener {
@@ -75,8 +77,13 @@ namespace WebCore {
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };
 
-    // For "onXXX" event attributes.
-    RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState&, JSC::JSValue listener, JSC::JSObject& wrapper);
+    // For "onxxx" attributes that automatically set up JavaScript event listeners.
+    JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomicString& eventType);
+    void setEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, EventTarget&, const AtomicString& eventType, JSC::JSValue);
+
+    // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
+    JSC::JSValue windowForwardedEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
+    void setWindowForwardedEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
 
     Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
     Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
@@ -110,13 +117,6 @@ namespace WebCore {
         ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
 
         return m_jsFunction.get();
-    }
-
-    inline RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState& state, JSC::JSValue listener, JSC::JSObject& wrapper)
-    {
-        if (!listener.isObject())
-            return nullptr;
-        return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(&state));
     }
 
     inline Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState& state, JSC::JSObject& listener, JSC::JSObject& wrapper)

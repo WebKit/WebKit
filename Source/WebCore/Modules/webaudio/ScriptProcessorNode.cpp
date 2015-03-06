@@ -219,7 +219,6 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
 void ScriptProcessorNode::setOnaudioprocess(PassRefPtr<EventListener> listener)
 {
-    m_hasAudioProcessListener = listener;
     setAttributeEventListener(eventNames().audioprocessEvent, listener);
 }
 
@@ -284,6 +283,28 @@ double ScriptProcessorNode::tailTime() const
 double ScriptProcessorNode::latencyTime() const
 {
     return std::numeric_limits<double>::infinity();
+}
+
+bool ScriptProcessorNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+{
+    bool success = AudioNode::addEventListener(eventType, listener, useCapture);
+    if (success && eventType == eventNames().audioprocessEvent)
+        m_hasAudioProcessListener = hasEventListeners(eventNames().audioprocessEvent);
+    return success;
+}
+
+bool ScriptProcessorNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+{
+    bool success = AudioNode::removeEventListener(eventType, listener, useCapture);
+    if (success && eventType == eventNames().audioprocessEvent)
+        m_hasAudioProcessListener = hasEventListeners(eventNames().audioprocessEvent);
+    return success;
+}
+
+void ScriptProcessorNode::removeAllEventListeners()
+{
+    m_hasAudioProcessListener = false;
+    AudioNode::removeAllEventListeners();
 }
 
 } // namespace WebCore
