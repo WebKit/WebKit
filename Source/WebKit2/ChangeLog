@@ -1,3 +1,15 @@
+2015-03-06  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r181140): WebKit2 fails to build on Mavericks buildbot
+
+        Work around Xcode dependency tracking issues by making changes
+        to source files that need to be recompiled.
+
+        * NetworkProcess/NetworkProcess.cpp: Update copyright.  Include
+        NetworkCache.h since it didn't appear to be included by
+        NetworkCacheCoders.h.
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm: Update copyright.
+
 2015-03-05  Antti Koivisto  <antti@apple.com>
 
         Move disk cache classes to namespace
