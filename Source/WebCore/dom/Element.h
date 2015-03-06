@@ -310,8 +310,6 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    void lazyReattach();
-
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&);
     virtual bool rendererIsNeeded(const RenderStyle&);
 
