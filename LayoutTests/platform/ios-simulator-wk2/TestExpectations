@@ -523,7 +523,6 @@ webarchive/test-script-src.html [ Failure ]
 # HTTP tests that fail:
 http/tests/appcache/interrupted-update.html [ Failure ]
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
-http/tests/cache/disk-cache-validation.html [ Failure ]
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]

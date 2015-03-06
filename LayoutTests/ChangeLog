@@ -1,3 +1,15 @@
+2015-03-06  Antti Koivisto  <antti@apple.com>
+
+        Enable disk cache validation test on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=142405
+
+        Reviewed by Andreas Kling.
+
+        The features is enabled.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-03-06  Jer Noble  <jer.noble@apple.com>
 
         [Web Audio] Decoding specific .m4a file crashes tab
