@@ -250,7 +250,7 @@ def machOArchitectureCode
     nil
 end
 
-def determineArchitecture
+def determineArchitectureFromMachOBinary
     code = machOArchitectureCode
     return nil unless code
     is64BitFlag = 0x01000000
@@ -269,6 +269,43 @@ def determineArchitecture
     end
 end
 
+def determineArchitectureFromELFBinary
+    f = File.open($jscPath.to_s)
+    data = f.read(19)
+
+    if !(data[0,4] == "\x7F\x45\x4C\x46")
+        $stderr.puts "Warning: Missing ELF magic in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    code = data[18].ord
+    case code
+    when 3
+        "x86"
+    when 62
+        "x86-64"
+    when 40
+        "arm"
+    when 183
+        "arm64"
+    else
+        $stderr.puts "Warning: unable to determine architecture from code: #{code}"
+        nil
+    end
+end
+
+def determineArchitecture
+    case $hostOS
+    when "darwin"
+        determineArchitectureFromMachOBinary
+    when "linux"
+        determineArchitectureFromELFBinary
+    else
+        $stderr.puts "Warning: unable to determine architecture on this platform."
+        nil
+    end
+end
+
 def determineOS
     case RbConfig::CONFIG["host_os"]
     when /darwin/i
@@ -283,8 +320,8 @@ def determineOS
     end
 end
 
-$architecture = determineArchitecture unless $architecture
 $hostOS = determineOS unless $hostOS
+$architecture = determineArchitecture unless $architecture
 
 if !$testRunnerType
     if $remote and $hostOS == "darwin"
