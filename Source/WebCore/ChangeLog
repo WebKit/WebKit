@@ -1,3 +1,21 @@
+2015-03-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] ASSERTION FAILED !track.growthLimitIsInfinite() in RenderGrid::computeUsedBreadthOfGridTracks
+        https://bugs.webkit.org/show_bug.cgi?id=142265
+
+        Reviewed by Darin Adler.
+
+         The problem is that computeUsedBreadthOfGridTracks() could return
+        -1 for rows because we're calling computeContentLogicalHeight()
+        which can indeed return -1. In those cases we should clamp the
+        value to 0 the same as Flexbox does otherwise we could end up with
+        a negative value in the min track sizing function.
+
+        Test: fast/css-grid-layout/grid-indefinite-calculated-height-crash.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfSpecifiedLength):
+
 2015-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tree dumping functions to be used in release builds by switching a flag
