@@ -673,6 +673,7 @@ WebInspector.LogContentView.prototype = {
                         visible = showsErrors;
                         break;
                     case WebInspector.ConsoleMessage.MessageLevel.Log:
+                    case WebInspector.ConsoleMessage.MessageLevel.Debug:
                         visible = showsLogs;
                         break;
                 }
