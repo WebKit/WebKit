@@ -2146,7 +2146,7 @@ void FrameSelection::didLayout()
     updateDataDetectorsForSelection();
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void FrameSelection::formatForDebugger(char* buffer, unsigned length) const
 {
@@ -2585,7 +2585,7 @@ void FrameSelection::setCaretColor(const Color& caretColor)
 
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showTree(const WebCore::FrameSelection& sel)
 {

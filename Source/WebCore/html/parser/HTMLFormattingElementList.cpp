@@ -200,7 +200,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
         remove(&candidates[i]->element());
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void HTMLFormattingElementList::show()
 {

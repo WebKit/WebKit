@@ -643,7 +643,7 @@ int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
     return containingBlock->isHorizontalWritingMode() ? caretPoint.x() : caretPoint.y();
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void VisiblePosition::debugPosition(const char* msg) const
 {
@@ -745,7 +745,7 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
 
 }  // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showTree(const WebCore::VisiblePosition* vpos)
 {

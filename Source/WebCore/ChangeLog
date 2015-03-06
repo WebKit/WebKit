@@ -1,3 +1,71 @@
+2015-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow tree dumping functions to be used in release builds by switching a flag
+        https://bugs.webkit.org/show_bug.cgi?id=142379
+
+        Reviewed by Zalan Bujtas.
+
+        There are various tree dumping functions that are useful for debugging, and sometimes
+        you want to be able to use them in release builds. Currently they are surrounded by
+        #ifndef NDEBUG. Change this to #if ENABLE(TREE_DEBUGGING), which is defined to 0 or 1
+        in wtf/Platform.h
+
+        * dom/DocumentMarkerController.cpp:
+        * dom/DocumentMarkerController.h:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Position.cpp:
+        * dom/Position.h:
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * dom/Text.cpp:
+        * dom/Text.h:
+        * editing/FrameSelection.cpp:
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.cpp:
+        * editing/VisiblePosition.h:
+        * editing/VisibleSelection.cpp:
+        * editing/VisibleSelection.h:
+        * html/parser/HTMLElementStack.cpp:
+        * html/parser/HTMLFormattingElementList.cpp:
+        * rendering/CounterNode.cpp:
+        * rendering/CounterNode.h:
+        * rendering/InlineBox.cpp:
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderCounter.cpp:
+        * rendering/RenderCounter.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        (WebCore::RenderLayerBacking::updateBackgroundLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::CompositingState::CompositingState):
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/svg/SVGResources.cpp:
+        * rendering/svg/SVGResources.h:
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An SVG element without intrinsic size inherits the container size as its viewport instead of inheriting the container viewport.

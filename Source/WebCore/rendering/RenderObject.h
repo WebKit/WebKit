@@ -136,10 +136,6 @@ struct AnnotatedRegionValue {
 };
 #endif
 
-#ifndef NDEBUG
-const int showTreeCharacterOffset = 39;
-#endif
-
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -271,7 +267,7 @@ private:
     void setLayerNeedsFullRepaintForPositionedMovementLayout();
 
 public:
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void showNodeTreeForThis() const;
     void showRenderTreeForThis() const;
     void showLineTreeForThis() const;
@@ -1111,7 +1107,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::RenderObject& renderer) { return renderer.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);

@@ -606,7 +606,7 @@ HTMLElementStack::ElementRecord* HTMLElementStack::furthestBlockForFormattingEle
     return nullptr;
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void HTMLElementStack::show()
 {

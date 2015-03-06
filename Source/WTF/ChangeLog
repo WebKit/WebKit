@@ -1,3 +1,17 @@
+2015-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow tree dumping functions to be used in release builds by switching a flag
+        https://bugs.webkit.org/show_bug.cgi?id=142379
+
+        Reviewed by Zalan Bujtas.
+
+        There are various tree dumping functions that are useful for debugging, and sometimes
+        you want to be able to use them in release builds. Currently they are surrounded by
+        #ifndef NDEBUG. Change this to #if ENABLE(TREE_DEBUGGING), which is defined to 0 or 1
+        in wtf/Platform.h
+
+        * wtf/Platform.h:
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()

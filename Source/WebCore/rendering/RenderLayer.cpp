@@ -7047,7 +7047,7 @@ RenderNamedFlowFragment* RenderLayer::currentRenderNamedFlowFragment() const
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showLayerTree(const WebCore::RenderLayer* layer)
 {

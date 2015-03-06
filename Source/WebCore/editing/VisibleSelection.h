@@ -107,7 +107,7 @@ public:
 
     WEBCORE_EXPORT bool isInPasswordField() const;
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void debugPosition() const;
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;

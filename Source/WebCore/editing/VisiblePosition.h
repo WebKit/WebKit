@@ -99,8 +99,8 @@ public:
     // Abs x/y position of the caret ignoring transforms.
     // FIXME: navigation with transforms should be smarter.
     WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;
-    
-#ifndef NDEBUG
+
+#if ENABLE(TREE_DEBUGGING)
     void debugPosition(const char* msg = "") const;
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
@@ -161,7 +161,7 @@ bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::VisiblePosition*);
 void showTree(const WebCore::VisiblePosition&);

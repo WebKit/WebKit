@@ -71,7 +71,7 @@
 #include "RenderScrollbar.h"
 #endif
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 #include "RenderTreeAsText.h"
 #endif
 
@@ -225,7 +225,7 @@ struct CompositingState {
 #if ENABLE(CSS_COMPOSITING)
         , m_hasNotIsolatedCompositedBlendingDescendants(false)
 #endif
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         , m_depth(0)
 #endif
     {
@@ -238,7 +238,7 @@ struct CompositingState {
 #if ENABLE(CSS_COMPOSITING)
         , m_hasNotIsolatedCompositedBlendingDescendants(other.m_hasNotIsolatedCompositedBlendingDescendants)
 #endif
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         , m_depth(other.m_depth + 1)
 #endif
     {
@@ -250,7 +250,7 @@ struct CompositingState {
 #if ENABLE(CSS_COMPOSITING)
     bool m_hasNotIsolatedCompositedBlendingDescendants;
 #endif
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     int m_depth;
 #endif
 };
@@ -3027,7 +3027,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
 
     if (!m_layerForTopOverhangArea) {
         m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         m_layerForTopOverhangArea->setName("top overhang area");
 #endif
         m_scrollLayer->addChildBelow(m_layerForTopOverhangArea.get(), m_rootContentLayer.get());
@@ -3051,7 +3051,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
     if (!m_layerForBottomOverhangArea) {
         m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         m_layerForBottomOverhangArea->setName("bottom overhang area");
 #endif
         m_scrollLayer->addChildBelow(m_layerForBottomOverhangArea.get(), m_rootContentLayer.get());
@@ -3082,7 +3082,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
     if (!m_layerForHeader) {
         m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         m_layerForHeader->setName("header");
 #endif
         m_scrollLayer->addChildAbove(m_layerForHeader.get(), m_rootContentLayer.get());
@@ -3123,7 +3123,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     if (!m_layerForFooter) {
         m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         m_layerForFooter->setName("footer");
 #endif
         m_scrollLayer->addChildAbove(m_layerForFooter.get(), m_rootContentLayer.get());
@@ -3191,7 +3191,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
             m_layerForOverhangAreas = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_layerForOverhangAreas->setName("overhang areas");
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
@@ -3220,7 +3220,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresContentShadowLayer()) {
         if (!m_contentShadowLayer) {
             m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_contentShadowLayer->setName("content shadow");
 #endif
             m_contentShadowLayer->setSize(m_rootContentLayer->size());
@@ -3240,7 +3240,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         if (!m_layerForHorizontalScrollbar) {
             m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
 
 #endif
@@ -3264,7 +3264,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         if (!m_layerForVerticalScrollbar) {
             m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_layerForVerticalScrollbar->setName("vertical scrollbar container");
 #endif
 #if PLATFORM(COCOA) && USE(CA)
@@ -3311,7 +3311,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
     if (!m_rootContentLayer) {
         m_rootContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
         m_rootContentLayer->setName("content root");
 #endif
         IntRect overflowRect = snappedIntRect(m_renderView.layoutOverflowRect());
@@ -3336,19 +3336,19 @@ void RenderLayerCompositor::ensureRootLayer()
 
             // Create a layer to host the clipping layer and the overflow controls layers.
             m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_overflowControlsHostLayer->setName("overflow controls host");
 #endif
 
             // Create a clipping layer if this is an iframe
             m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_clipLayer->setName("frame clipping");
 #endif
             m_clipLayer->setMasksToBounds(true);
             
             m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
             m_scrollLayer->setName("frame scrolling");
 #endif
             // Hook them up

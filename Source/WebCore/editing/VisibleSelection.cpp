@@ -669,7 +669,7 @@ bool VisibleSelection::isInPasswordField() const
     return is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void VisibleSelection::debugPosition() const
 {
@@ -726,7 +726,7 @@ void VisibleSelection::showTreeForThis() const
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 void showTree(const WebCore::VisibleSelection& sel)
 {

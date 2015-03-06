@@ -207,7 +207,7 @@ public:
     // Painting.
     WEBCORE_EXPORT void updateAppearance();
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
 #endif
@@ -375,7 +375,7 @@ inline void FrameSelection::notifyAccessibilityForSelectionChange()
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::FrameSelection&);
 void showTree(const WebCore::FrameSelection*);
