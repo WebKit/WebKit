@@ -499,14 +499,16 @@ namespace JSC {
     class PropertyNode : public ParserArenaFreeable {
     public:
         enum Type { Constant = 1, Getter = 2, Setter = 4 };
+        enum PutType { Unknown, KnownDirect };
 
-        PropertyNode(const Identifier&, ExpressionNode*, Type);
-        PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type);
+        PropertyNode(const Identifier&, ExpressionNode*, Type, PutType);
+        PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType);
         
         ExpressionNode* expressionName() const { return m_expression; }
         const Identifier* name() const { return m_name; }
 
         Type type() const { return m_type; }
+        PutType putType() const { return m_putType; }
 
     private:
         friend class PropertyListNode;
@@ -514,6 +516,7 @@ namespace JSC {
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
         Type m_type;
+        PutType m_putType;
     };
 
     class PropertyListNode : public ExpressionNode {

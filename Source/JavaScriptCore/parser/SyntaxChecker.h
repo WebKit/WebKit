@@ -175,20 +175,20 @@ public:
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return ArgumentsListResult; }
-    Property createProperty(const Identifier* name, int, PropertyNode::Type type, bool complete)
+    Property createProperty(const Identifier* name, int, PropertyNode::Type type, PropertyNode::PutType, bool complete)
     {
         if (!complete)
             return Property(type);
         ASSERT(name);
         return Property(name, type);
     }
-    Property createProperty(VM* vm, ParserArena& parserArena, double name, int, PropertyNode::Type type, bool complete)
+    Property createProperty(VM* vm, ParserArena& parserArena, double name, int, PropertyNode::Type type, PropertyNode::PutType, bool complete)
     {
         if (!complete)
             return Property(type);
         return Property(&parserArena.identifierArena().makeNumericIdentifier(vm, name), type);
     }
-    Property createProperty(int, int, PropertyNode::Type type, bool)
+    Property createProperty(int, int, PropertyNode::Type type, PropertyNode::PutType, bool)
     {
         return Property(type);
     }

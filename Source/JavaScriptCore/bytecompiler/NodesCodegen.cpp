@@ -376,7 +376,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
     if (node.name()) {
-        generator.emitDirectPutById(newObj, *node.name(), generator.emitNode(node.m_assign));
+        generator.emitDirectPutById(newObj, *node.name(), generator.emitNode(node.m_assign), node.putType());
         return;
     }
     RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);

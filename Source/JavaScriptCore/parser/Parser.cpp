@@ -1522,7 +1522,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             // FIXME: Syntax error when super() is called
             semanticFailIfTrue(isStaticMethod && *methodInfo.name == propertyNames.prototype,
                 "Cannot declare a static method named 'prototype'");
-            property = context.createProperty(methodInfo.name, method, PropertyNode::Constant, alwaysStrictInsideClass);
+            property = context.createProperty(methodInfo.name, method, PropertyNode::Constant, PropertyNode::Unknown, alwaysStrictInsideClass);
         }
 
         TreePropertyList& tail = isStaticMethod ? staticMethodsTail : instanceMethodsTail;
@@ -1933,7 +1933,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             TreeExpression node = parseAssignmentExpression(context);
             failIfFalse(node, "Cannot parse expression for property declaration");
             context.setEndOffset(node, m_lexer->currentOffset());
-            return context.createProperty(ident, node, PropertyNode::Constant, complete);
+            return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete);
         }
 
         failIfFalse(wasIdent, "Expected an identifier as property name");
@@ -1943,7 +1943,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             JSTokenLocation location(tokenLocation());
             currentScope()->useVariable(ident, m_vm->propertyNames->eval == *ident);
             TreeExpression node = context.createResolve(location, ident, start);
-            return context.createProperty(ident, node, PropertyNode::Constant, complete);
+            return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::KnownDirect, complete);
         }
 
         PropertyNode::Type type;
@@ -1963,7 +1963,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(const_cast<VM*>(m_vm), m_parserArena, propertyName, node, PropertyNode::Constant, complete);
+        return context.createProperty(const_cast<VM*>(m_vm), m_parserArena, propertyName, node, PropertyNode::Constant, PropertyNode::Unknown, complete);
     }
     case OPENBRACKET: {
         next();
@@ -1975,7 +1975,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(propertyName, node, PropertyNode::Constant, complete);
+        return context.createProperty(propertyName, node, PropertyNode::Constant, PropertyNode::Unknown, complete);
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");

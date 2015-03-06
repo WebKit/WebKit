@@ -1402,7 +1402,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     return value;
 }
 
-RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value)
+RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value, PropertyNode::PutType putType)
 {
     unsigned propertyIndex = addConstant(property);
 
@@ -1418,9 +1418,7 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
-    instructions().append(
-        property != m_vm->propertyNames->underscoreProto
-        && PropertyName(property).asIndex() == PropertyName::NotAnIndex);
+    instructions().append(putType == PropertyNode::KnownDirect || (property != m_vm->propertyNames->underscoreProto && PropertyName(property).asIndex() == PropertyName::NotAnIndex));
     return value;
 }
 

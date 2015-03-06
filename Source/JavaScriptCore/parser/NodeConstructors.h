@@ -159,18 +159,20 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
 
-    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type)
+    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, PutType putType)
         : m_name(&name)
         , m_assign(assign)
         , m_type(type)
+        , m_putType(putType)
     {
     }
 
-    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type)
+    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType)
         : m_name(0)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
+        , m_putType(putType)
     {
     }
 

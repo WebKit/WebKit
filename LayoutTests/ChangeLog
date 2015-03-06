@@ -1,3 +1,15 @@
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        __proto__ shorthand property should not modify prototype in Object Literal construction
+        https://bugs.webkit.org/show_bug.cgi?id=142382
+
+        Reviewed by Geoffrey Garen.
+
+        * js/object-literal-shorthand-construction-expected.txt:
+        * js/script-tests/object-literal-shorthand-construction.js:
+        Update test to cover the __proto__ shorthand case which is
+        different from longhand case.
+
 2015-03-06  Antti Koivisto  <antti@apple.com>
 
         Enable disk cache validation test on iOS

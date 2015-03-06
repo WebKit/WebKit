@@ -316,7 +316,7 @@ public:
         info.body->setInferredName(*name);
         info.body->setFunctionKeywordStart(getOrSetStartOffset);
         return new (m_parserArena) PropertyNode(*name, new (m_parserArena) FuncExprNode(location, m_vm->propertyNames->nullIdentifier,
-            info.body, m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters), type);
+            info.body, m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters), type, PropertyNode::Unknown);
     }
     
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation& location, PropertyNode::Type type, bool, double name, const ParserFunctionInfo<ASTBuilder>& info, unsigned getOrSetStartOffset)
@@ -325,7 +325,7 @@ public:
         info.body->setFunctionKeywordStart(getOrSetStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
         return new (m_parserArena) PropertyNode(ident, new (m_parserArena) FuncExprNode(location, vm->propertyNames->nullIdentifier,
-            info.body, m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters), type);
+            info.body, m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters), type, PropertyNode::Unknown);
     }
 
     ArgumentsNode* createArguments() { return new (m_parserArena) ArgumentsNode(); }
@@ -333,17 +333,17 @@ public:
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, arg); }
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ArgumentListNode* args, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, args, arg); }
 
-    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, bool)
+    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
     {
         if (node->isFuncExprNode())
             static_cast<FuncExprNode*>(node)->body()->setInferredName(*propertyName);
-        return new (m_parserArena) PropertyNode(*propertyName, node, type);
+        return new (m_parserArena) PropertyNode(*propertyName, node, type, putType);
     }
-    PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, bool)
+    PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
     {
-        return new (m_parserArena) PropertyNode(parserArena.identifierArena().makeNumericIdentifier(vm, propertyName), node, type);
+        return new (m_parserArena) PropertyNode(parserArena.identifierArena().makeNumericIdentifier(vm, propertyName), node, type, putType);
     }
-    PropertyNode* createProperty(ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, bool) { return new (m_parserArena) PropertyNode(propertyName, node, type); }
+    PropertyNode* createProperty(ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool) { return new (m_parserArena) PropertyNode(propertyName, node, type, putType); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property) { return new (m_parserArena) PropertyListNode(location, property); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property, PropertyListNode* tail) { return new (m_parserArena) PropertyListNode(location, property, tail); }
 
