@@ -456,8 +456,10 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(&m_webPage);
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
     if (m_nativeSurfaceHandleForCompositing)
         m_layerTreeHost->setNativeSurfaceHandleForCompositing(m_nativeSurfaceHandleForCompositing);
+#endif
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
