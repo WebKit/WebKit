@@ -155,6 +155,33 @@
 
 2015-03-05  Roger Fong  <roger_fong@apple.com>
 
+        Implement new fullscreen media controls on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=142355.
+        <rdar://problem/16175787>
+
+        Reviewed by Dean Jackson.
+
+        Adjust sizes and positioning of all fullscreen media control elements.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-fullscreen-button.exit): Update to match entering fullscreen button.
+        (video:-webkit-full-screen::-webkit-media-controls-panel):
+        (video:-webkit-full-screen::-webkit-media-controls-panel .volume-box):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-max-button):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-min-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button.paused):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-back-button):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-forward-button):
+        (video:-webkit-full-screen::-webkit-media-controls-timeline-container):
+        (video:-webkit-full-screen::-webkit-media-controls-current-time-display):
+        (video:-webkit-full-screen::-webkit-media-controls-time-remaining-display):
+        (audio:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb): Deleted.
+        (video:-webkit-full-screen::-webkit-media-controls-rewind-button): Deleted. Not used in full screen.
+
+2015-03-05  Roger Fong  <roger_fong@apple.com>
+
         Minor touchups to inline media control icons.
         https://bugs.webkit.org/show_bug.cgi?id=142354.
         <rdar://problem/20058854>.

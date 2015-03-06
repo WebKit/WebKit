@@ -1072,7 +1072,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 8, width - scrubberPosition - borderSize , trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgb(30, 30, 30)";
+        ctx.fillStyle = "rgb(50, 50, 50)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
@@ -1133,7 +1133,7 @@ Controller.prototype = {
         this.addRoundedRect(ctx, 1, 4, width - borderSize, trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgb(30, 30, 30)";
+        ctx.fillStyle = "rgb(50, 50, 50)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         

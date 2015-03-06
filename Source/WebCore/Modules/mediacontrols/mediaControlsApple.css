@@ -77,7 +77,7 @@ audio::-webkit-media-controls-panel {
     line-height: 25px;
     -webkit-user-select: none;
     -webkit-user-drag: element;
-    background-color: black !important;
+    background-color: rgba(0,0,0,0.8);
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -172,7 +172,7 @@ audio::-webkit-media-controls-panel .volume-box {
     -webkit-transform: rotate(-90deg) translateY(-4px) translateX(-5px);
     -webkit-transform-origin: 11px 11px;
 
-    background-color: black;
+    background-color: rgba(0,0,0,0.8);
     border-radius: 4px;
 
     display: -webkit-flex;
@@ -339,8 +339,11 @@ audio::-webkit-media-controls-fullscreen-button {
 
 video::-webkit-media-controls-fullscreen-button.exit,
 audio::-webkit-media-controls-fullscreen-button.exit {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 7,8 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 8,7 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" stroke-width="1.25"><path d="M 7.5,0.5 L 7.5,6 L 13,6"/><path d="M 0,8 L 5.5,8 L 5.5,13.5"/><path stroke-linecap="round" d="M 7.5,6 L 12.5,1"/><path stroke-linecap="round" d="M 5.5,8 L 0.5,13"/></svg>');
+    margin-right: 11px;
+    margin-top: 6px;
 }
+
 video::-webkit-media-controls-optimized-fullscreen-button,
 audio::-webkit-media-controls-optimized-fullscreen-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 7,8 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 8,7 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
@@ -518,25 +521,12 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     -webkit-justify-content: flex-end !important;
 
     width: 440px !important;
-    height: 60px !important;
-    margin: 0 auto 50px auto !important;
+    height: 64px !important;
+    margin: 0 auto 32px auto !important;
     padding-top: 10px !important;
 
-    background: -webkit-linear-gradient(top,
-        rgba(45, 45, 45, .97) 0,
-        rgba(30, 30, 30, .97) 19px,
-        rgba(25, 25, 25, .97) 19px,
-        rgba(25, 25, 25, .97) 20px,
-        rgba(19, 19, 19, .97) 20px,
-        rgba(12, 12, 12, .97) 100%
-    ) !important;
-
-    box-shadow: 
-        inset 0 -1px 1px rgba(0, 0, 0, 0.5),
-        inset 0  1px 0 0px   rgba(255, 255, 255, 0.15),
-        inset 0 -1px 0 0px   rgba(202, 202, 202, 0.09),
-        0  0   0 1px rgba(0, 0, 0, 0.5);
-    border-radius: 8px !important;
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 6px !important;
 
     transition: opacity 0.3s linear !important;
 }
@@ -549,72 +539,64 @@ video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {
 video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
     -webkit-transform: none;
     opacity: 1;
-    left: 11px;
-    top: 13px;
-    width: 90px;
-    height: 14px;
+    left: 12px;
+    top: 16px;
+    width: 96px;
+    height: 15px;
     display: -webkit-flex;
     -webkit-flex-direction: row;
     -webkit-align-items: center;
-    background-image: none;
+    background-color: transparent;
     border: none;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-volume-slider {
-    height: 6px !important;
-    border-radius: 3px !important;
-    background-image: -webkit-linear-gradient(top,
-        rgba(16, 16, 16, .300) 0,
-        rgba(9,  9,  9,  .629) 100%
-    ) !important;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
+    background-color: transparent;
+    width: 60px !important;
+    margin: 0 !important;
 }
 
-video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+video:-webkit-full-screen::-webkit-media-controls-mute-button,
+audio:-webkit-full-screen::-webkit-media-controls-mute-button,
+video:-webkit-full-screen::-webkit-media-controls-volume-max-button {
+    width: 14px !important;
+    margin-left: 6px !important;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" stroke="white" fill="none" stroke-width="1.25" stroke-linecap="round"><path fill="white" stroke="rgba(255,255,255,0.67)" d="M 0,9 0,5 3,5 6,2 6,12 3,9 0,9 z"/><path d="M 9,5 C 10.75,6.5 10.75,7.5 9,9"/><path d="M 10,3 C 13,4 13,10 10,11" /><path d="M 11,1 C 15.67,3 15.67,11 11,13"/></svg>');
+}
+video:-webkit-full-screen::-webkit-media-controls-mute-button,
+audio:-webkit-full-screen::-webkit-media-controls-mute-button,
+video:-webkit-full-screen::-webkit-media-controls-volume-min-button {
     width: 10px !important;
-    height: 10px !important;
-    border-radius: 5px !important;
-
-    /* rotateZ() forces the layer into compositing mode.
-    Slider thumbs are small, so forcing a compositing layer is inexpensive,
-       and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(270deg) !important;
+    margin-right: 6px !important;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 15" stroke="white" fill="none" stroke-width="1.25" stroke-linecap="round"><path fill="white" stroke="rgba(255,255,255,0.67)" d="M 0,9 0,5 3,5 6,2 6,12 3,9 0,9 z"/><path d="M 9,5 C 10.75,6.5 10.75,7.5 9,9"/></svg>');
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {
     position: absolute;
     
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 22"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 0,22 8,22 8,0 z" fill="url(#gradient)"/><path d="M 13,0 13,22 21,22 21,0 z" fill="url(#gradient)"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 23" fill="white"><path d="M 0,0 0,22 8,22 8,0 z"/><path d="M 13,0 13,22 21,22 21,0 z"/></svg>');
 
-    width: 22px;
+    width: 21px;
     height: 23px;
-    left: 209px;
-    top: 9px;
+    left: 210px;
+    top: 12px;
     margin: 0;
     padding: 0;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button.paused {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 22"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 21,11 0,22 z" fill="url(#gradient)"/></svg>');
-}
-
-video:-webkit-full-screen::-webkit-media-controls-rewind-button {
-    position: absolute;
-    left: 162px;
-    top: 13px;
-    width: 18px;
-    height: 18px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 23" fill="white"><path d="M 0,0 21,11.5 0,23 z"/></svg>');
 }
 
 video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
     position: absolute;
 
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 22,0 11,7 22,15 z" fill="url(#gradient)"/><path d="M 11,0 0,7 11,15 z" fill="url(#gradient)"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 15" fill="white"><path d="M 24,0 12,7 24,15 z"/><path d="M 12,0 0,7 12,15 z"/></svg>');
 
-    width: 23px;
-    height: 16px;
+    width: 24px;
+    height: 15px;
     left: 156px;
-    top: 13px;
+    top: 16px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
@@ -629,21 +611,28 @@ video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
 video:-webkit-full-screen::-webkit-media-controls-seek-forward-button {
     position: absolute;
 
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 11,7 0,15 z" fill="url(#gradient)"/><path d="M 11,0 22,7 11,15 z" fill="url(#gradient)"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 15" fill="white"><path d="M 0,0 12,7 0,15 z"/><path d="M 12,0 24,7 12,15 z"/></svg>');
 
-    width: 23px;
-    height: 16px;
-    left: 256px;
-    top: 13px;
+    width: 24px;
+    height: 15px;
+    left: 255px;
+    top: 16px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-timeline-container {
     height: auto;
-    width: 420px;
+    width: 440px;
     position: absolute;
-    bottom: 9px;
-    left: 8px;
-    right: 8px;
+    bottom: 8px;
+    left: 0px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-current-time-display {
+    margin-left: 12px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-time-remaining-display {
+    margin-right: 12px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-status-display {
@@ -652,6 +641,12 @@ video:-webkit-full-screen::-webkit-media-controls-status-display {
     bottom: 7px;
     left: 8px;
     right: 8px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button,
+audio:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button {
+    margin-top: 6px;
+    margin-right:24px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-closed-captions-container {
