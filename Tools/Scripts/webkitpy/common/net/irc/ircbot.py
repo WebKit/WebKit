@@ -29,8 +29,8 @@
 from webkitpy.common.config import irc as config_irc
 
 from webkitpy.common.thread.messagepump import MessagePump, MessagePumpDelegate
-from webkitpy.thirdparty.autoinstalled.irc import ircbot
-from webkitpy.thirdparty.autoinstalled.irc import irclib
+from webkitpy.thirdparty.irc import ircbot
+from webkitpy.thirdparty.irc import irclib
 
 
 class IRCBotDelegate(object):

@@ -1,3 +1,22 @@
+2015-03-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        setup-git-clone fails due to the failure to download python-irclib-0.4.8
+        https://bugs.webkit.org/show_bug.cgi?id=141946
+
+        Reviewed by Ryosuke Niwa.
+
+        Check in ircbot.py and irclib.py to avoid network problems in the future.
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_irc): Deleted.
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_imports):
+        * Scripts/webkitpy/thirdparty/irc/__init__.py: Added.
+        * Scripts/webkitpy/thirdparty/irc/ircbot.py: Added.
+        * Scripts/webkitpy/thirdparty/irc/irclib.py: Added.
+
 2015-03-06  David Kilzer  <ddkilzer@apple.com>
 
         Dashboard: Perf bot status is missing for Apple {Mavericks,Yosemite} Release builds
