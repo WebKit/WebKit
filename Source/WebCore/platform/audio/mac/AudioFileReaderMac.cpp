@@ -147,7 +147,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     SInt64 numberOfFrames64 = 0;
     size = sizeof(numberOfFrames64);
     result = ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64);
-    if (result != noErr)
+    if (result != noErr || numberOfFrames64 <= 0)
         return 0;
 
     // Sample-rate

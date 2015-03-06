@@ -1,3 +1,14 @@
+2015-03-06  Jer Noble  <jer.noble@apple.com>
+
+        [Web Audio] Decoding specific .m4a file crashes tab
+        https://bugs.webkit.org/show_bug.cgi?id=139545
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/decode-audio-data-too-short-expected.txt: Added.
+        * webaudio/decode-audio-data-too-short.html: Added.
+        * webaudio/resources/media/too-short.m4a: Added.
+
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash in -[WebCascadeList objectAtIndex:] + 195

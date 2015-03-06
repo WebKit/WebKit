@@ -1,3 +1,17 @@
+2015-03-06  Jer Noble  <jer.noble@apple.com>
+
+        [Web Audio] Decoding specific .m4a file crashes tab
+        https://bugs.webkit.org/show_bug.cgi?id=139545
+
+        Reviewed by Eric Carlson.
+
+        Test: webaudio/decode-audio-data-too-short.html
+
+        Bail out early if CoreAudio reports the number of frames in the file to be negative.
+
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+
 2015-03-06  Jeremy Jones  <jeremyj@apple.com>
 
         Scroll to make the video element visible when exiting fullscreen.
