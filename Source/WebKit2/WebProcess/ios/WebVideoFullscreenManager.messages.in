@@ -42,5 +42,6 @@ messages -> WebVideoFullscreenManager {
     SelectAudioMediaOption(uint64_t index)
     SelectLegibleMediaOption(uint64_t index)
     fullscreenModeChanged(WebCore::HTMLMediaElement::VideoFullscreenMode videoFullscreenMode)
+    FullscreenMayReturnToInline(bool isPageVisible)
 }
 #endif

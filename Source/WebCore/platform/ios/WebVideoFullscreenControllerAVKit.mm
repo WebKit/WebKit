@@ -183,6 +183,7 @@ public:
 
 - (void)fullscreenMayReturnToInline
 {
+    _interface->preparedToReturnToInline(true, _videoElement->clientRect());
 }
 
 @end

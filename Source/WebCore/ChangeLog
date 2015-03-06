@@ -1,3 +1,32 @@
+2015-03-06  Jeremy Jones  <jeremyj@apple.com>
+
+        Scroll to make the video element visible when exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=141439
+
+        Reviewed by Simon Fraser.
+
+        This patch will scroll the element so it is visible when exiting fullscreen,
+        but only if the element is completely scrolled off screen.
+        Also update the element screen rect so exit animation goes to the correct location.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoViewIfNotVisible): Added.
+        * dom/Element.h: Add declaration for scrollIntoViewIfNotVisible.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController fullscreenMayReturnToInline]):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController playerViewController:restoreUserInterfaceForOptimizedFullscreenStopWithCompletionHandler:]):
+        (-[WebAVPlayerController playerViewControllerWillCancelOptimizedFullscree:]):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal):
+        (WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline):
+        (WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline):
+        * rendering/ScrollBehavior.cpp:
+        * rendering/ScrollBehavior.h:
+
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash in -[WebCascadeList objectAtIndex:] + 195

@@ -86,6 +86,7 @@ protected:
     virtual void didExitFullscreen();
     virtual void didCleanupFullscreen();
     virtual void setVideoLayerGravityEnum(unsigned);
+    virtual void fullscreenMayReturnToInline(bool isPageVisible);
     void setVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort);
     
     WebPage* m_page;

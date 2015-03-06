@@ -258,6 +258,13 @@ void WebVideoFullscreenManager::setVideoLayerGravityEnum(unsigned gravity)
     setVideoLayerGravity((WebVideoFullscreenModel::VideoGravity)gravity);
 }
     
+void WebVideoFullscreenManager::fullscreenMayReturnToInline(bool isPageVisible)
+{
+    if (!isPageVisible)
+        m_videoElement->scrollIntoViewIfNotVisible(false);
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::PreparedToReturnToInline(true, clientRectForElement(m_videoElement.get())), m_page->pageID());
+}
+    
 void WebVideoFullscreenManager::setVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort)
 {
     if (m_layerHostingContext)

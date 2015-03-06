@@ -1,3 +1,24 @@
+2015-03-06  Jeremy Jones  <jeremyj@apple.com>
+
+        Scroll to make the video element visible when exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=141439
+
+        Reviewed by Simon Fraser.
+
+        This patch will restore interface state when exiting fullscreen.
+        Adds preparedToReturnToInline to continue exiting once the interface is updated.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        (WebKit::WebVideoFullscreenManagerProxy::preparedToReturnToInline): added.
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::fullscreenMayReturnToInline):
+
 2015-03-06  Antti Koivisto  <antti@apple.com>
 
         Rename NetworkCacheStorageCocoa.mm to NetworkCacheStorage.cpp

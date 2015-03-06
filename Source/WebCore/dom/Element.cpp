@@ -611,6 +611,20 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
         renderer()->scrollRectToVisible(bounds, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
+void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
+{
+    document().updateLayoutIgnorePendingStylesheets();
+    
+    if (!renderer())
+        return;
+    
+    LayoutRect bounds = renderer()->anchorRect();
+    if (centerIfNotVisible)
+        renderer()->scrollRectToVisible(bounds, ScrollAlignment::alignCenterIfNotVisible, ScrollAlignment::alignCenterIfNotVisible);
+    else
+        renderer()->scrollRectToVisible(bounds, ScrollAlignment::alignToEdgeIfNotVisible, ScrollAlignment::alignToEdgeIfNotVisible);
+}
+    
 void Element::scrollByUnits(int units, ScrollGranularity granularity)
 {
     document().updateLayoutIgnorePendingStylesheets();

@@ -61,6 +61,8 @@ struct ScrollAlignment {
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
+    static const ScrollAlignment alignCenterIfNotVisible;
+    static const ScrollAlignment alignToEdgeIfNotVisible;
     static const ScrollAlignment alignCenterIfNeeded;
     WEBCORE_EXPORT static const ScrollAlignment alignToEdgeIfNeeded;
     WEBCORE_EXPORT static const ScrollAlignment alignCenterAlways;

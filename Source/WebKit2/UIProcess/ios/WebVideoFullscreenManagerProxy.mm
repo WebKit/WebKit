@@ -75,7 +75,7 @@ void WebVideoFullscreenManagerProxy::invalidate()
     m_layerHost.clear();
 }
 
-void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingDeviceScaleFactor, HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
+void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
 {
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
@@ -119,7 +119,14 @@ void WebVideoFullscreenManagerProxy::setExternalPlaybackProperties(bool enabled,
     
 void WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline()
 {
+    bool isViewVisible = m_page->isViewVisible();
+    m_page->send(Messages::WebVideoFullscreenManager::FullscreenMayReturnToInline(isViewVisible), m_page->pageID());
+}
+    
+void WebVideoFullscreenManagerProxy::preparedToReturnToInline(bool visible, const WebCore::IntRect& inlineRect)
+{
     m_page->fullscreenMayReturnToInline();
+    WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(visible, inlineRect);
 }
 
 void WebVideoFullscreenManagerProxy::requestExitFullscreen()
