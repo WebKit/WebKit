@@ -560,8 +560,8 @@ order
 -webkit-print-color-adjust [Inherited]
 -webkit-rtl-ordering [Inherited, Setter=setRTLOrdering, Initial=initialRTLOrdering]
 #if defined(ENABLE_CSS_SCROLL_SNAP)
--webkit-scroll-snap-points-x [Converter=ScrollSnapPoints]
--webkit-scroll-snap-points-y [Converter=ScrollSnapPoints]
+-webkit-scroll-snap-points-x [Converter=ScrollSnapPoints, Custom=Initial|Inherit]
+-webkit-scroll-snap-points-y [Converter=ScrollSnapPoints, Custom=Initial|Inherit]
 -webkit-scroll-snap-type
 -webkit-scroll-snap-destination [Converter=SnapCoordinatePair]
 -webkit-scroll-snap-coordinate [Converter=ScrollSnapCoordinates, NameForMethods=ScrollSnapCoordinates]

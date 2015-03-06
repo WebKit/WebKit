@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,10 +75,10 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
         snapOffsetSubsequence.append(0);
 
     bool isHorizontalAxis = axis == ScrollEventAxis::Horizontal;
-    auto& points = isHorizontalAxis ? style.scrollSnapPointsX() : style.scrollSnapPointsY();
+    auto* points = isHorizontalAxis ? style.scrollSnapPointsX() : style.scrollSnapPointsY();
     auto& destination = style.scrollSnapDestination();
-    bool hasRepeat = points.hasRepeat;
-    LayoutUnit repeatOffset = valueForLength(points.repeatOffset, viewSize);
+    bool hasRepeat = points ? points->hasRepeat : false;
+    LayoutUnit repeatOffset = points ? valueForLength(points->repeatOffset, viewSize) : LayoutUnit();
     LayoutUnit destinationOffset = valueForLength(isHorizontalAxis ? destination.width() : destination.height(), viewSize);
     LayoutUnit curSnapPositionShift = 0;
     LayoutUnit maxScrollOffset = scrollSize - viewSize;
@@ -130,19 +130,22 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     Vector<LayoutUnit> horizontalSnapOffsetSubsequence;
     Vector<LayoutUnit> verticalSnapOffsetSubsequence;
 
-    if (scrollingElementStyle.scrollSnapPointsX().usesElements || scrollingElementStyle.scrollSnapPointsY().usesElements) {
-        bool shouldAddHorizontalChildOffsets = scrollingElementStyle.scrollSnapPointsX().usesElements && canComputeHorizontalOffsets;
-        bool shouldAddVerticalChildOffsets = scrollingElementStyle.scrollSnapPointsY().usesElements && canComputeVerticalOffsets;
+    bool scrollSnapPointsXUsesElements = scrollingElementStyle.scrollSnapPointsX() ? scrollingElementStyle.scrollSnapPointsX()->usesElements : false;
+    bool scrollSnapPointsYUsesElements = scrollingElementStyle.scrollSnapPointsY() ? scrollingElementStyle.scrollSnapPointsY()->usesElements : false;
+
+    if (scrollSnapPointsXUsesElements || scrollSnapPointsYUsesElements) {
+        bool shouldAddHorizontalChildOffsets = scrollSnapPointsXUsesElements && canComputeHorizontalOffsets;
+        bool shouldAddVerticalChildOffsets = scrollSnapPointsYUsesElements && canComputeVerticalOffsets;
         appendChildSnapOffsets(scrollingElement, shouldAddHorizontalChildOffsets, horizontalSnapOffsetSubsequence, shouldAddVerticalChildOffsets, verticalSnapOffsetSubsequence);
     }
 
-    if (!scrollingElementStyle.scrollSnapPointsX().usesElements && canComputeHorizontalOffsets) {
-        for (auto& snapLength : scrollingElementStyle.scrollSnapPointsX().offsets)
+    if (scrollingElementStyle.scrollSnapPointsX() && !scrollSnapPointsXUsesElements && canComputeHorizontalOffsets) {
+        for (auto& snapLength : scrollingElementStyle.scrollSnapPointsX()->offsets)
             horizontalSnapOffsetSubsequence.append(valueForLength(snapLength, viewWidth));
     }
 
-    if (!scrollingElementStyle.scrollSnapPointsY().usesElements && canComputeVerticalOffsets) {
-        for (auto& snapLength : scrollingElementStyle.scrollSnapPointsY().offsets)
+    if (scrollingElementStyle.scrollSnapPointsY() && !scrollSnapPointsYUsesElements && canComputeVerticalOffsets) {
+        for (auto& snapLength : scrollingElementStyle.scrollSnapPointsY()->offsets)
             verticalSnapOffsetSubsequence.append(valueForLength(snapLength, viewHeight));
     }
 

@@ -59,6 +59,9 @@ media/media-captions.html
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# Need a scroll snap point implementation
+css3/scroll-snap [ Skip ]
+
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------

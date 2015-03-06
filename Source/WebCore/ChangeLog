@@ -1,3 +1,47 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Add 'initial' keyword support for scroll snap CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=136345
+        <rdar://problem/18162325>
+
+        Reviewed by Dean Jackson.
+
+        Tested by css3/scroll-snap/scroll-snap-initial.html
+
+        The existing implementation already had 'initial' keyword support, but did not fully follow
+        the CSS specification. In particular, the 'initial' state for the scroll-snap-points-x and
+        scroll-snap-points-y properties was not handled correctly.
+
+        Revise implementation to represent ScrollSnapPoints as a pointer, so that 'none' is a valid
+        state.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::scrollSnapPoints): If 'points' is null, return CSSValueNone.
+        * css/CSSPropertyNames.in: Provide custom initial/inherit handles for snap point x/y sets.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertScrollSnapPoints): Update to represent ScrollSnapPoints
+        as a pointer.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitScrollSnapPointsX): Provide custom pointer-based
+        implementation for ScrollSnapPoints.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitScrollSnapPointsX): Ditto.
+        (WebCore::StyleBuilderCustom::applyInitialWebkitScrollSnapPointsY): Ditto.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitScrollSnapPointsY): Ditto."
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::updateFromStyle): Handle ScrollSnapPoints as pointers.
+        (WebCore::updateSnapOffsetsForScrollableArea): Ditto.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::scrollSnapPointsX): Update to use pointer-based representation of ScrollSnapPoints.
+        (WebCore::RenderStyle::scrollSnapPointsY): Ditto.
+        (WebCore::RenderStyle::setScrollSnapPointsX): Ditto.
+        (WebCore::RenderStyle::setScrollSnapPointsY): Ditto.
+        (WebCore::RenderStyle::initialScrollSnapPointsX): Deleted.
+        (WebCore::RenderStyle::initialScrollSnapPointsY): Deleted.
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleScrollSnapPoints.cpp:
+        (WebCore::StyleScrollSnapPoints::StyleScrollSnapPoints): Revise constructor to handle pointer argument.
+        * rendering/style/StyleScrollSnapPoints.h:
+
 2015-03-05  Roger Fong  <roger_fong@apple.com>
 
         Reskin Captions button and container on OSX.

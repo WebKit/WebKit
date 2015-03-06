@@ -1,3 +1,19 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Add 'initial' keyword support for scroll snap CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=136345
+        <rdar://problem/18162325>
+
+        Reviewed by Dean Jackson.
+
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Update for corrected 'initial' behavior.
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Rebaselined.
+        * css3/scroll-snap/scroll-snap-initial.html: Added.
+        * css3/scroll-snap/scroll-snap-initial-expected.txt: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6: Object Literal Extensions - Methods

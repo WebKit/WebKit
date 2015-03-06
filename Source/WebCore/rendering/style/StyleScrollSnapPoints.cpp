@@ -57,8 +57,8 @@ StyleScrollSnapPoints::StyleScrollSnapPoints()
 
 inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints& other)
     : RefCounted()
-    , xPoints(other.xPoints)
-    , yPoints(other.yPoints)
+    , xPoints(other.xPoints ? std::make_unique<ScrollSnapPoints>(*other.xPoints) : nullptr)
+    , yPoints(other.yPoints ? std::make_unique<ScrollSnapPoints>(*other.yPoints) : nullptr)
     , destination(other.destination)
     , coordinates(other.coordinates)
 {

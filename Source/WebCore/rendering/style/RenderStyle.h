@@ -1080,8 +1080,8 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType() const { return static_cast<ScrollSnapType>(rareNonInheritedData->m_scrollSnapType); }
-    const ScrollSnapPoints& scrollSnapPointsX() const;
-    const ScrollSnapPoints& scrollSnapPointsY() const;
+    const ScrollSnapPoints* scrollSnapPointsX() const;
+    const ScrollSnapPoints* scrollSnapPointsY() const;
     const LengthSize& scrollSnapDestination() const;
     const Vector<LengthSize>& scrollSnapCoordinates() const;
 #endif
@@ -1625,8 +1625,8 @@ public:
     
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(ScrollSnapType type) { SET_VAR(rareNonInheritedData, m_scrollSnapType, static_cast<unsigned>(type)); }
-    void setScrollSnapPointsX(ScrollSnapPoints);
-    void setScrollSnapPointsY(ScrollSnapPoints);
+    void setScrollSnapPointsX(std::unique_ptr<ScrollSnapPoints>);
+    void setScrollSnapPointsY(std::unique_ptr<ScrollSnapPoints>);
     void setScrollSnapDestination(LengthSize);
     void setScrollSnapCoordinates(Vector<LengthSize>);
 #endif
@@ -1959,16 +1959,16 @@ public:
     static ImageResolutionSource initialImageResolutionSource() { return ImageResolutionSpecified; }
     static ImageResolutionSnap initialImageResolutionSnap() { return ImageResolutionNoSnap; }
     static float initialImageResolution() { return 1; }
-    static StyleImage* initialBorderImageSource() { return 0; }
-    static StyleImage* initialMaskBoxImageSource() { return 0; }
+    static StyleImage* initialBorderImageSource() { return nullptr; }
+    static StyleImage* initialMaskBoxImageSource() { return nullptr; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
     static QuotesData* initialQuotes() { return nullptr; }
     static const AtomicString& initialContentAltText() { return emptyAtom; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType() { return ScrollSnapType::None; }
-    static ScrollSnapPoints initialScrollSnapPointsX();
-    static ScrollSnapPoints initialScrollSnapPointsY();
+    static ScrollSnapPoints* initialScrollSnapPointsX() { return nullptr; }
+    static ScrollSnapPoints* initialScrollSnapPointsY() { return nullptr; }
     static LengthSize initialScrollSnapDestination();
     static Vector<LengthSize> initialScrollSnapCoordinates();
 #endif

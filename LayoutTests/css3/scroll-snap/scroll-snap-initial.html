@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .horizontalGallery {
+                width: 400px;
+                height: 50px;
+                overflow-y: hidden;
+                overflow-x: auto;
+            }
+            .verticalGallery {
+                width: 400px;
+                height: 50px;
+                display: inline-block;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            .horizontalGalleryDrawer {
+                width: 3000px;
+                height: 50px;
+            }
+            .verticalGalleryDrawer {
+                width: 400px;
+                height: 300px;
+            }
+            .colorBox {
+                height: 50px;
+                width: 400px;
+                float: left;
+            }
+
+            .noInitial {
+                -webkit-scroll-snap-type: mandatory;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-points-y: repeat(100%);
+                -webkit-scroll-snap-destination: 10% 11%;
+                -webkit-scroll-snap-coordinate: none;
+            }
+
+            .initialType {
+                -webkit-scroll-snap-type: initial;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-points-y: repeat(100%);
+                -webkit-scroll-snap-destination: 0px 0px;
+                -webkit-scroll-snap-coordinate: 15px 122px;
+            }
+
+            .initialXPoints {
+                -webkit-scroll-snap-type: mandatory;
+                -webkit-scroll-snap-points-x: initial;
+                -webkit-scroll-snap-points-y: repeat(100%);
+                -webkit-scroll-snap-destination: 50% 70%;
+                -webkit-scroll-snap-coordinate: 100% 50%;
+            }
+
+            .initialYPoints {
+                -webkit-scroll-snap-type: mandatory;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-points-y: initial;
+                -webkit-scroll-snap-destination: 10px 20px;
+                -webkit-scroll-snap-coordinate: 50% 100%;
+            }
+
+            .initialDestination {
+                -webkit-scroll-snap-type: proximity;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-points-y: repeat(100%);
+                -webkit-scroll-snap-destination: initial;
+                -webkit-scroll-snap-coordinate: 10px 10px;
+            }
+
+            .initialSnapCoordinate {
+                -webkit-scroll-snap-type: mandatory;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-points-y: repeat(100%);
+                -webkit-scroll-snap-destination: 10% 10%;
+                -webkit-scroll-snap-coordinate: initial;
+            }
+
+            .allInitial {
+                -webkit-scroll-snap-type: initial;
+                -webkit-scroll-snap-points-x: initial;
+                -webkit-scroll-snap-points-y: initial;
+                -webkit-scroll-snap-destination: initial;
+                -webkit-scroll-snap-coordinate: initial
+            }
+
+            #item0 { background-color: red; }
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div style="width: 400px">
+            <div id="noInitial" class="horizontalGallery noInitial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialType" class="horizontalGallery initialType" style="-webkit-scroll-snap-type: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialXPoints" class="horizontalGallery initialXPoints" style="-webkit-scroll-snap-points-x: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialYPoints" class="horizontalGallery initialYPoints" style="-webkit-scroll-snap-points-y: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialDestination" class="horizontalGallery initialDestination" style="-webkit-scroll-snap-destination: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialSnapCoordinate" class="horizontalGallery initialSnapCoordinate" style="-webkit-scroll-snap-coordinate: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="allInitial" class="horizontalGallery allInitial" style="-webkit-scroll-snap-type: initial; -webkit-scroll-snap-points-x: initial; -webkit-scroll-snap-points-y: initial; -webkit-scroll-snap-destination: initial; -webkit-scroll-snap-coordinate: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="allInitialY" class="verticalGallery noInitial" style="-webkit-scroll-snap-type: initial; -webkit-scroll-snap-points-x: initial; -webkit-scroll-snap-points-y: initial; -webkit-scroll-snap-destination: initial; -webkit-scroll-snap-coordinate: initial">
+                <div class="verticalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+        </div>
+        <div id="console"></div>
+        <script>
+        description("Tests 'initial' on scroll snap properties.");
+
+        var noInitial = document.getElementById('noInitial');
+        shouldBeEmptyString("noInitial.style['-webkit-scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
+        shouldBeEmptyString("noInitial.style['-webkit-scroll-snap-points-x']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
+        shouldBeEmptyString("noInitial.style['-webkit-scroll-snap-points-y']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
+        shouldBeEmptyString("noInitial.style['-webkit-scroll-snap-destination']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-destination')", "10% 11%");
+        shouldBeEmptyString("noInitial.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+
+        var initialType = document.getElementById('initialType');
+        shouldBeEqualToString("initialType.style['-webkit-scroll-snap-type']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('-webkit-scroll-snap-type')", "none");
+        shouldBeEmptyString("initialType.style['-webkit-scroll-snap-points-x']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
+        shouldBeEmptyString("initialType.style['-webkit-scroll-snap-points-y']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
+        shouldBeEmptyString("initialType.style['-webkit-scroll-snap-destination']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
+        shouldBeEmptyString("initialType.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('-webkit-scroll-snap-coordinate')", "15px 122px");
+
+        var initialXPoints = document.getElementById('initialXPoints');
+        shouldBeEmptyString("initialXPoints.style['-webkit-scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialXPoints).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
+        shouldBeEqualToString("initialXPoints.style['-webkit-scroll-snap-points-x']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialXPoints).getPropertyValue('-webkit-scroll-snap-points-x')", "none");
+        shouldBeEmptyString("initialXPoints.style['-webkit-scroll-snap-points-y']");
+        shouldBeEqualToString("window.getComputedStyle(initialXPoints).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
+        shouldBeEmptyString("initialXPoints.style['-webkit-scroll-snap-destination']");
+        shouldBeEqualToString("window.getComputedStyle(initialXPoints).getPropertyValue('-webkit-scroll-snap-destination')", "50% 70%");
+        shouldBeEmptyString("initialXPoints.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("window.getComputedStyle(initialXPoints).getPropertyValue('-webkit-scroll-snap-coordinate')", "100% 50%");
+
+        var initialYPoints = document.getElementById('initialYPoints');
+        shouldBeEmptyString("initialYPoints.style['-webkit-scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialYPoints).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
+        shouldBeEmptyString("initialYPoints.style['-webkit-scroll-snap-points-x']");
+        shouldBeEqualToString("window.getComputedStyle(initialYPoints).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
+        shouldBeEqualToString("initialYPoints.style['-webkit-scroll-snap-points-y']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialYPoints).getPropertyValue('-webkit-scroll-snap-points-y')", "none");
+        shouldBeEmptyString("initialYPoints.style['-webkit-scroll-snap-destination']");
+        shouldBeEqualToString("window.getComputedStyle(initialYPoints).getPropertyValue('-webkit-scroll-snap-destination')", "10px 20px");
+        shouldBeEmptyString("initialYPoints.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("window.getComputedStyle(initialYPoints).getPropertyValue('-webkit-scroll-snap-coordinate')", "50% 100%");
+
+        var initialDestination = document.getElementById('initialDestination');
+        shouldBeEmptyString("initialDestination.style['-webkit-scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-type')", "proximity");
+        shouldBeEmptyString("initialDestination.style['-webkit-scroll-snap-points-x']");
+        shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
+        shouldBeEmptyString("initialDestination.style['-webkit-scroll-snap-points-y']");
+        shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
+        shouldBeEqualToString("initialDestination.style['-webkit-scroll-snap-destination']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
+        shouldBeEmptyString("initialDestination.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-coordinate')", "10px 10px");
+
+        var initialSnapCoordinate = document.getElementById('initialSnapCoordinate');
+        shouldBeEmptyString("initialSnapCoordinate.style['-webkit-scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialSnapCoordinate).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
+        shouldBeEmptyString("initialSnapCoordinate.style['-webkit-scroll-snap-points-x']");
+        shouldBeEqualToString("window.getComputedStyle(initialSnapCoordinate).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
+        shouldBeEmptyString("initialSnapCoordinate.style['-webkit-scroll-snap-points-y']");
+        shouldBeEqualToString("window.getComputedStyle(initialSnapCoordinate).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
+        shouldBeEmptyString("initialSnapCoordinate.style['-webkit-scroll-snap-destination']");
+        shouldBeEqualToString("window.getComputedStyle(initialSnapCoordinate).getPropertyValue('-webkit-scroll-snap-destination')", "10% 10%");
+        shouldBeEqualToString("initialSnapCoordinate.style['-webkit-scroll-snap-coordinate']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialSnapCoordinate).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+
+        var allInitial = document.getElementById('allInitial');
+        shouldBeEqualToString("allInitial.style['-webkit-scroll-snap-type']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('-webkit-scroll-snap-type')", "none");
+        shouldBeEqualToString("allInitial.style['-webkit-scroll-snap-points-x']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('-webkit-scroll-snap-points-x')", "none");
+        shouldBeEqualToString("allInitial.style['-webkit-scroll-snap-points-y']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('-webkit-scroll-snap-points-y')", "none");
+        shouldBeEqualToString("allInitial.style['-webkit-scroll-snap-destination']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
+        shouldBeEqualToString("allInitial.style['-webkit-scroll-snap-coordinate']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+
+        var allInitialY = document.getElementById('allInitialY');
+        shouldBeEqualToString("allInitialY.style['-webkit-scroll-snap-type']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitialY).getPropertyValue('-webkit-scroll-snap-type')", "none");
+        shouldBeEqualToString("allInitialY.style['-webkit-scroll-snap-points-x']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitialY).getPropertyValue('-webkit-scroll-snap-points-x')", "none");
+        shouldBeEqualToString("allInitialY.style['-webkit-scroll-snap-points-y']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitialY).getPropertyValue('-webkit-scroll-snap-points-y')", "none");
+        shouldBeEqualToString("allInitialY.style['-webkit-scroll-snap-destination']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitialY).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
+        shouldBeEqualToString("allInitialY.style['-webkit-scroll-snap-coordinate']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitialY).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
+

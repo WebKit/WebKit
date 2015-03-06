@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -1865,17 +1865,6 @@ void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& pagi
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-
-ScrollSnapPoints RenderStyle::initialScrollSnapPointsX()
-{
-    return ScrollSnapPoints();
-}
-
-ScrollSnapPoints RenderStyle::initialScrollSnapPointsY()
-{
-    return ScrollSnapPoints();
-}
-
 LengthSize RenderStyle::initialScrollSnapDestination()
 {
     return defaultScrollSnapDestination();
@@ -1886,14 +1875,14 @@ Vector<LengthSize> RenderStyle::initialScrollSnapCoordinates()
     return Vector<LengthSize>();
 }
 
-const ScrollSnapPoints& RenderStyle::scrollSnapPointsX() const
+const ScrollSnapPoints* RenderStyle::scrollSnapPointsX() const
 {
-    return rareNonInheritedData->m_scrollSnapPoints->xPoints;
+    return rareNonInheritedData->m_scrollSnapPoints->xPoints.get();
 }
 
-const ScrollSnapPoints& RenderStyle::scrollSnapPointsY() const
+const ScrollSnapPoints* RenderStyle::scrollSnapPointsY() const
 {
-    return rareNonInheritedData->m_scrollSnapPoints->yPoints;
+    return rareNonInheritedData->m_scrollSnapPoints->yPoints.get();
 }
 
 const LengthSize& RenderStyle::scrollSnapDestination() const
@@ -1906,16 +1895,16 @@ const Vector<LengthSize>& RenderStyle::scrollSnapCoordinates() const
     return rareNonInheritedData->m_scrollSnapPoints->coordinates;
 }
 
-void RenderStyle::setScrollSnapPointsX(ScrollSnapPoints points)
+void RenderStyle::setScrollSnapPointsX(std::unique_ptr<ScrollSnapPoints> points)
 {
-    if (rareNonInheritedData->m_scrollSnapPoints->xPoints == points)
+    if (rareNonInheritedData->m_scrollSnapPoints->xPoints.get() == points.get())
         return;
     rareNonInheritedData.access()->m_scrollSnapPoints.access()->xPoints = WTF::move(points);
 }
 
-void RenderStyle::setScrollSnapPointsY(ScrollSnapPoints points)
+void RenderStyle::setScrollSnapPointsY(std::unique_ptr<ScrollSnapPoints> points)
 {
-    if (rareNonInheritedData->m_scrollSnapPoints->yPoints == points)
+    if (rareNonInheritedData->m_scrollSnapPoints->yPoints.get() == points.get())
         return;
     rareNonInheritedData.access()->m_scrollSnapPoints.access()->yPoints = WTF::move(points);
 }

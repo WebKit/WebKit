@@ -17,10 +17,10 @@ function testComputedScrollSnapRule(description, snapProperty, rule, expected)
 }
 
 testComputedScrollSnapRule("invalid snapping type", "type", "potato", "none");
-testComputedScrollSnapRule("invalid points along x axis", "points-x", "hello world", "repeat(100%)");
-testComputedScrollSnapRule("invalid points along y axis", "points-y", "hello world", "repeat(100%)");
-testComputedScrollSnapRule("typo in point definition", "points-x", "repaet(50px)", "repeat(100%)");
-testComputedScrollSnapRule("another invalid point definition", "points-x", "??px repeat(50px)", "repeat(100%)");
+testComputedScrollSnapRule("invalid points along x axis", "points-x", "hello world", "none");
+testComputedScrollSnapRule("invalid points along y axis", "points-y", "hello world", "none");
+testComputedScrollSnapRule("typo in point definition", "points-x", "repaet(50px)", "none");
+testComputedScrollSnapRule("another invalid point definition", "points-x", "??px repeat(50px)", "none");
 testComputedScrollSnapRule("invalid destination", "destination", "foo bar", "0px 0px");
 testComputedScrollSnapRule("short one destination value", "destination", "50%", "0px 0px");
 testComputedScrollSnapRule("extra destination value", "destination", "50px 100% 75px", "0px 0px");
@@ -33,8 +33,8 @@ testComputedScrollSnapRule("none type", "type", "none", "none");
 testComputedScrollSnapRule("mandatory type", "type", "mandatory", "mandatory");
 testComputedScrollSnapRule("proximity type", "type", "proximity", "proximity");
 
-testComputedScrollSnapRule("inherited points along x axis", "points-x", "inherit", "repeat(100%)");
-testComputedScrollSnapRule("initial points along x axis", "points-x", "initial", "repeat(100%)");
+testComputedScrollSnapRule("inherited points along x axis", "points-x", "inherit", "none");
+testComputedScrollSnapRule("initial points along x axis", "points-x", "initial", "none");
 testComputedScrollSnapRule("element points along x axis", "points-x", "elements", "elements");
 testComputedScrollSnapRule("percentage points along x axis", "points-x", "100% 50%", "100% 50%");
 testComputedScrollSnapRule("pixel points along x axis", "points-x", "100px 50px", "100px 50px");
@@ -45,8 +45,8 @@ testComputedScrollSnapRule("pixel points along x axis with percentage repeat", "
 testComputedScrollSnapRule("percentage points along x axis with pixel repeat", "points-x", "100% 50% repeat(40px)", "100% 50% repeat(40px)");
 testComputedScrollSnapRule("pixel points along x axis with pixel repeat", "points-x", "100px repeat(42px)", "100px repeat(42px)");
 
-testComputedScrollSnapRule("inherited points along y axis", "points-y", "inherit", "repeat(100%)");
-testComputedScrollSnapRule("initial points along y axis", "points-y", "initial", "repeat(100%)");
+testComputedScrollSnapRule("inherited points along y axis", "points-y", "inherit", "none");
+testComputedScrollSnapRule("initial points along y axis", "points-y", "initial", "none");
 testComputedScrollSnapRule("element points along y axis", "points-y", "elements", "elements");
 testComputedScrollSnapRule("percentage points along y axis", "points-y", "100% 50%", "100% 50%");
 testComputedScrollSnapRule("pixel points along y axis", "points-y", "100px 50px", "100px 50px");

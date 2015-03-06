@@ -90,7 +90,7 @@ public:
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
     static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
 #if ENABLE(CSS_SCROLL_SNAP)
-    static ScrollSnapPoints convertScrollSnapPoints(StyleResolver&, CSSValue&);
+    static std::unique_ptr<ScrollSnapPoints> convertScrollSnapPoints(StyleResolver&, CSSValue&);
     static LengthSize convertSnapCoordinatePair(StyleResolver&, CSSValue&, size_t offset = 0);
     static Vector<LengthSize> convertScrollSnapCoordinates(StyleResolver&, CSSValue&);
 #endif
@@ -708,27 +708,27 @@ inline Length StyleBuilderConverter::parseSnapCoordinate(StyleResolver& styleRes
     return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
 }
 
-inline ScrollSnapPoints StyleBuilderConverter::convertScrollSnapPoints(StyleResolver& styleResolver, CSSValue& value)
+inline std::unique_ptr<ScrollSnapPoints> StyleBuilderConverter::convertScrollSnapPoints(StyleResolver& styleResolver, CSSValue& value)
 {
-    ScrollSnapPoints points;
+    auto points = std::make_unique<ScrollSnapPoints>();
 
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueElements);
-        points.usesElements = true;
+        points->usesElements = true;
         return points;
     }
 
-    points.hasRepeat = false;
+    points->hasRepeat = false;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
         if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
             if (auto* interval = lengthRepeat->interval()) {
-                points.repeatOffset = parseSnapCoordinate(styleResolver, *interval);
-                points.hasRepeat = true;
+                points->repeatOffset = parseSnapCoordinate(styleResolver, *interval);
+                points->hasRepeat = true;
                 break;
             }
         }
-        points.offsets.append(parseSnapCoordinate(styleResolver, itemValue));
+        points->offsets.append(parseSnapCoordinate(styleResolver, itemValue));
     }
 
     return points;

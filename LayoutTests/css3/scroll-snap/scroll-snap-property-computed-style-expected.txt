@@ -8,16 +8,16 @@ invalid snapping type : potato
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
 
 invalid points along x axis : hello world
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
 
 invalid points along y axis : hello world
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
 
 typo in point definition : repaet(50px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
 
 another invalid point definition : ??px repeat(50px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
 
 invalid destination : foo bar
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
@@ -50,10 +50,10 @@ proximity type : proximity
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'proximity'
 
 inherited points along x axis : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
 
 initial points along x axis : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
 
 element points along x axis : elements
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'elements'
@@ -83,10 +83,10 @@ pixel points along x axis with pixel repeat : 100px repeat(42px)
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px repeat(42px)'
 
 inherited points along y axis : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
 
 initial points along y axis : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
 
 element points along y axis : elements
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'elements'

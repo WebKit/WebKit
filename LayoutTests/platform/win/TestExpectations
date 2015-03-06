@@ -591,6 +591,9 @@ webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 # TODO Attachment elements do not provide a custom renderer
 webkit.org/b/142260 fast/attachment [ Skip ]
+
+# TODO Scroll snap points
+css3/scroll-snap [ Skip ]
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

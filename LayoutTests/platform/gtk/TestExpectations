@@ -620,7 +620,8 @@ webkit.org/b/142291 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ I
 webkit.org/b/142291 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
 webkit.org/b/142291 fast/regions/repaint/fixed-in-named-flow-cb-changed.html [ ImageOnlyFailure ]
 
-
+# TODO Scroll snap points
+css3/scroll-snap [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
