@@ -30,7 +30,6 @@
 #include "GUniquePtrSoup.h"
 #include "ResourceRequestBase.h"
 #include <libsoup/soup.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -121,8 +120,8 @@ namespace WebCore {
         void doUpdatePlatformHTTPBody() { }
         void doUpdateResourceHTTPBody() { }
 
-        PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
-        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }
+        std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData> data) const { return data; }
+        void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>) { }
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
