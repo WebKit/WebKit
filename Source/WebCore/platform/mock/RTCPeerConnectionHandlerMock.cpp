@@ -166,7 +166,7 @@ std::unique_ptr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataC
     return std::make_unique<RTCDataChannelHandlerMock>(label, init);
 }
 
-std::unique_ptr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<MediaStreamSource>)
+std::unique_ptr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<RealtimeMediaSource>)
 {
     return std::make_unique<RTCDTMFSenderHandlerMock>();
 }

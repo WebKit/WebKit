@@ -33,16 +33,15 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 
 #include "MediaStreamCenter.h"
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include "UUID.h"
 
 namespace WebCore {
 
-MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name)
+RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const String& name)
     : m_id(id)
     , m_type(type)
     , m_name(name)
@@ -58,7 +57,7 @@ MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& 
     m_id = createCanonicalUUIDString();
 }
 
-void MediaStreamSource::reset()
+void RealtimeMediaSource::reset()
 {
     m_readyState = New;
     m_enabled = true;
@@ -67,7 +66,7 @@ void MediaStreamSource::reset()
     m_remote = false;
 }
 
-void MediaStreamSource::setReadyState(ReadyState readyState)
+void RealtimeMediaSource::setReadyState(ReadyState readyState)
 {
     if (m_readyState == Ended || m_readyState == readyState)
         return;
@@ -86,12 +85,12 @@ void MediaStreamSource::setReadyState(ReadyState readyState)
         stopProducingData();
 }
 
-void MediaStreamSource::addObserver(MediaStreamSource::Observer* observer)
+void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer* observer)
 {
     m_observers.append(observer);
 }
 
-void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
+void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer* observer)
 {
     size_t pos = m_observers.find(observer);
     if (pos != notFound)
@@ -101,7 +100,7 @@ void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
         stop();
 }
 
-void MediaStreamSource::setMuted(bool muted)
+void RealtimeMediaSource::setMuted(bool muted)
 {
     if (m_muted == muted)
         return;
@@ -115,7 +114,7 @@ void MediaStreamSource::setMuted(bool muted)
         (*observer)->sourceMutedChanged();
 }
 
-void MediaStreamSource::setEnabled(bool enabled)
+void RealtimeMediaSource::setEnabled(bool enabled)
 {
     if (!enabled) {
         // Don't disable the source unless all observers are disabled.
@@ -142,12 +141,12 @@ void MediaStreamSource::setEnabled(bool enabled)
         (*observer)->sourceEnabledChanged();
 }
 
-bool MediaStreamSource::readonly() const
+bool RealtimeMediaSource::readonly() const
 {
     return m_readonly;
 }
 
-void MediaStreamSource::stop()
+void RealtimeMediaSource::stop()
 {
     // This is called from the track.stop() method, which should "Permanently stop the generation of data
     // for track's source", so go straight to ended. This will notify any other tracks using this source

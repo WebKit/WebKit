@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class MediaStreamPrivate;
-class MediaStreamSource;
+class RealtimeMediaSource;
 class MediaStreamSourcesQueryClient;
 
 class MediaStreamCenterGStreamer : public MediaStreamCenter {

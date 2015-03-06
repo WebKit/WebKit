@@ -35,7 +35,7 @@
 
 #include "MediaStreamCenter.h"
 
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 

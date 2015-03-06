@@ -38,7 +38,7 @@ class AVVideoCaptureSource : public AVMediaCaptureSource {
 public:
     static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
 
-    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const override;
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
     virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
 
 private:

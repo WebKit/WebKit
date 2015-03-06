@@ -42,7 +42,7 @@ private:
     AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
     virtual ~AVAudioCaptureSource();
     
-    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const override;
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
     virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
     
     virtual void setupCaptureSession() override;

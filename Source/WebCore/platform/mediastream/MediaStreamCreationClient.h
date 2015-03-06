@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

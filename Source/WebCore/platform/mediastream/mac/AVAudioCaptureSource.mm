@@ -31,8 +31,8 @@
 
 #import "Logging.h"
 #import "MediaConstraints.h"
-#import "MediaStreamSourceStates.h"
 #import "NotImplemented.h"
+#import "RealtimeMediaSourceStates.h"
 #import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
@@ -63,17 +63,17 @@ RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceType* d
 }
     
 AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraints)
-    : AVMediaCaptureSource(device, id, MediaStreamSource::Audio, constraints)
+    : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio, constraints)
 {
     currentStates()->setSourceId(id);
-    currentStates()->setSourceType(MediaStreamSourceStates::Microphone);
+    currentStates()->setSourceType(RealtimeMediaSourceStates::Microphone);
 }
     
 AVAudioCaptureSource::~AVAudioCaptureSource()
 {
 }
 
-RefPtr<MediaStreamSourceCapabilities> AVAudioCaptureSource::capabilities() const
+RefPtr<RealtimeMediaSourceCapabilities> AVAudioCaptureSource::capabilities() const
 {
     notImplemented();
     return 0;

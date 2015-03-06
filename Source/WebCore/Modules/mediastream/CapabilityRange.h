@@ -29,7 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include "ScriptWrappable.h"
 #include <bindings/ScriptValue.h>
 #include <interpreter/CallFrame.h>
@@ -41,16 +41,16 @@ class CapabilityRange : public RefCounted<CapabilityRange>, public ScriptWrappab
 public:
     virtual ~CapabilityRange() { }
 
-    static RefPtr<CapabilityRange> create(const MediaStreamSourceCapabilityRange&);
+    static RefPtr<CapabilityRange> create(const RealtimeMediaSourceCapabilityRange&);
 
     Deprecated::ScriptValue min(JSC::ExecState*) const;
     Deprecated::ScriptValue max(JSC::ExecState*) const;
     bool supported() const { return m_rangeInfo.supported(); }
 
 private:
-    CapabilityRange(const MediaStreamSourceCapabilityRange&);
+    CapabilityRange(const RealtimeMediaSourceCapabilityRange&);
     
-    MediaStreamSourceCapabilityRange m_rangeInfo;
+    RealtimeMediaSourceCapabilityRange m_rangeInfo;
 };
 
 } // namespace WebCore

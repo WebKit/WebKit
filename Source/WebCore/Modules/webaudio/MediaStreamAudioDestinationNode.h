@@ -49,7 +49,7 @@ public:
     virtual void process(size_t framesToProcess);
     virtual void reset();
     
-    MediaStreamSource* mediaStreamSource();
+    RealtimeMediaSource* mediaStreamSource();
 
 private:
     MediaStreamAudioDestinationNode(AudioContext*, size_t numberOfChannels);

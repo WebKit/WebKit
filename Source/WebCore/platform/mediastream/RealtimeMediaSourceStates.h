@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamSourceStates_h
-#define MediaStreamSourceStates_h
+#ifndef RealtimeMediaSourceStates_h
+#define RealtimeMediaSourceStates_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-class MediaStreamSourceStates {
+class RealtimeMediaSourceStates {
 public:
     enum SourceType { None, Camera, Microphone };
     enum VideoFacingMode { Unknown, User, Environment, Left, Right };
 
-    MediaStreamSourceStates()
+    RealtimeMediaSourceStates()
         : m_sourceType(None)
         , m_facingMode(Unknown)
         , m_width(0)
@@ -50,8 +50,8 @@ public:
     {
     }
 
-    static const AtomicString& sourceType(MediaStreamSourceStates::SourceType);
-    static const AtomicString& facingMode(MediaStreamSourceStates::VideoFacingMode);
+    static const AtomicString& sourceType(RealtimeMediaSourceStates::SourceType);
+    static const AtomicString& facingMode(RealtimeMediaSourceStates::VideoFacingMode);
 
     SourceType sourceType() const { return m_sourceType; }
     void setSourceType(SourceType type) { m_sourceType = type; }
@@ -90,6 +90,6 @@ private:
 
 } // namespace WebCore
 
-#endif // MediaStreamSourceStates_h
+#endif // RealtimeMediaSourceStates_h
 
 #endif

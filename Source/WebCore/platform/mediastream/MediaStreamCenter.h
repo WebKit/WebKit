@@ -34,7 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +42,7 @@ namespace WebCore {
 
 class MediaConstraints;
 class MediaStreamCreationClient;
-class MediaStreamSourceStates;
+class RealtimeMediaSourceStates;
 class MediaStreamTrackSourcesRequestClient;
 
 class MediaStreamCenter {

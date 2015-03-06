@@ -33,24 +33,24 @@
 
 namespace WebCore {
 
-RefPtr<MediaSourceStates> MediaSourceStates::create(const MediaStreamSourceStates& states)
+RefPtr<MediaSourceStates> MediaSourceStates::create(const RealtimeMediaSourceStates& states)
 {
     return adoptRef(new MediaSourceStates(states));
 }
 
-MediaSourceStates::MediaSourceStates(const MediaStreamSourceStates& states)
+MediaSourceStates::MediaSourceStates(const RealtimeMediaSourceStates& states)
     : m_sourceStates(states)
 {
 }
 
 const AtomicString& MediaSourceStates::sourceType() const
 {
-    return MediaStreamSourceStates::sourceType(m_sourceStates.sourceType());
+    return RealtimeMediaSourceStates::sourceType(m_sourceStates.sourceType());
 }
 
 const AtomicString& MediaSourceStates::facingMode() const
 {
-    return MediaStreamSourceStates::facingMode(m_sourceStates.facingMode());
+    return RealtimeMediaSourceStates::facingMode(m_sourceStates.facingMode());
 }
 
 

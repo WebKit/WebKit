@@ -23,22 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamSourceCapabilities_h
-#define MediaStreamSourceCapabilities_h
+#ifndef RealtimeMediaSourceCapabilities_h
+#define RealtimeMediaSourceCapabilities_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSourceStates.h"
+#include "RealtimeMediaSourceStates.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class MediaStreamSourceCapabilityRange {
+class RealtimeMediaSourceCapabilityRange {
 public:
     
-    MediaStreamSourceCapabilityRange(float min, float max, bool supported = true)
+    RealtimeMediaSourceCapabilityRange(float min, float max, bool supported = true)
         : m_type(Float)
     {
         m_min.asFloat = min;
@@ -46,7 +46,7 @@ public:
         m_supported = supported;
     }
     
-    MediaStreamSourceCapabilityRange(unsigned long min, unsigned long max, bool supported = true)
+    RealtimeMediaSourceCapabilityRange(unsigned long min, unsigned long max, bool supported = true)
         : m_type(ULong)
     {
         m_min.asULong = min;
@@ -54,7 +54,7 @@ public:
         m_supported = supported;
     }
     
-    MediaStreamSourceCapabilityRange()
+    RealtimeMediaSourceCapabilityRange()
     {
         m_type = Undefined;
         m_min.asULong = 0;
@@ -81,20 +81,20 @@ private:
     bool m_supported;
 };
 
-class MediaStreamSourceCapabilities : public RefCounted<MediaStreamSourceCapabilities> {
+class RealtimeMediaSourceCapabilities : public RefCounted<RealtimeMediaSourceCapabilities> {
 public:
-    static PassRefPtr<MediaStreamSourceCapabilities> create()
+    static PassRefPtr<RealtimeMediaSourceCapabilities> create()
     {
-        return adoptRef(new MediaStreamSourceCapabilities());
+        return adoptRef(new RealtimeMediaSourceCapabilities());
     }
 
-    ~MediaStreamSourceCapabilities() { }
+    ~RealtimeMediaSourceCapabilities() { }
 
-    const Vector<MediaStreamSourceStates::SourceType>& sourceTypes() { return m_sourceType; }
-    void setSourceType(MediaStreamSourceStates::SourceType sourceType) { m_sourceType.resizeToFit(1); addSourceType(sourceType); }
-    void addSourceType(MediaStreamSourceStates::SourceType sourceType)
+    const Vector<RealtimeMediaSourceStates::SourceType>& sourceTypes() { return m_sourceType; }
+    void setSourceType(RealtimeMediaSourceStates::SourceType sourceType) { m_sourceType.resizeToFit(1); addSourceType(sourceType); }
+    void addSourceType(RealtimeMediaSourceStates::SourceType sourceType)
     {
-        if (sourceType == MediaStreamSourceStates::Camera)
+        if (sourceType == RealtimeMediaSourceStates::Camera)
             m_videoSource = true;
         m_sourceType.append(sourceType);
     }
@@ -102,48 +102,48 @@ public:
     const Vector<AtomicString>& sourceId() { return m_sourceId; }
     void setSourceId(const AtomicString& id)  { m_sourceId.reserveCapacity(1); m_sourceId.insert(0, id); }
 
-    const Vector<MediaStreamSourceStates::VideoFacingMode>& facingModes() { return m_facingMode; }
-    void addFacingMode(MediaStreamSourceStates::VideoFacingMode mode) { m_facingMode.append(mode); }
+    const Vector<RealtimeMediaSourceStates::VideoFacingMode>& facingModes() { return m_facingMode; }
+    void addFacingMode(RealtimeMediaSourceStates::VideoFacingMode mode) { m_facingMode.append(mode); }
 
-    const MediaStreamSourceCapabilityRange& width() { return m_width; }
-    void setWidthRange(const MediaStreamSourceCapabilityRange& width) { m_width = width; }
+    const RealtimeMediaSourceCapabilityRange& width() { return m_width; }
+    void setWidthRange(const RealtimeMediaSourceCapabilityRange& width) { m_width = width; }
 
-    const MediaStreamSourceCapabilityRange& height() { return m_height; }
-    void setHeightRange(const MediaStreamSourceCapabilityRange& height) { m_height = height; }
+    const RealtimeMediaSourceCapabilityRange& height() { return m_height; }
+    void setHeightRange(const RealtimeMediaSourceCapabilityRange& height) { m_height = height; }
 
-    const MediaStreamSourceCapabilityRange& frameRate() { return m_frameRate; }
-    void setFrameRateRange(const MediaStreamSourceCapabilityRange& frameRate) { m_frameRate = frameRate; }
+    const RealtimeMediaSourceCapabilityRange& frameRate() { return m_frameRate; }
+    void setFrameRateRange(const RealtimeMediaSourceCapabilityRange& frameRate) { m_frameRate = frameRate; }
 
-    const MediaStreamSourceCapabilityRange& aspectRatio() { return m_aspectRatio; }
-    void setAspectRatioRange(const MediaStreamSourceCapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
+    const RealtimeMediaSourceCapabilityRange& aspectRatio() { return m_aspectRatio; }
+    void setAspectRatioRange(const RealtimeMediaSourceCapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
 
-    const MediaStreamSourceCapabilityRange& volume() { return m_volume; }
-    void setVolumeRange(const MediaStreamSourceCapabilityRange& volume) { m_volume = volume; }
+    const RealtimeMediaSourceCapabilityRange& volume() { return m_volume; }
+    void setVolumeRange(const RealtimeMediaSourceCapabilityRange& volume) { m_volume = volume; }
 
     bool hasVideoSource() { return m_videoSource; }
     void setHasVideoSource(bool isVideo) { m_videoSource = isVideo;; }
 
 private:
-    MediaStreamSourceCapabilities()
+    RealtimeMediaSourceCapabilities()
         : m_videoSource(false)
     {
     }
 
     Vector<AtomicString> m_sourceId;
-    Vector<MediaStreamSourceStates::SourceType> m_sourceType;
-    Vector<MediaStreamSourceStates::VideoFacingMode> m_facingMode;
+    Vector<RealtimeMediaSourceStates::SourceType> m_sourceType;
+    Vector<RealtimeMediaSourceStates::VideoFacingMode> m_facingMode;
 
-    MediaStreamSourceCapabilityRange m_width;
-    MediaStreamSourceCapabilityRange m_height;
-    MediaStreamSourceCapabilityRange m_frameRate;
-    MediaStreamSourceCapabilityRange m_aspectRatio;
-    MediaStreamSourceCapabilityRange m_volume;
+    RealtimeMediaSourceCapabilityRange m_width;
+    RealtimeMediaSourceCapabilityRange m_height;
+    RealtimeMediaSourceCapabilityRange m_frameRate;
+    RealtimeMediaSourceCapabilityRange m_aspectRatio;
+    RealtimeMediaSourceCapabilityRange m_volume;
 
     bool m_videoSource;
 };
 
 } // namespace WebCore
 
-#endif // MediaStreamSourceCapabilities_h
+#endif // RealtimeMediaSourceCapabilities_h
 
 #endif

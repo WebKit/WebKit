@@ -34,8 +34,8 @@
 #import "AVVideoCaptureSource.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
-#import "MediaStreamSource.h"
-#import "MediaStreamSourceStates.h"
+#import "RealtimeMediaSource.h"
+#import "RealtimeMediaSourceStates.h"
 #import "SoftLinking.h"
 #import "UUID.h"
 #import <AVFoundation/AVFoundation.h>
@@ -221,30 +221,30 @@ String AVCaptureDeviceManager::bestSessionPresetForVideoSize(AVCaptureSessionTyp
     return emptyString();
 }
 
-bool AVCaptureDeviceManager::deviceSupportsFacingMode(AVCaptureDeviceType *device, MediaStreamSourceStates::VideoFacingMode facingMode)
+bool AVCaptureDeviceManager::deviceSupportsFacingMode(AVCaptureDeviceType *device, RealtimeMediaSourceStates::VideoFacingMode facingMode)
 {
     if (![device hasMediaType:AVMediaTypeVideo])
         return false;
     
     switch (facingMode) {
-    case MediaStreamSourceStates::User:
+    case RealtimeMediaSourceStates::User:
         if ([device position] == AVCaptureDevicePositionFront)
             return true;
         break;
-    case MediaStreamSourceStates::Environment:
+    case RealtimeMediaSourceStates::Environment:
         if ([device position] == AVCaptureDevicePositionBack)
             return true;
         break;
-    case MediaStreamSourceStates::Left:
-    case MediaStreamSourceStates::Right:
-    case MediaStreamSourceStates::Unknown:
+    case RealtimeMediaSourceStates::Left:
+    case RealtimeMediaSourceStates::Right:
+    case RealtimeMediaSourceStates::Unknown:
         return false;
     }
     
     return false;
 }
 
-CaptureDevice* AVCaptureDeviceManager::bestDeviceForFacingMode(MediaStreamSourceStates::VideoFacingMode facingMode)
+CaptureDevice* AVCaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSourceStates::VideoFacingMode facingMode)
 {
     Vector<CaptureDevice>& devices = captureDeviceList();
     
@@ -260,7 +260,7 @@ CaptureDevice* AVCaptureDeviceManager::bestDeviceForFacingMode(MediaStreamSource
     return 0;
 }
 
-bool AVCaptureDeviceManager::sessionSupportsConstraint(AVCaptureSessionType *session, MediaStreamSource::Type type, const String& name, const String& value)
+bool AVCaptureDeviceManager::sessionSupportsConstraint(AVCaptureSessionType *session, RealtimeMediaSource::Type type, const String& name, const String& value)
 {
     size_t constraint = validConstraintNames().find(name);
     if (constraint == notFound)
@@ -268,17 +268,17 @@ bool AVCaptureDeviceManager::sessionSupportsConstraint(AVCaptureSessionType *ses
     
     switch (constraint) {
     case Width:
-        if (type == MediaStreamSource::Audio)
+        if (type == RealtimeMediaSource::Audio)
             return false;
 
         return !bestSessionPresetForVideoSize(session, value.toInt(), 0).isEmpty();
     case Height:
-        if (type == MediaStreamSource::Audio)
+        if (type == RealtimeMediaSource::Audio)
             return false;
 
         return !bestSessionPresetForVideoSize(session, 0, value.toInt()).isEmpty();
     case FrameRate: {
-        if (type == MediaStreamSource::Audio)
+        if (type == RealtimeMediaSource::Audio)
             return false;
         
         // It would make sense to use [AVCaptureConnection videoMinFrameDuration] and
@@ -287,34 +287,34 @@ bool AVCaptureDeviceManager::sessionSupportsConstraint(AVCaptureSessionType *ses
         return rate > 0 && rate <= 60;
     }
     case Gain: {
-        if (type != MediaStreamSource::Audio)
+        if (type != RealtimeMediaSource::Audio)
             return false;
         
         float level = value.toFloat();
         return level > 0 && level <= 1;
     }
     case FacingMode: {
-        if (type == MediaStreamSource::Audio)
+        if (type == RealtimeMediaSource::Audio)
             return false;
 
         size_t facingMode =  validFacingModes().find(value);
         if (facingMode != notFound)
             return false;
-        return bestDeviceForFacingMode(static_cast<MediaStreamSourceStates::VideoFacingMode>(facingMode));
+        return bestDeviceForFacingMode(static_cast<RealtimeMediaSourceStates::VideoFacingMode>(facingMode));
     }
     }
     
     return false;
 }
 
-bool AVCaptureDeviceManager::isValidConstraint(MediaStreamSource::Type type, const String& name)
+bool AVCaptureDeviceManager::isValidConstraint(RealtimeMediaSource::Type type, const String& name)
 {
     size_t constraint = validConstraintNames().find(name);
     if (constraint == notFound)
         return false;
 
     if (constraint == Gain)
-        return type == MediaStreamSource::Audio;
+        return type == RealtimeMediaSource::Audio;
 
     return true;
 }
@@ -347,7 +347,7 @@ Vector<RefPtr<TrackSourceInfo>> AVCaptureDeviceManager::getSourcesInfo(const Str
     return sourcesInfo;
 }
 
-bool AVCaptureDeviceManager::verifyConstraintsForMediaType(MediaStreamSource::Type type, MediaConstraints* constraints, String& invalidConstraint)
+bool AVCaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, MediaConstraints* constraints, String& invalidConstraint)
 {
     if (!isAvailable())
         return false;
@@ -384,7 +384,7 @@ bool AVCaptureDeviceManager::verifyConstraintsForMediaType(MediaStreamSource::Ty
     return true;
 }
 
-RefPtr<MediaStreamSource> AVCaptureDeviceManager::bestSourceForTypeAndConstraints(MediaStreamSource::Type type, PassRefPtr<MediaConstraints> constraints)
+RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::bestSourceForTypeAndConstraints(RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
 {
     if (!isAvailable())
         return 0;
@@ -397,23 +397,23 @@ RefPtr<MediaStreamSource> AVCaptureDeviceManager::bestSourceForTypeAndConstraint
 
         // FIXME: consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        if (type == MediaStreamSource::Audio && !devices[i].m_audioSourceId.isEmpty()) {
+        if (type == RealtimeMediaSource::Audio && !devices[i].m_audioSourceId.isEmpty()) {
             if (!devices[i].m_audioSource) {
                 AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:devices[i].m_captureDeviceID];
                 ASSERT(device);
                 devices[i].m_audioSource = AVAudioCaptureSource::create(device, devices[i].m_audioSourceId, constraints);
             }
-            devices[i].m_audioSource->setReadyState(MediaStreamSource::Live);
+            devices[i].m_audioSource->setReadyState(RealtimeMediaSource::Live);
             return devices[i].m_audioSource;
         }
 
-        if (type == MediaStreamSource::Video && !devices[i].m_videoSourceId.isEmpty()) {
+        if (type == RealtimeMediaSource::Video && !devices[i].m_videoSourceId.isEmpty()) {
             if (!devices[i].m_videoSource) {
                 AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:devices[i].m_captureDeviceID];
                 ASSERT(device);
                 devices[i].m_videoSource = AVVideoCaptureSource::create(device, devices[i].m_videoSourceId, constraints);
             }
-            devices[i].m_videoSource->setReadyState(MediaStreamSource::Live);
+            devices[i].m_videoSource->setReadyState(RealtimeMediaSource::Live);
             return devices[i].m_videoSource;
         }
     }
@@ -478,10 +478,10 @@ const Vector<AtomicString>& AVCaptureDeviceManager::validFacingModes()
     DEPRECATED_DEFINE_STATIC_LOCAL(Vector<AtomicString>, modes, ());
     
     if (!modes.size()) {
-        modes.insert(MediaStreamSourceStates::User, MediaStreamSourceStates::facingMode(MediaStreamSourceStates::User));
-        modes.insert(MediaStreamSourceStates::Environment, MediaStreamSourceStates::facingMode(MediaStreamSourceStates::Environment));
-        modes.insert(MediaStreamSourceStates::Left, MediaStreamSourceStates::facingMode(MediaStreamSourceStates::Left));
-        modes.insert(MediaStreamSourceStates::Right, MediaStreamSourceStates::facingMode(MediaStreamSourceStates::Right));
+        modes.insert(RealtimeMediaSourceStates::User, RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::User));
+        modes.insert(RealtimeMediaSourceStates::Environment, RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::Environment));
+        modes.insert(RealtimeMediaSourceStates::Left, RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::Left));
+        modes.insert(RealtimeMediaSourceStates::Right, RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::Right));
     }
     
     return modes;

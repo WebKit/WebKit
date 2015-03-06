@@ -1,3 +1,22 @@
+2015-03-05  Philippe Normand  <pnormand@igalia.com>
+
+        Rename MediaStreamSource to RealtimeMediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=142330
+
+        Reviewed by Eric Carlson.
+
+        MediaStreamSource is a misleading name, it's not the source of a
+        MediaStream.
+
+        The chain from high level to low level is: MediaStream -
+        MediaStreamTrack - MediaStreamTrackPrivate - RealTimeMediaSource
+        and a MediaStream can contains several MediaStreamTrack objects of
+        different types.
+
+        MediaStreamSourceStates was also renamed to
+        RealtimeMediaSourceStates, and MediaStreamSourceCapabilities to
+        RealtimeMediaSourceCapabilities, for consistency.
+
 2015-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed WinCairo port build fix since r181136.

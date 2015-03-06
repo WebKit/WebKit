@@ -65,7 +65,7 @@ void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCrea
 
     if (audioConstraints) {
         String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(MediaStreamSource::Audio, audioConstraints.get(), invalidConstraint);
+        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Audio, audioConstraints.get(), invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             client->constraintsInvalid(invalidConstraint);
             return;
@@ -74,7 +74,7 @@ void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCrea
 
     if (videoConstraints) {
         String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(MediaStreamSource::Video, videoConstraints.get(), invalidConstraint);
+        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Video, videoConstraints.get(), invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             client->constraintsInvalid(invalidConstraint);
             return;
@@ -90,18 +90,18 @@ void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClien
     
     ASSERT(client);
     
-    Vector<RefPtr<MediaStreamSource>> audioSources;
-    Vector<RefPtr<MediaStreamSource>> videoSources;
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
     
     if (audioConstraints) {
         String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(MediaStreamSource::Audio, audioConstraints.get(), invalidConstraint);
+        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Audio, audioConstraints.get(), invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidConstraint);
             return;
         }
         
-        RefPtr<MediaStreamSource> audioSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(MediaStreamSource::Audio, audioConstraints.get());
+        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get());
         ASSERT(audioSource);
         
         audioSources.append(audioSource.release());
@@ -109,13 +109,13 @@ void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClien
     
     if (videoConstraints) {
         String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(MediaStreamSource::Video, videoConstraints.get(), invalidConstraint);
+        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Video, videoConstraints.get(), invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidConstraint);
             return;
         }
         
-        RefPtr<MediaStreamSource> videoSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(MediaStreamSource::Video, videoConstraints.get());
+        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get());
         ASSERT(videoSource);
         
         videoSources.append(videoSource.release());

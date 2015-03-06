@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +37,7 @@ namespace WebCore {
 
 class MediaSourceStates : public RefCounted<MediaSourceStates>, public ScriptWrappable {
 public:
-    static RefPtr<MediaSourceStates> create(const MediaStreamSourceStates&);
+    static RefPtr<MediaSourceStates> create(const RealtimeMediaSourceStates&);
 
     const AtomicString& sourceType() const;
     const AtomicString& sourceId() const { return m_sourceStates.sourceId(); }
@@ -48,12 +48,12 @@ public:
     const AtomicString& facingMode() const;
     unsigned long volume() const { return m_sourceStates.volume(); }
     
-    bool hasVideoSource() const { return m_sourceStates.sourceType() == MediaStreamSourceStates::Camera; }
+    bool hasVideoSource() const { return m_sourceStates.sourceType() == RealtimeMediaSourceStates::Camera; }
 
 private:
-    explicit MediaSourceStates(const MediaStreamSourceStates&);
+    explicit MediaSourceStates(const RealtimeMediaSourceStates&);
 
-    MediaStreamSourceStates m_sourceStates;
+    RealtimeMediaSourceStates m_sourceStates;
 };
 
 } // namespace WebCore

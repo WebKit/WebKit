@@ -29,7 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamCapabilities.h"
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -38,11 +38,11 @@
 namespace WebCore {
 
 class CapabilityRange;
-class MediaStreamSourceCapabilities;
+class RealtimeMediaSourceCapabilities;
 
 class MediaStreamCapabilities : public RefCounted<MediaStreamCapabilities>, public ScriptWrappable {
 public:
-    static RefPtr<MediaStreamCapabilities> create(PassRefPtr<MediaStreamSourceCapabilities>);
+    static RefPtr<MediaStreamCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities>);
     virtual ~MediaStreamCapabilities() { }
 
     virtual Vector<String> sourceType() const;
@@ -57,9 +57,9 @@ public:
     bool hasVideoSource() { return m_SourceCapabilities->hasVideoSource(); }
 
 protected:
-    explicit MediaStreamCapabilities(PassRefPtr<MediaStreamSourceCapabilities>);
+    explicit MediaStreamCapabilities(PassRefPtr<RealtimeMediaSourceCapabilities>);
 
-    RefPtr<MediaStreamSourceCapabilities> m_SourceCapabilities;
+    RefPtr<RealtimeMediaSourceCapabilities> m_SourceCapabilities;
 };
 
 } // namespace WebCore

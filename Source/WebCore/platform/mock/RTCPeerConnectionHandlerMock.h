@@ -55,7 +55,7 @@ public:
     virtual void removeStream(PassRefPtr<MediaStreamPrivate>) override;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) override;
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) override;
-    virtual std::unique_ptr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamSource>) override;
+    virtual std::unique_ptr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<RealtimeMediaSource>) override;
     virtual void stop() override;
 
     explicit RTCPeerConnectionHandlerMock(RTCPeerConnectionHandlerClient*);

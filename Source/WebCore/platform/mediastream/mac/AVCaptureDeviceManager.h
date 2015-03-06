@@ -29,8 +29,8 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "MediaStreamCenter.h"
-#include "MediaStreamSource.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,15 +49,15 @@ public:
     static bool isAvailable();
 
     Vector<RefPtr<TrackSourceInfo>> getSourcesInfo(const String&);
-    bool verifyConstraintsForMediaType(MediaStreamSource::Type, MediaConstraints*, String&);
-    RefPtr<MediaStreamSource> bestSourceForTypeAndConstraints(MediaStreamSource::Type, PassRefPtr<MediaConstraints>);
+    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, String&);
+    RefPtr<RealtimeMediaSource> bestSourceForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
 
     enum ValidConstraints { Width = 0, Height, FrameRate, FacingMode, Gain };
     static const Vector<AtomicString>& validConstraintNames();
     static const Vector<AtomicString>& validFacingModes();
 
-    static bool deviceSupportsFacingMode(AVCaptureDevice*, MediaStreamSourceStates::VideoFacingMode);
-    static bool isValidConstraint(MediaStreamSource::Type, const String&);
+    static bool deviceSupportsFacingMode(AVCaptureDevice*, RealtimeMediaSourceStates::VideoFacingMode);
+    static bool isValidConstraint(RealtimeMediaSource::Type, const String&);
     static String bestSessionPresetForVideoSize(AVCaptureSession*, int width, int height);
 
     void registerForDeviceNotifications();
@@ -68,8 +68,8 @@ protected:
     AVCaptureDeviceManager();
     ~AVCaptureDeviceManager();
 
-    CaptureDevice* bestDeviceForFacingMode(MediaStreamSourceStates::VideoFacingMode);
-    bool sessionSupportsConstraint(AVCaptureSession*, MediaStreamSource::Type, const String& name, const String& value);
+    CaptureDevice* bestDeviceForFacingMode(RealtimeMediaSourceStates::VideoFacingMode);
+    bool sessionSupportsConstraint(AVCaptureSession*, RealtimeMediaSource::Type, const String& name, const String& value);
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
 };

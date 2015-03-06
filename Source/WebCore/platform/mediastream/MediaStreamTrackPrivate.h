@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class MediaSourceStates;
-class MediaStreamSourceCapabilities;
+class RealtimeMediaSourceCapabilities;
 
 class MediaStreamTrackPrivateClient {
 public:
@@ -47,9 +47,9 @@ public:
     virtual void trackEnabledChanged() = 0;
 };
 
-class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public MediaStreamSource::Observer {
+class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public RealtimeMediaSource::Observer {
 public:
-    static PassRefPtr<MediaStreamTrackPrivate> create(PassRefPtr<MediaStreamSource>);
+    static PassRefPtr<MediaStreamTrackPrivate> create(PassRefPtr<RealtimeMediaSource>);
 
     virtual ~MediaStreamTrackPrivate();
 
@@ -67,13 +67,13 @@ public:
     bool enabled() const { return m_enabled; }
     void setEnabled(bool);
 
-    void setReadyState(MediaStreamSource::ReadyState);
-    MediaStreamSource::ReadyState readyState() const;
+    void setReadyState(RealtimeMediaSource::ReadyState);
+    RealtimeMediaSource::ReadyState readyState() const;
 
     RefPtr<MediaStreamTrackPrivate> clone();
 
-    MediaStreamSource* source() const { return m_source.get(); }
-    void setSource(PassRefPtr<MediaStreamSource>);
+    RealtimeMediaSource* source() const { return m_source.get(); }
+    void setSource(PassRefPtr<RealtimeMediaSource>);
 
     enum StopBehavior { StopTrackAndStopSource, StopTrackOnly };
     void stop(StopBehavior);
@@ -81,10 +81,10 @@ public:
     
     void setClient(MediaStreamTrackPrivateClient* client) { m_client = client; }
 
-    MediaStreamSource::Type type() const;
+    RealtimeMediaSource::Type type() const;
 
-    const MediaStreamSourceStates& states() const;
-    RefPtr<MediaStreamSourceCapabilities> capabilities() const;
+    const RealtimeMediaSourceStates& states() const;
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
 
     RefPtr<MediaConstraints> constraints() const;
     void applyConstraints(PassRefPtr<MediaConstraints>);
@@ -93,21 +93,21 @@ public:
 
 protected:
     explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);
-    MediaStreamTrackPrivate(PassRefPtr<MediaStreamSource>);
+    MediaStreamTrackPrivate(PassRefPtr<RealtimeMediaSource>);
 
 private:
     MediaStreamTrackPrivateClient* client() const { return m_client; }
 
-    // MediaStreamSourceObserver
+    // RealtimeMediaSourceObserver
     virtual void sourceReadyStateChanged() override final;
     virtual void sourceMutedChanged() override final;
     virtual void sourceEnabledChanged() override final;
     virtual bool observerIsEnabled() override final;
     
-    RefPtr<MediaStreamSource> m_source;
+    RefPtr<RealtimeMediaSource> m_source;
     MediaStreamTrackPrivateClient* m_client;
     RefPtr<MediaConstraints> m_constraints;
-    MediaStreamSource::ReadyState m_readyState;
+    RealtimeMediaSource::ReadyState m_readyState;
     mutable String m_id;
 
     bool m_muted;

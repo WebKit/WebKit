@@ -31,7 +31,7 @@
 
 #import "Logging.h"
 #import "MediaConstraints.h"
-#import "MediaStreamSourceStates.h"
+#import "RealtimeMediaSourceStates.h"
 #import "SoftLinking.h"
 #import "UUID.h"
 #import <AVFoundation/AVFoundation.h>
@@ -121,15 +121,15 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     return globalQueue;
 }
 
-AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, MediaStreamSource::Type type, PassRefPtr<MediaConstraints> constraints)
-    : MediaStreamSource(id, type, emptyString())
+AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
+    : RealtimeMediaSource(id, type, emptyString())
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_constraints(constraints)
     , m_device(device)
     , m_isRunning(false)
 {
     setName([device localizedName]);
-    m_currentStates.setSourceType(type == MediaStreamSource::Video ? MediaStreamSourceStates::Camera : MediaStreamSourceStates::Microphone);
+    m_currentStates.setSourceType(type == RealtimeMediaSource::Video ? RealtimeMediaSourceStates::Camera : RealtimeMediaSourceStates::Microphone);
 }
 
 AVMediaCaptureSource::~AVMediaCaptureSource()
@@ -164,7 +164,7 @@ void AVMediaCaptureSource::stopProducingData()
     m_isRunning = true;
 }
 
-const MediaStreamSourceStates& AVMediaCaptureSource::states()
+const RealtimeMediaSourceStates& AVMediaCaptureSource::states()
 {
     updateStates();
     return m_currentStates;

@@ -33,18 +33,18 @@
 namespace WebCore {
 
 class CapabilityRange;
-class MediaStreamSourceCapabilities;
+class RealtimeMediaSourceCapabilities;
 
 class AllVideoCapabilities : public MediaStreamCapabilities {
 public:
-    static RefPtr<AllVideoCapabilities> create(PassRefPtr<MediaStreamSourceCapabilities> capabilities)
+    static RefPtr<AllVideoCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
     {
         return adoptRef(new AllVideoCapabilities(capabilities));
     }
     virtual ~AllVideoCapabilities() { }
 
 private:
-    explicit AllVideoCapabilities(PassRefPtr<MediaStreamSourceCapabilities> capabilities)
+    explicit AllVideoCapabilities(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
         : MediaStreamCapabilities(capabilities)
     {
     }

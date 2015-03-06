@@ -29,24 +29,24 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamCapabilities.h"
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CapabilityRange;
-class MediaStreamSourceCapabilities;
+class RealtimeMediaSourceCapabilities;
 
 class AllAudioCapabilities : public MediaStreamCapabilities {
 public:
-    static RefPtr<AllAudioCapabilities> create(PassRefPtr<MediaStreamSourceCapabilities> capabilities)
+    static RefPtr<AllAudioCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
     {
         return adoptRef(new AllAudioCapabilities(capabilities));
     }
     virtual ~AllAudioCapabilities() { }
 
 private:
-    explicit AllAudioCapabilities(PassRefPtr<MediaStreamSourceCapabilities> capabilities)
+    explicit AllAudioCapabilities(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
         : MediaStreamCapabilities(capabilities)
     {
     }

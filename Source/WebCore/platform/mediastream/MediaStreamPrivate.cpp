@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
+PassRefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources)
 {
     return adoptRef(new MediaStreamPrivate(createCanonicalUUIDString(), audioSources, videoSources));
 }
@@ -53,47 +53,47 @@ PassRefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<Me
     return adoptRef(new MediaStreamPrivate(createCanonicalUUIDString(), audioPrivateTracks, videoPrivateTracks));
 }
 
-void MediaStreamPrivate::addSource(PassRefPtr<MediaStreamSource> prpSource)
+void MediaStreamPrivate::addSource(PassRefPtr<RealtimeMediaSource> prpSource)
 {
-    RefPtr<MediaStreamSource> source = prpSource;
+    RefPtr<RealtimeMediaSource> source = prpSource;
     switch (source->type()) {
-    case MediaStreamSource::Audio:
+    case RealtimeMediaSource::Audio:
         if (m_audioStreamSources.find(source) == notFound)
             m_audioStreamSources.append(source);
         break;
-    case MediaStreamSource::Video:
+    case RealtimeMediaSource::Video:
         if (m_videoStreamSources.find(source) == notFound)
             m_videoStreamSources.append(source);
         break;
-    case MediaStreamSource::None:
+    case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();
         break;
     }
 }
 
-void MediaStreamPrivate::removeSource(PassRefPtr<MediaStreamSource> source)
+void MediaStreamPrivate::removeSource(PassRefPtr<RealtimeMediaSource> source)
 {
     size_t pos = notFound;
     switch (source->type()) {
-    case MediaStreamSource::Audio:
+    case RealtimeMediaSource::Audio:
         pos = m_audioStreamSources.find(source);
         if (pos == notFound)
             return;
         m_audioStreamSources.remove(pos);
         break;
-    case MediaStreamSource::Video:
+    case RealtimeMediaSource::Video:
         pos = m_videoStreamSources.find(source);
         if (pos == notFound)
             return;
         m_videoStreamSources.remove(pos);
         break;
-    case MediaStreamSource::None:
+    case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();
         break;
     }
 }
 
-void MediaStreamPrivate::addRemoteSource(MediaStreamSource* source)
+void MediaStreamPrivate::addRemoteSource(RealtimeMediaSource* source)
 {
     if (m_client)
         m_client->addRemoteSource(source);
@@ -101,7 +101,7 @@ void MediaStreamPrivate::addRemoteSource(MediaStreamSource* source)
         addSource(source);
 }
 
-void MediaStreamPrivate::removeRemoteSource(MediaStreamSource* source)
+void MediaStreamPrivate::removeRemoteSource(RealtimeMediaSource* source)
 {
     if (m_client)
         m_client->removeRemoteSource(source);
@@ -125,7 +125,7 @@ void MediaStreamPrivate::removeRemoteTrack(MediaStreamTrackPrivate* track)
         removeTrack(track);
 }
 
-MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
+MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources)
     : m_client(0)
     , m_id(id)
     , m_isActive(false)
@@ -177,7 +177,7 @@ void MediaStreamPrivate::setActive(bool active)
 void MediaStreamPrivate::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
 {
     RefPtr<MediaStreamTrackPrivate> track = prpTrack;
-    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == RealtimeMediaSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
 
     size_t pos = tracks.find(track);
     if (pos != notFound)
@@ -190,7 +190,7 @@ void MediaStreamPrivate::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
 
 void MediaStreamPrivate::removeTrack(PassRefPtr<MediaStreamTrackPrivate> track)
 {
-    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == RealtimeMediaSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
 
     size_t pos = tracks.find(track);
     if (pos == notFound)

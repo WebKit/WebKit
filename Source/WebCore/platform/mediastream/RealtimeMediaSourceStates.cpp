@@ -31,14 +31,13 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-
-#include "MediaStreamSourceStates.h"
+#include "RealtimeMediaSourceStates.h"
 
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-const AtomicString& MediaStreamSourceStates::facingMode(MediaStreamSourceStates::VideoFacingMode mode)
+const AtomicString& RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::VideoFacingMode mode)
 {
     static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
@@ -46,15 +45,15 @@ const AtomicString& MediaStreamSourceStates::facingMode(MediaStreamSourceStates:
     static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
     
     switch (mode) {
-    case MediaStreamSourceStates::User:
+    case RealtimeMediaSourceStates::User:
         return userFacing;
-    case MediaStreamSourceStates::Environment:
+    case RealtimeMediaSourceStates::Environment:
         return environmentFacing;
-    case MediaStreamSourceStates::Left:
+    case RealtimeMediaSourceStates::Left:
         return leftFacing;
-    case MediaStreamSourceStates::Right:
+    case RealtimeMediaSourceStates::Right:
         return rightFacing;
-    case MediaStreamSourceStates::Unknown:
+    case RealtimeMediaSourceStates::Unknown:
         return emptyAtom;
     }
     
@@ -62,18 +61,18 @@ const AtomicString& MediaStreamSourceStates::facingMode(MediaStreamSourceStates:
     return emptyAtom;
 }
 
-const AtomicString& MediaStreamSourceStates::sourceType(MediaStreamSourceStates::SourceType sourceType)
+const AtomicString& RealtimeMediaSourceStates::sourceType(RealtimeMediaSourceStates::SourceType sourceType)
 {
     static NeverDestroyed<AtomicString> none("none", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> camera("camera", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> microphone("microphone", AtomicString::ConstructFromLiteral);
     
     switch (sourceType) {
-    case MediaStreamSourceStates::None:
+    case RealtimeMediaSourceStates::None:
         return none;
-    case MediaStreamSourceStates::Camera:
+    case RealtimeMediaSourceStates::Camera:
         return camera;
-    case MediaStreamSourceStates::Microphone:
+    case RealtimeMediaSourceStates::Microphone:
         return microphone;
     }
     

@@ -84,7 +84,7 @@ MediaStreamTrack::~MediaStreamTrack()
     m_privateTrack->setClient(nullptr);
 }
 
-void MediaStreamTrack::setSource(PassRefPtr<MediaStreamSource> newSource)
+void MediaStreamTrack::setSource(PassRefPtr<RealtimeMediaSource> newSource)
 {
     m_privateTrack->setSource(newSource);
 }
@@ -136,11 +136,11 @@ const AtomicString& MediaStreamTrack::readyState() const
     static NeverDestroyed<AtomicString> newState("new", AtomicString::ConstructFromLiteral);
 
     switch (m_privateTrack->readyState()) {
-    case MediaStreamSource::Live:
+    case RealtimeMediaSource::Live:
         return live;
-    case MediaStreamSource::New:
+    case RealtimeMediaSource::New:
         return newState;
-    case MediaStreamSource::Ended:
+    case RealtimeMediaSource::Ended:
         return ended;
     }
 
@@ -172,10 +172,10 @@ RefPtr<MediaStreamCapabilities> MediaStreamTrack::getCapabilities() const
     // The source may be shared by multiple tracks, so its states is not necessarily
     // in sync with the track state. A track that is new or has ended always has a source
     // type of "none".
-    RefPtr<MediaStreamSourceCapabilities> sourceCapabilities = m_privateTrack->capabilities();
-    MediaStreamSource::ReadyState readyState = m_privateTrack->readyState();
-    if (readyState == MediaStreamSource::New || readyState == MediaStreamSource::Ended)
-        sourceCapabilities->setSourceType(MediaStreamSourceStates::None);
+    RefPtr<RealtimeMediaSourceCapabilities> sourceCapabilities = m_privateTrack->capabilities();
+    RealtimeMediaSource::ReadyState readyState = m_privateTrack->readyState();
+    if (readyState == RealtimeMediaSource::New || readyState == RealtimeMediaSource::Ended)
+        sourceCapabilities->setSourceType(RealtimeMediaSourceStates::None);
     
     return MediaStreamCapabilities::create(sourceCapabilities.release());
 }
@@ -194,7 +194,7 @@ void MediaStreamTrack::applyConstraints(PassRefPtr<MediaConstraints>)
 
 RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
 {
-    if (m_privateTrack->type() == MediaStreamSource::Audio)
+    if (m_privateTrack->type() == RealtimeMediaSource::Audio)
         return AudioStreamTrack::create(*this);
 
     return VideoStreamTrack::create(*this);
@@ -235,10 +235,10 @@ void MediaStreamTrack::trackReadyStateChanged()
     if (stopped())
         return;
 
-    MediaStreamSource::ReadyState readyState = m_privateTrack->readyState();
-    if (readyState == MediaStreamSource::Live)
+    RealtimeMediaSource::ReadyState readyState = m_privateTrack->readyState();
+    if (readyState == RealtimeMediaSource::Live)
         scheduleEventDispatch(Event::create(eventNames().startedEvent, false, false));
-    else if (readyState == MediaStreamSource::Ended && !m_stoppingTrack)
+    else if (readyState == RealtimeMediaSource::Ended && !m_stoppingTrack)
         scheduleEventDispatch(Event::create(eventNames().endedEvent, false, false));
 
     configureTrackRendering();
@@ -277,7 +277,7 @@ void MediaStreamTrack::configureTrackRendering()
 
 void MediaStreamTrack::trackDidEnd()
 {
-    m_privateTrack->setReadyState(MediaStreamSource::Ended);
+    m_privateTrack->setReadyState(RealtimeMediaSource::Ended);
 
     for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
         (*i)->trackDidEnd();

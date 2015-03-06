@@ -2169,8 +2169,8 @@ set(WebCore_SOURCES
     platform/mediastream/MediaStreamCenter.cpp
     platform/mediastream/MediaStreamPrivate.cpp
     platform/mediastream/MediaStreamTrackPrivate.cpp
-    platform/mediastream/MediaStreamSource.cpp
-    platform/mediastream/MediaStreamSourceStates.cpp
+    platform/mediastream/RealtimeMediaSource.cpp
+    platform/mediastream/RealtimeMediaSourceStates.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp
     platform/mediastream/RTCSessionDescriptionDescriptor.cpp

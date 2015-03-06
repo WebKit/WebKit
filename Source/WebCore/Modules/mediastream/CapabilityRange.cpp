@@ -40,17 +40,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<CapabilityRange> CapabilityRange::create(const MediaStreamSourceCapabilityRange& rangeInfo)
+RefPtr<CapabilityRange> CapabilityRange::create(const RealtimeMediaSourceCapabilityRange& rangeInfo)
 {
     return adoptRef(new CapabilityRange(rangeInfo));
 }
 
-CapabilityRange::CapabilityRange(const MediaStreamSourceCapabilityRange& rangeInfo)
+CapabilityRange::CapabilityRange(const RealtimeMediaSourceCapabilityRange& rangeInfo)
     : m_rangeInfo(rangeInfo)
 {
 }
 
-static Deprecated::ScriptValue scriptValue(ExecState* exec, const MediaStreamSourceCapabilityRange::ValueUnion& value, MediaStreamSourceCapabilityRange::Type type)
+static Deprecated::ScriptValue scriptValue(ExecState* exec, const RealtimeMediaSourceCapabilityRange::ValueUnion& value, RealtimeMediaSourceCapabilityRange::Type type)
 {
     // NOTE: the spec says:
     //      ... an implementation should make a reasonable attempt to translate and scale the hardware's setting
@@ -62,13 +62,13 @@ static Deprecated::ScriptValue scriptValue(ExecState* exec, const MediaStreamSou
     // "Custom" and return jsUndefined() from the custom getter to support it.
     
     switch (type) {
-    case MediaStreamSourceCapabilityRange::Float:
+    case RealtimeMediaSourceCapabilityRange::Float:
         return Deprecated::ScriptValue(exec->vm(), JSValue(value.asFloat));
         break;
-    case MediaStreamSourceCapabilityRange::ULong:
+    case RealtimeMediaSourceCapabilityRange::ULong:
         return Deprecated::ScriptValue(exec->vm(), JSValue(value.asULong));
         break;
-    case MediaStreamSourceCapabilityRange::Undefined:
+    case RealtimeMediaSourceCapabilityRange::Undefined:
         return Deprecated::ScriptValue(exec->vm(), jsUndefined());
         break;
     }

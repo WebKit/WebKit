@@ -37,9 +37,9 @@
 
 #include "ActiveDOMObject.h"
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamSource.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

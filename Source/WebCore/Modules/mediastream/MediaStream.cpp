@@ -35,8 +35,8 @@
 #include "ExceptionCode.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamRegistry.h"
-#include "MediaStreamSource.h"
 #include "MediaStreamTrackEvent.h"
+#include "RealtimeMediaSource.h"
 #include "VideoStreamTrack.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -44,7 +44,7 @@ namespace WebCore {
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
-    return MediaStream::create(context, MediaStreamPrivate::create(Vector<RefPtr<MediaStreamSource>>(), Vector<RefPtr<MediaStreamSource>>()));
+    return MediaStream::create(context, MediaStreamPrivate::create(Vector<RefPtr<RealtimeMediaSource>>(), Vector<RefPtr<RealtimeMediaSource>>()));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStream> stream)
@@ -216,9 +216,9 @@ bool MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack)
     return true;
 }
 
-bool MediaStream::haveTrackWithSource(PassRefPtr<MediaStreamSource> source)
+bool MediaStream::haveTrackWithSource(PassRefPtr<RealtimeMediaSource> source)
 {
-    if (source->type() == MediaStreamSource::Audio) {
+    if (source->type() == RealtimeMediaSource::Audio) {
         for (auto it = m_audioTracks.begin(), end = m_audioTracks.end(); it != end; ++it) {
             if ((*it)->source() == source.get())
                 return true;
@@ -288,13 +288,13 @@ void MediaStream::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void MediaStream::addRemoteSource(MediaStreamSource* source)
+void MediaStream::addRemoteSource(RealtimeMediaSource* source)
 {
     ASSERT(source);
     addRemoteTrack(MediaStreamTrackPrivate::create(source).get());
 }
 
-void MediaStream::removeRemoteSource(MediaStreamSource* source)
+void MediaStream::removeRemoteSource(RealtimeMediaSource* source)
 {
     ASSERT(source);
     if (!active())
@@ -324,13 +324,13 @@ void MediaStream::addRemoteTrack(MediaStreamTrackPrivate* privateTrack)
 
     RefPtr<MediaStreamTrack> track;
     switch (privateTrack->type()) {
-    case MediaStreamSource::Audio:
+    case RealtimeMediaSource::Audio:
         track = AudioStreamTrack::create(*scriptExecutionContext(), *privateTrack);
         break;
-    case MediaStreamSource::Video:
+    case RealtimeMediaSource::Video:
         track = VideoStreamTrack::create(*scriptExecutionContext(), *privateTrack);
         break;
-    case MediaStreamSource::None:
+    case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -377,14 +377,14 @@ URLRegistry& MediaStream::registry() const
     return MediaStreamRegistry::registry();
 }
 
-Vector<RefPtr<MediaStreamTrack>>* MediaStream::trackVectorForType(MediaStreamSource::Type type)
+Vector<RefPtr<MediaStreamTrack>>* MediaStream::trackVectorForType(RealtimeMediaSource::Type type)
 {
     switch (type) {
-    case MediaStreamSource::Audio:
+    case RealtimeMediaSource::Audio:
         return &m_audioTracks;
-    case MediaStreamSource::Video:
+    case RealtimeMediaSource::Video:
         return &m_videoTracks;
-    case MediaStreamSource::None:
+    case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();
     }
     return nullptr;

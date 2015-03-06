@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "MediaStreamSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS AVCaptureAudioDataOutput;
@@ -43,7 +43,7 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class AVMediaCaptureSource : public MediaStreamSource {
+class AVMediaCaptureSource : public RealtimeMediaSource {
 public:
     virtual ~AVMediaCaptureSource();
 
@@ -52,9 +52,9 @@ public:
     virtual void captureSessionStoppedRunning();
 
 protected:
-    AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, MediaStreamSource::Type, PassRefPtr<MediaConstraints>);
+    AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
 
-    virtual const MediaStreamSourceStates& states() override;
+    virtual const RealtimeMediaSourceStates& states() override;
 
     virtual void startProducingData() override;
     virtual void stopProducingData() override;
@@ -64,7 +64,7 @@ protected:
 
     AVCaptureSession *session() const { return m_session.get(); }
     AVCaptureDevice *device() const { return m_device.get(); }
-    MediaStreamSourceStates* currentStates() { return &m_currentStates; }
+    RealtimeMediaSourceStates* currentStates() { return &m_currentStates; }
     MediaConstraints* constraints() { return m_constraints.get(); }
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
@@ -75,7 +75,7 @@ private:
 
     RetainPtr<WebCoreAVMediaCaptureSourceObserver> m_objcObserver;
     RefPtr<MediaConstraints> m_constraints;
-    MediaStreamSourceStates m_currentStates;
+    RealtimeMediaSourceStates m_currentStates;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
     

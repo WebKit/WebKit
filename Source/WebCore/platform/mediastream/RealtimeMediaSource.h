@@ -31,13 +31,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamSource_h
-#define MediaStreamSource_h
+#ifndef RealtimeMediaSource_h
+#define RealtimeMediaSource_h
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaConstraints.h"
-#include "MediaStreamSourceCapabilities.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -47,9 +47,9 @@ namespace WebCore {
 class AudioBus;
 class MediaConstraints;
 class MediaStreamPrivate;
-class MediaStreamSourceStates;
+class RealtimeMediaSourceStates;
 
-class MediaStreamSource : public RefCounted<MediaStreamSource> {
+class RealtimeMediaSource : public RefCounted<RealtimeMediaSource> {
 public:
     class Observer {
     public:
@@ -64,7 +64,7 @@ public:
         virtual bool observerIsEnabled() = 0;
     };
 
-    virtual ~MediaStreamSource() { }
+    virtual ~RealtimeMediaSource() { }
 
     bool isAudioStreamSource() const { return type() == Audio; }
     virtual bool useIDForTrackID() const { return false; }
@@ -77,8 +77,8 @@ public:
     virtual const String& name() const { return m_name; }
     virtual void setName(const String& name) { m_name = name; }
 
-    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const = 0;
-    virtual const MediaStreamSourceStates& states() = 0;
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
+    virtual const RealtimeMediaSourceStates& states() = 0;
     
     enum ReadyState { New = 0, Live = 1, Ended = 2 };
     virtual ReadyState readyState() const { return m_readyState; }
@@ -107,7 +107,7 @@ public:
     void reset();
 
 protected:
-    MediaStreamSource(const String& id, Type, const String& name);
+    RealtimeMediaSource(const String& id, Type, const String& name);
 
 private:
     String m_id;
@@ -126,4 +126,4 @@ private:
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamSource_h
+#endif // RealtimeMediaSource_h

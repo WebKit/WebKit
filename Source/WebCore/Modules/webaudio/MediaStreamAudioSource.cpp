@@ -40,11 +40,11 @@ RefPtr<MediaStreamAudioSource> MediaStreamAudioSource::create()
 }
 
 MediaStreamAudioSource::MediaStreamAudioSource()
-    : MediaStreamSource(ASCIILiteral("WebAudio-") + createCanonicalUUIDString(), MediaStreamSource::Audio, "MediaStreamAudioDestinationNode")
+    : RealtimeMediaSource(ASCIILiteral("WebAudio-") + createCanonicalUUIDString(), RealtimeMediaSource::Audio, "MediaStreamAudioDestinationNode")
 {
 }
 
-RefPtr<MediaStreamSourceCapabilities> MediaStreamAudioSource::capabilities() const
+RefPtr<RealtimeMediaSourceCapabilities> MediaStreamAudioSource::capabilities() const
 {
     // FIXME: implement this.
     // https://bugs.webkit.org/show_bug.cgi?id=122430
@@ -52,7 +52,7 @@ RefPtr<MediaStreamSourceCapabilities> MediaStreamAudioSource::capabilities() con
     return nullptr;
 }
 
-const MediaStreamSourceStates& MediaStreamAudioSource::states()
+const RealtimeMediaSourceStates& MediaStreamAudioSource::states()
 {
     // FIXME: implement this.
     // https://bugs.webkit.org/show_bug.cgi?id=122430

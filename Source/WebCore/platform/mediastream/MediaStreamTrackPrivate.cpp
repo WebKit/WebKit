@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(PassRefPtr<MediaStreamSource> source)
+PassRefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(PassRefPtr<RealtimeMediaSource> source)
 {
     return adoptRef(new MediaStreamTrackPrivate(source));
 }
@@ -55,10 +55,10 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& 
     m_ignoreMutations = false;
 }
 
-MediaStreamTrackPrivate::MediaStreamTrackPrivate(PassRefPtr<MediaStreamSource> source)
+MediaStreamTrackPrivate::MediaStreamTrackPrivate(PassRefPtr<RealtimeMediaSource> source)
     : m_source(nullptr)
     , m_client(nullptr)
-    , m_readyState(MediaStreamSource::New)
+    , m_readyState(RealtimeMediaSource::New)
     , m_muted(false)
     , m_enabled(true)
     , m_stopped(false)
@@ -74,7 +74,7 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
         m_source->removeObserver(this);
 }
 
-void MediaStreamTrackPrivate::setSource(PassRefPtr<MediaStreamSource> source)
+void MediaStreamTrackPrivate::setSource(PassRefPtr<RealtimeMediaSource> source)
 {
     if (m_source)
         m_source->removeObserver(this);
@@ -116,7 +116,7 @@ const String& MediaStreamTrackPrivate::label() const
 
 bool MediaStreamTrackPrivate::ended() const
 {
-    return m_stopped || (m_source && m_source->readyState() == MediaStreamSource::Ended);
+    return m_stopped || (m_source && m_source->readyState() == RealtimeMediaSource::Ended);
 }
 
 bool MediaStreamTrackPrivate::muted() const
@@ -183,30 +183,30 @@ void MediaStreamTrackPrivate::stop(StopBehavior stopSource)
     if (stopSource == StopTrackAndStopSource && m_source)
         m_source->stop();
 
-    setReadyState(MediaStreamSource::Ended);
+    setReadyState(RealtimeMediaSource::Ended);
     m_stopped = true;
 }
 
-MediaStreamSource::ReadyState MediaStreamTrackPrivate::readyState() const
+RealtimeMediaSource::ReadyState MediaStreamTrackPrivate::readyState() const
 {
     if (m_stopped)
-        return MediaStreamSource::Ended;
+        return RealtimeMediaSource::Ended;
 
     return m_readyState;
 }
 
-void MediaStreamTrackPrivate::setReadyState(MediaStreamSource::ReadyState state)
+void MediaStreamTrackPrivate::setReadyState(RealtimeMediaSource::ReadyState state)
 {
-    if (m_readyState == MediaStreamSource::Ended || m_readyState == state)
+    if (m_readyState == RealtimeMediaSource::Ended || m_readyState == state)
         return;
 
-    MediaStreamSource::ReadyState oldState = m_readyState;
+    RealtimeMediaSource::ReadyState oldState = m_readyState;
     m_readyState = state;
 
     if (!m_client || m_ignoreMutations)
         return;
 
-    if ((m_readyState == MediaStreamSource::Live && oldState == MediaStreamSource::New) || m_readyState == MediaStreamSource::Ended)
+    if ((m_readyState == RealtimeMediaSource::Live && oldState == RealtimeMediaSource::New) || m_readyState == RealtimeMediaSource::Ended)
         m_client->trackReadyStateChanged();
 }
 
@@ -221,25 +221,25 @@ RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
     return m_constraints;
 }
 
-const MediaStreamSourceStates& MediaStreamTrackPrivate::states() const
+const RealtimeMediaSourceStates& MediaStreamTrackPrivate::states() const
 {
     if (!m_source) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const MediaStreamSourceStates, noState, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(const RealtimeMediaSourceStates, noState, ());
         return noState;
     }
     
     return m_source->states();
 }
 
-MediaStreamSource::Type MediaStreamTrackPrivate::type() const
+RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const
 {
     if (!m_source)
-        return MediaStreamSource::None;
+        return RealtimeMediaSource::None;
 
     return m_source->type();
 }
 
-RefPtr<MediaStreamSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
+RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
 {
     if (!m_source)
         return 0;

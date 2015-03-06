@@ -35,28 +35,28 @@
 #include "MediaStream.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
-#include "MediaStreamSource.h"
-#include "MediaStreamSourceCapabilities.h"
 #include "MediaStreamTrack.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
+#include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class MockSource : public MediaStreamSource {
+class MockSource : public RealtimeMediaSource {
 public:
-    MockSource(const AtomicString& id, const AtomicString& name, MediaStreamSource::Type type)
-        : MediaStreamSource(id, type, name)
+    MockSource(const AtomicString& id, const AtomicString& name, RealtimeMediaSource::Type type)
+        : RealtimeMediaSource(id, type, name)
     {
     }
 
     virtual ~MockSource() { }
 
-    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const { return m_capabilities; }
-    virtual const MediaStreamSourceStates& states() { return m_currentStates; }
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const { return m_capabilities; }
+    virtual const RealtimeMediaSourceStates& states() { return m_currentStates; }
 
-    RefPtr<MediaStreamSourceCapabilities> m_capabilities;
-    MediaStreamSourceStates m_currentStates;
+    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
+    RealtimeMediaSourceStates m_currentStates;
 };
     
 typedef HashMap<String, RefPtr<MockSource>> MockSourceMap;
@@ -81,22 +81,22 @@ static const AtomicString& mockVideoSourceID()
 
 static void initializeMockSources()
 {
-    RefPtr<MockSource> mockSource1 = adoptRef(new MockSource(mockVideoSourceID(), "Mock video device", MediaStreamSource::Video));
-    mockSource1->m_capabilities = MediaStreamSourceCapabilities::create();
+    RefPtr<MockSource> mockSource1 = adoptRef(new MockSource(mockVideoSourceID(), "Mock video device", RealtimeMediaSource::Video));
+    mockSource1->m_capabilities = RealtimeMediaSourceCapabilities::create();
     mockSource1->m_capabilities->setSourceId(mockSource1->id());
-    mockSource1->m_capabilities->addSourceType(MediaStreamSourceStates::Camera);
-    mockSource1->m_capabilities->addSourceType(MediaStreamSourceStates::Microphone);
-    mockSource1->m_capabilities->addFacingMode(MediaStreamSourceStates::User);
-    mockSource1->m_capabilities->addFacingMode(MediaStreamSourceStates::Environment);
-    mockSource1->m_capabilities->setWidthRange(MediaStreamSourceCapabilityRange(320UL, 1920UL, true));
-    mockSource1->m_capabilities->setHeightRange(MediaStreamSourceCapabilityRange(240UL, 1080UL, true));
-    mockSource1->m_capabilities->setFrameRateRange(MediaStreamSourceCapabilityRange(15.0f, 60.0f, true));
-    mockSource1->m_capabilities->setAspectRatioRange(MediaStreamSourceCapabilityRange(4 / 3.0f, 16 / 9.0f, true));
-    mockSource1->m_capabilities->setVolumeRange(MediaStreamSourceCapabilityRange(10UL, 90UL, true));
+    mockSource1->m_capabilities->addSourceType(RealtimeMediaSourceStates::Camera);
+    mockSource1->m_capabilities->addSourceType(RealtimeMediaSourceStates::Microphone);
+    mockSource1->m_capabilities->addFacingMode(RealtimeMediaSourceStates::User);
+    mockSource1->m_capabilities->addFacingMode(RealtimeMediaSourceStates::Environment);
+    mockSource1->m_capabilities->setWidthRange(RealtimeMediaSourceCapabilityRange(320UL, 1920UL, true));
+    mockSource1->m_capabilities->setHeightRange(RealtimeMediaSourceCapabilityRange(240UL, 1080UL, true));
+    mockSource1->m_capabilities->setFrameRateRange(RealtimeMediaSourceCapabilityRange(15.0f, 60.0f, true));
+    mockSource1->m_capabilities->setAspectRatioRange(RealtimeMediaSourceCapabilityRange(4 / 3.0f, 16 / 9.0f, true));
+    mockSource1->m_capabilities->setVolumeRange(RealtimeMediaSourceCapabilityRange(10UL, 90UL, true));
 
-    mockSource1->m_currentStates.setSourceType(MediaStreamSourceStates::Camera);
+    mockSource1->m_currentStates.setSourceType(RealtimeMediaSourceStates::Camera);
     mockSource1->m_currentStates.setSourceId(mockSource1->id());
-    mockSource1->m_currentStates.setFacingMode(MediaStreamSourceStates::User);
+    mockSource1->m_currentStates.setFacingMode(RealtimeMediaSourceStates::User);
     mockSource1->m_currentStates.setWidth(1920);
     mockSource1->m_currentStates.setHeight(1080);
     mockSource1->m_currentStates.setFrameRate(30);
@@ -105,12 +105,12 @@ static void initializeMockSources()
     String mockSource1id = mockSource1->id();
     mockSourceMap().add(mockSource1id, mockSource1.release());
 
-    RefPtr<MockSource> mockSource2 = adoptRef(new MockSource(mockAudioSourceID(), "Mock audio device", MediaStreamSource::Audio));
-    mockSource2->m_capabilities = MediaStreamSourceCapabilities::create();
+    RefPtr<MockSource> mockSource2 = adoptRef(new MockSource(mockAudioSourceID(), "Mock audio device", RealtimeMediaSource::Audio));
+    mockSource2->m_capabilities = RealtimeMediaSourceCapabilities::create();
     mockSource2->m_capabilities->setSourceId(mockSource2->id());
-    mockSource2->m_capabilities->setVolumeRange(MediaStreamSourceCapabilityRange(0UL, 100UL, true));
+    mockSource2->m_capabilities->setVolumeRange(RealtimeMediaSourceCapabilityRange(0UL, 100UL, true));
 
-    mockSource2->m_currentStates.setSourceType(MediaStreamSourceStates::Microphone);
+    mockSource2->m_currentStates.setSourceType(RealtimeMediaSourceStates::Microphone);
     mockSource2->m_currentStates.setSourceId(mockSource2->id());
     mockSource2->m_currentStates.setVolume(50);
     String mockSource2id = mockSource2->id();
@@ -159,8 +159,8 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
 
     ASSERT(client);
     
-    Vector<RefPtr<MediaStreamSource>> audioSources;
-    Vector<RefPtr<MediaStreamSource>> videoSources;
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
     MockSourceMap& map = mockSourceMap();
 
     if (audioConstraints) {
@@ -173,9 +173,9 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         MockSourceMap::iterator it = map.find(mockAudioSourceID());
         ASSERT(it != map.end());
 
-        RefPtr<MediaStreamSource> audioSource = it->value;
+        RefPtr<RealtimeMediaSource> audioSource = it->value;
         audioSource->reset();
-        audioSource->setReadyState(MediaStreamSource::Live);
+        audioSource->setReadyState(RealtimeMediaSource::Live);
         audioSources.append(audioSource.release());
     }
 
@@ -189,9 +189,9 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         MockSourceMap::iterator it = map.find(mockVideoSourceID());
         ASSERT(it != map.end());
 
-        RefPtr<MediaStreamSource> videoSource = it->value;
+        RefPtr<RealtimeMediaSource> videoSource = it->value;
         videoSource->reset();
-        videoSource->setReadyState(MediaStreamSource::Live);
+        videoSource->setReadyState(RealtimeMediaSource::Live);
         videoSources.append(videoSource.release());
     }
     
@@ -208,7 +208,7 @@ bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTra
     for (MockSourceMap::iterator it = map.begin(); it != end; ++it) {
         MockSource* source = it->value.get();
 
-        sources.append(TrackSourceInfo::create(source->id(), source->type() == MediaStreamSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio, source->name()));
+        sources.append(TrackSourceInfo::create(source->id(), source->type() == RealtimeMediaSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio, source->name()));
     }
 
     requestClient->didCompleteRequest(sources);

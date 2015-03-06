@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class MediaStreamSource;
+class RealtimeMediaSource;
 class ScriptExecutionContext;
 
 class VideoStreamTrack final : public MediaStreamTrack {
