@@ -36,6 +36,9 @@
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
 
+    void clearPageCache();
+    unsigned int pageCacheSize();
+
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
     [RaisesException] Node ensureShadowRoot(Element host);

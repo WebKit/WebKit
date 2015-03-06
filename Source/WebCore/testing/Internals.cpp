@@ -76,6 +76,7 @@
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -367,6 +368,16 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
     return resource && resource->status() == CachedResource::Cached;
 }
 
+
+void Internals::clearPageCache()
+{
+    pageCache()->pruneToCapacityNow(0, PruningReason::None);
+}
+
+unsigned Internals::pageCacheSize() const
+{
+    return pageCache()->pageCount();
+}
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
 {

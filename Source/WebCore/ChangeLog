@@ -1,3 +1,36 @@
+2015-03-06  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180337
+
+    2015-02-18  Andreas Kling  <akling@apple.com>
+
+            REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.
+            <https://webkit.org/b/141788>
+
+            Reviewed by Anders Carlsson.
+
+            Once again we've fallen into the TemporaryChange trap:
+
+                TemporaryChange<unsigned>(m_member, temporaryValue);
+
+            The code above doesn't actually do anything. Since the TemporaryChange local is not named,
+            it immediately goes out of scope and restores the original value of m_member.
+
+            Unless someone knows a C++ trick to prevent these, we'll need to add a style checker pass
+            to catch bugs like this. Whatever we do will be done separately from this bug.
+
+            Test: fast/history/page-cache-clearing.html
+
+            * history/PageCache.cpp:
+            (WebCore::PageCache::pruneToSizeNow): Name the local so it lives longer.
+
+            * testing/Internals.cpp:
+            (WebCore::Internals::clearPageCache):
+            (WebCore::Internals::pageCacheSize):
+            * testing/Internals.h:
+            * testing/Internals.idl: Add a way to clear the page cache and query its size from
+            window.internals to facilitate writing a simple test for this bug.
+
 2015-03-05  Dean Jackson  <dino@apple.com>
 
         Merge r180906. <rdar://problem/20058845>

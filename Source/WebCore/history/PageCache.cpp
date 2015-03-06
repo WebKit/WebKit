@@ -386,7 +386,7 @@ bool PageCache::canCache(Page* page) const
 
 void PageCache::pruneToCapacityNow(int capacity, PruningReason pruningReason)
 {
-    TemporaryChange<int>(m_capacity, std::max(capacity, 0));
+    TemporaryChange<int> change(m_capacity, std::max(capacity, 0));
     prune(pruningReason);
 }
 

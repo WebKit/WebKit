@@ -1,3 +1,21 @@
+2015-03-06  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180337
+
+    2015-02-18  Andreas Kling  <akling@apple.com>
+
+            REGRESSION(r179347): Clearing the PageCache no longer clears the PageCache.
+            <https://webkit.org/b/141788>
+
+            Reviewed by Anders Carlsson.
+
+            Add a simple test that navigates to a temporary page which immediately does a history.back
+            navigation. Upon returning to the first page, check that the page cache now has 1 entry,
+            and that clearing the page cache makes that entry go away.
+
+            * fast/history/page-cache-clearing-expected.txt: Added.
+            * fast/history/page-cache-clearing.html: Added.
+
 2015-02-26  Babak Shafiei  <bshafiei@apple.com>
 
        Merge r173806.
