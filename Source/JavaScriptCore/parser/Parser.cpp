@@ -1282,10 +1282,8 @@ static const char* stringForFunctionMode(FunctionParseMode mode)
         return "setter";
     case FunctionMode:
         return "function";
-#if ENABLE(ES6_CLASS_SYNTAX)
     case MethodMode:
         return "method";
-#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
@@ -1936,6 +1934,12 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete);
         }
 
+        if (match(OPENPAREN)) {
+            auto method = parsePropertyMethod(context, ident);
+            propagateError();
+            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::KnownDirect, complete);
+        }
+
         failIfFalse(wasIdent, "Expected an identifier as property name");
 
         if (match(COMMA) || match(CLOSEBRACE)) {
@@ -1959,6 +1963,14 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
     case INTEGER: {
         double propertyName = m_token.m_data.doubleValue;
         next();
+
+        if (match(OPENPAREN)) {
+            const Identifier& ident = m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM*>(m_vm), propertyName);
+            auto method = parsePropertyMethod(context, &ident);
+            propagateError();
+            return context.createProperty(&ident, method, PropertyNode::Constant, PropertyNode::Unknown, complete);
+        }
+
         consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
@@ -1969,8 +1981,14 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         next();
         auto propertyName = parseExpression(context);
         failIfFalse(propertyName, "Cannot parse computed property name");
-        
         handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
+
+        if (match(OPENPAREN)) {
+            auto method = parsePropertyMethod(context, &m_vm->propertyNames->nullIdentifier);
+            propagateError();
+            return context.createProperty(propertyName, method, PropertyNode::Constant, PropertyNode::KnownDirect, complete);
+        }
+
         consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
@@ -1981,6 +1999,17 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");
         goto namedProperty;
     }
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMethod(TreeBuilder& context, const Identifier* methodName)
+{
+    JSTokenLocation methodLocation(tokenLocation());
+    unsigned methodStart = tokenStart();
+    ParserFunctionInfo<TreeBuilder> methodInfo;
+    failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, MethodMode, false, methodInfo)), "Cannot parse this method");
+    methodInfo.name = methodName;
+    return context.createFunctionExpr(methodLocation, methodInfo, methodStart);
 }
 
 template <typename LexerType>

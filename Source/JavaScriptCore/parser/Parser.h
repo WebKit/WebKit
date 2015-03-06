@@ -85,9 +85,7 @@ enum FunctionParseMode {
     FunctionMode,
     GetterMode,
     SetterMode,
-#if ENABLE(ES6_CLASS_SYNTAX)
-    MethodMode
-#endif
+    MethodMode,
 };
 enum DeconstructionKind {
     DeconstructToVariables,
@@ -739,6 +737,7 @@ private:
     enum SpreadMode { AllowSpread, DontAllowSpread };
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&, SpreadMode);
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
+    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);

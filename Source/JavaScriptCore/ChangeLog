@@ -1,3 +1,22 @@
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Object Literal Extensions - Methods
+        https://bugs.webkit.org/show_bug.cgi?id=142390
+
+        Reviewed by Geoffrey Garen.
+
+        Support method syntax in object literals.
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseProperty):
+        Methods are allowed for identifier, string, and numeric names,
+        and computed property names.
+
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        Helper for parsing a property method.
+
 2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         __proto__ shorthand property should not modify prototype in Object Literal construction
