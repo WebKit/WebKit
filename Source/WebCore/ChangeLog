@@ -1,3 +1,10 @@
+2015-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed WinCairo port build fix since r181136.
+
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformAdopt): Missing ":" in std::unique_ptr.
+
 2015-03-06  David Kilzer  <ddkilzer@apple.com>
 
         Rename SOFT_LINK_{CONSTANT,FUNCTION}_{HEADER,SOURCE} to SOFT_LINK_{CONSTANT,FUNCTION}_FOR_{HEADER,SOURCE}

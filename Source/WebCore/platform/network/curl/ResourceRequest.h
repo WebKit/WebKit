@@ -79,7 +79,7 @@ namespace WebCore {
         void doUpdateResourceHTTPBody() { }
 
         std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData> data) const { return data; }
-        void doPlatformAdopt(std:unique_ptr<CrossThreadResourceRequestData>) { }
+        void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>) { }
  
         static bool s_httpPipeliningEnabled;
     };
