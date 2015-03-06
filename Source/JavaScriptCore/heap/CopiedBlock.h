@@ -228,7 +228,7 @@ inline unsigned CopiedBlock::liveBytes()
 
 inline char* CopiedBlock::payload()
 {
-    return reinterpret_cast<char*>(this) + ((sizeof(CopiedBlock) + 7) & ~7);
+    return reinterpret_cast<char*>(this) + WTF::roundUpToMultipleOf<sizeof(double)>(sizeof(CopiedBlock));
 }
 
 inline char* CopiedBlock::payloadEnd()

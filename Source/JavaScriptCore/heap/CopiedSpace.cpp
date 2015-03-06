@@ -99,7 +99,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
 {
     ASSERT(isOversize(bytes));
     
-    CopiedBlock* block = CopiedBlock::create(sizeof(CopiedBlock) + bytes);
+    CopiedBlock* block = CopiedBlock::create(WTF::roundUpToMultipleOf<sizeof(double)>(sizeof(CopiedBlock) + bytes));
     m_newGen.oversizeBlocks.push(block);
     m_newGen.blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);

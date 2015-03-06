@@ -1,3 +1,16 @@
+2015-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Fix crashes seen on the the 32-bit buildbots after my last patch.
+
+        Unreviewed.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::payload):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateOversize): Round up to the right alignment,
+        since the size of the CopiedBlock class is not guaranteed to be the
+        right alignment, and is in fact the wrong alignment on 32-bit.
+
 2015-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
