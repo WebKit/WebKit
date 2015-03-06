@@ -1,3 +1,22 @@
+2015-03-06  David Kilzer  <ddkilzer@apple.com>
+
+        Rename SOFT_LINK_{CONSTANT,FUNCTION}_{HEADER,SOURCE} to SOFT_LINK_{CONSTANT,FUNCTION}_FOR_{HEADER,SOURCE}
+        <http://webkit.org/b/142177>
+
+        Reviewed by Alex Christensen.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        - Rename SOFT_LINK_{CONSTANT,FUNCTION}_SOURCE() to
+          SOFT_LINK_{CONSTANT,FUNCTION}_FOR_SOURCE().
+        * platform/cf/CoreMediaSoftLink.h:
+        - Rename SOFT_LINK_{CONSTANT,FUNCTION}_HEADER() to
+          SOFT_LINK_{CONSTANT,FUNCTION}_FOR_HEADER().
+
+        * platform/mac/SoftLinking.h:
+        * platform/win/SoftLinking.h:
+        - Rename SOFT_LINK_{CONSTANT,FUNCTION}_{HEADER,SOURCE}() to
+          SOFT_LINK_{CONSTANT,FUNCTION}_FOR_{HEADER,SOURCE}().
+
 2015-03-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] ASSERTION FAILED !track.growthLimitIsInfinite() in RenderGrid::computeUsedBreadthOfGridTracks
