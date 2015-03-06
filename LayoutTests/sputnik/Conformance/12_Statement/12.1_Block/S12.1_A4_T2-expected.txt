@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token '}'. Expected a ':' following the property name 'x'.
 S12.1_A4_T2
 
-PASS Expected parsing failure
+FAIL No error detected
 
 TEST COMPLETE
 

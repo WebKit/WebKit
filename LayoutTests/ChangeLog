@@ -1,3 +1,24 @@
+2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Follow-up fixes to ObjectTreeBaseTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=142367
+
+        Reviewed by Geoffrey Garen.
+
+        * js/object-literal-shorthand-construction-expected.txt: Added.
+        * js/object-literal-shorthand-construction.html: Added.
+        * js/script-tests/object-literal-shorthand-construction.js: Added.
+        (equivalent):
+        (testShorthandConstructionEquivalent):
+        (testShorthandConstructionNotEquivalent):
+        Tests specifically for new literal construction with shorthands.
+
+        * sputnik/Conformance/12_Statement/12.1_Block/S12.1_A4_T1-expected.txt:
+        * sputnik/Conformance/12_Statement/12.1_Block/S12.1_A4_T2-expected.txt:
+        * sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.4_The_for_in_Statement/S12.6.4_A15-expected.txt:
+        These tests use object literal shorthand construction syntax and expected
+        failures. The tests now fail differently, so just rebase their results.
+
 2015-03-05  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> should allow the title property to override its title

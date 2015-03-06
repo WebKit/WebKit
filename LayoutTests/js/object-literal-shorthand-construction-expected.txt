@@ -1,0 +1,67 @@
+basic tests for object literal shorthand construction
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!{a} is true
+PASS ({a}).a === 1 is true
+PASS ({a}).a === a is true
+PASS ({foo})['foo'] === foo is true
+PASS Object.getOwnPropertyDescriptor({a}, 'a').enumerable is true
+PASS Object.getOwnPropertyDescriptor({a}, 'a').configurable is true
+PASS Object.getOwnPropertyDescriptor({a}, 'a').writable is true
+PASS Object.keys({a,b}).join() is "a,b"
+PASS Object.keys({b,a}).join() is "b,a"
+PASS equivalent({a}, {a:a}) is true
+PASS equivalent({a}, {a:a}) is true
+PASS equivalent({a,}, {a:a}) is true
+PASS equivalent({a,a}, {a:a}) is true
+PASS equivalent({a,b}, {a:a, b:b}) is true
+PASS equivalent({ a , b }, {a:a, b:b}) is true
+PASS equivalent({a,b,}, {a:a, b:b}) is true
+PASS equivalent({a,b,a}, {a:a, b:b}) is true
+PASS equivalent({b,a,a}, {b:b, a:a}) is true
+PASS !equivalent({a}, {b:a}) is true
+PASS !equivalent({b}, {a:b}) is true
+PASS !equivalent({a,b}, {a:b, b:a}) is true
+PASS equivalent({foo}, {foo:foo}) is true
+PASS equivalent({foo}, {foo:foo}) is true
+PASS equivalent({foo,}, {foo:foo}) is true
+PASS equivalent({foo,foo}, {foo:foo}) is true
+PASS equivalent({foo,bar}, {foo:foo, bar:bar}) is true
+PASS equivalent({ foo , bar }, {foo:foo, bar:bar}) is true
+PASS equivalent({foo,bar,}, {foo:foo, bar:bar}) is true
+PASS equivalent({foo,bar,foo}, {foo:foo, bar:bar}) is true
+PASS equivalent({bar,foo,foo}, {bar:bar, foo:foo}) is true
+PASS equivalent({foo,bar,foo}, {foo:foo, bar:bar}) is true
+PASS equivalent({bar,foo,foo}, {bar:bar, foo:foo}) is true
+PASS !equivalent({foo}, {bar:foo}) is true
+PASS !equivalent({bar}, {foo:bar}) is true
+PASS !equivalent({foo,bar}, {foo:bar, bar:foo}) is true
+PASS equivalent({a, b:b, c}, {a, b, c}) is true
+PASS equivalent({a:a, b, c:c}, {a, b, c}) is true
+PASS equivalent({a, b, c:c}, {a, b, c}) is true
+PASS equivalent({'a':a, b, c:c}, {a, b, c}) is true
+PASS equivalent({nest:{a}}.nest, {nest: {a:a}}.nest) is true
+PASS equivalent({nest:[{a}]}.nest[0], {nest: [{a:a}]}.nest[0]) is true
+PASS equivalent([{nest:[{a}]}][0].nest[0], [{nest: [{a:a}]}][0].nest[0]) is true
+PASS equivalent({a,b,t,x,f,nul,un,fun,foo,bar}, {a:a, b:b, t:t, x:x, f:f, nul:null, un:un, fun:fun, foo:foo, bar:bar}) is true
+PASS equivalent({eval}, {eval: window.eval}) is true
+PASS ({noSuchIdentifier}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
+PASS ({a,noSuchIdentifier}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
+PASS ({noSuchIdentifier,a}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
+PASS ({a,b,noSuchIdentifier}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
+PASS ({get}) threw exception ReferenceError: Can't find variable: get.
+PASS ({set}) threw exception ReferenceError: Can't find variable: set.
+PASS equivalent({get}, {get: 1}) is true
+PASS equivalent({set}, {set: 2}) is true
+PASS ({get x(){ return true; }}).x is true
+PASS ({get 'x'(){ return true; }}).x is true
+PASS ({get 42(){ return true; }})['42'] is true
+PASS !!Object.getOwnPropertyDescriptor({set x(value){}}, 'x').set is true
+PASS !!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set is true
+PASS !!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

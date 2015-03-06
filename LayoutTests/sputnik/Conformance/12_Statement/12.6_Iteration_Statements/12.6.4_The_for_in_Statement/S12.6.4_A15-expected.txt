@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected token '}'. Expected a ':' following the property name '__arr'.
 S12.6.4_A15
 
-PASS Expected parsing failure
+FAIL No error detected
 
 TEST COMPLETE
 
