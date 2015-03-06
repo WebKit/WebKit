@@ -88,7 +88,8 @@ void IOChannel::read(size_t offset, size_t size, std::function<void ( Data&, int
             return;
         }
         ASSERT(!didCallCompletionHandler);
-        Data data(fileData);
+        DispatchPtr<dispatch_data_t> fileDataPtr(fileData);
+        Data data(fileDataPtr);
         completionHandler(data, error);
         didCallCompletionHandler = true;
     });

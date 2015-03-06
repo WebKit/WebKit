@@ -33,9 +33,6 @@
 #include "NetworkCacheFileSystemPosix.h"
 #include "NetworkCacheIOChannel.h"
 #include <dispatch/dispatch.h>
-#include <mach/vm_param.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
@@ -123,13 +120,11 @@ static Ref<IOChannel> openFileForKey(const Key& key, IOChannel::Type type, const
     return IOChannel::open(filePath, type);
 }
 
-static unsigned hashData(dispatch_data_t data)
+static unsigned hashData(const Data& data)
 {
-    if (!data || !dispatch_data_get_size(data))
-        return 0;
     StringHasher hasher;
-    dispatch_data_apply(data, [&hasher](dispatch_data_t, size_t, const void* data, size_t size) {
-        hasher.addCharacters(static_cast<const uint8_t*>(data), size);
+    data.apply([&hasher](const uint8_t* data, size_t size) {
+        hasher.addCharacters(data, size);
         return true;
     });
     return hasher.hash();
@@ -156,8 +151,8 @@ struct EntryMetaData {
 static bool decodeEntryMetaData(EntryMetaData& metaData, const Data& fileData)
 {
     bool success = false;
-    dispatch_data_apply(fileData.dispatchData(), [&metaData, &success](dispatch_data_t, size_t, const void* data, size_t size) {
-        Decoder decoder(reinterpret_cast<const uint8_t*>(data), size);
+    fileData.apply([&metaData, &success](const uint8_t* data, size_t size) {
+        Decoder decoder(data, size);
         if (!decoder.decode(metaData.cacheStorageVersion))
             return false;
         if (!decoder.decode(metaData.key))
@@ -182,17 +177,6 @@ static bool decodeEntryMetaData(EntryMetaData& metaData, const Data& fileData)
     return success;
 }
 
-static DispatchPtr<dispatch_data_t> mapFile(int fd, size_t offset, size_t size)
-{
-    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
-    if (map == MAP_FAILED)
-        return nullptr;
-    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_main_queue(), [map, size] {
-        munmap(map, size);
-    }));
-    return bodyMap;
-}
-
 static bool decodeEntryHeader(const Data& fileData, EntryMetaData& metaData, Data& data)
 {
     if (!decodeEntryMetaData(metaData, fileData))
@@ -202,8 +186,8 @@ static bool decodeEntryHeader(const Data& fileData, EntryMetaData& metaData, Dat
     if (metaData.headerOffset + metaData.headerSize > metaData.bodyOffset)
         return false;
 
-    auto headerData = adoptDispatch(dispatch_data_create_subrange(fileData.dispatchData(), metaData.headerOffset, metaData.headerSize));
-    if (metaData.headerChecksum != hashData(headerData.get())) {
+    auto headerData = fileData.subrange(metaData.headerOffset, metaData.headerSize);
+    if (metaData.headerChecksum != hashData(headerData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
         return false;
     }
@@ -224,25 +208,25 @@ static std::unique_ptr<Storage::Entry> decodeEntry(const Data& fileData, int fd,
         return nullptr;
 
     auto bodyData = mapFile(fd, metaData.bodyOffset, metaData.bodySize);
-    if (!bodyData) {
+    if (bodyData.isNull()) {
         LOG(NetworkCacheStorage, "(NetworkProcess) map failed");
         return nullptr;
     }
 
-    if (metaData.bodyChecksum != hashData(bodyData.get())) {
+    if (metaData.bodyChecksum != hashData(bodyData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) data checksum mismatch");
         return nullptr;
     }
 
-    return std::unique_ptr<Storage::Entry>(new Storage::Entry {
+    return std::make_unique<Storage::Entry>(Storage::Entry {
         metaData.key,
         metaData.timeStamp,
         headerData,
-        { bodyData, Data::Backing::Map }
+        bodyData
     });
 }
 
-static DispatchPtr<dispatch_data_t> encodeEntryMetaData(const EntryMetaData& entry)
+static Data encodeEntryMetaData(const EntryMetaData& entry)
 {
     Encoder encoder;
 
@@ -256,28 +240,28 @@ static DispatchPtr<dispatch_data_t> encodeEntryMetaData(const EntryMetaData& ent
 
     encoder.encodeChecksum();
 
-    return adoptDispatch(dispatch_data_create(encoder.buffer(), encoder.bufferSize(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    return Data(encoder.buffer(), encoder.bufferSize());
 }
 
 static Data encodeEntryHeader(const Storage::Entry& entry)
 {
     EntryMetaData metaData(entry.key);
     metaData.timeStamp = entry.timeStamp;
-    metaData.headerChecksum = hashData(entry.header.dispatchData());
+    metaData.headerChecksum = hashData(entry.header);
     metaData.headerSize = entry.header.size();
-    metaData.bodyChecksum = hashData(entry.body.dispatchData());
+    metaData.bodyChecksum = hashData(entry.body);
     metaData.bodySize = entry.body.size();
 
     auto encodedMetaData = encodeEntryMetaData(metaData);
-    auto headerData = adoptDispatch(dispatch_data_create_concat(encodedMetaData.get(), entry.header.dispatchData()));
+    auto headerData = concatenate(encodedMetaData, entry.header);
     if (!entry.body.size())
         return { headerData };
 
-    size_t headerSize = dispatch_data_get_size(headerData.get());
-    size_t dataOffset = round_page(headerSize);
-    Vector<uint8_t, 4096> filler(dataOffset - headerSize, 0);
-    auto alignmentData = adoptDispatch(dispatch_data_create(filler.data(), filler.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
-    return { adoptDispatch(dispatch_data_create_concat(headerData.get(), alignmentData.get())) };
+    size_t dataOffset = WTF::roundUpToMultipleOf(pageSize(), headerData.size());
+    Vector<uint8_t, 4096> filler(dataOffset - headerData.size(), 0);
+    Data alignmentData(filler.data(), filler.size());
+
+    return concatenate(headerData, alignmentData);
 }
 
 void Storage::removeEntry(const Key& key)
@@ -481,15 +465,13 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
     StringCapture cachePathCapture(m_directoryPath);
     backgroundIOQueue().dispatch([this, &write, cachePathCapture] {
         auto encodedHeader = encodeEntryHeader(write.entry);
-        auto headerAndBodyData = adoptDispatch(dispatch_data_create_concat(encodedHeader.dispatchData(), write.entry.body.dispatchData()));
-
-        Data writeData(headerAndBodyData);
+        auto headerAndBodyData = concatenate(encodedHeader, write.entry.body);
 
         auto channel = openFileForKey(write.entry.key, IOChannel::Type::Create, cachePathCapture.string());
         int fd = channel->fileDescriptor();
         size_t bodyOffset = encodedHeader.size();
 
-        channel->write(0, writeData, [this, &write, bodyOffset, fd](int error) {
+        channel->write(0, headerAndBodyData, [this, &write, bodyOffset, fd](int error) {
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
             if (error) {
                 if (m_contentsFilter.mayContain(write.entry.key.shortHash()))
@@ -501,10 +483,9 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
             m_approximateSize += totalSize;
 
             bool shouldMapBody = !error && bodySize >= pageSize();
-            auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : nullptr;
+            auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : Data();
 
-            Data bodyData(bodyMap, Data::Backing::Map);
-            write.completionHandler(!error, bodyData);
+            write.completionHandler(!error, bodyMap);
 
             ASSERT(m_activeWriteOperations.contains(&write));
             m_activeWriteOperations.remove(&write);

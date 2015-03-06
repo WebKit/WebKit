@@ -1,5 +1,32 @@
 2015-03-06  Antti Koivisto  <antti@apple.com>
 
+        Move dispatch_data use behind NetworkCache::Data abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=142392
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cache/NetworkCacheData.h:
+        (WebKit::NetworkCache::DispatchPtr::DispatchPtr):
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::Data):
+        (WebKit::NetworkCache::Data::apply):
+        (WebKit::NetworkCache::Data::subrange):
+        (WebKit::NetworkCache::concatenate):
+        (WebKit::NetworkCache::mapFile):
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::read):
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCache::hashData):
+        (WebKit::NetworkCache::decodeEntryMetaData):
+        (WebKit::NetworkCache::decodeEntryHeader):
+        (WebKit::NetworkCache::decodeEntry):
+        (WebKit::NetworkCache::encodeEntryMetaData):
+        (WebKit::NetworkCache::encodeEntryHeader):
+        (WebKit::NetworkCache::Storage::dispatchFullWriteOperation):
+        (WebKit::NetworkCache::mapFile): Deleted.
+
+2015-03-06  Antti Koivisto  <antti@apple.com>
+
         Use WTF abstraction for page size in NetworkCacheStorage
         https://bugs.webkit.org/show_bug.cgi?id=142396
 

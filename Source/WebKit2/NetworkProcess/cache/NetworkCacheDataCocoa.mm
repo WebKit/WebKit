@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include <dispatch/dispatch.h>
+#include <sys/mman.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -40,13 +41,10 @@ Data::Data(const uint8_t* data, size_t size)
 }
 
 Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
+    : m_dispatchData(dispatchData)
+    , m_size(m_dispatchData ? dispatch_data_get_size(m_dispatchData.get()) : 0)
+    , m_isMap(m_size && backing == Backing::Map)
 {
-    if (!dispatchData)
-        return;
-    const void* data;
-    m_dispatchData = adoptDispatch(dispatch_data_create_map(dispatchData.get(), &data, &m_size));
-    m_data = static_cast<const uint8_t*>(data);
-    m_isMap = m_size && backing == Backing::Map;
 }
 
 const uint8_t* Data::data() const
@@ -64,6 +62,40 @@ const uint8_t* Data::data() const
 bool Data::isNull() const
 {
     return !m_dispatchData;
+}
+
+bool Data::apply(const std::function<bool (const uint8_t*, size_t)>&& applier) const
+{
+    if (!m_size)
+        return false;
+    return dispatch_data_apply(m_dispatchData.get(), [&applier](dispatch_data_t, size_t, const void* data, size_t size) {
+        return applier(static_cast<const uint8_t*>(data), size);
+    });
+}
+
+Data Data::subrange(size_t offset, size_t size) const
+{
+    return { adoptDispatch(dispatch_data_create_subrange(dispatchData(), offset, size)) };
+}
+
+Data concatenate(const Data& a, const Data& b)
+{
+    if (a.isNull())
+        return b;
+    if (b.isNull())
+        return a;
+    return { adoptDispatch(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
+}
+
+Data mapFile(int fd, size_t offset, size_t size)
+{
+    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
+    if (map == MAP_FAILED)
+        return { };
+    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_main_queue(), [map, size] {
+        munmap(map, size);
+    }));
+    return { bodyMap, Data::Backing::Map };
 }
 
 }

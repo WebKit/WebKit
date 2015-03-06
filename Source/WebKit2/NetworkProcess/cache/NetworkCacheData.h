@@ -47,7 +47,7 @@ public:
         : m_ptr(nullptr)
     {
     }
-    DispatchPtr(T ptr)
+    explicit DispatchPtr(T ptr)
         : m_ptr(ptr)
     {
         if (m_ptr)
@@ -108,6 +108,10 @@ public:
     size_t size() const { return m_size; }
     bool isMap() const { return m_isMap; }
 
+    Data subrange(size_t offset, size_t) const;
+
+    bool apply(const std::function<bool (const uint8_t*, size_t)>&&) const;
+
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
 #endif
@@ -119,6 +123,9 @@ private:
     size_t m_size { 0 };
     bool m_isMap { false };
 };
+
+Data concatenate(const Data&, const Data&);
+Data mapFile(int fd, size_t offset, size_t);
 
 }
 }
