@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes"?>
+<svg  version="1.1" viewBox="0 0 160 160" xmlns = 'http://www.w3.org/2000/svg' xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <font id="Litherum" horiz-adv-x="1000">
+      <font-face font-family="Litherum" font-weight="normal" font-style="normal" units-per-em="1000" cap-height="600" x-height="400" ascent="1000" descent="0" alphabetic="0" mathematical="500" ideographic="400" hanging="500">
+        <font-face-src>
+          <font-face-name name="Litherum"/>
+        </font-face-src>
+      </font-face>
+    <glyph unicode="A" horiz-adv-x="1000" d="M 500 0 H 1000 V 600 H 500 z"/>
+    </font>
+    <font id="Litherum2" horiz-adv-x="1000" horiz-origin-x="500" horiz-origin-y="300">
+      <font-face font-family="Litherum" font-weight="normal" font-style="normal" units-per-em="1000" cap-height="600" x-height="400" ascent="1000" descent="0" alphabetic="0" mathematical="500" ideographic="400" hanging="500">
+        <font-face-src>
+          <font-face-name name="Litherum"/>
+        </font-face-src>
+      </font-face>
+    <glyph unicode="A" horiz-adv-x="1000" d="M 0 -300 H 500 V 300 H 0 z"/>
+    </font>
+  </defs>
+</svg>

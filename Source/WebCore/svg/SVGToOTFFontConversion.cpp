@@ -1051,7 +1051,6 @@ public:
         : m_cffData(cffData)
         , m_hasBoundingBox(false)
     {
-        // FIXME: Moving to the origin isn't going to work for subsequent absolute coordinates
         writeCFFEncodedNumber(m_cffData, width);
         writeCFFEncodedNumber(m_cffData, origin.x());
         writeCFFEncodedNumber(m_cffData, origin.y());

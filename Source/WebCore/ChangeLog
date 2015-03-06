@@ -1,3 +1,17 @@
+2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test horiz-origin-x and horiz-origin-y in SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=142403
+
+        Reviewed by Simon Fraser.
+
+        Remove incorrect comment.
+
+        Test: svg/fonts/svg-font-horiz-origin.html
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::CFFBuilder::CFFBuilder):
+
 2015-03-06  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tree dumping functions to be used in release builds by switching a flag

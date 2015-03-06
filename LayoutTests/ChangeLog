@@ -1,3 +1,17 @@
+2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test horiz-origin-x and horiz-origin-y in SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=142403
+
+        Simply moving to the origin in glyph-space at the beginning
+        of path parsing won't work if subsequent coordinates are absolute.
+
+        Reviewed by Simon Fraser.
+
+        * svg/fonts/resources/svg-font-horiz-origin-font.svg: Added.
+        * svg/fonts/svg-font-horiz-origin-expected.html: Added.
+        * svg/fonts/svg-font-horiz-origin.html: Added.
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An SVG element without intrinsic size inherits the container size as its viewport instead of inheriting the container viewport.
