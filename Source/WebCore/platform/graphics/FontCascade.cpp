@@ -108,7 +108,8 @@ TypesettingFeatures FontCascade::s_defaultTypesettingFeatures = 0;
 // ============================================================================================
 
 FontCascade::FontCascade()
-    : m_letterSpacing(0)
+    : m_weakPtrFactory(this)
+    , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_useBackslashAsYenSymbol(false)
     , m_typesettingFeatures(0)
@@ -117,6 +118,7 @@ FontCascade::FontCascade()
 
 FontCascade::FontCascade(const FontDescription& fd, float letterSpacing, float wordSpacing)
     : m_fontDescription(fd)
+    , m_weakPtrFactory(this)
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
     , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(fd.firstFamily()))
@@ -127,6 +129,7 @@ FontCascade::FontCascade(const FontDescription& fd, float letterSpacing, float w
 // FIXME: We should make this constructor platform-independent.
 FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
     : m_fonts(FontCascadeFonts::createForPlatformFont(fontData))
+    , m_weakPtrFactory(this)
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_useBackslashAsYenSymbol(false)
@@ -144,7 +147,8 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
 // FIXME: We should make this constructor platform-independent.
 #if PLATFORM(IOS)
 FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelector> fontSelector)
-    : m_letterSpacing(0)
+    : m_weakPtrFactory(this)
+    , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
@@ -160,6 +164,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelect
 FontCascade::FontCascade(const FontCascade& other)
     : m_fontDescription(other.m_fontDescription)
     , m_fonts(other.m_fonts)
+    , m_weakPtrFactory(this)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)

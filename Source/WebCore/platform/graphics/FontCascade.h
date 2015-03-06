@@ -34,6 +34,7 @@
 #include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
 
 // "X11/X.h" defines Complex to 0 and conflicts
@@ -208,6 +209,8 @@ public:
 
     bool primaryFontIsSystemFont() const;
 
+    WeakPtr<FontCascade> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
@@ -336,6 +339,7 @@ private:
 
     FontDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;
+    WeakPtrFactory<FontCascade> m_weakPtrFactory;
     float m_letterSpacing;
     float m_wordSpacing;
     mutable bool m_useBackslashAsYenSymbol;

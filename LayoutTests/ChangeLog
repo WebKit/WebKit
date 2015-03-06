@@ -1,3 +1,13 @@
+2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash in -[WebCascadeList objectAtIndex:] + 195
+        https://bugs.webkit.org/show_bug.cgi?id=141274
+
+        Reviewed by David Kilzer.
+
+        * platform/mac/fast/text/crash-complextextcontroller-custom-cascade-list-expected.txt: Added.
+        * platform/mac/fast/text/crash-complextextcontroller-custom-cascade-list.html: Added.
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Setting any of the <object> element plugin controlling attributes does not have any affect.

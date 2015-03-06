@@ -31,6 +31,7 @@
 #include "FontCascade.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS)
 #include <CoreText/CoreText.h>
@@ -38,9 +39,10 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
 @interface WebCascadeList : NSArray {
     @private
-    const WebCore::FontCascade* _font;
+    WeakPtr<WebCore::FontCascade> _font;
     UChar32 _character;
     NSUInteger _count;
     Vector<RetainPtr<CTFontDescriptorRef>, 16> _fontDescriptors;
@@ -57,7 +59,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _font = font;
+    _font = font->createWeakPtr();
     _character = character;
 
     // By the time a WebCascadeList is used, the FontCascade has already been asked to realize all of its
@@ -70,11 +72,14 @@
 
 - (NSUInteger)count
 {
-    return _count;
+    return _font ? _count : 0;
 }
 
 - (id)objectAtIndex:(NSUInteger)index
 {
+    if (!_font)
+        return nil;
+
     CTFontDescriptorRef fontDescriptor;
     if (index < _fontDescriptors.size()) {
         if ((fontDescriptor = _fontDescriptors[index].get()))

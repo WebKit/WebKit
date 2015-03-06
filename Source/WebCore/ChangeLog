@@ -1,5 +1,27 @@
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Crash in -[WebCascadeList objectAtIndex:] + 195
+        https://bugs.webkit.org/show_bug.cgi?id=141274
+
+        Reviewed by David Kilzer.
+
+        CTFontDescriptorRefs can live forever in caches inside CoreText, which means our
+        WebCascadeList can too.
+
+        Test: platform/mac/fast/text/crash-complextextcontroller-custom-cascade-list.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade): Initialize WeakPtrFactory.
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::createWeakPtr):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm: Migrate the raw pointer
+        to WeakPtr.
+        (-[WebCascadeList initWithFont:character:]):
+        (-[WebCascadeList count]):
+        (-[WebCascadeList objectAtIndex:]):
+
+2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Rename BreakingContextInlineHeaders.h to BreakingContext.h
         https://bugs.webkit.org/show_bug.cgi?id=142404
 
