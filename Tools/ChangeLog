@@ -1,3 +1,12 @@
+2015-03-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove Mountain Lion libraries since ML isn't supported
+        https://bugs.webkit.org/show_bug.cgi?id=142332
+
+        Reviewed by Darin Adler.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-03-06  Carlos Alberto Lopez Perez <clopez@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Layout tests imported/w3c/web-platform-tests certificates should not be tracked on WebKit VCS

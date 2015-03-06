@@ -197,9 +197,6 @@ if ($llvm) {
     } elsif ($preferSystemLLVMOverDrops) {
         # Don't fall through to drop detection.
         print "Using system LLVM.\n";
-    } elsif ($osxVersion eq "10.8") {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
     } elsif ($osxVersion eq "10.9") {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
