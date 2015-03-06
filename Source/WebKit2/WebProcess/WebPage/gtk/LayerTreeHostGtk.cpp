@@ -92,17 +92,6 @@ bool LayerTreeHostGtk::makeContextCurrent()
     return m_context->makeContextCurrent();
 }
 
-void LayerTreeHostGtk::ensureTextureMapper()
-{
-    if (m_textureMapper)
-        return;
-
-    ASSERT(m_isValid);
-    m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
-    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
-}
-
 void LayerTreeHostGtk::initialize()
 {
     m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
@@ -124,13 +113,6 @@ void LayerTreeHostGtk::initialize()
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
     m_nonCompositedContentLayer->setNeedsDisplay();
-
-    // The creation of the TextureMapper needs an active OpenGL context.
-    if (!makeContextCurrent())
-        return;
-
-    ensureTextureMapper();
-    scheduleLayerFlush();
 }
 
 LayerTreeHostGtk::~LayerTreeHostGtk()
@@ -296,8 +278,6 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     if (!makeContextCurrent())
         return;
 
-    ensureTextureMapper();
-
     // The window size may be out of sync with the page size at this point, and getting
     // the viewport parameters incorrect, means that the content will be misplaced. Thus
     // we set the viewport parameters directly from the window size.
@@ -309,6 +289,7 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    ASSERT(m_textureMapper);
     m_textureMapper->beginPainting();
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint();
     m_textureMapper->endPainting();
@@ -344,7 +325,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
 
 void LayerTreeHostGtk::scheduleLayerFlush()
 {
-    if (!m_layerFlushSchedulingEnabled)
+    if (!m_layerFlushSchedulingEnabled || !m_textureMapper)
         return;
 
     // We use a GLib timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.
@@ -387,6 +368,18 @@ void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverl
 void LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_layerTreeContext.contextID = handle;
+
+    // The creation of the TextureMapper needs an active OpenGL context.
+    if (!makeContextCurrent())
+        return;
+
+    ASSERT(m_isValid);
+    ASSERT(!m_textureMapper);
+    m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
+
+    scheduleLayerFlush();
 }
 
 } // namespace WebKit
