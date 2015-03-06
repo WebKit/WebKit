@@ -1,3 +1,25 @@
+2015-03-05  Roger Fong  <roger_fong@apple.com>
+
+        Reskin Captions button and container on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142383.
+        <rdar://problem/20061466>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-toggle-closed-captions-button): Create new captions button icon.
+        Update caption container to match rest of media controls better.
+        (audio::-webkit-media-controls-closed-captions-container):
+        (audio::-webkit-media-controls-closed-captions-container .list):
+        (audio::-webkit-media-controls-closed-captions-container h3):
+        (audio::-webkit-media-controls-closed-captions-container ul):
+        (audio::-webkit-media-controls-closed-captions-container li):
+        (audio::-webkit-media-controls-closed-captions-container li:focus):
+        (audio::-webkit-media-controls-closed-captions-container li:hover):
+        Fix up some fonts to make fonts between captions, status display and time displays consistent.
+        (audio::-webkit-media-controls-status-display):
+        (audio::-webkit-media-controls-time-remaining-display):
+
 2015-03-06  Jer Noble  <jer.noble@apple.com>
 
         [Web Audio] Decoding specific .m4a file crashes tab
