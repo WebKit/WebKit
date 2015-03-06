@@ -1,5 +1,29 @@
 2015-03-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r180234
+
+    2015-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+            Throwing from an FTL call IC slow path may result in tag registers being clobbered on 64-bit CPUs
+            https://bugs.webkit.org/show_bug.cgi?id=141717
+            rdar://problem/19863382
+
+            Reviewed by Geoffrey Garen.
+
+            The best solution is to ensure that the engine catching an exception restores tag registers.
+
+            Each of these new test cases reliably crashed prior to this patch and they don't crash at all now.
+
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_catch):
+            * llint/LowLevelInterpreter.asm:
+            * llint/LowLevelInterpreter64.asm:
+            * tests/stress/throw-from-ftl-call-ic-slow-path-cells.js: Added.
+            * tests/stress/throw-from-ftl-call-ic-slow-path-undefined.js: Added.
+            * tests/stress/throw-from-ftl-call-ic-slow-path.js: Added.
+
+2015-03-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r181030
 
     2015-03-04  Filip Pizlo  <fpizlo@apple.com>
