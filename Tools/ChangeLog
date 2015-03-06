@@ -1,3 +1,13 @@
+2015-03-06  David Kilzer  <ddkilzer@apple.com>
+
+        Dashboard: Perf bot status is missing for Apple {Mavericks,Yosemite} Release builds
+
+        See also fix to config.json in r181097.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Add missing "WK2" to the names of the perf
+        bots.
+
 2015-03-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         run-jsc-stress-tests should determine the architecture from ELF binaries
