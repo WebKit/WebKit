@@ -526,18 +526,23 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
 
 FloatSize SVGSVGElement::currentViewportSize() const
 {
-    if (hasIntrinsicWidth() && hasIntrinsicHeight())
-        return FloatSize(floatValueForLength(intrinsicWidth(), 0), floatValueForLength(intrinsicHeight(), 0));
+    FloatSize viewportSize;
 
-    if (!renderer())
-        return { };
-
-    if (is<RenderSVGRoot>(*renderer())) {
-        auto& root = downcast<RenderSVGRoot>(*renderer());
-        return root.contentBoxRect().size() / root.style().effectiveZoom();
+    if (renderer()) {
+        if (is<RenderSVGRoot>(*renderer())) {
+            auto& root = downcast<RenderSVGRoot>(*renderer());
+            viewportSize = root.contentBoxRect().size() / root.style().effectiveZoom();
+        } else
+            viewportSize = downcast<RenderSVGViewportContainer>(*renderer()).viewport().size();
     }
 
-    return downcast<RenderSVGViewportContainer>(*renderer()).viewport().size();
+    if (!viewportSize.isEmpty())
+        return viewportSize;
+
+    if (!(hasIntrinsicWidth() && hasIntrinsicHeight()))
+        return { };
+
+    return FloatSize(floatValueForLength(intrinsicWidth(), 0), floatValueForLength(intrinsicHeight(), 0));
 }
 
 bool SVGSVGElement::hasIntrinsicWidth() const

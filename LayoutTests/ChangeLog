@@ -1,3 +1,16 @@
+2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An SVG element without intrinsic size inherits the container size as its viewport instead of inheriting the container viewport.
+        https://bugs.webkit.org/show_bug.cgi?id=141725.
+
+        Reviewed by Darin Adler.
+
+        * svg/css/svg-css-different-intrinsic-sizes-expected.html: Added.
+        * svg/css/svg-css-different-intrinsic-sizes.html: Added.
+        The intrinsic size of the <svg> element is overridden by CSS. The elements
+        inside the <svg> should consider the css size (which is equal to the <svg>
+        element viewport) instead of the <svg> element intrinsic size.
+
 2015-03-06  Simon Fraser  <simon.fraser@apple.com>
 
         Allow composited clip-path to be updated without a layer repaint
