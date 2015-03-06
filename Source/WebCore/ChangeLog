@@ -1,3 +1,22 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] 'Gliding' phase of scroll snap points is incorrect on desktop
+        https://bugs.webkit.org/show_bug.cgi?id=142351
+        <rdar://problem/20058023>
+
+        Reviewed by Dean Jackson.
+
+        This problem was caused by incorrectly starting a new snapping animation timer when the
+        "end momentum" phase event had been received. This caused WebKit to recalculate the
+        animation curve for the remaining distance, resulting in the bad animation behavior.
+
+        Removing this incorrect start animation command when entering the momentum ended state
+        resolves the problem.
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): Remove the command to
+        start a new snap animation when entering the "end momentum" state.
+
 2015-03-05  Joonghun Park  <jh718.park@samsung.com>
 
         Use std::unique_ptr instead of PassOwnPtr|OwnPtr for ResourceRequest

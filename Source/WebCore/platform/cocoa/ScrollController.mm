@@ -537,7 +537,6 @@ void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis
         break;
         
     case WheelEventStatus::InertialScrollEnd:
-        beginScrollSnapAnimation(axis, ScrollSnapState::Snapping);
         snapState.clearInitialWheelDeltaWindow();
         snapState.m_shouldOverrideWheelEvent = false;
         break;
