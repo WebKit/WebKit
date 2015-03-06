@@ -192,6 +192,11 @@ TreeOutline.prototype.removeChild = function(child, suppressOnDeselect, suppress
         throw "child not found in this node's children";
 
     this.removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling);
+
+    if (!this.children.length) {
+        this._listItemNode.classList.remove("parent");
+        this.hasChildren = false;
+    }
 };
 
 TreeOutline.prototype.removeChildren = function(suppressOnDeselect)

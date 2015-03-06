@@ -61,12 +61,6 @@ WebInspector.GeneralTreeElement.prototype = {
         return this._listItemNode;
     },
 
-    get disclosureButton()
-    {
-        this._createElementsIfNeeded();
-        return this._disclosureButton;
-    },
-
     get iconElement()
     {
         this._createElementsIfNeeded();

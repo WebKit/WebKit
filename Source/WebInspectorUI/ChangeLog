@@ -1,3 +1,34 @@
+2015-03-06  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Populate Debugger sidebar with all debuggable resources
+        https://bugs.webkit.org/show_bug.cgi?id=141232
+
+        Reviewed by Timothy Hatcher.
+
+        All debuggable resources now show in the debugger sidebar. The _resourceAdded handler now adds a script resource
+        to the sidebar regardless of whether it has any breakpoints set on it. The new function
+        _getTreeElementForSourceCodeAndAddToContentTreeOutline adds the element to the debugger sidebar before
+        _addBreakpointsForSourceCode is called. Removing all breakpoints from a resource no longer removes that
+        resource from the debugger sidebar. TreeOutline.prototype.removeChild has been updated so the disclosure
+        button will disappear and reappear correctly when removing/adding breakpoints.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint): Expand resource if first breakpoint is added.
+        (WebInspector.DebuggerSidebarPanel.prototype._getTreeElementForSourceCodeAndAddToContentTreeOutline): Created.
+        (WebInspector.DebuggerSidebarPanel.prototype._resourceAdded): Checks resource type and adds scripts to sidebar.
+        (WebInspector.DebuggerSidebarPanel.prototype._mainResourceChanged):
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._removeBreakpointTreeElement): No longer removes empty parent.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeElementSelected): Displays scripts without breakpoints now.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.get disclosureButton): Drive-by fix. Unused. Deleted.
+
+        * UserInterface/Views/TreeOutline.js:
+        (TreeOutline.prototype.removeChild):
+        Remove parent class and set hasChildren to false if necessary to properly hide and reveal disclosure button
+        for elements whose children have been removed.
+
 2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Follow-up fixes to ObjectTreeBaseTreeElement
