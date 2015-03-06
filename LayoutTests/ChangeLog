@@ -1,3 +1,11 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Give up on Attachment testing.
+
+        Just skip Attachments until they settle down. Also document more debug assertions.
+
+        * platform/win/TestExpectations:
+
 2015-03-05  Oliver Hunt  <oliver@apple.com>
 
         Block mixed mode content
