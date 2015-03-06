@@ -1689,7 +1689,7 @@ sub buildVisualStudioProject
 
     my $logFile = File::Spec->catfile($logPath, "BuildOutput.htm");
     chomp($logFile = `cygpath -w "$logFile"`) if isCygwin();
-    my $logging = "/flp:LogFile=" . $logFile . ";Verbosity=minimal";
+    my $logging = "/flp:LogFile=" . $logFile . ";ErrorsOnly";
 
     my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $logging);
 

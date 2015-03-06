@@ -1,3 +1,11 @@
+2015-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed EWS fix.
+
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject): Dial logging back to 'ErrorsOnly' to see if that makes
+        the EWS output more usable.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
