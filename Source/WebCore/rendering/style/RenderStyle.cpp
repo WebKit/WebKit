@@ -716,7 +716,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned&) const
+bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
 {
     if (inherited_flags._visibility != other.inherited_flags._visibility
         || inherited_flags.m_printColorAdjust != other.inherited_flags.m_printColorAdjust
@@ -737,8 +737,11 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned&) con
         return true;
 #endif
 
-    if (rareNonInheritedData->m_clipPath != other.rareNonInheritedData->m_clipPath)
-        return true;
+    // FIXME: this should probably be moved to changeRequiresLayerRepaint().
+    if (rareNonInheritedData->m_clipPath != other.rareNonInheritedData->m_clipPath) {
+        changedContextSensitiveProperties |= ContextSensitivePropertyClipPath;
+        // Don't return; keep looking for another change.
+    }
 
     return false;
 }

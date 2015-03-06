@@ -926,6 +926,18 @@ void RenderLayerCompositor::layerStyleChanged(RenderLayer& layer, const RenderSt
     }
 }
 
+bool RenderLayerCompositor::canCompositeClipPath(const RenderLayer& layer)
+{
+    ASSERT(layer.isComposited());
+    ASSERT(layer.renderer().style().clipPath());
+
+    if (layer.renderer().hasMask())
+        return false;
+
+    ClipPathOperation& clipPath = *layer.renderer().style().clipPath();
+    return (clipPath.type() != ClipPathOperation::Shape || clipPath.type() == ClipPathOperation::Shape) && GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape);
+}
+
 bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeRepaint shouldRepaint)
 {
     bool layerChanged = false;

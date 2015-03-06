@@ -1,3 +1,15 @@
+2015-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow composited clip-path to be updated without a layer repaint
+        https://bugs.webkit.org/show_bug.cgi?id=142384
+
+        Reviewed by Zalan Bujtas.
+        
+        Test repaint with a clip-path change.
+
+        * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt: Added.
+        * compositing/masks/compositing-clip-path-change-no-repaint.html: Added.
+
 2015-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening on 6th Mar.

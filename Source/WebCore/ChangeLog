@@ -1,3 +1,38 @@
+2015-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow composited clip-path to be updated without a layer repaint
+        https://bugs.webkit.org/show_bug.cgi?id=142384
+
+        Reviewed by Zalan Bujtas.
+        
+        When clip-path is mapped to a compositing shape layer mask, we can just
+        push a new shape to the GraphicsLayer to update the clip path, without
+        needing to repaint.
+        
+        Achieve this by adding ContextSensitivePropertyClipPath. When set, and the
+        stars are aligned, issue a StyleDifferenceRecompositeLayer rather than
+        a StyleDifferenceRepaint.
+        
+        We ask RenderLayerCompositor whether the clip path can be composited
+        to hide platform differences related to whether GraphicsLayer supports
+        shape masks.
+
+        Test: compositing/masks/compositing-clip-path-change-no-repaint.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference): Remove obvious comment
+        about opacity. Handle ContextSensitivePropertyClipPath.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canCompositeClipPath): If we have a mask
+        we have to paint the mask + clip path into the mask layer (mirrors code in
+        RenderLayerBacking::updateMaskingLayer but isn't quite similar enough to share).
+        * rendering/RenderLayerCompositor.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint): Set ContextSensitivePropertyClipPath
+        and don't return, as is normal for context-sensitive property handling.
+        * rendering/style/RenderStyleConstants.h: Line things up to avoid future bit
+        fumbles, and remove unnecessary braces.
+
 2015-03-06  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Process all actions when blocking a URL.

@@ -277,8 +277,6 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
             diff = std::max(diff, StyleDifferenceRecompositeLayer);
     }
 
-    // If opacity changed, and we are not composited, need to repaint (also
-    // ignoring text nodes)
     if (contextSensitiveProperties & ContextSensitivePropertyOpacity) {
         if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited())
             diff = std::max(diff, StyleDifferenceRepaintLayer);
@@ -286,6 +284,16 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
             diff = std::max(diff, StyleDifferenceRecompositeLayer);
     }
 
+    if (contextSensitiveProperties & ContextSensitivePropertyClipPath) {
+        if (hasLayer()
+            && downcast<RenderLayerModelObject>(*this).layer()->isComposited()
+            && hasClipPath()
+            && RenderLayerCompositor::canCompositeClipPath(*downcast<RenderLayerModelObject>(*this).layer()))
+            diff = std::max(diff, StyleDifferenceRecompositeLayer);
+        else
+            diff = std::max(diff, StyleDifferenceRepaint);
+    }
+    
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
