@@ -1,3 +1,14 @@
+2015-03-06  Antti Koivisto  <antti@apple.com>
+
+        Use WTF abstraction for page size in NetworkCacheStorage
+        https://bugs.webkit.org/show_bug.cgi?id=142396
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCache::decodeEntryMetaData):
+        (WebKit::NetworkCache::Storage::dispatchFullWriteOperation):
+
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] SVG fonts are garbled

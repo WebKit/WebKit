@@ -36,14 +36,11 @@
 #include <mach/vm_param.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if PLATFORM(IOS)
-#include <mach/vm_page_size.h>
-#endif
 
 namespace WebKit {
 namespace NetworkCache {
@@ -178,7 +175,7 @@ static bool decodeEntryMetaData(EntryMetaData& metaData, const Data& fileData)
         if (!decoder.verifyChecksum())
             return false;
         metaData.headerOffset = decoder.currentOffset();
-        metaData.bodyOffset = round_page(metaData.headerOffset + metaData.headerSize);
+        metaData.bodyOffset = WTF::roundUpToMultipleOf(pageSize(), metaData.headerOffset + metaData.headerSize);
         success = true;
         return false;
     });
@@ -503,7 +500,7 @@ void Storage::dispatchFullWriteOperation(const WriteOperation& write)
 
             m_approximateSize += totalSize;
 
-            bool shouldMapBody = !error && bodySize >= vm_page_size;
+            bool shouldMapBody = !error && bodySize >= pageSize();
             auto bodyMap = shouldMapBody ? mapFile(fd, bodyOffset, bodySize) : nullptr;
 
             Data bodyData(bodyMap, Data::Backing::Map);
