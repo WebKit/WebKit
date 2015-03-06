@@ -1,3 +1,17 @@
+2015-03-05  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] TestExpectations for ios-simulator-wk2 should fall back to 'wk2' after 'ios-simulator'
+        <http://webkit.org/b/142226>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_baseline_search_path): Switch the
+        TestExpectations order of ios-simulator-wk2 from this:
+          ios-simulator-wk2, wk2, ios-simulator
+        To this:
+          ios-simulator-wk2, ios-simualtor, wk2
+
 2015-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Provide tiered logging from MSBuild -- Errors on top, Warnings after
