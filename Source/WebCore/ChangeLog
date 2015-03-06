@@ -1,3 +1,18 @@
+2015-03-05  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Web video on iPad appears black and missing the AirPlay placard when connected to an AirPlay route
+        https://bugs.webkit.org/show_bug.cgi?id=142373
+        <rdar://problem/19866072>
+
+        Reviewed by Brent Fulgham.
+
+        There was no style for the placard, which meant it had
+        zero height (and thus was invisible).
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-wireless-playback-status): Added.
+        (audio::-webkit-media-controls-wireless-playback-status.hidden):
+
 2015-03-05  Roger Fong  <roger_fong@apple.com>
 
         Adjust volume box to not intersect with rest of inline media controls on OSX.
