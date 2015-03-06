@@ -542,7 +542,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
 
     Frame& topFrame = m_frame->tree().top();
     if (&topFrame != m_frame) {
-        if (!frameLoader()->mixedContentChecker().canDisplayInsecureContent(topFrame.document()->securityOrigin(), newRequest.url())) {
+        if (!frameLoader()->mixedContentChecker().canDisplayInsecureContent(topFrame.document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return;
         }

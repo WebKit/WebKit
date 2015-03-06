@@ -3,6 +3,10 @@ function frameLoaded() {
   if (window.opener)
     window.opener.postMessage('done', '*');
 }
+setTimeout(function(){
+  if (window.opener)
+    window.opener.postMessage('blocked', '*');
+}, 100)
 </script>
 <iframe onload="frameLoaded()"
         src="http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>

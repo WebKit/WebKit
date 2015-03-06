@@ -60,13 +60,13 @@ bool MixedContentChecker::isMixedContent(SecurityOrigin* securityOrigin, const U
     return !SecurityOrigin::isSecure(url);
 }
 
-bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrigin, const URL& url) const
+bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrigin, ContentType type, const URL& url) const
 {
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = m_frame.settings().allowDisplayOfInsecureContent();
-    logWarning(allowed, "displayed", url);
+    bool allowed = m_frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn;
+    logWarning(allowed, "display", url);
 
     if (allowed)
         client().didDisplayInsecureContent();
@@ -80,7 +80,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
         return true;
 
     bool allowed = m_frame.settings().allowRunningOfInsecureContent();
-    logWarning(allowed, "ran", url);
+    logWarning(allowed, "run", url);
 
     if (allowed)
         client().didRunInsecureContent(securityOrigin, url);
@@ -90,7 +90,8 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
 
 void MixedContentChecker::logWarning(bool allowed, const String& action, const URL& target) const
 {
-    String message = makeString((allowed ? String() : "[blocked] "), "The page at ", m_frame.document()->url().stringCenterEllipsizedToLength(), ' ', action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
+    const char* errorString = allowed ? " was allowed to " : " was not allowed to ";
+    String message = makeString((allowed ? String() : "[blocked] "), "The page at ", m_frame.document()->url().stringCenterEllipsizedToLength(), errorString, action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
     m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 

@@ -12,6 +12,8 @@ if (window.testRunner) {
 window.addEventListener("message", function (e) {
   if (window.testRunner)
       testRunner.notifyDone();
+	if (e.data == "done")
+	    throw "should not have loaded insecure content"
 }, false);
 
 </script>

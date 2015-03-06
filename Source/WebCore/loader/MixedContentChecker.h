@@ -44,9 +44,14 @@ class SecurityOrigin;
 class MixedContentChecker {
     WTF_MAKE_NONCOPYABLE(MixedContentChecker);
 public:
+    enum class ContentType {
+        Active,
+        ActiveCanWarn,
+    };
+
     MixedContentChecker(Frame&);
 
-    bool canDisplayInsecureContent(SecurityOrigin*, const URL&) const;
+    bool canDisplayInsecureContent(SecurityOrigin*, ContentType, const URL&) const;
     bool canRunInsecureContent(SecurityOrigin*, const URL&) const;
     static bool isMixedContent(SecurityOrigin*, const URL&);
 

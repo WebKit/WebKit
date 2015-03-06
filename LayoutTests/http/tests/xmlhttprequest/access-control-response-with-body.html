@@ -24,6 +24,10 @@ Body from cross origin preflight response is prepended to the actual response bo
        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
        xhr.send(null);
+       setTimeout(function(){
+          if (window.testRunner)
+              testRunner.notifyDone()
+       }, 100)
   };
   
 </script>

@@ -1,3 +1,26 @@
+2015-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Block mixed mode content
+        https://bugs.webkit.org/show_bug.cgi?id=142378
+
+        Reviewed by Darin Adler.
+
+        Switched to blocking mixed mode content by default,
+        and modify the blocking rules to allow us to match
+        the behaviours of other browsers.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canDisplayInsecureContent):
+        (WebCore::MixedContentChecker::canRunInsecureContent):
+        (WebCore::MixedContentChecker::logWarning):
+        * loader/MixedContentChecker.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        * page/Settings.in:
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Document::recalcStyle() shouldn't call viewportContentsChanged() if there is a pending layout

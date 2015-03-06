@@ -271,6 +271,46 @@ CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResourc
     return downcast<CachedRawResource>(requestResource(CachedResource::MainResource, request).get());
 }
 
+static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResource::Type type)
+{
+    switch (type) {
+    case CachedResource::ImageResource:
+            return MixedContentChecker::ContentType::ActiveCanWarn;
+
+    case CachedResource::CSSStyleSheet:
+    case CachedResource::Script:
+    case CachedResource::FontResource:
+        return MixedContentChecker::ContentType::Active;
+
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+        return MixedContentChecker::ContentType::Active;
+#endif
+
+    case CachedResource::RawResource:
+    case CachedResource::SVGDocumentResource:
+        return MixedContentChecker::ContentType::Active;
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+        return MixedContentChecker::ContentType::Active;
+#endif
+
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkSubresource:
+        return MixedContentChecker::ContentType::Active;
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+        return MixedContentChecker::ContentType::Active;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return MixedContentChecker::ContentType::Active;
+    }
+}
+
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
 {
     switch (type) {
@@ -298,7 +338,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         // These resources can corrupt only the frame's pixels.
         if (Frame* f = frame()) {
             Frame& topFrame = f->tree().top();
-            if (!topFrame.loader().mixedContentChecker().canDisplayInsecureContent(topFrame.document()->securityOrigin(), url))
+            if (!topFrame.loader().mixedContentChecker().canDisplayInsecureContent(topFrame.document()->securityOrigin(), contentTypeFromResourceType(type), url))
                 return false;
         }
         break;

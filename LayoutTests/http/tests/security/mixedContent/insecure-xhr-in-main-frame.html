@@ -11,6 +11,8 @@ if (window.testRunner) {
 window.addEventListener("message", function (e) {
     if (window.testRunner)
         testRunner.notifyDone();
+    if (e.data == "done")
+    	throw "Should not load this"
 }, false);
 
 </script>

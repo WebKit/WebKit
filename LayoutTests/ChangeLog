@@ -1,3 +1,31 @@
+2015-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Block mixed mode content
+        https://bugs.webkit.org/show_bug.cgi?id=142378
+
+        Reviewed by Darin Adler.
+
+        Update test results to reflect the new reality.
+
+        * http/tests/security/mixedContent/insecure-css-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-plugin-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-frame.html:
+        * http/tests/xmlhttprequest/access-control-response-with-body.html:
+
 2015-03-05  Benjamin Poulain  <bpoulain@apple.com>
 
         new layout test http/tests/usercontentfilter/character-set-basic-support.html fails
