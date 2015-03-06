@@ -71,10 +71,6 @@ public:
     void deleteObjectStore(const String& name, ExceptionCode&);
     void close();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(versionchange);
-
     // IDBDatabaseCallbacks
     virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness);
     virtual void onAbort(int64_t, PassRefPtr<IDBDatabaseError>);

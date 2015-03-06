@@ -92,13 +92,6 @@ public:
     using RefCounted<FileReader>::ref;
     using RefCounted<FileReader>::deref;
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
-
 private:
     explicit FileReader(ScriptExecutionContext&);
 

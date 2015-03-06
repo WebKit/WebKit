@@ -74,8 +74,6 @@ public:
     void webkitClearResourceTimings();
     void webkitSetResourceTimingBufferSize(unsigned int);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitresourcetimingbufferfull);
-
     void addResourceTiming(const String& initiatorName, Document*, const ResourceRequest&, const ResourceResponse&, double initiationTime, double finishTime);
 #endif
 

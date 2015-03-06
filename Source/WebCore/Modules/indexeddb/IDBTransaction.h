@@ -96,10 +96,6 @@ public:
     void setActive(bool);
     void setError(PassRefPtr<DOMError>, const String& errorMessage);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-
     void onAbort(PassRefPtr<IDBDatabaseError>);
     void onComplete();
 

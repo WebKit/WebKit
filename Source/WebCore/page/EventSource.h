@@ -66,10 +66,6 @@ public:
 
     State readyState() const;
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-
     void close();
 
     using RefCounted<EventSource>::ref;

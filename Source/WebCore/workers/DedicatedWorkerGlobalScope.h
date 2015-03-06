@@ -57,8 +57,6 @@ namespace WebCore {
         // Needed for Objective-C bindings (see bug 28774).
         void postMessage(PassRefPtr<SerializedScriptValue>, MessagePort*, ExceptionCode&);
 
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
-
         DedicatedWorkerThread& thread();
 
     private:

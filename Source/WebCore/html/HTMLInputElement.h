@@ -66,8 +66,6 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
-
     virtual HTMLInputElement* toInputElement() override final { return this; }
 
     WEBCORE_EXPORT virtual bool shouldAutocomplete() const override final;

@@ -58,8 +58,6 @@ namespace WebCore {
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
         void terminate();
-    
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
         // EventTarget API.
         virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }

@@ -65,9 +65,6 @@ public:
 
     size_t bufferSize() const { return m_bufferSize; }
 
-    EventListener* onaudioprocess() { return getAttributeEventListener(eventNames().audioprocessEvent); }
-    void setOnaudioprocess(PassRefPtr<EventListener>);
-    
 private:
     virtual double tailTime() const override;
     virtual double latencyTime() const override;

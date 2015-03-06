@@ -111,9 +111,6 @@ public:
     void willChange();
     virtual void didChange();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(enter);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(exit);
-
     using RefCounted<TextTrackCue>::ref;
     using RefCounted<TextTrackCue>::deref;
 

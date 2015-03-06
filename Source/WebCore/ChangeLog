@@ -1,3 +1,68 @@
+2015-03-06  Darin Adler  <darin@apple.com>
+
+        Remove unused C++ DOM event handler attribute functions
+        https://bugs.webkit.org/show_bug.cgi?id=142398
+
+        Reviewed by Anders Carlsson.
+
+        * dom/EventTarget.h: Removed now-unneeded macros: DEFINE_ATTRIBUTE_EVENT_LISTENER,
+        DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER, DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER,
+        DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER, DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER,
+        DECLARE_FORWARDING_ATTRIBUTE_EVENT_LISTENER, DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::setOnended): Deleted.
+        (WebCore::AudioScheduledSourceNode::finish): Rewrote this to use dispatchEvent
+        instead of one-off event-sending code. Also use a lambda to avoid needing two
+        additional member functions to implement this.
+        (WebCore::AudioScheduledSourceNode::notifyEndedDispatch): Deleted.
+        (WebCore::AudioScheduledSourceNode::notifyEnded): Deleted.
+        * Modules/webaudio/AudioScheduledSourceNode.h: Updated for above.
+
+        * Modules/battery/BatteryManager.h: Removed onxxx and setOnxxx functions,
+        including ones created with macros from EventTarget.h.
+        * Modules/encryptedmedia/MediaKeySession.h: Ditto.
+        * Modules/indexeddb/IDBDatabase.h: Ditto.
+        * Modules/indexeddb/IDBOpenDBRequest.h: Ditto.
+        * Modules/indexeddb/IDBRequest.h: Ditto.
+        * Modules/indexeddb/IDBTransaction.h: Ditto.
+        * Modules/mediastream/MediaStream.h: Ditto.
+        * Modules/mediastream/MediaStreamTrack.h: Ditto.
+        * Modules/mediastream/RTCDTMFSender.h: Ditto.
+        * Modules/mediastream/RTCDataChannel.h: Ditto.
+        * Modules/mediastream/RTCPeerConnection.h: Ditto.
+        * Modules/notifications/Notification.h: Ditto.
+        * Modules/speech/SpeechSynthesisUtterance.h: Ditto.
+        * Modules/webaudio/AudioContext.h: Ditto.
+        * Modules/webaudio/ScriptProcessorNode.cpp: Ditto.
+        * Modules/webaudio/ScriptProcessorNode.h: Ditto.
+        * Modules/websockets/WebSocket.h: Ditto.
+        * css/FontLoader.h: Ditto.
+        * dom/Document.h: Ditto.
+        * dom/Element.cpp: Ditto.
+        * dom/Element.h: Ditto.
+        * dom/MessagePort.h: Ditto.
+        * fileapi/FileReader.h: Ditto.
+        * html/HTMLBodyElement.h: Ditto.
+        * html/HTMLFormElement.h: Ditto.
+        * html/HTMLFrameSetElement.h: Ditto.
+        * html/HTMLInputElement.h: Ditto.
+        * html/HTMLMediaElement.h: Ditto.
+        * html/HTMLVideoElement.h: Ditto.
+        * html/track/TextTrack.h: Ditto.
+        * html/track/TextTrackCue.h: Ditto.
+        * html/track/TrackListBase.h: Ditto.
+        * loader/appcache/DOMApplicationCache.h: Ditto.
+        * page/DOMWindow.h: Ditto.
+        * page/EventSource.h: Ditto.
+        * page/Performance.h: Ditto.
+        * workers/AbstractWorker.h: Ditto.
+        * workers/DedicatedWorkerGlobalScope.h: Ditto.
+        * workers/Worker.h: Ditto.
+        * workers/WorkerGlobalScope.h: Ditto.
+        * xml/XMLHttpRequest.h: Ditto.
+        * xml/XMLHttpRequestUpload.h: Ditto.
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Setting any of the <object> element plugin controlling attributes does not have any affect.

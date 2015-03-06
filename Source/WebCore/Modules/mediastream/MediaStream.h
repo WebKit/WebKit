@@ -71,14 +71,8 @@ public:
 
     PassRefPtr<MediaStream> clone();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
-
     bool active() const;
     void setActive(bool);
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(active);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(inactive);
 
     MediaStreamPrivate* privateStream() const { return m_private.get(); }
 

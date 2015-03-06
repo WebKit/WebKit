@@ -282,90 +282,6 @@ namespace WebCore {
 
         void dispatchLoadEvent();
 
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(beforeunload);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(blur);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(canplay);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(canplaythrough);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(contextmenu);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dblclick);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(drag);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dragend);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dragenter);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dragleave);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dragover);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(dragstart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(drop);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(durationchange);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(emptied);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(focus);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(hashchange);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(input);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(invalid);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(keydown);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(keypress);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(keyup);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadeddata);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadedmetadata);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mousedown);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseenter);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseleave);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mousemove);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseout);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseover);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseup);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(mousewheel);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(offline);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(online);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(pagehide);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(pageshow);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(pause);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(play);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(playing);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(popstate);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(ratechange);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(reset);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(resize);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(scroll);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(search);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(seeked);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(seeking);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(select);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(stalled);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(storage);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(submit);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(suspend);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(timeupdate);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(unload);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(volumechange);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(waiting);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitbeginfullscreen);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitendfullscreen);
-#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealbottom);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealleft);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealright);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealtop);
-#endif
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(wheel);
-
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationiteration, webkitAnimationIteration);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationend, webkitAnimationEnd);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationstart, animationstart);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationiteration, animationiteration);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationend, animationend);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkittransitionend, webkitTransitionEnd);
-        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(transitionend, transitionend);
-
         void captureEvents();
         void releaseEvents();
 
@@ -373,15 +289,6 @@ namespace WebCore {
 
         using RefCounted<DOMWindow>::ref;
         using RefCounted<DOMWindow>::deref;
-
-#if ENABLE(DEVICE_ORIENTATION)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(devicemotion);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
-#endif
-
-#if ENABLE(PROXIMITY_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitdeviceproximity);
-#endif
 
         // HTML 5 key/value storage
         Storage* sessionStorage(ExceptionCode&) const;
@@ -397,21 +304,6 @@ namespace WebCore {
         //  0 is straight up; -90 is when the device is rotated 90 clockwise;
         //  90 is when rotated counter clockwise.
         int orientation() const;
-
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(orientationchange);
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
-#endif
-
-#if ENABLE(IOS_GESTURE_EVENTS)
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(gesturestart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(gesturechange);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(gestureend);
 #endif
 
 #if ENABLE(WEB_TIMING)

@@ -232,13 +232,6 @@ public:
     void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode&);
     void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode&);
     void webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode&);
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
-#endif
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitneedkey);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
@@ -267,21 +260,6 @@ public:
     WEBCORE_EXPORT virtual bool canPlay() const override;
 
     double percentLoaded() const;
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(emptied);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadedmetadata);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadeddata);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(canplay);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(canplaythrough);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(playing);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(waiting);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(durationchange);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(timeupdate);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(play);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(pause);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ratechange);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(volumechange);
 
 #if ENABLE(VIDEO_TRACK)
     PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
@@ -380,9 +358,6 @@ public:
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
     virtual void wirelessRoutesAvailableDidChange() override;
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitcurrentplaybacktargetiswirelesschanged);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitplaybacktargetavailabilitychanged);
 #endif
 
     // EventTarget function.

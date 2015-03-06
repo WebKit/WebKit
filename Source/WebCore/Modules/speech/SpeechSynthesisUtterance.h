@@ -64,14 +64,6 @@ public:
     double startTime() const { return m_platformUtterance->startTime(); }
     void setStartTime(double startTime) { m_platformUtterance->setStartTime(startTime); }
     
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(start);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(end);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(pause);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(resume);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(mark);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(boundary);
-
     using RefCounted<SpeechSynthesisUtterance>::ref;
     using RefCounted<SpeechSynthesisUtterance>::deref;
 

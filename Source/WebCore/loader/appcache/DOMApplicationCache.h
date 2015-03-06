@@ -58,17 +58,6 @@ public:
     using RefCounted<DOMApplicationCache>::ref;
     using RefCounted<DOMApplicationCache>::deref;
 
-    // Explicitly named attribute event listener helpers
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(checking);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(noupdate);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(downloading);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(updateready);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(cached);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(obsolete);
-
     virtual EventTargetInterface eventTargetInterface() const override { return DOMApplicationCacheEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override;
 

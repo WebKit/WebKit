@@ -217,11 +217,6 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     }
 }
 
-void ScriptProcessorNode::setOnaudioprocess(PassRefPtr<EventListener> listener)
-{
-    setAttributeEventListener(eventNames().audioprocessEvent, listener);
-}
-
 void ScriptProcessorNode::fireProcessEventDispatch(void* userData)
 {
     ScriptProcessorNode* jsAudioNode = static_cast<ScriptProcessorNode*>(userData);

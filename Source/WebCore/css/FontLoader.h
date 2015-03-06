@@ -57,12 +57,6 @@ public:
     }
     virtual ~FontLoader();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loading);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadingdone);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-
     bool checkFont(const String&, const String&);
     void loadFont(const Dictionary&);
     void loadFontDone(const LoadFontCallback&);

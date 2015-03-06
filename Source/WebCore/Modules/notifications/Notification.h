@@ -102,15 +102,6 @@ public:
 
     TextDirection direction() const { return dir() == "rtl" ? RTL : LTR; }
 
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    EventListener* ondisplay() { return getAttributeEventListener(eventNames().showEvent); }
-    void setOndisplay(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().showEvent, listener); }
-#endif
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(show);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
-    
     WEBCORE_EXPORT void dispatchClickEvent();
     WEBCORE_EXPORT void dispatchCloseEvent();
     WEBCORE_EXPORT void dispatchErrorEvent();

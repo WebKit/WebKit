@@ -84,12 +84,6 @@ public:
     RefPtr<MediaStreamTrack> clone();
     void stopProducingData();
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(started);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(overconstrained);
-
     RealtimeMediaSource* source() const { return m_privateTrack->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_privateTrack.get(); }
 

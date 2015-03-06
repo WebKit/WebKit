@@ -83,8 +83,6 @@ public:
     void webkitSetPresentationMode(const String&);
     String webkitPresentationMode() const;
     virtual void fullscreenModeChanged(VideoFullscreenMode) override;
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitpresentationmodechanged);
 #endif
 
 private:

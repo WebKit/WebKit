@@ -227,8 +227,6 @@ public:
     virtual EventTargetInterface eventTargetInterface() const override final { return AudioContextEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override final;
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
-
     // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
     using ThreadSafeRefCounted<AudioContext>::ref;
     using ThreadSafeRefCounted<AudioContext>::deref;

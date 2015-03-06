@@ -50,9 +50,6 @@ public:
     virtual EventTargetInterface eventTargetInterface() const;
     virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(upgradeneeded);
-
 protected:
     virtual bool shouldEnqueueEvent() const override;
 

@@ -89,11 +89,6 @@ public:
     String binaryType() const;
     void setBinaryType(const String&);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
-
     // EventTarget functions.
     virtual EventTargetInterface eventTargetInterface() const override;
     virtual ScriptExecutionContext* scriptExecutionContext() const override;

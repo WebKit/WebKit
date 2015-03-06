@@ -48,13 +48,6 @@ namespace WebCore {
         virtual EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
         virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest->scriptExecutionContext(); }
 
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
-
         void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
         void dispatchProgressEvent(const AtomicString &type);
 

@@ -125,9 +125,6 @@ public:
 
     void requestAutocomplete();
     void finishRequestAutocomplete(AutocompleteResult);
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(autocomplete);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(autocompleteerror);
 #endif
 
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }

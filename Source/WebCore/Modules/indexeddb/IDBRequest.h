@@ -73,9 +73,6 @@ public:
 
     const String& readyState() const;
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-
     void markEarlyDeath();
     void setCursorDetails(IndexedDB::CursorType, IndexedDB::CursorDirection);
     void setPendingCursor(PassRefPtr<IDBCursor>);

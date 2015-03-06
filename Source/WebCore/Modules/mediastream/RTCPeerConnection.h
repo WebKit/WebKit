@@ -103,14 +103,6 @@ public:
 
     void close(ExceptionCode&);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(negotiationneeded);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(icecandidate);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(signalingstatechange);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(iceconnectionstatechange);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(datachannel);
-
     // RTCPeerConnectionHandlerClient
     virtual void negotiationNeeded() override;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) override;

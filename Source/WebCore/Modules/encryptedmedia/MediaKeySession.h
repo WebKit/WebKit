@@ -73,10 +73,6 @@ public:
 
     void enqueueEvent(PassRefPtr<Event>);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
-
     virtual EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 

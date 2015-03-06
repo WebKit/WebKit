@@ -144,17 +144,6 @@ public:
 
     const ResourceResponse& resourceResponse() const { return m_response; }
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(readystatechange);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
-#if ENABLE(XHR_TIMEOUT)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(timeout);
-#endif
-
     using RefCounted<XMLHttpRequest>::ref;
     using RefCounted<XMLHttpRequest>::deref;
 

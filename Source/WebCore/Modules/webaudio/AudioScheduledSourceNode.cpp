@@ -196,11 +196,6 @@ void AudioScheduledSourceNode::noteOff(double when, ExceptionCode& ec)
 }
 #endif
 
-void AudioScheduledSourceNode::setOnended(PassRefPtr<EventListener> listener)
-{
-    setAttributeEventListener(eventNames().endedEvent, listener);
-}
-
 void AudioScheduledSourceNode::finish()
 {
     if (m_playbackState != FINISHED_STATE) {
@@ -210,24 +205,11 @@ void AudioScheduledSourceNode::finish()
         context()->decrementActiveSourceCount();
     }
 
-    if (m_hasEndedListener)
-        callOnMainThread(&AudioScheduledSourceNode::notifyEndedDispatch, this);
-}
-
-void AudioScheduledSourceNode::notifyEndedDispatch(void* userData)
-{
-    static_cast<AudioScheduledSourceNode*>(userData)->notifyEnded();
-}
-
-void AudioScheduledSourceNode::notifyEnded()
-{
-    EventListener* listener = onended();
-    if (!listener)
-        return;
-
-    RefPtr<Event> event = Event::create(eventNames().endedEvent, FALSE, FALSE);
-    event->setTarget(this);
-    listener->handleEvent(context()->scriptExecutionContext(), event.get());
+    if (m_hasEndedListener) {
+        callOnMainThread([this] {
+            dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        });
+    }
 }
 
 bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)

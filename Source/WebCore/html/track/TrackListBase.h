@@ -56,10 +56,6 @@ public:
     using RefCounted<TrackListBase>::deref;
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return m_context; }
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
-
     void clearElement() { m_element = 0; }
     Element* element() const;
     HTMLMediaElement* mediaElement() const { return m_element; }

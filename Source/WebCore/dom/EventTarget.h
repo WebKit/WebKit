@@ -167,36 +167,6 @@ namespace WebCore {
         EventTargetData m_eventTargetData;
     };
 
-    // FIXME: These macros should be split into separate DEFINE and DECLARE
-    // macros to avoid causing so many header includes.
-    #define DEFINE_ATTRIBUTE_EVENT_LISTENER(attribute) \
-        EventListener* on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
-        void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
-
-    #define DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(attribute) \
-        virtual EventListener* on##attribute(); \
-        virtual void setOn##attribute(PassRefPtr<EventListener> listener); \
-
-    #define DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(type, attribute) \
-        EventListener* type::on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
-        void type::setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
-
-    #define DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(attribute) \
-        EventListener* on##attribute() { return document().getWindowAttributeEventListener(eventNames().attribute##Event); } \
-        void setOn##attribute(PassRefPtr<EventListener> listener) { document().setWindowAttributeEventListener(eventNames().attribute##Event, listener); } \
-
-    #define DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(attribute, eventName) \
-        EventListener* on##attribute() { return getAttributeEventListener(eventNames().eventName##Event); } \
-        void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().eventName##Event, listener); } \
-
-    #define DECLARE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(recipient, attribute) \
-        EventListener* on##attribute(); \
-        void setOn##attribute(PassRefPtr<EventListener> listener);
-
-    #define DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(type, recipient, attribute) \
-        EventListener* type::on##attribute() { return recipient ? recipient->getAttributeEventListener(eventNames().attribute##Event) : 0; } \
-        void type::setOn##attribute(PassRefPtr<EventListener> listener) { if (recipient) recipient->setAttributeEventListener(eventNames().attribute##Event, listener); }
-
     inline void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     {
         EventListenerIterator iterator(this);

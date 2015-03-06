@@ -123,8 +123,6 @@ public:
     void cueWillChange(TextTrackCue*);
     void cueDidChange(TextTrackCue*);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);
-
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }
 

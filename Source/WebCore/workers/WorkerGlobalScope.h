@@ -82,10 +82,6 @@ namespace WebCore {
         WorkerLocation* location() const;
         void close();
 
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(offline);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(online);
-
         // WorkerUtils
         virtual void importScripts(const Vector<String>& urls, ExceptionCode&);
         WorkerNavigator* navigator() const;

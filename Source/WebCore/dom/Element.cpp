@@ -297,11 +297,6 @@ void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
     EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, eventOptions, visualOptions);
 }
 
-DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);
-DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
-DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
-DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
-
 RefPtr<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     switch (type) {

@@ -45,8 +45,6 @@ namespace WebCore {
 
     class AbstractWorker : public RefCounted<AbstractWorker>, public EventTargetWithInlineData {
     public:
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-
         using RefCounted<AbstractWorker>::ref;
         using RefCounted<AbstractWorker>::deref;
 
