@@ -40,6 +40,8 @@ public:
     File* file() const;
     void setFile(File*);
 
+    String attachmentTitle() const;
+
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
     virtual ~HTMLAttachmentElement();

@@ -1,5 +1,28 @@
 2015-03-05  Timothy Horton  <timothy_horton@apple.com>
 
+        <attachment> should allow the title property to override its title
+        https://bugs.webkit.org/show_bug.cgi?id=142369
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/attachment/attachment-title.html
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::parseAttribute):
+        Invalidate the attachment if the title changes.
+
+        (WebCore::HTMLAttachmentElement::attachmentTitle):
+        Use the title attribute for the title, unless it's empty, in which
+        case we'll use the file's name.
+
+        * html/HTMLAttachmentElement.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::AttachmentLayout::layOutTitle):
+        Use attachmentTitle() instead of reaching into the file. Also rename
+        some things from filename to title.
+
+2015-03-05  Timothy Horton  <timothy_horton@apple.com>
+
         Two text carets result when dragging a file into a contentEditable area that preventDefault()s the "drop" event
         https://bugs.webkit.org/show_bug.cgi?id=142362
         <rdar://problem/20046434>

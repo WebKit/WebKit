@@ -2181,19 +2181,16 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontSystemFontType, attachmentTitleFontSize, nullptr));
     baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToTitleMargin + CTFontGetAscent(font.get()));
 
-    File* file = attachment.attachmentElement().file();
-    if (!file)
-        return;
-    String filename = file->name();
-    if (filename.isEmpty())
+    String title = attachment.attachmentElement().attachmentTitle();
+    if (title.isEmpty())
         return;
 
     NSDictionary *textAttributes = @{
         (id)kCTFontAttributeName: (id)font.get(),
         (id)kCTForegroundColorAttributeName: titleTextColorForAttachment(attachment)
     };
-    RetainPtr<NSAttributedString> attributedFilename = adoptNS([[NSAttributedString alloc] initWithString:filename attributes:textAttributes]);
-    RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedFilename.get()));
+    RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
+    RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
 
     CFRange fitRange;
     CGSize titleTextSize = CTFramesetterSuggestFrameSizeWithConstraints(titleFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(attachmentTitleMaximumWidth, CGFLOAT_MAX), &fitRange);
@@ -2224,8 +2221,8 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
     // Combine it into one last line, and center-truncate it.
     CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
     CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-    NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedFilename length] - remainingRangeStart);
-    NSAttributedString *remainingString = [attributedFilename attributedSubstringFromRange:remainingRange];
+    NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedTitle length] - remainingRangeStart);
+    NSAttributedString *remainingString = [attributedTitle attributedSubstringFromRange:remainingRange];
     RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
     RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
     RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));

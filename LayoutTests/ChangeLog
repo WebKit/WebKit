@@ -1,5 +1,17 @@
 2015-03-05  Timothy Horton  <timothy_horton@apple.com>
 
+        <attachment> should allow the title property to override its title
+        https://bugs.webkit.org/show_bug.cgi?id=142369
+
+        Reviewed by Anders Carlsson.
+
+        * fast/attachment/attachment-title.html: Added.
+        * platform/mac/fast/attachment/attachment-title-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-title-expected.txt: Added.
+        Add a test for the title property.
+
+2015-03-05  Timothy Horton  <timothy_horton@apple.com>
+
         <attachment> should support indication of download progress
         https://bugs.webkit.org/show_bug.cgi?id=142336
         <rdar://problem/19982504>
