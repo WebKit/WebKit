@@ -87,7 +87,7 @@ testShorthandConstructionEquivalent("{nest:[{a}]}.nest[0]", "{nest: [{a:a}]}.nes
 testShorthandConstructionEquivalent("[{nest:[{a}]}][0].nest[0]", "[{nest: [{a:a}]}][0].nest[0]");
 testShorthandConstructionEquivalent("{a,b,t,x,f,nul,un,fun,foo,bar}", "{a:a, b:b, t:t, x:x, f:f, nul:null, un:un, fun:fun, foo:foo, bar:bar}");
 
-testShorthandConstructionEquivalent("{eval}", "{eval: window.eval}");
+testShorthandConstructionEquivalent("{eval}", "{eval: eval}");
 
 shouldThrow("({noSuchIdentifier})");
 shouldThrow("({a,noSuchIdentifier})");

@@ -46,7 +46,7 @@ PASS equivalent({nest:{a}}.nest, {nest: {a:a}}.nest) is true
 PASS equivalent({nest:[{a}]}.nest[0], {nest: [{a:a}]}.nest[0]) is true
 PASS equivalent([{nest:[{a}]}][0].nest[0], [{nest: [{a:a}]}][0].nest[0]) is true
 PASS equivalent({a,b,t,x,f,nul,un,fun,foo,bar}, {a:a, b:b, t:t, x:x, f:f, nul:null, un:un, fun:fun, foo:foo, bar:bar}) is true
-PASS equivalent({eval}, {eval: window.eval}) is true
+PASS equivalent({eval}, {eval: eval}) is true
 PASS ({noSuchIdentifier}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
 PASS ({a,noSuchIdentifier}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.
 PASS ({noSuchIdentifier,a}) threw exception ReferenceError: Can't find variable: noSuchIdentifier.

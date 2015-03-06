@@ -1,3 +1,10 @@
+2015-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Test Fix: Remove unnecessary reference to "window" causing test failure.
+
+        * js/object-literal-shorthand-construction-expected.txt:
+        * js/script-tests/object-literal-shorthand-construction.js:
+
 2015-03-05  Stephanie Lewis  <slewis@apple.com>
 
         Mark http/tests/usercontentfilter/character-set-basic-support.html as failing.
