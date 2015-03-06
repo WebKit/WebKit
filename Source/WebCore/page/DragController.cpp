@@ -156,8 +156,7 @@ bool DragController::dragIsMove(FrameSelection& selection, DragData& dragData)
     return m_documentUnderMouse == m_dragInitiator && visibleSelection.isContentEditable() && visibleSelection.isRange() && !isCopyKeyDown(dragData);
 }
 
-// FIXME: This method is poorly named.  We're just clearing the selection from the document this drag is exiting.
-void DragController::cancelDrag()
+void DragController::clearDragCaret()
 {
     m_page.dragCaretController().clear();
 }
@@ -166,7 +165,7 @@ void DragController::dragEnded()
 {
     m_dragInitiator = 0;
     m_didInitiateDrag = false;
-    m_page.dragCaretController().clear();
+    clearDragCaret();
     
     m_client.dragEnded();
 }
@@ -216,6 +215,7 @@ bool DragController::performDragOperation(DragData& dragData)
             dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb); // Invalidate dataTransfer here for security.
         }
         if (preventedDefault) {
+            clearDragCaret();
             m_documentUnderMouse = 0;
             return true;
         }
@@ -243,7 +243,7 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
 
     // If we were over another document clear the selection
     if (m_documentUnderMouse)
-        cancelDrag();
+        clearDragCaret();
     m_documentUnderMouse = newDocument;
 }
 
@@ -253,7 +253,7 @@ DragOperation DragController::dragEnteredOrUpdated(DragData& dragData)
 
     m_dragDestinationAction = m_client.actionMaskForDrag(dragData);
     if (m_dragDestinationAction == DragDestinationActionNone) {
-        cancelDrag(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
+        clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
         return DragOperationNone;
     }
 
@@ -323,7 +323,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
         return false;
 
     if (isHandlingDrag) {
-        m_page.dragCaretController().clear();
+        clearDragCaret();
         return true;
     }
 
@@ -347,6 +347,8 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
         
         if (!m_fileInputElementUnderMouse)
             m_page.dragCaretController().setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
+        else
+            clearDragCaret();
 
         Frame* innerFrame = element->document().frame();
         dragOperation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
@@ -376,7 +378,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
     }
     
     // We are not over an editable region. Make sure we're clearing any prior drag cursor.
-    m_page.dragCaretController().clear();
+    clearDragCaret();
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
     m_fileInputElementUnderMouse = 0;
@@ -473,12 +475,12 @@ bool DragController::concludeEditDrag(DragData& dragData)
     }
 
     if (!m_page.dragController().canProcessDrag(dragData)) {
-        m_page.dragCaretController().clear();
+        clearDragCaret();
         return false;
     }
 
     VisibleSelection dragCaret = m_page.dragCaretController().caretPosition();
-    m_page.dragCaretController().clear();
+    clearDragCaret();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
     RefPtr<Element> rootEditableElement = innerFrame->selection().selection().rootEditableElement();
 

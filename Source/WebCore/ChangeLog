@@ -1,5 +1,37 @@
 2015-03-05  Timothy Horton  <timothy_horton@apple.com>
 
+        Two text carets result when dragging a file into a contentEditable area that preventDefault()s the "drop" event
+        https://bugs.webkit.org/show_bug.cgi?id=142362
+        <rdar://problem/20046434>
+
+        Reviewed by Simon Fraser.
+
+        * page/DragController.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::clearDragCaret):
+        Rename cancelDrag to clearDragCaret, since that's really what it does.
+
+        (WebCore::DragController::tryDocumentDrag):
+        When updating the drag position, if we're now over a <input type="file">,
+        clear the drag caret. This avoids leaving a caret behind when dragging
+        over a <input type="file"> inside a contentEditable area.
+
+        (WebCore::DragController::performDragOperation):
+        When the content preventDefault()s while finishing a drag, we should still
+        clear the drag caret, because it's possible that the client did not
+        preventDefault() on dragover/etc., so we would have set a cursor, and
+        now need to clear it so that it doesn't get left behind.
+
+        (WebCore::DragController::mouseMovedIntoDocument):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::concludeEditDrag):
+        Adjust to renamed clearDragCaret.
+
+        (WebCore::DragController::dragEnded):
+        Make use of clearDragCaret (which is equivalent to this line).
+
+2015-03-05  Timothy Horton  <timothy_horton@apple.com>
+
         <attachment> should support indication of download progress
         https://bugs.webkit.org/show_bug.cgi?id=142336
         <rdar://problem/19982504>
