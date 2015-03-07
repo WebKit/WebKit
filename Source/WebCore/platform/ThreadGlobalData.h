@@ -39,10 +39,10 @@ using WTF::ThreadSpecific;
 
 namespace WebCore {
 
-    class EventNames;
     class ThreadTimers;
 
     struct CachedResourceRequestInitiators;
+    struct EventNames;
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
 

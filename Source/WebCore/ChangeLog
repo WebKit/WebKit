@@ -1,3 +1,37 @@
+2015-03-07  Darin Adler  <darin@apple.com>
+
+        Do a bit of EventNames tidying
+        https://bugs.webkit.org/show_bug.cgi?id=142438
+
+        Reviewed by Anders Carlsson.
+
+        * dom/EventNames.h: Sorted the event names into a single list instead of
+        the rudimentary attempts at organizing the list that simply made it hard
+        to see what is and is not in the list. Removed two unused event names.
+        I'm sure there are more. Reorganized the EventName class, now a struct,
+        into a more conventional "public first" order. Got the function bodies
+        out of the struct so we can see more clearly what is in the struct.
+        Made more things const.
+        (WebCore::EventNames::touchEventNames): Changed the return value to a
+        std::array of reference wrappers rather than a vector of atomic strings.
+        This should eliminate unnecessary memory allocation and reference count churn.
+
+        * dom/EventNames.cpp: Changed initialization based on the above.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::getEventListeners): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_LOCAL and also just tightened up the function a bit.
+
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument): Streamlined this function with
+        modern for loops, auto, and also tried to make what it does a bit clearer,
+        by making loops that are just based on numbers of event listeners look a
+        bit less like code that actually iterates a vector of listeners. Also used
+        the type unsigned instead of size_t.
+
+        * platform/ThreadGlobalData.h: Updated since it's a struct instead of class now.
+        (Why is this file in platform!?)
+
 2015-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Increase TestWebKitAPI Test Coverage

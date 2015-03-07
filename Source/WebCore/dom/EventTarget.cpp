@@ -38,6 +38,7 @@
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -263,17 +264,10 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
 
 const EventListenerVector& EventTarget::getEventListeners(const AtomicString& eventType)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(EventListenerVector, emptyVector, ());
-
-    EventTargetData* d = eventTargetData();
-    if (!d)
-        return emptyVector;
-
-    EventListenerVector* listenerVector = d->eventListenerMap.find(eventType);
-    if (!listenerVector)
-        return emptyVector;
-
-    return *listenerVector;
+    auto* data = eventTargetData();
+    auto* listenerVector = data ? data->eventListenerMap.find(eventType) : nullptr;
+    static NeverDestroyed<EventListenerVector> emptyVector;
+    return listenerVector ? *listenerVector : emptyVector.get();
 }
 
 void EventTarget::removeAllEventListeners()

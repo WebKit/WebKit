@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.
+ * Copyright (C) 2005, 2015 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,11 +24,10 @@
 namespace WebCore {
 
 #define INITIALIZE_EVENT_NAME(name) \
-    , name##Event(#name, AtomicString::ConstructFromLiteral)
+    name##Event(#name, AtomicString::ConstructFromLiteral),
 
 EventNames::EventNames()
-    : dummy(0)
-    DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_EVENT_NAME)
+    : DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_EVENT_NAME) dummy(0)
 {
 }
 
