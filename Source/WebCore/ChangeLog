@@ -1,3 +1,56 @@
+2015-03-06  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Move compiling of content extensions to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=142402
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::~CompiledContentExtension):
+        (WebCore::ContentExtensions::CompiledContentExtension::create): Deleted.
+        (WebCore::ContentExtensions::CompiledContentExtension::CompiledContentExtension): Deleted.
+        * contentextensions/CompiledContentExtension.h:
+        (WebCore::ContentExtensions::CompiledContentExtension::bytecode): Deleted.
+        (WebCore::ContentExtensions::CompiledContentExtension::actions): Deleted.
+        Convert CompiledContentExtension to be an abstract base class so that we can back it however
+        we like at the WebKit level. Since it doesn't necessarily use Vectors for its backing store
+        any more, change the interface to use pointer/length.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h:
+        Change compileRuleList to return compiled result as the raw Vectors rather than as
+        a CompiledContentExtension, since that class is now abstract. It is up to the caller
+        to copy the data into its final home.
+
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        * contentextensions/ContentExtensionRule.h:
+        Switch Action::deserialize to take pointer/length rather than a Vector.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL):
+        Pull getting the serialized actions from the compiled extension out of the loop
+        to avoid calling the virtual function multiple times. Pass the bytecode and actions
+        as pointer/length pairs rather than Vectors.
+
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::getBits):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::DFABytecodeInterpreter):
+        Switch the interpreter to take pointer/length rather than a Vector.
+
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::addUserContentExtension):
+        (WebCore::UserContentController::removeUserContentExtension):
+        (WebCore::UserContentController::removeAllUserContentExtensions):
+        (WebCore::UserContentController::addUserContentFilter): Deleted.
+        (WebCore::UserContentController::removeUserContentFilter): Deleted.
+        (WebCore::UserContentController::removeAllUserContentFilters): Deleted.
+        * page/UserContentController.h:
+        Unify terminology to use the term UserContentExtension rather than UserContentFilter.
+
 2015-03-06  Roger Fong  <roger_fong@apple.com>
 
         Redraw timeline background when updating media time.

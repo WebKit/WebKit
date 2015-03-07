@@ -34,6 +34,7 @@
 
 namespace WebKit {
 
+class WebCompiledContentExtensionData;
 class WebUserMessageHandlerDescriptorProxy;
 
 class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
@@ -61,9 +62,9 @@ private:
     void removeUserScriptMessageHandler(uint64_t);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentFilters(const Vector<std::pair<String, String>>&);
-    void removeUserContentFilter(const String& name);
-    void removeAllUserContentFilters();
+    void addUserContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>&);
+    void removeUserContentExtension(const String& name);
+    void removeAllUserContentExtensions();
 #endif
 
     uint64_t m_identifier;

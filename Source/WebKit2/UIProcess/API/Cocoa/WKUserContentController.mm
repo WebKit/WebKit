@@ -130,21 +130,21 @@ private:
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->addUserContentFilter(*userContentFilter->_userContentFilter);
+    _userContentControllerProxy->addUserContentExtension(*userContentFilter->_userContentExtension);
 #endif
 }
 
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeUserContentFilter(userContentFilterName);
+    _userContentControllerProxy->removeUserContentExtension(userContentFilterName);
 #endif
 }
 
 - (void)_removeAllUserContentFilters
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeAllUserContentFilters();
+    _userContentControllerProxy->removeAllUserContentExtensions();
 #endif
 }
 

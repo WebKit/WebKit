@@ -238,6 +238,8 @@ set(WebKit2_SOURCES
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
     Shared/WebBatteryStatus.cpp
+    Shared/WebCompiledContentExtension.cpp
+    Shared/WebCompiledContentExtensionData.cpp
     Shared/WebConnection.cpp
     Shared/WebConnectionClient.cpp
     Shared/WebContextMenuItem.cpp
@@ -389,7 +391,7 @@ set(WebKit2_SOURCES
     UIProcess/API/APINavigation.cpp
     UIProcess/API/APISessionState.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
-    UIProcess/API/APIUserContentFilter.cpp
+    UIProcess/API/APIUserContentExtension.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp

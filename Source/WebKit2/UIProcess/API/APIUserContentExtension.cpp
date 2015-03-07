@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroupData_h
-#define WebPageGroupData_h
-
-#include "WebCompiledContentExtensionData.h"
-#include <WebCore/UserScript.h>
-#include <WebCore/UserStyleSheet.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
-
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
-
-namespace WebKit {
-
-struct WebPageGroupData {
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebPageGroupData&);
-
-    String identifier;
-    uint64_t pageGroupID;
-    bool visibleToInjectedBundle;
-    bool visibleToHistoryClient;
-
-    Vector<WebCore::UserStyleSheet> userStyleSheets;
-    Vector<WebCore::UserScript> userScripts;
+#include "config.h"
+#include "APIUserContentExtension.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, WebCompiledContentExtensionData> userContentExtensions;
-#endif
-};
 
-} // namespace WebKit
+#include "WebCompiledContentExtension.h"
 
+namespace API {
 
-#endif // WebPageGroupData_h
+UserContentExtension::UserContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
+    : m_name(name)
+    , m_compiledExtension(WTF::move(contentExtension))
+{
+}
+
+UserContentExtension::~UserContentExtension()
+{
+}
+
+} // namespace API
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

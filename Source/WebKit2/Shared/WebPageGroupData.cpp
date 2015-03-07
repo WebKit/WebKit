@@ -39,7 +39,7 @@ void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
     encoder << userStyleSheets;
     encoder << userScripts;
 #if ENABLE(CONTENT_EXTENSIONS)
-    encoder << userContentFilters;
+    encoder << userContentExtensions;
 #endif
 }
 
@@ -58,7 +58,7 @@ bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& d
     if (!decoder.decode(data.userScripts))
         return false;
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (!decoder.decode(data.userContentFilters))
+    if (!decoder.decode(data.userContentExtensions))
         return false;
 #endif
     return true;

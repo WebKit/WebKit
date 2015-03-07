@@ -27,22 +27,22 @@
 
 #if WK_API_ENABLED
 
-#import "APIUserContentFilter.h"
+#import "APIUserContentExtension.h"
 #import "WKObject.h"
 
 namespace WebKit {
 
-inline _WKUserContentFilter *wrapper(API::UserContentFilter& userContentFilter)
+inline _WKUserContentFilter *wrapper(API::UserContentExtension& userContentExtension)
 {
-    ASSERT([userContentFilter.wrapper() isKindOfClass:[_WKUserContentFilter class]]);
-    return (_WKUserContentFilter *)userContentFilter.wrapper();
+    ASSERT([userContentExtension.wrapper() isKindOfClass:[_WKUserContentFilter class]]);
+    return (_WKUserContentFilter *)userContentExtension.wrapper();
 }
 
 }
 
 @interface _WKUserContentFilter () <WKObject> {
 @package
-    API::ObjectStorage<API::UserContentFilter> _userContentFilter;
+    API::ObjectStorage<API::UserContentExtension> _userContentExtension;
 }
 @end
 

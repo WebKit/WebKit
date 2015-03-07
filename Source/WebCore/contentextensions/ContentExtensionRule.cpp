@@ -39,7 +39,7 @@ ContentExtensionRule::ContentExtensionRule(const Trigger& trigger, const Action&
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
 
-Action Action::deserialize(const Vector<SerializedActionByte>& actions, unsigned location)
+Action Action::deserialize(const SerializedActionByte* actions, const unsigned actionsLength, unsigned location)
 {
     switch (static_cast<ActionType>(actions[location])) {
     case ActionType::BlockCookies:
@@ -52,15 +52,15 @@ Action Action::deserialize(const Vector<SerializedActionByte>& actions, unsigned
         RELEASE_ASSERT_NOT_REACHED();
     case ActionType::CSSDisplayNone: {
         unsigned stringStartIndex = location + sizeof(ActionType) + sizeof(unsigned) + sizeof(bool);
-        RELEASE_ASSERT(actions.size() >= stringStartIndex);
+        RELEASE_ASSERT(actionsLength >= stringStartIndex);
         unsigned selectorLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
         bool wideCharacters = actions[location + sizeof(ActionType) + sizeof(unsigned)];
         
         if (wideCharacters) {
-            RELEASE_ASSERT(actions.size() >= stringStartIndex + selectorLength * sizeof(UChar));
+            RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(UChar));
             return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength));
         }
-        RELEASE_ASSERT(actions.size() >= stringStartIndex + selectorLength * sizeof(LChar));
+        RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(LChar));
         return Action(ActionType::CSSDisplayNone, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength));
     }
     }

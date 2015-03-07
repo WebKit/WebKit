@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WebPageGroupProxy.h"
 
-#include "WebProcess.h"
 #include "InjectedBundle.h"
+#include "WebCompiledContentExtension.h"
+#include "WebProcess.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/UserContentController.h>
@@ -54,8 +55,8 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
         addUserScript(userScript);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    for (const auto& slot : data.userContentFilters)
-        addUserContentFilter(slot.key, slot.value);
+    for (auto& slot : data.userContentExtensions)
+        addUserContentExtension(slot.key, slot.value);
 #endif
 }
 
@@ -97,19 +98,20 @@ void WebPageGroupProxy::removeAllUserContent()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebPageGroupProxy::addUserContentFilter(const String& name, const String& serializedRules)
+void WebPageGroupProxy::addUserContentExtension(const String& name, WebCompiledContentExtensionData contentExtensionData)
 {
-    userContentController().addUserContentFilter(name, serializedRules);
+    RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTF::move(contentExtensionData.bytecode), WTF::move(contentExtensionData.actions));
+    userContentController().addUserContentExtension(name, compiledContentExtension);
 }
 
-void WebPageGroupProxy::removeUserContentFilter(const String& name)
+void WebPageGroupProxy::removeUserContentExtension(const String& name)
 {
-    userContentController().removeUserContentFilter(name);
+    userContentController().removeUserContentExtension(name);
 }
 
-void WebPageGroupProxy::removeAllUserContentFilters()
+void WebPageGroupProxy::removeAllUserContentExtensions()
 {
-    userContentController().removeAllUserContentFilters();    
+    userContentController().removeAllUserContentExtensions();    
 }
 #endif
 

@@ -23,32 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserContentFilter_h
-#define APIUserContentFilter_h
+#include "config.h"
+#include "WebCompiledContentExtension.h"
 
-#include "APIObject.h"
-#include <wtf/text/WTFString.h>
+#if ENABLE(CONTENT_EXTENSIONS)
 
-namespace API {
+namespace WebKit {
 
-class UserContentFilter final : public ObjectImpl<Object::Type::UserContentFilter> {
-public:
-    static Ref<UserContentFilter> create(const WTF::String& name, const WTF::String& serializedRules)
-    {
-        return adoptRef(*new UserContentFilter(name, serializedRules));
-    }
+Ref<WebCompiledContentExtension> WebCompiledContentExtension::create(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode, Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
+{
+    return adoptRef(*new WebCompiledContentExtension(WTF::move(bytecode), WTF::move(actions)));
+}
 
-    UserContentFilter(const WTF::String& name, const WTF::String& serializedRules);
-    ~UserContentFilter();
+WebCompiledContentExtension::WebCompiledContentExtension(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode, Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
+    : m_data { WTF::move(bytecode), WTF::move(actions) }
+{
+}
 
-    const WTF::String& name() const { return m_name; }
-    const WTF::String& serializedRules() const { return m_serializedRules; }
+WebCompiledContentExtension::~WebCompiledContentExtension()
+{
+}
 
-private:
-    WTF::String m_name;
-    WTF::String m_serializedRules;
-};
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::bytecode() const
+{
+    return m_data.bytecode.data();
+}
 
-} // namespace API
+unsigned WebCompiledContentExtension::bytecodeLength() const
+{
+    return m_data.bytecode.size();
+}
 
-#endif // APIUserContentFilter_h
+const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentExtension::actions() const
+{
+    return m_data.actions.data();
+}
+
+unsigned WebCompiledContentExtension::actionsLength() const
+{
+    return m_data.actions.size();
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

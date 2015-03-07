@@ -179,15 +179,15 @@ void UserContentController::removeUserMessageHandlerDescriptor(UserMessageHandle
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void UserContentController::addUserContentFilter(const String& name, const String& ruleList)
+void UserContentController::addUserContentExtension(const String& name, RefPtr<ContentExtensions::CompiledContentExtension> contentExtension)
 {
     if (!m_contentExtensionBackend)
         m_contentExtensionBackend = std::make_unique<ContentExtensions::ContentExtensionsBackend>();
     
-    m_contentExtensionBackend->addContentExtension(name, ContentExtensions::compileRuleList(ruleList));
+    m_contentExtensionBackend->addContentExtension(name, contentExtension);
 }
 
-void UserContentController::removeUserContentFilter(const String& name)
+void UserContentController::removeUserContentExtension(const String& name)
 {
     if (!m_contentExtensionBackend)
         return;
@@ -195,7 +195,7 @@ void UserContentController::removeUserContentFilter(const String& name)
     m_contentExtensionBackend->removeContentExtension(name);
 }
 
-void UserContentController::removeAllUserContentFilters()
+void UserContentController::removeAllUserContentExtensions()
 {
     if (!m_contentExtensionBackend)
         return;

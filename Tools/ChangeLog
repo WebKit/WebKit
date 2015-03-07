@@ -1,3 +1,20 @@
+2015-03-06  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Move compiling of content extensions to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=142402
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp: Copied from Tools/TestWebKitAPI/Tests/WebCore/ContentFilter.cpp.
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::~InMemoryCompiledContentExtension):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::InMemoryCompiledContentExtension):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/ContentFilter.cpp: Removed.
+        Update test for new name (ContentFilter -> ContentExtensions) and API (CompiledContentExtension
+        is now abstract).
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct Windows build.

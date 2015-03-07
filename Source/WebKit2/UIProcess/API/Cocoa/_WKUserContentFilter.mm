@@ -28,6 +28,9 @@
 
 #if WK_API_ENABLED
 
+#include "WebCompiledContentExtension.h"
+#include <WebCore/ContentExtensionCompiler.h>
+
 @implementation _WKUserContentFilter
 
 - (instancetype)initWithName:(NSString *)name serializedRules:(NSString *)serializedRules
@@ -35,14 +38,17 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserContentFilter>(self, String(name), String(serializedRules));
+    auto compiledContentExtensionData = WebCore::ContentExtensions::compileRuleList(String(serializedRules));
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTF::move(compiledContentExtensionData.bytecode), WTF::move(compiledContentExtensionData.actions));
+
+    API::Object::constructInWrapper<API::UserContentExtension>(self, String(name), WTF::move(compiledContentExtension));
 
     return self;
 }
 
 - (void)dealloc
 {
-    _userContentFilter->~UserContentFilter();
+    _userContentExtension->~UserContentExtension();
 
     [super dealloc];
 }
@@ -51,7 +57,7 @@
 
 - (API::Object&)_apiObject
 {
-    return *_userContentFilter;
+    return *_userContentExtension;
 }
 
 @end

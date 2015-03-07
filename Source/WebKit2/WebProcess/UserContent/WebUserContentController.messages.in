@@ -34,8 +34,8 @@ messages -> WebUserContentController {
     RemoveUserScriptMessageHandler(uint64_t identifier);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    AddUserContentFilters(Vector<std::pair<String, String>> userContentFilters);
-    RemoveUserContentFilter(String name);
-    RemoveAllUserContentFilters();
+    AddUserContentExtensions(Vector<std::pair<String, WebKit::WebCompiledContentExtensionData>> userContentFilters);
+    RemoveUserContentExtension(String name);
+    RemoveAllUserContentExtensions();
 #endif
 }

@@ -1,3 +1,122 @@
+2015-03-06  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Move compiling of content extensions to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=142402
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/API/APIObject.h:
+        Rename UserContentFilter type to UserContentExtension to match new unified naming.
+
+        * Shared/WebCompiledContentExtension.cpp: Added.
+        (WebKit::WebCompiledContentExtension::create):
+        (WebKit::WebCompiledContentExtension::WebCompiledContentExtension):
+        (WebKit::WebCompiledContentExtension::~WebCompiledContentExtension):
+        (WebKit::WebCompiledContentExtension::bytecode):
+        (WebKit::WebCompiledContentExtension::bytecodeLength):
+        (WebKit::WebCompiledContentExtension::actions):
+        (WebKit::WebCompiledContentExtension::actionsLength):
+        * Shared/WebCompiledContentExtension.h: Added.
+        Add new WebKit2 implementation of CompiledContentExtension. Right now it is the same as the old
+        WebCore based CompiledContentExtension, but in subsequent patches, it will use shared/file backed
+        memory.
+
+        * Shared/WebCompiledContentExtensionData.cpp: Added.
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebCompiledContentExtensionData.h: Added.
+        Add encodable/decodable holder for the compiled content extension data for use in IPC. Right
+        now it is doing the naive thing and always copying the data, but in subsequent patches, it will
+        use shared/file backed memory.
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        Rename member to match new unification on the name userContentExtension. Change the value from
+        the serialized JSON (as a String) to WebCompiledContentExtensionData.
+
+        * UIProcess/API/APIUserContentExtension.cpp: Copied from Source/WebKit2/UIProcess/API/APIUserContentFilter.cpp.
+        (API::UserContentExtension::UserContentExtension):
+        (API::UserContentExtension::~UserContentExtension):
+        (API::UserContentFilter::UserContentFilter): Deleted.
+        (API::UserContentFilter::~UserContentFilter): Deleted.
+        * UIProcess/API/APIUserContentExtension.h: Copied from Source/WebKit2/UIProcess/API/APIUserContentFilter.h.
+        * UIProcess/API/APIUserContentFilter.cpp: Removed.
+        * UIProcess/API/APIUserContentFilter.h: Removed.
+        Renamed UserContentFilter to APIUserContentExtension. Updated to store the compiled extension (as a WebCompiledContentExtension)
+        rather than the serialized JSON.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveUserContentFilter):
+        (WKPageGroupRemoveAllUserContentFilters):
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        (WKUserContentControllerAddUserContentFilter):
+        (WKUserContentControllerRemoveAllUserContentFilters):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _addUserContentFilter:]):
+        (-[WKUserContentController _removeUserContentFilter:]):
+        (-[WKUserContentController _removeAllUserContentFilters]):
+        Update for rename of APIUserContentFilter -> UserContentExtension.
+
+        * UIProcess/API/C/WKUserContentFilterRef.cpp:
+        (WKUserContentFilterGetTypeID):
+        (WKUserContentFilterCreate):
+        Update for rename of APIUserContentFilter -> UserContentExtension. Also make WKUserContentFilterCreate eagerly
+        compile rule list to a WebCompiledContentExtensionData.
+
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter initWithName:serializedRules:]):
+        (-[_WKUserContentFilter dealloc]):
+        (-[_WKUserContentFilter _apiObject]):
+        Update for rename of APIUserContentFilter -> UserContentExtension. Also make initWithName:serializedRules: eagerly
+        compile rule list to a WebCompiledContentExtensionData.
+
+        * UIProcess/API/Cocoa/_WKUserContentFilterInternal.h:
+        (WebKit::wrapper):
+        Update for rename of APIUserContentFilter -> UserContentExtension.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeUserContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeAllUserContentExtensions):
+        (WebKit::WebUserContentControllerProxy::addUserContentFilter): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeUserContentFilter): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeAllUserContentFilters): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addUserContentExtension):
+        (WebKit::WebPageGroup::removeUserContentExtension):
+        (WebKit::WebPageGroup::removeAllUserContentExtensions):
+        (WebKit::WebPageGroup::addUserContentFilter): Deleted.
+        (WebKit::WebPageGroup::removeUserContentFilter): Deleted.
+        (WebKit::WebPageGroup::removeAllUserContentFilters): Deleted.
+        * UIProcess/WebPageGroup.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserContentExtensions):
+        (WebKit::WebUserContentController::removeUserContentExtension):
+        (WebKit::WebUserContentController::removeAllUserContentExtensions):
+        (WebKit::WebUserContentController::addUserContentFilters): Deleted.
+        (WebKit::WebUserContentController::removeUserContentFilter): Deleted.
+        (WebKit::WebUserContentController::removeAllUserContentFilters): Deleted.
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::addUserContentExtension):
+        (WebKit::WebPageGroupProxy::removeUserContentExtension):
+        (WebKit::WebPageGroupProxy::removeAllUserContentExtensions):
+        (WebKit::WebPageGroupProxy::addUserContentFilter): Deleted.
+        (WebKit::WebPageGroupProxy::removeUserContentFilter): Deleted.
+        (WebKit::WebPageGroupProxy::removeAllUserContentFilters): Deleted.
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+        Pipe the compiled extension from the UIProcess to the WebProcess.
+
 2015-03-06  Dean Jackson  <dino@apple.com>
 
         Support "plus-lighter" in mix-blend mode

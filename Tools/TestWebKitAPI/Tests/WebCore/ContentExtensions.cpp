@@ -57,7 +57,7 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-class ContentFilterTest : public testing::Test {
+class ContentExtensionTest : public testing::Test {
 public:
     virtual void SetUp()
     {
@@ -67,11 +67,37 @@ public:
     }
 };
 
+class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
+public:
+    static RefPtr<InMemoryCompiledContentExtension> create(ContentExtensions::CompiledContentExtensionData&& data)
+    {
+        return adoptRef(new InMemoryCompiledContentExtension(WTF::move(data)));
+    }
+
+    virtual ~InMemoryCompiledContentExtension()
+    {
+    }
+
+    virtual const ContentExtensions::DFABytecode* bytecode() const override { return m_data.bytecode.data(); }
+    virtual unsigned bytecodeLength() const override { return m_data.bytecode.size(); }
+    virtual const ContentExtensions::SerializedActionByte* actions() const override { return m_data.actions.data(); }
+    virtual unsigned actionsLength() const override { return m_data.actions.size(); }
+
+private:
+    InMemoryCompiledContentExtension(ContentExtensions::CompiledContentExtensionData&& data)
+        : m_data(WTF::move(data))
+    {
+    }
+
+    ContentExtensions::CompiledContentExtensionData m_data;
+};
+
 const char* basicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}}]";
 
-TEST_F(ContentFilterTest, Basic)
+TEST_F(ContentExtensionTest, Basic)
 {
-    RefPtr<ContentExtensions::CompiledContentExtension> extension = ContentExtensions::compileRuleList(basicFilter);
+    auto extensionData = ContentExtensions::compileRuleList(basicFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", extension);

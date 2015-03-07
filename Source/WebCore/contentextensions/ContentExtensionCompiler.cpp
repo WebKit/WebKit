@@ -98,7 +98,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 }
 
 
-Ref<CompiledContentExtension> compileRuleList(const String& ruleList)
+CompiledContentExtensionData compileRuleList(const String& ruleList)
 {
     auto parsedRuleList = parseRuleList(ruleList);
 
@@ -154,7 +154,7 @@ Ref<CompiledContentExtension> compileRuleList(const String& ruleList)
     DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
 
-    return CompiledContentExtension::create(WTF::move(bytecode), WTF::move(actions));
+    return { WTF::move(bytecode), WTF::move(actions) };
 }
 
 } // namespace ContentExtensions

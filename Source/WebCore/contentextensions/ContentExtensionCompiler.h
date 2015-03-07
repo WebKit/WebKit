@@ -35,7 +35,12 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-WEBCORE_EXPORT Ref<CompiledContentExtension> compileRuleList(const String&);
+struct CompiledContentExtensionData {
+    Vector<DFABytecode> bytecode;
+    Vector<SerializedActionByte> actions;
+};
+
+WEBCORE_EXPORT CompiledContentExtensionData compileRuleList(const String&);
 
 } // namespace ContentExtensions
 } // namespace WebCore

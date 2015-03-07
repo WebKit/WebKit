@@ -39,8 +39,9 @@ namespace ContentExtensions {
 
 class DFABytecodeInterpreter {
 public:
-    DFABytecodeInterpreter(const Vector<DFABytecode>& bytecode)
-        : bytecode(bytecode)
+    DFABytecodeInterpreter(const DFABytecode* bytecode, unsigned bytecodeLength)
+        : m_bytecode(bytecode)
+        , m_bytecodeLength(bytecodeLength)
     {
     }
     
@@ -49,7 +50,8 @@ public:
     Actions interpret(const CString&);
 
 private:
-    const Vector<DFABytecode>& bytecode;
+    const DFABytecode* m_bytecode;
+    const unsigned m_bytecodeLength;
 };
 
 } // namespace ContentExtensions

@@ -27,6 +27,7 @@
 #include "WebUserContentController.h"
 
 #include "DataReference.h"
+#include "WebCompiledContentExtension.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -181,20 +182,23 @@ void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifie
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebUserContentController::addUserContentFilters(const Vector<std::pair<String, String>>& userContentFilters)
+void WebUserContentController::addUserContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>& userContentExtensions)
 {
-    for (const auto& userContentFilter : userContentFilters)
-        m_userContentController->addUserContentFilter(userContentFilter.first, userContentFilter.second);
+    for (const auto& userContentExtension : userContentExtensions) {
+        WebCompiledContentExtensionData contentExtensionData = userContentExtension.second;
+        RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTF::move(contentExtensionData.bytecode), WTF::move(contentExtensionData.actions));
+        m_userContentController->addUserContentExtension(userContentExtension.first, compiledContentExtension);
+    }
 }
 
-void WebUserContentController::removeUserContentFilter(const String& name)
+void WebUserContentController::removeUserContentExtension(const String& name)
 {
-    m_userContentController->removeUserContentFilter(name);
+    m_userContentController->removeUserContentExtension(name);
 }
 
-void WebUserContentController::removeAllUserContentFilters()
+void WebUserContentController::removeAllUserContentExtensions()
 {
-    m_userContentController->removeAllUserContentFilters();
+    m_userContentController->removeAllUserContentExtensions();
 }
 #endif
 

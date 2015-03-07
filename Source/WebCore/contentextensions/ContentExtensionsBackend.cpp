@@ -67,10 +67,13 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const CString& urlCString = urlString.utf8();
 
-    Vector<Action> actions;
+    Vector<Action> finalActions;
     for (auto& compiledContentExtension : m_contentExtensions.values()) {
-        DFABytecodeInterpreter interpreter(compiledContentExtension->bytecode());
+        DFABytecodeInterpreter interpreter(compiledContentExtension->bytecode(), compiledContentExtension->bytecodeLength());
         DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString);
+        
+        const SerializedActionByte* actions = compiledContentExtension->actions();
+        const unsigned actionsLength = compiledContentExtension->actionsLength();
         
         if (!triggeredActions.isEmpty()) {
             Vector<unsigned> actionLocations;
@@ -81,14 +84,14 @@ Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
             
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
-                Action action = Action::deserialize(compiledContentExtension->actions(), actionLocations[i - 1]);
+                Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
                 if (action.type() == ActionType::IgnorePreviousRules)
                     break;
-                actions.append(action);
+                finalActions.append(action);
             }
         }
     }
-    return actions;
+    return finalActions;
 }
 
 } // namespace ContentExtensions

@@ -42,6 +42,8 @@ class UserContentController;
 
 namespace WebKit {
 
+class WebCompiledContentExtensionData;
+
 class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
 public:
     static PassRefPtr<WebPageGroupProxy> create(const WebPageGroupData&);
@@ -64,9 +66,9 @@ public:
     void removeAllUserContent();
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentFilter(const String& name, const String& serializedRules);
-    void removeUserContentFilter(const String& name);
-    void removeAllUserContentFilters();
+    void addUserContentExtension(const String& name, WebCompiledContentExtensionData);
+    void removeUserContentExtension(const String& name);
+    void removeAllUserContentExtensions();
 #endif
 
 private:

@@ -67,9 +67,9 @@ public:
     void removeAllUserContent();
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentFilter(const API::UserContentFilter&);
-    void removeUserContentFilter(const String&);
-    void removeAllUserContentFilters();
+    void addUserContentExtension(const API::UserContentExtension&);
+    void removeUserContentExtension(const String&);
+    void removeAllUserContentExtensions();
 #endif
 
 private:

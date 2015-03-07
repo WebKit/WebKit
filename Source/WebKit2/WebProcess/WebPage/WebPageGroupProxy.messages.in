@@ -28,8 +28,8 @@ messages -> WebPageGroupProxy {
     RemoveAllUserContent();
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    AddUserContentFilter(String name, String serializedRules);
-    RemoveUserContentFilter(String name);
-    RemoveAllUserContentFilters();
+    AddUserContentExtension(String name, WebKit::WebCompiledContentExtensionData contentExtension);
+    RemoveUserContentExtension(String name);
+    RemoveAllUserContentExtensions();
 #endif
 }

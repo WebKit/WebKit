@@ -34,25 +34,19 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
 namespace ContentExtensions {
 
-class CompiledContentExtension : public ThreadSafeRefCounted<CompiledContentExtension> {
+class WEBCORE_EXPORT CompiledContentExtension : public ThreadSafeRefCounted<CompiledContentExtension> {
 public:
-    static Ref<CompiledContentExtension> create(Vector<DFABytecode>&&, Vector<SerializedActionByte>&&);
+    virtual ~CompiledContentExtension();
 
-    const Vector<DFABytecode>& bytecode() const { return m_bytecode; }
-    const Vector<SerializedActionByte>& actions() const { return m_actions; }
-
-private:
-    CompiledContentExtension(Vector<DFABytecode>&&, Vector<SerializedActionByte>&&);
-
-    Vector<DFABytecode> m_bytecode;
-    Vector<SerializedActionByte> m_actions;
+    virtual const DFABytecode* bytecode() const = 0;
+    virtual unsigned bytecodeLength() const = 0;
+    virtual const SerializedActionByte* actions() const = 0;
+    virtual unsigned actionsLength() const = 0;
 };
 
 } // namespace ContentExtensions
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

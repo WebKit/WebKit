@@ -31,14 +31,7 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-Ref<CompiledContentExtension> CompiledContentExtension::create(Vector<DFABytecode>&& bytecode, Vector<SerializedActionByte>&& actions)
-{
-    return WTF::adoptRef(*new CompiledContentExtension(WTF::move(bytecode), WTF::move(actions)));
-}
-
-CompiledContentExtension::CompiledContentExtension(Vector<DFABytecode>&& bytecode, Vector<SerializedActionByte>&& actions)
-    : m_bytecode(WTF::move(bytecode))
-    , m_actions(WTF::move(actions))
+CompiledContentExtension::~CompiledContentExtension()
 {
 }
 

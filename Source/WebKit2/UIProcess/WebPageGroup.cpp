@@ -27,7 +27,8 @@
 #include "WebPageGroup.h"
 
 #include "APIArray.h"
-#include "APIUserContentFilter.h"
+#include "APIUserContentExtension.h"
+#include "WebCompiledContentExtension.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -173,22 +174,22 @@ void WebPageGroup::removeAllUserContent()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebPageGroup::addUserContentFilter(const API::UserContentFilter& userContentFilter)
+void WebPageGroup::addUserContentExtension(const API::UserContentExtension& userContentExtension)
 {
-    m_data.userContentFilters.set(userContentFilter.name(), userContentFilter.serializedRules());
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserContentFilter(userContentFilter.name(), userContentFilter.serializedRules()), m_data.pageGroupID);
+    m_data.userContentExtensions.set(userContentExtension.name(), userContentExtension.compiledExtension().data());
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserContentExtension(userContentExtension.name(), userContentExtension.compiledExtension().data()), m_data.pageGroupID);
 }
 
-void WebPageGroup::removeUserContentFilter(const String& contentFilterName)
+void WebPageGroup::removeUserContentExtension(const String& contentExtensionName)
 {
-    m_data.userContentFilters.remove(contentFilterName);
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveUserContentFilter(contentFilterName), m_data.pageGroupID);
+    m_data.userContentExtensions.remove(contentExtensionName);
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveUserContentExtension(contentExtensionName), m_data.pageGroupID);
 }
 
-void WebPageGroup::removeAllUserContentFilters()
+void WebPageGroup::removeAllUserContentExtensions()
 {
-    m_data.userContentFilters.clear();
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContentFilters(), m_data.pageGroupID);
+    m_data.userContentExtensions.clear();
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContentExtensions(), m_data.pageGroupID);
 }
 #endif
 

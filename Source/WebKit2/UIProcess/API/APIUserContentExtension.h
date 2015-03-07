@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroupData_h
-#define WebPageGroupData_h
+#ifndef APIUserContentExtension_h
+#define APIUserContentExtension_h
 
-#include "WebCompiledContentExtensionData.h"
-#include <WebCore/UserScript.h>
-#include <WebCore/UserStyleSheet.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
+#include "APIObject.h"
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
+namespace WebKit {
+class WebCompiledContentExtension;
 }
 
-namespace WebKit {
+namespace API {
 
-struct WebPageGroupData {
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebPageGroupData&);
-
-    String identifier;
-    uint64_t pageGroupID;
-    bool visibleToInjectedBundle;
-    bool visibleToHistoryClient;
-
-    Vector<WebCore::UserStyleSheet> userStyleSheets;
-    Vector<WebCore::UserScript> userScripts;
-
+class UserContentExtension final : public ObjectImpl<Object::Type::UserContentExtension> {
+public:
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, WebCompiledContentExtensionData> userContentExtensions;
-#endif
+    static Ref<UserContentExtension> create(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
+    {
+        return adoptRef(*new UserContentExtension(name, WTF::move(contentExtension)));
+    }
+
+    UserContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&&);
+    virtual ~UserContentExtension();
+
+    const WTF::String& name() const { return m_name; }
+    const WebKit::WebCompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
+
+private:
+    WTF::String m_name;
+    Ref<WebKit::WebCompiledContentExtension> m_compiledExtension;
+#endif // ENABLE(CONTENT_EXTENSIONS)
 };
 
-} // namespace WebKit
+} // namespace API
 
-
-#endif // WebPageGroupData_h
+#endif // APIUserContentExtension_h

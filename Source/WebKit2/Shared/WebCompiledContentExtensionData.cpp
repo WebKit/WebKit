@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroupData_h
-#define WebPageGroupData_h
-
+#include "config.h"
 #include "WebCompiledContentExtensionData.h"
-#include <WebCore/UserScript.h>
-#include <WebCore/UserStyleSheet.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
+#if ENABLE(CONTENT_EXTENSIONS)
+
+#include "ArgumentCoders.h"
 
 namespace WebKit {
 
-struct WebPageGroupData {
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebPageGroupData&);
+void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << bytecode;
+    encoder << actions;
+}
 
-    String identifier;
-    uint64_t pageGroupID;
-    bool visibleToInjectedBundle;
-    bool visibleToHistoryClient;
-
-    Vector<WebCore::UserStyleSheet> userStyleSheets;
-    Vector<WebCore::UserScript> userScripts;
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, WebCompiledContentExtensionData> userContentExtensions;
-#endif
-};
+bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
+{
+    if (!decoder.decode(compiledContentExtensionData.bytecode))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.actions))
+        return false;
+    return true;
+}
 
 } // namespace WebKit
 
-
-#endif // WebPageGroupData_h
+#endif // ENABLE(CONTENT_EXTENSIONS)

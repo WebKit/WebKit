@@ -23,19 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIUserContentFilter.h"
+#ifndef WebCompiledContentExtension_h
+#define WebCompiledContentExtension_h
 
-namespace API {
+#if ENABLE(CONTENT_EXTENSIONS)
 
-UserContentFilter::UserContentFilter(const WTF::String& name, const WTF::String& serializedRules)
-    : m_name(name)
-    , m_serializedRules(serializedRules)
-{
-}
+#include "WebCompiledContentExtensionData.h"
 
-UserContentFilter::~UserContentFilter()
-{
-}
+namespace WebKit {
 
-} // namespace API
+class WebCompiledContentExtension final : public WebCore::ContentExtensions::CompiledContentExtension {
+public:
+    static Ref<WebCompiledContentExtension> create(Vector<WebCore::ContentExtensions::DFABytecode>&&, Vector<WebCore::ContentExtensions::SerializedActionByte>&&);
+    virtual ~WebCompiledContentExtension();
+
+    WebCompiledContentExtensionData data() const { return m_data; }
+
+private:
+    WebCompiledContentExtension(Vector<WebCore::ContentExtensions::DFABytecode>&&, Vector<WebCore::ContentExtensions::SerializedActionByte>&&);
+
+    virtual const WebCore::ContentExtensions::DFABytecode* bytecode() const override;
+    virtual unsigned bytecodeLength() const override;
+    virtual const WebCore::ContentExtensions::SerializedActionByte* actions() const override;
+    virtual unsigned actionsLength() const override;
+    
+    WebCompiledContentExtensionData m_data;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
+#endif // WebCompiledContentExtension_h
