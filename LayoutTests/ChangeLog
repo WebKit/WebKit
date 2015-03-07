@@ -1,3 +1,14 @@
+2015-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r180595): construct varargs fails in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=142030
+
+        Reviewed by Michael Saboff.
+
+        Re-enable the test on 64-bit iOS.
+
+        * js/regress/script-tests/deltablue-varargs.js:
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Setting scroll-snap-desination to (100% 100%) locks up WebKit

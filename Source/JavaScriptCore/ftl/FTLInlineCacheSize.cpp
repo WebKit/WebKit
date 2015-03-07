@@ -76,7 +76,7 @@ size_t sizeOfCall()
 size_t sizeOfCallVarargs()
 {
 #if CPU(ARM64)
-    return 300;
+    return 332;
 #else
     return 275;
 #endif
