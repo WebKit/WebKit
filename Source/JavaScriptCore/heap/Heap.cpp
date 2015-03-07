@@ -1066,7 +1066,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         vm()->typeProfiler()->invalidateTypeSetCache();
 
     reapWeakHandles();
-    pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();
     snapshotMarkedSpace();
 
@@ -1178,15 +1177,6 @@ void Heap::reapWeakHandles()
 {
     GCPHASE(ReapingWeakHandles);
     m_objectSpace.reapWeakSets();
-}
-
-void Heap::pruneStaleEntriesFromWeakGCMaps()
-{
-    GCPHASE(PruningStaleEntriesFromWeakGCMaps);
-    if (m_operationInProgress != FullCollection)
-        return;
-    for (auto& pruneCallback : m_weakGCMaps.values())
-        pruneCallback();
 }
 
 void Heap::sweepArrayBuffers()

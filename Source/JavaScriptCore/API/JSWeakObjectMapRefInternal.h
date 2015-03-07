@@ -41,9 +41,9 @@ typedef JSC::WeakGCMap<void*, JSC::JSObject> WeakMapType;
 
 struct OpaqueJSWeakObjectMap : public RefCounted<OpaqueJSWeakObjectMap> {
 public:
-    static Ref<OpaqueJSWeakObjectMap> create(JSC::VM& vm, void* data, JSWeakMapDestroyedCallback callback)
+    static PassRefPtr<OpaqueJSWeakObjectMap> create(void* data, JSWeakMapDestroyedCallback callback)
     {
-        return adoptRef(*new OpaqueJSWeakObjectMap(vm, data, callback));
+        return adoptRef(new OpaqueJSWeakObjectMap(data, callback));
     }
 
     WeakMapType& map() { return m_map; }
@@ -54,9 +54,8 @@ public:
     }
 
 private:
-    OpaqueJSWeakObjectMap(JSC::VM& vm, void* data, JSWeakMapDestroyedCallback callback)
-        : m_map(vm)
-        , m_data(data)
+    OpaqueJSWeakObjectMap(void* data, JSWeakMapDestroyedCallback callback)
+        : m_data(data)
         , m_callback(callback)
     {
     }

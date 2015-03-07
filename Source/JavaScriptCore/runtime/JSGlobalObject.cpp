@@ -123,7 +123,6 @@
 #include "SymbolConstructor.h"
 #include "SymbolPrototype.h"
 #include "VariableWatchpointSetInlines.h"
-#include "WeakGCMapInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
 
