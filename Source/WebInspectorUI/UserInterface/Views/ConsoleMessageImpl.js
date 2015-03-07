@@ -45,6 +45,7 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
         "map": this._formatParameterAsObject,
         "set": this._formatParameterAsObject,
         "weakmap": this._formatParameterAsObject,
+        "iterator": this._formatParameterAsObject,
         "array":  this._formatParameterAsArray,
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString

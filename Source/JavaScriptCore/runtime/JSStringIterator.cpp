@@ -42,4 +42,20 @@ void JSStringIterator::finishCreation(VM& vm, JSGlobalObject*, JSString* iterate
     putDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName, jsNumber(0));
 }
 
+JSValue JSStringIterator::iteratedValue(ExecState* exec) const
+{
+    return getDirect(exec->vm(), exec->vm().propertyNames->iteratedStringPrivateName);
+}
+
+JSStringIterator* JSStringIterator::clone(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSValue iteratedString = getDirect(vm, vm.propertyNames->iteratedStringPrivateName);
+    JSValue nextIndex = getDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName);
+
+    auto clone = JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), asString(iteratedString));
+    clone->putDirect(vm, vm.propertyNames->stringIteratorNextIndexPrivateName, nextIndex);
+    return clone;
+}
+
 } // namespace JSC

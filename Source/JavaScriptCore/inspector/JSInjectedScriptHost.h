@@ -67,6 +67,7 @@ public:
     JSC::JSValue getInternalProperties(JSC::ExecState*);
     JSC::JSValue weakMapSize(JSC::ExecState*);
     JSC::JSValue weakMapEntries(JSC::ExecState*);
+    JSC::JSValue iteratorEntries(JSC::ExecState*);
 
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;

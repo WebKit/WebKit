@@ -1,3 +1,13 @@
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Support for Iterator Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142420
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object.html:
+        Update tests to include iterator objects.
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Mark svg/fonts/svg-font-horiz-orig.html as Image-only failing.

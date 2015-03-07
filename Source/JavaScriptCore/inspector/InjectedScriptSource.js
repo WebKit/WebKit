@@ -286,7 +286,7 @@ InjectedScript.prototype = {
         if (typeof object !== "object")
             return;
 
-        var entries = this._getCollectionEntries(object, InjectedScriptHost.subtype(object), startIndex, numberToFetch);
+        var entries = this._entries(object, InjectedScriptHost.subtype(object), startIndex, numberToFetch);
         return entries.map(function(entry) {
             entry.value = injectedScript._wrapObject(entry.value, objectGroupName, false, true);
             if ("key" in entry)
@@ -828,7 +828,12 @@ InjectedScript.prototype = {
         return InjectedScriptHost.weakMapEntries(object, numberToFetch);
     },
 
-    _getCollectionEntries: function(object, subtype, startIndex, numberToFetch)
+    _getIteratorEntries: function(object, numberToFetch)
+    {
+        return InjectedScriptHost.iteratorEntries(object, numberToFetch);
+    },
+
+    _entries: function(object, subtype, startIndex, numberToFetch)
     {
         if (subtype === "set")
             return this._getSetEntries(object, startIndex, numberToFetch);
@@ -836,6 +841,8 @@ InjectedScript.prototype = {
             return this._getMapEntries(object, startIndex, numberToFetch);
         if (subtype === "weakmap")
             return this._getWeakMapEntries(object, numberToFetch);
+        if (subtype === "iterator")
+            return this._getIteratorEntries(object, numberToFetch);
 
         throw "unexpected type";
     },
@@ -961,8 +968,8 @@ InjectedScript.RemoteObject.prototype = {
         };
 
         try {
-            // Maps and Sets have entries.
-            if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap")
+            // Maps, Sets, and Iterators have entries.
+            if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap" || this.subtype === "iterator")
                 this._appendEntryPreviews(object, preview);
 
             preview.properties = [];
@@ -1112,7 +1119,7 @@ InjectedScript.RemoteObject.prototype = {
     _appendEntryPreviews: function(object, preview)
     {
         // Fetch 6, but only return 5, so we can tell if we overflowed.
-        var entries = injectedScript._getCollectionEntries(object, this.subtype, 0, 6);
+        var entries = injectedScript._entries(object, this.subtype, 0, 6);
         if (!entries)
             return;
 

@@ -39,6 +39,7 @@ const ClassInfo JSMapIterator::s_info = { "Map Iterator", &Base::s_info, 0, CREA
 void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 {
     Base::finishCreation(vm);
+    m_map.set(vm, this, iteratedObject);
     m_iteratedObjectData.set(vm, this, iteratedObject->mapData());
 }
 
@@ -57,6 +58,13 @@ JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
     args.append(value);
     JSGlobalObject* globalObject = callFrame->callee()->globalObject();
     return constructArray(callFrame, 0, globalObject, args);
+}
+
+JSMapIterator* JSMapIterator::clone(ExecState* exec)
+{
+    auto clone = JSMapIterator::create(exec->vm(), exec->callee()->globalObject()->mapIteratorStructure(), m_map.get(), m_kind);
+    clone->m_iterator = m_iterator;
+    return clone;
 }
 
 }

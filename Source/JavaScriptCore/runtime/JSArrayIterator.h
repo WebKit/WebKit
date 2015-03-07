@@ -55,6 +55,10 @@ public:
         return instance;
     }
 
+    ArrayIterationKind kind(ExecState*) const;
+    JSValue iteratedValue(ExecState*) const;
+    JSArrayIterator* clone(ExecState*);
+
     using JSNonFinalObject::arrayStorageOrNull;
 private:
     JSArrayIterator(VM& vm, Structure* structure)

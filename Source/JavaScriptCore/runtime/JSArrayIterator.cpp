@@ -45,4 +45,26 @@ void JSArrayIterator::finishCreation(VM& vm, JSGlobalObject*, ArrayIterationKind
     putDirect(vm, vm.propertyNames->arrayIterationKindPrivateName, jsNumber(kind));
 }
 
+ArrayIterationKind JSArrayIterator::kind(ExecState* exec) const
+{
+    JSValue kindValue = getDirect(exec->vm(), exec->vm().propertyNames->arrayIterationKindPrivateName);
+    return static_cast<ArrayIterationKind>(kindValue.asInt32());
+}
+
+JSValue JSArrayIterator::iteratedValue(ExecState* exec) const
+{
+    return getDirect(exec->vm(), exec->vm().propertyNames->iteratedObjectPrivateName);
+}
+
+JSArrayIterator* JSArrayIterator::clone(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSValue iteratedObject = getDirect(vm, vm.propertyNames->iteratedObjectPrivateName);
+    JSValue nextIndex = getDirect(vm, vm.propertyNames->arrayIteratorNextIndexPrivateName);
+
+    auto clone = JSArrayIterator::create(exec, exec->callee()->globalObject()->arrayIteratorStructure(), kind(exec), asObject(iteratedObject));
+    clone->putDirect(vm, vm.propertyNames->arrayIteratorNextIndexPrivateName, nextIndex);
+    return clone;
+}
+
 }

@@ -1,5 +1,19 @@
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: ES6: Improved Support for Iterator Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142420
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl):
+        Treat an iterator like an object.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        Output iterator previews with []s, not {}s.
+
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Adopt Object Literal Method Property Syntax
         https://bugs.webkit.org/show_bug.cgi?id=142409
 

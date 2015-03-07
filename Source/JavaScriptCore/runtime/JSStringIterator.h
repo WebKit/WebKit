@@ -49,6 +49,9 @@ public:
         return instance;
     }
 
+    JSValue iteratedValue(ExecState*) const;
+    JSStringIterator* clone(ExecState*);
+
 private:
     JSStringIterator(VM& vm, Structure* structure)
         : Base(vm, structure)

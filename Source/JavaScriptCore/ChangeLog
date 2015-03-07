@@ -1,3 +1,61 @@
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Support for Iterator Objects
+        https://bugs.webkit.org/show_bug.cgi?id=142420
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Runtime.json:
+        Add new object subtype "iterator" for built-in iterator objects.
+
+        * inspector/InjectedScriptSource.js:
+        Return iterator values as Entry objects.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        Identify "iterator" typed objects.
+
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        Provide internal properties for the different Iterator objects.
+
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        Fetch the next few iterator entries of a built-in iterator object.
+
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIteratorEntries):
+        Call through to JSInjectedScriptHost.
+
+        * runtime/JSArgumentsIterator.cpp:
+        (JSC::JSArgumentsIterator::clone):
+        * runtime/JSArgumentsIterator.h:
+        (JSC::JSArgumentsIterator::iteratedValue):
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::kind):
+        (JSC::JSArrayIterator::iteratedValue):
+        (JSC::JSArrayIterator::clone):
+        * runtime/JSArrayIterator.h:
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::finishCreation):
+        (JSC::JSMapIterator::clone):
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::kind):
+        (JSC::JSMapIterator::iteratedValue):
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::finishCreation):
+        (JSC::JSSetIterator::clone):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::kind):
+        (JSC::JSSetIterator::iteratedValue):
+        * runtime/JSStringIterator.cpp:
+        (JSC::JSStringIterator::iteratedValue):
+        (JSC::JSStringIterator::clone):
+        * runtime/JSStringIterator.h:
+        Add accessors for internal properties and provide a way to clone the
+        iterator so we can be at the same index and peek at the next few
+        objects without modifying the original iterator object.
+
 2015-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r180595): construct varargs fails in FTL

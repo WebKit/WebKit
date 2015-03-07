@@ -39,4 +39,11 @@ void JSArgumentsIterator::finishCreation(VM& vm, Arguments* arguments)
     m_arguments.set(vm, this, arguments);
 }
 
+JSArgumentsIterator* JSArgumentsIterator::clone(ExecState* exec)
+{
+    auto clone = JSArgumentsIterator::create(exec->vm(), exec->callee()->globalObject()->argumentsIteratorStructure(), m_arguments.get());
+    clone->m_nextIndex = m_nextIndex;
+    return clone;
+}
+
 }

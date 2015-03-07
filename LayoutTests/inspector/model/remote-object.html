@@ -129,6 +129,21 @@ function test()
         {expression: "set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set"},
         {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set"},
 
+        // Iterators
+        {expression: "'a'[Symbol.iterator]()"},
+        {expression: "'long string'[Symbol.iterator]()"},
+        {expression: "[][Symbol.iterator]()"},
+        {expression: "[1][Symbol.iterator]()"},
+        {expression: "[1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()"},
+        {expression: "[1, 'two', 3, 'four', 5, 'size'].keys()"},
+        {expression: "[1, 'two', 3, 'four', 5, 'size'].entries()"},
+        {expression: "map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()"},
+        {expression: "map.keys()"},
+        {expression: "map.entries()"},
+        {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values()"},
+        {expression: "map.entries()"},
+        {expression: "x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.iterator]()"},
+
         // Promise
         {expression: "new Promise(function(){})"},
         {expression: "Promise.reject()"},
@@ -159,30 +174,34 @@ function test()
         return value;
     }
 
-    function runNextStep() {
-        if (currentStepIndex >= steps.length) {
-            InspectorTest.completeTest();
-            return;
+    function runSteps() {
+
+        function afterStep() {
+            if (++currentStepIndex >= steps.length)
+                InspectorTest.completeTest();
         }
 
-        var step = steps[currentStepIndex++];
-        if (step.browserOnly) {
-            runNextStep();
-            return;
+        function runStep(step) {
+            if (step.browserOnly) {
+                afterStep();
+                return;
+            }
+
+            WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, false, function(remoteObject, wasThrown) {
+                InspectorTest.log("");
+                InspectorTest.log("-----------------------------------------------------");
+                InspectorTest.log("EXPRESSION: " + step.expression);
+                InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+                InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, "  "));
+                afterStep();
+            });
         }
 
-        InspectorTest.log("");
-        InspectorTest.log("-----------------------------------------------------");
-        InspectorTest.log("EXPRESSION: " + step.expression);
-
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, false, function(remoteObject, wasThrown) {
-            InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
-            InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, "  "));
-            runNextStep();
-        });
+        for (var step of steps)
+            runStep(step);
     }
 
-    runNextStep();
+    runSteps();
 }
 
 function runInBrowserTest()

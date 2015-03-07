@@ -73,6 +73,10 @@ public:
         m_iterator.finish();
     }
 
+    SetIterationKind kind() const { return m_kind; }
+    JSValue iteratedValue() const { return m_set.get(); }
+    JSSetIterator* clone(ExecState*);
+
 private:
     JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, SetIterationKind kind)
         : Base(vm, structure)
@@ -85,6 +89,7 @@ private:
     JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    WriteBarrier<JSSet> m_set;
     WriteBarrier<MapData> m_iteratedObjectData;
     MapData::const_iterator m_iterator;
     SetIterationKind m_kind;

@@ -58,6 +58,9 @@ public:
         return true;
     }
 
+    JSValue iteratedValue() const { return m_arguments.get(); }
+    JSArgumentsIterator* clone(ExecState*);
+
 private:
 
     static const unsigned StructureFlags = Base::StructureFlags;

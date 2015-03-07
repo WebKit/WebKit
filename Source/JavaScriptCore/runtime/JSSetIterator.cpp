@@ -39,6 +39,7 @@ const ClassInfo JSSetIterator::s_info = { "Set Iterator", &Base::s_info, 0, CREA
 void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 {
     Base::finishCreation(vm);
+    m_set.set(vm, this, iteratedObject);
     m_iteratedObjectData.set(vm, this, iteratedObject->mapData());
 }
 
@@ -57,6 +58,13 @@ JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
     args.append(value);
     JSGlobalObject* globalObject = callFrame->callee()->globalObject();
     return constructArray(callFrame, 0, globalObject, args);
+}
+
+JSSetIterator* JSSetIterator::clone(ExecState* exec)
+{
+    auto clone = JSSetIterator::create(exec->vm(), exec->callee()->globalObject()->setIteratorStructure(), m_set.get(), m_kind);
+    clone->m_iterator = m_iterator;
+    return clone;
 }
 
 }

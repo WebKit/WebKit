@@ -144,7 +144,9 @@ WebInspector.ObjectPreviewView.prototype = {
     {
         var lossless = preview.lossless && !preview.propertyPreviews.length;
 
-        element.appendChild(document.createTextNode("{"));
+        var isIterator = preview.subtype === "iterator";
+
+        element.appendChild(document.createTextNode(isIterator ? "[" : "{"));
 
         var limit = Math.min(preview.collectionEntryPreviews.length, this._numberOfPropertiesToShowInMode());
         for (var i = 0; i < limit; ++i) {
@@ -166,7 +168,7 @@ WebInspector.ObjectPreviewView.prototype = {
 
         if (preview.overflow)
             element.appendChild(document.createTextNode(", \u2026"));
-        element.appendChild(document.createTextNode("}"));
+        element.appendChild(document.createTextNode(isIterator ? "]" : "}"));
 
         return lossless;
     },
