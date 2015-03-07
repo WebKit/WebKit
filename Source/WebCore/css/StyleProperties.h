@@ -86,7 +86,7 @@ public:
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned) const;
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
+    WEBCORE_EXPORT PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
@@ -182,7 +182,7 @@ inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() co
 
 class MutableStyleProperties : public StyleProperties {
 public:
-    static Ref<MutableStyleProperties> create(CSSParserMode = CSSQuirksMode);
+    WEBCORE_EXPORT static Ref<MutableStyleProperties> create(CSSParserMode = CSSQuirksMode);
     static Ref<MutableStyleProperties> create(const CSSProperty* properties, unsigned count);
 
     WEBCORE_EXPORT ~MutableStyleProperties();

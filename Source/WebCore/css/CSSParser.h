@@ -101,9 +101,9 @@ public:
         RefPtr<CSSCalcValue> m_calculation;
     };
 
-    CSSParser(const CSSParserContext&);
+    WEBCORE_EXPORT CSSParser(const CSSParserContext&);
 
-    ~CSSParser();
+    WEBCORE_EXPORT ~CSSParser();
 
     void parseSheet(StyleSheetContents*, const String&, int startLineNumber = 0, RuleSourceDataList* = nullptr, bool = false);
     PassRefPtr<StyleRuleBase> parseRule(StyleSheetContents*, const String&);
@@ -114,7 +114,7 @@ public:
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(CSSValueID ident, ValueWithCalculation&);
-    bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
+    WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
 

@@ -1,3 +1,19 @@
+2015-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Increase TestWebKitAPI Test Coverage
+        https://bugs.webkit.org/show_bug.cgi?id=142433
+
+        Reviewed by Darin Adler.
+
+        Correct some build deficiencies that prevent TestWebKitAPI
+        from executing certain tests on Windows.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Copy the interpreter
+        headers.
+        * css/CSSParser.h: Export necessary symbols
+        * css/CSSParserMode.h: Ditto.
+        * css/StyleProperties.h: Ditto.
+
 2015-03-07  David Kilzer  <ddkilzer@apple.com>
 
         Rename SOFT_LINK_FRAMEWORK_{HEADER,SOURCE} to SOFT_LINK_FRAMEWORK_FOR_{HEADER,SOURCE}

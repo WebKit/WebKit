@@ -74,7 +74,7 @@ public:
 bool operator==(const CSSParserContext&, const CSSParserContext&);
 inline bool operator!=(const CSSParserContext& a, const CSSParserContext& b) { return !(a == b); }
 
-const CSSParserContext& strictCSSParserContext();
+WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 
 };
 

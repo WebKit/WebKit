@@ -31,6 +31,10 @@
 #include <wtf/MetaAllocator.h>
 #include <wtf/Vector.h>
 
+#if OS(WINDOWS)
+#undef small
+#endif
+
 using namespace WTF;
 
 namespace TestWebKitAPI {

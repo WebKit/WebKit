@@ -19,6 +19,9 @@
     <Filter Include="Tests\WTF\cf">
       <UniqueIdentifier>{909ce22a-2223-4afa-af44-2d0153f13cc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests\JavaScriptCore">
+      <UniqueIdentifier>{3d2548c0-f826-4e9f-aaea-c6dee792f9ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
@@ -28,7 +31,13 @@
     <ClInclude Include="..\win\HostWindow.h">
       <Filter>win</Filter>
     </ClInclude>
-    <ClInclude Include="TestWebKitAPIPrefix.h" />
+    <ClInclude Include="..\win\TestWebKitAPIPrefix.h" />
+    <ClInclude Include="..\Tests\WTF\MoveOnly.h">
+      <Filter>Tests\WTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tests\WTF\RefLogger.h">
+      <Filter>Tests\WTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Counters.cpp" />
@@ -93,7 +102,70 @@
     <ClCompile Include="..\Tests\WTF\cf\RetainPtrHashing.cpp">
       <Filter>Tests\WTF\cf</Filter>
     </ClCompile>
-    <ClCompile Include="TestWebKitAPIPrefix.cpp" />
+    <ClCompile Include="..\win\TestWebKitAPIPrefix.cpp" />
+    <ClCompile Include="..\Tests\WTF\AtomicString.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\CString.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\Deque.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\HashSet.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\IntegerToStringConversion.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\ListHashSet.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\MetaAllocator.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\Optional.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\RedBlackTree.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\RefCounter.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\StringBuilder.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\StringImpl.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\StringView.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\TemporaryChange.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\WeakPtr.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\WTFString.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\CalculationValue.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\TimeRanges.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\URL.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\CSSParser.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\JavaScriptCore\VMInspector.cpp">
+      <Filter>Tests\JavaScriptCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestWebKitAPIPostBuild.cmd" />

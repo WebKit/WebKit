@@ -1,3 +1,18 @@
+2015-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Increase TestWebKitAPI Test Coverage[Win] Increase TestWebKitAPI Test Coverage
+        https://bugs.webkit.org/show_bug.cgi?id=142433
+
+        Reviewed by Darin Adler.
+
+        Include more TestWebKitAPI tests when building for Windows. Also
+        fix a build error in MetaAllocator.cpp caused by one of the
+        Microsoft headers #defining 'small'.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+
 2015-03-06  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Move compiling of content extensions to the UIProcess

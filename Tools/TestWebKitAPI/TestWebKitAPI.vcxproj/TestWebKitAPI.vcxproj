@@ -283,13 +283,20 @@
     <ClInclude Include="..\Counters.h" />
     <ClInclude Include="..\Test.h" />
     <ClInclude Include="..\TestsController.h" />
+    <ClInclude Include="..\Tests\WTF\MoveOnly.h" />
+    <ClInclude Include="..\Tests\WTF\RefLogger.h" />
     <ClInclude Include="..\win\HostWindow.h" />
     <ClInclude Include="..\win\TestWebKitAPIPrefix.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Counters.cpp" />
     <ClCompile Include="..\TestsController.cpp" />
+    <ClCompile Include="..\Tests\JavaScriptCore\VMInspector.cpp" />
+    <ClCompile Include="..\Tests\WebCore\CalculationValue.cpp" />
+    <ClCompile Include="..\Tests\WebCore\CSSParser.cpp" />
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />
+    <ClCompile Include="..\Tests\WebCore\TimeRanges.cpp" />
+    <ClCompile Include="..\Tests\WebCore\URL.cpp" />
     <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -301,21 +308,37 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Tests\WebKit\win\WebViewDestruction.cpp" />
+    <ClCompile Include="..\Tests\WTF\AtomicString.cpp" />
     <ClCompile Include="..\Tests\WTF\cf\RetainPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\cf\RetainPtrHashing.cpp" />
     <ClCompile Include="..\Tests\WTF\CheckedArithmeticOperations.cpp" />
+    <ClCompile Include="..\Tests\WTF\CString.cpp" />
+    <ClCompile Include="..\Tests\WTF\Deque.cpp" />
     <ClCompile Include="..\Tests\WTF\Functional.cpp" />
     <ClCompile Include="..\Tests\WTF\HashMap.cpp" />
+    <ClCompile Include="..\Tests\WTF\HashSet.cpp" />
+    <ClCompile Include="..\Tests\WTF\IntegerToStringConversion.cpp" />
+    <ClCompile Include="..\Tests\WTF\ListHashSet.cpp" />
     <ClCompile Include="..\Tests\WTF\MD5.cpp" />
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
+    <ClCompile Include="..\Tests\WTF\MetaAllocator.cpp" />
+    <ClCompile Include="..\Tests\WTF\Optional.cpp" />
+    <ClCompile Include="..\Tests\WTF\RedBlackTree.cpp" />
     <ClCompile Include="..\Tests\WTF\Ref.cpp" />
+    <ClCompile Include="..\Tests\WTF\RefCounter.cpp" />
     <ClCompile Include="..\Tests\WTF\RefPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\SHA1.cpp" />
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp" />
+    <ClCompile Include="..\Tests\WTF\StringBuilder.cpp" />
     <ClCompile Include="..\Tests\WTF\StringHasher.cpp" />
+    <ClCompile Include="..\Tests\WTF\StringImpl.cpp" />
     <ClCompile Include="..\Tests\WTF\StringOperators.cpp" />
+    <ClCompile Include="..\Tests\WTF\StringView.cpp" />
+    <ClCompile Include="..\Tests\WTF\TemporaryChange.cpp" />
     <ClCompile Include="..\Tests\WTF\Vector.cpp" />
+    <ClCompile Include="..\Tests\WTF\WeakPtr.cpp" />
+    <ClCompile Include="..\Tests\WTF\WTFString.cpp" />
     <ClCompile Include="..\win\HostWindow.cpp" />
     <ClCompile Include="..\win\main.cpp" />
     <ClCompile Include="..\win\TestWebKitAPIPrefix.cpp">
