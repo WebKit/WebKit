@@ -71,7 +71,7 @@ static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontal
 static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& style, ScrollEventAxis axis, LayoutUnit viewSize, LayoutUnit scrollSize, Vector<LayoutUnit>& snapOffsetSubsequence)
 {
     std::sort(snapOffsetSubsequence.begin(), snapOffsetSubsequence.end());
-    if (!snapOffsetSubsequence.size())
+    if (snapOffsetSubsequence.isEmpty())
         snapOffsetSubsequence.append(0);
 
     bool isHorizontalAxis = axis == ScrollEventAxis::Horizontal;
@@ -87,7 +87,7 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
     do {
         for (auto& snapPosition : snapOffsetSubsequence) {
             LayoutUnit potentialSnapPosition = curSnapPositionShift + snapPosition - destinationOffset;
-            if (potentialSnapPosition <= 0)
+            if (potentialSnapPosition < 0)
                 continue;
 
             if (potentialSnapPosition >= maxScrollOffset)
