@@ -1,5 +1,13 @@
 2015-03-06  Dean Jackson  <dino@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=142416
+
+        Unreviewed build fix.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h: Add kCAFilterPlusL.
+
+2015-03-06  Dean Jackson  <dino@apple.com>
+
         Support "plus-lighter" in mix-blend mode
         https://bugs.webkit.org/show_bug.cgi?id=142416
         <rdar://problem/19993979>

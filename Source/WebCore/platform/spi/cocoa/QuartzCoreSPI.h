@@ -124,7 +124,7 @@ EXTERN_C NSString * const kCAFilterColorHueRotate;
 EXTERN_C NSString * const kCAFilterColorSaturate;
 EXTERN_C NSString * const kCAFilterGaussianBlur;
 EXTERN_C NSString * const kCAFilterPlusD;
-
+EXTERN_C NSString * const kCAFilterPlusL;
 
 EXTERN_C NSString * const kCAFilterNormalBlendMode;
 EXTERN_C NSString * const kCAFilterMultiplyBlendMode;
