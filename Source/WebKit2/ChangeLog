@@ -1,3 +1,29 @@
+2015-03-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r181176.
+
+    2015-03-06  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION (r180782): Data Detector popovers are not dismissed on scroll or zoom
+            https://bugs.webkit.org/show_bug.cgi?id=142371
+            -and corresponding-
+            rdar://problem/20059224
+
+            Reviewed by Tim Horton.
+
+            This patch has the WKImmediateActionController keep track of whether or not it has 
+            an active immediate action. Then we only call into Lookup and DD if the window is 
+            key OR if the WKView’s immediateActionController has an active action.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissContentRelativeChildWindows]):
+            * UIProcess/mac/WKImmediateActionController.h:
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController initWithPage:view:recognizer:]):
+            (-[WKImmediateActionController willDestroyView:]):
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController hasActiveImmediateAction]):
+            (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
         Merge r180782
