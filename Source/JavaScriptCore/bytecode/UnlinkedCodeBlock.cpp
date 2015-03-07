@@ -118,15 +118,38 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& source, size_t lineOffset)
+FunctionExecutable* UnlinkedFunctionExecutable::linkInsideExecutable(VM& vm, const SourceCode& source)
 {
-    unsigned firstLine = lineOffset + m_firstLineOffset;
+    unsigned firstLine = source.firstLine() + m_firstLineOffset;
+    unsigned startOffset = source.startOffset() + m_startOffset;
+
     bool startColumnIsOnFirstSourceLine = !m_firstLineOffset;
     unsigned startColumn = m_unlinkedBodyStartColumn + (startColumnIsOnFirstSourceLine ? source.startColumn() : 1);
     bool endColumnIsOnStartLine = !m_lineCount;
     unsigned endColumn = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
-    SourceCode code(source.provider(), m_startOffset, m_startOffset + m_sourceLength, firstLine, startColumn);
+
+    SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
     return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumn);
+}
+
+FunctionExecutable* UnlinkedFunctionExecutable::linkGlobalCode(VM& vm, const SourceCode& source)
+{
+    unsigned firstLine = source.firstLine() + m_firstLineOffset;
+    unsigned startOffset = source.startOffset() + m_startOffset;
+
+    // We don't have any owner executable. The source string is effectively like a global
+    // string (like in the handling of eval). Hence, the startColumn is always 1.
+    unsigned startColumn = 1;
+    bool endColumnIsOnStartLine = !m_lineCount;
+    // The unlinkedBodyEndColumn is 0-based. Hence, we need to add 1 to it. But if the
+    // endColumn is on the startLine, then we need to subtract back the adjustment for
+    // the open brace resulting in an adjustment of 0.
+    unsigned endColumnExcludingBraces = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? 0 : 1);
+    unsigned startOffsetExcludingOpenBrace = startOffset + 1;
+    unsigned endOffsetExcludingCloseBrace = startOffset + m_sourceLength - 1;
+    SourceCode code(source.provider(), startOffsetExcludingOpenBrace, endOffsetExcludingCloseBrace, firstLine, startColumn);
+
+    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumnExcludingBraces, false);
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Identifier& name, ExecState& exec, const SourceCode& source, JSObject*& exception)

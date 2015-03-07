@@ -503,7 +503,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
-        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source, lineNo()), scope);
+        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->linkInsideExecutable(vm, m_source), scope);
         globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
         if (vm.typeProfiler() || vm.controlFlowProfiler()) {
             vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
@@ -608,25 +608,8 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, source, exception);
     if (!unlinkedExecutable)
-        return 0;
-    unsigned lineCount = unlinkedExecutable->lineCount();
-    unsigned firstLine = source.firstLine() + unlinkedExecutable->firstLineOffset();
-    unsigned startOffset = source.startOffset() + unlinkedExecutable->startOffset();
-
-    // We don't have any owner executable. The source string is effectively like a global
-    // string (like in the handling of eval). Hence, the startColumn is always 1.
-    unsigned startColumn = 1;
-    unsigned sourceLength = unlinkedExecutable->sourceLength();
-    bool endColumnIsOnStartLine = !lineCount;
-    // The unlinkedBodyEndColumn is based-0. Hence, we need to add 1 to it. But if the
-    // endColumn is on the startLine, then we need to subtract back the adjustment for
-    // the open brace resulting in an adjustment of 0.
-    unsigned endColumnExcludingBraces = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? 0 : 1);
-    unsigned startOffsetExcludingOpenBrace = startOffset + 1;
-    unsigned endOffsetExcludingCloseBrace = startOffset + sourceLength - 1;
-    SourceCode bodySource(source.provider(), startOffsetExcludingOpenBrace, endOffsetExcludingCloseBrace, firstLine, startColumn);
-
-    return FunctionExecutable::create(exec.vm(), bodySource, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumnExcludingBraces, false);
+        return nullptr;
+    return unlinkedExecutable->linkGlobalCode(exec.vm(), source);
 }
 
 String FunctionExecutable::paramString() const

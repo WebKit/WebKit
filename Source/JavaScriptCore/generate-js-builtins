@@ -264,24 +264,10 @@ for (codeReference, name, source) in codeReferences:
     builtinsImplementation.write("const int s_%sLength = %d;\n\n" % (codeReference, sourceLength + 1)) # + 1 for \n
 
 builtinsImplementation.write("""
-FunctionExecutable* createBuiltinExecutable(VM& vm, UnlinkedFunctionExecutable* unlinkedExecutable, const SourceCode& source)
-{
-    unsigned lineCount = unlinkedExecutable->lineCount();
-    unsigned startColumn = 1;
-    unsigned sourceLength = unlinkedExecutable->sourceLength();
-    bool endColumnIsOnStartLine = !lineCount;
-    unsigned endColumnExcludingBraces = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? 0 : 1);
-    unsigned startOffset = unlinkedExecutable->startOffset();
-    unsigned startOffsetExcludingOpenBrace = startOffset + 1;
-    unsigned endOffsetExcludingCloseBrace = startOffset + sourceLength - 1;
-    SourceCode bodySource(source.provider(), startOffsetExcludingOpenBrace, endOffsetExcludingCloseBrace, 0, startColumn);
-    return FunctionExecutable::create(vm, bodySource, unlinkedExecutable, 0, lineCount, startColumn, endColumnExcludingBraces, false);
-}
-
 #define JSC_DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
 FunctionExecutable* codeName##Generator(VM& vm) \\
 { \\
-    return createBuiltinExecutable(vm, vm.builtinExecutables()->codeName##Executable(), vm.builtinExecutables()->codeName##Source()); \\
+    return vm.builtinExecutables()->codeName##Executable()->linkGlobalCode(vm, vm.builtinExecutables()->codeName##Source()); \\
 }
 
 JSC_FOREACH_BUILTIN(JSC_DEFINE_BUILTIN_GENERATOR)

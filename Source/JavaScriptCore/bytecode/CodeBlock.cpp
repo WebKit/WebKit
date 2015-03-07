@@ -1746,17 +1746,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
             vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        unsigned lineCount = unlinkedExecutable->lineCount();
-        unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
-        bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
-        unsigned startColumn = unlinkedExecutable->unlinkedBodyStartColumn() + (startColumnIsOnOwnerStartLine ? ownerExecutable->startColumn() : 1);
-        bool endColumnIsOnStartLine = !lineCount;
-        unsigned endColumn = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? startColumn : 1);
-        unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
-        unsigned sourceLength = unlinkedExecutable->sourceLength();
-        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumn);
-        m_functionDecls[i].set(*m_vm, ownerExecutable, executable);
+        m_functionDecls[i].set(*m_vm, ownerExecutable, unlinkedExecutable->linkInsideExecutable(*m_vm, ownerExecutable->source()));
     }
 
     m_functionExprs.resizeToFit(unlinkedCodeBlock->numberOfFunctionExprs());
@@ -1764,17 +1754,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
             vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        unsigned lineCount = unlinkedExecutable->lineCount();
-        unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
-        bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
-        unsigned startColumn = unlinkedExecutable->unlinkedBodyStartColumn() + (startColumnIsOnOwnerStartLine ? ownerExecutable->startColumn() : 1);
-        bool endColumnIsOnStartLine = !lineCount;
-        unsigned endColumn = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? startColumn : 1);
-        unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
-        unsigned sourceLength = unlinkedExecutable->sourceLength();
-        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumn);
-        m_functionExprs[i].set(*m_vm, ownerExecutable, executable);
+        m_functionExprs[i].set(*m_vm, ownerExecutable, unlinkedExecutable->linkInsideExecutable(*m_vm, ownerExecutable->source()));
     }
 
     if (unlinkedCodeBlock->hasRareData()) {

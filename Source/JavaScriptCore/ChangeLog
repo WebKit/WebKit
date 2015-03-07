@@ -1,3 +1,29 @@
+2015-03-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The code to link FunctionExecutable is duplicated everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=142436
+
+        Reviewed by Darin Adler.
+
+        Reduced code duplication by factoring out linkInsideExecutable and linkGlobalCode.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Calls linkInsideExecutable.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::linkInsideExecutable): Renamed from link. Now takes care of startOffset.
+        This change was needed to use this function in CodeBlock::CodeBlock. Also, this function no longer takes
+        lineOffset since this information is already stored in the source code.
+        (JSC::UnlinkedFunctionExecutable::linkGlobalCode): Extracted from FunctionExecutable::fromGlobalCode.
+
+        * bytecode/UnlinkedCodeBlock.h:
+
+        * generate-js-builtins: Calls linkGlobalCode.
+
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties): Calls linkGlobalCode.
+        (JSC::FunctionExecutable::fromGlobalCode): Calls linkGlobalCode.
+
 2015-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
