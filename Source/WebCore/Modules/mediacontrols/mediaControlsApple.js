@@ -582,6 +582,7 @@ Controller.prototype = {
     {
         if (!this.scrubbing)
             this.updateTime();
+        this.drawTimelineBackground();
     },
 
     handleDurationChange: function(event)
