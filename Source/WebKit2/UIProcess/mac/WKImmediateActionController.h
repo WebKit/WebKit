@@ -62,6 +62,8 @@ enum class ImmediateActionState {
     BOOL _hasActivatedActionContext;
     RetainPtr<DDActionContext> _currentActionContext;
     RetainPtr<QLPreviewMenuItem> _currentQLPreviewMenuItem;
+
+    BOOL _hasActiveImmediateAction;
 }
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
@@ -69,6 +71,7 @@ enum class ImmediateActionState {
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 - (void)dismissContentRelativeChildWindows;
+- (BOOL)hasActiveImmediateAction;
 
 @end
 
