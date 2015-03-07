@@ -1855,7 +1855,7 @@ svg/animations/animate-text-nested-transforms.html [ Failure ]
 svg/repaint/text-mask-update.svg [ ImageOnlyFailure ]
 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
-webkit.org/b/142423 svg/fonts/svg-font-horiz-origin.html [ Failure ]
+webkit.org/b/142423 svg/fonts/svg-font-horiz-origin.html [ ImageOnlyFailure ]
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################

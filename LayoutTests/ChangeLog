@@ -1,5 +1,11 @@
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Mark svg/fonts/svg-font-horiz-orig.html as Image-only failing.
+
+        * platform/win/TestExpectations:
+
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Mark svg/fonts/svg-font-horiz-orig.html as failing.
         https://bugs.webkit.org/show_bug.cgi?id=142423
 
