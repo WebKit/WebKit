@@ -219,6 +219,6 @@ echo Build WARNINGS...                                         >> "%CONFIGURATIO
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\webkit_warnings.log" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
-:SkipIndividualBuilds
+:SkipMSBuildFiles
 
 echo "Completed."

@@ -1,3 +1,12 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct Windows build.
+
+        Rubberstamped by Michael Saboff
+
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Correct cut/paste error
+        in the GOTO labels.
+
 2015-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/sync-request-on-max-conns might fail after finished
