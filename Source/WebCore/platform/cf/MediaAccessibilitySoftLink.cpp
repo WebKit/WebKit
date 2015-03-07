@@ -30,7 +30,7 @@
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
 
-SOFT_LINK_FRAMEWORK_SOURCE(WebCore, MediaAccessibility)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, MediaAccessibility)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceSetDisplayType, void, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))

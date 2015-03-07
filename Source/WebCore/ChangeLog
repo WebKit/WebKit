@@ -1,3 +1,18 @@
+2015-03-07  David Kilzer  <ddkilzer@apple.com>
+
+        Rename SOFT_LINK_FRAMEWORK_{HEADER,SOURCE} to SOFT_LINK_FRAMEWORK_FOR_{HEADER,SOURCE}
+        <http://webkit.org/b/142434>
+
+        Reviewed by Darin Adler.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/cf/MediaAccessibilitySoftLink.cpp:
+        * platform/cf/MediaAccessibilitySoftLink.h:
+        * platform/mac/SoftLinking.h:
+        * platform/win/SoftLinking.h:
+        - Do the rename.
+
 2015-03-06  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Move compiling of content extensions to the UIProcess

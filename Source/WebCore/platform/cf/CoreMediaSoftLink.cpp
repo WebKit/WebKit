@@ -30,7 +30,7 @@
 #include "CoreMediaSPI.h"
 #include "SoftLinking.h"
 
-SOFT_LINK_FRAMEWORK_SOURCE(WebCore, CoreMedia)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, CoreMedia)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBlockBufferGetDataLength, size_t, (CMBlockBufferRef theBuffer), (theBuffer))

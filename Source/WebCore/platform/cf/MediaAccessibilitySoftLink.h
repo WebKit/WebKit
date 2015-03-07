@@ -31,7 +31,7 @@
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
 
-SOFT_LINK_FRAMEWORK_HEADER(WebCore, MediaAccessibility)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaAccessibility)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
 #define MACaptionAppearanceGetDisplayType softLink_MediaAccessibility_MACaptionAppearanceGetDisplayType

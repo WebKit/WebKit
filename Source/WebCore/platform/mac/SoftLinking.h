@@ -293,7 +293,7 @@
 
 // See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
 
-#define SOFT_LINK_FRAMEWORK_HEADER(functionNamespace, framework) \
+#define SOFT_LINK_FRAMEWORK_FOR_HEADER(functionNamespace, framework) \
     namespace functionNamespace { \
     extern void* framework##Library(bool isOptional = false); \
     bool is##framework##FrameworkAvailable(); \
@@ -302,7 +302,7 @@
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_SOURCE(functionNamespace, framework) \
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
     namespace functionNamespace { \
     void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
