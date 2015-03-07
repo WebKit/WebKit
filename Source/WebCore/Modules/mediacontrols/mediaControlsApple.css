@@ -227,6 +227,18 @@ video::-webkit-media-controls-volume-min-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" ><path fill="white" stroke="rgba(255,255,255,0.67)" d="M 0,9 0,5 3,5 6,2 6,12 3,9 0,9 z"/></svg>');
 }
 
+video::-webkit-media-controls-wireless-playback-picker-button,
+audio::-webkit-media-controls-wireless-playback-picker-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" stroke="white"><defs> <clipPath fill-rule="evenodd" id="cut-hole"><path d="M 0,0 L 16,0 L 16,15 L 0,15 z M 0,14 L 16,14 L 8,4.5 z"/></clipPath></defs><rect fill="none" clip-path="url(#cut-hole)" x="0.5" y="1.5" width="15" height="8"/><path fill="white" d="M 4.25,12.75 L 11.75,12.75 L 8,8.25 z"/></svg>');
+    margin-right: 16px;
+    width: 16px;
+}
+
+video::-webkit-media-controls-wireless-playback-picker-button.playing,
+audio::-webkit-media-controls-wireless-playback-picker-button.playing {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" stroke="rgb(0,172,245)"><defs> <clipPath fill-rule="evenodd" id="cut-hole"><path d="M 0,0 L 16,0 L 16,15 L 0,15 z M 0,14 L 16,14 L 8,4.5 z"/></clipPath></defs><rect fill="none" clip-path="url(#cut-hole)" x="0.5" y="1.5" width="15" height="8"/><path fill="rgb(0,172,245)" d="M 4.25,12.75 L 11.75,12.75 L 8,8.25 z"/></svg>');
+}
+
 video::-webkit-media-controls-toggle-closed-captions-button,
 audio::-webkit-media-controls-toggle-closed-captions-button {
     width: 16px;
@@ -642,6 +654,12 @@ video:-webkit-full-screen::-webkit-media-controls-status-display {
 
 video:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button,
 audio:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button {
+    margin-top: 6px;
+    margin-right:24px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-wireless-playback-picker-button,
+audio:-webkit-full-screen::-webkit-media-controls-wireless-playback-picker-button {
     margin-top: 6px;
     margin-right:24px;
 }

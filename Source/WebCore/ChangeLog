@@ -53,6 +53,19 @@
 
 2015-03-06  Roger Fong  <roger_fong@apple.com>
 
+        Create new buttons for media controls on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142415.
+        <rdar://problem/20019441>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-wireless-playback-picker-button.playing):
+        (audio:-webkit-full-screen::-webkit-media-controls-wireless-playback-picker-button):
+
+2015-03-06  Roger Fong  <roger_fong@apple.com>
+
         Redraw timeline background when updating media time.
         https://bugs.webkit.org/show_bug.cgi?id=142421.
         <rdar://problem/20065104>
