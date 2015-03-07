@@ -111,8 +111,8 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
     }
 
     SourceCode source = makeSource(program, sourceURL, position);
-    JSObject* exception = 0;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->vmEntryGlobalObject()->debugger(), source, &exception);
+    JSObject* exception = nullptr;
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception);
     if (!function) {
         ASSERT(exception);
         return exec->vm().throwException(exec, exception);

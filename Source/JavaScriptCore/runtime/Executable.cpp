@@ -604,9 +604,9 @@ void FunctionExecutable::unlinkCalls()
 #endif
 }
 
-FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, ExecState& exec, const SourceCode& source, JSObject*& exception)
 {
-    UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, debugger, source, exception);
+    UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, source, exception);
     if (!unlinkedExecutable)
         return 0;
     unsigned lineCount = unlinkedExecutable->lineCount();
@@ -626,7 +626,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
     unsigned endOffsetExcludingCloseBrace = startOffset + sourceLength - 1;
     SourceCode bodySource(source.provider(), startOffsetExcludingOpenBrace, endOffsetExcludingCloseBrace, firstLine, startColumn);
 
-    return FunctionExecutable::create(exec->vm(), bodySource, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumnExcludingBraces, false);
+    return FunctionExecutable::create(exec.vm(), bodySource, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumnExcludingBraces, false);
 }
 
 String FunctionExecutable::paramString() const

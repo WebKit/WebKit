@@ -547,7 +547,7 @@ public:
         executable->finishCreation(vm);
         return executable;
     }
-    static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
+    static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState&, const SourceCode&, JSObject*& exception);
 
     static void destroy(JSCell*);
         

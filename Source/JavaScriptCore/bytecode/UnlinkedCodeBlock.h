@@ -131,7 +131,7 @@ public:
 
     UnlinkedFunctionCodeBlock* codeBlockFor(VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, bool bodyIncludesBraces, ParserError&);
 
-    static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
+    static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState&, const SourceCode&, JSObject*& exception);
 
     FunctionExecutable* link(VM&, const SourceCode&, size_t lineOffset);
 
