@@ -254,9 +254,6 @@ fast/frames/transparent-scrollbar.html
 fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-dataTransferItemList-file-handling.html
 
-# ENABLE(CSS_SCROLL_SNAP) is disabled.
-css3/scroll-snap
-
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
@@ -526,6 +523,8 @@ fast/canvas/webgl [ Skip ]
 webgl [ Skip ]
 http/tests/webgl [ Skip ]
 compositing/webgl [ Skip ]
+compositing/backface-visibility/backface-visibility-webgl.html [ Skip ]
+compositing/visibility/visibility-simple-webgl-layer.html [ Skip ]
 fast/images/webgl-teximage2d.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
@@ -1505,9 +1504,12 @@ webkit.org/b/122963 fast/regions/repaint/region-painting-via-layout.html [ Missi
 
 # EFL port doesn't fully support printing
 webkit.org/b/123561 printing/media-queries-print.html [ Missing ]
+webkit.org/b/123561 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
+webkit.org/b/123561 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/123561 printing/setPrinting.html [ Missing ]
 webkit.org/b/123561 printing/simultaneous-position-float-change.html [ Missing ]
 webkit.org/b/123561 printing/single-line-must-not-be-split-into-two-pages.html [ Missing ]
+webkit.org/b/123561 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
 webkit.org/b/123561 printing/width-overflow.html [ Missing ]
 
 # crypto.subtle is not yet enabled, but digest algorithms are already implemented
@@ -2025,6 +2027,11 @@ webkit.org/b/141458 imported/mozilla/svg/blend-multiply.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/blend-screen.svg [ ImageOnlyFailure ]
 webkit.org/b/141458 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
+webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 # Started failing since r167808
 webkit.org/b/141496 fast/multicol/client-rects-spanners-complex.html [ Failure ]
@@ -2103,3 +2110,11 @@ webkit.org/b/141896 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
 # Need to investigate why these security tests have been failed since r144338.
 webkit.org/b/141958 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
 webkit.org/b/141958 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+
+webkit.org/b/142426 compositing/masks/compositing-clip-path-and-mask.html [ ImageOnlyFailure ]
+webkit.org/b/142426 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
+webkit.org/b/142426 compositing/masks/compositing-clip-path.html [ ImageOnlyFailure ]
+webkit.org/b/142426 compositing/masks/reference-clip-path-on-composited.html [ ImageOnlyFailure ]
+
+webkit.org/b/142427 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/142427 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]

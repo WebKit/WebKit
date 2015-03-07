@@ -1,3 +1,12 @@
+2015-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening on 7th Mar.
+
+        Remove duplicated css nap scroll skip.
+        Mark printing, compositing mask, svg pattern, and webgl visibility tests to failures.
+
+        * platform/efl/TestExpectations:
+
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Support for Iterator Objects
