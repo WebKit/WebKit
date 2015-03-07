@@ -848,6 +848,7 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(BlendMode blend
     case BlendModeColor: ts << "color"; break;
     case BlendModeLuminosity: ts << "luminosity"; break;
     case BlendModePlusDarker: ts << "plus-darker"; break;
+    case BlendModePlusLighter: ts << "plus-lighter"; break;
     }
     return ts;
 }

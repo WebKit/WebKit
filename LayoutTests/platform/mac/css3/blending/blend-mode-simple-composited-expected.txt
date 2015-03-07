@@ -17,6 +17,7 @@ layer at (0,0) size 800x436 isolatesBlending
         RenderBlock (floating) {LI} at (45,285) size 130x130
         RenderBlock (floating) {LI} at (185,285) size 130x130
         RenderBlock (floating) {LI} at (325,285) size 130x130
+        RenderBlock (floating) {LI} at (465,285) size 130x130
 layer at (53,21) size 130x130
   RenderImage {IMG} at (0,0) size 130x130
 layer at (193,21) size 130x130 blendMode: overlay
@@ -42,4 +43,6 @@ layer at (53,301) size 130x130 blendMode: difference
 layer at (193,301) size 130x130 blendMode: exclusion
   RenderImage {IMG} at (0,0) size 130x130
 layer at (333,301) size 130x130 blendMode: plus-darker
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (473,301) size 130x130 blendMode: plus-lighter
   RenderImage {IMG} at (0,0) size 130x130

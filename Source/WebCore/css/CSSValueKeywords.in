@@ -1056,6 +1056,8 @@ hue
 saturation
 color
 luminosity
+// plus-darker
+// plus-lighter
 
 // isolation
 // auto

@@ -1537,6 +1537,9 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode, Blen
         case BlendModePlusDarker:
             target = kCGBlendModePlusDarker;
             break;
+        case BlendModePlusLighter:
+            target = kCGBlendModePlusLighter;
+            break;
         default:
             break;
         }

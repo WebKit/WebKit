@@ -1,3 +1,32 @@
+2015-03-06  Dean Jackson  <dino@apple.com>
+
+        Support "plus-lighter" in mix-blend mode
+        https://bugs.webkit.org/show_bug.cgi?id=142416
+        <rdar://problem/19993979>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Support the "plus-lighter" blending mode to CSS.
+        See my reply to: https://lists.w3.org/Archives/Public/public-fx/2015JanMar/0021.html
+
+        Test: css3/blending/svg-blend-plus-lighter.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): mix-blend-mode can now accept the
+        new keyword.
+        * css/CSSPrimitiveValueMappings.h: Add the mappings to/from the GraphicsType.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator BlendMode):
+        * css/CSSValueKeywords.in: Add comment to show plus-darker and plus-lighter
+        are available.
+        * platform/graphics/GraphicsTypes.cpp: New GraphicsType for PlusLighter.
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm: Map to the CA filter.
+        (PlatformCAFilters::setBlendingFiltersOnLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Map to the CG
+        blending flag.
+
 2015-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Soft link MediaAccessibility using new macros.

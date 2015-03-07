@@ -1,3 +1,16 @@
+2015-03-06  Dean Jackson  <dino@apple.com>
+
+        Support "plus-lighter" in mix-blend mode
+        https://bugs.webkit.org/show_bug.cgi?id=142416
+        <rdar://problem/19993979>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Output the appropriate blending type when logging.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+
 2015-03-06  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r180782): Data Detector popovers are not dismissed on scroll or zoom
