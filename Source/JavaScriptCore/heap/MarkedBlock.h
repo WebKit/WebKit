@@ -69,7 +69,8 @@ namespace JSC {
     // size is equal to the difference between the cell size and the object
     // size.
 
-    class MarkedBlock : public HeapBlock<MarkedBlock> {
+    class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
+        friend class WTF::DoublyLinkedListNode<MarkedBlock>;
         friend class LLIntOffsetsExtractor;
         friend struct VerifyMarkedOrRetired;
     public:
@@ -113,7 +114,8 @@ namespace JSC {
         };
 
         enum DestructorType { None, ImmortalStructure, Normal };
-        static MarkedBlock* create(DeadBlock*, MarkedAllocator*, size_t cellSize, DestructorType);
+        static MarkedBlock* create(MarkedAllocator*, size_t capacity, size_t cellSize, DestructorType);
+        static void destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
@@ -194,12 +196,15 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(Region*, MarkedAllocator*, size_t cellSize, DestructorType);
+        MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, DestructorType);
         Atom* atoms();
         size_t atomNumber(const void*);
         template<DestructorType> void callDestructor(JSCell*);
         template<BlockState, SweepMode, DestructorType> FreeList specializedSweep();
         
+        MarkedBlock* m_prev;
+        MarkedBlock* m_next;
+
         size_t m_atomsPerCell;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
 #if ENABLE(PARALLEL_GC)
@@ -211,6 +216,7 @@ namespace JSC {
 #endif
         std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
+        size_t m_capacity;
         DestructorType m_destructorType;
         MarkedAllocator* m_allocator;
         BlockState m_state;
@@ -333,7 +339,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::capacity()
     {
-        return region()->blockSize();
+        return m_capacity;
     }
 
     inline size_t MarkedBlock::atomNumber(const void* p)

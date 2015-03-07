@@ -33,17 +33,22 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(DeadBlock* block, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+MarkedBlock* MarkedBlock::create(MarkedAllocator* allocator, size_t capacity, size_t cellSize, DestructorType destructorType)
 {
-    ASSERT(reinterpret_cast<size_t>(block) == (reinterpret_cast<size_t>(block) & blockMask));
-    Region* region = block->region();
-    return new (NotNull, block) MarkedBlock(region, allocator, cellSize, destructorType);
+    return new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, destructorType);
 }
 
-MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
-    : HeapBlock<MarkedBlock>(region)
+void MarkedBlock::destroy(MarkedBlock* block)
+{
+    block->~MarkedBlock();
+    fastAlignedFree(block);
+}
+
+MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, DestructorType destructorType)
+    : DoublyLinkedListNode<MarkedBlock>()
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
-    , m_endAtom((allocator->cellSize() ? atomsPerBlock : region->blockSize() / atomSize) - m_atomsPerCell + 1)
+    , m_endAtom((allocator->cellSize() ? atomsPerBlock : capacity / atomSize) - m_atomsPerCell + 1)
+    , m_capacity(capacity)
     , m_destructorType(destructorType)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.
