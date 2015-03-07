@@ -120,7 +120,6 @@ ALWAYS_INLINE bool isWindowInactive(const Element* element)
     return !element->document().page()->focusController().isActive();
 }
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
 ALWAYS_INLINE bool equalIgnoringASCIICase(const String& a, const String& b)
 {
     if (a.length() != b.length()) 
@@ -213,31 +212,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<A
         } while (rangeSubtagsStartIndex < rangeLength);
         if (matchedRange)
             return true;
-    }
-    return false;
-}
-#endif
-    
-inline bool matchesLangPseudoClassDeprecated(const Element* element, AtomicStringImpl* filter)
-{
-    AtomicString value;
-#if ENABLE(VIDEO_TRACK)
-    if (is<WebVTTElement>(*element))
-        value = downcast<WebVTTElement>(*element).language();
-    else
-#endif
-        value = element->computeInheritedLanguage();
-
-    if (value.isNull())
-        return false;
-
-    if (value.impl() == filter)
-        return true;
-
-    if (value.impl()->startsWith(filter, false)) {
-        if (value.length() == filter->length())
-            return true;
-        return value[filter->length()] == '-';
     }
     return false;
 }

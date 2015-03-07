@@ -1,3 +1,33 @@
+2015-03-06  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Enable selectors level 4's :lang() by default
+        https://bugs.webkit.org/show_bug.cgi?id=142302
+
+        Reviewed by Benjamin Poulain.
+
+        No behavior change.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setLangArgumentList):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::appendLangArgumentList):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setLangArgumentList):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+        (WebCore::matchesLangPseudoClassDeprecated): Deleted.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Setting scroll-snap-desination to (100% 100%) locks up WebKit

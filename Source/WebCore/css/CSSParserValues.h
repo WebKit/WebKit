@@ -209,9 +209,7 @@ public:
     void setForPage() { m_selector->setForPage(); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
-#if ENABLE(CSS_SELECTORS_LEVEL4)
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);
-#endif
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }

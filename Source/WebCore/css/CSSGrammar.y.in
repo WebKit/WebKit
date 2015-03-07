@@ -62,9 +62,9 @@ static inline bool isCSSTokenAString(int yytype)
     case MINFUNCTION:
     case NTHCHILDFUNCTIONS:
     case NTHCHILDSELECTORSEPARATOR:
+    case LANGFUNCTION:
 #if ENABLE_CSS_SELECTORS_LEVEL4
     case DIRFUNCTION:
-    case LANGFUNCTION:
     case ROLEFUNCTION:
 #endif
     case UNICODERANGE:
@@ -218,10 +218,10 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %token <string> MAXFUNCTION
 %token <string> MINFUNCTION
 %token <string> NTHCHILDFUNCTIONS
+%token <string> LANGFUNCTION
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> DIRFUNCTION
-%token <string> LANGFUNCTION
 %token <string> ROLEFUNCTION
 #endif
 
@@ -320,15 +320,10 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <valueList> calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 %destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 
-#if ENABLE_CSS_SELECTORS_LEVEL4
-
 %type <string> lang_range
-
 %union { Vector<CSSParserString>* stringList; }
 %type <stringList> comma_separated_lang_ranges
 %destructor { delete $$; } comma_separated_lang_ranges
-
-#endif
 
 %type <string> min_or_max
 
@@ -1089,7 +1084,6 @@ nested_selector_list:
     }
     ;
 
-#if ENABLE_CSS_SELECTORS_LEVEL4
 lang_range: IDENT | STRING ;
 
 comma_separated_lang_ranges:
@@ -1107,7 +1101,6 @@ comma_separated_lang_ranges:
         delete $1;
     }
     ;
-#endif
 
 complex_selector_with_trailing_whitespace:
     complex_selector WHITESPACE;
@@ -1379,18 +1372,6 @@ pseudo:
                 $$ = selector.release();
         }
     }
-
-#if ENABLE_CSS_SELECTORS_LEVEL4
-    | ':' DIRFUNCTION maybe_space IDENT maybe_space ')' {
-        $$ = nullptr;
-        auto selector = std::make_unique<CSSParserSelector>();
-        selector->setMatch(CSSSelector::PseudoClass);
-        selector->setArgument($4);
-        selector->setPseudoClassValue($2);
-        if (selector->pseudoClassType() == CSSSelector::PseudoClassDir)
-            $$ = selector.release();
-    }
-
     | ':' LANGFUNCTION maybe_space comma_separated_lang_ranges maybe_space ')' {
         $$ = nullptr;
         if ($4) {
@@ -1401,6 +1382,17 @@ pseudo:
             if (selector->pseudoClassType() == CSSSelector::PseudoClassLang)
                 $$ = selector.release();
         }
+    }
+
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    | ':' DIRFUNCTION maybe_space IDENT maybe_space ')' {
+        $$ = nullptr;
+        auto selector = std::make_unique<CSSParserSelector>();
+        selector->setMatch(CSSSelector::PseudoClass);
+        selector->setArgument($4);
+        selector->setPseudoClassValue($2);
+        if (selector->pseudoClassType() == CSSSelector::PseudoClassDir)
+            $$ = selector.release();
     }
 
     | ':' ROLEFUNCTION maybe_space IDENT maybe_space ')' {
@@ -1891,9 +1883,9 @@ invalid_square_brackets_block: '[' error_recovery ']' | '[' error_recovery TOKEN
 invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesis;
 
 opening_parenthesis:
-    '(' | FUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION
+    '(' | FUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION | LANGFUNCTION
 #if ENABLE_CSS_SELECTORS_LEVEL4
-    | DIRFUNCTION | LANGFUNCTION | ROLEFUNCTION
+    | DIRFUNCTION | ROLEFUNCTION
 #endif
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION

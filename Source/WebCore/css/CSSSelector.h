@@ -224,18 +224,14 @@ namespace WebCore {
         const AtomicString& attributeCanonicalLocalName() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         bool attributeValueMatchingIsCaseInsensitive() const;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         const Vector<AtomicString>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
-#endif
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
         void setArgument(const AtomicString&);
         void setAttributeValueMatchingIsCaseInsensitive(bool);
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
-#endif
         void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
         bool parseNth() const;
@@ -342,9 +338,7 @@ namespace WebCore {
             QualifiedName m_attribute; // used for attribute selector
             AtomicString m_attributeCanonicalLocalName;
             AtomicString m_argument; // Used for :contains and :nth-*
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-            std::unique_ptr<Vector<AtomicString>> m_langArgumentList;
-#endif
+            std::unique_ptr<Vector<AtomicString>> m_langArgumentList; // Used for :lang arguments.
             std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
         
         private:

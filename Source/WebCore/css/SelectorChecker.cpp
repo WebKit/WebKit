@@ -953,15 +953,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             break;
         case CSSSelector::PseudoClassLang:
             {
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 ASSERT(selector->langArgumentList() && !selector->langArgumentList()->isEmpty());
                 return matchesLangPseudoClass(element, *selector->langArgumentList());
-#else
-                const AtomicString& argument = selector->argument();      
-                if (argument.isNull())
-                    return false;
-                return matchesLangPseudoClassDeprecated(element, argument.impl());
-#endif                          
             }
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClassFullScreen:
