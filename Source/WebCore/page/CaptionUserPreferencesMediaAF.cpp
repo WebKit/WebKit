@@ -51,16 +51,10 @@
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
-#endif
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include "MediaAccessibilitySoftLink.h"
 
-#if !PLATFORM(WIN)
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_FRAMEWORK_OPTIONAL(Lib)
-#define SOFT_LINK_AVF(Lib, Name, Type) SOFT_LINK(Lib, Name, Type)
-#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_POINTER_OPTIONAL(Lib, Name, Type)
-#define SOFT_LINK_AVF_FRAMEWORK_IMPORT(Lib, Fun, ReturnType, Arguments, Signature) SOFT_LINK(Lib, Fun, ReturnType, Arguments, Signature)
-#else
+#if PLATFORM(WIN)
 
 #ifdef DEBUG_ALL
 #define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_DEBUG_LIBRARY(Lib)
@@ -71,52 +65,13 @@
 #define SOFT_LINK_AVF(Lib, Name, Type) SOFT_LINK_DLL_IMPORT(Lib, Name, Type)
 #define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(Lib, Name, Type)
 #define SOFT_LINK_AVF_FRAMEWORK_IMPORT(Lib, Fun, ReturnType, Arguments, Signature) SOFT_LINK_DLL_IMPORT(Lib, Fun, ReturnType, __cdecl, Arguments, Signature)
-#endif
 
-SOFT_LINK_AVF_FRAMEWORK(MediaAccessibility)
-
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceSetDisplayType, void, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyForegroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyBackgroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyWindowColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetForegroundOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetBackgroundOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowRoundedCornerRadius, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyFontDescriptorForStyle, CTFontDescriptorRef, (MACaptionAppearanceDomain domain,  MACaptionAppearanceBehavior *behavior, MACaptionAppearanceFontStyle fontStyle), (domain, behavior, fontStyle))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetRelativeCharacterSize, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetTextEdgeStyle, MACaptionAppearanceTextEdgeStyle, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceAddSelectedLanguage, bool, (MACaptionAppearanceDomain domain, CFStringRef language), (domain, language));
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
-
-SOFT_LINK_AVF_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
-#define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
-
-#if PLATFORM(WIN)
 // CoreText only needs to be soft-linked on Windows.
 SOFT_LINK_AVF_FRAMEWORK(CoreText)
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
 SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
 #define kCTFontNameAttribute getkCTFontNameAttribute()
 
-// These are needed on Windows due to the way DLLs work. We do not need them on other platforms
-#define MACaptionAppearanceGetDisplayType softLink_MACaptionAppearanceGetDisplayType
-#define MACaptionAppearanceSetDisplayType softLink_MACaptionAppearanceSetDisplayType
-#define MACaptionAppearanceCopyForegroundColor softLink_MACaptionAppearanceCopyForegroundColor
-#define MACaptionAppearanceCopyBackgroundColor softLink_MACaptionAppearanceCopyBackgroundColor
-#define MACaptionAppearanceCopyWindowColor softLink_MACaptionAppearanceCopyWindowColor
-#define MACaptionAppearanceGetForegroundOpacity softLink_MACaptionAppearanceGetForegroundOpacity
-#define MACaptionAppearanceGetBackgroundOpacity softLink_MACaptionAppearanceGetBackgroundOpacity
-#define MACaptionAppearanceGetWindowOpacity softLink_MACaptionAppearanceGetWindowOpacity
-#define MACaptionAppearanceGetWindowRoundedCornerRadius softLink_MACaptionAppearanceGetWindowRoundedCornerRadius
-#define MACaptionAppearanceCopyFontDescriptorForStyle softLink_MACaptionAppearanceCopyFontDescriptorForStyle
-#define MACaptionAppearanceGetRelativeCharacterSize softLink_MACaptionAppearanceGetRelativeCharacterSize
-#define MACaptionAppearanceGetTextEdgeStyle softLink_MACaptionAppearanceGetTextEdgeStyle
-#define MACaptionAppearanceAddSelectedLanguage softLink_MACaptionAppearanceAddSelectedLanguage
-#define MACaptionAppearanceCopySelectedLanguages softLink_MACaptionAppearanceCopySelectedLanguages
-#define MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics softLink_MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics
 #define CTFontDescriptorCopyAttribute softLink_CTFontDescriptorCopyAttribute
 #endif
 #endif

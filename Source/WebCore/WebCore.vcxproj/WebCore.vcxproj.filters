@@ -7225,6 +7225,9 @@
     <ClCompile Include="..\platform\cf\CoreMediaSoftLink.cpp">
       <Filter>platform\cf</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\cf\MediaAccessibilitySoftLink.cpp">
+      <Filter>platform\cf</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\FontCascadeFonts.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -12182,6 +12185,9 @@
       <Filter>platform\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\CoreMediaSoftLink.h">
+      <Filter>platform\cf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\cf\MediaAccessibilitySoftLink.h">
       <Filter>platform\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h">

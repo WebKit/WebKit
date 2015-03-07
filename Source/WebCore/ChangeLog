@@ -1,3 +1,18 @@
+2015-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Soft link MediaAccessibility using new macros.
+        https://bugs.webkit.org/show_bug.cgi?id=142406
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebCore.unexp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * platform/cf/MediaAccessibilitySoftLink.cpp: Added.
+        * platform/cf/MediaAccessibilitySoftLink.h: Added.
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Add 'initial' keyword support for scroll snap CSS properties
