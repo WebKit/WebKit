@@ -1,3 +1,11 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Turn off a warning on Windows.
+
+        Reduce build logging noise on Windows.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ES6: Improved Support for Iterator Objects

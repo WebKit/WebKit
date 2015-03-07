@@ -8,6 +8,7 @@
       <DisableSpecificWarnings>4611;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\;..\tools\;..\runtime\;..\llint\;..\jit\;..\disassembler\;..\heap\;..\debugger\;..\assembler\;..\profiler\;..\yarr\;..\interpreter\;..\bytecode\;..\builtins\;..\dfg\;..\bytecompiler\;..\parser\;..\API\;..\ftl\;..\bindings\;..\inspector\;..\ftl;..\llvm;..\llvm\library;$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\JavaScriptCore\DerivedSources\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\include\private\;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4611;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
