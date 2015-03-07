@@ -1,5 +1,20 @@
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: JS Pretty Printing: "case" or "default" outside of switch causes unbalanced indentation
+        https://bugs.webkit.org/show_bug.cgi?id=142428
+
+        Reviewed by Timothy Hatcher.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        Fix "case" and "default" indentation rules to only happen inside a switch.
+
+        * Tools/PrettyPrinting/js-tests/switch-case-default-expected.js:
+        * Tools/PrettyPrinting/js-tests/switch-case-default.js:
+        Add tests for "case" and "default" nested inside and outside of switches.
+
+2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ES6: Improved Support for Iterator Objects
         https://bugs.webkit.org/show_bug.cgi?id=142420
 

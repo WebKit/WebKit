@@ -137,7 +137,13 @@ CodeMirror.extendMode("javascript", {
 
     indentAfterToken: function(lastToken, lastContent, token, state, content, isComment)
     {
-        return content === "{" || content === "case" || content === "default";
+        if (content === "{")
+            return true;
+
+        if (content === "case" || content === "default")
+            return state.lexical.type === "}" && state.lexical.prev && state.lexical.prev.type === "form"; // Switch case/default.
+
+        return false;
     },
 
     newlineBeforeToken: function(lastToken, lastContent, token, state, content, isComment)
