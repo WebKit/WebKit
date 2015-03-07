@@ -66,6 +66,7 @@ using namespace WebKit;
     _wkView = wkView;
     _type = kWKImmediateActionNone;
     _immediateActionRecognizer = immediateActionRecognizer;
+    _hasActiveImmediateAction = NO;
 
     return self;
 }
@@ -84,6 +85,7 @@ using namespace WebKit;
 
     _immediateActionRecognizer = nil;
     _currentActionContext = nil;
+    _hasActiveImmediateAction = NO;
 }
 
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event
@@ -122,6 +124,7 @@ using namespace WebKit;
     _currentActionContext = nil;
     _userData = nil;
     _currentQLPreviewMenuItem = nil;
+    _hasActiveImmediateAction = NO;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
@@ -144,6 +147,11 @@ using namespace WebKit;
 {
     _page->setMaintainsInactiveSelection(false);
     [_currentQLPreviewMenuItem close];
+}
+
+- (BOOL)hasActiveImmediateAction
+{
+    return _hasActiveImmediateAction;
 }
 
 #pragma mark NSImmediateActionGestureRecognizerDelegate
@@ -170,6 +178,8 @@ using namespace WebKit;
 
     if (_state == ImmediateActionState::None)
         return;
+
+    _hasActiveImmediateAction = YES;
 
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.

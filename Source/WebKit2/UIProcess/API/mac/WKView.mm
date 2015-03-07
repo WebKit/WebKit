@@ -4352,7 +4352,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_dismissContentRelativeChildWindows
 {
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
-    if ([[self window] isKeyWindow]) {
+    if ([[self window] isKeyWindow]
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    || [_data->_immediateActionController hasActiveImmediateAction]
+#endif
+    ) {
         if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
             [lookupDefinitionModuleClass hideDefinition];
 
