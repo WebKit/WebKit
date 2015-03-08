@@ -1,3 +1,26 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Document::recalcStyle() shouldn't call viewportContentsChanged() if there is a pending layout
+        https://bugs.webkit.org/show_bug.cgi?id=142140
+
+        Reviewed by Darin Adler.
+
+        Stop calling FrameView::viewportContentsChanged() in Document::recalcStyle()
+        if there is a layout pending to avoid doing unncessary work. If there is a
+        layout pending, we don't need to do anything because viewportContentsChanged()
+        will be called after layout.
+
+        We only need to call FrameView::viewportContentsChanged() in
+        Document::recalcStyle() if a style recalc does not cause a layout. For e.g.
+        a '-webkit-transform' could make an animated GIF visible without causing a
+        layout, in which case we need to resume the animated GIF after style recalc.
+
+        No new tests, already covered by:
+        fast/images/animated-gif-webkit-transform.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+
 2015-03-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r180846.
