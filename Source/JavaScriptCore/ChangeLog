@@ -1,5 +1,23 @@
 2015-03-08  Andreas Kling  <akling@apple.com>
 
+        JITThunks keeps finalized Weaks around, pinning WeakBlocks.
+        <https://webkit.org/b/142454>
+
+        Reviewed by Darin Adler.
+
+        Make JITThunks a WeakHandleOwner so it can keep its host function map free of stale entries.
+        This fixes an issue I was seeing where a bunch of WeakBlocks stuck around with nothing but
+        finalized Weak<NativeExecutable> entries.
+
+        * jit/JITThunks.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::finalize): Make JITThunks inherit from WeakHandleOwner so it can receive
+        a callback when the NativeExecutables get garbage collected.
+
+        (JSC::JITThunks::hostFunctionStub): Pass 'this' as the handle owner when creating Weaks.
+
+2015-03-08  Andreas Kling  <akling@apple.com>
+
         BuiltinExecutables keeps finalized Weaks around, pinning WeakBlocks.
         <https://webkit.org/b/142460>
 

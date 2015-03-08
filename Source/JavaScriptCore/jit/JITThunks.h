@@ -34,6 +34,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "ThunkGenerator.h"
 #include "Weak.h"
+#include "WeakHandleOwner.h"
 #include "WeakInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -44,10 +45,10 @@ namespace JSC {
 class VM;
 class NativeExecutable;
 
-class JITThunks {
+class JITThunks final : private WeakHandleOwner {
 public:
     JITThunks();
-    ~JITThunks();
+    virtual ~JITThunks();
 
     MacroAssemblerCodePtr ctiNativeCall(VM*);
     MacroAssemblerCodePtr ctiNativeConstruct(VM*);
@@ -64,6 +65,8 @@ private:
     // Main thread can hold this lock for a while, so use an adaptive mutex.
     typedef Mutex Lock;
     typedef MutexLocker Locker;
+
+    void finalize(Handle<Unknown>, void* context) override;
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
     CTIStubMap m_ctiStubMap;
