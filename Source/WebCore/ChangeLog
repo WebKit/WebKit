@@ -1,5 +1,32 @@
 2015-03-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Don't call RenderLayerCompositor::needsToBeComposited() so many times
+        https://bugs.webkit.org/show_bug.cgi?id=142441
+
+        Reviewed by Brent Fulgham.
+
+        Save one call to needsToBeComposited() per RenderLayer while rebuilding compositing
+        layers, and a call to isRunningAcceleratedTransformAnimation() in some cases.
+        
+        computeCompositingRequirements() already knows if the layer will be composited, so
+        pass that to updateBacking() in the form of a "yes/no/don't" know enum. However,
+        since updateBacking() no longer calls needsToBeComposited(), we need to call 
+        requiresCompositingForPosition() to get the viewportConstrainedNotCompositedReason flags.
+        
+        isRunningAcceleratedTransformAnimation() will only be true for a layer which has a
+        direct compositing reason, so only call isRunningAcceleratedTransformAnimation()
+        in that case.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::rendererForCompositingTests):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Use references.
+        (WebCore::RenderLayerCompositor::reasonsForCompositing): Use references.
+        * rendering/RenderLayerCompositor.h:
+
+2015-03-08  Simon Fraser  <simon.fraser@apple.com>
+
         In RenderLayerCompositor, track layer bounds and the haveComputedBounds flag together in a struct
         https://bugs.webkit.org/show_bug.cgi?id=142449
 

@@ -293,7 +293,7 @@ public:
 
     void setShouldReevaluateCompositingAfterLayout() { m_reevaluateCompositingAfterLayout = true; }
 
-    bool viewHasTransparentBackground(Color* backgroundColor = 0) const;
+    bool viewHasTransparentBackground(Color* backgroundColor = nullptr) const;
 
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
@@ -322,14 +322,15 @@ private:
     virtual void flushLayersSoon(GraphicsLayerUpdater*) override;
 
     // Whether the given RL needs a compositing layer.
-    bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;
     // Whether the layer has an intrinsic need for compositing layer.
-    bool requiresCompositingLayer(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool requiresCompositingLayer(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;
     // Whether the layer could ever be composited.
     bool canBeComposited(const RenderLayer&) const;
 
     // Make or destroy the backing for this layer; returns true if backing changed.
-    bool updateBacking(RenderLayer&, CompositingChangeRepaint shouldRepaint);
+    enum class BackingRequired { No, Yes, Unknown };
+    bool updateBacking(RenderLayer&, CompositingChangeRepaint shouldRepaint, BackingRequired = BackingRequired::Unknown);
 
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
     void setIsInWindowForLayerIncludingDescendants(RenderLayer&, bool isInWindow);
@@ -410,7 +411,7 @@ private:
     bool requiresCompositingForFrame(RenderLayerModelObject&) const;
     bool requiresCompositingForFilters(RenderLayerModelObject&) const;
     bool requiresCompositingForScrollableFrame() const;
-    bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&) const;
     bool requiresCompositingForIndirectReason(RenderLayerModelObject&, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
