@@ -498,7 +498,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     }
 }
 
-void Heap::markRoots(double gcStartTime)
+void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
     SamplingRegion samplingRegion("Garbage Collection: Marking");
 
@@ -519,14 +519,10 @@ void Heap::markRoots(double gcStartTime)
 
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
-    void* dummy;
-    ALLOCATE_AND_GET_REGISTER_STATE(registers);
     ConservativeRoots conservativeRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    gatherStackRoots(conservativeRoots, &dummy, registers);
+    gatherStackRoots(conservativeRoots, stackOrigin, stackTop, calleeSavedRegisters);
     gatherJSStackRoots(conservativeRoots);
     gatherScratchBufferRoots(conservativeRoots);
-
-    sanitizeStackForVM(m_vm);
 
     clearLivenessData();
 
@@ -583,11 +579,11 @@ void Heap::copyBackingStores()
         m_storageSpace.doneCopying();
 }
 
-void Heap::gatherStackRoots(ConservativeRoots& roots, void** dummy, MachineThreads::RegisterState& registers)
+void Heap::gatherStackRoots(ConservativeRoots& roots, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
     GCPHASE(GatherStackRoots);
     m_jitStubRoutines.clearMarks();
-    m_machineThreads.gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks, dummy, registers);
+    m_machineThreads.gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks, stackOrigin, stackTop, calleeSavedRegisters);
 }
 
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)
@@ -988,7 +984,17 @@ void Heap::collectAllGarbage()
 
 static double minute = 60.0;
 
-void Heap::collect(HeapOperation collectionType)
+NEVER_INLINE void Heap::collect(HeapOperation collectionType)
+{
+    void* stackTop;
+    ALLOCATE_AND_GET_REGISTER_STATE(registers);
+
+    collectImpl(collectionType, wtfThreadData().stack().origin(), &stackTop, registers);
+
+    sanitizeStackForVM(m_vm);
+}
+
+NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
@@ -1033,7 +1039,7 @@ void Heap::collect(HeapOperation collectionType)
     stopAllocation();
     flushWriteBarrierBuffer();
 
-    markRoots(gcStartTime);
+    markRoots(gcStartTime, stackOrigin, stackTop, calleeSavedRegisters);
 
     if (m_verifier) {
         m_verifier->gatherLiveObjects(HeapVerifier::Phase::AfterMarking);

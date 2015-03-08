@@ -267,6 +267,8 @@ private:
     JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
+    void collectImpl(HeapOperation, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
+
     void suspendCompilerThreads();
     void willStartCollection(HeapOperation collectionType);
     void deleteOldCode(double gcStartTime);
@@ -274,8 +276,8 @@ private:
     void flushWriteBarrierBuffer();
     void stopAllocation();
 
-    void markRoots(double gcStartTime);
-    void gatherStackRoots(ConservativeRoots&, void** dummy, MachineThreads::RegisterState& registers);
+    void markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
+    void gatherStackRoots(ConservativeRoots&, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void clearLivenessData();
