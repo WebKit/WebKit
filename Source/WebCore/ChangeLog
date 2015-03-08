@@ -1,3 +1,33 @@
+2015-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Crash in WebCore::NotificationCenter::stop()
+        https://bugs.webkit.org/show_bug.cgi?id=142444
+        <rdar://problem/20082520>
+
+        Reviewed by Andreas Kling.
+
+        A use-after-free would sometimes cause us to crash in NotificationCenter::stop().
+        After investigation, it turns out that NotificationCenter::stop() calls
+        NotificationClient::clearNotifications() which will destroy the Notification
+        objects, all of which hold a strong reference to the NotificationCenter. If at
+        this point, only Notifications are ref'ing the NotificationCenter, this means
+        that the NotificationCenter will get destroyed right after the call to
+        NotificationClient::clearNotifications(). However, we reset m_client to null
+        after calling clearNotifications() and it causes us to crash in this case.
+
+        The issue is addressed by adding a Ref<NotificationCenter> protector in
+        NotificationCenter::stop() so that we make sure the NotificationCenter lives
+        at least until the end of the method execution.
+
+        I was able to consistently reproduce the crash by doing:
+        Tools/Scripts/run-webkit-tests -1 --debug --repeat-each=30 -g http/tests/notifications/event-listener-crash.html
+
+        No new tests, already covered by:
+        http/tests/notifications/event-listener-crash.html
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::stop):
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Setting scroll-snap-desination to (100% 100%) locks up WebKit

@@ -100,6 +100,11 @@ void NotificationCenter::stop()
 {
     if (!m_client)
         return;
+
+    // The call to clearNotifications() below will destroy the notifications. The notifications will
+    // unref the NotificationCenter when destroyed so we need to protect the NotificationCenter here
+    // in case no-one else holds a ref to the NotificationCenter at this point besides Notifications.
+    Ref<NotificationCenter> protect(*this);
     m_client->cancelRequestsForPermission(scriptExecutionContext());
     m_client->clearNotifications(scriptExecutionContext());
     m_client = 0;
