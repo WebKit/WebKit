@@ -1,3 +1,41 @@
+2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Setting any of the <object> element plugin controlling attributes does not have any affect.
+        https://bugs.webkit.org/show_bug.cgi?id=141936.
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/image-object-hover-inherit-expected.html: Added.
+        * fast/css/image-object-hover-inherit.html: Added.
+        A guarding test to catch the case of reconstructing the image <object>
+        renderer while performing a synchronous resolveTree() followed by page
+        rendering or dump render tree.
+        
+        * svg/as-object/resources/lime100x100.html: Added.
+        * svg/as-object/resources/lime100x100.png: Added.
+        * svg/as-object/resources/lime100x100.svg: Added.
+        * svg/as-object/resources/red100x100.svg: Added.
+        * svg/as-object/svg-in-object-dynamic-attribute-change-expected.html: Added.
+        * svg/as-object/svg-in-object-dynamic-attribute-change.html: Added.
+        Ensure that changing the 'type' and the 'data' attributes of the <object>
+        element will have the expected outcome. Also make sure that the <object>
+        element renderer falls back correctly when setting any of the attributes
+        to some unexpected value.
+
+2015-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180683.
+        https://bugs.webkit.org/show_bug.cgi?id=142249
+
+        Broke fast/css/acid2-pixel.html (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Setting any of the <object> element plugin controlling
+        attributes does not have any affect."
+        https://bugs.webkit.org/show_bug.cgi?id=141936
+        http://trac.webkit.org/changeset/180683
+
 2015-02-27  Zalan Bujtas  <zalan@apple.com>
 
         Use after free in WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle

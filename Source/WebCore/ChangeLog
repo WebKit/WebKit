@@ -1,3 +1,41 @@
+2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Setting any of the <object> element plugin controlling attributes does not have any affect.
+        https://bugs.webkit.org/show_bug.cgi?id=141936.
+
+        Reviewed by Simon Fraser.
+        
+        When setting any of the <object> element plugin controlling attributes
+        dynamically we need to mark the the element to be dirty by calling
+        setNeedsStyleRecalc(), so it has to recreate its renderer when needed.
+
+        Tests: fast/css/image-object-hover-inherit.html
+               svg/as-object/svg-in-object-dynamic-attribute-change.html
+
+        * dom/Element.h: Delete unimplemented function.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute): Mark the element dirty by
+        calling setNeedsStyleRecalc() when one of the plugin controlling attributes
+        gets changed. We have to clear m_useFallbackContent because the attribute's
+        new value might fix the object rendering.
+        
+        * html/HTMLObjectElement.h: Add a function to clear m_useFallbackContent.
+
+2015-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r180683.
+        https://bugs.webkit.org/show_bug.cgi?id=142249
+
+        Broke fast/css/acid2-pixel.html (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Setting any of the <object> element plugin controlling
+        attributes does not have any affect."
+        https://bugs.webkit.org/show_bug.cgi?id=141936
+        http://trac.webkit.org/changeset/180683
+
 2015-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use SoupMessage::starting instead of SoupSession::request-started

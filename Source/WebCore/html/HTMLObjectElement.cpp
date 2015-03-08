@@ -137,7 +137,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         return;
 
     clearUseFallbackContent();
-    setNeedsStyleRecalc(SyntheticStyleChange);
+    setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
