@@ -170,7 +170,6 @@ struct _WebKitWebViewPrivate {
             g_main_loop_quit(modalLoop.get());
     }
 
-    WebKitWebContext* context;
     WebKitWebView* relatedView;
     CString title;
     CString customTextEncoding;
@@ -185,6 +184,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
     GRefPtr<WebKitUserContentManager> userContentManager;
+    GRefPtr<WebKitWebContext> context;
     GRefPtr<WebKitWindowProperties> windowProperties;
 
     GRefPtr<GMainLoop> modalLoop;
@@ -448,7 +448,7 @@ static void webkitWebViewRequestFavicon(WebKitWebView* webView)
 
     WebKitWebViewPrivate* priv = webView->priv;
     priv->faviconCancellable = adoptGRef(g_cancellable_new());
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
     webkit_favicon_database_get_favicon(database, priv->activeURI.data(), priv->faviconCancellable.get(), gotFaviconCallback, webView);
 }
 
@@ -510,7 +510,7 @@ static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
     if (priv->faviconChangedHandlerID)
         return;
 
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
     priv->faviconChangedHandlerID = g_signal_connect(database, "favicon-changed", G_CALLBACK(faviconChangedCallback), webView);
 }
 
@@ -518,7 +518,7 @@ static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* 
 {
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->faviconChangedHandlerID)
-        g_signal_handler_disconnect(webkit_web_context_get_favicon_database(priv->context), priv->faviconChangedHandlerID);
+        g_signal_handler_disconnect(webkit_web_context_get_favicon_database(priv->context.get()), priv->faviconChangedHandlerID);
     priv->faviconChangedHandlerID = 0;
 }
 
@@ -639,7 +639,7 @@ static void webkitWebViewConstructed(GObject* object)
     if (!priv->settings)
         priv->settings = adoptGRef(webkit_settings_new());
 
-    webkitWebContextCreatePageForWebView(priv->context, webView, priv->userContentManager.get(), priv->relatedView);
+    webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
 
     priv->loadObserver = std::make_unique<PageLoadStateObserver>(webView);
     getPage(webView)->pageLoadState().addObserver(*priv->loadObserver);
@@ -706,7 +706,7 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
     switch (propId) {
     case PROP_WEB_CONTEXT:
-        g_value_set_object(value, webView->priv->context);
+        g_value_set_object(value, webView->priv->context.get());
         break;
     case PROP_SETTINGS:
         g_value_set_object(value, webkit_web_view_get_settings(webView));
@@ -756,7 +756,7 @@ static void webkitWebViewDispose(GObject* object)
         webView->priv->loadObserver.reset();
     }
 
-    webkitWebContextWebViewDestroyed(webView->priv->context, webView);
+    webkitWebContextWebViewDestroyed(webView->priv->context.get(), webView);
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
@@ -1811,7 +1811,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         priv->mainResource = 0;
         priv->waitingForMainResource = false;
     } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
-        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
         GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
         webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
 
@@ -1843,7 +1843,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
 {
     webkitWebViewCancelAuthenticationRequest(webView);
 
-    WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context);
+    WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context.get());
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
         gboolean returnValue;
         g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURI, certificate, tlsErrors, &returnValue);
@@ -2247,7 +2247,7 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    return webView->priv->context;
+    return webView->priv->context.get();
 }
 
 /**
@@ -3381,7 +3381,7 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     g_return_val_if_fail(uri, 0);
 
-    WebKitDownload* download = webkitWebContextStartDownload(webView->priv->context, uri, getPage(webView));
+    WebKitDownload* download = webkitWebContextStartDownload(webView->priv->context.get(), uri, getPage(webView));
     webkitDownloadSetWebView(download, webView);
 
     return download;

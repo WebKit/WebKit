@@ -1,3 +1,22 @@
+2015-03-04  Debarshi Ray  <debarshir@gnome.org>
+
+        [GTK] WebView should hold a reference on WebContext because non-default contexts are a reality
+        https://bugs.webkit.org/show_bug.cgi?id=142225
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRequestFavicon):
+        (webkitWebViewWatchForChangesInFavicon):
+        (webkitWebViewDisconnectFaviconDatabaseSignalHandlers):
+        (webkitWebViewConstructed):
+        (webkitWebViewGetProperty):
+        (webkitWebViewDispose):
+        (webkitWebViewLoadChanged):
+        (webkitWebViewLoadFailedWithTLSErrors):
+        (webkit_web_view_get_context):
+        (webkit_web_view_download_uri):
+
 2015-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.91 release.
