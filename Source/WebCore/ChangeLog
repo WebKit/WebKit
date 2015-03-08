@@ -1,3 +1,21 @@
+2015-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Tidy up RenderLayerCompositor's CompositingState
+        https://bugs.webkit.org/show_bug.cgi?id=142445
+
+        Reviewed by Dan Bernstein.
+        
+        Make CompositingState a private struct in RenderLayerCompositor.
+        Since it's a struct, remove the m_ prefix from its data members.
+
+        No behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::CompositingState::CompositingState):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::CompositingState::CompositingState): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2015-03-07  Darin Adler  <darin@apple.com>
 
         Unindent EventTarget, EventListener, JSEventLister.h files

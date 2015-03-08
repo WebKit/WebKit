@@ -309,6 +309,7 @@ public:
 
 private:
     class OverlapMap;
+    struct CompositingState;
 
     // GraphicsLayerClient implementation
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
@@ -341,7 +342,7 @@ private:
     void updateCompositingLayersTimerFired();
 
     // Returns true if any layer's compositing changed
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
 
     void computeRegionCompositingRequirements(RenderNamedFlowFragment*, OverlapMap&, CompositingState&, bool& layersChanged, bool& anyDescendantHas3DTransform);
 
