@@ -349,14 +349,6 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     return m_client.featuresUsedInPage(toAPI(page), toAPI(API::Array::createStringArray(features).get()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::willDestroyFrame(WebPage* page, WebFrame* frame)
-{
-    if (!m_client.willDestroyFrame)
-        return;
-
-    m_client.willDestroyFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
-}
-    
 API::String* InjectedBundlePageLoaderClient::userAgentForURL(WebFrame* frame, API::URL* url) const
 {
     if (!m_client.userAgentForURL)

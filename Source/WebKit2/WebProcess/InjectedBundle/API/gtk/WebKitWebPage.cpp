@@ -399,9 +399,9 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
 
-    WKBundlePageLoaderClientV7 loaderClient = {
+    WKBundlePageLoaderClientV6 loaderClient = {
         {
-            7, // version
+            6, // version
             page, // clientInfo
         },
         didStartProvisionalLoadForFrame,
@@ -438,7 +438,6 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // featuresUsedInPage
         0, // willLoadURLRequest
         0, // willLoadDataRequest
-        0, // willDestroyFrame
     };
     WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient.base);
 

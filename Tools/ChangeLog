@@ -1,3 +1,13 @@
+2015-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove willDestroyFrame in WKBundlePageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=142389
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2015-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Increase TestWebKitAPI Test Coverage[Win] Increase TestWebKitAPI Test Coverage

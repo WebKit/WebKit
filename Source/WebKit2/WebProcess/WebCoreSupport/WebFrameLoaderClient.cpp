@@ -102,9 +102,6 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
     
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->injectedBundleLoaderClient().willDestroyFrame(webPage, m_frame);
-
     m_frame->invalidate();
 
     // Balances explicit ref() in WebFrame::create().

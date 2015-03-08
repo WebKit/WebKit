@@ -1,3 +1,28 @@
+2015-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove willDestroyFrame in WKBundlePageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=142389
+
+        Reviewed by Anders Carlsson.
+
+        I added willDestroyFrame in r154540 but I realized recently that
+        it has never actually worked. Adding the callback to
+        WKBundlePageLoaderClient was the first mistake, since frames are
+        handled by WebProcess and DidDestroyFrame message is indeed a
+        WebProcessProxy not a WebPageProxy one. Second mistake was calling
+        the callback from WebFrameLoaderClient::frameLoaderDestroyed(),
+        since at that point the frame has already been detached from the
+        page and so WebFrame::page() always returns nullptr. So, this in
+        fact dead code and since r180211 nobody is using it.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate): Use verion 6 instead of version 7 of loader client.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyFrame): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::frameLoaderDestroyed):
+
 2015-03-06  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Move compiling of content extensions to the UIProcess
