@@ -42,7 +42,7 @@ WKUserContentFilterRef WKUserContentFilterCreate(WKStringRef nameRef, WKStringRe
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     auto compiledContentExtensionData = WebCore::ContentExtensions::compileRuleList(toWTFString(serializedRulesRef));
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTF::move(compiledContentExtensionData.bytecode), WTF::move(compiledContentExtensionData.actions));
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(compiledContentExtensionData);
 
     return toAPI(&API::UserContentExtension::create(toWTFString(nameRef), WTF::move(compiledContentExtension)).leakRef());
 #else

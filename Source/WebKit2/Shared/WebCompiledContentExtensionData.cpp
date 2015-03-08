@@ -34,16 +34,33 @@ namespace WebKit {
 
 void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << bytecode;
-    encoder << actions;
+    SharedMemory::Handle handle;
+    data->createHandle(handle, SharedMemory::ReadOnly);
+    encoder << handle;
+
+    encoder << bytecodeOffset;
+    encoder << bytecodeSize;
+    encoder << actionsOffset;
+    encoder << actionsSize;
 }
 
 bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
 {
-    if (!decoder.decode(compiledContentExtensionData.bytecode))
+    SharedMemory::Handle handle;
+    if (!decoder.decode(handle))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.actions))
+    compiledContentExtensionData.data = SharedMemory::create(handle, SharedMemory::ReadOnly);
+
+    if (!decoder.decode(compiledContentExtensionData.bytecodeOffset))
         return false;
+    if (!decoder.decode(compiledContentExtensionData.bytecodeSize))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.actionsOffset))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.actionsSize))
+        return false;
+
+
     return true;
 }
 

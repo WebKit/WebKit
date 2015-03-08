@@ -28,15 +28,33 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include <WebCore/ContentExtensionCompiler.h>
+
 namespace WebKit {
 
-Ref<WebCompiledContentExtension> WebCompiledContentExtension::create(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode, Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
+Ref<WebCompiledContentExtension> WebCompiledContentExtension::createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData& compilerData)
 {
-    return adoptRef(*new WebCompiledContentExtension(WTF::move(bytecode), WTF::move(actions)));
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(compilerData.bytecode.size() + compilerData.actions.size());
+    memcpy(static_cast<char*>(sharedMemory->data()), compilerData.bytecode.data(), compilerData.bytecode.size());
+    memcpy(static_cast<char*>(sharedMemory->data()) + compilerData.bytecode.size(), compilerData.actions.data(), compilerData.actions.size());
+
+    WebCompiledContentExtensionData data;
+    data.data = WTF::move(sharedMemory);
+    data.bytecodeOffset = 0;
+    data.bytecodeSize = compilerData.bytecode.size();
+    data.actionsOffset = compilerData.bytecode.size();
+    data.actionsSize = compilerData.actions.size();
+
+    return create(WTF::move(data));
 }
 
-WebCompiledContentExtension::WebCompiledContentExtension(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode, Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions)
-    : m_data { WTF::move(bytecode), WTF::move(actions) }
+Ref<WebCompiledContentExtension> WebCompiledContentExtension::create(WebCompiledContentExtensionData&& data)
+{
+    return adoptRef(*new WebCompiledContentExtension(WTF::move(data)));
+}
+
+WebCompiledContentExtension::WebCompiledContentExtension(WebCompiledContentExtensionData&& data)
+    : m_data(WTF::move(data))
 {
 }
 
@@ -46,22 +64,22 @@ WebCompiledContentExtension::~WebCompiledContentExtension()
 
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::bytecode() const
 {
-    return m_data.bytecode.data();
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.bytecodeOffset;
 }
 
 unsigned WebCompiledContentExtension::bytecodeLength() const
 {
-    return m_data.bytecode.size();
+    return m_data.bytecodeSize;
 }
 
 const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentExtension::actions() const
 {
-    return m_data.actions.data();
+    return static_cast<const WebCore::ContentExtensions::SerializedActionByte*>(m_data.data->data()) + m_data.actionsOffset;
 }
 
 unsigned WebCompiledContentExtension::actionsLength() const
 {
-    return m_data.actions.size();
+    return m_data.actionsSize;
 }
 
 } // namespace WebKit

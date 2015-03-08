@@ -1,3 +1,46 @@
+2015-03-08  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Pass compiled content extensions as read-only shared memory rather than copying them
+        https://bugs.webkit.org/show_bug.cgi?id=142458
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebCompiledContentExtensionData.h:
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData):
+        Store the compiled data as a SharedMemory block with offset/size pairs for the
+        bytecode and actions. While the bytecode offset is currently always 0, this won't
+        be the case when we map these in from files due to metadata that will be placed
+        at the top of the files.
+
+        * Shared/WebCompiledContentExtension.h:
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData):
+        Temporary creation helper. In subsequent patches, this will be removed and replaced
+        by always passing in shared/mapped data.
+
+        (WebKit::WebCompiledContentExtension::create):
+        (WebKit::WebCompiledContentExtension::WebCompiledContentExtension):
+        (WebKit::WebCompiledContentExtension::bytecode):
+        (WebKit::WebCompiledContentExtension::bytecodeLength):
+        (WebKit::WebCompiledContentExtension::actions):
+        (WebKit::WebCompiledContentExtension::actionsLength):
+        Convert to work with the new WebCompiledContentExtension format.
+        
+        * UIProcess/API/C/WKUserContentFilterRef.cpp:
+        (WKUserContentFilterCreate):
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter initWithName:serializedRules:]):
+        Switch to using WebCompiledContentExtension::createFromCompiledContentExtensionData().
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserContentExtensions):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::addUserContentExtension):
+        Update to pass the WebCompiledContentExtensionData directly to the WebCompiledContentExtension.
+
 2015-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove willDestroyFrame in WKBundlePageLoaderClient

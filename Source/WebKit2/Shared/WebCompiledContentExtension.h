@@ -29,18 +29,28 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "WebCompiledContentExtensionData.h"
+#include <WebCore/CompiledContentExtension.h>
+
+namespace WebCore {
+namespace ContentExtensions {
+struct CompiledContentExtensionData;
+}
+}
 
 namespace WebKit {
 
 class WebCompiledContentExtension final : public WebCore::ContentExtensions::CompiledContentExtension {
 public:
-    static Ref<WebCompiledContentExtension> create(Vector<WebCore::ContentExtensions::DFABytecode>&&, Vector<WebCore::ContentExtensions::SerializedActionByte>&&);
+    // FIXME: Remove this once everyone is converted to using the UserContentExtensionStore.
+    static Ref<WebCompiledContentExtension> createFromCompiledContentExtensionData(const WebCore::ContentExtensions::CompiledContentExtensionData&);
+
+    static Ref<WebCompiledContentExtension> create(WebCompiledContentExtensionData&&);
     virtual ~WebCompiledContentExtension();
 
     WebCompiledContentExtensionData data() const { return m_data; }
 
 private:
-    WebCompiledContentExtension(Vector<WebCore::ContentExtensions::DFABytecode>&&, Vector<WebCore::ContentExtensions::SerializedActionByte>&&);
+    WebCompiledContentExtension(WebCompiledContentExtensionData&&);
 
     virtual const WebCore::ContentExtensions::DFABytecode* bytecode() const override;
     virtual unsigned bytecodeLength() const override;

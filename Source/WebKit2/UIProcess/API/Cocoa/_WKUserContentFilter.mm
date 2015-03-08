@@ -39,7 +39,7 @@
         return nil;
 
     auto compiledContentExtensionData = WebCore::ContentExtensions::compileRuleList(String(serializedRules));
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTF::move(compiledContentExtensionData.bytecode), WTF::move(compiledContentExtensionData.actions));
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::createFromCompiledContentExtensionData(compiledContentExtensionData);
 
     API::Object::constructInWrapper<API::UserContentExtension>(self, String(name), WTF::move(compiledContentExtension));
 

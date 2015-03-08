@@ -28,7 +28,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <WebCore/CompiledContentExtension.h>
+#include "SharedMemory.h"
+#include <wtf/RefPtr.h>
 
 namespace IPC {
 class ArgumentDecoder;
@@ -39,11 +40,27 @@ namespace WebKit {
 
 class WebCompiledContentExtensionData {
 public:
+    WebCompiledContentExtensionData()
+    {
+    }
+    
+    WebCompiledContentExtensionData(RefPtr<SharedMemory> data, unsigned bytecodeOffset, unsigned bytecodeSize, unsigned actionsOffset, unsigned actionsSize)
+        : data(data)
+        , bytecodeOffset(bytecodeOffset)
+        , bytecodeSize(bytecodeSize)
+        , actionsOffset(actionsOffset)
+        , actionsSize(actionsSize)
+    {
+    }
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebCompiledContentExtensionData&);
 
-    Vector<WebCore::ContentExtensions::DFABytecode> bytecode;
-    Vector<WebCore::ContentExtensions::SerializedActionByte> actions;
+    RefPtr<SharedMemory> data;
+    unsigned bytecodeOffset { 0 };
+    unsigned bytecodeSize { 0 };
+    unsigned actionsOffset { 0 };
+    unsigned actionsSize { 0 };
 };
 
 }
