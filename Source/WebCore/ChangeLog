@@ -1,3 +1,19 @@
+2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Check TLS errors as soon as they are set in the SoupMessage
+        https://bugs.webkit.org/show_bug.cgi?id=142244
+
+        Reviewed by Sergio Villar Senin.
+
+        Connect to the notify::tls-errors signal of SoupMessage to cancel
+        the load earlier in case of TLS failure, preventing any private
+        data from being sent to the server before the TLS errors are checked.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::tlsErrorsChangedCallback):
+        (WebCore::gotHeadersCallback):
+        (WebCore::createSoupMessageForHandleAndRequest):
+
 2015-03-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         TextCheckingParagraph::isEmpty() is sufficient to check whether paragraph is empty
