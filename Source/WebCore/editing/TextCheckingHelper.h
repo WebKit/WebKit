@@ -50,10 +50,8 @@ public:
     int textLength() const { return text().length(); }
     String textSubstring(unsigned pos, unsigned len = UINT_MAX) const { return text().substring(pos, len); }
     UChar textCharAt(int index) const { return text()[static_cast<unsigned>(index)]; }
-    bool isTextEmpty() const { return text().isEmpty(); }
 
     bool isEmpty() const;
-    bool isRangeEmpty() const { return checkingStart() >= checkingEnd(); }
 
     int checkingStart() const;
     int checkingEnd() const;

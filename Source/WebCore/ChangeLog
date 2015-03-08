@@ -1,3 +1,29 @@
+2015-03-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        TextCheckingParagraph::isEmpty() is sufficient to check whether paragraph is empty
+        https://bugs.webkit.org/show_bug.cgi?id=142276
+
+        Reviewed by Darin Adler.
+
+        TextCheckingParagraph::isEmpty() already calls TextCheckingParagraph::isRangeEmpty().
+        There is no need to call them both at the caller site.
+
+        No new tests. No behavior change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        Update caller site.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::isEmpty):
+        Avoid using helepers here to get rid of them as they are
+        no longer needed outside TextCheckingParagraph.
+
+        * editing/TextCheckingHelper.h:
+        (WebCore::TextCheckingParagraph::isTextEmpty): Deleted.
+        (WebCore::TextCheckingParagraph::isRangeEmpty): Deleted.
+        Do not expose isTextEmpty() and isRangeEmpty().
+
 2015-03-04  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r179597): Can't see power saver banner for plugins
