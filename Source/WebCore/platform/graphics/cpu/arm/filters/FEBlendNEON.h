@@ -126,7 +126,7 @@ void FEBlend::platformApplySoftware()
 
     if (pixelArrayLength >= 8) {
         platformApplyNEON(srcPixelArrayA->data(), srcPixelArrayB->data(), dstPixelArray->data(), pixelArrayLength);
-        return
+        return;
     }
     // If there is just one pixel we expand it to two.
     ASSERT(pixelArrayLength > 0);
