@@ -854,6 +854,7 @@ webkit.org/b/125517 compositing/regions/z-index-update.html [ Crash Pass ]
 
 webkit.org/b/141897 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
 webkit.org/b/141897 fast/regions/overflow/overflow-region-inline.html [ ImageOnlyFailure ]
+webkit.org/b/141897 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ Crash Pass ]
 
@@ -1295,6 +1296,8 @@ Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
 Bug(EFL) fast/repaint/invisible-objects.html [ Failure ]
 Bug(EFL) fast/repaint/layer-hide-when-needs-layout.html [ Failure ]
+Bug(EFL) fast/text/whitespace/019.html [ Failure ]
+Bug(EFL) fast/text/whitespace/023.html [ Failure ]
 Bug(EFL) fast/text/whitespace/028.html [ Failure ]
 Bug(EFL) fullscreen/full-screen-iframe-legacy.html [ Failure Pass ]
 Bug(EFL) media/track/track-cues-pause-on-exit.html [ Failure Pass ]
@@ -1474,6 +1477,10 @@ webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Timeout ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
+webkit.org/b/142450 fast/text/font-kerning.html [ ImageOnlyFailure ]
+webkit.org/b/142450 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
+webkit.org/b/142450 fast/text/space-width.html [ ImageOnlyFailure ]
+
 # Synthesized italics not supported
 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
@@ -1483,6 +1490,7 @@ webkit.org/b/118378 vibration/cancelVibration-after-pagevisibility-changed-to-hi
 # Some tests will fail after the visual overflow patch, they will be fixed shortly.
 webkit.org/b/118665 fast/regions/hover-in-second-region.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
 
 webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 
@@ -1836,7 +1844,11 @@ webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]
 
+# HIDPI-related tests do not work
+webkit.org/b/102097 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
+webkit.org/b/102097 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
+webkit.org/b/102097 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
 # Failing after r150802
 webkit.org/b/125577 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
@@ -1942,6 +1954,7 @@ webkit.org/b/133974 fast/css3-text/css3-text-decoration/text-decoration-skip/tex
 
 # Difference invisible at the naked eye with Latin Modern Math.
 webkit.org/b/134153 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
+webkit.org/b/134153 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
 webkit.org/b/134712 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
 
@@ -1974,6 +1987,7 @@ webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-polygon-004.h
 webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 
 webkit.org/b/136223 fast/ruby/ruby-base-merge-block-children-crash-2.html [ Failure ]
+webkit.org/b/136223 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
 
 # Started failing after r172835
 webkit.org/b/136226 fast/events/constructors/mouse-event-constructor.html [ Failure ]
@@ -1987,6 +2001,7 @@ webkit.org/b/136406 compositing/backing/backface-visibility-in-transformed.html 
 webkit.org/b/136406 compositing/backing/backface-visibility.html [ Failure ]
 webkit.org/b/136406 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/136406 compositing/contents-opaque/hidden-with-visible-text.html [ Failure ]
+webkit.org/b/136406 compositing/contents-opaque/opaque-with-clip-path.html [ ImageOnlyFailure ]
 webkit.org/b/136406 compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/scaled-ancestor.html [ Failure ]
@@ -2118,3 +2133,9 @@ webkit.org/b/142426 compositing/masks/reference-clip-path-on-composited.html [ I
 
 webkit.org/b/142427 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/142427 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
+
+webkit.org/b/142451 fast/text/emphasis-combined-text.html [ Failure ]
+webkit.org/b/142451 fast/text/emphasis-vertical.html [ Failure ]
+
+webkit.org/b/142452 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
+webkit.org/b/142452 fast/writing-mode/broken-ideographic-font.html [ Failure ]

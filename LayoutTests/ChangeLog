@@ -1,3 +1,12 @@
+2015-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening on 8th Mar.
+
+        Mark emphasis text test, writing mode test, whitespace test to failure.
+        Besides update new failure tests to existing bugs.
+
+        * platform/efl/TestExpectations:
+
 2015-03-07  Darin Adler  <darin@apple.com>
 
         Improve the event handler test
