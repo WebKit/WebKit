@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
                                               RenderTableCell {TD} at (122,1) size 150x35 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                                                 RenderTextControl {INPUT} at (7,7) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                                                 RenderText {#text} at (0,0) size 0x0
-layer at (242,105) size 122x14 scrollWidth 178
+layer at (242,105) size 122x14 scrollWidth 177
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 177x14
       text run at (0,0) width 177: "simon.king@pipinghotnetworks.com"

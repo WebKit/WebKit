@@ -71,6 +71,7 @@ http/tests/media
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]
+fast/history/page-cache-removed-source-buffer.html [ Skip ]
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
@@ -210,9 +211,13 @@ http/tests/local/fileapi/send-sliced-dragged-file.html
 # <rdar://problem/14590711> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::Element::detach + 17
 svg/as-image/svg-nested.html
 
-# Difference of less 0.03% on borders between colors.
+# Height of actual image is 1-2 pixels shorter than expected image.
+fast/backgrounds/gradient-background-on-subpixel-position.html [ ImageOnlyFailure ]
+
+# Difference of less 0.03% between images.
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
+svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
@@ -2340,6 +2345,7 @@ fast/events/touch/emulated-touch-iframe.html
 # iOS does not support window resizing or window.resizeTo().
 fast/dynamic/window-resize-scrollbars-test.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
+loader/go-back-to-different-window-size.html [ Skip ]
 
 # LayoutTests/fast tests that timeout:
 fast/events/reveal-link-when-focused.html

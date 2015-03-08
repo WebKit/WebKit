@@ -1,3 +1,39 @@
+2015-03-08  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Gardening to skip new tests, rebaseline existing tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        - Mark test as flakey.
+
+        * platform/ios-simulator-wk2/fast/css/text-overflow-input-expected.txt: Remove.
+        * platform/ios-simulator-wk2/fast/forms/input-disabled-color-expected.txt: Remove.
+        * platform/ios-simulator-wk2/fast/forms/input-text-word-wrap-expected.txt: Remove.
+        * platform/ios-simulator-wk2/fast/forms/minWidthPercent-expected.txt: Remove.
+        - Superceded by new platform/ios-simulator results.
+
+        * platform/ios-simulator/TestExpectations:
+        - Skip two tests that will always time out on iOS.
+        - Mark two tests as ImageOnlyFailure that fail consistently.
+
+        * platform/ios-simulator/compositing/media-controls-bar-appearance-expected.txt: Add.
+        - Add result for new test from r180965.
+
+        * platform/ios-simulator/fast/attachment/attachment-label-highlight-expected.txt: Add.
+        * platform/ios-simulator/fast/attachment/attachment-progress-expected.txt: Add.
+        * platform/ios-simulator/fast/attachment/attachment-subtitle-expected.txt: Add.
+        * platform/ios-simulator/fast/attachment/attachment-title-expected.txt: Add.
+        - Add results for new attachment tests.
+
+        * platform/ios-simulator/fast/css/text-overflow-input-expected.txt: Update.
+        * platform/ios-simulator/fast/forms/input-disabled-color-expected.txt: Update.
+        * platform/ios-simulator/fast/forms/input-text-scroll-left-on-blur-expected.txt: Update.
+        * platform/ios-simulator/fast/forms/input-text-word-wrap-expected.txt: Update.
+        * platform/ios-simulator/fast/forms/minWidthPercent-expected.txt: Update.
+        * platform/ios-simulator/tables/mozilla/bugs/bug59354-expected.txt: Update.
+        * platform/ios-simulator/tables/mozilla/bugs/bug96334-expected.txt: Update.
+        * platform/ios-simulator/tables/mozilla/other/move_row-expected.txt: Update.
+        - Rebaseline after other bug fixes like r180815.
+
 2015-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening on 8th Mar.

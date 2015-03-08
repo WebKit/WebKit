@@ -58,55 +58,55 @@ layer at (0,0) size 800x600
         text run at (139,321) width 5: " "
       RenderTextControl {INPUT} at (145,322) size 136x22 [color=#FF0000] [border: (1px solid #4C4C4C)]
       RenderBR {BR} at (282,336) size 1x0
-layer at (160,33) size 122x14 scrollWidth 140
+layer at (160,33) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,58) size 122x14 scrollWidth 140
+layer at (160,58) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,83) size 122x14 scrollWidth 140
+layer at (160,83) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,108) size 122x14 scrollWidth 140
+layer at (160,108) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,133) size 122x14 scrollWidth 140
+layer at (160,133) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,158) size 122x14 scrollWidth 140
+layer at (160,158) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,183) size 122x14 scrollWidth 140
+layer at (160,183) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,208) size 122x14 scrollWidth 140
+layer at (160,208) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,233) size 122x14 scrollWidth 140
+layer at (160,233) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,258) size 122x14 scrollWidth 140
+layer at (160,258) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,283) size 122x14 scrollWidth 140
+layer at (160,283) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,308) size 122x14 scrollWidth 140
+layer at (160,308) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"
-layer at (160,333) size 122x14 scrollWidth 140
+layer at (160,333) size 122x14 scrollWidth 139
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 139x14
       text run at (0,0) width 139: "This text field is not disabled"

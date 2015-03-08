@@ -1246,7 +1246,7 @@ fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html [ Fa
 fast/forms/input-maxlength-ime-completed.html [ Failure ]
 fast/forms/input-maxlength-ime-preedit.html [ Failure ]
 fast/forms/input-paste-undo.html [ Failure ]
-fast/forms/input-text-scroll-left-on-blur.html [ Failure ]
+fast/forms/input-text-scroll-left-on-blur.html [ Failure Pass ]
 fast/forms/interactive-validation-assertion-by-validate-twice.html [ Failure ]
 fast/forms/interactive-validation-prevented.html [ Failure ]
 fast/forms/month/month-interactive-validation-required.html [ Failure ]

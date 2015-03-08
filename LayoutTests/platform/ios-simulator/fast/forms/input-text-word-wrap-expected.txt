@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,36) size 784x33
         RenderTextControl {INPUT} at (2,0) size 136x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
-layer at (17,53) size 122x14 scrollWidth 237
+layer at (17,53) size 122x14 scrollWidth 236
   RenderBlock {DIV} at (6,9) size 123x15
     RenderText {#text} at (0,0) size 236x14
       text run at (0,0) width 236: "This sentence should not wrap into the next line."

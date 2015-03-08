@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 752x39
                 text run at (2,2) width 752: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,22) width 602: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
-layer at (35,31) size 122x14 scrollWidth 134
+layer at (35,31) size 122x14 scrollWidth 133
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 133x14
       text run at (0,0) width 133: "THIS NEEDS THIS VALUE"

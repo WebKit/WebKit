@@ -144,7 +144,7 @@ layer at (447,77) size 122x14 scrollWidth 266
   RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 265x14
       text run at (0,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (590,77) size 122x14 scrollWidth 367
+layer at (590,77) size 122x14 scrollWidth 366
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
@@ -168,7 +168,7 @@ layer at (447,102) size 122x14 scrollX 142 scrollWidth 265
   RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (-142,0) size 266x14
       text run at (-142,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (590,102) size 122x14 scrollWidth 367
+layer at (590,102) size 122x14 scrollWidth 366
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
@@ -192,7 +192,7 @@ layer at (447,163) size 122x14 scrollWidth 266
   RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 265x14
       text run at (0,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (590,163) size 122x14 scrollWidth 367
+layer at (590,163) size 122x14 scrollWidth 366
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
@@ -216,7 +216,7 @@ layer at (447,188) size 122x14 scrollX 142 scrollWidth 265
   RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (-142,0) size 266x14
       text run at (-142,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (590,188) size 122x14 scrollWidth 372
+layer at (590,188) size 122x14 scrollWidth 371
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (5,0) size 366x14
       text run at (5,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
