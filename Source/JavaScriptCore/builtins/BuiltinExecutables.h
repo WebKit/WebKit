@@ -29,6 +29,7 @@
 #include "JSCBuiltins.h"
 #include "SourceCode.h"
 #include "Weak.h"
+#include "WeakHandleOwner.h"
 
 namespace JSC {
 
@@ -36,7 +37,7 @@ class UnlinkedFunctionExecutable;
 class Identifier;
 class VM;
 
-class BuiltinExecutables {
+class BuiltinExecutables final: private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit BuiltinExecutables(VM&);
@@ -49,6 +50,8 @@ const SourceCode& name##Source() { return m_##name##Source; }
 #undef EXPOSE_BUILTIN_SOURCES
     
 private:
+    void finalize(Handle<Unknown>, void* context) override;
+
     VM& m_vm;
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&);
 #define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, length)\

@@ -1,3 +1,22 @@
+2015-03-08  Andreas Kling  <akling@apple.com>
+
+        BuiltinExecutables keeps finalized Weaks around, pinning WeakBlocks.
+        <https://webkit.org/b/142460>
+
+        Reviewed by Geoffrey Garen.
+
+        Make BuiltinExecutables a WeakHandleOwner so it can clear out its respective Weak members
+        if and when their pointees get garbage collected.
+
+        This fixes an issue I've seen locally where a WeakBlock is pinned down by a single one of
+        these Weak<BuiltinExecutables>.
+
+        * builtins/BuiltinExecutables.h: Make BuiltinExecutables inherit from WeakHandleOwner.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::finalize): Clear out the relevant member pointer when it's been
+        garbage collected. We use the WeakImpl's "context" field to pass the address of the member.
+
 2015-03-07  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
