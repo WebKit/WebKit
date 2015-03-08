@@ -1,3 +1,15 @@
+2015-03-03  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win64] JSC compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=142216
+
+        Reviewed by Mark Lam.
+
+        There is missing a version of setupArgumentsWithExecState when NUMBER_OF_ARGUMENT_REGISTERS == 4.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2015-02-26  Mark Lam  <mark.lam@apple.com>
 
         MachineThreads::Thread clean up has a use after free race condition.
