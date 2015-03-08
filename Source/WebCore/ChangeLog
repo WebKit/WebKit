@@ -1,3 +1,25 @@
+2015-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        In RenderLayerCompositor, track layer bounds and the haveComputedBounds flag together in a struct
+        https://bugs.webkit.org/show_bug.cgi?id=142449
+
+        Reviewed by Brent Fulgham.
+        
+        Rather than tracking 'layerBounds' and 'haveComputedBounds' separately, group them together
+        in an OverlapExtent struct and add a function to compute the bounds, which removes
+        a copy of this code. OverlapExtent will be extended in a future patch.
+
+        No behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::OverlapMap::geometryMap): Allow const access to
+        the geometryMap, used by computeExtent().
+        (WebCore::RenderLayerCompositor::computeExtent):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        * rendering/RenderLayerCompositor.h:
+
 2015-03-07  Chris Dumez  <cdumez@apple.com>
 
         Crash in WebCore::NotificationCenter::stop()

@@ -180,6 +180,7 @@ public:
         m_overlapStack.removeLast();
     }
 
+    const RenderGeometryMap& geometryMap() const { return m_geometryMap; }
     RenderGeometryMap& geometryMap() { return m_geometryMap; }
 
 private:
@@ -253,6 +254,11 @@ struct RenderLayerCompositor::CompositingState {
 #if ENABLE(TREE_DEBUGGING)
     int depth;
 #endif
+};
+
+struct RenderLayerCompositor::OverlapExtent {
+    LayoutRect bounds;
+    bool extentComputed { false };
 };
 
 #if !LOG_DISABLED
@@ -1117,20 +1123,27 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
-void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer& layer, LayoutRect& layerBounds, bool& boundsComputed)
+void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& extent) const
+{
+    if (extent.extentComputed)
+        return;
+
+    // FIXME: If this layer's overlap bounds include its children, we don't need to add its
+    // children's bounds to the overlap map.
+    extent.bounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
+    // Empty rects never intersect, but we need them to for the purposes of overlap testing.
+    if (extent.bounds.isEmpty())
+        extent.bounds.setSize(LayoutSize(1, 1));
+
+    extent.extentComputed = true;
+}
+
+void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& extent)
 {
     if (layer.isRootLayer())
         return;
 
-    if (!boundsComputed) {
-        // FIXME: If this layer's overlap bounds include its children, we don't need to add its
-        // children's bounds to the overlap map.
-        layerBounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
-        // Empty rects never intersect, but we need them to for the purposes of overlap testing.
-        if (layerBounds.isEmpty())
-            layerBounds.setSize(LayoutSize(1, 1));
-        boundsComputed = true;
-    }
+    computeExtent(overlapMap, layer, extent);
 
     LayoutRect clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
 
@@ -1141,7 +1154,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
     if (!settings.delegatesPageScaling())
         clipRect.scale(pageScaleFactor());
 #endif
-    clipRect.intersect(layerBounds);
+    clipRect.intersect(extent.bounds);
     overlapMap.add(&layer, clipRect);
 }
 
@@ -1154,9 +1167,8 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     if (ancestorLayer)
         overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer);
     
-    LayoutRect bounds;
-    bool haveComputedBounds = false;
-    addToOverlapMap(overlapMap, layer, bounds, haveComputedBounds);
+    OverlapExtent layerExtent;
+    addToOverlapMap(overlapMap, layer, layerExtent);
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(&layer);
@@ -1222,7 +1234,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // if this flow thread will not be painted (for instance because of having no regions, or only invalid regions),
         // the child layers will never have their lists updated (which would normally happen during painting).
         layer.updateDescendantsLayerListsIfNeeded(true);
-
         return;
     }
 
@@ -1238,19 +1249,14 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool willBeComposited = needsToBeComposited(layer);
 
     RenderLayer::IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None;
-    bool haveComputedBounds = false;
-    LayoutRect absBounds;
+
+    OverlapExtent layerExtent;
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && !overlapMap.isEmpty() && compositingState.testingOverlap) {
+        computeExtent(overlapMap, layer, layerExtent);
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
-        absBounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
-
-        // Empty rects never intersect, but we need them to for the purposes of overlap testing.
-        if (absBounds.isEmpty())
-            absBounds.setSize(LayoutSize(1, 1));
-        haveComputedBounds = true;
-        compositingReason = overlapMap.overlapsLayers(absBounds) ? RenderLayer::IndirectCompositingReason::Overlap : RenderLayer::IndirectCompositingReason::None;
+        compositingReason = overlapMap.overlapsLayers(layerExtent.bounds) ? RenderLayer::IndirectCompositingReason::Overlap : RenderLayer::IndirectCompositingReason::None;
     }
 
 #if ENABLE(VIDEO)
@@ -1353,7 +1359,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // the overlap map. Layers that do not composite will draw into their
     // compositing ancestor's backing, and so are still considered for overlap.
     if (childState.compositingAncestor && !childState.compositingAncestor->isRootLayer())
-        addToOverlapMap(overlapMap, layer, absBounds, haveComputedBounds);
+        addToOverlapMap(overlapMap, layer, layerExtent);
 
 #if ENABLE(CSS_COMPOSITING)
     layer.setHasNotIsolatedCompositedBlendingDescendants(childState.hasNotIsolatedCompositedBlendingDescendants);

@@ -310,6 +310,7 @@ public:
 private:
     class OverlapMap;
     struct CompositingState;
+    struct OverlapExtent;
 
     // GraphicsLayerClient implementation
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
@@ -336,7 +337,8 @@ private:
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
 
-    void addToOverlapMap(OverlapMap&, RenderLayer&, LayoutRect& layerBounds, bool& boundsComputed);
+    void computeExtent(const OverlapMap&, RenderLayer&, OverlapExtent&) const;
+    void addToOverlapMap(OverlapMap&, RenderLayer&, OverlapExtent&);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
 
     void updateCompositingLayersTimerFired();
