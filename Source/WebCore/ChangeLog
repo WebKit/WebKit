@@ -1,3 +1,16 @@
+2015-03-04  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] the GST_SCHEDULING_FLAG_BANDWIDTH_LIMITED should be wrapped by a ifdef
+        https://bugs.webkit.org/show_bug.cgi?id=142274
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't handle scheduling queries if building against versions of
+        GStreamer older than 1.2.0.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcQueryWithParent):
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Setting any of the <object> element plugin controlling attributes does not have any affect.
