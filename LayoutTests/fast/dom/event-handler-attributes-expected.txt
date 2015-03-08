@@ -1,4 +1,4 @@
-Test which event listeners are set up by legacy event handler attributes (the ones with names like onclick).
+Test which event listeners are set up by event handler attributes (the ones with names like onclick).
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -98,57 +98,54 @@ PASS testScriptAttribute(window, "touchcancel") is "none"
 PASS testScriptAttribute(window, "touchend") is "none"
 PASS testScriptAttribute(window, "touchmove") is "none"
 PASS testScriptAttribute(window, "touchstart") is "none"
-PASS testScriptAttribute(window, "webkitkeyadded") is "none"
-PASS testScriptAttribute(window, "webkitkeyerror") is "none"
-PASS testScriptAttribute(window, "webkitkeymessage") is "none"
 PASS testScriptAttribute(window, "webkitpresentationmodechanged") is "none"
 
 Event names we expect to be able to set on the document
 
-FAIL testScriptAttribute(document, "abort") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "beforecopy") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "beforecut") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "beforepaste") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "blur") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "change") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "click") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "contextmenu") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "copy") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "cut") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dblclick") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "drag") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dragend") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dragenter") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dragleave") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dragover") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "dragstart") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "drop") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "error") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "focus") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "input") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "invalid") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "keydown") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "keypress") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "keyup") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "load") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mousedown") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mouseenter") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mouseleave") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mousemove") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mouseout") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mouseover") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mouseup") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "mousewheel") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "paste") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "readystatechange") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "reset") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "scroll") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "search") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "select") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "selectionchange") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "selectstart") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "submit") should be document. Was document, remove failed.
-FAIL testScriptAttribute(document, "wheel") should be document. Was document, remove failed.
+PASS testScriptAttribute(document, "abort") is "document"
+PASS testScriptAttribute(document, "beforecopy") is "document"
+PASS testScriptAttribute(document, "beforecut") is "document"
+PASS testScriptAttribute(document, "beforepaste") is "document"
+PASS testScriptAttribute(document, "blur") is "document"
+PASS testScriptAttribute(document, "change") is "document"
+PASS testScriptAttribute(document, "click") is "document"
+PASS testScriptAttribute(document, "contextmenu") is "document"
+PASS testScriptAttribute(document, "copy") is "document"
+PASS testScriptAttribute(document, "cut") is "document"
+PASS testScriptAttribute(document, "dblclick") is "document"
+PASS testScriptAttribute(document, "drag") is "document"
+PASS testScriptAttribute(document, "dragend") is "document"
+PASS testScriptAttribute(document, "dragenter") is "document"
+PASS testScriptAttribute(document, "dragleave") is "document"
+PASS testScriptAttribute(document, "dragover") is "document"
+PASS testScriptAttribute(document, "dragstart") is "document"
+PASS testScriptAttribute(document, "drop") is "document"
+PASS testScriptAttribute(document, "error") is "document"
+PASS testScriptAttribute(document, "focus") is "document"
+PASS testScriptAttribute(document, "input") is "document"
+PASS testScriptAttribute(document, "invalid") is "document"
+PASS testScriptAttribute(document, "keydown") is "document"
+PASS testScriptAttribute(document, "keypress") is "document"
+PASS testScriptAttribute(document, "keyup") is "document"
+PASS testScriptAttribute(document, "load") is "document"
+PASS testScriptAttribute(document, "mousedown") is "document"
+PASS testScriptAttribute(document, "mouseenter") is "document"
+PASS testScriptAttribute(document, "mouseleave") is "document"
+PASS testScriptAttribute(document, "mousemove") is "document"
+PASS testScriptAttribute(document, "mouseout") is "document"
+PASS testScriptAttribute(document, "mouseover") is "document"
+PASS testScriptAttribute(document, "mouseup") is "document"
+PASS testScriptAttribute(document, "mousewheel") is "document"
+PASS testScriptAttribute(document, "paste") is "document"
+PASS testScriptAttribute(document, "readystatechange") is "document"
+PASS testScriptAttribute(document, "reset") is "document"
+PASS testScriptAttribute(document, "scroll") is "document"
+PASS testScriptAttribute(document, "search") is "document"
+PASS testScriptAttribute(document, "select") is "document"
+PASS testScriptAttribute(document, "selectionchange") is "document"
+PASS testScriptAttribute(document, "selectstart") is "document"
+PASS testScriptAttribute(document, "submit") is "document"
+PASS testScriptAttribute(document, "wheel") is "document"
 
 Event names we expect not to be able to set on the document
 
@@ -197,9 +194,6 @@ PASS testScriptAttribute(document, "waiting") is "none"
 PASS testScriptAttribute(document, "webkitanimationend") is "none"
 PASS testScriptAttribute(document, "webkitanimationiteration") is "none"
 PASS testScriptAttribute(document, "webkitanimationstart") is "none"
-PASS testScriptAttribute(document, "webkitkeyadded") is "none"
-PASS testScriptAttribute(document, "webkitkeyerror") is "none"
-PASS testScriptAttribute(document, "webkitkeymessage") is "none"
 PASS testScriptAttribute(document, "webkitpresentationmodechanged") is "none"
 PASS testScriptAttribute(document, "webkittransitionend") is "none"
 
@@ -279,9 +273,6 @@ FAIL testElementAttribute(element, "waiting") should be target. Was script: none
 FAIL testElementAttribute(element, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(element, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(element, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(element, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(element, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(element, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(element, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(element, "wheel") is "target"
@@ -379,9 +370,6 @@ FAIL testElementAttribute(inputElement, "waiting") should be target. Was script:
 FAIL testElementAttribute(inputElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(inputElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(inputElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(inputElement, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(inputElement, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(inputElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(inputElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(inputElement, "wheel") is "target"
@@ -479,9 +467,6 @@ PASS testElementAttribute(audioElement, "waiting") is "target"
 FAIL testElementAttribute(audioElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(audioElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(audioElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(audioElement, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(audioElement, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(audioElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(audioElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(audioElement, "wheel") is "target"
@@ -579,9 +564,6 @@ PASS testElementAttribute(videoElement, "waiting") is "target"
 FAIL testElementAttribute(videoElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(videoElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(videoElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(videoElement, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(videoElement, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(videoElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(videoElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(videoElement, "wheel") is "target"
@@ -623,7 +605,7 @@ PASS testElementAttribute(bodyElement, "unload") is "window"
 
 Event names we expect to be forwarded from <body> element to document)
 
-FAIL testElementAttribute(bodyElement, "selectionchange") should be document. Was script: none; content: document, remove failed.
+FAIL testElementAttribute(bodyElement, "selectionchange") should be document. Was script: none; content: document.
 
 Non-forwarded event names on <body> element
 
@@ -697,9 +679,6 @@ FAIL testElementAttribute(bodyElement, "waiting") should be target. Was script: 
 FAIL testElementAttribute(bodyElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(bodyElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(bodyElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(bodyElement, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(bodyElement, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(bodyElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(bodyElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(bodyElement, "wheel") is "target"
@@ -803,9 +782,6 @@ FAIL testElementAttribute(framesetElement, "waiting") should be target. Was scri
 FAIL testElementAttribute(framesetElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(framesetElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(framesetElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "webkitkeyadded") should be target. Was none.
-FAIL testElementAttribute(framesetElement, "webkitkeyerror") should be target. Was none.
-FAIL testElementAttribute(framesetElement, "webkitkeymessage") should be target. Was none.
 FAIL testElementAttribute(framesetElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(framesetElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(framesetElement, "wheel") is "target"

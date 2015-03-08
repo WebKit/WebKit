@@ -1,3 +1,21 @@
+2015-03-07  Darin Adler  <darin@apple.com>
+
+        Improve the event handler test
+        https://bugs.webkit.org/show_bug.cgi?id=142439
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/event-handler-attributes-expected.txt: Renamed from legacy-event-handler-attributes-expected.txt.
+        Also updated to reflect changes in the test.
+
+        * fast/dom/event-handler-attributes.html: Renamed from legacy-event-handler-attributes.html.
+        Fixed bug in the test that was making document event handler tests falsely report failure.
+        Removed testing of some HTMLMediaElement attributes that are conditionally present; this test
+        is intended to test only unconditionally available event handler attributes at this time.
+
+        * platform/win/fast/dom/legacy-event-handler-attributes-expected.txt: Removed. The conditional HTMLMediaElement
+        attributes are the reason the Windows-specific results were needed.
+
 2015-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening on 7th Mar.
