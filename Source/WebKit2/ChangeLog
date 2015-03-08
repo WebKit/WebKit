@@ -1,3 +1,33 @@
+2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r180924): ASSERTION FAILED: !from.isEmpty() in WebCore::TransformationMatrix::rectToRect
+        https://bugs.webkit.org/show_bug.cgi?id=142345
+
+        Reviewed by Martin Robinson.
+
+        This was caused by r180924 that postpones the creation of the
+        TextureMapper, which could cause that a layer has not yet a size
+        when TextureMapper::paint() is called. This patch moves the
+        creation of the TextureMapper to
+        LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(), so that
+        it's created as soon as it's possible to create. This method is
+        called by the drawing area right after creating the
+        LayerTreeHostGtk if it already have a handler, or when the handle
+        is received from the UI process.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize): Remove the
+        nsureTextureMapper call because at this point the layer context ID
+        is always 0, so it's impossible to create the TextureMapper.
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): Remove the
+        ensureTextureMapper call from here too, since at this point, if we
+        have a context, we should also have a TextureMapper. Add an ASSERT
+        right before using the TextureMapper.
+        (WebKit::LayerTreeHostGtk::setNativeSurfaceHandleForCompositing):
+        Create the TextureMapper here.
+        (WebKit::LayerTreeHostGtk::ensureTextureMapper): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2015-03-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Disable RC4

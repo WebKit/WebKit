@@ -87,7 +87,6 @@ private:
     void layerFlushTimerFired();
 
     bool makeContextCurrent();
-    void ensureTextureMapper();
 
     LayerTreeContext m_layerTreeContext;
     bool m_isValid;
