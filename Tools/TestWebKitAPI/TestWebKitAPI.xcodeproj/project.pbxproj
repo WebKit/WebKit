@@ -56,6 +56,7 @@
 		7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
+		7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
 		7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */; };
 		7C54A4C11AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */; };
@@ -515,6 +516,7 @@
 		76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent.cpp; sourceTree = "<group>"; };
 		76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent_Bundle.cpp; sourceTree = "<group>"; };
 		76E182DE15475A8300F1FADD /* auto-submitting-form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "auto-submitting-form.html"; sourceTree = "<group>"; };
+		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		7C486BA01AA1254B003F6F9B /* bundle-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "bundle-file.html"; sourceTree = "<group>"; };
 		7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandle.cpp; sourceTree = "<group>"; };
 		7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandle_Bundle.cpp; sourceTree = "<group>"; };
@@ -1046,6 +1048,7 @@
 				BC55F5F814AD78EE00484BE1 /* Vector.cpp */,
 				265AF54F15D1E48A00B0CB4A /* WTFString.cpp */,
 				1CB9BC371A67482300FE5678 /* WeakPtr.cpp */,
+				7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */,
 			);
 			path = WTF;
 			sourceTree = "<group>";
@@ -1549,6 +1552,7 @@
 			files = (
 				1CB9BC381A67482300FE5678 /* WeakPtr.cpp in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
+				7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

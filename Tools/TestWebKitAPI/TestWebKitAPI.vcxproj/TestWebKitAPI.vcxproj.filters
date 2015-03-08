@@ -166,6 +166,9 @@
     <ClCompile Include="..\Tests\JavaScriptCore\VMInspector.cpp">
       <Filter>Tests\JavaScriptCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\WorkQueue.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestWebKitAPIPostBuild.cmd" />

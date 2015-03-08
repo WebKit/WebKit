@@ -338,6 +338,7 @@
     <ClCompile Include="..\Tests\WTF\TemporaryChange.cpp" />
     <ClCompile Include="..\Tests\WTF\Vector.cpp" />
     <ClCompile Include="..\Tests\WTF\WeakPtr.cpp" />
+    <ClCompile Include="..\Tests\WTF\WorkQueue.cpp" />
     <ClCompile Include="..\Tests\WTF\WTFString.cpp" />
     <ClCompile Include="..\win\HostWindow.cpp" />
     <ClCompile Include="..\win\main.cpp" />

@@ -1,3 +1,21 @@
+2015-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Add some WorkQueue tests to TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=142447
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp: Added.
+        (TestWebKitAPI::simpleTest):
+        (TestWebKitAPI::longTest):
+        (TestWebKitAPI::thirdTest):
+        (TestWebKitAPI::finishedTests):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::longTest2):
+
 2015-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove willDestroyFrame in WKBundlePageLoaderClient
