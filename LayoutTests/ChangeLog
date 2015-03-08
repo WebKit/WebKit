@@ -1,3 +1,14 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Setting scroll-snap-desination to (100% 100%) locks up WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=142414
+        <rdar://problem/20077275>
+
+        Reviewed by Dean Jackson.
+
+        * css3/scroll-snap/scroll-snap-desination-lock-up.html: Added.
+        * css3/scroll-snap/scroll-snap-desination-lock-up-expected.txt: Added.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()

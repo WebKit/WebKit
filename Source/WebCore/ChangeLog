@@ -1,3 +1,20 @@
+2015-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Setting scroll-snap-desination to (100% 100%) locks up WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=142414
+        <rdar://problem/20077275>
+
+        Reviewed by Dean Jackson.
+
+        Tested by css3/scroll-snap/scroll-snap-desination-lock-up.html.
+
+        Correct an infinite loop that is triggered when you combine a repeating (100%)
+        scroll-snap-point-{x,y} along with a 100% scroll-snap-destination value.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::updateFromStyle): Make sure we break out of the loop properly when
+        the scroll-snap-point-{x,y} step is the same as the scroll-snap-destination.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Document::recalcStyle() shouldn't call viewportContentsChanged() if there is a pending layout
