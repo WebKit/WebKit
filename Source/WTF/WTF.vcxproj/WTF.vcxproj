@@ -149,7 +149,10 @@
     <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
     <ClCompile Include="..\wtf\win\RunLoopWin.cpp" />
+    <ClCompile Include="..\wtf\win\WorkItemWin.cpp" />
+    <ClCompile Include="..\wtf\win\WorkQueueWin.cpp" />
     <ClCompile Include="..\wtf\win\WTFDLL.cpp" />
+    <ClCompile Include="..\wtf\WorkQueue.cpp" />
     <ClCompile Include="..\wtf\WTFThreadData.cpp" />
     <ClCompile Include="..\wtf\SchedulePairCF.cpp" />
   </ItemGroup>
@@ -306,6 +309,8 @@
     <ClInclude Include="..\wtf\Vector.h" />
     <ClInclude Include="..\wtf\VMTags.h" />
     <ClInclude Include="..\wtf\win\GDIObject.h" />
+    <ClInclude Include="..\wtf\win\WorkItemWin.h" />
+    <ClInclude Include="..\wtf\WorkQueue.h" />
     <ClInclude Include="..\wtf\WTFThreadData.h" />
   </ItemGroup>
   <ItemGroup>

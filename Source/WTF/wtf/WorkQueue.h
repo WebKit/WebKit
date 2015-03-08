@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,10 @@
 #include <wtf/gobject/GRefPtr.h>
 #elif PLATFORM(EFL)
 #include <DispatchQueueEfl.h>
+#elif OS(WINDOWS)
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/win/WorkItemWin.h>
 #endif
 
 namespace WTF {
@@ -84,6 +88,19 @@ private:
     void platformInitialize(const char* name, Type, QOS);
     void platformInvalidate();
 
+#if OS(WINDOWS)
+    static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
+    static void CALLBACK timerCallback(void* context, BOOLEAN timerOrWaitFired);
+    static DWORD WINAPI workThreadCallback(void* context);
+
+    bool tryRegisterAsWorkThread();
+    void unregisterAsWorkThread();
+    void performWorkOnRegisteredWorkThread();
+
+    static void unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem>);
+    static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
+#endif
+
 #if OS(DARWIN)
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
@@ -95,6 +112,16 @@ private:
     GMainLoopSource m_socketEventSource;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
+#elif OS(WINDOWS)
+    volatile LONG m_isWorkThreadRegistered;
+
+    Mutex m_workItemQueueLock;
+    Vector<RefPtr<WorkItemWin>> m_workItemQueue;
+
+    Mutex m_handlesLock;
+    HashMap<HANDLE, RefPtr<HandleWorkItem>> m_handles;
+
+    HANDLE m_timerQueue;
 #endif
 };
 
