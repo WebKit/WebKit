@@ -1,3 +1,36 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
+        https://bugs.webkit.org/show_bug.cgi?id=142350
+
+        Reviewed by Michael Saboff and Benjamin Poulain.
+
+        Fix ASSERTION FAILED: !is8Bit() in StringImpl::characters16() from
+        WTF::equalInner() after r173761. The code was incorrectly assuming that
+        if stringImpl is 16-bit, then matchString is 16-bit too, which is not
+        correct.
+
+        Also rename WTFString::startsWith() / endsWith() taking an offset to
+        hasInfixStartingAt() / hasInfixEndingAt() for clarity. It seems odd
+        to call it startsWith even though it won't technically *start* with
+        the pattern if the input offset is greater than zero.
+
+        Also drop the caseSensitive argument as it is never used (always true
+        at call sites.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalInner):
+        (WTF::StringImpl::hasInfixStartingAt):
+        (WTF::StringImpl::hasInfixEndingAt):
+        (WTF::StringImpl::startsWith): Deleted.
+        (WTF::StringImpl::endsWith): Deleted.
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::hasInfixStartingAt):
+        (WTF::String::hasInfixEndingAt):
+        (WTF::String::startsWith): Deleted.
+        (WTF::String::endsWith): Deleted.
+
 2015-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         Enable concurrent JIT on GTK

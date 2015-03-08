@@ -1647,7 +1647,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.startsWith(searchString, start, true)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixStartingAt(searchString, start)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
@@ -1675,7 +1675,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
         return JSValue::encode(jsUndefined());
     unsigned end = std::min<unsigned>(std::max(pos, 0), length);
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.endsWith(searchString, end, true)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixEndingAt(searchString, end)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)

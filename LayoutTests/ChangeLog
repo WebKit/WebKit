@@ -1,3 +1,16 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
+        https://bugs.webkit.org/show_bug.cgi?id=142350
+
+        Reviewed by Michael Saboff and Benjamin Poulain.
+
+        Update String.startsWith() / endsWith() test to cover cases where the
+        input string is 8-bit and the pattern is 16-bit, and vice-versa.
+
+        * js/script-tests/string-includes.js:
+        * js/string-includes-expected.txt:
+
 2015-03-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Setting any of the <object> element plugin controlling attributes does not have any affect.

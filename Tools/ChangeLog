@@ -1,3 +1,16 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
+        https://bugs.webkit.org/show_bug.cgi?id=142350
+
+        Reviewed by Michael Saboff and Benjamin Poulain.
+
+        Add API test for WTFString::hasInfixStartingAt() to make sure it doesn't
+        crash if the string is 8-bit but the pattern is 16-bit (and vice-versa).
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix /webkit2/WebKitWebResource/mime-type after r180927.

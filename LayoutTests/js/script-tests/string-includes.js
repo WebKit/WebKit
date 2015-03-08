@@ -54,6 +54,10 @@ shouldBe("'1e+100 bar'.startsWith(1e+100)", "true");
 shouldBe("'1e100 bar'.startsWith(1e100)", "false");
 shouldBe("'フーバー'.startsWith('フー')", "true");
 shouldBe("'フーバー'.startsWith('バー')", "false");
+shouldBe("'フーバー'.startsWith('abc')", "false");
+shouldBe("'フーバー'.startsWith('abc', 1)", "false");
+shouldBe("'foo bar'.startsWith('フー')", "false");
+shouldBe("'foo bar'.startsWith('フー', 1)", "false");
 
 // Test endsWith
 shouldBe("'foo bar'.endsWith('bar')", "true");
@@ -82,6 +86,10 @@ shouldBe("'foo 1e+100'.endsWith(1e+100)", "true");
 shouldBe("'foo 1e100'.endsWith(1e100)", "false");
 shouldBe("'フーバー'.endsWith('バー')", "true");
 shouldBe("'フーバー'.endsWith('フー')", "false");
+shouldBe("'フーバー'.endsWith('abc')", "false");
+shouldBe("'フーバー'.endsWith('abc')", "false");
+shouldBe("'foo bar'.endsWith('フー')", "false");
+shouldBe("'foo bar'.endsWith('フー', 3)", "false");
 
 // Call functions with an environment record as 'this'.
 shouldThrow("(function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })()");

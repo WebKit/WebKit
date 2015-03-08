@@ -1,3 +1,17 @@
+2015-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()
+        https://bugs.webkit.org/show_bug.cgi?id=142350
+
+        Reviewed by Michael Saboff and Benjamin Poulain.
+
+        Call WTFString::hasInfixStartingAt() / hasInfixEndingAt() now that these
+        methods have been renamed for clarity.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+
 2015-03-04  Andreas Kling  <akling@apple.com>
 
         GC should compute stack bounds and dump registers at the earliest opportunity.
