@@ -1,3 +1,34 @@
+2015-03-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
+        https://bugs.webkit.org/show_bug.cgi?id=140900
+
+        Reviewed by Mark Hahnenberg.
+
+        Re-landing just the removal of BlockAllocator, which is now unused.
+
+        * API/JSBase.cpp:
+        * CMakeLists.txt:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/BlockAllocator.cpp: Removed.
+        * heap/BlockAllocator.h: Removed.
+        * heap/GCThreadSharedData.h:
+        * heap/HandleBlockInlines.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::blockAllocator): Deleted.
+        * heap/HeapTimer.cpp:
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.h:
+        * heap/Region.h: Removed.
+        * heap/SuperRegion.cpp: Removed.
+        * heap/SuperRegion.h: Removed.
+
 2015-03-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181010.

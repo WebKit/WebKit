@@ -22,7 +22,6 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
-#include "BlockAllocator.h"
 #include "HeapBlock.h"
 
 #include "HeapOperation.h"

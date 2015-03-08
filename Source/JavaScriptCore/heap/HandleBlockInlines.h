@@ -26,7 +26,6 @@
 #ifndef HandleBlockInlines_h
 #define HandleBlockInlines_h
 
-#include "BlockAllocator.h"
 #include "HandleBlock.h"
 #include <wtf/FastMalloc.h>
 

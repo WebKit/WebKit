@@ -32,6 +32,7 @@
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

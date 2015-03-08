@@ -152,9 +152,6 @@ void MemoryPressureHandler::install()
         // This gives us a more consistent picture of live objects at the end of testing.
         gcController().garbageCollectNow();
 
-        // Release any freed up blocks from the JS heap back to the system.
-        JSDOMWindowBase::commonVM().heap.blockAllocator().releaseFreeRegions();
-
         WTF::releaseFastMallocFreeMemory();
 
         malloc_zone_pressure_relief(nullptr, 0);
