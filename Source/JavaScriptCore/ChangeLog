@@ -1,3 +1,12 @@
+2015-03-04  Debarshi Ray  <debarshir@gnome.org>
+
+        Silence GCC's -Wstrict-prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=142278
+
+        Reviewed by Alexey Proskuryakov.
+
+        * API/JSContextRef.h:
+
 2015-03-03  peavo@outlook.com  <peavo@outlook.com>
 
         [Win64] JSC compile error.
