@@ -92,7 +92,7 @@ private:
     void concurrentScavenge();
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeMediumPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
-    void scavengeLargeRanges(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
     std::array<std::array<LineMetadata, SmallPage::lineCount>, smallMax / alignment> m_smallLineMetadata;
     std::array<std::array<LineMetadata, MediumPage::lineCount>, mediumMax / alignment> m_mediumLineMetadata;

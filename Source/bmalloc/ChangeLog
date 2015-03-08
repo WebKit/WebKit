@@ -1,3 +1,52 @@
+2015-03-03  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Miscellaneous cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=142231
+
+        Reviewed by Andreas Kling.
+
+        No performance change -- maybe a tiny reduction in memory use.
+
+        * bmalloc/Heap.cpp: Moved the sleep function into StaticMutex, since
+        it's a helper for working with mutexes.
+
+        (bmalloc::Heap::scavenge): Make sure to wait before we start any
+        scavenging, since individual scavenging functions now always scavenge
+        at least one page before waiting themselves.
+
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeMediumPages):
+        (bmalloc::Heap::scavengeLargeObjects): Use the new wait helper to
+        simplify this code. Also, we now require our caller to wait until at
+        least one deallocation is desirable. This simplifies our loop.
+
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateMediumPage):
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::allocateLarge): Don't freak out any time the heap does
+        an allocation. Only consider the heap to be growing if it actually needs
+        to allocate new VM. This allows us to shrink the heap back down from a
+        high water mark more reliably even if heap activity continues.
+
+        (bmalloc::sleep): Deleted.
+        (bmalloc::Heap::scavengeLargeRanges): Renamed to match our use of
+        "LargeObject".
+
+        * bmalloc/Heap.h:
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::operator bool): Added to simplify a while loop.
+
+        * bmalloc/StaticMutex.h:
+        (bmalloc::sleep):
+        (bmalloc::waitUntilFalse): New helper for waiting until a condition
+        becomes reliably false.
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::~Vector): Oops! Don't deallocate the null pointer.
+        We don't actually run any Vector destructors, but an iteration of this
+        patch did, and then crashed. So, let's fix that.
+
 2015-03-02  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Eagerly remove allocated objects from the free list
