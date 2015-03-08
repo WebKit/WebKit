@@ -1,5 +1,16 @@
 2015-03-03  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: Don't branch when setting the owner of a large object
+        https://bugs.webkit.org/show_bug.cgi?id=142241
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::owner):
+        (bmalloc::BoundaryTag::setOwner):
+
+2015-03-03  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Miscellaneous cleanup
         https://bugs.webkit.org/show_bug.cgi?id=142231
 
