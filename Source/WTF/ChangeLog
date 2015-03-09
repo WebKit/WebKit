@@ -1,3 +1,15 @@
+2015-03-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [EFL] Move DispatchQueue to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=142493
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/PlatformEfl.cmake: Add DispatchQueue to the source list.
+        * wtf/efl/DispatchQueueEfl.cpp: Renamed from Source/WebKit2/Platform/efl/DispatchQueueEfl.cpp.
+        * wtf/efl/DispatchQueueEfl.h: Renamed from Source/WebKit2/Platform/efl/DispatchQueueEfl.h.
+        * wtf/efl/DispatchQueueWorkItemEfl.h: Renamed from Source/WebKit2/Platform/efl/DispatchQueueWorkItemEfl.h.
+
 2015-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] WTF::WorkQueue does not balance ref/deref properly
