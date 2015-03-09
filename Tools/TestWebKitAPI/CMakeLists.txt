@@ -100,6 +100,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/WorkQueue.cpp
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
