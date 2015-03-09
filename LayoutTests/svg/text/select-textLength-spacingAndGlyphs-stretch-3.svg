@@ -5,5 +5,5 @@
 <text id="test" x="10" y="10" font-family="Arial" font-size="10" textLength="140" lengthAdjust="spacingAndGlyphs">Text to Stretch</text>
 
 <script xlink:href="resources/SelectionTestCase.js"/>
-<script>selectRange("test", 8, 10, "Str");</script>
+<script>selectRange("test", 8, 10, "");</script>
 </svg>

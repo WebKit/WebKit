@@ -5,5 +5,5 @@
 <text id="test" x="10" y="10" font-family="Arial" font-size="10" textLength="50" lengthAdjust="spacingAndGlyphs">Text to Squeeze</text>
 
 <script xlink:href="resources/SelectionTestCase.js"/>
-<script>selectRange("test", 0, 3, "Text");</script>
+<script>selectRange("test", 0, 3, "Te");</script>
 </svg>
