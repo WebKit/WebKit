@@ -1,3 +1,78 @@
+2015-03-09  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add tests
+        https://bugs.webkit.org/show_bug.cgi?id=142475
+
+        Reviewed by Andreas Kling.
+
+        Added a mock content filter that can be configured by window.internals. A test can control whether the filter
+        is enabled, what to display when a page is blocked, at what point the allow/block decision is made, and what
+        decision to make.
+
+        Added tests to cover allowing and blocking content at each decision point.
+
+        Tests: contentfiltering/allow-after-add-data.html
+               contentfiltering/allow-after-finished-adding-data.html
+               contentfiltering/allow-after-response.html
+               contentfiltering/block-after-add-data.html
+               contentfiltering/block-after-finished-adding-data.html
+               contentfiltering/block-after-response.html
+
+        * DerivedSources.make: Added MockContentFilterSettings.idl.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp: Added.
+        (WebCore::JSMockContentFilterSettings::decisionPoint): Returned the decision point's JSValue.
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint): Set the decision point; threw an exception for invalid values.
+        (WebCore::JSMockContentFilterSettings::decision): Returned the decision's JSValue.
+        (WebCore::JSMockContentFilterSettings::setDecision): Set the decision; threw an exception for invalid values.
+        * platform/ContentFilter.cpp:
+        (WebCore::ContentFilter::types): Renamed from contentFilterTypes.
+        (WebCore::ContentFilter::createIfNeeded):
+        (WebCore::contentFilterType): Deleted.
+        (WebCore::contentFilterTypes): Deleted.
+        * platform/ContentFilter.h:
+        (WebCore::ContentFilter::addType): Used to register a new content filter type.
+        (WebCore::ContentFilter::type): Renamed from contentFilterType.
+        * platform/cocoa/NetworkExtensionContentFilter.h: Moved definition of HAVE_NE_FILTER_SOURCE to here.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Called MockContentFilterSettings::reset().
+        (WebCore::Internals::Internals): Called MockContentFilter::ensureInstalled().
+        (WebCore::Internals::mockContentFilterSettings): Returned a reference to MockContentFilterSettings::singleton().
+        * testing/Internals.h:
+        * testing/Internals.idl: Added attribute mockContentFilterSettings.
+        * testing/MockContentFilter.cpp: Added.
+        (WebCore::MockContentFilter::ensureInstalled): Called MockContentFilter::addType().
+        (WebCore::MockContentFilter::canHandleResponse): Returned whether MockContentFilterSettings is enabled.
+        (WebCore::MockContentFilter::create): Returned a new MockContentFilter.
+        (WebCore::MockContentFilter::MockContentFilter): Called maybeDetermineStatus().
+        (WebCore::MockContentFilter::addData): Copied data into m_replacementData and called maybeDetermineStatus().
+        (WebCore::MockContentFilter::finishedAddingData): Called maybeDetermineStatus().
+        (WebCore::MockContentFilter::needsMoreData): Returned whether m_status equals NeedsMoreData.
+        (WebCore::MockContentFilter::didBlockData): Returned whether m_status equals Blocked.
+        (WebCore::MockContentFilter::getReplacementData): Returned a pointer to the start of m_replacementData.
+        (WebCore::MockContentFilter::unblockHandler): Returned an empty ContentFilterUnblockHandler.
+        (WebCore::MockContentFilter::maybeDetermineStatus): If m_status is NeedsMoreData and the current decision point
+        equals MockContentFilterSettings's decision point, set m_status according to MockContentFilterSettings's
+        decision. If m_status becomes Blocked, clear the original page data from m_replacementData and copy
+        MockContentFilterSettings's blocked string instead.
+        * testing/MockContentFilter.h: Copied from Source/WebCore/platform/cocoa/NetworkExtensionContentFilter.h.
+        * testing/MockContentFilterSettings.cpp: Copied from Source/WebCore/platform/ContentFilter.h.
+        (WebCore::MockContentFilterSettings::singleton):
+        (WebCore::MockContentFilterSettings::reset): Reset settings to their initial values.
+        (WebCore::MockContentFilterSettings::MockContentFilterSettings):
+        * testing/MockContentFilterSettings.h: Copied from Source/WebCore/platform/cocoa/NetworkExtensionContentFilter.h.
+        (WebCore::MockContentFilterSettings::ref): Added an empty implementation to make the bindings think this is RefCounted.
+        (WebCore::MockContentFilterSettings::deref): Ditto.
+        (WebCore::MockContentFilterSettings::enabled):
+        (WebCore::MockContentFilterSettings::setEnabled):
+        (WebCore::MockContentFilterSettings::blockedString):
+        (WebCore::MockContentFilterSettings::setBlockedString):
+        (WebCore::MockContentFilterSettings::decisionPoint):
+        (WebCore::MockContentFilterSettings::setDecisionPoint):
+        (WebCore::MockContentFilterSettings::decision):
+        (WebCore::MockContentFilterSettings::setDecision):
+        * testing/MockContentFilterSettings.idl: Copied from Source/WebCore/platform/ContentFilter.h.
+
 2015-03-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout should not be limited to RenderText.

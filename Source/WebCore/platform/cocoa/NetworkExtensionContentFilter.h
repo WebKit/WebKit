@@ -30,6 +30,8 @@
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
 
+#define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
+
 OBJC_CLASS NEFilterSource;
 OBJC_CLASS NSMutableData;
 

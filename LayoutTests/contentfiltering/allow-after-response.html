@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+var settings = window.internals.mockContentFilterSettings;
+settings.enabled = true;
+settings.blockedString = "FAIL";
+settings.decisionPoint = settings.DECISION_POINT_AFTER_RESPONSE;
+settings.decision = settings.DECISION_ALLOW;
+</script>
+<iframe src="data:text/html,PASS"></iframe>

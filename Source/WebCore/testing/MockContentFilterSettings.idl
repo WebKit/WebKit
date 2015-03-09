@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilter_h
-#define ContentFilter_h
+[
+    Conditional=CONTENT_FILTERING,
+    NoInterfaceObject,
+    ImplementationLacksVTable
+] interface MockContentFilterSettings {
+    attribute boolean enabled;
+    attribute DOMString blockedString;
 
-#if ENABLE(CONTENT_FILTERING)
+    const octet DECISION_POINT_AFTER_RESPONSE = 0;
+    const octet DECISION_POINT_AFTER_ADD_DATA = 1;
+    const octet DECISION_POINT_AFTER_FINISHED_ADDING_DATA = 2;
+    [Custom] attribute octet decisionPoint;
 
-#include "ContentFilterUnblockHandler.h"
-#include <wtf/Vector.h>
-
-namespace WebCore {
-
-class ResourceResponse;
-
-class ContentFilter {
-public:
-    template <typename T> static void addType() { types().append(type<T>()); }
-
-    static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&);
-
-    virtual ~ContentFilter() { }
-    virtual void addData(const char* data, int length) = 0;
-    virtual void finishedAddingData() = 0;
-    virtual bool needsMoreData() const = 0;
-    virtual bool didBlockData() const = 0;
-    virtual const char* getReplacementData(int& length) const = 0;
-    virtual ContentFilterUnblockHandler unblockHandler() const = 0;
-
-private:
-    struct Type {
-        const std::function<bool(const ResourceResponse&)> canHandleResponse;
-        const std::function<std::unique_ptr<ContentFilter>(const ResourceResponse&)> create;
-    };
-    template <typename T> static Type type() { return { T::canHandleResponse, T::create }; }
-    WEBCORE_EXPORT static Vector<Type>& types();
+    const octet DECISION_ALLOW = 0;
+    const octet DECISION_BLOCK = 1;
+    [Custom] attribute octet decision;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(CONTENT_FILTERING)
-
-#endif // ContentFilter_h

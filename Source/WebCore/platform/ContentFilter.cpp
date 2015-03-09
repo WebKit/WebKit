@@ -35,27 +35,16 @@
 
 namespace WebCore {
 
-struct ContentFilterType {
-    const std::function<bool(const ResourceResponse&)> canHandleResponse;
-    const std::function<std::unique_ptr<ContentFilter>(const ResourceResponse&)> create;
-};
-
-template <typename T>
-static inline ContentFilterType contentFilterType()
+Vector<ContentFilter::Type>& ContentFilter::types()
 {
-    return { T::canHandleResponse, T::create };
-}
-
-static const Vector<ContentFilterType>& contentFilterTypes()
-{
-    static NeverDestroyed<Vector<ContentFilterType>> types(
-        Vector<ContentFilterType>({
-            contentFilterType<ParentalControlsContentFilter>(),
+    static NeverDestroyed<Vector<ContentFilter::Type>> types {
+        Vector<ContentFilter::Type> {
+            type<ParentalControlsContentFilter>(),
 #if HAVE(NE_FILTER_SOURCE)
-            contentFilterType<NetworkExtensionContentFilter>()
+            type<NetworkExtensionContentFilter>()
 #endif
-        })
-    );
+        }
+    };
     return types;
 }
 
@@ -79,7 +68,7 @@ private:
 std::unique_ptr<ContentFilter> ContentFilter::createIfNeeded(const ResourceResponse& response)
 {
     ContentFilterCollection::Container filters;
-    for (auto& type : contentFilterTypes()) {
+    for (auto& type : types()) {
         if (type.canHandleResponse(response))
             filters.append(type.create(response));
     }

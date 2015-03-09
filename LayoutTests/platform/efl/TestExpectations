@@ -2155,3 +2155,6 @@ webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 
 webkit.org/b/142483 fast/css/font-face-default-font.html [ Failure ]
 webkit.org/b/142483 fast/css/font-face-in-media-rule.html [ Failure ]
+
+# This feature is only enabled on Mac and iOS right now
+contentfiltering [ Skip ]

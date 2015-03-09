@@ -1,3 +1,23 @@
+2015-03-09  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Add tests
+        https://bugs.webkit.org/show_bug.cgi?id=142475
+
+        Reviewed by Andreas Kling.
+
+        * contentfiltering/allow-after-add-data-expected.html: Added.
+        * contentfiltering/allow-after-add-data.html: Added.
+        * contentfiltering/allow-after-finished-adding-data-expected.html: Added.
+        * contentfiltering/allow-after-finished-adding-data.html: Added.
+        * contentfiltering/allow-after-response-expected.html: Added.
+        * contentfiltering/allow-after-response.html: Added.
+        * contentfiltering/block-after-add-data-expected.html: Added.
+        * contentfiltering/block-after-add-data.html: Added.
+        * contentfiltering/block-after-finished-adding-data-expected.html: Added.
+        * contentfiltering/block-after-finished-adding-data.html: Added.
+        * contentfiltering/block-after-response-expected.html: Added.
+        * contentfiltering/block-after-response.html: Added.
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         svg/custom/svg-fonts-without-missing-glyph.xhtml fails after fonts/font-fallback-prefers-pictographs.html

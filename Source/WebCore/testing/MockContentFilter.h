@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilter_h
-#define ContentFilter_h
+#ifndef MockContentFilter_h
+#define MockContentFilter_h
 
-#if ENABLE(CONTENT_FILTERING)
-
-#include "ContentFilterUnblockHandler.h"
-#include <wtf/Vector.h>
+#include "ContentFilter.h"
+#include "MockContentFilterSettings.h"
 
 namespace WebCore {
 
-class ResourceResponse;
-
-class ContentFilter {
+class MockContentFilter final : public ContentFilter {
+    WTF_MAKE_NONCOPYABLE(MockContentFilter);
+    WTF_MAKE_FAST_ALLOCATED;
+    friend std::unique_ptr<MockContentFilter> std::make_unique<MockContentFilter>(const ResourceResponse&);
 public:
-    template <typename T> static void addType() { types().append(type<T>()); }
+    static void ensureInstalled();
+    static bool canHandleResponse(const ResourceResponse&);
+    static std::unique_ptr<MockContentFilter> create(const ResourceResponse&);
 
-    static std::unique_ptr<ContentFilter> createIfNeeded(const ResourceResponse&);
-
-    virtual ~ContentFilter() { }
-    virtual void addData(const char* data, int length) = 0;
-    virtual void finishedAddingData() = 0;
-    virtual bool needsMoreData() const = 0;
-    virtual bool didBlockData() const = 0;
-    virtual const char* getReplacementData(int& length) const = 0;
-    virtual ContentFilterUnblockHandler unblockHandler() const = 0;
+    void addData(const char* data, int length) override;
+    void finishedAddingData() override;
+    bool needsMoreData() const override;
+    bool didBlockData() const override;
+    const char* getReplacementData(int& length) const override;
+    ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
-    struct Type {
-        const std::function<bool(const ResourceResponse&)> canHandleResponse;
-        const std::function<std::unique_ptr<ContentFilter>(const ResourceResponse&)> create;
+    enum class Status {
+        NeedsMoreData,
+        Allowed,
+        Blocked
     };
-    template <typename T> static Type type() { return { T::canHandleResponse, T::create }; }
-    WEBCORE_EXPORT static Vector<Type>& types();
+
+    explicit MockContentFilter(const ResourceResponse&);
+    void maybeDetermineStatus(MockContentFilterSettings::DecisionPoint);
+
+    Vector<char> m_replacementData;
+    Status m_status { Status::NeedsMoreData };
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(CONTENT_FILTERING)
-
-#endif // ContentFilter_h
+#endif // MockContentFilter_h

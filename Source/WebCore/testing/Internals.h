@@ -65,6 +65,10 @@ class TimeRanges;
 class TypeConversions;
 class XMLHttpRequest;
 
+#if ENABLE(CONTENT_FILTERING)
+class MockContentFilterSettings;
+#endif
+
 typedef int ExceptionCode;
 
 class Internals : public RefCounted<Internals>
@@ -367,6 +371,10 @@ public:
 
     RefPtr<File> createFile(const String&);
     void queueMicroTask(int);
+
+#if ENABLE(CONTENT_FILTERING)
+    MockContentFilterSettings& mockContentFilterSettings();
+#endif
 
 private:
     explicit Internals(Document*);

@@ -175,6 +175,10 @@
 #include "DictionaryLookup.h"
 #endif
 
+#if ENABLE(CONTENT_FILTERING)
+#include "MockContentFilter.h"
+#endif
+
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
 using JSC::JSFunction;
@@ -314,6 +318,10 @@ void Internals::resetToConsistentState(Page* page)
 #endif
 
     MockPageOverlayClient::singleton().uninstallAllOverlays();
+
+#if ENABLE(CONTENT_FILTERING)
+    MockContentFilterSettings::reset();
+#endif
 }
 
 Internals::Internals(Document* document)
@@ -328,6 +336,10 @@ Internals::Internals(Document* document)
     MockMediaStreamCenter::registerMockMediaStreamCenter();
     enableMockRTCPeerConnectionHandler();
     WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
+#endif
+
+#if ENABLE(CONTENT_FILTERING)
+    MockContentFilter::ensureInstalled();
 #endif
 }
 
@@ -2539,5 +2551,12 @@ void Internals::queueMicroTask(int testNumber)
     if (contextDocument())
         MicroTaskQueue::singleton().queueMicroTask(MicroTaskTest::create(contextDocument()->createWeakPtr(), testNumber));
 }
+
+#if ENABLE(CONTENT_FILTERING)
+MockContentFilterSettings& Internals::mockContentFilterSettings()
+{
+    return MockContentFilterSettings::singleton();
+}
+#endif
 
 }
