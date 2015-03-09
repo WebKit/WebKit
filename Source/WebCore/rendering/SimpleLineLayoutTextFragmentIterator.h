@@ -92,8 +92,8 @@ public:
     const FlowContents::Segment& segmentForPosition(unsigned position) const { return m_flowContents.segmentForPosition(position); };
 
 private:
-    unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
-    unsigned findNextBreakablePosition(unsigned position) const;
+    enum PositionType { Breakable, NonWhitespace };
+    unsigned skipToNextPosition(PositionType, unsigned startPosition) const;
     UChar characterAt(unsigned position) const;
     bool isLineBreak(unsigned position) const;
     bool isEnd(unsigned position) const;
