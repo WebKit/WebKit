@@ -1,3 +1,18 @@
+2015-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt to fix timeouts on iOS Simulator layout tests
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run): Most layout test runs on iOS
+        Simulator end after the first 50 tests time out.  Some analysis
+        this past weekend shows that the 'Booted' status in the output
+        of `xcrun simctl list` is not sufficient (and watching the test
+        run shows that SpringBoard hasn't fully started to the point
+        where it's displaying icons on the home screen).  The workaround
+        until we have a better fix is to add an arbitrary timeout to let
+        SpringBoard finish launching.  In practice, 15 seconds is
+        probably enough, but 30 seconds should nearly always work.
+
 2015-03-09  Per Arne Vollan  <peavo@outlook.com>
 
         Unreviewed. Add myself as a committer.

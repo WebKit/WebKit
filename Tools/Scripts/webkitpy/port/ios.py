@@ -209,6 +209,11 @@ class IOSSimulatorPort(Port):
             '--args', '-CurrentDeviceUDID', device_udid])
         Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.BOOTED)
 
+        # FIXME: Pause here until SpringBoard finishes launching to workaround <rdar://problem/20000383>.
+        boot_delay = 30
+        _log.debug('Waiting {seconds} seconds for iOS Simulator to finish booting ...'.format(seconds=boot_delay))
+        time.sleep(boot_delay)
+
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
         fifos = [path for path in os.listdir('/tmp') if re.search('org.webkit.(DumpRenderTree|WebKitTestRunner).*_(IN|OUT|ERROR)', path)]
