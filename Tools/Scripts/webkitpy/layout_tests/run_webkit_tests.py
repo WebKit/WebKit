@@ -208,6 +208,8 @@ def parse_args(args):
         optparse.make_option("--java", action="store_true",
             default=False,
             help="Build java support files"),
+        optparse.make_option("--layout-tests-directory", action="store", default=None,
+            help="Override the default layout test directory.", dest="layout_tests_dir")
     ]))
 
     option_group_definitions.append(("Testing Options", [

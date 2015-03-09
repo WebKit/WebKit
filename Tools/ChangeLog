@@ -1,3 +1,20 @@
+2015-03-06  Jer Noble  <jer.noble@apple.com>
+
+        Add an option to run-webkit-tests to override the LayoutTests/ directory
+        https://bugs.webkit.org/show_bug.cgi?id=142418
+
+        Reviewed by David Kilzer.
+
+        Add an arugment to run-webkit-tests which, when set, overrides the port's default LayoutTests
+        directory. The base port will parse the options during initialization and store the override
+        location if present. layout_tests_dir() will return this overridden location if set.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.layout_tests_dir):
+
 2015-03-09  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Enable WorkQueue tests for CMake ports

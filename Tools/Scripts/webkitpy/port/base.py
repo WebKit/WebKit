@@ -137,6 +137,7 @@ class Port(object):
         self._results_directory = None
         self._root_was_set = hasattr(options, 'root') and options.root
         self._jhbuild_wrapper = []
+        self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir
 
     def architecture(self):
         return self.get_option('architecture')
@@ -666,6 +667,8 @@ class Port(object):
         return self._webkit_finder.path_to_script(script_name)
 
     def layout_tests_dir(self):
+        if self._layout_tests_dir:
+            return self._layout_tests_dir
         return self._webkit_finder.layout_tests_dir()
 
     def perf_tests_dir(self):
