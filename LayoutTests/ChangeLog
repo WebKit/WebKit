@@ -1,3 +1,17 @@
+2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] x-height cannot be specified
+        https://bugs.webkit.org/show_bug.cgi?id=142465
+
+        Reviewed by Simon Fraser.
+
+        For all non-system fonts, OS X disregards the font's reported x-height. Therefore,
+        it is impossible to satisfy this test.
+
+        * fast/css/ex-unit-with-no-x-height-expected.txt: Removed.
+        * fast/css/ex-unit-with-no-x-height.html: Removed.
+        * platform/mac/TestExpectations:
+
 2015-03-09  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK+ Gardening
