@@ -1,3 +1,17 @@
+2015-03-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Do not show passing test result on output of EFL layout test
+        https://bugs.webkit.org/show_bug.cgi?id=142380
+
+        Reviewed by Darin Adler.
+
+        To show passing tests has caused inconvenience when we detect problem tests
+        in output of layout test. So this patch applies '--debug-rwt-logging' except for EFL port
+        in order not to show passing tests in the output of EFL layout test.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start):
+
 2015-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
