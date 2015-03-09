@@ -1,0 +1,31 @@
+Tests for ES6 class syntax "extends"
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new Base) instanceof Base is true
+PASS (new Derived) instanceof Derived is true
+PASS (new Derived).baseMethod() is "base"
+PASS (new Derived).overridenMethod() is "derived"
+PASS Derived.staticBaseMethod() is "base"
+PASS Derived.staticOverridenMethod() is "derived"
+PASS x = class extends threw exception SyntaxError: Unexpected end of script.
+PASS x = class extends threw exception SyntaxError: Unexpected end of script.
+PASS x = class extends Base { threw exception SyntaxError: Unexpected end of script.
+PASS x = class extends Base {} threw exception SyntaxError: Class declaration without a constructor is not supported yet..
+PASS x = class extends Base { constructor() { } } did not throw exception.
+PASS x.__proto__ is Base
+PASS x.prototype.__proto__ is Base.prototype
+PASS x = class extends null { constructor() { } }; x.__proto__ is Function.prototype
+PASS x.__proto__ is Function.prototype
+PASS x = class extends 3 { constructor() { } }; x.__proto__ threw exception TypeError: The superclass is not an object..
+PASS x = class extends "abc" { constructor() { } }; x.__proto__ threw exception TypeError: The superclass is not an object..
+baseWithBadPrototype = class { constructor() { } }; baseWithBadPrototype.prototype = 3
+PASS x = class extends baseWithBadPrototype { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
+baseWithBadPrototype.prototype = "abc"
+PASS x = class extends baseWithBadPrototype { constructor() { } } threw exception TypeError: The superclass's prototype is not an object..
+PASS baseWithBadPrototype.prototype = null; x = class extends baseWithBadPrototype { constructor() { } } did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,104 @@
+2015-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Support extends and super keywords
+        https://bugs.webkit.org/show_bug.cgi?id=142200
+
+        Reviewed by Filip Pizlo.
+
+        Added the support for ES6 class syntax inheritance.
+
+        Added ConstructorKind as well as boolean flags indicating the constructor kind to
+        various classes in UnlinkedCodeBlock as well as AST nodes.
+
+        Each method stores the associated class as its homeObjectPrivateName. This value is used to
+        make super calls.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::UnlinkedFunctionExecutable::constructorKindIsDerived): Added.
+        (JSC::UnlinkedCodeBlock::constructorKindIsDerived): Added.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Don't emit op_create_this in a derived class
+        as the object is allocated by the highest base class's constructor. Also set "this" to null
+        and store the original value in m_newTargetRegister. "this" is supposed to be in TDZ but
+        that will be implemented in a separate patch.
+        (JSC::BytecodeGenerator::emitReturn): Allow "undefined" to be returned from a derived class.
+        In a derived class's constructor, not returning "undefined" or an object results in a type
+        error instead of "this" being returned.
+        (JSC::BytecodeGenerator::emitThrowTypeError): Added.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::constructorKindIsDerived): Added.
+        (JSC::BytecodeGenerator::newTarget): Added.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::SuperNode::emitBytecode): Added. Emits the code to obtain the callee's parent class.
+        (JSC::emitSuperBaseForCallee): Added. Emits the code to obtain the parent class's prototype.
+        (JSC::emitPutHomeObject): Added.
+        (JSC::PropertyListNode::emitBytecode): Stores the home object when adding methods.
+        (JSC::PropertyListNode::emitPutConstantProperty): Ditto.
+        (JSC::BracketAccessorNode::emitBytecode): Added the support for super['foo'].
+        (JSC::DotAccessorNode::emitBytecode): Added the support for super.foo.
+        (JSC::FunctionCallValueNode::emitBytecode): Added the support for super().
+        (JSC::FunctionCallBracketNode::emitBytecode): Added the support for super['foo']().
+        (JSC::FunctionCallDotNode::emitBytecode): Added the support for super.foo().
+        (JSC::DeleteBracketNode::emitBytecode): Forbid "delete super.foo".
+        (JSC::DeleteDotNode::emitBytecode): Forbid "delete super['foo']".
+        (JSC::ClassExprNode::emitBytecode): Added the support for "classHeritage". This is the main
+        logic for inheritance. When a class B inherits from a class A, set B.__proto__ to A and set
+        B.prototype.__proto__ to A.prototype. Throw exceptions when either A or A.__proto__ is not
+        an object.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::superExpr): Added.
+
+        * parser/NodeConstructors.h:
+        (JSC::SuperNode::SuperNode): Added.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isSuperNode):
+        (JSC::PropertyNode::type):
+        (JSC::PropertyNode::needsSuperBinding):
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo): Throw a parser error if super() is used outside
+        of class constructors.
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass): ConstructorKind is "derived" if and only if the parent
+        class is specified in the declaration / expression.
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression): Added the support for "super()", "super.foo",
+        and "super['foo']". Throw a semantic error if "super" appears by itself.
+
+        * parser/Parser.h:
+        (JSC::Scope::Scope): Added m_hasDirectSuper. This variable keeps track of the use of "super()"
+        so that parseFunctionInfo can spit an error if it's used outside of class constructors.
+        (JSC::Scope::hasDirectSuper): Added.
+        (JSC::Scope::setHasDirectSuper): Added.
+
+        * parser/ParserModes.h:
+        (JSC::ConstructorKind): Added.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::superExpr): Added.
+
+        * runtime/CommonIdentifiers.h: Added homeObjectPrivateName.
+
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::executableInfo): 
+        (JSC::ProgramExecutable::executableInfo):
+
 2015-03-08  Andreas Kling  <akling@apple.com>
 
         JITThunks keeps finalized Weaks around, pinning WeakBlocks.

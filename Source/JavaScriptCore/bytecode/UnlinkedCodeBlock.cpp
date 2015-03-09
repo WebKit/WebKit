@@ -61,7 +61,8 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     function->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
     executable->recordParse(function->features(), function->hasCapturedVariables());
     
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode,
+        ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKindIsDerived()));
     auto generator(std::make_unique<BytecodeGenerator>(vm, function.get(), result, debuggerMode, profilerMode));
     error = generator->generate();
     if (error.isValid())
@@ -84,6 +85,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_isInStrictContext(node->isInStrictContext())
     , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
+    , m_constructorKindIsDerived(node->constructorKindIsDerived())
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
     , m_parameters(node->parameters())
@@ -229,6 +231,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_isConstructor(info.m_isConstructor)
     , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(info.m_isBuiltinFunction)
+    , m_constructorKindIsDerived(info.m_constructorKindIsDerived)
     , m_firstLine(0)
     , m_lineCount(0)
     , m_endColumn(UINT_MAX)

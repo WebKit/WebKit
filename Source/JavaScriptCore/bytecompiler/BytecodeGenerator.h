@@ -269,7 +269,12 @@ namespace JSC {
         ParserArena& parserArena() const { return m_scopeNode->parserArena(); }
         const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
 
-        bool isConstructor() { return m_codeBlock->isConstructor(); }
+        bool isConstructor() const { return m_codeBlock->isConstructor(); }
+#if ENABLE(ES6_CLASS_SYNTAX)
+        bool constructorKindIsDerived() const { return m_codeBlock->constructorKindIsDerived(); }
+#else
+        bool constructorKindIsDerived() const { return false; }
+#endif
 
         ParserError generate();
 
@@ -290,7 +295,8 @@ namespace JSC {
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
-        
+        RegisterID* newTarget() { return m_newTargetRegister; }
+
         RegisterID* scopeRegister() { return m_scopeRegister; }
 
         // Returns the next available temporary register. Registers returned by
@@ -763,6 +769,7 @@ namespace JSC {
         RegisterID* m_emptyValueRegister { nullptr };
         RegisterID* m_globalObjectRegister { nullptr };
         RegisterID* m_localArgumentsRegister { nullptr };
+        RegisterID* m_newTargetRegister { nullptr };
 
         Vector<Identifier, 16> m_watchableVariables;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;

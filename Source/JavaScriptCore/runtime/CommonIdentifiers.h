@@ -261,7 +261,8 @@
     macro(isFinite) \
     macro(TypeError) \
     macro(undefined) \
-    macro(BuiltinLog)
+    macro(BuiltinLog) \
+    macro(homeObject)
 
 namespace JSC {
     

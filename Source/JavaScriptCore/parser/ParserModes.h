@@ -34,6 +34,9 @@ namespace JSC {
 enum JSParserStrictness { JSParseNormal, JSParseBuiltin, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 
+enum class ConstructorKind { Base, Derived };
+enum class SuperBinding { Needed, NotNeeded };
+
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 

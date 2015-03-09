@@ -156,6 +156,30 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
     return result;
 }
 
+// ------------------------------ SuperNode -------------------------------------
+
+RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (dst == generator.ignoredResult())
+        return 0;
+
+    RegisterID callee;
+    callee.setIndex(JSStack::Callee);
+
+    RefPtr<RegisterID> homeObject = generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().homeObjectPrivateName);
+    RefPtr<RegisterID> protoParent = generator.emitGetById(generator.newTemporary(), homeObject.get(), generator.propertyNames().underscoreProto);
+    return generator.emitGetById(generator.finalDestination(dst), protoParent.get(), generator.propertyNames().constructor);
+}
+
+static RegisterID* emitSuperBaseForCallee(BytecodeGenerator& generator)
+{
+    RegisterID callee;
+    callee.setIndex(JSStack::Callee);
+
+    RefPtr<RegisterID> homeObject = generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().homeObjectPrivateName);
+    return generator.emitGetById(generator.newTemporary(), homeObject.get(), generator.propertyNames().underscoreProto);
+}
+
 // ------------------------------ ResolveNode ----------------------------------
 
 bool ResolveNode::isPure(BytecodeGenerator& generator) const
@@ -294,6 +318,11 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 // ------------------------------ PropertyListNode -----------------------------
 
+static inline void emitPutHomeObject(BytecodeGenerator& generator, RegisterID* function, RegisterID* homeObject)
+{
+    generator.emitPutById(function, generator.propertyNames().homeObjectPrivateName, homeObject);
+}
+
 RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     // Fast case: this loop just handles regular value properties.
@@ -330,6 +359,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             }
 
             RegisterID* value = generator.emitNode(node->m_assign);
+            if (node->needsSuperBinding())
+                emitPutHomeObject(generator, value, dst);
 
             // This is a get/set property, find its entry in the map.
             ASSERT(node->m_type == PropertyNode::Getter || node->m_type == PropertyNode::Setter);
@@ -344,12 +375,14 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             // Generate the paired node now.
             RefPtr<RegisterID> getterReg;
             RefPtr<RegisterID> setterReg;
+            RegisterID* secondReg = nullptr;
 
             if (node->m_type == PropertyNode::Getter) {
                 getterReg = value;
                 if (pair.second) {
                     ASSERT(pair.second->m_type == PropertyNode::Setter);
                     setterReg = generator.emitNode(pair.second->m_assign);
+                    secondReg = setterReg.get();
                 } else {
                     setterReg = generator.newTemporary();
                     generator.emitLoad(setterReg.get(), jsUndefined());
@@ -360,11 +393,15 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 if (pair.second) {
                     ASSERT(pair.second->m_type == PropertyNode::Getter);
                     getterReg = generator.emitNode(pair.second->m_assign);
+                    secondReg = getterReg.get();
                 } else {
                     getterReg = generator.newTemporary();
                     generator.emitLoad(getterReg.get(), jsUndefined());
                 }
             }
+
+            if (pair.second && pair.second->needsSuperBinding())
+                emitPutHomeObject(generator, secondReg, dst);
 
             generator.emitPutGetterSetter(dst, *node->name(), getterReg.get(), setterReg.get());
         }
@@ -375,18 +412,30 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
+    RefPtr<RegisterID> value = generator.emitNode(node.m_assign);
+    if (node.needsSuperBinding())
+        emitPutHomeObject(generator, value.get(), newObj);
     if (node.name()) {
-        generator.emitDirectPutById(newObj, *node.name(), generator.emitNode(node.m_assign), node.putType());
+        generator.emitDirectPutById(newObj, *node.name(), value.get(), node.putType());
         return;
     }
     RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
-    generator.emitDirectPutByVal(newObj, propertyName.get(), generator.emitNode(node.m_assign));
+    generator.emitDirectPutByVal(newObj, propertyName.get(), value.get());
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------
 
 RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_base->isSuperNode()) {
+        // FIXME: Should we generate the profiler info?
+        if (m_subscript->isString()) {
+            const Identifier& id = static_cast<StringNode*>(m_subscript)->value();
+            return generator.emitGetById(generator.finalDestination(dst), emitSuperBaseForCallee(generator), id);
+        }
+        return generator.emitGetByVal(generator.finalDestination(dst), emitSuperBaseForCallee(generator), generator.emitNode(m_subscript));
+    }
+
     if (m_base->isResolveNode() 
         && generator.willResolveToArgumentsRegister(static_cast<ResolveNode*>(m_base)->identifier())
         && !generator.symbolTable().slowArguments()) {
@@ -431,7 +480,7 @@ RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, Register
     }
 
 nonArgumentsPath:
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
+    RefPtr<RegisterID> base = m_base->isSuperNode() ? emitSuperBaseForCallee(generator) : generator.emitNode(m_base);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* finalDest = generator.finalDestination(dst);
     RegisterID* ret = generator.emitGetById(finalDest, base.get(), m_ident);
@@ -521,6 +570,13 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> func = generator.emitNode(m_expr);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     CallArguments callArguments(generator, m_args);
+    if (m_expr->isSuperNode()) {
+        ASSERT(generator.constructorKindIsDerived());
+        generator.emitMove(callArguments.thisRegister(), generator.newTarget());
+        RegisterID* ret = generator.emitConstruct(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
+        generator.emitMove(generator.thisRegister(), ret);
+        return ret;
+    }
     generator.emitLoad(callArguments.thisRegister(), jsUndefined());
     RegisterID* ret = generator.emitCall(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.vm()->typeProfiler()) {
@@ -574,13 +630,17 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
 
 RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
+    bool baseIsSuper = m_base->isSuperNode();
+    RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : generator.emitNode(m_base);
     RefPtr<RegisterID> property = generator.emitNode(m_subscript);
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     RefPtr<RegisterID> function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
-    generator.emitMove(callArguments.thisRegister(), base.get());
+    if (baseIsSuper)
+        generator.emitMove(callArguments.thisRegister(), generator.thisRegister());
+    else
+        generator.emitMove(callArguments.thisRegister(), base.get());
     RegisterID* ret = generator.emitCall(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.vm()->typeProfiler()) {
         generator.emitProfileType(returnValue.get(), ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
@@ -596,9 +656,13 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     RefPtr<RegisterID> function = generator.tempDestination(dst);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
-    generator.emitNode(callArguments.thisRegister(), m_base);
+    bool baseIsSuper = m_base->isSuperNode();
+    if (baseIsSuper)
+        generator.emitMove(callArguments.thisRegister(), generator.thisRegister());
+    else
+        generator.emitNode(callArguments.thisRegister(), m_base);
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
-    generator.emitGetById(function.get(), callArguments.thisRegister(), m_ident);
+    generator.emitGetById(function.get(), baseIsSuper ? emitSuperBaseForCallee(generator) : callArguments.thisRegister(), m_ident);
     RegisterID* ret = generator.emitCall(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.vm()->typeProfiler()) {
         generator.emitProfileType(returnValue.get(), ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
@@ -940,6 +1004,8 @@ RegisterID* DeleteBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     RefPtr<RegisterID> r1 = generator.emitNode(m_subscript);
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    if (m_base->isSuperNode())
+        return emitThrowReferenceError(generator, "Cannot delete a super property");
     return generator.emitDeleteByVal(generator.finalDestination(dst), r0.get(), r1.get());
 }
 
@@ -950,6 +1016,8 @@ RegisterID* DeleteDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> r0 = generator.emitNode(m_base);
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    if (m_base->isSuperNode())
+        return emitThrowReferenceError(generator, "Cannot delete a super property");
     return generator.emitDeleteById(generator.finalDestination(dst), r0.get(), m_ident);
 }
 
@@ -2807,10 +2875,41 @@ void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    ASSERT(!m_parentClassExpression);
+    RefPtr<RegisterID> superclass;
+    if (m_classHeritage) {
+        superclass = generator.newTemporary();
+        generator.emitNode(superclass.get(), m_classHeritage);
+    }
 
     RefPtr<RegisterID> constructor = generator.emitNode(dst, m_constructorExpression);
+    // FIXME: Make the prototype non-configurable & non-writable.
     RefPtr<RegisterID> prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
+
+    if (superclass) {
+        RefPtr<RegisterID> tempRegister = generator.newTemporary();
+        RefPtr<Label> superclassIsNullLabel = generator.newLabel();
+        generator.emitJumpIfTrue(generator.emitUnaryOp(op_eq_null, tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
+
+        // FIXME: Throw TypeError if it's a generator function.
+        RefPtr<Label> superclassIsObjectLabel = generator.newLabel();
+        generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), superclass.get()), superclassIsObjectLabel.get());
+        generator.emitThrowTypeError(ASCIILiteral("The superclass is not an object."));
+        generator.emitLabel(superclassIsObjectLabel.get());
+
+        RefPtr<RegisterID> protoParent = generator.newTemporary();
+        generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
+
+        RefPtr<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
+        generator.emitJumpIfTrue(generator.emitUnaryOp(op_is_object_or_null, tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
+        generator.emitThrowTypeError(ASCIILiteral("The superclass's prototype is not an object."));
+        generator.emitLabel(protoParentIsObjectOrNullLabel.get());
+
+        generator.emitDirectPutById(constructor.get(), generator.propertyNames().underscoreProto, superclass.get(), PropertyNode::Unknown);
+        generator.emitDirectPutById(prototype.get(), generator.propertyNames().underscoreProto, protoParent.get(), PropertyNode::Unknown);
+
+        generator.emitLabel(superclassIsNullLabel.get());
+        emitPutHomeObject(generator, constructor.get(), prototype.get());
+    }
 
     if (m_staticMethods)
         generator.emitNode(constructor.get(), m_staticMethods);

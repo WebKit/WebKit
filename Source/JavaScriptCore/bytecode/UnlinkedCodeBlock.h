@@ -65,12 +65,13 @@ typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, bool constructorKindIsDerived)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
+        , m_constructorKindIsDerived(constructorKindIsDerived)
     {
     }
     bool m_needsActivation : 1;
@@ -78,6 +79,7 @@ struct ExecutableInfo {
     bool m_isStrictMode : 1;
     bool m_isConstructor : 1;
     bool m_isBuiltinFunction : 1;
+    bool m_constructorKindIsDerived : 1;
 };
 
 enum UnlinkedFunctionKind {
@@ -116,6 +118,7 @@ public:
             return JSParseStrict;
         return JSParseNormal;
     }
+    bool constructorKindIsDerived() const { return m_constructorKindIsDerived; }
 
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
@@ -167,6 +170,7 @@ private:
     bool m_isInStrictContext : 1;
     bool m_hasCapturedVariables : 1;
     bool m_isBuiltinFunction : 1;
+    bool m_constructorKindIsDerived : 1;
 
     Identifier m_name;
     Identifier m_inferredName;
@@ -341,7 +345,9 @@ public:
     bool isNumericCompareFunction() const { return m_isNumericCompareFunction; }
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
-    
+
+    bool constructorKindIsDerived() const { return m_constructorKindIsDerived; }
+
     void shrinkToFit()
     {
         m_jumpTargets.shrinkToFit();
@@ -533,6 +539,7 @@ private:
     bool m_isConstructor : 1;
     bool m_hasCapturedVariables : 1;
     bool m_isBuiltinFunction : 1;
+    bool m_constructorKindIsDerived : 1;
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;

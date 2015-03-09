@@ -1,3 +1,20 @@
+2015-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Support extends and super keywords
+        https://bugs.webkit.org/show_bug.cgi?id=142200
+
+        Reviewed by Filip Pizlo.
+
+        Added tests for "extends" and "super" keywords.
+
+        * TestExpectations:
+        * js/class-syntax-extends-expected.txt: Added.
+        * js/class-syntax-extends.html: Added.
+        * js/class-syntax-super-expected.txt: Added.
+        * js/class-syntax-super.html: Added.
+        * js/script-tests/class-syntax-extends.js: Added.
+        * js/script-tests/class-syntax-super.js: Added.
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large

@@ -167,12 +167,13 @@ FunctionParameters::~FunctionParameters()
         patterns()[i]->deref();
 }
 
-FunctionBodyNode::FunctionBodyNode(ParserArena&, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool isInStrictContext)
+FunctionBodyNode::FunctionBodyNode(ParserArena&, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool isInStrictContext, ConstructorKind constructorKind)
     : StatementNode(endLocation)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
     , m_startStartOffset(startLocation.startOffset)
     , m_isInStrictContext(isInStrictContext)
+    , m_constructorKindIsDerived(constructorKind == ConstructorKind::Derived)
 {
 }
 

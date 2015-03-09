@@ -164,6 +164,7 @@ namespace JSC {
         virtual bool isSubtract() const { return false; }
         virtual bool isBoolean() const { return false; }
         virtual bool isSpreadExpression() const { return false; }
+        virtual bool isSuperNode() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, FallThroughMode);
 
@@ -445,6 +446,15 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
+    class SuperNode final : public ExpressionNode {
+    public:
+        SuperNode(const JSTokenLocation&);
+
+    private:
+        virtual bool isSuperNode() const override { return true; }
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+    };
+
     class ResolveNode : public ExpressionNode {
     public:
         ResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& start);
@@ -501,22 +511,24 @@ namespace JSC {
         enum Type { Constant = 1, Getter = 2, Setter = 4 };
         enum PutType { Unknown, KnownDirect };
 
-        PropertyNode(const Identifier&, ExpressionNode*, Type, PutType);
+        PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding);
         PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType);
-        
+
         ExpressionNode* expressionName() const { return m_expression; }
         const Identifier* name() const { return m_name; }
 
-        Type type() const { return m_type; }
-        PutType putType() const { return m_putType; }
+        Type type() const { return static_cast<Type>(m_type); }
+        bool needsSuperBinding() const { return m_needsSuperBinding; }
+        PutType putType() const { return static_cast<PutType>(m_putType); }
 
     private:
         friend class PropertyListNode;
         const Identifier* m_name;
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
-        Type m_type;
-        PutType m_putType;
+        unsigned m_type : 3;
+        unsigned m_needsSuperBinding : 1;
+        unsigned m_putType : 1;
     };
 
     class PropertyListNode : public ExpressionNode {
@@ -1547,7 +1559,7 @@ namespace JSC {
     public:
         using ParserArenaDeletable::operator new;
 
-        FunctionBodyNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, bool isInStrictContext);
+        FunctionBodyNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, bool isInStrictContext, ConstructorKind);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
 
@@ -1575,6 +1587,7 @@ namespace JSC {
 
         int startStartOffset() const { return m_startStartOffset; }
         bool isInStrictContext() const { return m_isInStrictContext; }
+        bool constructorKindIsDerived() { return m_constructorKindIsDerived; }
 
     protected:
         Identifier m_ident;
@@ -1587,7 +1600,8 @@ namespace JSC {
         unsigned m_endColumn;
         SourceCode m_source;
         int m_startStartOffset;
-        bool m_isInStrictContext;
+        bool m_isInStrictContext : 1;
+        bool m_constructorKindIsDerived : 1;
     };
 
     class FunctionNode final : public ScopeNode {
@@ -1644,7 +1658,7 @@ namespace JSC {
 
         const Identifier& m_name;
         ExpressionNode* m_constructorExpression;
-        ExpressionNode* m_parentClassExpression;
+        ExpressionNode* m_classHeritage;
         PropertyListNode* m_instanceMethods;
         PropertyListNode* m_staticMethods;
     };
