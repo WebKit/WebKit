@@ -1,3 +1,15 @@
+2015-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build when compiling with dead code stripping disabled
+        <http://webkit.org/b/142467>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        (EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]): Disable mig code
+        generation and compilation for out-of-process plugin support.
+        This was never used on iOS.
+
 2015-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] SVG fonts are garbled

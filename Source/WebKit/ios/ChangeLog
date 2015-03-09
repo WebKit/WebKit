@@ -1,3 +1,13 @@
+2015-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build when compiling with dead code stripping disabled
+        <http://webkit.org/b/142467>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::save): Add missing method.
+
 2015-02-14  Alexey Proskuryakov  <ap@apple.com>
 
         rel="noreferrer" should make window.opener null
