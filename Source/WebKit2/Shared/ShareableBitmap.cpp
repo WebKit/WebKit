@@ -138,29 +138,6 @@ ShareableBitmap::~ShareableBitmap()
         fastFree(m_data);
 }
 
-bool ShareableBitmap::resize(const IntSize& size)
-{
-    // We can't resize backing stores that are backed by shared memory.
-    ASSERT(!isBackedBySharedMemory());
-
-    if (size == m_size)
-        return true;
-
-    size_t newNumBytes = numBytesForSize(size);
-    
-    // Try to resize.
-    char* newData = 0;
-    if (!tryFastRealloc(m_data, newNumBytes).getValue(newData)) {
-        // We failed, but the backing store is still kept in a consistent state.
-        return false;
-    }
-
-    m_size = size;
-    m_data = newData;
-
-    return true;
-}
-
 void* ShareableBitmap::data() const
 {
     if (isBackedBySharedMemory())

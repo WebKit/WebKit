@@ -593,18 +593,15 @@ bool PluginProxy::updateBackingStore()
 
     IntSize backingStoreSize = m_pluginSize;
     backingStoreSize.scale(contentsScaleFactor());
-    
-    if (!m_backingStore) {
-        m_backingStore = ShareableBitmap::create(backingStoreSize, ShareableBitmap::SupportsAlpha);
-        return true;
+
+    if (m_backingStore) {
+        if (m_backingStore->size() == backingStoreSize)
+            return false;
+        m_backingStore = nullptr; // Give malloc a chance to recycle our backing store.
     }
 
-    if (backingStoreSize != m_backingStore->size()) {
-        // The backing store already exists, just resize it.
-        return m_backingStore->resize(backingStoreSize);
-    }
-
-    return false;
+    m_backingStore = ShareableBitmap::create(backingStoreSize, ShareableBitmap::SupportsAlpha);
+    return !!m_backingStore;
 }
 
 uint64_t PluginProxy::windowNPObjectID()
