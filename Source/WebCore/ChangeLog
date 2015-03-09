@@ -22,6 +22,20 @@
 
 2015-03-09  Roger Fong  <roger_fong@apple.com>
 
+        Only call showControls if controls are hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=142496.
+        <rdar://problem/20083732>
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleWrapperMouseMove):
+        (Controller.prototype.controlsAreHidden):
+        Controls are hidden if the ‘show’ class name is not present,
+        not if the ‘hidden’ class name is.
+
+2015-03-09  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Re-add CSS property that was unintentionally removed in r180893
         <rdar://problem/20083715>
 

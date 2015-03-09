@@ -676,7 +676,8 @@ Controller.prototype = {
 
     handleWrapperMouseMove: function(event)
     {
-        this.showControls();
+        if (this.controlsAreHidden())
+            this.showControls();
         this.resetHideControlsTimer();
 
         if (!this.isDragging)
@@ -1230,7 +1231,7 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.isAudio() && this.controls.panel.classList.contains(this.ClassNames.hidden);
+        return !this.isAudio() && !this.controls.panel.classList.contains(this.ClassNames.show);
     },
 
     removeControls: function()
