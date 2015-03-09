@@ -34,6 +34,7 @@
 #include "FontGenericFamilies.h"
 #include "IntSize.h"
 #include "InternalSettingsGenerated.h"
+#include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -87,6 +88,13 @@ public:
         bool m_autoscrollForDragAndDropEnabled;
         bool m_pluginReplacementEnabled;
         bool m_shouldConvertPositionStyleOnCopy;
+        bool m_fontFallbackPrefersPictographs;
+        bool m_backgroundShouldExtendBeyondPage;
+        SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
+        bool m_scrollingTreeIncludesFrames;
+#if ENABLE(TOUCH_EVENTS)
+        bool m_touchEventEmulationEnabled;
+#endif
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)

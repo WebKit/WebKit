@@ -1,3 +1,12 @@
+2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        svg/custom/svg-fonts-without-missing-glyph.xhtml fails after fonts/font-fallback-prefers-pictographs.html
+        https://bugs.webkit.org/show_bug.cgi?id=142470
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/TestExpectations:
+
 2015-03-09  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: add aliases between :nth-child()/:nth-last-child() and :first-child/:last-child

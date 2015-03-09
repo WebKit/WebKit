@@ -1237,7 +1237,6 @@ webkit.org/b/140589 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
-webkit.org/b/142470 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]
