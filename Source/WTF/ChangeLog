@@ -1,3 +1,16 @@
+2015-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] WTF::WorkQueue does not balance ref/deref properly
+        https://bugs.webkit.org/show_bug.cgi?id=142471
+
+        Reviewed by Antti Koivisto.
+
+        Make sure we deref the count when we execute a function in the
+        WorkQueue.
+
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::performWorkOnRegisteredWorkThread):
+
 2015-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Revive WTF::WorkQueue on Windows

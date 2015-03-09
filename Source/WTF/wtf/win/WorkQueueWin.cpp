@@ -82,8 +82,10 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 
         // Allow more work to be scheduled while we're not using the queue directly.
         m_workItemQueueLock.unlock();
-        for (auto& workItem : workItemQueue)
+        for (auto& workItem : workItemQueue) {
             workItem->function()();
+            deref();
+        }
         m_workItemQueueLock.lock();
     }
 

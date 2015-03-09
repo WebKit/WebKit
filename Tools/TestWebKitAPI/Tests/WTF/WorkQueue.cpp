@@ -53,13 +53,15 @@ TEST(WTF_WorkQueue, Simple)
     static const char* thirdTestLabel = "thirdTest";
 
     auto queue = WorkQueue::create("com.apple.WebKit.Test.simple");
-    
+    int initialRefCount = queue->refCount();
+    EXPECT_EQ(1, initialRefCount);
+
     MutexLocker locker(m_lock);
     queue->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
     });
-    
+
     queue->dispatch([&](void) {
         m_functionCallOrder.append(longTestLabel);
         std::this_thread::sleep_for(std::chrono::nanoseconds(100));
@@ -78,13 +80,17 @@ TEST(WTF_WorkQueue, Simple)
         m_testCompleted.signal();
     });
 
+    EXPECT_GT(queue->refCount(), 1);
+
     m_testCompleted.wait(m_lock);
+
+    EXPECT_EQ(1, queue->refCount());
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
 
-    EXPECT_EQ(m_functionCallOrder.size(), static_cast<size_t>(3));
+    EXPECT_EQ(static_cast<size_t>(3), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
     EXPECT_STREQ(longTestLabel, m_functionCallOrder[1].c_str());
     EXPECT_STREQ(thirdTestLabel, m_functionCallOrder[2].c_str());
@@ -102,6 +108,11 @@ TEST(WTF_WorkQueue, TwoQueues)
     
     auto queue1 = WorkQueue::create("com.apple.WebKit.Test.twoQueues1");
     auto queue2 = WorkQueue::create("com.apple.WebKit.Test.twoQueues2");
+
+    int initialQueue1RefCount = queue1->refCount();
+    int initialQueue2RefCount = queue2->refCount();
+    EXPECT_EQ(1, initialQueue1RefCount);
+    EXPECT_EQ(1, initialQueue2RefCount);
 
     MutexLocker locker(m_lock);
     
@@ -132,14 +143,16 @@ TEST(WTF_WorkQueue, TwoQueues)
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_FALSE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
+    EXPECT_EQ(1, queue1->refCount());
 
     m_testQueue2Completed.wait(m_lock);
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
+    EXPECT_EQ(1, queue2->refCount());
 
-    EXPECT_EQ(m_functionCallOrder.size(), static_cast<size_t>(3));
+    EXPECT_EQ(static_cast<size_t>(3), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
     EXPECT_STREQ(thirdTestLabel, m_functionCallOrder[1].c_str());
     EXPECT_STREQ(longTestLabel, m_functionCallOrder[2].c_str());
@@ -182,7 +195,7 @@ TEST(WTF_WorkQueue, DispatchAfter)
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledDispatchAfterTest);
 
-    EXPECT_EQ(m_functionCallOrder.size(), static_cast<size_t>(2));
+    EXPECT_EQ(static_cast<size_t>(2), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
     EXPECT_STREQ(dispatchAfterLabel, m_functionCallOrder[1].c_str());
 }
