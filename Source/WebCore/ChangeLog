@@ -1,3 +1,11 @@
+2015-03-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Re-add CSS property that was unintentionally removed in r180893
+        <rdar://problem/20083715>
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel):
+
 2015-03-09  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Merge TextFragmentIterator::findNextBreakablePosition() and TextFragmentIterator::findNextNonWhitespacePosition().
