@@ -113,6 +113,7 @@ public:
     bool containsAnyFormControls() const;
     void stopLoading();
     bool handlesPageScaleGesture() const;
+    void setAccessibleName(const String&);
 
     static WebFrame* frameForContext(JSContextRef);
 

@@ -74,6 +74,8 @@ WK_EXPORT bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frame, d
 WK_EXPORT WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
 WK_EXPORT WKStringRef WKBundleFrameCopyMIMETypeForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
 
+WK_EXPORT void WKBundleFrameSetAccessibleName(WKBundleFrameRef frame, WKStringRef accessibleName);
+
 WK_EXPORT WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frame);
 
 typedef bool (*WKBundleFrameFrameFilterCallback)(WKBundleFrameRef frame, WKBundleFrameRef subframe, void* context);

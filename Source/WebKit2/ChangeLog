@@ -1,5 +1,21 @@
 2015-03-08  Sam Weinig  <sam@webkit.org>
 
+        AX: Expose a frame's accessible name through WK2 C SPI
+        <rdar://problem/19653068>
+        https://bugs.webkit.org/show_bug.cgi?id=142468
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameSetAccessibleName):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setAccessibleName):
+        * WebProcess/WebPage/WebFrame.h:
+        Add SPI to set a frame's accessible name. This matches the Legacy WebKit SPI -[WebFrame setAccessibleName:]. 
+
+2015-03-08  Sam Weinig  <sam@webkit.org>
+
         [Content Extensions] Pass compiled content extensions as read-only shared memory rather than copying them
         https://bugs.webkit.org/show_bug.cgi?id=142458
 

@@ -240,6 +240,11 @@ void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef direct
     toImpl(frameRef)->setTextDirection(toWTFString(directionRef));
 }
 
+void WKBundleFrameSetAccessibleName(WKBundleFrameRef frameRef, WKStringRef accessibleNameRef)
+{
+    toImpl(frameRef)->setAccessibleName(toWTFString(accessibleNameRef));
+}
+
 WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frameRef)
 {
     return WKBundleFrameCopyWebArchiveFilteringSubframes(frameRef, 0, 0);

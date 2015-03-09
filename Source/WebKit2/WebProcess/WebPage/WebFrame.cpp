@@ -510,6 +510,25 @@ bool WebFrame::handlesPageScaleGesture() const
     return pluginView && pluginView->handlesPageScaleFactor();
 }
 
+void WebFrame::setAccessibleName(const String& accessibleName)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    
+    if (!m_coreFrame)
+        return;
+
+    auto* document = m_coreFrame->document();
+    if (!document)
+        return;
+    
+    auto* rootObject = document->axObjectCache()->rootObject();
+    if (!rootObject)
+        return;
+
+    rootObject->setAccessibleName(accessibleName);
+}
+
 IntRect WebFrame::contentBounds() const
 {    
     if (!m_coreFrame)
