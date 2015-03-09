@@ -1,3 +1,12 @@
+2015-03-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening on 9th Mar.
+
+        Mark svg/text/select-textLength-spacingAndGlyphs-foo.html to failure.
+        Update new failling tests to existing bugs.
+
+        * platform/efl/TestExpectations:
+
 2015-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Last test gardening after r177774 (for reals this time)

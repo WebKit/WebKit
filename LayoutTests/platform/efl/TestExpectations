@@ -665,6 +665,7 @@ Bug(EFL) fast/loader/child-frame-add-after-back-forward.html [ Failure Pass ]
 Bug(EFL) fast/events/backspace-navigates-back.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
 Bug(EFL) js/dom/create-lots-of-workers.html [ Crash Failure Pass ]
+Bug(EFL) media/track/track-cues-pause-on-exit.html [ Failure Timeout Pass ]
 Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
@@ -809,6 +810,8 @@ webkit.org/b/108355 storage/websql/sql-error-codes.html [ Failure ]
 
 # Libsoup 2.42.0 regressions
 webkit.org/b/114918 http/tests/xmlhttprequest/cache-override.html [ Failure Pass ]
+webkit.org/b/114918 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html [ Failure Timeout Pass ]
+webkit.org/b/114918 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-mixed-case.html [ Timeout Pass ]
 
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure Pass ]
 
@@ -1959,6 +1962,7 @@ webkit.org/b/134153 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 webkit.org/b/134712 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
 
 webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
+webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
 
 webkit.org/b/135504 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135504 svg/css/parse-length.html [ Failure ]
@@ -2139,3 +2143,15 @@ webkit.org/b/142451 fast/text/emphasis-vertical.html [ Failure ]
 
 webkit.org/b/142452 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 webkit.org/b/142452 fast/writing-mode/broken-ideographic-font.html [ Failure ]
+
+# Need new baseline since r181260.
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
+webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
+
+webkit.org/b/142483 fast/css/font-face-default-font.html [ Failure ]
+webkit.org/b/142483 fast/css/font-face-in-media-rule.html [ Failure ]
