@@ -1,3 +1,14 @@
+2015-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt to fix WTF_WorkQueue.TwoQueues timeout test failure
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST): Change delay from 50ns to 50ms, and add
+        an expectation that will fail if we hit the race condition.
+        This test is inherently racy and will deadlock if the first job
+        for queue2 takes the mutex lock before the second job for
+        queue1.
+
 2015-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] WTF::WorkQueue does not balance ref/deref properly

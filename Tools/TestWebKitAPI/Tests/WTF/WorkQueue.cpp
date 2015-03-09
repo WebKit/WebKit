@@ -122,9 +122,13 @@ TEST(WTF_WorkQueue, TwoQueues)
     });
 
     queue2->dispatch([&](void) {
-        std::this_thread::sleep_for(std::chrono::nanoseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
         MutexLocker locker(m_lock);
+
+        // Will fail if queue2 took the mutex before queue1.
+        EXPECT_TRUE(calledThirdTest);
+
         m_functionCallOrder.append(longTestLabel);
         calledLongTest = true;
         m_testQueue2Completed.signal();
