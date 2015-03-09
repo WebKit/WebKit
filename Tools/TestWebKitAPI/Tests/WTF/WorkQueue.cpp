@@ -172,14 +172,12 @@ TEST(WTF_WorkQueue, DispatchAfter)
         m_dispatchAfterTestCompleted.signal();
     });
 
-    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     m_testCompleted.wait(m_lock);
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_FALSE(calledDispatchAfterTest);
     
     m_dispatchAfterTestCompleted.wait(m_lock);
-    std::chrono::time_point<std::chrono::system_clock> done = std::chrono::system_clock::now();
 
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledDispatchAfterTest);

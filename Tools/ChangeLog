@@ -1,5 +1,12 @@
 2015-03-08  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST): Remove two unused variables.
+
+2015-03-08  Brent Fulgham  <bfulgham@apple.com>
+
         Add some WorkQueue tests to TestWebKitAPI
         https://bugs.webkit.org/show_bug.cgi?id=142447
 
