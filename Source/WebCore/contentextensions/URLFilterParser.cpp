@@ -36,68 +36,277 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-const uint16_t hasNonCharacterMask = 0x0080;
-const uint16_t characterMask = 0x0007F;
-const uint16_t newlineClassIDBuiltinMask = 0x100;
-const uint16_t caseInsensitiveMask = 0x200;
-
-static TrivialAtom trivialAtomFromASCIICharacter(char character, bool caseSensitive)
-{
-    ASSERT(isASCII(character));
-
-    if (caseSensitive || !isASCIIAlpha(character))
-        return static_cast<uint16_t>(character);
-
-    return static_cast<uint16_t>(toASCIILower(character)) | caseInsensitiveMask;
-}
-
-enum class AtomQuantifier : uint16_t {
-    One = 0,
-    ZeroOrOne = 0x1000,
-    ZeroOrMore = 0x2000,
-    OneOrMore = 0x4000
+enum class AtomQuantifier : uint8_t {
+    One,
+    ZeroOrOne,
+    ZeroOrMore,
+    OneOrMore
 };
 
-static void quantifyTrivialAtom(TrivialAtom& trivialAtom, AtomQuantifier quantifier)
-{
-    ASSERT(trivialAtom & (hasNonCharacterMask | characterMask));
-    ASSERT(!(trivialAtom & 0xf000));
-    trivialAtom |= static_cast<uint16_t>(quantifier);
-}
-
-static AtomQuantifier trivialAtomQuantifier(TrivialAtom trivialAtom)
-{
-    switch (trivialAtom & 0xf000) {
-    case static_cast<unsigned>(AtomQuantifier::One):
-        return AtomQuantifier::One;
-    case static_cast<unsigned>(AtomQuantifier::ZeroOrOne):
-        return AtomQuantifier::ZeroOrOne;
-    case static_cast<unsigned>(AtomQuantifier::ZeroOrMore):
-        return AtomQuantifier::ZeroOrMore;
-    case static_cast<unsigned>(AtomQuantifier::OneOrMore):
-        return AtomQuantifier::OneOrMore;
+class Term {
+public:
+    Term()
+    {
     }
-    ASSERT_NOT_REACHED();
-    return AtomQuantifier::One;
-}
 
-static TrivialAtom trivialAtomForNewlineClassIDBuiltin()
-{
-    return hasNonCharacterMask | newlineClassIDBuiltinMask;
-}
+    Term(char character, bool isCaseSensitive)
+        : m_termType(TermType::CharacterSet)
+    {
+        new (NotNull, &m_atomData.characterSet) CharacterSet();
+        addCharacter(character, isCaseSensitive);
+    }
 
-class GraphBuilder {
-    struct BoundedSubGraph {
-        unsigned start;
-        unsigned end;
+    enum UniversalTransitionTag { UniversalTransition };
+    explicit Term(UniversalTransitionTag)
+        : m_termType(TermType::CharacterSet)
+    {
+        new (NotNull, &m_atomData.characterSet) CharacterSet();
+        for (unsigned i = 0; i < 128; ++i)
+            m_atomData.characterSet.characters.set(i);
+    }
+
+    enum CharacterSetTermTag { CharacterSetTerm };
+    Term(CharacterSetTermTag, bool isInverted)
+        : m_termType(TermType::CharacterSet)
+    {
+        new (NotNull, &m_atomData.characterSet) CharacterSet();
+        m_atomData.characterSet.inverted = isInverted;
+    }
+
+    Term(const Term& other)
+        : m_termType(other.m_termType)
+        , m_quantifier(other.m_quantifier)
+    {
+        switch (m_termType) {
+        case TermType::Empty:
+        case TermType::Deleted:
+            break;
+        case TermType::CharacterSet:
+            new (NotNull, &m_atomData.characterSet) CharacterSet(other.m_atomData.characterSet);
+            break;
+        }
+    }
+
+    Term(Term&& other)
+        : m_termType(WTF::move(other.m_termType))
+        , m_quantifier(WTF::move(other.m_quantifier))
+    {
+        switch (m_termType) {
+        case TermType::Empty:
+        case TermType::Deleted:
+            break;
+        case TermType::CharacterSet:
+            new (NotNull, &m_atomData.characterSet) CharacterSet(WTF::move(other.m_atomData.characterSet));
+            break;
+        }
+        other.destroy();
+    }
+
+    enum EmptyValueTag { EmptyValue };
+    Term(EmptyValueTag)
+        : m_termType(TermType::Empty)
+    {
+    }
+
+    enum DeletedValueTag { DeletedValue };
+    Term(DeletedValueTag)
+        : m_termType(TermType::Deleted)
+    {
+    }
+
+    ~Term()
+    {
+        destroy();
+    }
+
+    bool isValid() const
+    {
+        return m_termType != TermType::Empty && m_termType != TermType::Deleted;
+    }
+
+    void addCharacter(UChar character, bool isCaseSensitive)
+    {
+        ASSERT(isASCII(character));
+
+        ASSERT_WITH_SECURITY_IMPLICATION(m_termType == TermType::CharacterSet);
+        if (m_termType != TermType::CharacterSet)
+            return;
+
+        if (isCaseSensitive || !isASCIIAlpha(character))
+            m_atomData.characterSet.characters.set(character);
+        else {
+            m_atomData.characterSet.characters.set(toASCIIUpper(character));
+            m_atomData.characterSet.characters.set(toASCIILower(character));
+        }
+    }
+
+    void quantify(const AtomQuantifier& quantifier)
+    {
+        ASSERT_WITH_MESSAGE(m_quantifier == AtomQuantifier::One, "Transition to quantified term should only happen once.");
+        m_quantifier = quantifier;
+    }
+
+    AtomQuantifier quantifier() const
+    {
+        return m_quantifier;
+    }
+
+    bool isUniversalTransition() const
+    {
+        return m_termType == TermType::CharacterSet
+            && ((m_atomData.characterSet.inverted && !m_atomData.characterSet.characters.bitCount())
+                || (!m_atomData.characterSet.inverted && m_atomData.characterSet.characters.bitCount() == 128));
+    }
+
+    void visitSimpleTransitions(std::function<void(char)> visitor) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_termType == TermType::CharacterSet);
+        if (m_termType != TermType::CharacterSet)
+            return;
+
+        if (!m_atomData.characterSet.inverted) {
+            for (const auto& characterIterator : m_atomData.characterSet.characters.setBits())
+                visitor(static_cast<char>(characterIterator));
+        } else {
+            for (unsigned i = 1; i < m_atomData.characterSet.characters.size(); ++i) {
+                if (m_atomData.characterSet.characters.get(i))
+                    continue;
+                visitor(static_cast<char>(i));
+            }
+        }
+    }
+
+    Term& operator=(const Term& other)
+    {
+        destroy();
+        new (NotNull, this) Term(other);
+        return *this;
+    }
+
+    Term& operator=(Term&& other)
+    {
+        destroy();
+        new (NotNull, this) Term(WTF::move(other));
+        return *this;
+    }
+
+    bool operator==(const Term& other) const
+    {
+        if (other.m_termType != m_termType || other.m_quantifier != m_quantifier)
+            return false;
+
+        switch (m_termType) {
+        case TermType::Empty:
+        case TermType::Deleted:
+            return true;
+        case TermType::CharacterSet:
+            return m_atomData.characterSet == other.m_atomData.characterSet;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    unsigned hash() const
+    {
+        unsigned primary = static_cast<unsigned>(m_termType) << 16 | static_cast<unsigned>(m_quantifier);
+        unsigned secondary = 0;
+        switch (m_termType) {
+        case TermType::Empty:
+            secondary = 52184393;
+            break;
+        case TermType::Deleted:
+            secondary = 40342988;
+            break;
+        case TermType::CharacterSet:
+            secondary = m_atomData.characterSet.hash();
+            break;
+        }
+        return WTF::pairIntHash(primary, secondary);
+    }
+
+    bool isEmptyValue() const
+    {
+        return m_termType == TermType::Empty;
+    }
+
+    bool isDeletedValue() const
+    {
+        return m_termType == TermType::Deleted;
+    }
+
+private:
+    void destroy()
+    {
+        switch (m_termType) {
+        case TermType::Empty:
+        case TermType::Deleted:
+            break;
+        case TermType::CharacterSet:
+            m_atomData.characterSet.~CharacterSet();
+            break;
+        }
+        m_termType = TermType::Deleted;
+    }
+
+    enum class TermType : uint8_t {
+        Empty,
+        Deleted,
+        CharacterSet
     };
 
+    TermType m_termType { TermType::Empty };
+    AtomQuantifier m_quantifier { AtomQuantifier::One };
+
+    struct CharacterSet {
+        bool inverted { false };
+        BitVector characters { 128 };
+
+        bool operator==(const CharacterSet& other) const
+        {
+            return other.inverted == inverted && other.characters == characters;
+        }
+
+        unsigned hash() const
+        {
+            return WTF::pairIntHash(inverted, characters.hash());
+        }
+    };
+
+    union AtomData {
+        AtomData()
+            : invalidTerm(0)
+        {
+        }
+        ~AtomData()
+        {
+        }
+
+        char invalidTerm;
+        CharacterSet characterSet;
+    } m_atomData;
+};
+
+struct TermHash {
+    static unsigned hash(const Term& term) { return term.hash(); }
+    static bool equal(const Term& a, const Term& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct TermHashTraits : public WTF::CustomHashTraits<Term> { };
+
+struct PrefixTreeEntry {
+    unsigned nfaNode;
+    HashMap<Term, std::unique_ptr<PrefixTreeEntry>, TermHash, TermHashTraits> nextPattern;
+};
+
+class GraphBuilder {
 public:
     GraphBuilder(NFA& nfa, PrefixTreeEntry& prefixTreeRoot, bool patternIsCaseSensitive, uint64_t patternId)
         : m_nfa(nfa)
         , m_patternIsCaseSensitive(patternIsCaseSensitive)
         , m_patternId(patternId)
-        , m_activeGroup({ nfa.root(), nfa.root() })
+        , m_subtreeStart(nfa.root())
+        , m_subtreeEnd(nfa.root())
         , m_lastPrefixTreeEntry(&prefixTreeRoot)
     {
     }
@@ -107,10 +316,10 @@ public:
         if (hasError())
             return;
 
-        sinkPendingAtomIfNecessary();
+        sinkFloatingTermIfNecessary();
 
-        if (m_activeGroup.start != m_activeGroup.end)
-            m_nfa.setFinal(m_activeGroup.end, m_patternId);
+        if (m_subtreeStart != m_subtreeEnd)
+            m_nfa.setFinal(m_subtreeEnd, m_patternId);
         else
             fail(ASCIILiteral("The pattern cannot match anything."));
     }
@@ -130,13 +339,11 @@ public:
             return;
         }
 
-        sinkPendingAtomIfNecessary();
-        ASSERT(m_floatingAtomType == FloatingAtomType::Invalid);
-        ASSERT(!m_pendingTrivialAtom);
+        sinkFloatingTermIfNecessary();
+        ASSERT(!m_floatingTerm.isValid());
 
         char asciiChararacter = static_cast<char>(character);
-        m_pendingTrivialAtom = trivialAtomFromASCIICharacter(asciiChararacter, m_patternIsCaseSensitive);
-        m_floatingAtomType = FloatingAtomType::Trivial;
+        m_floatingTerm = Term(asciiChararacter, m_patternIsCaseSensitive);
     }
 
     void atomBuiltInCharacterClass(JSC::Yarr::BuiltInCharacterClassID builtInCharacterClassID, bool inverted)
@@ -144,14 +351,12 @@ public:
         if (hasError())
             return;
 
-        sinkPendingAtomIfNecessary();
-        ASSERT(m_floatingAtomType == FloatingAtomType::Invalid);
-        ASSERT(!m_pendingTrivialAtom);
+        sinkFloatingTermIfNecessary();
+        ASSERT(!m_floatingTerm.isValid());
 
-        if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted) {
-            m_pendingTrivialAtom = trivialAtomForNewlineClassIDBuiltin();
-            m_floatingAtomType = FloatingAtomType::Trivial;
-        } else
+        if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted)
+            m_floatingTerm = Term(Term::UniversalTransition);
+        else
             fail(ASCIILiteral("Character class is not supported."));
     }
 
@@ -160,34 +365,17 @@ public:
         if (hasError())
             return;
 
-        switch (m_floatingAtomType) {
-        case FloatingAtomType::Invalid:
-            fail(ASCIILiteral("Quantifier without corresponding atom to quantify."));
-            break;
+        if (!m_floatingTerm.isValid())
+            fail(ASCIILiteral("Quantifier without corresponding term to quantify."));
 
-        case FloatingAtomType::Trivial:
-            if (!minimum && maximum == 1)
-                quantifyTrivialAtom(m_pendingTrivialAtom, AtomQuantifier::ZeroOrOne);
-            else if (!minimum && maximum == JSC::Yarr::quantifyInfinite)
-                quantifyTrivialAtom(m_pendingTrivialAtom, AtomQuantifier::ZeroOrMore);
-            else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
-                quantifyTrivialAtom(m_pendingTrivialAtom, AtomQuantifier::OneOrMore);
-            else
-                fail(ASCIILiteral("Arbitrary atom repetitions are not supported."));
-            break;
-        case FloatingAtomType::CharacterSet: {
-            ASSERT(m_characterSetQuantifier == AtomQuantifier::One);
-            if (!minimum && maximum == 1)
-                m_characterSetQuantifier = AtomQuantifier::ZeroOrOne;
-            else if (!minimum && maximum == JSC::Yarr::quantifyInfinite)
-                m_characterSetQuantifier = AtomQuantifier::ZeroOrMore;
-            else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
-                m_characterSetQuantifier = AtomQuantifier::OneOrMore;
-            else
-                fail(ASCIILiteral("Arbitrary character set repetitions are not supported."));
-            break;
-        }
-        }
+        if (!minimum && maximum == 1)
+            m_floatingTerm.quantify(AtomQuantifier::ZeroOrOne);
+        else if (!minimum && maximum == JSC::Yarr::quantifyInfinite)
+            m_floatingTerm.quantify(AtomQuantifier::ZeroOrMore);
+        else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
+            m_floatingTerm.quantify(AtomQuantifier::OneOrMore);
+        else
+            fail(ASCIILiteral("Arbitrary atom repetitions are not supported."));
     }
 
     void atomBackReference(unsigned)
@@ -215,16 +403,10 @@ public:
         if (hasError())
             return;
 
-        sinkPendingAtomIfNecessary();
+        sinkFloatingTermIfNecessary();
+        ASSERT(!m_floatingTerm.isValid());
 
-        ASSERT_WITH_MESSAGE(!m_pendingCharacterSet.bitCount(), "We should not have nested character classes.");
-        ASSERT(m_floatingAtomType == FloatingAtomType::Invalid);
-
-        m_buildMode = BuildMode::DirectGeneration;
-        m_lastPrefixTreeEntry = nullptr;
-
-        m_isInvertedCharacterSet = inverted;
-        m_floatingAtomType = FloatingAtomType::CharacterSet;
+        m_floatingTerm = Term(Term::CharacterSetTerm, inverted);
     }
 
     void atomCharacterClassAtom(UChar character)
@@ -232,13 +414,12 @@ public:
         if (hasError())
             return;
 
-        ASSERT(m_floatingAtomType == FloatingAtomType::CharacterSet);
-
         if (!isASCII(character)) {
             fail(ASCIILiteral("Non ASCII Character in a character set."));
             return;
         }
-        m_pendingCharacterSet.set(character);
+
+        m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
     }
 
     void atomCharacterClassRange(UChar a, UChar b)
@@ -246,14 +427,13 @@ public:
         if (hasError())
             return;
 
-        ASSERT(m_floatingAtomType == FloatingAtomType::CharacterSet);
-
         if (!a || !b || !isASCII(a) || !isASCII(b)) {
             fail(ASCIILiteral("Non ASCII Character in a character range of a character set."));
             return;
         }
+
         for (unsigned i = a; i <= b; ++i)
-            m_pendingCharacterSet.set(i);
+            m_floatingTerm.addCharacter(static_cast<UChar>(i), m_patternIsCaseSensitive);
     }
 
     void atomCharacterClassEnd()
@@ -303,20 +483,31 @@ private:
         m_errorMessage = errorMessage;
     }
 
-    BoundedSubGraph sinkAtom(std::function<void(unsigned, unsigned)> transitionFunction, AtomQuantifier quantifier, unsigned start)
+    void addTransitions(unsigned source, unsigned target)
     {
-        switch (quantifier) {
+        auto visitor = [this, source, target](char character) {
+            if (m_floatingTerm.isUniversalTransition())
+                m_nfa.addTransitionsOnAnyCharacter(source, target);
+            else
+                m_nfa.addTransition(source, target, character);
+        };
+        m_floatingTerm.visitSimpleTransitions(visitor);
+    }
+
+    unsigned sinkFloatingTerm(unsigned start)
+    {
+        switch (m_floatingTerm.quantifier()) {
         case AtomQuantifier::One: {
             unsigned newEnd = m_nfa.createNode();
             m_nfa.addRuleId(newEnd, m_patternId);
-            transitionFunction(start, newEnd);
-            return { start, newEnd };
+            addTransitions(start, newEnd);
+            return newEnd;
         }
         case AtomQuantifier::ZeroOrOne: {
             unsigned newEnd = m_nfa.createNode();
             m_nfa.addRuleId(newEnd, m_patternId);
-            transitionFunction(start, newEnd);
-            return { start, newEnd };
+            addTransitions(start, newEnd);
+            return newEnd;
         }
         case AtomQuantifier::ZeroOrMore: {
             unsigned repeatStart = m_nfa.createNode();
@@ -324,7 +515,7 @@ private:
             unsigned repeatEnd = m_nfa.createNode();
             m_nfa.addRuleId(repeatEnd, m_patternId);
 
-            transitionFunction(repeatStart, repeatEnd);
+            addTransitions(repeatStart, repeatEnd);
             m_nfa.addEpsilonTransition(repeatEnd, repeatStart);
 
             m_nfa.addEpsilonTransition(start, repeatStart);
@@ -333,7 +524,7 @@ private:
             m_nfa.addRuleId(kleenEnd, m_patternId);
             m_nfa.addEpsilonTransition(repeatEnd, kleenEnd);
             m_nfa.addEpsilonTransition(start, kleenEnd);
-            return { start, kleenEnd };
+            return kleenEnd;
         }
         case AtomQuantifier::OneOrMore: {
             unsigned repeatStart = m_nfa.createNode();
@@ -341,7 +532,7 @@ private:
             unsigned repeatEnd = m_nfa.createNode();
             m_nfa.addRuleId(repeatEnd, m_patternId);
 
-            transitionFunction(repeatStart, repeatEnd);
+            addTransitions(repeatStart, repeatEnd);
             m_nfa.addEpsilonTransition(repeatEnd, repeatStart);
 
             m_nfa.addEpsilonTransition(start, repeatStart);
@@ -349,172 +540,69 @@ private:
             unsigned afterRepeat = m_nfa.createNode();
             m_nfa.addRuleId(afterRepeat, m_patternId);
             m_nfa.addEpsilonTransition(repeatEnd, afterRepeat);
-            return { start, afterRepeat };
+            return afterRepeat;
         }
         }
     }
 
-    void generateTransition(TrivialAtom trivialAtom, unsigned source, unsigned target)
+    void sinkFloatingTermIfNecessary()
     {
-        if (trivialAtom & hasNonCharacterMask) {
-            ASSERT(trivialAtom & newlineClassIDBuiltinMask);
-            m_nfa.addTransitionsOnAnyCharacter(source, target);
-        } else {
-            if (trivialAtom & caseInsensitiveMask) {
-                char character = static_cast<char>(trivialAtom & characterMask);
-                m_nfa.addTransition(source, target, character);
-                m_nfa.addTransition(source, target, toASCIIUpper(character));
-            } else
-                m_nfa.addTransition(source, target, static_cast<char>(trivialAtom & characterMask));
-        }
-    }
-
-    BoundedSubGraph sinkTrivialAtom(TrivialAtom trivialAtom, unsigned start)
-    {
-        auto transitionFunction = [this, trivialAtom](unsigned source, unsigned target)
-        {
-            generateTransition(trivialAtom, source, target);
-        };
-        return sinkAtom(transitionFunction, trivialAtomQuantifier(trivialAtom), start);
-    }
-
-    void generateTransition(const BitVector& characterSet, bool isInverted, unsigned source, unsigned target)
-    {
-        ASSERT(characterSet.bitCount());
-        if (!isInverted) {
-            for (const auto& characterIterator : characterSet.setBits()) {
-                char character = static_cast<char>(characterIterator);
-                if (!m_patternIsCaseSensitive && isASCIIAlpha(character)) {
-                    m_nfa.addTransition(source, target, toASCIIUpper(character));
-                    m_nfa.addTransition(source, target, toASCIILower(character));
-                } else
-                    m_nfa.addTransition(source, target, character);
-            }
-        } else {
-            for (unsigned i = 1; i < characterSet.size(); ++i) {
-                if (characterSet.get(i))
-                    continue;
-                char character = static_cast<char>(i);
-
-                if (!m_patternIsCaseSensitive && (characterSet.get(toASCIIUpper(character)) || characterSet.get(toASCIILower(character))))
-                    continue;
-
-                m_nfa.addTransition(source, target, character);
-            }
-        }
-    }
-
-    BoundedSubGraph sinkCharacterSet(const BitVector& characterSet, bool isInverted, unsigned start)
-    {
-        auto transitionFunction = [this, &characterSet, isInverted](unsigned source, unsigned target)
-        {
-            generateTransition(characterSet, isInverted, source, target);
-        };
-        return sinkAtom(transitionFunction, m_characterSetQuantifier, start);
-    }
-
-    void sinkPendingAtomIfNecessary()
-    {
-        if (m_floatingAtomType == FloatingAtomType::Invalid)
+        if (!m_floatingTerm.isValid())
             return;
 
-        switch (m_buildMode) {
-        case BuildMode::PrefixTree: {
-            ASSERT(m_lastPrefixTreeEntry);
-            ASSERT_WITH_MESSAGE(m_floatingAtomType == FloatingAtomType::Trivial, "Only trivial atoms are handled with a prefix tree.");
+        ASSERT(m_lastPrefixTreeEntry);
 
-            auto nextEntry = m_lastPrefixTreeEntry->nextPattern.find(m_pendingTrivialAtom);
-            if (nextEntry != m_lastPrefixTreeEntry->nextPattern.end()) {
-                m_lastPrefixTreeEntry = nextEntry->value.get();
-                m_nfa.addRuleId(m_lastPrefixTreeEntry->nfaNode, m_patternId);
-            } else {
-                std::unique_ptr<PrefixTreeEntry> nextPrefixTreeEntry = std::make_unique<PrefixTreeEntry>();
+        auto nextEntry = m_lastPrefixTreeEntry->nextPattern.find(m_floatingTerm);
+        if (nextEntry != m_lastPrefixTreeEntry->nextPattern.end()) {
+            m_lastPrefixTreeEntry = nextEntry->value.get();
+            m_nfa.addRuleId(m_lastPrefixTreeEntry->nfaNode, m_patternId);
+        } else {
+            std::unique_ptr<PrefixTreeEntry> nextPrefixTreeEntry = std::make_unique<PrefixTreeEntry>();
 
-                BoundedSubGraph newSubGraph = sinkTrivialAtom(m_pendingTrivialAtom, m_lastPrefixTreeEntry->nfaNode);
-                nextPrefixTreeEntry->nfaNode = newSubGraph.end;
+            unsigned newEnd = sinkFloatingTerm(m_lastPrefixTreeEntry->nfaNode);
+            nextPrefixTreeEntry->nfaNode = newEnd;
 
-                auto addResult = m_lastPrefixTreeEntry->nextPattern.set(m_pendingTrivialAtom, WTF::move(nextPrefixTreeEntry));
-                ASSERT(addResult.isNewEntry);
+            auto addResult = m_lastPrefixTreeEntry->nextPattern.set(m_floatingTerm, WTF::move(nextPrefixTreeEntry));
+            ASSERT(addResult.isNewEntry);
 
-                if (!m_newPrefixSubtreeRoot) {
-                    m_newPrefixSubtreeRoot = m_lastPrefixTreeEntry;
-                    m_newPrefixStaringPoint = m_pendingTrivialAtom;
-                }
-
-                m_lastPrefixTreeEntry = addResult.iterator->value.get();
+            if (!m_newPrefixSubtreeRoot) {
+                m_newPrefixSubtreeRoot = m_lastPrefixTreeEntry;
+                m_newPrefixStaringPoint = m_floatingTerm;
             }
-            m_activeGroup.end = m_lastPrefixTreeEntry->nfaNode;
-            ASSERT(m_lastPrefixTreeEntry);
-            break;
+
+            m_lastPrefixTreeEntry = addResult.iterator->value.get();
         }
-        case BuildMode::DirectGeneration: {
-            ASSERT(!m_lastPrefixTreeEntry);
+        m_subtreeEnd = m_lastPrefixTreeEntry->nfaNode;
 
-            switch (m_floatingAtomType) {
-            case FloatingAtomType::Invalid:
-                ASSERT_NOT_REACHED();
-                break;
-            case FloatingAtomType::Trivial: {
-                BoundedSubGraph newSubGraph = sinkTrivialAtom(m_pendingTrivialAtom, m_activeGroup.end);
-                m_activeGroup.end = newSubGraph.end;
-                break;
-            }
-            case FloatingAtomType::CharacterSet:
-                if (!m_pendingCharacterSet.bitCount()) {
-                    fail(ASCIILiteral("Empty character set."));
-                    return;
-                }
-                BoundedSubGraph newSubGraph = sinkCharacterSet(m_pendingCharacterSet, m_isInvertedCharacterSet, m_activeGroup.end);
-                m_activeGroup.end = newSubGraph.end;
-
-                m_isInvertedCharacterSet = false;
-                m_characterSetQuantifier = AtomQuantifier::One;
-                m_pendingCharacterSet.clearAll();
-                break;
-            }
-            break;
-            }
-        }
-
-        m_pendingTrivialAtom = 0;
-        m_floatingAtomType = FloatingAtomType::Invalid;
+        m_floatingTerm = Term();
+        ASSERT(m_lastPrefixTreeEntry);
     }
 
     NFA& m_nfa;
     bool m_patternIsCaseSensitive;
     const uint64_t m_patternId;
 
-    BoundedSubGraph m_activeGroup;
+    unsigned m_subtreeStart { 0 };
+    unsigned m_subtreeEnd { 0 };
 
     PrefixTreeEntry* m_lastPrefixTreeEntry;
-    enum class FloatingAtomType {
-        Invalid,
-        Trivial,
-        CharacterSet
-    };
-    FloatingAtomType m_floatingAtomType { FloatingAtomType::Invalid };
-    TrivialAtom m_pendingTrivialAtom = 0;
-
-    bool m_isInvertedCharacterSet { false };
-    BitVector m_pendingCharacterSet { 128 };
-    AtomQuantifier m_characterSetQuantifier { AtomQuantifier::One };
-
-    enum class BuildMode {
-        PrefixTree,
-        DirectGeneration
-    };
-    BuildMode m_buildMode { BuildMode::PrefixTree };
+    Term m_floatingTerm;
 
     PrefixTreeEntry* m_newPrefixSubtreeRoot = nullptr;
-    TrivialAtom m_newPrefixStaringPoint = 0;
+    Term m_newPrefixStaringPoint;
 
     String m_errorMessage;
 };
 
 URLFilterParser::URLFilterParser(NFA& nfa)
     : m_nfa(nfa)
+    , m_prefixTreeRoot(std::make_unique<PrefixTreeEntry>())
 {
-    m_prefixTreeRoot.nfaNode = nfa.root();
+    m_prefixTreeRoot->nfaNode = nfa.root();
+}
+
+URLFilterParser::~URLFilterParser()
+{
 }
 
 String URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
@@ -530,7 +618,7 @@ String URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSens
 
     String error;
 
-    GraphBuilder graphBuilder(m_nfa, m_prefixTreeRoot, patternIsCaseSensitive, patternId);
+    GraphBuilder graphBuilder(m_nfa, *m_prefixTreeRoot, patternIsCaseSensitive, patternId);
     error = String(JSC::Yarr::parse(graphBuilder, pattern, 0));
     if (error.isNull())
         graphBuilder.finalize();

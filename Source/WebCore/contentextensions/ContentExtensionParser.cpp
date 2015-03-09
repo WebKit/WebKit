@@ -188,7 +188,7 @@ Vector<ContentExtensionRule> parseRuleList(const String& rules)
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionEndTime = monotonicallyIncreasingTime();
-    dataLogF("Time spent loading extension %s: %f\n", identifier.utf8().data(), (loadExtensionEndTime - loadExtensionStartTime));
+    dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime));
 #endif
 
     return ruleList;

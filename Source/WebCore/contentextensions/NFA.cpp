@@ -105,8 +105,8 @@ void NFA::restoreToGraphSize(unsigned size)
 
 void NFA::addRuleId(unsigned node, uint64_t ruleId)
 {
-    ASSERT(!m_nodes[node].ruleIds.contains(ruleId));
-    m_nodes[node].ruleIds.append(ruleId);
+    if (!m_nodes[node].ruleIds.contains(ruleId))
+        m_nodes[node].ruleIds.append(ruleId);
 }
 
 static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, uint16_t epsilonTransitionCharacter)

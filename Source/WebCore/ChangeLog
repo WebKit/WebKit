@@ -1,3 +1,71 @@
+2015-03-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Merge TrivialAtom and CharacterSet into a Term abstraction, prepare Term for composition
+        https://bugs.webkit.org/show_bug.cgi?id=142429
+
+        Reviewed by Darin Adler.
+
+        This patch merges CharacterSet and Trivial atom into a new class: Term. A Term is
+        a combination of an Atom and one Quantifier.
+
+        With term being the basic block, we can use the PrefixTree for any construct,
+        greatly reducing the size of the NFA graph.
+
+        Term is built on top of an union holding the Atom storage. This is done in preparation
+        for more complicated Atoms like a disjunction.
+
+        Everything else is pretty much the same. BuildMode is gone since we use the prefix
+        tree for everything. FloatingAtomType is gone, a TrivialAtom is now represented
+        by a single character CharacterSet (or two for case insensitive).
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::parseRuleList):
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::addRuleId):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::Term::Term):
+        (WebCore::ContentExtensions::Term::~Term):
+        (WebCore::ContentExtensions::Term::isValid):
+        (WebCore::ContentExtensions::Term::addCharacter):
+        (WebCore::ContentExtensions::Term::quantify):
+        (WebCore::ContentExtensions::Term::quantifier):
+        (WebCore::ContentExtensions::Term::isUniversalTransition):
+        (WebCore::ContentExtensions::Term::visitSimpleTransitions):
+        (WebCore::ContentExtensions::Term::operator=):
+        (WebCore::ContentExtensions::Term::operator==):
+        (WebCore::ContentExtensions::Term::hash):
+        (WebCore::ContentExtensions::Term::isEmptyValue):
+        (WebCore::ContentExtensions::Term::isDeletedValue):
+        (WebCore::ContentExtensions::Term::destroy):
+        (WebCore::ContentExtensions::Term::CharacterSet::operator==):
+        (WebCore::ContentExtensions::Term::CharacterSet::hash):
+        (WebCore::ContentExtensions::TermHash::hash):
+        (WebCore::ContentExtensions::TermHash::equal):
+        (WebCore::ContentExtensions::GraphBuilder::GraphBuilder):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::atomBuiltInCharacterClass):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassRange):
+        (WebCore::ContentExtensions::GraphBuilder::addTransitions):
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTerm):
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTermIfNecessary):
+        (WebCore::ContentExtensions::URLFilterParser::URLFilterParser):
+        (WebCore::ContentExtensions::URLFilterParser::~URLFilterParser):
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        (WebCore::ContentExtensions::trivialAtomFromASCIICharacter): Deleted.
+        (WebCore::ContentExtensions::quantifyTrivialAtom): Deleted.
+        (WebCore::ContentExtensions::trivialAtomQuantifier): Deleted.
+        (WebCore::ContentExtensions::trivialAtomForNewlineClassIDBuiltin): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::sinkAtom): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::generateTransition): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::sinkTrivialAtom): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::sinkCharacterSet): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::sinkPendingAtomIfNecessary): Deleted.
+        * contentextensions/URLFilterParser.h:
+
 2015-03-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(WEBGL) build after r180609

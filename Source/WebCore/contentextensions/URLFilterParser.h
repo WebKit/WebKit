@@ -37,22 +37,17 @@ namespace ContentExtensions {
 
 class NFA;
 
-typedef uint16_t TrivialAtom;
-
-struct PrefixTreeEntry {
-    unsigned nfaNode;
-    HashMap<TrivialAtom, std::unique_ptr<PrefixTreeEntry>> nextPattern;
-};
-
+struct PrefixTreeEntry;
 
 class URLFilterParser {
 public:
     explicit URLFilterParser(NFA&);
+    ~URLFilterParser();
     String addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:
     NFA& m_nfa;
-    PrefixTreeEntry m_prefixTreeRoot;
+    std::unique_ptr<PrefixTreeEntry> m_prefixTreeRoot;
 };
 
 } // namespace ContentExtensions
