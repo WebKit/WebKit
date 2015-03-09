@@ -60,6 +60,8 @@
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
+#import "_WKUserContentExtensionStoreInternal.h"
+#import "_WKUserContentFilterInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import "_WKWebsiteDataRecordInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
@@ -184,6 +186,14 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::UserContentController:
         wrapper = [WKUserContentController alloc];
+        break;
+
+    case Type::UserContentExtension:
+        wrapper = [_WKUserContentFilter alloc];
+        break;
+
+    case Type::UserContentExtensionStore:
+        wrapper = [_WKUserContentExtensionStore alloc];
         break;
 
     case Type::UserScript:

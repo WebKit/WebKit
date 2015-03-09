@@ -60,6 +60,7 @@ class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
 class UserContentExtension;
+class UserContentExtensionStore;
 class UserScript;
 }
 
@@ -161,6 +162,7 @@ WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
+WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::UserContentExtensionStore)
 WK_ADD_API_MAPPING(WKUserContentFilterRef, API::UserContentExtension)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)

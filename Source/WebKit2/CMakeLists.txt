@@ -392,6 +392,7 @@ set(WebKit2_SOURCES
     UIProcess/API/APISessionState.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
     UIProcess/API/APIUserContentExtension.cpp
+    UIProcess/API/APIUserContentExtensionStore.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp

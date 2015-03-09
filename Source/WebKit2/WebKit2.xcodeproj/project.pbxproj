@@ -1084,11 +1084,18 @@
 		7C135AAC173B0CFF00586AE2 /* PluginInformationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */; };
 		7C1BA33D1A4A0E600043E249 /* APIDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA33B1A4A0E600043E249 /* APIDictionary.cpp */; };
 		7C1BA33E1A4A0E600043E249 /* APIDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1BA33C1A4A0E600043E249 /* APIDictionary.h */; };
+		7C2413021AACFA7500A58C15 /* _WKUserContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */; };
+		7C2413031AACFA7500A58C15 /* _WKUserContentExtensionStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C2413051AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */; };
+		7C2413081AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */; };
+		7C2413091AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C361D721927FA360036A59D /* WebScriptMessageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C361D6F1927FA360036A59D /* WebScriptMessageHandler.cpp */; };
 		7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C361D701927FA360036A59D /* WebScriptMessageHandler.h */; };
 		7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */; };
 		7C361D79192803BD0036A59D /* WebUserContentControllerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C361D77192803BD0036A59D /* WebUserContentControllerProxyMessages.h */; };
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
+		7C3A06A71AAB903E009D74BA /* APIUserContentExtensionStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3A06A51AAB903E009D74BA /* APIUserContentExtensionStore.cpp */; };
+		7C3A06A81AAB903E009D74BA /* APIUserContentExtensionStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A06A61AAB903E009D74BA /* APIUserContentExtensionStore.h */; };
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
 		7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */; };
@@ -3276,12 +3283,19 @@
 		7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInformationMac.mm; sourceTree = "<group>"; };
 		7C1BA33B1A4A0E600043E249 /* APIDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIDictionary.cpp; sourceTree = "<group>"; };
 		7C1BA33C1A4A0E600043E249 /* APIDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDictionary.h; sourceTree = "<group>"; };
+		7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserContentExtensionStore.mm; sourceTree = "<group>"; };
+		7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStore.h; sourceTree = "<group>"; };
+		7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStoreInternal.h; sourceTree = "<group>"; };
+		7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentExtensionStoreRef.cpp; sourceTree = "<group>"; };
+		7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentExtensionStoreRef.h; sourceTree = "<group>"; };
 		7C361D6F1927FA360036A59D /* WebScriptMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebScriptMessageHandler.cpp; sourceTree = "<group>"; };
 		7C361D701927FA360036A59D /* WebScriptMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptMessageHandler.h; sourceTree = "<group>"; };
 		7C361D751928028B0036A59D /* WebUserContentControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentControllerProxy.messages.in; sourceTree = "<group>"; };
 		7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		7C361D77192803BD0036A59D /* WebUserContentControllerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentControllerProxyMessages.h; sourceTree = "<group>"; };
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
+		7C3A06A51AAB903E009D74BA /* APIUserContentExtensionStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIUserContentExtensionStore.cpp; sourceTree = "<group>"; };
+		7C3A06A61AAB903E009D74BA /* APIUserContentExtensionStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserContentExtensionStore.h; sourceTree = "<group>"; };
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
 		7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -5315,6 +5329,9 @@
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
+				7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */,
+				7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */,
+				7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */,
 				7C89D2B81A6B0F2C003A5FDE /* _WKUserContentFilter.h */,
 				7C89D2B71A6B0F2C003A5FDE /* _WKUserContentFilter.mm */,
 				7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */,
@@ -6263,6 +6280,8 @@
 				1A4D664718A2D91A00D82E21 /* APIUIClient.h */,
 				7C89D2B11A6B068C003A5FDE /* APIUserContentExtension.cpp */,
 				7C89D2B21A6B068C003A5FDE /* APIUserContentExtension.h */,
+				7C3A06A51AAB903E009D74BA /* APIUserContentExtensionStore.cpp */,
+				7C3A06A61AAB903E009D74BA /* APIUserContentExtensionStore.h */,
 				7C89D2A51A6789EA003A5FDE /* APIUserScript.cpp */,
 				7C89D2921A67122F003A5FDE /* APIUserScript.h */,
 				1A4832C51A9BC13C008B4DFE /* APIWebsiteDataRecord.cpp */,
@@ -6393,10 +6412,12 @@
 				4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */,
 				7C89D29D1A678554003A5FDE /* WKUserContentControllerRef.cpp */,
 				7C89D29E1A678554003A5FDE /* WKUserContentControllerRef.h */,
-				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,
-				7C89D2A21A678875003A5FDE /* WKUserScriptRef.h */,
+				7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */,
+				7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */,
 				7C89D2BD1A6B11EF003A5FDE /* WKUserContentFilterRef.cpp */,
 				7C89D2BE1A6B11EF003A5FDE /* WKUserContentFilterRef.h */,
+				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,
+				7C89D2A21A678875003A5FDE /* WKUserScriptRef.h */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -7531,6 +7552,7 @@
 				376311FE1A3FB600005A2E51 /* _WKSameDocumentNavigationTypeInternal.h in Headers */,
 				376C511A1957452E0007B0FA /* _WKSecurityOrigin.h in Headers */,
 				2D3A65DB1A7C3A1F00CAC637 /* WKNavigationActionRef.h in Headers */,
+				7C2413051AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h in Headers */,
 				2D3A65DF1A7C3A7D00CAC637 /* WKNavigationResponseRef.h in Headers */,
 				2D3A65E31A7C3A9300CAC637 /* WKNavigationRef.h in Headers */,
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
@@ -8053,10 +8075,12 @@
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
 				33367630130C9998006C9DE2 /* WebResourceCacheManager.h in Headers */,
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
+				7C3A06A81AAB903E009D74BA /* APIUserContentExtensionStore.h in Headers */,
 				33367636130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
+				7C2413031AACFA7500A58C15 /* _WKUserContentExtensionStore.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
@@ -8140,6 +8164,7 @@
 				1AB474DE184D44590051B622 /* WKBundlePageUIClient.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
+				7C2413091AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
@@ -9503,6 +9528,7 @@
 				51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */,
 				51829DA51637C70C000953D6 /* NetworkResourceLoadScheduler.cpp in Sources */,
 				512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */,
+				7C2413021AACFA7500A58C15 /* _WKUserContentExtensionStore.mm in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				31A2EC551489982E00810D71 /* NotificationPermissionRequest.cpp in Sources */,
 				3131261E148FF82C00BA2A39 /* NotificationPermissionRequestManager.cpp in Sources */,
@@ -9694,6 +9720,7 @@
 				51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */,
 				51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */,
 				3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */,
+				7C2413081AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp in Sources */,
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
 				330934551315B9750097A7BC /* WebCookieManagerProxy.cpp in Sources */,
@@ -10005,6 +10032,7 @@
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				BC7B633812A45ABA00D174A4 /* WKPageGroup.cpp in Sources */,
 				BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */,
+				7C3A06A71AAB903E009D74BA /* APIUserContentExtensionStore.cpp in Sources */,
 				2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */,
 				2DA1E4FF18C02B6A00DBC929 /* WKPDFView.mm in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
