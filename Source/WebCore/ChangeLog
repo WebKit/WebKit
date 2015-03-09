@@ -1,5 +1,32 @@
 2015-03-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r179895.
+
+    2015-02-10  Chris Dumez  <cdumez@apple.com>
+
+            Add another assertion to help track down crash in DocumentLoader::stopLoadingForPolicyChange()
+            https://bugs.webkit.org/show_bug.cgi?id=141447
+            <rdar://problem/13811738>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Add another assertion to help track down crash in
+            DocumentLoader::stopLoadingForPolicyChange().
+
+            The trace seems to hint that frameLoader() returns null when
+            stopLoadingForPolicyChange() is called. frameLoader() can only return
+            null after DocumentLoader::detachFromFrame() has been called.
+            Also, stopLoadingForPolicyChange() here is called from the
+            DocumentLoader::continueAfterContentPolicy() policy callback which
+            requires m_waitingForContentPolicy to be true. Therefore, we should
+            assert that m_waitingForContentPolicy is false when m_frame is cleared
+            in DocumentLoader::detachFromFrame().
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::detachFromFrame):
+
+2015-03-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r179880.
 
     2015-02-10  Chris Dumez  <cdumez@apple.com>
