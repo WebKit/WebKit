@@ -1,3 +1,29 @@
+2015-03-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r179880.
+
+    2015-02-10  Chris Dumez  <cdumez@apple.com>
+
+            Add assertion to help track down WebCore::DocumentLoader::stopLoadingForPolicyChange() crash
+            https://bugs.webkit.org/show_bug.cgi?id=141441
+            <rdar://problem/13811738>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Add assertion to help track down a crash in
+            WebCore::DocumentLoader::stopLoadingForPolicyChange().
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::~DocumentLoader):
+            Make sure the DocumentLoader is not waiting for a content policy
+            response when it is destroyed. If this were to happen, then the
+            lambda function passed to PolicyChecker::checkContentPolicy()
+            would outlive the DocumentLoader. This is an issue because
+            that lambda function captures [this], which is the DocumentLoader.
+            This would cause DocumentLoader::continueAfterContentPolicy() to
+            be called after the DocumentLoader has been destroyed, which would
+            explain the crash.
+
 2015-03-04  Lucas Forschler  <lforschler@apple.com>
 
         Merge r181038
