@@ -68,18 +68,25 @@ TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float 
         ++m_position;
         return fragment;
     }
+    unsigned spaceCount = 0;
     unsigned startPosition = m_position;
-    unsigned endPosition = skipToNextPosition(PositionType::NonWhitespace, startPosition);
+    unsigned endPosition = findNextNonWhitespacePosition(startPosition, spaceCount);
     ASSERT(startPosition <= endPosition);
     if (endPosition > startPosition) {
         bool multipleWhitespace = startPosition + 1 < endPosition;
         bool isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
         bool isBreakable = !isCollapsed && multipleWhitespace;
-        float width = isCollapsed ? m_style.spaceWidth : textWidth(startPosition, endPosition, xPosition);
+        float width = 0;
+        if (isCollapsed)
+            width = m_style.spaceWidth;
+        else {
+            unsigned length = endPosition - startPosition;
+            width = length == spaceCount ? length * m_style.spaceWidth : textWidth(startPosition, endPosition, xPosition);
+        }
         m_position = endPosition;
         return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, isCollapsed, isBreakable);
     }
-    endPosition = skipToNextPosition(PositionType::Breakable, startPosition + 1);
+    endPosition = findNextBreakablePosition(startPosition + 1);
     m_position = endPosition;
     return TextFragment(startPosition, endPosition, textWidth(startPosition, endPosition, xPosition), TextFragment::NonWhitespace, false, m_style.breakWordOnOverflow);
 }
@@ -107,55 +114,58 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
 }
 
 template <typename CharacterType>
-static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, const FlowContents::Segment& segment, unsigned startPosition)
+static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, const FlowContents::Segment& segment, unsigned position)
 {
-    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, segment.text.characters<CharacterType>(), segment.end - segment.start, startPosition);
+    const auto* characters = segment.text.characters<CharacterType>();
+    unsigned segmentLength = segment.end - segment.start;
+    unsigned segmentPosition = position - segment.start;
+    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, characters, segmentLength, segmentPosition);
 }
 
-template <typename CharacterType>
-static unsigned nextNonWhitespacePosition(const FlowContents::Segment& segment, unsigned startPosition, const TextFragmentIterator::Style& style)
+unsigned TextFragmentIterator::findNextBreakablePosition(unsigned position) const
 {
-    const auto* text = segment.text.characters<CharacterType>();
-    unsigned position = startPosition;
-    for (; position < segment.end; ++position) {
-        auto character = text[position];
-        bool isWhitespace = character == ' ' || character == '\t' || (!style.preserveNewline && character == '\n');
-        if (!isWhitespace)
-            return position;
+    while (!isEnd(position)) {
+        auto& segment = m_flowContents.segmentForPosition(position);
+        if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
+            UChar lastCharacter = segment.start > 0 ? characterAt(segment.start - 1) : 0;
+            UChar secondToLastCharacter = segment.start > 1 ? characterAt(segment.start - 2) : 0;
+            m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+            m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
+        }
+
+        unsigned breakable = segment.text.is8Bit() ? nextBreakablePosition<LChar>(m_lineBreakIterator, segment, position) : nextBreakablePosition<UChar>(m_lineBreakIterator, segment, position);
+        position = segment.start + breakable;
+        if (position < segment.end)
+            break;
     }
     return position;
 }
 
-unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition) const
+template <typename CharacterType>
+static bool findNextNonWhitespace(const FlowContents::Segment& segment, const TextFragmentIterator::Style& style, unsigned& position, unsigned& spaceCount)
 {
-    if (isEnd(startPosition))
-        return startPosition;
+    const auto* text = segment.text.characters<CharacterType>();
+    for (; position < segment.end; ++position) {
+        auto character = text[position - segment.start];
+        bool isSpace = character == ' ';
+        bool isWhitespace = isSpace || character == '\t' || (!style.preserveNewline && character == '\n');
+        if (!isWhitespace)
+            return true;
+        if (isSpace)
+            ++spaceCount;
+    }
+    return false;
+}
 
-    unsigned currentPosition = startPosition;
-    FlowContents::Iterator it(m_flowContents, m_flowContents.segmentIndexForPosition(currentPosition));
+unsigned TextFragmentIterator::findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
+{
+    FlowContents::Iterator it(m_flowContents, m_flowContents.segmentIndexForPosition(position));
     for (auto end = m_flowContents.end(); it != end; ++it) {
-        auto& segment = *it;
-        unsigned currentPositonRelativeToSegment = currentPosition - segment.start;
-        unsigned nextPositionRelativeToSegment = 0;
-        if (positionType == NonWhitespace) {
-            nextPositionRelativeToSegment = segment.text.is8Bit() ? nextNonWhitespacePosition<LChar>(segment, currentPositonRelativeToSegment, m_style) :
-                nextNonWhitespacePosition<UChar>(segment, currentPositonRelativeToSegment, m_style);
-        } else if (positionType == Breakable) {
-            if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
-                UChar lastCharacter = segment.start > 0 ? characterAt(segment.start - 1) : 0;
-                UChar secondToLastCharacter = segment.start > 1 ? characterAt(segment.start - 2) : 0;
-                m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
-                m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
-            }
-            nextPositionRelativeToSegment = segment.text.is8Bit() ? nextBreakablePosition<LChar>(m_lineBreakIterator, segment, currentPositonRelativeToSegment) :
-                nextBreakablePosition<UChar>(m_lineBreakIterator, segment, currentPositonRelativeToSegment);
-        } else
-            ASSERT_NOT_REACHED();
-        currentPosition = segment.start + nextPositionRelativeToSegment;
-        if (currentPosition < segment.end)
+        bool foundNonWhitespace = (*it).text.is8Bit() ? findNextNonWhitespace<LChar>(*it, m_style, position, spaceCount) : findNextNonWhitespace<UChar>(*it, m_style, position, spaceCount);
+        if (foundNonWhitespace)
             break;
     }
-    return currentPosition;
+    return position;
 }
 
 template <typename CharacterType>
