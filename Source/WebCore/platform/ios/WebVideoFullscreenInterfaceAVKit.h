@@ -76,6 +76,7 @@ public:
     WEBCORE_EXPORT virtual void resetMediaState() override;
     WEBCORE_EXPORT virtual void setDuration(double) override;
     WEBCORE_EXPORT virtual void setCurrentTime(double currentTime, double anchorTime) override;
+    WEBCORE_EXPORT virtual void setBufferedTime(double bufferedTime) override;
     WEBCORE_EXPORT virtual void setRate(bool isPlaying, float playbackRate) override;
     WEBCORE_EXPORT virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
     WEBCORE_EXPORT virtual void setSeekableRanges(const TimeRanges&) override;

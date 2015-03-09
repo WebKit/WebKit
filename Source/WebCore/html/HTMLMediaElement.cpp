@@ -4377,6 +4377,16 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
     return TimeRanges::create(*m_player->buffered());
 }
 
+double HTMLMediaElement::maxBufferedTime() const
+{
+    RefPtr<TimeRanges> bufferedRanges = buffered();
+    unsigned numRanges = bufferedRanges->length();
+    if (!numRanges)
+        return 0;
+
+    return bufferedRanges->end(numRanges - 1, ASSERT_NO_EXCEPTION);
+}
+
 PassRefPtr<TimeRanges> HTMLMediaElement::played()
 {
     if (m_playing) {

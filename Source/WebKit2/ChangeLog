@@ -1,3 +1,18 @@
+2015-03-08  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Video buffer progress missing on iPhones
+        https://bugs.webkit.org/show_bug.cgi?id=142462
+
+        Reviewed by Eric Carlson.
+
+        Coordinate the SetBufferedTime message between the Web and UI
+        processes.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in: New message SetBufferedTime.
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setBufferedTime):
+
 2015-03-08  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Add scaffolding for the WKUserContentExtensionStore

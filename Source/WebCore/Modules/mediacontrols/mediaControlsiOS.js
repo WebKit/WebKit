@@ -307,8 +307,9 @@ ControllerIOS.prototype = {
 
         var played = this.video.currentTime / this.video.duration;
         var buffered = 0;
-        for (var i = 0, end = this.video.buffered.length; i < end; ++i)
-            buffered = Math.max(this.video.buffered.end(i), buffered);
+        var bufferedRanges = this.video.buffered;
+        if (bufferedRanges && bufferedRanges.length)
+            buffered = Math.max(bufferedRanges.end(bufferedRanges.length - 1), buffered);
 
         buffered /= this.video.duration;
 

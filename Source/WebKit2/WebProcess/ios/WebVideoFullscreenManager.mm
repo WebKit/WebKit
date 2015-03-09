@@ -134,6 +134,11 @@ void WebVideoFullscreenManager::setCurrentTime(double currentTime, double anchor
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetCurrentTime(currentTime, anchorTime), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::setBufferedTime(double bufferedTime)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetBufferedTime(bufferedTime), m_page->pageID());
+}
+
 void WebVideoFullscreenManager::setRate(bool isPlaying, float playbackRate)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetRate(isPlaying, playbackRate), m_page->pageID());

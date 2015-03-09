@@ -1,3 +1,42 @@
+2015-03-08  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Video buffer progress missing on iPhones
+        https://bugs.webkit.org/show_bug.cgi?id=142462
+
+        Reviewed by Eric Carlson.
+
+        The fullscreen controller on the iPhone idiom was using
+        the media duration as its maximum loaded time, meaning the
+        download progress was missing (it looked like everything
+        was already downloaded). The fix is to calculate
+        what the maximum buffered time is from the HTMLMediaElement,
+        and send that to the fullscreen controller.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.drawTimelineBackground): While implementing
+        the native function I noticed that the JS controls forgot that
+        the buffered time ranges are ordered, and thus they don't need
+        to search through the array. The last range will be the highest.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::maxBufferedTime): New helper function
+        to calculate the highest buffered time in the media source.
+        * html/HTMLMediaElement.h:
+
+        * platform/ios/WebVideoFullscreenInterface.h: New setBufferedTime method.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setDuration): No longer set
+        the loadedTimeRanges.
+        (WebVideoFullscreenInterfaceAVKit::setBufferedTime): Calculate a normalized
+        value of the maximum loaded/buffered time, and tell the platform controller
+        to show that range.
+
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::updateForEventName): Send the maximum
+        buffered time.
+
 2015-03-08  Chris Dumez  <cdumez@apple.com>
 
         Crash in WebCore::NotificationCenter::stop()

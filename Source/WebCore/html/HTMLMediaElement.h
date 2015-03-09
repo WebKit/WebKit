@@ -446,6 +446,8 @@ public:
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
 
+    double maxBufferedTime() const;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();

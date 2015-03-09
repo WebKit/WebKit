@@ -721,8 +721,7 @@ void WebVideoFullscreenInterfaceAVKit::setDuration(double duration)
         playerController.contentDuration = duration;
         playerController.maxTime = duration;
         playerController.contentDurationWithinEndTimes = duration;
-        playerController.loadedTimeRanges = @[@0, @(duration)];
-        
+
         // FIXME: we take this as an indication that playback is ready.
         playerController.canPlay = YES;
         playerController.canPause = YES;
@@ -743,6 +742,22 @@ void WebVideoFullscreenInterfaceAVKit::setCurrentTime(double currentTime, double
         AVValueTiming *timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime
             anchorTimeStamp:anchorTimeStamp rate:0];
         [strongThis->m_playerController setTiming:timing];
+    });
+}
+
+void WebVideoFullscreenInterfaceAVKit::setBufferedTime(double bufferedTime)
+{
+    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+
+    dispatch_async(dispatch_get_main_queue(), [strongThis, bufferedTime] {
+        WebAVPlayerController* playerController = strongThis->m_playerController.get();
+        double duration = playerController.contentDuration;
+        double normalizedBufferedTime;
+        if (!duration)
+            normalizedBufferedTime = 0;
+        else
+            normalizedBufferedTime = bufferedTime / duration;
+        playerController.loadedTimeRanges = @[@0, @(normalizedBufferedTime)];
     });
 }
 

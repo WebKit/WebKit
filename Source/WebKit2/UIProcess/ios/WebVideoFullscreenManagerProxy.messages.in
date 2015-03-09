@@ -24,6 +24,7 @@
 messages -> WebVideoFullscreenManagerProxy {
     ResetMediaState()
     SetCurrentTime(double currentTime, double hostTime)
+    SetBufferedTime(double bufferedTime)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);
     SetCanPlayFastReverse(bool value);

@@ -120,6 +120,7 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
     if (all
         || eventName == eventNames().timeupdateEvent) {
         m_videoFullscreenInterface->setCurrentTime(m_videoElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+        m_videoFullscreenInterface->setBufferedTime(m_videoElement->maxBufferedTime());
         // FIXME: 130788 - find a better event to update seekable ranges from.
         m_videoFullscreenInterface->setSeekableRanges(*m_videoElement->seekable());
     }
