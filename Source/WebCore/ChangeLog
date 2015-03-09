@@ -1,3 +1,49 @@
+2015-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout should not be limited to RenderText.
+        https://bugs.webkit.org/show_bug.cgi?id=142504
+
+        Reviewed by Antti Koivisto.
+
+        This is in transition to support br element.
+
+        No change in functionality.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        (WebCore::RenderText::absoluteQuadsClippedToEllipsis):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::firstRunLocation):
+        (WebCore::RenderText::linesBoundingBox):
+        (WebCore::RenderText::caretMinOffset):
+        (WebCore::RenderText::caretMaxOffset):
+        (WebCore::RenderText::containsCaretOffset):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::segmentForRenderer):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeBoundingBox):
+        (WebCore::SimpleLineLayout::computeFirstRunLocation):
+        (WebCore::SimpleLineLayout::collectAbsoluteRects):
+        (WebCore::SimpleLineLayout::collectAbsoluteQuads):
+        (WebCore::SimpleLineLayout::computeTextBoundingBox): Deleted.
+        (WebCore::SimpleLineLayout::computeTextFirstRunLocation): Deleted.
+        (WebCore::SimpleLineLayout::collectTextAbsoluteRects): Deleted.
+        (WebCore::SimpleLineLayout::collectTextAbsoluteQuads): Deleted.
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::findCaretMinimumOffset):
+        (WebCore::SimpleLineLayout::findCaretMaximumOffset):
+        (WebCore::SimpleLineLayout::containsCaretOffset):
+        (WebCore::SimpleLineLayout::findTextCaretMinimumOffset): Deleted.
+        (WebCore::SimpleLineLayout::findTextCaretMaximumOffset): Deleted.
+        (WebCore::SimpleLineLayout::containsTextCaretOffset): Deleted.
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRenderer):
+        * rendering/SimpleLineLayoutResolver.h:
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         svg/custom/svg-fonts-without-missing-glyph.xhtml fails after fonts/font-fallback-prefers-pictographs.html

@@ -300,7 +300,7 @@ String RenderText::originalText() const
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     if (auto layout = simpleLineLayout()) {
-        rects.appendVector(collectTextAbsoluteRects(*this, *layout, accumulatedOffset));
+        rects.appendVector(SimpleLineLayout::collectAbsoluteRects(*this, *layout, accumulatedOffset));
         return;
     }
     rects.appendVector(m_lineBoxes.absoluteRects(accumulatedOffset));
@@ -404,7 +404,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
     if (auto layout = simpleLineLayout()) {
         ASSERT(style().textOverflow() != TextOverflowEllipsis);
-        return collectTextAbsoluteQuads(*this, *layout, nullptr);
+        return SimpleLineLayout::collectAbsoluteQuads(*this, *layout, nullptr);
     }
     return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
 }
@@ -412,7 +412,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     if (auto layout = simpleLineLayout()) {
-        quads.appendVector(collectTextAbsoluteQuads(*this, *layout, wasFixed));
+        quads.appendVector(SimpleLineLayout::collectAbsoluteQuads(*this, *layout, wasFixed));
         return;
     }
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
@@ -961,7 +961,7 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
 IntPoint RenderText::firstRunLocation() const
 {
     if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::computeTextFirstRunLocation(*this, *layout);
+        return SimpleLineLayout::computeFirstRunLocation(*this, *layout);
 
     return m_lineBoxes.firstRunLocation();
 }
@@ -1258,7 +1258,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
 IntRect RenderText::linesBoundingBox() const
 {
     if (auto layout = simpleLineLayout())
-        return SimpleLineLayout::computeTextBoundingBox(*this, *layout);
+        return SimpleLineLayout::computeBoundingBox(*this, *layout);
 
     return m_lineBoxes.boundingBox(*this);
 }
@@ -1346,14 +1346,14 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 int RenderText::caretMinOffset() const
 {
     if (auto layout = simpleLineLayout())
-        return SimpleLineLayout::findTextCaretMinimumOffset(*this, *layout);
+        return SimpleLineLayout::findCaretMinimumOffset(*this, *layout);
     return m_lineBoxes.caretMinOffset();
 }
 
 int RenderText::caretMaxOffset() const
 {
     if (auto layout = simpleLineLayout())
-        return SimpleLineLayout::findTextCaretMaximumOffset(*this, *layout);
+        return SimpleLineLayout::findCaretMaximumOffset(*this, *layout);
     return m_lineBoxes.caretMaxOffset(*this);
 }
 
@@ -1372,7 +1372,7 @@ bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
     if (auto layout = simpleLineLayout())
-        return SimpleLineLayout::containsTextCaretOffset(*this, *layout, offset);
+        return SimpleLineLayout::containsCaretOffset(*this, *layout, offset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
 }
 

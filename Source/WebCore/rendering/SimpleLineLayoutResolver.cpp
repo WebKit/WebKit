@@ -27,7 +27,7 @@
 #include "SimpleLineLayoutResolver.h"
 
 #include "RenderBlockFlow.h"
-#include "RenderText.h"
+#include "RenderObject.h"
 #include "SimpleLineLayoutFunctions.h"
 
 namespace WebCore {
@@ -77,7 +77,7 @@ StringView RunResolver::Run::text() const
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
     auto& segment = resolver.m_flowContents.segmentForPosition(run.start);
-    // We currently split runs on segment boundaries (different RenderText).
+    // We currently split runs on segment boundaries (different RenderObject).
     ASSERT(run.end <= segment.end);
     if (segment.text.is8Bit())
         return StringView(segment.text.characters8(), segment.text.length()).substring(run.start - segment.start, run.end - run.start);
@@ -155,7 +155,7 @@ Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) c
     return Range<Iterator>(rangeBegin, rangeEnd);
 }
 
-Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderText& renderer) const
+Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& renderer) const
 {
     auto& segment = m_flowContents.segmentForRenderer(renderer);
 

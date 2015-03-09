@@ -62,7 +62,7 @@ unsigned FlowContents::segmentIndexForPositionSlow(unsigned position) const
     return index;
 }
 
-const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderText& renderer) const
+const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderObject& renderer) const
 {
     for (auto& segment : m_segments) {
         if (&segment.renderer == &renderer)

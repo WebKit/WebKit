@@ -28,7 +28,6 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderText.h"
 #include "SimpleLineLayoutFlowContents.h"
 
 namespace WebCore {
@@ -94,8 +93,9 @@ TextFragmentIterator::TextFragment TextFragmentIterator::nextTextFragment(float 
 float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
 {
     const auto& fromSegment = m_flowContents.segmentForPosition(from);
+    ASSERT(is<RenderText>(fromSegment.renderer));
     if ((m_style.font.isFixedPitch() && fromSegment.end >= to) || (from == fromSegment.start && to == fromSegment.end))
-        return fromSegment.renderer.width(from - fromSegment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
+        return downcast<RenderText>(fromSegment.renderer).width(from - fromSegment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
 
     const auto* segment = &fromSegment;
     float textWidth = 0;

@@ -41,10 +41,10 @@ public:
         unsigned start;
         unsigned end;
         String text;
-        const RenderText& renderer;
+        const RenderObject& renderer;
     };
     const Segment& segmentForPosition(unsigned) const;
-    const Segment& segmentForRenderer(const RenderText&) const;
+    const Segment& segmentForRenderer(const RenderObject&) const;
 
     class Iterator {
     public:

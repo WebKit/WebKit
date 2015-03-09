@@ -134,11 +134,11 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
     }
 }
 
-IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& layout)
+IntRect computeBoundingBox(const RenderObject& renderer, const Layout& layout)
 {
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*textRenderer.parent()), layout);
+    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
     FloatRect boundingBoxRect;
-    for (const auto& run : resolver.rangeForRenderer(textRenderer)) {
+    for (const auto& run : resolver.rangeForRenderer(renderer)) {
         FloatRect rect = run.rect();
         if (boundingBoxRect == FloatRect())
             boundingBoxRect = rect;
@@ -148,10 +148,10 @@ IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& lay
     return enclosingIntRect(boundingBoxRect);
 }
 
-IntPoint computeTextFirstRunLocation(const RenderText& textRenderer, const Layout& layout)
+IntPoint computeFirstRunLocation(const RenderObject& renderer, const Layout& layout)
 {
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*textRenderer.parent()), layout);
-    const auto& it = resolver.rangeForRenderer(textRenderer);
+    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    const auto& it = resolver.rangeForRenderer(renderer);
     auto begin = it.begin();
     if (begin == it.end())
         return IntPoint(0, 0);
@@ -159,23 +159,23 @@ IntPoint computeTextFirstRunLocation(const RenderText& textRenderer, const Layou
     return flooredIntPoint((*begin).rect().location());
 }
 
-Vector<IntRect> collectTextAbsoluteRects(const RenderText& textRenderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
+Vector<IntRect> collectAbsoluteRects(const RenderObject& renderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
 {
     Vector<IntRect> rects;
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*textRenderer.parent()), layout);
-    for (const auto& run : resolver.rangeForRenderer(textRenderer)) {
+    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    for (const auto& run : resolver.rangeForRenderer(renderer)) {
         LayoutRect rect = run.rect();
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
     }
     return rects;
 }
 
-Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText& textRenderer, const Layout& layout, bool* wasFixed)
+Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layout& layout, bool* wasFixed)
 {
     Vector<FloatQuad> quads;
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*textRenderer.parent()), layout);
-    for (const auto& run : resolver.rangeForRenderer(textRenderer))
-        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(run.rect()), 0, wasFixed));
+    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    for (const auto& run : resolver.rangeForRenderer(renderer))
+        quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), 0, wasFixed));
     return quads;
 }
 

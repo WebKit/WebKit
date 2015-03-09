@@ -28,7 +28,6 @@
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
-#include "RenderText.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
 #include <wtf/Vector.h>
@@ -101,7 +100,7 @@ public:
     Iterator end() const;
 
     Range<Iterator> rangeForRect(const LayoutRect&) const;
-    Range<Iterator> rangeForRenderer(const RenderText&) const;
+    Range<Iterator> rangeForRenderer(const RenderObject&) const;
 
 private:
     enum class IndexType { First, Last };
