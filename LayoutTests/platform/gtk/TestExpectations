@@ -608,6 +608,7 @@ webkit.org/b/142142 media/video-volume-slider.html [ Failure ]
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 webkit.org/b/142286 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/142286 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
 webkit.org/b/142289 fast/text/font-kerning.html [ ImageOnlyFailure ]
@@ -1302,6 +1303,12 @@ webkit.org/b/139363 media/media-controls-timeline-updates.html [ Timeout ]
 
 webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout ]
+
+webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Timeout ]
+webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
+webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
+webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
+webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2349,6 +2356,18 @@ webkit.org/b/140252 fast/text/justify-ideograph-vertical.html [ Failure ]
 webkit.org/b/140252 fast/text/khmer-lao-font.html [ Failure ]
 webkit.org/b/140252 fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
 webkit.org/b/140252 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+
+webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg [ Failure ]
+webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
+webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ Failure ]
+webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
+webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
+
+webkit.org/b/142480 fast/dom/event-handler-attributes.html [ Failure ]
+webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
+
+webkit.org/b/142487 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
+webkit.org/b/142423 svg/fonts/svg-font-horiz-origin.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

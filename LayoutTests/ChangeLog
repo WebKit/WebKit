@@ -1,3 +1,11 @@
+2015-03-09  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Unreviewed GTK+ Gardening
+
+        https://bugs.webkit.org/show_bug.cgi?id=142499 
+
+        * platform/gtk/TestExpectations:
+
 2015-03-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening on 9th Mar.
