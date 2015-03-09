@@ -101,13 +101,15 @@ void NotificationCenter::stop()
     if (!m_client)
         return;
 
-    // The call to clearNotifications() below will destroy the notifications. The notifications will
-    // unref the NotificationCenter when destroyed so we need to protect the NotificationCenter here
-    // in case no-one else holds a ref to the NotificationCenter at this point besides Notifications.
-    Ref<NotificationCenter> protect(*this);
-    m_client->cancelRequestsForPermission(scriptExecutionContext());
-    m_client->clearNotifications(scriptExecutionContext());
-    m_client = 0;
+    // Clear m_client now because the call to NotificationClient::clearNotifications() below potentially
+    // destroy the NotificationCenter. This is because the notifications will be destroyed and unref the
+    // NotificationCenter.
+    auto& client = *m_client;
+    m_client = nullptr;
+
+    client.cancelRequestsForPermission(scriptExecutionContext());
+    client.clearNotifications(scriptExecutionContext());
+    // Do not attempt the access |this|, the NotificationCenter may be destroyed at this point.
 }
 
 void NotificationCenter::requestTimedOut(NotificationCenter::NotificationRequestCallback* request)

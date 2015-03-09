@@ -1,3 +1,21 @@
+2015-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Crash in WebCore::NotificationCenter::stop()
+        https://bugs.webkit.org/show_bug.cgi?id=142444
+        <rdar://problem/20082520>
+
+        Reviewed by Darin Adler.
+
+        Rework the patch in r181219 so that we do not need a Ref<NotificationCenter> protector
+        in NotificationCenter::stop(). Instead, we put the client in a local variable and null
+        out m_client *before* calling NotificationClient::clearNotifications().
+
+        No new tests, already covered by:
+        http/tests/notifications/event-listener-crash.html
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::stop):
+
 2015-03-07  Chris Dumez  <cdumez@apple.com>
 
         Crash in WebCore::NotificationCenter::stop()
