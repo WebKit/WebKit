@@ -70,8 +70,8 @@ JSValue JSReadableStream::ready(ExecState* exec) const
 {
     JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), readyPromiseSlotName());
     DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper](RefPtr<ReadableStream> stream) mutable {
-        wrapper.resolve(stream.get());
+    auto successCallback = [wrapper, this]() mutable {
+        wrapper.resolve(&impl());
     };
     impl().ready(WTF::move(successCallback));
 
@@ -88,8 +88,8 @@ JSValue JSReadableStream::closed(ExecState* exec) const
 {
     JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
     DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper](RefPtr<ReadableStream> stream) mutable {
-        wrapper.resolve(stream.get());
+    auto successCallback = [wrapper, this]() mutable {
+        wrapper.resolve(&impl());
     };
     impl().closed(WTF::move(successCallback));
 

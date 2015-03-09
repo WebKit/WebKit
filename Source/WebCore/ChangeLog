@@ -1,3 +1,17 @@
+2015-03-09  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        ReadableStream does not not need to pass itself as callback parameter
+        https://bugs.webkit.org/show_bug.cgi?id=142399
+
+        Reviewed by Darin Adler.
+
+        No change in behavior.
+
+        * Modules/streams/ReadableStream.h: Remove ReadableStream parameter from SuccessCallback definition.
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::JSReadableStream::ready): Capture JSReadableStream instance instead.
+        (WebCore::JSReadableStream::closed): Capture JSReadableStream instance instead.
+
 2015-03-08  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Video buffer progress missing on iPhones

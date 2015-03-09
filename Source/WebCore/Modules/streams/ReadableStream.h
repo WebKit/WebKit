@@ -61,7 +61,7 @@ public:
     // JS API implementation.
     String state() const;
 
-    typedef std::function<void(RefPtr<ReadableStream>)> SuccessCallback;
+    typedef std::function<void()> SuccessCallback;
     void closed(SuccessCallback);
     void ready(SuccessCallback);
 
