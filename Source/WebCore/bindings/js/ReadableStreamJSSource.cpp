@@ -67,7 +67,6 @@ Ref<ReadableStreamJSSource> ReadableStreamJSSource::create(JSC::ExecState* exec)
 }
 
 ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
-    : m_error(exec->vm(), jsUndefined())
 {
     if (!exec->argumentCount())
         return;

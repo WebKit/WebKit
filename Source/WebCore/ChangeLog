@@ -1,3 +1,15 @@
+2015-03-09  Xabier Rodriguez Calvar <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        ReadableStreamJSSource should use JSC::Strong UnspecifiedBoolType operator
+        https://bugs.webkit.org/show_bug.cgi?id=142397
+
+        Reviewed by Benjamin Poulain.
+
+        No behavior change. Current tests cover the changes.
+
+        * bindings/js/ReadableStreamJSSource.cpp:
+        * bindings/js/ReadableStreamJSSource.h:
+
 2015-03-09  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         ReadableStream does not not need to pass itself as callback parameter

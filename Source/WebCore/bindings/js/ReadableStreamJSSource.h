@@ -52,7 +52,7 @@ public:
     bool start() { return true; }
 
     // ReadableStreamSource API.
-    virtual bool isErrored() { return !m_error.get().isUndefined(); }
+    virtual bool isErrored() { return !!m_error; }
 
 private:
     void setInternalError(JSC::ExecState*, const String&);
