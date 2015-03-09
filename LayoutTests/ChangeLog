@@ -1,3 +1,11 @@
+2015-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Change bug number for svg/custom/svg-fonts-without-missing-glyph.xhtml
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
 2015-03-08  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Gardening to skip new tests, rebaseline existing tests

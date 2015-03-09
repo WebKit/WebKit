@@ -1244,7 +1244,7 @@ webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ 
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
 webkit.org/b/139968 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
-webkit.org/b/139968 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
+webkit.org/b/142470 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]
 
 # Sometimes has an extra space at the end
