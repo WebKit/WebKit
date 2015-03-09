@@ -1,3 +1,15 @@
+2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Work around a Cocoa font parsing bug
+        https://bugs.webkit.org/show_bug.cgi?id=142446
+        <rdar://problem/20086223>
+
+        Reviewed by Simon Fraser.
+
+        Work around a bug in Cocoa regarding font parsing.
+
+        * svg/SVGToOTFFontConversion.cpp:
+
 2015-03-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the build after r181153

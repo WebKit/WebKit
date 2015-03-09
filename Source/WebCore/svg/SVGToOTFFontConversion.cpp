@@ -1300,6 +1300,10 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, initialGlyph);
     }
 
+    // <rdar://problem/20086223> Cocoa has a bug where glyph bounding boxes are not correctly respected for frustum culling. Work around this by
+    // inflating the font's bounding box
+    m_boundingBox.extend(FloatPoint(0, 0));
+
     appendLigatureGlyphs();
 
     if (m_glyphs.size() > std::numeric_limits<Glyph>::max()) {
