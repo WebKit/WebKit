@@ -1,3 +1,13 @@
+2015-03-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add WebKitSystemInterface for iOS 8.2
+        https://bugs.webkit.org/show_bug.cgi?id=142505
+
+        Reviewed by Andy Estes.
+
+        * libWebKitSystemInterfaceIOSDevice8.2.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator8.2.a: Added.
+
 2015-03-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove Mountain Lion libraries since ML isn't supported
