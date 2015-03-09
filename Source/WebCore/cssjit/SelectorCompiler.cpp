@@ -471,7 +471,7 @@ static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& select
 }
 
 // Handle the forward :nth-child() and backward :nth-last-child().
-static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext selectorContext, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, Vector<std::pair<int, int>, 2>& simpleCases, Vector<NthChildOfSelectorInfo>& filteredCases, unsigned& internalSpecificity)
+static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext selectorContext, FragmentPositionInRootFragments positionInRootFragments, CSSSelector::PseudoClassType firstMatchAlternative, bool visitedMatchEnabled, Vector<std::pair<int, int>, 2>& simpleCases, Vector<NthChildOfSelectorInfo>& filteredCases, HashSet<unsigned>& pseudoClasses, unsigned& internalSpecificity)
 {
     if (!selector.parseNth())
         return FunctionType::CannotMatchAnything;
@@ -540,7 +540,11 @@ static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext
         filteredCases.append(nthChildOfSelectorInfo);
         return globalFunctionType;
     }
-    simpleCases.append(std::pair<int, int>(a, b));
+
+    if (b == 1 && a <= 0)
+        pseudoClasses.add(firstMatchAlternative);
+    else
+        simpleCases.append(std::pair<int, int>(a, b));
     if (selectorContext == SelectorContext::QuerySelector)
         return FunctionType::SimpleSelectorChecker;
     return FunctionType::SelectorCheckerWithCheckingContext;
@@ -698,10 +702,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SelectorCheckerWithCheckingContext;
 
     case CSSSelector::PseudoClassNthChild:
-        return addNthChildType(selector, selectorContext, positionInRootFragments, visitedMatchEnabled, fragment.nthChildFilters, fragment.nthChildOfFilters, internalSpecificity);
+        return addNthChildType(selector, selectorContext, positionInRootFragments, CSSSelector::PseudoClassFirstChild, visitedMatchEnabled, fragment.nthChildFilters, fragment.nthChildOfFilters, fragment.pseudoClasses, internalSpecificity);
 
     case CSSSelector::PseudoClassNthLastChild:
-        return addNthChildType(selector, selectorContext, positionInRootFragments, visitedMatchEnabled, fragment.nthLastChildFilters, fragment.nthLastChildOfFilters, internalSpecificity);
+        return addNthChildType(selector, selectorContext, positionInRootFragments, CSSSelector::PseudoClassLastChild, visitedMatchEnabled, fragment.nthLastChildFilters, fragment.nthLastChildOfFilters, fragment.pseudoClasses, internalSpecificity);
 
     case CSSSelector::PseudoClassNot:
         {

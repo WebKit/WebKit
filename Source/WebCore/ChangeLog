@@ -1,3 +1,27 @@
+2015-03-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add aliases between :nth-child()/:nth-last-child() and :first-child/:last-child
+        https://bugs.webkit.org/show_bug.cgi?id=142472
+
+        Reviewed by Andreas Kling.
+
+        The pseudo class :first-child has weaker tree marking than :nth-child(1).
+        This patch aliases :nth-child(1) to :first-child in the CSS JIT to take
+        advantage of that.
+
+        The strength of :last-child and :nth-last-child(1) are pretty much identical
+        but :last-child is a bit simpler so I changed it too. It is also easier
+        to handle both the same.
+
+        Tests: fast/selectors/nth-child-matching-first-on-root.html
+               fast/selectors/nth-child-matching-first.html
+               fast/selectors/nth-last-child-matching-first-on-root.html
+               fast/selectors/nth-last-child-matching-first.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addNthChildType):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2015-03-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Merge TrivialAtom and CharacterSet into a Term abstraction, prepare Term for composition

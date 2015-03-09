@@ -1,0 +1,133 @@
+Test cases of :nth-child() matching only the first child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing ":nth-child(1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(-n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(-n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(-n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(-2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(-2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(-2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(-3n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(-3n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(-3n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(odd):nth-child(1):nth-child(2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(odd):nth-child(+1):nth-child(2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(odd):nth-child(-n+1):nth-child(2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(odd):nth-child(-2n+1):nth-child(2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(odd):nth-child(-3n+1):nth-child(2n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)').length is 1
+PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)')[0].id is "testcase1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(-n-1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(-n-1)').length is 0
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing ":nth-child(n+1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)').length is 5
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[2].id is "testcase3"
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[3].id is "testcase4"
+PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[4].id is "testcase5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing ":nth-child(n-1)"
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)').length is 5
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[2].id is "testcase3"
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[3].id is "testcase4"
+PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[4].id is "testcase5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
