@@ -1,3 +1,15 @@
+2015-03-10  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Too large plugins are crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=139856
+
+        Reviewed by Darin Adler.
+
+        Add layout test to cover this crash.
+
+        * plugins/large-plugin-crash-expected.txt: Added.
+        * plugins/large-plugin-crash.html: Added.
+
 2015-03-09  Alexey Proskuryakov  <ap@apple.com>
 
         Skip contentfiltering/block-after-add-data.html for now.

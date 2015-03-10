@@ -1,0 +1,15 @@
+<html>
+    <body>
+        <p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=139856">139856</a>: Large plugin crash.</p>
+        <p>This test PASSES if it does not CRASH.</p>
+
+        <embed id="plugin" width="99999999999999999" type="application/x-webkit-test-netscape"></embed>
+
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            document.getElementById('plugin').style.webkitTransform = 'scale(1)';
+        </script>
+
+    </body>
+</html>
