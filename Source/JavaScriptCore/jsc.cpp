@@ -363,9 +363,6 @@ public:
     static NO_RETURN_DUE_TO_CRASH bool deleteProperty(JSCell*, ExecState*, PropertyName)
     {
         RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
-        return true;
-#endif
     }
 
     unsigned getLength() const { return m_vector.size(); }
