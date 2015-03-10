@@ -43,7 +43,7 @@ namespace JSC { namespace Yarr {
 #define YarrStackSpaceForBackTrackInfoParentheses 2
 
 static const unsigned quantifyInfinite = UINT_MAX;
-static const unsigned offsetNoMatch = (unsigned)-1;
+static const unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
 
 // The below limit restricts the number of "recursive" match calls in order to
 // avoid spending exponential time on complex regular expressions.

@@ -45,7 +45,7 @@ public:
     JIT::Call call()
     {
 #if ENABLE(OPCODE_SAMPLING)
-        if (m_jit->m_bytecodeOffset != (unsigned)-1)
+        if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
             m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, true);
 #endif
         m_jit->updateTopCallFrame();
@@ -73,7 +73,7 @@ public:
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)
-        if (m_jit->m_bytecodeOffset != (unsigned)-1)
+        if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
             m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, false);
 #endif
         
