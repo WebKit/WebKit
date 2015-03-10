@@ -1,3 +1,15 @@
+2015-03-10  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix bleeding debug test bots.
+        https://webkit.org/b/142513>
+
+        Not reviewed.
+
+        The test needs to initialize WTF threading explicitly before using it.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        (testCompareAndSwap):
+
 2015-03-10  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Unreviewed build fix.

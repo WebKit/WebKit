@@ -98,6 +98,8 @@ void testCompareAndSwap()
     const int numThreads = 5;
     ThreadIdentifier threadIDs[numThreads];
     Data data[numThreads];
+
+    WTF::initializeThreading();
     
     printf("Starting %d threads for CompareAndSwap test.  Test should complete without hanging.\n", numThreads);
     for (int i = 0; i < numThreads; i++) {
