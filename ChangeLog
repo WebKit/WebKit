@@ -1,3 +1,12 @@
+2015-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Handle unused parameter warnings as build errors except in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=142338
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2015-03-03  Daniel Bates  <dabates@apple.com>
 
         Convert ManualTests/svg-tooltip.svg to a DRT test

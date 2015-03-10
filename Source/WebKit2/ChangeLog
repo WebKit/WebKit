@@ -1,3 +1,12 @@
+2015-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Handle unused parameter warnings as build errors except in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=142338
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+
 2015-03-10  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of <rdar://problem/20086546> [Cocoa] Add an option to treat certificate chains with SHA1-signed certificates as insecure

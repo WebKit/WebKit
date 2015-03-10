@@ -22,7 +22,7 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
         # Enable errors on warning
         if (OPTION_ENABLE_WERROR)
-            set(OLD_COMPILE_FLAGS "-Werror -Wno-error=unused-parameter ${OLD_COMPILE_FLAGS}")
+            set(OLD_COMPILE_FLAGS "-Werror ${OLD_COMPILE_FLAGS}")
         endif ()
 
         set_target_properties(${_target} PROPERTIES

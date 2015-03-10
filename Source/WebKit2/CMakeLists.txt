@@ -760,6 +760,10 @@ macro(ADD_WEBKIT2_PREFIX_HEADER _target)
     endif ()
 endmacro()
 
+# Suppress unused parameter warnings for sources in WebKit2.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 GENERATE_WEBKIT2_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
