@@ -73,7 +73,7 @@ static CFCharacterSetRef phoneFallbackCharacterSet()
     return characterSet;
 }
 
-PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescription& description, const Font* originalFontData, const UChar* characters, int length)
+PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescription& description, const Font* originalFontData, const UChar* characters, unsigned length)
 {
     const FontPlatformData& platformData = originalFontData->platformData();
     CTFontRef ctFont = platformData.font();
@@ -194,11 +194,11 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
     return LanguageSpecificFont::None;
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, int length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, unsigned length)
 {
     // Unlike OS X, our fallback font on iPhone is Arial Unicode, which doesn't have some apple-specific glyphs like F8FF.
     // Fall back to the Apple Fallback font in this case.
-    if (length > 0 && requiresCustomFallbackFont(*characters)) {
+    if (length && requiresCustomFallbackFont(*characters)) {
         auto* fallback = getCustomFallbackFont(*characters, description);
         if (!fallback)
             return nullptr;
@@ -217,7 +217,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     }
 
     LanguageSpecificFont languageSpecificFont = LanguageSpecificFont::None;
-    if (length > 0)
+    if (length)
         languageSpecificFont = languageSpecificFallbackFont(c);
 
     RefPtr<Font> font;
@@ -479,7 +479,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description)
         static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
         static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
-        for (int j = 0; j < 3 && !font; ++j) {
+        for (unsigned j = 0; j < 3 && !font; ++j) {
             if (family.contains(*matchWords[j], false))
                 font = fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
         }

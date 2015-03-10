@@ -1,3 +1,31 @@
+2015-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use unsigned for HashSet size.
+        https://bugs.webkit.org/show_bug.cgi?id=142518
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/HashCountedSet.h:
+        (WTF::Traits>::size):
+        (WTF::Traits>::capacity):
+        * wtf/HashMap.h:
+        (WTF::X>::size):
+        (WTF::X>::capacity):
+        * wtf/HashSet.h:
+        (WTF::V>::size):
+        (WTF::V>::capacity):
+        * wtf/HashTable.h:
+        (WTF::HashTable::Stats::recordCollisionAtCount):
+        (WTF::HashTable::Stats::dumpStats):
+        (WTF::HashTable::size):
+        (WTF::HashTable::capacity):
+        (WTF::KeyTraits>::deallocateTable):
+        (WTF::KeyTraits>::checkTableConsistencyExceptSize):
+        * wtf/HashTraits.h:
+        * wtf/ListHashSet.h:
+        (WTF::U>::size):
+        (WTF::U>::capacity):
+
 2015-03-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove PassRefPtr from svg/properties classes.

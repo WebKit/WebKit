@@ -143,7 +143,7 @@ TEST(WTF_HashMap, InitializerList)
         { 4, "four" },
     };
 
-    EXPECT_EQ(4, map.size());
+    EXPECT_EQ(4u, map.size());
 
     EXPECT_EQ("one", map.get(1));
     EXPECT_EQ("two", map.get(2));

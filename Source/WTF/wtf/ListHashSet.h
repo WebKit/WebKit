@@ -78,8 +78,8 @@ public:
 
     void swap(ListHashSet&);
 
-    int size() const;
-    int capacity() const;
+    unsigned size() const;
+    unsigned capacity() const;
     bool isEmpty() const;
 
     iterator begin() { return makeIterator(m_head); }
@@ -347,13 +347,13 @@ inline ListHashSet<T, U>::~ListHashSet()
 }
 
 template<typename T, typename U>
-inline int ListHashSet<T, U>::size() const
+inline unsigned ListHashSet<T, U>::size() const
 {
     return m_impl.size(); 
 }
 
 template<typename T, typename U>
-inline int ListHashSet<T, U>::capacity() const
+inline unsigned ListHashSet<T, U>::capacity() const
 {
     return m_impl.capacity(); 
 }

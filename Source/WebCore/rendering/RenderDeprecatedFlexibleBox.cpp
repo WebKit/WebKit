@@ -78,7 +78,7 @@ public:
                 if (!m_ordinalIteration)
                     m_currentOrdinal = m_forward ? 1 : m_largestOrdinal;
                 else {
-                    if (m_ordinalIteration >= m_ordinalValues.size() + 1)
+                    if (m_ordinalIteration > m_ordinalValues.size())
                         return 0;
 
                     // Only copy+sort the values once per layout even if the iterator is reset.
@@ -110,11 +110,11 @@ private:
     RenderDeprecatedFlexibleBox* m_box;
     RenderBox* m_currentChild;
     bool m_forward;
-    unsigned int m_currentOrdinal;
-    unsigned int m_largestOrdinal;
-    HashSet<unsigned int> m_ordinalValues;
-    Vector<unsigned int> m_sortedOrdinalValues;
-    int m_ordinalIteration;
+    unsigned m_currentOrdinal;
+    unsigned m_largestOrdinal;
+    HashSet<unsigned> m_ordinalValues;
+    Vector<unsigned> m_sortedOrdinalValues;
+    unsigned m_ordinalIteration;
 };
 
 RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Ref<RenderStyle>&& style)

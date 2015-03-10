@@ -107,7 +107,7 @@ private:
         typedef HashSet<RefPtr<ResourceLoader>> RequestMap;
         RequestMap m_requestsLoading;
         const String m_name;
-        const int m_maxRequestsInFlight;
+        const unsigned m_maxRequestsInFlight;
     };
 
     enum CreateHostPolicy {

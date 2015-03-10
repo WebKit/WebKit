@@ -110,7 +110,7 @@ public:
     WEBCORE_EXPORT static FontCache& singleton();
 
     // This method is implemented by the platform.
-    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, bool isPlatformFont, const UChar* characters, int length);
+    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length);
 
     // Also implemented by the platform.
     void platformInit();
@@ -140,7 +140,7 @@ public:
 
     WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
-    WEBCORE_EXPORT void purgeInactiveFontData(int count = INT_MAX);
+    WEBCORE_EXPORT void purgeInactiveFontData(unsigned count = UINT_MAX);
 
 #if PLATFORM(WIN)
     RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
@@ -165,7 +165,7 @@ private:
     // These methods are implemented by each platform.
 #if PLATFORM(IOS)
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
-    PassRefPtr<Font> getSystemFontFallbackForCharacters(const FontDescription&, const Font*, const UChar* characters, int length);
+    PassRefPtr<Font> getSystemFontFallbackForCharacters(const FontDescription&, const Font*, const UChar* characters, unsigned length);
 #endif
     std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
 

@@ -422,7 +422,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
 
     if (!fallbackFont) {
         UChar codeUnits[2];
-        int codeUnitsLength;
+        unsigned codeUnitsLength;
         if (U_IS_BMP(character)) {
             codeUnits[0] = FontCascade::normalizeSpaces(character);
             codeUnitsLength = 1;

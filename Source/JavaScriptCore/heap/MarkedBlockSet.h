@@ -57,7 +57,7 @@ inline void MarkedBlockSet::add(MarkedBlock* block)
 
 inline void MarkedBlockSet::remove(MarkedBlock* block)
 {
-    int oldCapacity = m_set.capacity();
+    unsigned oldCapacity = m_set.capacity();
     m_set.remove(block);
     if (m_set.capacity() != oldCapacity) // Indicates we've removed a lot of blocks.
         recomputeFilter();

@@ -1,3 +1,18 @@
+2015-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use unsigned for HashSet size.
+        https://bugs.webkit.org/show_bug.cgi?id=142518
+
+        Reviewed by Benjamin Poulain.
+
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::prune):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * heap/MarkedBlockSet.h:
+        (JSC::MarkedBlockSet::remove):
+        * runtime/WeakMapData.h:
+
 2015-03-10  Mark Lam  <mark.lam@apple.com>
 
         Use std::numeric_limits<unsigned>::max() instead of (unsigned)-1.

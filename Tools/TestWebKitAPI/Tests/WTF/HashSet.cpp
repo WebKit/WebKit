@@ -45,7 +45,7 @@ void testInitialCapacity()
     HashSet<int, DefaultHash<int>::Hash, InitialCapacityTestHashTraits<initialCapacity> > testSet;
 
     // Initial capacity is null.
-    ASSERT_EQ(0, testSet.capacity());
+    ASSERT_EQ(0u, testSet.capacity());
 
     // Adding items up to size should never change the capacity.
     for (size_t i = 0; i < size; ++i) {

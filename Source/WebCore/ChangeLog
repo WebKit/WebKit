@@ -1,3 +1,41 @@
+2015-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use unsigned for HashSet size.
+        https://bugs.webkit.org/show_bug.cgi?id=142518
+
+        Reviewed by Benjamin Poulain.
+
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        (WebCore::WebSocketExtensionDeflateFrame::processResponse):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::checkForDuplicate):
+        (WebCore::CloneSerializer::writeConstantPoolIndex):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::~ScriptRunner):
+        * loader/ResourceLoadScheduler.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::systemFallbackFontForCharacter):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::getSystemFontFallbackForCharacters):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::similarFont):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::shouldAutoActivateFontIfNeeded):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::similarFont):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::next):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::computeOverflowFromCells):
+
 2015-03-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Refactor media controls code

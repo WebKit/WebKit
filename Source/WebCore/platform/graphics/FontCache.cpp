@@ -368,15 +368,15 @@ static FontDataCache& cachedFonts()
 
 
 #if PLATFORM(IOS)
-const int cMaxInactiveFontData = 120;
-const int cTargetInactiveFontData = 100;
+const unsigned cMaxInactiveFontData = 120;
+const unsigned cTargetInactiveFontData = 100;
 #else
-const int cMaxInactiveFontData = 225;
-const int cTargetInactiveFontData = 200;
+const unsigned cMaxInactiveFontData = 225;
+const unsigned cTargetInactiveFontData = 200;
 #endif
 
-const int cMaxUnderMemoryPressureInactiveFontData = 50;
-const int cTargetUnderMemoryPressureInactiveFontData = 30;
+const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
+const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
 RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
 {
@@ -411,19 +411,19 @@ void FontCache::purgeTimerFired()
 void FontCache::purgeInactiveFontDataIfNeeded()
 {
     bool underMemoryPressure = MemoryPressureHandler::singleton().isUnderMemoryPressure();
-    int inactiveFontDataLimit = underMemoryPressure ? cMaxUnderMemoryPressureInactiveFontData : cMaxInactiveFontData;
+    unsigned inactiveFontDataLimit = underMemoryPressure ? cMaxUnderMemoryPressureInactiveFontData : cMaxInactiveFontData;
 
     if (cachedFonts().size() < inactiveFontDataLimit)
         return;
-    int inactiveCount = inactiveFontCount();
+    unsigned inactiveCount = inactiveFontCount();
     if (inactiveCount <= inactiveFontDataLimit)
         return;
 
-    int targetFontDataLimit = underMemoryPressure ? cTargetUnderMemoryPressureInactiveFontData : cTargetInactiveFontData;
+    unsigned targetFontDataLimit = underMemoryPressure ? cTargetUnderMemoryPressureInactiveFontData : cTargetInactiveFontData;
     purgeInactiveFontData(inactiveCount - targetFontDataLimit);
 }
 
-void FontCache::purgeInactiveFontData(int purgeCount)
+void FontCache::purgeInactiveFontData(unsigned purgeCount)
 {
     pruneUnreferencedEntriesFromFontCascadeCache();
     pruneSystemFallbackFonts();

@@ -78,7 +78,7 @@ TEST(WTF_ListHashSet, AppendOrMoveToLastNewItems)
     result = list.appendOrMoveToLast(3);
     ASSERT_TRUE(result.isNewEntry);
 
-    ASSERT_EQ(list.size(), 3);
+    ASSERT_EQ(list.size(), 3u);
 
     // The list should be in order 1, 2, 3.
     ListHashSet<int>::iterator iterator = list.begin();
@@ -99,11 +99,11 @@ TEST(WTF_ListHashSet, AppendOrMoveToLastWithDuplicates)
     ASSERT_TRUE(result.isNewEntry);
     result = list.appendOrMoveToLast(1);
     ASSERT_FALSE(result.isNewEntry);
-    ASSERT_EQ(1, list.size());
+    ASSERT_EQ(1u, list.size());
 
     list.add(2);
     list.add(3);
-    ASSERT_EQ(3, list.size());
+    ASSERT_EQ(3u, list.size());
 
     // Appending 2 move it to the end.
     ASSERT_EQ(3, list.last());
@@ -118,7 +118,7 @@ TEST(WTF_ListHashSet, AppendOrMoveToLastWithDuplicates)
     ASSERT_FALSE(result.isNewEntry);
     result = list.appendOrMoveToLast(1);
     ASSERT_FALSE(result.isNewEntry);
-    ASSERT_EQ(3, list.size());
+    ASSERT_EQ(3u, list.size());
 
     ListHashSet<int>::iterator iterator = list.begin();
     ASSERT_EQ(3, *iterator);
@@ -139,7 +139,7 @@ TEST(WTF_ListHashSet, PrependOrMoveToLastNewItems)
     result = list.prependOrMoveToFirst(3);
     ASSERT_TRUE(result.isNewEntry);
 
-    ASSERT_EQ(list.size(), 3);
+    ASSERT_EQ(list.size(), 3u);
 
     // The list should be in order 3, 1, 2.
     ListHashSet<int>::iterator iterator = list.begin();
@@ -160,11 +160,11 @@ TEST(WTF_ListHashSet, PrependOrMoveToLastWithDuplicates)
     ASSERT_TRUE(result.isNewEntry);
     result = list.prependOrMoveToFirst(1);
     ASSERT_FALSE(result.isNewEntry);
-    ASSERT_EQ(1, list.size());
+    ASSERT_EQ(1u, list.size());
 
     list.add(2);
     list.add(3);
-    ASSERT_EQ(3, list.size());
+    ASSERT_EQ(3u, list.size());
 
     // Prepending 2 move it to the beginning.
     ASSERT_EQ(1, list.first());
@@ -179,7 +179,7 @@ TEST(WTF_ListHashSet, PrependOrMoveToLastWithDuplicates)
     ASSERT_FALSE(result.isNewEntry);
     result = list.prependOrMoveToFirst(3);
     ASSERT_FALSE(result.isNewEntry);
-    ASSERT_EQ(3, list.size());
+    ASSERT_EQ(3u, list.size());
 
     ListHashSet<int>::iterator iterator = list.begin();
     ASSERT_EQ(3, *iterator);

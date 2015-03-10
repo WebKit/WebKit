@@ -63,8 +63,8 @@ namespace WTF {
 
         void swap(HashSet&);
 
-        int size() const;
-        int capacity() const;
+        unsigned size() const;
+        unsigned capacity() const;
         bool isEmpty() const;
 
         iterator begin() const;
@@ -149,13 +149,13 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    inline int HashSet<T, U, V>::size() const
+    inline unsigned HashSet<T, U, V>::size() const
     {
         return m_impl.size(); 
     }
 
     template<typename T, typename U, typename V>
-    inline int HashSet<T, U, V>::capacity() const
+    inline unsigned HashSet<T, U, V>::capacity() const
     {
         return m_impl.capacity(); 
     }

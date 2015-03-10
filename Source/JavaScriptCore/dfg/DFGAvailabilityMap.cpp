@@ -45,7 +45,7 @@ void AvailabilityMap::prune()
             possibleNodes.add(m_locals[i].node());
     }
 
-    int oldPossibleNodesSize;
+    unsigned oldPossibleNodesSize;
     do {
         oldPossibleNodesSize = possibleNodes.size();
         for (auto pair : m_heap) {

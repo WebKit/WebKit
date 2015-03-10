@@ -84,7 +84,7 @@ private:
     private:
         virtual void visitWeakReferences(SlotVisitor&) override;
         virtual void finalizeUnconditionally() override;
-        int m_liveKeyCount;
+        unsigned m_liveKeyCount;
         WeakMapData* m_target;
     };
     DeadKeyCleaner m_deadKeyCleaner;

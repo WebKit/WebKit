@@ -236,7 +236,7 @@ static void compileStub(
         toMaterialize.add(materialization);
     
     while (!toMaterialize.isEmpty()) {
-        int previousToMaterializeSize = toMaterialize.size();
+        unsigned previousToMaterializeSize = toMaterialize.size();
         
         Vector<ExitTimeObjectMaterialization*> worklist;
         worklist.appendRange(toMaterialize.begin(), toMaterialize.end());

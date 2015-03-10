@@ -79,7 +79,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     }
     m_responseProcessed = true;
 
-    int expectedNumParameters = 0;
+    unsigned expectedNumParameters = 0;
     int windowBits = 15;
     HashMap<String, String>::const_iterator parameter = serverParameters.find("max_window_bits");
     if (parameter != serverParameters.end()) {
