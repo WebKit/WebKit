@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -267,13 +267,13 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad(const Transaction::Token& token)
+void PageLoadState::didCommitLoad(const Transaction::Token& token, bool hasInsecureContent)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Provisional);
 
     m_uncommittedState.state = State::Committed;
-    m_uncommittedState.hasInsecureContent = false;
+    m_uncommittedState.hasInsecureContent = hasInsecureContent;
 
     m_uncommittedState.url = m_uncommittedState.provisionalURL;
     m_uncommittedState.provisionalURL = String();

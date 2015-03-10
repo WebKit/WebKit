@@ -40,6 +40,8 @@ public:
     void setCertificateChain(CFArrayRef certificateChain) { m_certificateChain = certificateChain; }
     CFArrayRef certificateChain() const { return m_certificateChain.get(); }
 
+    WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
+
 #ifndef NDEBUG
     void dump() const;
 #endif

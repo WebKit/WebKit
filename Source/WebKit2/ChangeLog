@@ -1,3 +1,36 @@
+2015-03-10  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/20086546> [Cocoa] Add an option to treat certificate chains with SHA1-signed certificates as insecure
+        https://bugs.webkit.org/show_bug.cgi?id=142461
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Initialize
+        webPageConfiguration.treatsSHA1SignedCertificatesAsInsecure from the WKWebViewConfiguration.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        Added _treatsSHA1SignedCertificatesAsInsecure ivar.
+        (-[WKWebViewConfiguration copyWithZone:]): Copy _treatsSHA1SignedCertificatesAsInsecure.
+        (-[WKWebViewConfiguration _treatsSHA1SignedCertificatesAsInsecure]): Added this getter.
+        (-[WKWebViewConfiguration _setTreatsSHA1SignedCertificatesAsInsecure:]): Added this setter.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Declared new
+        _treatsSHA1SignedCertificatesAsInsecure property.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didCommitLoad): Use new hasInsecureContent parameter to initialize
+        hasInsecureContent parameter in the uncommitted state.
+        * UIProcess/PageLoadState.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize new m_treatsSHA1CertificatesAsInsecure
+        member variable from the WebPageConfiguration.
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Pass true for the new hasInsecureContent to
+        PageLoadState::didCommitLoad if we are treating SHA1-signed certificates as insecure and
+        the certificate info contains a non-root SHA1-signed certificate.
+        * UIProcess/WebPageProxy.h: Added m_treatsSHA1CertificatesAsInsecure member variable.
+
 2015-03-09  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: tryFastMalloc shouldn't crash

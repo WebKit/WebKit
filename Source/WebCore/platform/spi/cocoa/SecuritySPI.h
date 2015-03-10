@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CertificateInfo_h
-#define CertificateInfo_h
+#ifndef SecuritySPI_h
+#define SecuritySPI_h
 
-#include "NotImplemented.h"
+#if USE(APPLE_INTERNAL_SDK)
+#include <Security/SecCertificatePriv.h>
+#else
 
-namespace WebCore {
-
-class CertificateInfo {
-public:
-    CertificateInfo() { }
-
-    bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
+typedef uint32_t SecSignatureHashAlgorithm;
+enum {
+    kSecSignatureHashAlgorithmUnknown = 0,
+    kSecSignatureHashAlgorithmMD2 = 1,
+    kSecSignatureHashAlgorithmMD4 = 2,
+    kSecSignatureHashAlgorithmMD5 = 3,
+    kSecSignatureHashAlgorithmSHA1 = 4,
+    kSecSignatureHashAlgorithmSHA224 = 5,
+    kSecSignatureHashAlgorithmSHA256 = 6,
+    kSecSignatureHashAlgorithmSHA384 = 7,
+    kSecSignatureHashAlgorithmSHA512 = 8
 };
 
-}
-
 #endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
+EXTERN_C SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef certificate);
+#endif
+
+#endif // SecuritySPI_h

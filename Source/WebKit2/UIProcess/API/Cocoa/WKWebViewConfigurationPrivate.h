@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,8 @@
 @property (nonatomic, strong, setter=_setWebsiteDataStore:) _WKWebsiteDataStore *_websiteDataStore;
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;
+
+@property (nonatomic, setter=_setTreatsSHA1SignedCertificatesAsInsecure:) BOOL _treatsSHA1SignedCertificatesAsInsecure WK_AVAILABLE(NA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen WK_AVAILABLE(NA, WK_IOS_TBA);

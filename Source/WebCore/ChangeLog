@@ -1,3 +1,29 @@
+2015-03-10  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/20086546> [Cocoa] Add an option to treat certificate chains with SHA1-signed certificates as insecure
+        https://bugs.webkit.org/show_bug.cgi?id=142461
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj: Added reference to SecuritySPI.h and sorted the
+        spi/cocoa group.
+
+        * platform/network/cf/CertificateInfo.h: Declared new member function
+        containsNonRootSHA1SignedCertificate.
+
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate): Added. Checks if any but
+        the last certificate in the chain uses SHA-1 as its signature hash algorithm.
+
+        * platform/network/curl/CertificateInfo.h:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate): Added notImplemented
+        implementation.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate): Ditto.
+
+        * platform/spi/cocoa/SecuritySPI.h: Added.
+
 2015-03-09  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Sweep all collected objects on critical memory pressure

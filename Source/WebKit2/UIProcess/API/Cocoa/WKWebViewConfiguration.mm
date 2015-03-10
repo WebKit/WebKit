@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,7 @@ private:
     LazyInitialized<RetainPtr<_WKWebsiteDataStore>> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
+    BOOL _treatsSHA1SignedCertificatesAsInsecure;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
 
@@ -126,6 +127,7 @@ private:
     configuration._websiteDataStore = self._websiteDataStore;
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
+    configuration->_treatsSHA1SignedCertificatesAsInsecure = _treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
@@ -280,6 +282,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setGroupIdentifier:(NSString *)groupIdentifier
 {
     _groupIdentifier = groupIdentifier;
+}
+
+- (BOOL)_treatsSHA1SignedCertificatesAsInsecure
+{
+    return _treatsSHA1SignedCertificatesAsInsecure;
+}
+
+- (void)_setTreatsSHA1SignedCertificatesAsInsecure:(BOOL)insecure
+{
+    _treatsSHA1SignedCertificatesAsInsecure = insecure;
 }
 
 #if PLATFORM(IOS)

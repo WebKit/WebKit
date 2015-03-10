@@ -27,6 +27,7 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
+#include "NotImplemented.h"
 #include <libsoup/soup.h>
 #include <wtf/gobject/GRefPtr.h>
 
@@ -47,6 +48,8 @@ public:
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
     void setTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
+
+    bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;

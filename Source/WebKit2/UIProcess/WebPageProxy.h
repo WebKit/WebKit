@@ -249,6 +249,8 @@ struct WebPageConfiguration {
 
     WebPageProxy* relatedPage = nullptr;
 
+    bool treatsSHA1SignedCertificatesAsInsecure = false;
+
     WebPreferencesStore::ValueMap preferenceValues;
 };
 
@@ -1424,6 +1426,8 @@ private:
     String m_applicationNameForUserAgent;
     String m_customUserAgent;
     String m_customTextEncodingName;
+
+    bool m_treatsSHA1CertificatesAsInsecure;
 
     RefPtr<WebInspectorProxy> m_inspector;
 

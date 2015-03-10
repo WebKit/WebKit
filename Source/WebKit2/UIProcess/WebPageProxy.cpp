@@ -285,6 +285,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_websiteDataStore(*configuration.websiteDataStore)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
+    , m_treatsSHA1CertificatesAsInsecure(configuration.treatsSHA1SignedCertificatesAsInsecure)
 #if PLATFORM(IOS)
     , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(true)
     , m_firstLayerTreeTransactionIdAfterDidCommitLoad(0)
@@ -2818,8 +2819,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (frame->isMainFrame())
-        m_pageLoadState.didCommitLoad(transaction);
+    if (frame->isMainFrame()) {
+        bool hasInsecureCertificateChain = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
+        m_pageLoadState.didCommitLoad(transaction, hasInsecureCertificateChain);
+    }
 
 #if USE(APPKIT)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
