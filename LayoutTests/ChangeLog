@@ -1,3 +1,19 @@
+2015-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        CSS scroll-snap-destination and scroll-snap-coordinate are not honoring position values
+        https://bugs.webkit.org/show_bug.cgi?id=142411
+
+        Reviewed by Simon Fraser.
+
+        Add a test for <position> types in scroll snap operations. Also update the test expectations
+        for computed styles now that double-precision math is being used for calculated values.
+
+        * css3/scroll-snap/scroll-snap-position-values-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-position-values.html: Added.
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Updated
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Updated
+
+
 2015-03-10  Enrica Casucci  <enrica@apple.com>
 
         Add support for more emoji with variation.

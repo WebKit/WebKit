@@ -72,11 +72,11 @@ testComputedScrollSnapRule("single percentage coordinate", "coordinate", "50% 10
 testComputedScrollSnapRule("multiple pixel coordinates", "coordinate", "50px 100px 150px 100px 200px 100px", "50px 100px, 150px 100px, 200px 100px");
 testComputedScrollSnapRule("multiple percentage coordinates", "coordinate", "50% 100% 150% 100% 200% 100%", "50% 100%, 150% 100%, 200% 100%");
 
-testComputedScrollSnapRule("mm along x axis with pixel repeat", "points-x", "10mm repeat(42mm)", "37.78125px repeat(158.734375px)");
+testComputedScrollSnapRule("mm along x axis with pixel repeat", "points-x", "10mm repeat(42mm)", "37.7952766418457px repeat(158.7401580810547px)");
 testComputedScrollSnapRule("in along x axis with pixel repeat", "points-x", "10in repeat(4in)", "960px repeat(384px)");
-testComputedScrollSnapRule("pt along x axis with pixel repeat", "points-x", "10pt repeat(42pt)", "13.328125px repeat(56px)");
-testComputedScrollSnapRule("in/cm destination", "destination", "2in 5cm", "192px 188.96875px");
-testComputedScrollSnapRule("in/cm coordinate", "coordinate", "2in 5cm 5in 2cm", "192px 188.96875px, 480px 75.578125px");
+testComputedScrollSnapRule("pt along x axis with pixel repeat", "points-x", "10pt repeat(42pt)", "13.333333015441895px repeat(56px)");
+testComputedScrollSnapRule("in/cm destination", "destination", "2in 5cm", "192px 188.97637939453125px");
+testComputedScrollSnapRule("in/cm coordinate", "coordinate", "2in 5cm 5in 2cm", "192px 188.97637939453125px, 480px 75.5905532836914px");
 
 testComputedScrollSnapRule("subpixel along x axis with pixel repeat", "points-x", "100.5px repeat(50.25px)", "100.5px repeat(50.25px)");
 testComputedScrollSnapRule("subpixel destination", "destination", "0.125px 2.4375px", "0.125px 2.4375px");

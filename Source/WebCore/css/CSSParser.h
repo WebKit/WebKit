@@ -154,8 +154,8 @@ public:
     enum FillPositionFlag { InvalidFillPosition = 0, AmbiguousFillPosition = 1, XFillPosition = 2, YFillPosition = 4 };
     enum FillPositionParsingMode { ResolveValuesAsPercent = 0, ResolveValuesAsKeyword = 1 };
     PassRefPtr<CSSPrimitiveValue> parseFillPositionComponent(CSSParserValueList&, unsigned& cumulativeFlags, FillPositionFlag& individualFlag, FillPositionParsingMode = ResolveValuesAsPercent);
-    PassRefPtr<CSSValue> parseFillPositionX(CSSParserValueList&);
-    PassRefPtr<CSSValue> parseFillPositionY(CSSParserValueList&);
+    PassRefPtr<CSSValue> parsePositionX(CSSParserValueList&);
+    PassRefPtr<CSSValue> parsePositionY(CSSParserValueList&);
     void parse2ValuesFillPosition(CSSParserValueList&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool isPotentialPositionValue(CSSParserValue&);
     void parseFillPosition(CSSParserValueList&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
@@ -559,6 +559,7 @@ private:
     bool parseNonElementSnapPoints(CSSPropertyID propId, bool important);
     bool parseScrollSnapDestination(CSSPropertyID propId, bool important);
     bool parseScrollSnapCoordinate(CSSPropertyID propId, bool important);
+    bool parseScrollSnapPositions(RefPtr<CSSValue>& cssValueX, RefPtr<CSSValue>& cssValueY);
 #endif
 
     bool parseFontFaceSrcURI(CSSValueList&);

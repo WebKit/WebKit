@@ -705,7 +705,7 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
 #if ENABLE(CSS_SCROLL_SNAP)
 inline Length StyleBuilderConverter::parseSnapCoordinate(StyleResolver& styleResolver, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
+    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
 }
 
 inline std::unique_ptr<ScrollSnapPoints> StyleBuilderConverter::convertScrollSnapPoints(StyleResolver& styleResolver, CSSValue& value)

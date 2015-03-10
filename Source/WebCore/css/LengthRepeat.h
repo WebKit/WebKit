@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,13 @@ namespace WebCore {
 
 class LengthRepeat : public RefCounted<LengthRepeat> {
 public:
-    static PassRefPtr<LengthRepeat> create(PassRefPtr<CSSPrimitiveValue> interval) { return adoptRef(new LengthRepeat(interval)); }
+    static PassRefPtr<LengthRepeat> create(PassRefPtr<CSSValue> interval) { return adoptRef(new LengthRepeat(interval)); }
 
     PassRefPtr<LengthRepeat> cloneForCSSOM() const { return create(interval()); }
 
-    CSSPrimitiveValue* interval() const { return m_interval.get(); }
+    CSSValue* interval() const { return m_interval.get(); }
 
-    void setInterval(PassRefPtr<CSSPrimitiveValue> interval) { m_interval = interval; }
+    void setInterval(PassRefPtr<CSSValue> interval) { m_interval = interval; }
 
     bool equals(const LengthRepeat& other) const
     {
@@ -55,12 +55,12 @@ public:
     }
 
 private:
-    LengthRepeat(PassRefPtr<CSSPrimitiveValue> interval)
+    LengthRepeat(PassRefPtr<CSSValue> interval)
         : m_interval(interval)
     {
     }
 
-    RefPtr<CSSPrimitiveValue> m_interval;
+    RefPtr<CSSValue> m_interval;
 };
 
 } // namespace WebCore

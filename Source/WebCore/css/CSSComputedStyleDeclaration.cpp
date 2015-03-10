@@ -1109,8 +1109,8 @@ static Ref<CSSValueList> getTransitionPropertyValue(const AnimationList* animLis
 static Ref<CSSValueList> scrollSnapDestination(RenderStyle& style, const LengthSize& destination)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    list.get().append(percentageOrZoomAdjustedValue(destination.width(), &style));
-    list.get().append(percentageOrZoomAdjustedValue(destination.height(), &style));
+    list.get().append(zoomAdjustedPixelValueForLength(destination.width(), &style));
+    list.get().append(zoomAdjustedPixelValueForLength(destination.height(), &style));
     return list;
 }
 
@@ -1123,9 +1123,9 @@ static Ref<CSSValue> scrollSnapPoints(RenderStyle& style, const ScrollSnapPoints
         return cssValuePool().createIdentifierValue(CSSValueElements);
     auto list = CSSValueList::createSpaceSeparated();
     for (auto& point : points->offsets)
-        list.get().append(percentageOrZoomAdjustedValue(point, &style));
+        list.get().append(zoomAdjustedPixelValueForLength(point, &style));
     if (points->hasRepeat)
-        list.get().append(cssValuePool().createValue(LengthRepeat::create(percentageOrZoomAdjustedValue(points->repeatOffset, &style))));
+        list.get().append(cssValuePool().createValue(LengthRepeat::create(zoomAdjustedPixelValueForLength(points->repeatOffset, &style))));
     return WTF::move(list);
 }
 
@@ -1138,8 +1138,8 @@ static Ref<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<Leng
 
     for (auto& coordinate : coordinates) {
         auto pair = CSSValueList::createSpaceSeparated();
-        pair.get().append(percentageOrZoomAdjustedValue(coordinate.width(), &style));
-        pair.get().append(percentageOrZoomAdjustedValue(coordinate.height(), &style));
+        pair.get().append(zoomAdjustedPixelValueForLength(coordinate.width(), &style));
+        pair.get().append(zoomAdjustedPixelValueForLength(coordinate.height(), &style));
         list.get().append(WTF::move(pair));
     }
 

@@ -155,19 +155,19 @@ multiple percentage coordinates : 50% 100% 150% 100% 200% 100%
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%, 150% 100%, 200% 100%'
 
 mm along x axis with pixel repeat : 10mm repeat(42mm)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '37.78125px repeat(158.734375px)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '37.7952766418457px repeat(158.7401580810547px)'
 
 in along x axis with pixel repeat : 10in repeat(4in)
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '960px repeat(384px)'
 
 pt along x axis with pixel repeat : 10pt repeat(42pt)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '13.328125px repeat(56px)'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '13.333333015441895px repeat(56px)'
 
 in/cm destination : 2in 5cm
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '192px 188.96875px'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '192px 188.97637939453125px'
 
 in/cm coordinate : 2in 5cm 5in 2cm
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '192px 188.96875px, 480px 75.578125px'
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '192px 188.97637939453125px, 480px 75.5905532836914px'
 
 subpixel along x axis with pixel repeat : 100.5px repeat(50.25px)
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100.5px repeat(50.25px)'

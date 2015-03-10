@@ -1,3 +1,43 @@
+2015-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        CSS scroll-snap-destination and scroll-snap-coordinate are not honoring position values
+        https://bugs.webkit.org/show_bug.cgi?id=142411
+
+        Reviewed by Simon Fraser.
+
+        Tested by css3/scroll-snap/scroll-snap-position-values.html.
+
+        Revise the CSSParser to recognize that scroll-snap-coordinates and scroll-snap-destination
+        may be specified as positions, therefore allowing 'top', 'bottom', and 'center' for the Y axis,
+        and 'left', 'right', and 'center' for the X axis.
+
+        Correct implementation to support calculated values for Scroll Snap Point markup. This required the
+        Scroll Snap Point-specific LengthRepeat class to change its internal representation from a CSSPrimitiveValue
+        to a regular CSSValue.
+
+        Add tests that these position labels, as well as combinations with percentages and pixel offsets
+        are parsed properly.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::scrollSnapDestination): Switch from 'percentageOrZoomAdjustedValue' to 'zoomAdjustedPixelValueForLength'
+        when working with Length values. This is necessary to allow calculated results to be based on the proper default
+        page dimensions.
+        (WebCore::scrollSnapPoints): Ditto.
+        (WebCore::scrollSnapCoordinates): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseScrollSnapPositions): Consolidated code for dealing with snap point
+        positions.
+        (WebCore::CSSParser::parseScrollSnapDestination): Revise to call new helper function.
+        (WebCore::CSSParser::parseScrollSnapCoordinate): Ditto.
+        (WebCore::CSSParser::parseFillPositionX): Rename as parsePositionX.
+        (WebCore::CSSParser::parseFillPositionY): Rename as parsePositionY.
+        (WebCore::CSSParser::parseFillProperty): Update to call renamed parsePosition{X|Y} methods.
+        (WebCore::CSSParser::parseTransformOrigin): Ditto.
+        (WebCore::CSSParser::parsePerspectiveOrigin): Ditto.
+        * css/CSSParser.h:
+        * css/LengthRepeat.h: Revise class to use a CSSValue, rather than a CSSPrimitiveValue, so that we can represent
+        repeat values as calculations.
+
 2015-03-10  Enrica Casucci  <enrica@apple.com>
 
         Add support for more emoji with variation.

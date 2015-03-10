@@ -3319,20 +3319,33 @@ bool CSSParser::parseNonElementSnapPoints(CSSPropertyID propId, bool important)
     return false;
 }
 
+bool CSSParser::parseScrollSnapPositions(RefPtr<CSSValue>& cssValueX, RefPtr<CSSValue>& cssValueY)
+{
+    cssValueX = parsePositionX(*m_valueList);
+    if (!cssValueX)
+        return false;
+
+    // Don't accept odd-length lists of positions (must always have an X and a Y):
+    if (!m_valueList->next())
+        return false;
+
+    cssValueY = parsePositionY(*m_valueList);
+    if (!cssValueY)
+        return false;
+
+    return true;
+}
+
 bool CSSParser::parseScrollSnapDestination(CSSPropertyID propId, bool important)
 {
     RefPtr<CSSValueList> position = CSSValueList::createSpaceSeparated();
     if (m_valueList->size() != 2)
         return false;
-    ValueWithCalculation valueXWithCalculation(*m_valueList->current());
-    if (!validateUnit(valueXWithCalculation, FPercent | FLength))
-        return false;
-    RefPtr<CSSValue> cssValueX = createPrimitiveNumericValue(valueXWithCalculation);
 
-    ValueWithCalculation valueYWithCalculation(*m_valueList->next());
-    if (!validateUnit(valueYWithCalculation, FPercent | FLength))
+    RefPtr<CSSValue> cssValueX, cssValueY;
+    if (!parseScrollSnapPositions(cssValueX, cssValueY))
         return false;
-    RefPtr<CSSValue> cssValueY = createPrimitiveNumericValue(valueYWithCalculation);
+
     position->append(cssValueX.releaseNonNull());
     position->append(cssValueY.releaseNonNull());
     addProperty(propId, position, important);
@@ -3344,17 +3357,15 @@ bool CSSParser::parseScrollSnapCoordinate(CSSPropertyID propId, bool important)
 {
     RefPtr<CSSValueList> positions = CSSValueList::createSpaceSeparated();
     while (m_valueList->current()) {
-        ValueWithCalculation valueXWithCalculation(*m_valueList->current());
-        // Don't accept odd-length lists of coordinates.
-        if (!m_valueList->next())
+        RefPtr<CSSValue> cssValueX, cssValueY;
+        if (!parseScrollSnapPositions(cssValueX, cssValueY))
             return false;
-        ValueWithCalculation valueYWithCalculation(*m_valueList->current());
-        if (!validateUnit(valueXWithCalculation, FPercent | FLength) || !validateUnit(valueYWithCalculation, FPercent | FLength))
-            return false;
-        positions->append(createPrimitiveNumericValue(valueXWithCalculation));
-        positions->append(createPrimitiveNumericValue(valueYWithCalculation));
+
+        positions->append(cssValueX.releaseNonNull());
+        positions->append(cssValueY.releaseNonNull());
         m_valueList->next();
     }
+
     if (positions->length()) {
         addProperty(propId, positions.release(), important);
         return true;
@@ -4037,7 +4048,7 @@ bool CSSParser::parseFillImage(CSSParserValueList& valueList, RefPtr<CSSValue>& 
     return false;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseFillPositionX(CSSParserValueList& valueList)
+PassRefPtr<CSSValue> CSSParser::parsePositionX(CSSParserValueList& valueList)
 {
     int id = valueList.current()->id;
     if (id == CSSValueLeft || id == CSSValueRight || id == CSSValueCenter) {
@@ -4054,7 +4065,7 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionX(CSSParserValueList& valueList
     return nullptr;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseFillPositionY(CSSParserValueList& valueList)
+PassRefPtr<CSSValue> CSSParser::parsePositionY(CSSParserValueList& valueList)
 {
     int id = valueList.current()->id;
     if (id == CSSValueTop || id == CSSValueBottom || id == CSSValueCenter) {
@@ -4564,14 +4575,14 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     break;
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {
-                    currValue = parseFillPositionX(*m_valueList);
+                    currValue = parsePositionX(*m_valueList);
                     if (currValue)
                         m_valueList->next();
                     break;
                 }
                 case CSSPropertyBackgroundPositionY:
                 case CSSPropertyWebkitMaskPositionY: {
-                    currValue = parseFillPositionY(*m_valueList);
+                    currValue = parsePositionY(*m_valueList);
                     if (currValue)
                         m_valueList->next();
                     break;
@@ -9714,13 +9725,13 @@ bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId
             // parseTransformOriginShorthand advances the m_valueList pointer
             break;
         case CSSPropertyWebkitTransformOriginX: {
-            value = parseFillPositionX(*m_valueList);
+            value = parsePositionX(*m_valueList);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitTransformOriginY: {
-            value = parseFillPositionY(*m_valueList);
+            value = parsePositionY(*m_valueList);
             if (value)
                 m_valueList->next();
             break;
@@ -9757,13 +9768,13 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
             parse2ValuesFillPosition(*m_valueList, value, value2);
             break;
         case CSSPropertyWebkitPerspectiveOriginX: {
-            value = parseFillPositionX(*m_valueList);
+            value = parsePositionX(*m_valueList);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitPerspectiveOriginY: {
-            value = parseFillPositionY(*m_valueList);
+            value = parsePositionY(*m_valueList);
             if (value)
                 m_valueList->next();
             break;
