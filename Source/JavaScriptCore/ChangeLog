@@ -1,3 +1,23 @@
+2015-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Yet another build fix for Windows.
+        https://webkit.org/b/142513>
+
+        Reviewed by Alex Christensen.
+
+        Looks like MSVC requires the function be explicitly declared in a header file
+        in order for it to be linkable from another file in the same project.  This is
+        strange, but it seems to make MSVC happy.
+
+        Also fixed a typo in testapi.vcxproj.filters.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        * API/tests/CompareAndSwapTest.h: Added.
+        * API/tests/testapi.c:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-03-09  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Sweep all collected objects on critical memory pressure

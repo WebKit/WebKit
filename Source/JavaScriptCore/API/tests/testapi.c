@@ -45,12 +45,12 @@
 #include <windows.h>
 #endif
 
+#include "CompareAndSwapTest.h"
 #include "CustomGlobalObjectClassTest.h"
 
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
-void testCompareAndSwap();
 
 bool assertTrue(bool value, const char* message);
 extern void JSSynchronousGarbageCollectForDebugging(JSContextRef);

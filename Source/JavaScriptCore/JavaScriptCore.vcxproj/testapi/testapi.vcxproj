@@ -293,6 +293,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\API\tests\testapi.c" />
     <ClCompile Include="..\..\API\tests\CompareAndSwapTest.cpp" />
+    <ClInclude Include="..\..\API\tests\CompareAndSwapTest.h" />
     <ClCompile Include="..\..\API\tests\CustomGlobalObjectClassTest.c" />
     <ClInclude Include="..\..\API\tests\CustomGlobalObjectClassTest.h" />
   </ItemGroup>

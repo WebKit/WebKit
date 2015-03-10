@@ -3377,6 +3377,7 @@
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WatchdogMac.cpp; sourceTree = "<group>"; };
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
+		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
 		FEF6835A174343CC00A32E25 /* JITStubsARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM.h; sourceTree = "<group>"; };
 		FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARMv7.h; sourceTree = "<group>"; };
 		FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsX86_64.h; sourceTree = "<group>"; };
@@ -3734,6 +3735,7 @@
 			isa = PBXGroup;
 			children = (
 				FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */,
+				FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */,
 				C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */,
 				C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */,
 				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
