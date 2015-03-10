@@ -1,3 +1,11 @@
+2015-03-10  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mac build with a newer compiler
+
+        * Plugins/WebPluginController.mm:
+        (WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_):
+        (WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_):
+
 2015-03-09  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build when compiling with dead code stripping disabled
