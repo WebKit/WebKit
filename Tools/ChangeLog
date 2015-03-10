@@ -1,3 +1,16 @@
+2015-03-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add WebKitSystemInterface for iOS 8.2
+        https://bugs.webkit.org/show_bug.cgi?id=142505
+
+        Rubber-stamped by Anders Carlsson.
+
+        Make copy-webkitlibraries-to-product-directory install libWebKitSystemInterfaceIOS{Device, Simulator}8.2.a.
+        I inadvertently forgot to add libWebKitSystemInterfaceIOS{Device, Simulator}8.2.a to script
+        copy-webkitlibraries-to-product-directory in r181286.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Extend URL filter's Term definition to support groups/subpatterns
