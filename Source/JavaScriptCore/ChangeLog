@@ -1,5 +1,18 @@
 2015-03-09  Mark Lam  <mark.lam@apple.com>
 
+        Build fix for Windows after r181305.
+        https://webkit.org/b/142513>
+
+        Reviewed by Alex Christensen.
+
+        Windows doesn't like pthreads anymore.  Changed test to use WTF threading.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        (setBitThreadFunc):
+        (testCompareAndSwap):
+
+2015-03-09  Mark Lam  <mark.lam@apple.com>
+
         8-bit version of weakCompareAndSwap() can cause an infinite loop.
         https://webkit.org/b/142513>
 
