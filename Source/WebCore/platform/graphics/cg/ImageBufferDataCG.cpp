@@ -37,6 +37,7 @@
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include "IOSurface.h"
+#include "IOSurfacePool.h"
 #include "IOSurfaceSPI.h"
 #include <dispatch/dispatch.h>
 #endif
@@ -56,12 +57,12 @@ struct ScanlineData {
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData()
-    : m_data(nullptr)
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    , m_surface(nullptr)
-#endif
+ImageBufferData::~ImageBufferData()
 {
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    if (surface)
+        IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
+#endif
 }
 
 #if USE(ACCELERATE)
@@ -117,7 +118,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         return 0;
 
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
-    unsigned char* data = result->data();
+    unsigned char* resultData = result->data();
     
     Checked<int> endx = rect.maxX();
     endx *= ceilf(resolutionScale);
@@ -158,14 +159,14 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         return result.release();
     
     unsigned destBytesPerRow = 4 * rect.width();
-    unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
+    unsigned char* destRows = resultData + desty * destBytesPerRow + destx * 4;
     
     unsigned srcBytesPerRow;
     unsigned char* srcRows;
     
     if (!accelerateRendering) {
-        srcBytesPerRow = m_bytesPerRow.unsafeGet();
-        srcRows = reinterpret_cast<unsigned char*>(m_data) + originy * srcBytesPerRow + originx * 4;
+        srcBytesPerRow = bytesPerRow.unsafeGet();
+        srcRows = reinterpret_cast<unsigned char*>(data) + originy * srcBytesPerRow + originx * 4;
         
 #if USE(ACCELERATE)
         if (unmultiplied) {
@@ -205,9 +206,9 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         }
 #endif
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
@@ -272,10 +273,10 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
         // FIXME: WebCore::IOSurface should have a locking RAII object and base-address getter.
-        IOSurfaceRef surface = m_surface->surface();
-        IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
-        srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
-        srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
+        IOSurfaceRef surfaceRef = surface->surface();
+        IOSurfaceLock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
+        srcBytesPerRow = IOSurfaceGetBytesPerRow(surfaceRef);
+        srcRows = static_cast<unsigned char*>(IOSurfaceGetBaseAddress(surfaceRef)) + originy * srcBytesPerRow + originx * 4;
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
@@ -320,9 +321,9 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         }
 #else
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
 
@@ -371,7 +372,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
             }
         }
 #endif // USE(ACCELERATE)
-        IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, 0);
+        IOSurfaceUnlock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
 #else
         ASSERT_NOT_REACHED();
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
@@ -428,8 +429,8 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
     unsigned char* destRows;
     
     if (!accelerateRendering) {
-        destBytesPerRow = m_bytesPerRow.unsafeGet();
-        destRows = reinterpret_cast<unsigned char*>(m_data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
+        destBytesPerRow = bytesPerRow.unsafeGet();
+        destRows = reinterpret_cast<unsigned char*>(data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
         
 #if  USE(ACCELERATE)
         if (unmultiplied) {
@@ -470,9 +471,9 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
 #endif
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
@@ -516,10 +517,10 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surface = m_surface->surface();
-        IOSurfaceLock(surface, 0, 0);
-        destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
-        destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + (desty * destBytesPerRow + destx * 4).unsafeGet();
+        IOSurfaceRef surfaceRef = surface->surface();
+        IOSurfaceLock(surfaceRef, 0, nullptr);
+        destBytesPerRow = IOSurfaceGetBytesPerRow(surfaceRef);
+        destRows = static_cast<unsigned char*>(IOSurfaceGetBaseAddress(surfaceRef)) + (desty * destBytesPerRow + destx * 4).unsafeGet();
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
@@ -564,9 +565,9 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
 #else
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
 
@@ -598,7 +599,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
 #endif // USE(ACCELERATE)
 
-        IOSurfaceUnlock(surface, 0, 0);
+        IOSurfaceUnlock(surfaceRef, 0, nullptr);
 #else
         ASSERT_NOT_REACHED();
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)

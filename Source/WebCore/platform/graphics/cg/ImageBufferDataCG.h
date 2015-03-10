@@ -46,23 +46,22 @@ namespace WebCore {
 class IOSurface;
 class IntSize;
 
-class ImageBufferData {
-public:
-    ImageBufferData();
+struct ImageBufferData {
+    ~ImageBufferData();
 
-    IntSize m_backingStoreSize;
-    Checked<unsigned, RecordOverflow> m_bytesPerRow;
-    CGColorSpaceRef m_colorSpace;
+    IntSize backingStoreSize;
+    Checked<unsigned, RecordOverflow> bytesPerRow;
+    CGColorSpaceRef colorSpace;
 
     // Only for Software ImageBuffers.
-    void* m_data;
-    RetainPtr<CGDataProviderRef> m_dataProvider;
-    CGBitmapInfo m_bitmapInfo;
-    OwnPtr<GraphicsContext> m_context;
+    void* data { nullptr };
+    RetainPtr<CGDataProviderRef> dataProvider;
+    CGBitmapInfo bitmapInfo;
+    OwnPtr<GraphicsContext> context;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     // Only for Accelerated ImageBuffers.
-    std::unique_ptr<IOSurface> m_surface;
+    std::unique_ptr<IOSurface> surface;
 #endif
 
     PassRefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;

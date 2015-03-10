@@ -41,22 +41,33 @@ CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 
 using namespace WebCore;
 
+inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, ColorSpace colorSpace)
+{
+    auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace);
+    if (!cachedSurface)
+        return nullptr;
+
+    cachedSurface->setContextSize(contextSize);
+    return cachedSurface;
+}
+
 std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
 {
-    if (std::unique_ptr<IOSurface> cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace))
+    if (auto cachedSurface = surfaceFromPool(size, size, colorSpace))
         return cachedSurface;
     return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace));
 }
 
 std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, ColorSpace colorSpace)
 {
-    // FIXME: We should be able to pull surfaces out of the IOSurfacePool and adjust their contextSize.
+    if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace))
+        return cachedSurface;
     return std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace));
 }
 
 std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
 {
-    RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
+    auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);
 }
 
@@ -73,7 +84,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    std::unique_ptr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    auto surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
     auto surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
@@ -141,6 +152,17 @@ MachSendRight IOSurface::createSendRight() const
 RetainPtr<CGImageRef> IOSurface::createImage()
 {
     return adoptCF(CGIOSurfaceContextCreateImage(ensurePlatformContext()));
+}
+
+void IOSurface::setContextSize(IntSize contextSize)
+{
+    if (contextSize == m_contextSize)
+        return;
+
+    // Release the graphics context and update the context size. Next time the graphics context is
+    // accessed, we will construct it again with the right size.
+    releaseGraphicsContext();
+    m_contextSize = contextSize;
 }
 
 CGContextRef IOSurface::ensurePlatformContext()

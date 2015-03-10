@@ -1,3 +1,17 @@
+2015-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [CG] Have Canvas use the IOSurfacePool
+        https://bugs.webkit.org/show_bug.cgi?id=142417
+        <rdar://problem/20044440>
+
+        Reviewed by Darin Adler.
+
+        Lower the number of different canvas sizes from 1000 to 100 so that
+        the test does not require such a huge cache size. With 100, we now
+        get over 90% cache hit rate with the default IOSurfacePool size.
+
+        * Canvas/reuse.html:
+
 2015-01-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Poor performance on IE's Chalkboard benchmark.

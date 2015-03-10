@@ -81,7 +81,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         return;
 
     m_size = IntSize(scaledWidth, scaledHeight);
-    m_data.m_backingStoreSize = m_size;
+    m_data.backingStoreSize = m_size;
 
     success = false;  // Make early return mean failure.
     bool accelerateRendering = renderingMode == Accelerated;
@@ -94,8 +94,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
 #endif
 
     // Prevent integer overflows
-    m_data.m_bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(m_data.m_backingStoreSize.width());
-    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(m_data.m_backingStoreSize.height()) * m_data.m_bytesPerRow;
+    m_data.bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(m_data.backingStoreSize.width());
+    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(m_data.backingStoreSize.height()) * m_data.bytesPerRow;
     if (numBytes.hasOverflowed())
         return;
 
@@ -107,14 +107,14 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     ASSERT(renderingMode == Unaccelerated);
 #endif
 
-    m_data.m_colorSpace = cachedCGColorSpace(imageColorSpace);
+    m_data.colorSpace = cachedCGColorSpace(imageColorSpace);
 
     RetainPtr<CGContextRef> cgContext;
     if (accelerateRendering) {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        FloatSize userBounds = scaleSizeToUserSpace(FloatSize(width.unsafeGet(), height.unsafeGet()), m_data.m_backingStoreSize, m_size);
-        m_data.m_surface = IOSurface::create(m_data.m_backingStoreSize, IntSize(userBounds), imageColorSpace);
-        cgContext = m_data.m_surface->ensurePlatformContext();
+        FloatSize userBounds = scaleSizeToUserSpace(FloatSize(width.unsafeGet(), height.unsafeGet()), m_data.backingStoreSize, m_size);
+        m_data.surface = IOSurface::create(m_data.backingStoreSize, IntSize(userBounds), imageColorSpace);
+        cgContext = m_data.surface->ensurePlatformContext();
         if (cgContext)
             CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
 #endif
@@ -124,27 +124,27 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     }
 
     if (!accelerateRendering) {
-        if (!tryFastCalloc(m_data.m_backingStoreSize.height(), m_data.m_bytesPerRow.unsafeGet()).getValue(m_data.m_data))
+        if (!tryFastCalloc(m_data.backingStoreSize.height(), m_data.bytesPerRow.unsafeGet()).getValue(m_data.data))
             return;
-        ASSERT(!(reinterpret_cast<intptr_t>(m_data.m_data) & 3));
+        ASSERT(!(reinterpret_cast<intptr_t>(m_data.data) & 3));
 
 #if USE_ARGB32
-        m_data.m_bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+        m_data.bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
 #else
-        m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
+        m_data.bitmapInfo = kCGImageAlphaPremultipliedLast;
 #endif
-        cgContext = adoptCF(CGBitmapContextCreate(m_data.m_data, m_data.m_backingStoreSize.width(), m_data.m_backingStoreSize.height(), 8, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo));
+        cgContext = adoptCF(CGBitmapContextCreate(m_data.data, m_data.backingStoreSize.width(), m_data.backingStoreSize.height(), 8, m_data.bytesPerRow.unsafeGet(), m_data.colorSpace, m_data.bitmapInfo));
         // Create a live image that wraps the data.
-        m_data.m_dataProvider = adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, numBytes.unsafeGet(), releaseImageData));
+        m_data.dataProvider = adoptCF(CGDataProviderCreateWithData(0, m_data.data, numBytes.unsafeGet(), releaseImageData));
 
         if (!cgContext)
             return;
 
-        m_data.m_context = adoptPtr(new GraphicsContext(cgContext.get()));
+        m_data.context = adoptPtr(new GraphicsContext(cgContext.get()));
     }
 
     context()->scale(FloatSize(1, -1));
-    context()->translate(0, -m_data.m_backingStoreSize.height());
+    context()->translate(0, -m_data.backingStoreSize.height());
     context()->applyDeviceScaleFactor(m_resolutionScale);
 
     success = true;
@@ -157,10 +157,10 @@ ImageBuffer::~ImageBuffer()
 GraphicsContext* ImageBuffer::context() const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (m_data.m_surface)
-        return &m_data.m_surface->ensureGraphicsContext();
+    if (m_data.surface)
+        return &m_data.surface->ensureGraphicsContext();
 #endif
-    return m_data.m_context.get();
+    return m_data.context.get();
 }
 
 void ImageBuffer::flushContext() const
@@ -188,7 +188,7 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
         RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(0, logicalSize().width(), logicalSize().height(), 8, 4 * logicalSize().width(), deviceRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize()));
-        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize(), m_data.m_backingStoreSize, internalSize());
+        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize(), m_data.backingStoreSize, internalSize());
         CGContextDrawImage(context.get(), FloatRect(FloatPoint::zero(), imageSizeInUserSpace), image.get());
         image = adoptCF(CGBitmapContextCreateImage(context.get()));
     }
@@ -213,7 +213,7 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
     if (!context()->isAcceleratedContext()) {
         switch (copyBehavior) {
         case DontCopyBackingStore:
-            image = adoptCF(CGImageCreate(m_data.m_backingStoreSize.width(), m_data.m_backingStoreSize.height(), 8, 32, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo, m_data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault));
+            image = adoptCF(CGImageCreate(m_data.backingStoreSize.width(), m_data.backingStoreSize.height(), 8, 32, m_data.bytesPerRow.unsafeGet(), m_data.colorSpace, m_data.bitmapInfo, m_data.dataProvider.get(), 0, true, kCGRenderingIntentDefault));
             break;
         case CopyBackingStore:
             image = adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
@@ -225,7 +225,7 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
     }
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
-        image = m_data.m_surface->createImage();
+        image = m_data.surface->createImage();
 #endif
 
     return image;
@@ -244,7 +244,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext->drawNativeImage(image.get(), m_data.backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
@@ -268,7 +268,7 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
 
 void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) const
 {
-    FloatSize backingStoreSizeInUserSpace = scaleSizeToUserSpace(rect.size(), m_data.m_backingStoreSize, internalSize());
+    FloatSize backingStoreSizeInUserSpace = scaleSizeToUserSpace(rect.size(), m_data.backingStoreSize, internalSize());
 
     CGContextRef platformContextToClip = contextToClip->platformContext();
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.
@@ -342,7 +342,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     CGContextSetShadowWithColor(destContext, CGSizeZero, 0, 0);
 
     // Draw the image in CG coordinate space
-    FloatSize scaledDestSize = scaleSizeToUserSpace(coordinateSystem == LogicalCoordinateSystem ? logicalSize() : internalSize(), m_data.m_backingStoreSize, internalSize());
+    FloatSize scaledDestSize = scaleSizeToUserSpace(coordinateSystem == LogicalCoordinateSystem ? logicalSize() : internalSize(), m_data.backingStoreSize, internalSize());
     IntPoint destPointInCGCoords(destPoint.x() + sourceRect.x(), scaledDestSize.height() - (destPoint.y() + sourceRect.y()) - sourceRect.height());
     IntRect destRectInCGCoords(destPointInCGCoords, sourceCopySize);
     CGContextClipToRect(destContext, destRectInCGCoords);
@@ -461,7 +461,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
         RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(0, logicalSize().width(), logicalSize().height(), 8, 4 * logicalSize().width(), deviceRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), CGRectMake(0, 0, logicalSize().width(), logicalSize().height()));
-        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize(), m_data.m_backingStoreSize, internalSize());
+        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize(), m_data.backingStoreSize, internalSize());
         CGContextDrawImage(context.get(), CGRectMake(0, 0, imageSizeInUserSpace.width(), imageSizeInUserSpace.height()), image.get());
         image = adoptCF(CGBitmapContextCreateImage(context.get()));
     }

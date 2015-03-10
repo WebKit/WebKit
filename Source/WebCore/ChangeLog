@@ -1,3 +1,50 @@
+2015-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [CG] Have Canvas use the IOSurfacePool
+        https://bugs.webkit.org/show_bug.cgi?id=142417
+        <rdar://problem/20044440>
+
+        Reviewed by Darin Adler.
+
+        Have ImageBufferDataCG use the IOSurfacePool so that Canvas can
+        benefit from it. I see a ~75% progression on Canvas/reuse.html
+        performance test on my Macbook Pro with 1000 different canvas
+        sizes and ~110% progression with 100 different canvas sizes.
+
+        I also see a ~65% cache hit rate on the mobile version of
+        cnn.com.
+
+        Note that ImageData calls CGContextClearRect() after calling
+        IOSurface::create() so recycling IOSurfaces in this case should
+        be safe.
+
+        Performance test: Canvas/reuse.html
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::baseTransform):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::copyNativeImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::~ImageBufferData):
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        (WebCore::ImageBufferData::ImageBufferData): Deleted.
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::surfaceFromPool):
+        (IOSurface::create):
+        (IOSurface::createFromSendRight):
+        (IOSurface::createFromImage):
+        (IOSurface::setContextSize):
+
 2015-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         Assertion in ScrollController::processWheelEventForScrollSnapOnAxis when scrolling with mechanical wheel mouse

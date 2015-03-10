@@ -85,6 +85,10 @@ private:
     IOSurface(IntSize, IntSize contextSize, ColorSpace);
     IOSurface(IOSurfaceRef, ColorSpace);
 
+    static std::unique_ptr<IOSurface> surfaceFromPool(IntSize, IntSize contextSize, ColorSpace);
+    IntSize contextSize() const { return m_contextSize; }
+    void setContextSize(IntSize);
+
     ColorSpace m_colorSpace;
     IntSize m_size;
     IntSize m_contextSize;

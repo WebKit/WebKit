@@ -114,7 +114,7 @@ public:
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
     void platformTransformColorSpace(const Vector<int>&);
 #else
-    AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_data.m_backingStoreSize.height()); }
+    AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_data.backingStoreSize.height()); }
 #endif
     PlatformLayer* platformLayer() const;
 
