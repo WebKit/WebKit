@@ -1318,7 +1318,10 @@ void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitW
     DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
     if (!drawingArea)
         return;
+
     priv->redirectedWindow->resize(drawingArea->size());
+    // Force a resize to ensure the new redirected window size is used by the WebProcess.
+    drawingArea->forceResize();
 #else
     UNUSED_PARAM(webkitWebViewBase);
 #endif
