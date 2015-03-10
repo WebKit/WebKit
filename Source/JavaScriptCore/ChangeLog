@@ -1,3 +1,21 @@
+2015-03-10  Mark Lam  <mark.lam@apple.com>
+
+        [Win] JSC Build Warnings Need to be Resolved.
+        <https://webkit.org/b/142366>
+
+        Reviewed by Brent Fulgham.
+
+        Applied some benign changes to make the MSVC compiler happy.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        * runtime/BasicBlockLocation.cpp:
+        (JSC::BasicBlockLocation::getExecutedRanges):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted):
+
 2015-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Upgrade Map, Set and WeakMap constructor interface

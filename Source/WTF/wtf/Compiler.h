@@ -81,10 +81,6 @@
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS 1
 #endif
 
-#if !COMPILER(CLANG)
-#define WTF_COMPILER_QUIRK_CONSIDERS_UNREACHABLE_CODE 1
-#endif
-
 #if COMPILER(GCC) && !COMPILER(CLANG) && defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT 1
 #endif
@@ -126,6 +122,10 @@
 
 #if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
 #define WTF_COMPILER_SUNCC 1
+#endif
+
+#if !COMPILER(CLANG) && !COMPILER(MSVC)
+#define WTF_COMPILER_QUIRK_CONSIDERS_UNREACHABLE_CODE 1
 #endif
 
 /* ==== COMPILER_SUPPORTS - additional compiler feature detection, in alphabetical order ==== */

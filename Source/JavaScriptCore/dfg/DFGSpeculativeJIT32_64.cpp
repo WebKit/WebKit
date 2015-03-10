@@ -111,7 +111,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
             m_gprs.lock(gpr);
         }
         tagGPR = allocate();
-        uint32_t tag = JSValue::EmptyValueTag;
+        int32_t tag = JSValue::EmptyValueTag;
         DataFormat fillFormat = DataFormatJS;
         switch (info.registerFormat()) {
         case DataFormatInt32:

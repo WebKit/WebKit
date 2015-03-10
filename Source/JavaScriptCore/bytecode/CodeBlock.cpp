@@ -607,7 +607,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         out.printf("\nConstants:\n");
         size_t i = 0;
         do {
-            const char* sourceCodeRepresentationDescription;
+            const char* sourceCodeRepresentationDescription = nullptr;
             switch (m_constantsSourceCodeRepresentation[i]) {
             case SourceCodeRepresentation::Double:
                 sourceCodeRepresentationDescription = ": in source as double";

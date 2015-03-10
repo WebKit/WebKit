@@ -1,3 +1,13 @@
+2015-03-10  Mark Lam  <mark.lam@apple.com>
+
+        [Win] JSC Build Warnings Need to be Resolved.
+        <https://webkit.org/b/142366>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Compiler.h:
+        - MSVC also does not have the CONSIDERS_UNREACHABLE_CODE quirk.
+
 2015-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: tryFastMalloc shouldn't crash

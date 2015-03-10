@@ -54,7 +54,7 @@ Vector<std::pair<int, int>> BasicBlockLocation::getExecutedRanges() const
     int nextRangeStart = m_startOffset;
     while (gaps.size()) {
         Gap minGap(INT_MAX, 0);
-        unsigned minIdx = -1;
+        unsigned minIdx = std::numeric_limits<unsigned>::max();
         for (unsigned idx = 0; idx < gaps.size(); idx++) {
             // Because we know that the Gaps inside m_gaps aren't enclosed within one another, it suffices to just check the first element to test ordering.
             if (gaps[idx].first < minGap.first) {
