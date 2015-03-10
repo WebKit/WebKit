@@ -526,3 +526,21 @@ video::-webkit-media-text-track-container u {
 video::-webkit-media-text-track-container i {
     font-style: italic;
 }
+
+/* ==================== AIRPLAY PLACARD ==================== */
+
+video::-webkit-media-controls-wireless-playback-status,
+audio::-webkit-media-controls-wireless-playback-status {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 50%;
+}
+
+video::-webkit-media-controls-wireless-playback-status.hidden,
+audio::-webkit-media-controls-wireless-playback-status.hidden {
+    display: none;
+}
