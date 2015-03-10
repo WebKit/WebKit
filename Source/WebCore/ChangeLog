@@ -1,3 +1,47 @@
+2015-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Extend URL filter's Term definition to support groups/subpatterns
+        https://bugs.webkit.org/show_bug.cgi?id=142519
+
+        Reviewed by Alex Christensen.
+
+        Pretty simple extension: Term is extended to support holding
+        a Vector of Term. The quantifier of the Term applies to its
+        Vector of term as a whole.
+
+        To avoid exposing too much internal in the API of Term, I moved
+        graph generation from GraphBuilder to Term.
+
+        Sinking a CharacterSet works as usual. Sinking a Group is done
+        by sinking each of its Terms one by one and then apply the quantifier
+        on the whole subgraph. This is done by recursively calling into
+        Term::generateGraph().
+
+        Since groups could be nested, the groups make a stack with the latest
+        open group on top.
+        When sinking a floating Term, it is sunk to the latest open group. If there is no open
+        group, we use the prefix tree and sink the whole subpattern to the graph.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::Term::Term):
+        (WebCore::ContentExtensions::Term::extendGroupSubpattern):
+        (WebCore::ContentExtensions::Term::generateGraph):
+        (WebCore::ContentExtensions::Term::operator==):
+        (WebCore::ContentExtensions::Term::hash):
+        (WebCore::ContentExtensions::Term::isUniversalTransition):
+        (WebCore::ContentExtensions::Term::generateSubgraphForAtom):
+        (WebCore::ContentExtensions::Term::destroy):
+        (WebCore::ContentExtensions::Term::Group::operator==):
+        (WebCore::ContentExtensions::Term::Group::hash):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::atomParenthesesSubpatternBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomParenthesesEnd):
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTermIfNecessary):
+        (WebCore::ContentExtensions::Term::quantifier): Deleted.
+        (WebCore::ContentExtensions::Term::visitSimpleTransitions): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::addTransitions): Deleted.
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTerm): Deleted.
+
 2015-03-10  Roger Fong  <roger_fong@apple.com>
 
         Adjustments to media control fonts.

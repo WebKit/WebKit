@@ -92,6 +92,17 @@ private:
     ContentExtensions::CompiledContentExtensionData m_data;
 };
 
+void static testURL(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const URL& url, Vector<ContentExtensions::ActionType> expectedActions)
+{
+    auto actions = contentExtensionsBackend.actionsForURL(url);
+    EXPECT_EQ(expectedActions.size(), actions.size());
+    if (expectedActions.size() != actions.size())
+        return;
+
+    for (unsigned i = 0; i < expectedActions.size(); ++i)
+        EXPECT_EQ(expectedActions[i], actions[i].type());
+}
+
 const char* basicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}}]";
 
 TEST_F(ContentExtensionTest, Basic)
@@ -101,10 +112,49 @@ TEST_F(ContentExtensionTest, Basic)
 
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", extension);
-    
-    auto actions = backend.actionsForURL(URL(ParsedURLString, "http://webkit.org/"));
-    EXPECT_EQ(1u, actions.size());
-    EXPECT_EQ(ContentExtensions::ActionType::BlockLoad, actions[0].type());
+
+    testURL(backend, URL(ParsedURLString, "http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+}
+
+const char* patternsStartingWithGroupFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]";
+
+TEST_F(ContentExtensionTest, PatternStartingWithGroup)
+{
+    auto extensionData = ContentExtensions::compileRuleList(patternsStartingWithGroupFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("PatternNestedGroupsFilter", extension);
+
+    testURL(backend, URL(URL(), "http://whatwg.org/webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://whatwg.org/webkit.org"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/"), { });
+    testURL(backend, URL(URL(), "http://whatwg.org/"), { });
+    testURL(backend, URL(URL(), "http://whatwg.org"), { });
+}
+
+const char* patternNestedGroupsFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"http://webkit\\\\.org/(foo(bar)*)+\"}}]";
+
+TEST_F(ContentExtensionTest, PatternNestedGroups)
+{
+    auto extensionData = ContentExtensions::compileRuleList(patternNestedGroupsFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("PatternNestedGroupsFilter", extension);
+
+    testURL(backend, URL(URL(), "http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
+
+
+    testURL(backend, URL(URL(), "http://webkit.org/"), { });
+    testURL(backend, URL(URL(), "http://webkit.org/bar"), { });
+    testURL(backend, URL(URL(), "http://webkit.org/fobar"), { });
 }
 
 } // namespace TestWebKitAPI

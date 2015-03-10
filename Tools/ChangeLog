@@ -1,3 +1,13 @@
+2015-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Extend URL filter's Term definition to support groups/subpatterns
+        https://bugs.webkit.org/show_bug.cgi?id=142519
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::testURL):
+
 2015-03-06  Jer Noble  <jer.noble@apple.com>
 
         Add an option to run-webkit-tests to override the LayoutTests/ directory
