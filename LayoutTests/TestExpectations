@@ -490,3 +490,4 @@ webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirem
 # Content extensions are Mac-WK2-only for now
 http/tests/contentextensions [ Skip ]
 
+webkit.org/b/142526 contentfiltering/block-after-add-data.html [ Skip ]
