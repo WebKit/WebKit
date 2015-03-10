@@ -31,37 +31,24 @@
 namespace bmalloc {
 namespace api {
 
-// Returns null on failure.
-inline void* tryMalloc(size_t size)
-{
-    if (size <= largeMax)
-        return Cache::allocate(size);
-
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    return PerProcess<Heap>::get()->tryAllocateXLarge(lock, superChunkSize, roundUpToMultipleOf<xLargeAlignment>(size));
-}
-
-// Crashes on failure.
 inline void* malloc(size_t size)
 {
     return Cache::allocate(size);
 }
 
-// Crashes on failure.
 inline void* memalign(size_t alignment, size_t size)
 {
     return Cache::allocate(alignment, size);
 }
 
-// Crashes on failure.
-inline void* realloc(void* object, size_t newSize)
-{
-    return Cache::reallocate(object, newSize);
-}
-
 inline void free(void* object)
 {
     Cache::deallocate(object);
+}
+
+inline void* realloc(void* object, size_t newSize)
+{
+    return Cache::reallocate(object, newSize);
 }
 
 inline void scavengeThisThread()
