@@ -65,7 +65,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/GraphicsContext3DPrivate.cpp
     platform/graphics/ImageSource.cpp
-    platform/graphics/OpenGLShims.cpp
     platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp
@@ -116,10 +115,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 
-    platform/graphics/opengl/Extensions3DOpenGL.cpp
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/Extensions3DOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
@@ -402,6 +398,22 @@ endif ()
 if (WTF_USE_EGL)
     list(APPEND WebCore_LIBRARIES
         ${EGL_LIBRARY}
+    )
+endif ()
+
+if (WTF_USE_OPENGL_ES_2)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/opengl/Extensions3DOpenGLES.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+    )
+endif ()
+
+if (WTF_USE_OPENGL)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/OpenGLShims.cpp
+
+        platform/graphics/opengl/Extensions3DOpenGL.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     )
 endif ()
 
