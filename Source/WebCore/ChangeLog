@@ -1,3 +1,26 @@
+2015-03-10  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Merge TextFragmentIterator::findNextBreakablePosition() and TextFragmentIterator::findNextNonWhitespacePosition().
+        https://bugs.webkit.org/show_bug.cgi?id=142344
+
+        Reviewed by Antti Koivisto.
+
+        This patch merges findNextBreakablePosition() and findNextNonWhitespacePosition() so that
+        the segment looping and position handling logic are no longer duplicated. It also unifies
+        the static next*() functions' signature.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextTextFragment):
+        (WebCore::SimpleLineLayout::nextBreakablePosition):
+        (WebCore::SimpleLineLayout::nextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextBreakablePosition): Deleted.
+        (WebCore::SimpleLineLayout::findNextNonWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextNonWhitespacePosition): Deleted.
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GL_MAX_VARYING_FLOATS is not defined in OpenGL ES 2
