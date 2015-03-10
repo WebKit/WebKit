@@ -1,3 +1,31 @@
+2015-03-10  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Destructuring function parameters should show type information
+        https://bugs.webkit.org/show_bug.cgi?id=142233
+
+        Reviewed by Joseph Pecoraro.
+
+        JSC supports a function's formal parameter being a destructuring pattern, 
+        and so should the type profiler in the Inspector. This was just an oversight 
+        not to have this in bug 141215.
+
+        This patch also does a bit of refactoring to not have duplicate code
+        that traverses AST nodes in TypeTokenAnnotator and ScriptSyntaxTree.
+        Before, both of these classes were responsible for traversing the AST
+        in an identical way, this is bad. Now, ScriptSyntaxTree contains the
+        canonical implementation of how the AST should be traversed and which
+        AST nodes should be collected for type profiling. ScriptSyntaxTree will
+        pass this information back to TypeTokenAnnotator.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeToken):
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeTokensForEachNode): Deleted.
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.):
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        (WebInspector.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration):
+        (WebInspector.ScriptSyntaxTree.prototype.gatherIdentifiersInVariableDeclaration): Deleted.
+
 2015-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inline Error / Warning message for Issues

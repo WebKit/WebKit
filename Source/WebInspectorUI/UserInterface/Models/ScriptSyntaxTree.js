@@ -216,12 +216,14 @@ WebInspector.ScriptSyntaxTree.prototype = {
             case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
             case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
                 for (var param of node.params) {
-                    allRequests.push({
-                        typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
-                        sourceID,
-                        divot: param.range[0]
-                    });
-                    allRequestNodes.push(param);
+                    for (var identifier of this._gatherIdentifiersInDeclaration(param)) {
+                        allRequests.push({
+                            typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
+                            sourceID,
+                            divot: identifier.range[0]
+                        });
+                        allRequestNodes.push(identifier);
+                    }
                 }
 
                 allRequests.push({
@@ -232,7 +234,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 allRequestNodes.push(node);
                 break;
             case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
-                for (var identifier of this.gatherIdentifiersInVariableDeclaration(node)) {
+                for (var identifier of this._gatherIdentifiersInDeclaration(node.id)) {
                     allRequests.push({
                         typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
                         sourceID,
@@ -262,13 +264,16 @@ WebInspector.ScriptSyntaxTree.prototype = {
                     node.attachments.types = typeInformation;
             }
 
-            callback();
+            callback(allRequestNodes);
         }
 
         RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
     },
 
-    gatherIdentifiersInVariableDeclaration: function (node) {
+    // Private
+
+    _gatherIdentifiersInDeclaration: function(node)
+    {
         function gatherIdentifiers(node) 
         {
             switch (node.type) {
@@ -291,16 +296,15 @@ WebInspector.ScriptSyntaxTree.prototype = {
                     }
                     return identifiers;
                 default:
-                    console.assert(false, "Unexecpted node type in variable declarator: " + node.type);
+                    console.assert(false, "Unexpected node type in variable declarator: " + node.type);
                     return [];
             }
         }
 
-        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
-        return gatherIdentifiers(node.id);
-    },
+        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier || node.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern);
 
-    // Private
+        return gatherIdentifiers(node);
+    },
 
     _defaultParserState: function() 
     {
