@@ -1210,12 +1210,14 @@ struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
 void Heap::snapshotMarkedSpace()
 {
     GCPHASE(SnapshotMarkedSpace);
-    if (m_operationInProgress != FullCollection)
-        return;
 
-    m_blockSnapshot.resize(m_objectSpace.blocks().set().size());
-    MarkedBlockSnapshotFunctor functor(m_blockSnapshot);
-    m_objectSpace.forEachBlock(functor);
+    if (m_operationInProgress == EdenCollection)
+        m_blockSnapshot = m_objectSpace.blocksWithNewObjects();
+    else {
+        m_blockSnapshot.resizeToFit(m_objectSpace.blocks().set().size());
+        MarkedBlockSnapshotFunctor functor(m_blockSnapshot);
+        m_objectSpace.forEachBlock(functor);
+    }
 }
 
 void Heap::deleteSourceProviderCaches()
@@ -1227,9 +1229,10 @@ void Heap::deleteSourceProviderCaches()
 void Heap::notifyIncrementalSweeper()
 {
     GCPHASE(NotifyIncrementalSweeper);
-    if (m_operationInProgress != FullCollection)
-        return;
-    m_sweeper->startSweeping(m_blockSnapshot);
+    if (m_operationInProgress == EdenCollection)
+        m_sweeper->addBlocksAndContinueSweeping(WTF::move(m_blockSnapshot));
+    else
+        m_sweeper->startSweeping(WTF::move(m_blockSnapshot));
 }
 
 void Heap::rememberCurrentlyExecutingCodeBlocks()

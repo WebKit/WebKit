@@ -160,6 +160,8 @@ public:
     template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
 
+    const Vector<MarkedBlock*>& blocksWithNewObjects() const { return m_blocksWithNewObjects; }
+
 private:
     friend class LLIntOffsetsExtractor;
     friend class JIT;

@@ -1,3 +1,45 @@
+2015-03-10  Andreas Kling  <akling@apple.com>
+
+        Eden collections should trigger sweep of MarkedBlocks containing new objects.
+        <https://webkit.org/b/142538>
+
+        Reviewed by Geoffrey Garen.
+
+        Take a snapshot of all MarkedBlocks with new objects as part of Eden collections,
+        and append that to the IncrementalSweeper's working set.
+
+        This ensures that we run destructors for objects that were discovered to be garbage during
+        Eden collections, instead of delaying their teardown until the next full collection,
+        or the next allocation cycle for their block.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::snapshotMarkedSpace): For Eden collections, snapshot the list of MarkedBlocks
+        that contain new objects, since those are the only ones we're interested in.
+        Also use Vector::resizeToFit() to allocate the snapshot for full collections, since we know
+        the final size we need up front.
+
+        (JSC::Heap::notifyIncrementalSweeper): For Eden collections, tell the IncrementalSweeper
+        to add the block snapshot (taken earlier) to its existing set of blocks instead of replacing
+        it entirely. This allows Eden collections and incremental sweeping to occur interleaved with
+        each other without missing destruction opportunities.
+
+        * heap/IncrementalSweeper.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        (JSC::IncrementalSweeper::sweepNextBlock): Change the way we iterate over the sweeper's
+        work list: instead of keeping an index for the next block, just pop from the end of the list.
+        This allows us to add new blocks and deduplicate the list without disturbing iteration.
+
+        (JSC::IncrementalSweeper::startSweeping): Make this take a Vector<MarkedBlock>&& so we can
+        pass ownership of this Vector efficiently from Heap to IncrementalSweeper.
+
+        (JSC::IncrementalSweeper::addBlocksAndContinueSweeping): Added. This is used by Eden
+        collections to add a set of MarkedBlocks with new objects to the sweeper's existing
+        working set and kick the timer.
+
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::blocksWithNewObjects): Expose the list of MarkedBlocks with new objects.
+
 2015-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Use unsigned for HashSet size.
