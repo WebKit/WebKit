@@ -90,6 +90,7 @@ enum class WheelEventStatus {
     InertialScrollBegin,
     InertialScrolling,
     InertialScrollEnd,
+    StatelessScrollEvent,
     Unknown
 };
 
@@ -476,7 +477,10 @@ static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase,
                 
         case PlatformWheelEventPhaseEnded:
             return WheelEventStatus::InertialScrollEnd;
-                
+
+        case PlatformWheelEventPhaseNone:
+            return WheelEventStatus::StatelessScrollEvent;
+
         default:
             return WheelEventStatus::Unknown;
         }
@@ -540,7 +544,13 @@ void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis
         snapState.clearInitialWheelDeltaWindow();
         snapState.m_shouldOverrideWheelEvent = false;
         break;
-        
+
+    case WheelEventStatus::StatelessScrollEvent:
+        endScrollSnapAnimation(axis, ScrollSnapState::UserInteraction);
+        snapState.clearInitialWheelDeltaWindow();
+        snapState.m_shouldOverrideWheelEvent = false;
+        break;
+
     case WheelEventStatus::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -588,10 +598,10 @@ void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector
 {
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
     if (axis == ScrollEventAxis::Horizontal)
-        m_horizontalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Horizontal, snapPoints);
+        m_horizontalScrollSnapState = !snapPoints.isEmpty() ? std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Horizontal, snapPoints) : nullptr;
 
     if (axis == ScrollEventAxis::Vertical)
-        m_verticalScrollSnapState = std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Vertical, snapPoints);
+        m_verticalScrollSnapState = !snapPoints.isEmpty() ? std::make_unique<ScrollSnapAnimatorState>(ScrollEventAxis::Vertical, snapPoints) : nullptr;
 }
 
 void ScrollController::startScrollSnapTimer(ScrollEventAxis axis)

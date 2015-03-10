@@ -1,3 +1,17 @@
+2015-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Assertion in ScrollController::processWheelEventForScrollSnapOnAxis when scrolling with mechanical wheel mouse
+        https://bugs.webkit.org/show_bug.cgi?id=142517
+
+        Reviewed by Simon Fraser.
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::toWheelEventStatus): Recognize stateless mechanical wheel events.
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): If a mechanical wheel event is processed while
+        considering scroll snap logic, end any snap animations and clean up.
+        (WebCore::ScrollController::updateScrollSnapPoints): Don't begin tracking scroll snap state if there is not
+        scroll snap point defined in the markup.
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large
