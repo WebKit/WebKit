@@ -1,3 +1,24 @@
+2015-03-10  Roger Fong  <roger_fong@apple.com>
+
+        Adjustments to media control fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=142509.
+        <rdar://problem/20085228>
+
+        Reviewed by Darin Adler.
+
+        Use system font for controls. Adjust surrounding divs accordingly.
+        Apply subpixel antialiasing to all media control text.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (::-webkit-media-controls):
+        (audio::-webkit-media-controls-closed-captions-container .list):
+        (audio::-webkit-media-controls-status-display):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display.five-digit-time):
+        (audio::-webkit-media-controls-current-time-display.five-digit-time):
+        (audio::-webkit-media-controls-time-remaining-display.six-digit-time):
+        (audio::-webkit-media-controls-current-time-display.six-digit-time):
+
 2015-03-10  Dan Bernstein  <mitz@apple.com>
 
         Fixed a crash in CertificateInfo::containsNonRootSHA1SignedCertificate when loading a non-HTTPS webapge.
