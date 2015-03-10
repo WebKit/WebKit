@@ -2045,6 +2045,9 @@ fast/forms/004.html [ ImageOnlyFailure ]
 
 webkit.org/b/140865 fast/forms/textarea-placeholder-set-attribute.html [ Pass ImageOnlyFailure ]
 
+# Tiny image-only difference
+fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
+
 # new timeouts, need bug reports
 fast/forms/button-state-restore.html [ Skip ]
 fast/forms/radio/state-restore-radio-group.html [ Skip ]

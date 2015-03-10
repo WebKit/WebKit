@@ -1,3 +1,11 @@
+2015-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Rebaseline tests afer r181292.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/win/fast/forms/textfield-overflow-by-value-update-expected.txt:
+
 2015-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Support extends and super keywords
