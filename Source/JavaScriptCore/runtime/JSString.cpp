@@ -437,11 +437,12 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propert
 
 JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
 {
-    auto addResult = vm.stringCache.add(&stringImpl, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = jsString(&vm, String(stringImpl));
-    vm.lastCachedString.set(vm, addResult.iterator->value.get());
-    return addResult.iterator->value.get();
+    if (JSString* string = vm.stringCache.get(&stringImpl))
+        return string;
+
+    JSString* string = jsString(&vm, String(stringImpl));
+    vm.lastCachedString.set(vm, string);
+    return string;
 }
 
 } // namespace JSC

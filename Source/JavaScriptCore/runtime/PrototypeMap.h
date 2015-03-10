@@ -33,10 +33,17 @@ namespace JSC {
 
 class JSObject;
 class Structure;
+class VM;
 
 // Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
 class PrototypeMap {
 public:
+    explicit PrototypeMap(VM& vm)
+        : m_prototypes(vm)
+        , m_structures(vm)
+    {
+    }
+
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
     void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
     void addPrototype(JSObject*);

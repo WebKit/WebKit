@@ -36,6 +36,7 @@
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include "WeakGCMapInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -90,7 +91,7 @@ inline void StructureTransitionTable::add(VM& vm, Structure* structure)
 
         // This handles the second transition being added
         // (or the first transition being despecified!)
-        setMap(new TransitionMap());
+        setMap(new TransitionMap(vm));
         add(vm, existingTransition);
     }
 
