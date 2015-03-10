@@ -10,7 +10,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>NOMINMAX;USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\API;$(ConfigurationBuildDir)\include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\API;$(ProjectDir)\..\..\;$(ConfigurationBuildDir)\include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
