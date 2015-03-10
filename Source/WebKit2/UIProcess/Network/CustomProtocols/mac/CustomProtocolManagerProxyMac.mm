@@ -66,8 +66,11 @@ using namespace WebKit;
     _customProtocolID = customProtocolID;
     _connection = connection;
     _storagePolicy = NSURLCacheStorageNotAllowed;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    
+#pragma clang diagnostic pop
+
     return self;
 }
 

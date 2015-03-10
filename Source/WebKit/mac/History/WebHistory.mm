@@ -567,7 +567,10 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
             return NO;
         }
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
+#pragma clang diagnostic pop
         if (data.length)
             dictionary = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:nullptr error:nullptr];
     }

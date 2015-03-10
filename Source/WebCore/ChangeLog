@@ -1,3 +1,10 @@
+2015-03-10  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+
 2015-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Extend URL filter's Term definition to support groups/subpatterns

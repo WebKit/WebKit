@@ -274,7 +274,10 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
 
     if (!documentLoader->mainResourceLoader()) {
         // The resource has already been cached, start a new download.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         WebDownload *webDownload = [[WebDownload alloc] initWithRequest:request.nsURLRequest(UpdateHTTPBody) delegate:[webView downloadDelegate]];
+#pragma clang diagnostic pop
         [webDownload autorelease];
         return;
     }

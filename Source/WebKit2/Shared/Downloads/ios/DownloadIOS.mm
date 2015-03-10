@@ -142,7 +142,10 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
 #if USE(CFNETWORK)
     CFURLDownloadClient client;
     setUpDownloadClient(client, *this);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_download = adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(NULL, handle->releaseConnectionForDownload().get(), m_request.cfURLRequest(UpdateHTTPBody), response.cfURLResponse(), &client));
+#pragma clang diagnostic pop
 #else
     notImplemented();
 #endif
