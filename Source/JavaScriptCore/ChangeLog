@@ -1,3 +1,10 @@
+2015-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props:
+        Added directory containing config.h, like r181304.
+
 2015-03-09  Mark Lam  <mark.lam@apple.com>
 
         Yet another build fix for Windows.
