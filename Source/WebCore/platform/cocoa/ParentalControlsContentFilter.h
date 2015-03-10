@@ -36,11 +36,13 @@ OBJC_CLASS WebFilterEvaluator;
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public ContentFilter {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ParentalControlsContentFilter);
+    friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>(const ResourceResponse&);
+
 public:
     static bool canHandleResponse(const ResourceResponse&);
     static std::unique_ptr<ParentalControlsContentFilter> create(const ResourceResponse&);
-
-    explicit ParentalControlsContentFilter(const ResourceResponse&);
 
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
@@ -50,6 +52,8 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
+    explicit ParentalControlsContentFilter(const ResourceResponse&);
+
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
 };

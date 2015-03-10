@@ -32,9 +32,10 @@
 namespace WebCore {
 
 class MockContentFilter final : public ContentFilter {
-    WTF_MAKE_NONCOPYABLE(MockContentFilter);
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(MockContentFilter);
     friend std::unique_ptr<MockContentFilter> std::make_unique<MockContentFilter>(const ResourceResponse&);
+
 public:
     static void ensureInstalled();
     static bool canHandleResponse(const ResourceResponse&);

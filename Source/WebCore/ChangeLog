@@ -1,3 +1,14 @@
+2015-03-09  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Give ContentFilter subclasses private constructors, and make them fast-allocated and non-copyable
+        https://bugs.webkit.org/show_bug.cgi?id=142515
+
+        Reviewed by Andreas Kling.
+
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/ParentalControlsContentFilter.h:
+        * testing/MockContentFilter.h:
+
 2015-03-09  Chris Dumez  <cdumez@apple.com>
 
         [CG] Have Canvas use the IOSurfacePool
