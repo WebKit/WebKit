@@ -1,3 +1,51 @@
+2015-03-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Refactor media controls code
+        https://bugs.webkit.org/show_bug.cgi?id=142455
+
+        Reviewed by Dean Jackson.
+
+        No new tests, updated tests/media/hls/video-controls-live-stream-expected.txt.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+        (Controller.prototype.addVideoListeners):
+        (Controller.prototype.removeVideoListeners):
+        (Controller.prototype.createControls):
+        (Controller.prototype.setControlsType):
+        (Controller.prototype.configureInlineControls):
+        (Controller.prototype.updateStatusDisplay):
+        (Controller.prototype.handlePanelMouseDown):
+        (Controller.prototype.showControls):
+        (Controller.prototype.hideControls):
+        (Controller.prototype.handleOptimizedFullscreenButtonClicked):
+        (Controller.prototype.currentPlaybackTargetIsWireless):
+        (Controller.prototype.updateShouldListenForPlaybackTargetAvailabilityEvent):
+        (Controller.prototype.updateWirelessPlaybackStatus):
+        (Controller.prototype.updateWirelessTargetAvailable):
+        (Controller.prototype.handleWirelessPickerButtonClicked):
+        (Controller.prototype.handleWirelessPlaybackChange):
+        (Controller.prototype.handleWirelessTargetAvailableChange):
+        (Controller.prototype.setShouldListenForPlaybackTargetAvailabilityEvent):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS):
+        (ControllerIOS.prototype.addVideoListeners):
+        (ControllerIOS.prototype.removeVideoListeners):
+        (ControllerIOS.prototype.createControls):
+        (ControllerIOS.prototype.setControlsType):
+        (ControllerIOS.prototype.configureInlineControls):
+        (ControllerIOS.prototype.showControls):
+        (ControllerIOS.prototype.handleWirelessPickerButtonTouchEnd):
+        (ControllerIOS.prototype.updateShouldListenForPlaybackTargetAvailabilityEvent):
+        (ControllerIOS.prototype.updateStatusDisplay):
+        (ControllerIOS.prototype.setShouldListenForPlaybackTargetAvailabilityEvent):
+        (ControllerIOS.prototype.currentPlaybackTargetIsWireless): Deleted.
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): Deleted.
+        (ControllerIOS.prototype.updateWirelessTargetAvailable): Deleted.
+        (ControllerIOS.prototype.hideControls): Deleted.
+        (ControllerIOS.prototype.handleWirelessPlaybackChange): Deleted.
+        (ControllerIOS.prototype.handleWirelessTargetAvailableChange): Deleted.
+
 2015-03-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove PassRefPtr from svg/properties classes.

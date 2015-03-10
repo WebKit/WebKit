@@ -2,6 +2,7 @@
 EVENT(play)
 EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-text-track-container: classes: [hidden]
+-webkit-media-controls-wireless-playback-status: classes: [hidden]
 -webkit-media-controls-panel: classes: [paused]
 -webkit-media-controls-play-button: classes: [paused]
 -webkit-media-controls-status-display: classes: []
@@ -9,6 +10,7 @@ none: classes: [mute-box]
 -webkit-media-controls-volume-slider-container: classes: [volume-box]
 -webkit-media-controls-volume-slider: classes: []
 -webkit-media-controls-mute-button: classes: []
+-webkit-media-controls-wireless-playback-picker-button: classes: [hidden]
 -webkit-media-controls-toggle-closed-captions-button: classes: [hidden]
 -webkit-media-controls-fullscreen-button: classes: []
 TEST(timeline == null || timeline.disabled) OK
