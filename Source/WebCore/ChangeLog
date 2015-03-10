@@ -1,3 +1,9 @@
+2015-03-10  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * platform/spi/cocoa/SecuritySPI.h:
+
 2015-03-10  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Merge TextFragmentIterator::findNextBreakablePosition() and TextFragmentIterator::findNextNonWhitespacePosition().
