@@ -30,7 +30,7 @@
 #include <wtf/Threading.h>
 
 // Regression test for webkit.org/b/142513
-extern "C" void testCompareAndSwap();
+extern "C" JS_EXPORT_PRIVATE void testCompareAndSwap();
 
 class Bitmap {
 public:

@@ -1,5 +1,15 @@
 2015-03-09  Mark Lam  <mark.lam@apple.com>
 
+        Another build fix for Windows.
+        https://webkit.org/b/142513>
+
+        Not reviewed.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        - Added JS_EXPORT_PRIVATE attribute.
+
+2015-03-09  Mark Lam  <mark.lam@apple.com>
+
         Build fix for Windows after r181305.
         https://webkit.org/b/142513>
 
