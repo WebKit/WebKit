@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WeakMapConstructor.h"
 
+#include "Error.h"
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
@@ -44,11 +46,87 @@ void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
+static EncodedJSValue JSC_HOST_CALL callWeakMap(ExecState* exec)
+{
+    return JSValue::encode(throwTypeError(exec, ASCIILiteral("WeakMap cannot be called as a function")));
+}
+
 static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
-    Structure* structure = globalObject->weakMapStructure();
-    return JSValue::encode(JSWeakMap::create(exec, structure));
+    Structure* weakMapStructure = globalObject->weakMapStructure();
+    JSWeakMap* weakMap = JSWeakMap::create(exec, weakMapStructure);
+    JSValue iterable = exec->argument(0);
+    if (iterable.isUndefinedOrNull())
+        return JSValue::encode(weakMap);
+
+    JSValue adderFunction = weakMap->JSObject::get(exec, exec->propertyNames().set);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    CallData adderFunctionCallData;
+    CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
+    if (adderFunctionCallType == CallTypeNone)
+        return JSValue::encode(throwTypeError(exec));
+
+    JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorPrivateName);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    CallData iteratorFunctionCallData;
+    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    if (iteratorFunctionCallType == CallTypeNone)
+        return JSValue::encode(throwTypeError(exec));
+
+    ArgList iteratorFunctionArguments;
+    JSValue iterator = call(exec, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    if (!iterator.isObject())
+        return JSValue::encode(throwTypeError(exec));
+
+    while (true) {
+        JSValue next = iteratorStep(exec, iterator);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        if (next.isFalse())
+            return JSValue::encode(weakMap);
+
+        JSValue nextItem = iteratorValue(exec, next);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        if (!nextItem.isObject()) {
+            throwTypeError(exec);
+            iteratorClose(exec, iterator);
+            return JSValue::encode(jsUndefined());
+        }
+
+        JSValue key = nextItem.get(exec, 0);
+        if (exec->hadException()) {
+            iteratorClose(exec, iterator);
+            return JSValue::encode(jsUndefined());
+        }
+
+        JSValue value = nextItem.get(exec, 1);
+        if (exec->hadException()) {
+            iteratorClose(exec, iterator);
+            return JSValue::encode(jsUndefined());
+        }
+
+        MarkedArgumentBuffer arguments;
+        arguments.append(key);
+        arguments.append(value);
+        call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, weakMap, arguments);
+        if (exec->hadException()) {
+            iteratorClose(exec, iterator);
+            return JSValue::encode(jsUndefined());
+        }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSValue::encode(weakMap);
 }
 
 ConstructType WeakMapConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -57,9 +135,10 @@ ConstructType WeakMapConstructor::getConstructData(JSCell*, ConstructData& const
     return ConstructTypeHost;
 }
 
-CallType WeakMapConstructor::getCallData(JSCell*, CallData&)
+CallType WeakMapConstructor::getCallData(JSCell*, CallData& callData)
 {
-    return CallTypeNone;
+    callData.native.function = callWeakMap;
+    return CallTypeHost;
 }
 
 }

@@ -27,6 +27,7 @@
 #include "SetConstructor.h"
 
 #include "Error.h"
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
@@ -46,31 +47,67 @@ void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
-static EncodedJSValue JSC_HOST_CALL callSet(CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)
 {
-    // Until we have iterators we throw if we've been given
-    // any arguments that could require us to throw.
-    if (!callFrame->argument(0).isUndefinedOrNull())
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Set does not accept arguments when called as a function")));
-    if (!callFrame->argument(1).isUndefined())
-        return throwVMError(callFrame, createRangeError(callFrame, WTF::ASCIILiteral("Invalid comparator function")));
-
-    JSGlobalObject* globalObject = asInternalFunction(callFrame->callee())->globalObject();
-    Structure* setStructure = globalObject->setStructure();
-    return JSValue::encode(JSSet::create(callFrame, setStructure));
+    return JSValue::encode(throwTypeError(exec, ASCIILiteral("Set cannot be called as a function")));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructSet(CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
 {
-    JSGlobalObject* globalObject = asInternalFunction(callFrame->callee())->globalObject();
+    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* setStructure = globalObject->setStructure();
-    JSSet* set = JSSet::create(callFrame, setStructure);
-    MapData* mapData = set->mapData();
-    size_t count = callFrame->argumentCount();
-    for (size_t i = 0; i < count; i++) {
-        JSValue item = callFrame->uncheckedArgument(i);
-        mapData->set(callFrame, item, item);
+    JSSet* set = JSSet::create(exec, setStructure);
+    JSValue iterable = exec->argument(0);
+    if (iterable.isUndefinedOrNull())
+        return JSValue::encode(set);
+
+    JSValue adderFunction = set->get(exec, exec->propertyNames().add);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    CallData adderFunctionCallData;
+    CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
+    if (adderFunctionCallType == CallTypeNone)
+        return JSValue::encode(throwTypeError(exec));
+
+    JSValue iteratorFunction = iterable.get(exec, exec->propertyNames().iteratorPrivateName);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    CallData iteratorFunctionCallData;
+    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    if (iteratorFunctionCallType == CallTypeNone)
+        return JSValue::encode(throwTypeError(exec));
+
+    ArgList iteratorFunctionArguments;
+    JSValue iterator = call(exec, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    if (!iterator.isObject())
+        return JSValue::encode(throwTypeError(exec));
+
+    while (true) {
+        JSValue next = iteratorStep(exec, iterator);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        if (next.isFalse())
+            return JSValue::encode(set);
+
+        JSValue nextValue = iteratorValue(exec, next);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        MarkedArgumentBuffer arguments;
+        arguments.append(nextValue);
+        call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
+        if (exec->hadException()) {
+            iteratorClose(exec, iterator);
+            return JSValue::encode(jsUndefined());
+        }
     }
+    RELEASE_ASSERT_NOT_REACHED();
     return JSValue::encode(set);
 }
 

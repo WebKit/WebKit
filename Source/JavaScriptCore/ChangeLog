@@ -1,3 +1,42 @@
+2015-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Upgrade Map, Set and WeakMap constructor interface
+        https://bugs.webkit.org/show_bug.cgi?id=142348
+
+        Reviewed by Filip Pizlo.
+
+        In the latest ES6 spec, Map and Set constructors take initialization data sets
+        as iterable value. And iterate it and add the values into the constructed one.
+
+        This is breaking change because the old constructor interface is
+        already shipped in Safari 8.
+
+        * runtime/MapConstructor.cpp:
+        (JSC::callMap):
+        (JSC::constructMap):
+        (JSC::MapConstructor::getCallData):
+        * runtime/SetConstructor.cpp:
+        (JSC::callSet):
+        (JSC::constructSet):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::callWeakMap):
+        (JSC::constructWeakMap):
+        (JSC::WeakMapConstructor::getCallData):
+        * tests/stress/map-constructor-adder.js: Added.
+        * tests/stress/map-constructor.js: Added.
+        (testCallTypeError):
+        (testTypeError):
+        (for):
+        * tests/stress/set-constructor-adder.js: Added.
+        (Set.prototype.add):
+        * tests/stress/set-constructor.js: Added.
+        (for):
+        * tests/stress/weak-map-constructor-adder.js: Added.
+        * tests/stress/weak-map-constructor.js: Added.
+        (testCallTypeError):
+        (testTypeError):
+        (for):
+
 2015-03-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         GCC: CRASH() should be annotated with NORETURN

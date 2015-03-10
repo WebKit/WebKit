@@ -10,12 +10,20 @@ shouldBeTrue("new Map(undefined) instanceof Map");
 shouldBeTrue("new Map(undefined, undefined) instanceof Map");
 shouldBeTrue("new Map(null, undefined) instanceof Map");
 
+shouldThrow("Map()");
+shouldThrow("Map(1)");
+shouldThrow("Map(true)");
+shouldThrow("Map('String')");
+shouldThrow("Map([])");
+shouldThrow("Map({})");
+shouldThrow("Map(undefined)");
+shouldThrow("Map(null)");
 shouldThrow("new Map(1)");
 shouldThrow("new Map(true)");
-shouldThrow("new Map([])");
+shouldNotThrow("new Map([])");
 shouldThrow("new Map({})");
-shouldThrow("new Map(undefined, null)");
-shouldThrow("new Map(undefined, {})");
+shouldNotThrow("new Map(undefined, null)");
+shouldNotThrow("new Map(undefined, {})");
 
 var map = new Map;
 shouldBeFalse("Object.hasOwnProperty(map, 'size')")

@@ -1,3 +1,19 @@
+2015-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Upgrade Map, Set and WeakMap constructor interface
+        https://bugs.webkit.org/show_bug.cgi?id=142348
+
+        Reviewed by Filip Pizlo.
+
+        Constructor semantics is changed.
+
+        * js/basic-map-expected.txt:
+        * js/basic-set-expected.txt:
+        * js/dom/basic-weakmap-expected.txt:
+        * js/script-tests/basic-map.js:
+        * js/script-tests/basic-set.js:
+        (set new):
+
 2015-03-10  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Too large plugins are crashing.
