@@ -1,5 +1,14 @@
 2015-03-10  Dan Bernstein  <mitz@apple.com>
 
+        Fixed a crash in CertificateInfo::containsNonRootSHA1SignedCertificate when loading a non-HTTPS webapge.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate): Null-check the certificate chain.
+
+2015-03-10  Dan Bernstein  <mitz@apple.com>
+
         Fixed the build.
 
         * platform/spi/cocoa/SecuritySPI.h:

@@ -34,6 +34,9 @@ namespace WebCore {
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    if (!m_certificateChain)
+        return false;
+
     for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
         SecCertificateRef certificate = (SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i);
         if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
