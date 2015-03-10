@@ -38,6 +38,7 @@ class IncrementalSweeper : public HeapTimer {
 public:
 #if USE(CF)
     JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
+    JS_EXPORT_PRIVATE void fullSweep();
 #else
     explicit IncrementalSweeper(VM*);
 #endif
@@ -52,6 +53,7 @@ private:
     void doSweep(double startTime);
     void scheduleTimer();
     void cancelTimer();
+    bool hasWork() const { return !m_blocksToSweep.isEmpty(); }
     
     unsigned m_currentBlockToSweepIndex;
     Vector<MarkedBlock*>& m_blocksToSweep;

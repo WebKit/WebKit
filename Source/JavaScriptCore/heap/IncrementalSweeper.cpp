@@ -60,6 +60,12 @@ void IncrementalSweeper::cancelTimer()
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
+void IncrementalSweeper::fullSweep()
+{
+    while (hasWork())
+        doWork();
+}
+
 void IncrementalSweeper::doWork()
 {
     doSweep(WTF::monotonicallyIncreasingTime());

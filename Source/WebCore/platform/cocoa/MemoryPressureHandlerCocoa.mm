@@ -29,10 +29,12 @@
 #import "DispatchSPI.h"
 #import "IOSurfacePool.h"
 #import "GCController.h"
+#import "JSDOMWindow.h"
 #import "JSDOMWindowBase.h"
 #import "LayerPool.h"
 #import "Logging.h"
 #import "WebCoreSystemInterface.h"
+#import <JavaScriptCore/IncrementalSweeper.h>
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
@@ -87,6 +89,13 @@ void MemoryPressureHandler::platformReleaseMemory(bool critical)
         // Do a full GC since this is our last chance to run any code.
         ReliefLogger log("Collecting JavaScript garbage");
         gcController().garbageCollectNow();
+    }
+
+    // Do a full sweep of collected objects.
+    {
+        ReliefLogger log("Full JavaScript garbage sweep");
+        JSC::JSLockHolder lock(JSDOMWindow::commonVM());
+        JSDOMWindow::commonVM().heap.sweeper()->fullSweep();
     }
 #endif
 }

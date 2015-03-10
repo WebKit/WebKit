@@ -1,3 +1,19 @@
+2015-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Sweep all collected objects on critical memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=142457
+        <rdar://problem/20044440>
+
+        Reviewed by Geoffrey Garen.
+
+        All fullSweep() API to IncrementalSweeper so that we can call it in the
+        memory pressure handler.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::fullSweep):
+        * heap/IncrementalSweeper.h:
+        (JSC::IncrementalSweeper::hasWork):
+
 2015-03-09  Mark Lam  <mark.lam@apple.com>
 
         Another build fix for Windows.

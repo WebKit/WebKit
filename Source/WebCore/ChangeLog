@@ -1,3 +1,17 @@
+2015-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Sweep all collected objects on critical memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=142457
+        <rdar://problem/20044440>
+
+        Reviewed by Geoffrey Garen.
+
+        Do a full sweep of objects marked for destruction on critical memory
+        pressure to free up memory.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
 2015-03-09  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Give ContentFilter subclasses private constructors, and make them fast-allocated and non-copyable
