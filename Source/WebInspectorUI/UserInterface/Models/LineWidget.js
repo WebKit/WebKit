@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleObserver = function()
+WebInspector.LineWidget = function(codeMirrorLineWidget, widgetElement)
 {
     WebInspector.Object.call(this);
+
+    console.assert(widgetElement instanceof Element);
+
+    this._codeMirrorLineWidget = codeMirrorLineWidget;
+    this._widgetElement = widgetElement;
 };
 
-WebInspector.ConsoleObserver.prototype = {
-    constructor: WebInspector.ConsoleObserver,
+WebInspector.LineWidget.prototype = {
+    constructor: WebInspector.LineWidget,
+    __proto__: WebInspector.Object.prototype,
 
-    // Events defined by the "Console" domain.
+    // Public
 
-    messageAdded: function(message)
+    get codeMirrorLineWidget()
     {
-        if (message.type === "assert" && !message.text)
-            message.text = WebInspector.UIString("Assertion");
-
-        if (message.level === "warning" || message.level === "error")
-            WebInspector.issueManager.issueWasAdded(message.source, message.level, message.text, message.url, message.line, message.column || 0, message.parameters);
-
-        if (message.source === "console-api" && message.type === "clear")
-            return;
-
-        WebInspector.logManager.messageWasAdded(message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
+        return this._codeMirrorLineWidget;
     },
 
-    messageRepeatCountUpdated: function(count)
+    get widgetElement()
     {
-        WebInspector.logManager.messageRepeatCountUpdated(count);
+        return this._widgetElement;
     },
 
-    messagesCleared: function()
+    clear()
     {
-        WebInspector.logManager.messagesCleared();
+        this._codeMirrorLineWidget.clear();
+    },
+
+    update()
+    {
+        // FIXME: Later version of CodeMirror has update.
+        if (this._codeMirrorLineWidget.update)
+            this._codeMirrorLineWidget.update();
     }
 };
-
-WebInspector.ConsoleObserver.prototype.__proto__ = WebInspector.Object.prototype;

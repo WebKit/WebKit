@@ -576,7 +576,6 @@ WebInspector.TextEditor.prototype = {
     addStyleClassToLine: function(lineNumber, styleClassName)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
-        console.assert(lineHandle);
         if (!lineHandle)
             return null;
 
@@ -601,6 +600,17 @@ WebInspector.TextEditor.prototype = {
             return false;
 
         return this._codeMirror.toggleLineClass(lineHandle, "wrap", styleClassName);
+    },
+
+    createWidgetForLine: function(lineNumber)
+    {
+        var lineHandle = this._codeMirror.getLineHandle(lineNumber);
+        if (!lineHandle)
+            return null;
+
+        var widgetElement = document.createElement("div");
+        var lineWidget = this._codeMirror.addLineWidget(lineHandle, widgetElement, {coverGutter: false, noHScroll: true, handleMouseEvents: true});
+        return new WebInspector.LineWidget(lineWidget, widgetElement);
     },
 
     get lineCount()

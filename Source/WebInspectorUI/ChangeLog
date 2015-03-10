@@ -1,3 +1,81 @@
+2015-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inline Error / Warning message for Issues
+        https://bugs.webkit.org/show_bug.cgi?id=142520
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and new files.
+
+        * UserInterface/Controllers/IssueManager.js:
+        (WebInspector.IssueManager.prototype.issueWasAdded):
+        * UserInterface/Models/IssueMessage.js:
+        (WebInspector.IssueMessage):
+        (WebInspector.IssueMessage.prototype.get columnNumber):
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        Correctly pass the column number into IssueMessage.
+
+        * UserInterface/Models/LineWidget.js:
+        (WebInspector.LineWidget):
+        (WebInspector.LineWidget.prototype.get codeMirrorLineWidget):
+        (WebInspector.LineWidget.prototype.get widgetElement):
+        Create a new Model class for a LineWidget. The root element
+        should never change, but its children can be updated.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor .CodeMirror-linewidget):
+        Override styles so that widgets can overlap line content.
+
+        (.source-code.text-editor > .CodeMirror .issue-widget):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline):
+        Float issue widgets to the right side of the editor.
+
+        (.source-code.text-editor > .CodeMirror .issue-widget > .arrow):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline > .arrow):
+        Pure CSS arrow for widgets on the same line as their issue.
+
+        (.source-code.text-editor > .CodeMirror .issue-widget > .icon):
+        (.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-error):
+        Issue icon styles for the different issue types.
+
+        (.source-code.text-editor > .CodeMirror .issue-widget.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow):
+        (.source-code.text-editor > .CodeMirror .issue-widget.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow):
+        Different colors for the different issue types.
+
+        (.source-code.text-editor > .CodeMirror .issue-widget > .text):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline > .text):
+        Text positioning when on the same line or when expanded.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._addIssue):
+        (WebInspector.SourceCodeTextEditor.prototype._iconClassNameForIssueLevel):
+        (WebInspector.SourceCodeTextEditor.prototype._updateIssueWidgetForIssues):
+        (WebInspector.SourceCodeTextEditor.prototype._isWidgetToggleable):
+        (WebInspector.SourceCodeTextEditor.prototype._handleWidgetClick):
+        Create widgets for issues.
+
+        (WebInspector.SourceCodeTextEditor.prototype._contentDidPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorUpdatedFormatting):
+        (WebInspector.SourceCodeTextEditor.prototype._clearWidgets):
+        (WebInspector.SourceCodeTextEditor.prototype._reinsertAllIssues):
+        Update all widgets in certain cases.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.addStyleClassToLine):
+        This assertion is known to happen for issues added to an editor
+        before the content has loaded.
+
+        (WebInspector.TextEditor.prototype.createWidgetForLine):
+        Create a widget for a line.
+
 2015-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JS Pretty Printing: "case" or "default" outside of switch causes unbalanced indentation

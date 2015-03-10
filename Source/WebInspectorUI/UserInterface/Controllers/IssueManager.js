@@ -50,7 +50,7 @@ WebInspector.IssueManager.prototype = {
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.Cleared);
     },
 
-    issueWasAdded: function(source, level, text, url, lineNumber, parameters)
+    issueWasAdded: function(source, level, text, url, lineNumber, columnNumber, parameters)
     {
         var modifiedLineNumber;
         if (lineNumber) {
@@ -58,7 +58,7 @@ WebInspector.IssueManager.prototype = {
             modifiedLineNumber = lineNumber - 1;
         }
 
-        var issue = new WebInspector.IssueMessage(source, level, text, url, modifiedLineNumber, parameters);
+        var issue = new WebInspector.IssueMessage(source, level, text, url, modifiedLineNumber, columnNumber, parameters);
         this._issues.push(issue);
 
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue});

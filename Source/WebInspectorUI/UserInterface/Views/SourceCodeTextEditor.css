@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,108 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.source-code.text-editor > .CodeMirror .error {
-    background-color: rgb(255, 220, 208);
+.source-code.text-editor .CodeMirror-linewidget {
+    overflow: initial;
+    z-index: 3; /* overlap line content */
 }
 
 .source-code.text-editor > .CodeMirror .warning {
     background-color: rgb(253, 249, 226);
+}
+
+.source-code.text-editor > .CodeMirror .error {
+    background-color: rgb(255, 220, 208);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget {
+    float: right;
+    padding: 0 5px 1px 5px;
+    border-bottom-left-radius: 5px;
+    cursor: default;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline {
+    position: relative;
+    top: -13px;
+
+    padding: 0px 5px 0 3px;
+    border-bottom-left-radius: 0;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .arrow {
+    display: none;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline > .arrow {
+    position: absolute;
+    left: -5.5px;
+    display: block;
+
+    top: 0px;
+    width: 0px;
+    height: 0px;
+
+    border-top: 6.5px solid transparent;
+    border-bottom: 6.5px solid transparent; 
+    border-right: 5.5px solid transparent;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .icon {
+    height: 9px;
+    width: 9px;
+    padding-right: 12px;
+
+    background-size: 9px 9px;
+    background-repeat: no-repeat;
+    background-position-y: 1px;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-warning {
+    background-image: url(../Images/Warning.svg);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-error {
+    background-image: url(../Images/Error.svg);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.warning {
+    background-color: rgb(253, 249, 226);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
+    background-color: rgb(254, 233, 177);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow {
+    border-right-color: rgb(254, 233, 177);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.error {
+    background-color: rgb(255, 220, 208);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.error {
+    background-color: rgb(255, 173, 153);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow {
+    border-right-color: rgb(255, 173, 153);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .text {
+    font-family: -webkit-system-font, sans-serif;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline > .text {
+    display: inline-block;
+
+    max-width: 300px;
+    height: 12px;
+    padding-top: 1px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .popover .debugger-popover-content {

@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IssueMessage = function(source, level, text, url, lineNumber, parameters)
+WebInspector.IssueMessage = function(source, level, text, url, lineNumber, columnNumber, parameters)
 {
     WebInspector.Object.call(this);
 
     this._level = level;
     this._text = text;
+
+    // FIXME: Move to a SourceCodeLocation.
 
     // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined
     // once we don't get that value anymore from WebCore.
@@ -39,6 +41,9 @@ WebInspector.IssueMessage = function(source, level, text, url, lineNumber, param
 
     if (typeof lineNumber === "number" && lineNumber >= 0)
         this._lineNumber = lineNumber;
+
+    if (typeof columnNumber === "number" && columnNumber >= 0)
+        this._columnNumber = columnNumber;
 
     if (parameters && parameters !== "undefined") {
         this._parameters = [];
@@ -175,6 +180,7 @@ WebInspector.IssueMessage.Type.displayName = function(type)
 
 WebInspector.IssueMessage.prototype = {
     constructor: WebInspector.IssueMessage,
+    __proto__: WebInspector.Object.prototype,
 
     get type()
     {
@@ -201,9 +207,14 @@ WebInspector.IssueMessage.prototype = {
         return this._lineNumber;
     },
 
+    get columnNumber()
+    {
+        return this._columnNumber;
+    },
+
     // Private
 
-    _formatTextIfNecessary: function()
+    _formatTextIfNecessary()
     {
         if (!this._parameters)
             return;
@@ -238,5 +249,3 @@ WebInspector.IssueMessage.prototype = {
         this._text = resultText;
     }
 };
-
-WebInspector.IssueMessage.prototype.__proto__ = WebInspector.Object.prototype;

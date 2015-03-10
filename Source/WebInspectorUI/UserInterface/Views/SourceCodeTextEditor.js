@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,8 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
 
     this._sourceCode = sourceCode;
     this._breakpointMap = {};
-    this._issuesLineNumberMap = {};
+    this._issuesLineNumberMap = new Map;
+    this._widgetMap = new Map;
     this._contentPopulated = false;
     this._invalidLineNumbers = {0: true};
     this._ignoreContentDidChange = 0;
@@ -90,8 +91,8 @@ WebInspector.SourceCodeTextEditor.HoveredExpressionHighlightStyleClassName = "ho
 WebInspector.SourceCodeTextEditor.DurationToMouseOverTokenToMakeHoveredToken = 500;
 WebInspector.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease = 1000;
 WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling = 100;
-
 WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength = 500;
+WebInspector.SourceCodeTextEditor.WidgetContainsMultipleIssuesSymbol = Symbol("source-code-widget-contains-multiple-issues");
 
 WebInspector.SourceCodeTextEditor.Event = {
     ContentWillPopulate: "source-code-text-editor-content-will-populate",
@@ -438,17 +439,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this.dispatchEventToListeners(WebInspector.SourceCodeTextEditor.Event.ContentDidPopulate);
 
         // We add the issues each time content is populated. This is needed because lines might not exist
-        // if we tried added them before when the full content wasn't avaiable. (When populating with
+        // if we tried added them before when the full content wasn't available. (When populating with
         // partial script content this can be called multiple times.)
 
-        this._issuesLineNumberMap = {};
-
-        var issues = WebInspector.issueManager.issuesForSourceCode(this._sourceCode);
-        for (var i = 0; i < issues.length; ++i) {
-            var issue = issues[i];
-            console.assert(this._matchesIssue(issue));
-            this._addIssue(issue);
-        }
+        this._reinsertAllIssues();
 
         this._updateEditableMarkers();
     },
@@ -814,20 +808,153 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     _addIssue: function(issue)
     {
-        var lineNumberIssues = this._issuesLineNumberMap[issue.lineNumber];
-        if (!lineNumberIssues)
-            lineNumberIssues = this._issuesLineNumberMap[issue.lineNumber] = [];
+        // FIXME: Issue should have a SourceCodeLocation.
+        var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(issue.lineNumber, issue.columnNumber);
+        var lineNumber = sourceCodeLocation.formattedLineNumber;
+
+        var lineNumberIssues = this._issuesLineNumberMap.get(lineNumber);
+        if (!lineNumberIssues) {
+            lineNumberIssues = [];
+            this._issuesLineNumberMap.set(lineNumber, lineNumberIssues);
+        }
+
+        // Avoid displaying duplicate issues on the same line.
+        for (var existingIssue of lineNumberIssues) {
+            if (existingIssue.columnNumber === issue.columnNumber && existingIssue.text === issue.text)
+                return;
+        }
 
         lineNumberIssues.push(issue);
 
         if (issue.level === WebInspector.IssueMessage.Level.Error)
-            this.addStyleClassToLine(issue.lineNumber, WebInspector.SourceCodeTextEditor.LineErrorStyleClassName);
+            this.addStyleClassToLine(lineNumber, WebInspector.SourceCodeTextEditor.LineErrorStyleClassName);
         else if (issue.level === WebInspector.IssueMessage.Level.Warning)
-            this.addStyleClassToLine(issue.lineNumber, WebInspector.SourceCodeTextEditor.LineWarningStyleClassName);
+            this.addStyleClassToLine(lineNumber, WebInspector.SourceCodeTextEditor.LineWarningStyleClassName);
         else
             console.error("Unknown issue level");
 
-        // FIXME <rdar://problem/10854857>: Show the issue message on the line as a bubble.
+        var widget = this._issueWidgetForLine(lineNumber);
+        if (widget) {
+            if (issue.level === WebInspector.IssueMessage.Level.Error)
+                widget.widgetElement.classList.add(WebInspector.SourceCodeTextEditor.LineErrorStyleClassName);
+            else if (issue.level === WebInspector.IssueMessage.Level.Warning)
+                widget.widgetElement.classList.add(WebInspector.SourceCodeTextEditor.LineWarningStyleClassName);
+
+            this._updateIssueWidgetForIssues(widget, lineNumberIssues);
+        }
+    },
+
+    _issueWidgetForLine: function(lineNumber)
+    {
+        var widget = this._widgetMap.get(lineNumber);
+        if (widget)
+            return widget;
+
+        widget = this.createWidgetForLine(lineNumber);
+        if (!widget)
+            return null;
+
+        var widgetElement = widget.widgetElement;
+        widgetElement.classList.add("issue-widget");
+        widgetElement.classList.add("inline");
+        widgetElement.addEventListener("click", this._handleWidgetClick.bind(this, widget, lineNumber));
+
+        this._widgetMap.set(lineNumber, widget);
+
+        return widget;
+    },
+
+    _iconClassNameForIssueLevel: function(level)
+    {
+        if (level === WebInspector.IssueMessage.Level.Warning)
+            return "icon-warning";
+
+        console.assert(level === WebInspector.IssueMessage.Level.Error);
+        return "icon-error";
+    },
+
+    _updateIssueWidgetForIssues: function(widget, issues)
+    {
+        var widgetElement = widget.widgetElement;
+        widgetElement.removeChildren();
+
+        if (widgetElement.classList.contains("inline") || issues.length === 1) {
+            var arrowElement = widgetElement.appendChild(document.createElement("span"));
+            arrowElement.className = "arrow";
+
+            var iconElement = widgetElement.appendChild(document.createElement("span"));
+            iconElement.className = "icon";            
+
+            var textElement = widgetElement.appendChild(document.createElement("span"));
+            textElement.className = "text";
+
+            if (issues.length === 1) {
+                iconElement.classList.add(this._iconClassNameForIssueLevel(issues[0].level));
+                textElement.textContent = issues[0].text;
+            } else {
+                var errorsCount = 0;
+                var warningsCount = 0;
+                for (var issue of issues) {
+                    if (issue.level === WebInspector.IssueMessage.Level.Error)
+                        ++errorsCount;
+                    else if (issue.level === WebInspector.IssueMessage.Level.Warning)
+                        ++warningsCount;
+                }
+
+                if (warningsCount && errorsCount) {
+                    iconElement.classList.add(this._iconClassNameForIssueLevel(issue.level));
+                    textElement.textContent = WebInspector.UIString("%d Errors, %d Warnings").format(errorsCount, warningsCount);
+                } else if (errorsCount) {
+                    iconElement.classList.add(this._iconClassNameForIssueLevel(issue.level));
+                    textElement.textContent = WebInspector.UIString("%d Errors").format(errorsCount);
+                } else if (warningsCount) {
+                    iconElement.classList.add(this._iconClassNameForIssueLevel(issue.level));
+                    textElement.textContent = WebInspector.UIString("%d Warnings").format(warningsCount);
+                }
+
+                widget[WebInspector.SourceCodeTextEditor.WidgetContainsMultipleIssuesSymbol] = true;
+            }
+        } else {
+            for (var issue of issues) {
+                var iconElement = widgetElement.appendChild(document.createElement("span"));
+                iconElement.className = "icon";
+                iconElement.classList.add(this._iconClassNameForIssueLevel(issue.level));
+
+                var textElement = widgetElement.appendChild(document.createElement("span"));
+                textElement.className = "text";
+                textElement.textContent = issue.text;
+
+                widgetElement.appendChild(document.createElement("br"));
+            }
+        }
+
+        widget.update();
+    },
+
+    _isWidgetToggleable: function(widget)
+    {
+        if (widget[WebInspector.SourceCodeTextEditor.WidgetContainsMultipleIssuesSymbol])
+            return true;
+
+        if (!widget.widgetElement.classList.contains("inline"))
+            return true;
+
+        var textElement = widget.widgetElement.lastChild;
+        if (textElement.offsetWidth !== textElement.scrollWidth)
+            return true;
+        
+        return false;
+    },
+
+    _handleWidgetClick: function(widget, lineNumber, event)
+    {
+        if (!this._isWidgetToggleable(widget))
+            return;
+
+        widget.widgetElement.classList.toggle("inline");
+
+        var lineNumberIssues = this._issuesLineNumberMap.get(lineNumber);
+        this._updateIssueWidgetForIssues(widget, lineNumberIssues);
     },
 
     _breakpointInfoForBreakpoint: function(breakpoint)
@@ -1066,8 +1193,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 this._sourceCode.resource.formatterSourceMap = this.formatterSourceMap;
         }
 
-        // Some breakpoints may have moved, some might not have. Just go through
-        // and remove and reinsert all the breakpoints.
+        // Some breakpoints / issues may have moved, some might not have. Just go through
+        // and remove and reinsert all the breakpoints / issues.
 
         var oldBreakpointMap = this._breakpointMap;
         this._breakpointMap = {};
@@ -1080,6 +1207,28 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 this.setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, null);
                 this.setBreakpointInfoForLineAndColumn(newLineInfo.lineNumber, newLineInfo.columnNumber, this._breakpointInfoForBreakpoint(breakpoint));
             }
+        }
+
+        this._reinsertAllIssues();
+    },
+
+    _clearWidgets: function()
+    {
+        for (var widget of this._widgetMap.values())
+            widget.clear();
+
+        this._widgetMap.clear();
+    },
+
+    _reinsertAllIssues: function()
+    {
+        this._issuesLineNumberMap.clear();
+        this._clearWidgets();
+
+        var issues = WebInspector.issueManager.issuesForSourceCode(this._sourceCode);
+        for (var issue of issues) {
+            console.assert(this._matchesIssue(issue));
+            this._addIssue(issue);
         }
     },
 
