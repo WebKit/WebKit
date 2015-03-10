@@ -137,7 +137,7 @@ void SVGPolyElement::synchronizePoints(SVGElement* contextElement)
     ownerType.m_points.synchronize(&ownerType, pointsPropertyInfo()->attributeName, ownerType.m_points.value.valueAsString());
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGElement* contextElement)
+Ref<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
     SVGPolyElement& ownerType = downcast<SVGPolyElement>(*contextElement);
@@ -148,13 +148,13 @@ PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGE
 SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::points()
 {
     m_points.shouldSynchronize = true;
-    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_pointer_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->baseVal());
+    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->baseVal());
 }
 
 SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::animatedPoints()
 {
     m_points.shouldSynchronize = true;
-    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_pointer_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal());
+    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_reference_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal());
 }
 
 }

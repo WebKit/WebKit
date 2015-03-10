@@ -88,7 +88,7 @@ public:
     // textLength is not declared using the standard DECLARE_ANIMATED_LENGTH macro
     // as its getter needs special handling (return getComputedTextLength(), instead of m_textLength).
     SVGLength& specifiedTextLength() { return m_specifiedTextLength; }
-    PassRefPtr<SVGAnimatedLength> textLengthAnimated();
+    Ref<SVGAnimatedLength> textLengthAnimated();
     static const SVGPropertyInfo* textLengthPropertyInfo();
 
 protected:
@@ -109,7 +109,7 @@ private:
 
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTextLengthWrapper(SVGElement* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreateTextLengthWrapper(SVGElement* contextElement);
     mutable SVGSynchronizableAnimatedProperty<SVGLength> m_textLength;
     SVGLength m_specifiedTextLength;
   

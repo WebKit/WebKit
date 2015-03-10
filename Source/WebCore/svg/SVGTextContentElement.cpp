@@ -81,7 +81,7 @@ void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
     ownerType.m_textLength.synchronize(&ownerType, textLengthPropertyInfo()->attributeName, value);
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(SVGElement* contextElement)
+Ref<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
     SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
@@ -89,14 +89,14 @@ PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthW
         (&ownerType, textLengthPropertyInfo(), ownerType.m_textLength.value);
 }
 
-PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
+Ref<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
 {
     static NeverDestroyed<SVGLength> defaultTextLength(LengthModeOther);
     if (m_specifiedTextLength == defaultTextLength)
         m_textLength.value.newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength(), ASSERT_NO_EXCEPTION);
 
     m_textLength.shouldSynchronize = true;
-    return static_pointer_cast<SVGAnimatedLength>(lookupOrCreateTextLengthWrapper(this));
+    return static_reference_cast<SVGAnimatedLength>(lookupOrCreateTextLengthWrapper(this));
 
 }
 

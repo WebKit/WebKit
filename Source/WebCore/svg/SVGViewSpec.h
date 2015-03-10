@@ -72,13 +72,13 @@ public:
     SVGTransformList transformBaseValue() const { return m_transform; }
 
     // Custom animated 'viewBox' property.
-    PassRefPtr<SVGAnimatedRect> viewBoxAnimated();
+    RefPtr<SVGAnimatedRect> viewBoxAnimated();
     FloatRect& viewBox() { return m_viewBox; }
     FloatRect viewBoxBaseValue() const { return m_viewBox; }
     void setViewBoxBaseValue(const FloatRect& viewBox) { m_viewBox = viewBox; }
 
     // Custom animated 'preserveAspectRatio' property.
-    PassRefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated();
+    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated();
     SVGPreserveAspectRatio& preserveAspectRatio() { return m_preserveAspectRatio; }
     SVGPreserveAspectRatio preserveAspectRatioBaseValue() const { return m_preserveAspectRatio; }
     void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
@@ -94,9 +94,9 @@ private:
     static const AtomicString& viewBoxIdentifier();
     static const AtomicString& preserveAspectRatioIdentifier();
 
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTransformWrapper(SVGViewSpec* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(SVGViewSpec* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreateTransformWrapper(SVGViewSpec* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(SVGViewSpec* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* contextElement);
 
     SVGElement* m_contextElement;
     SVGZoomAndPanType m_zoomAndPan;

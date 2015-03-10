@@ -31,41 +31,41 @@ public:
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList> AnimatedListPropertyTearOff;
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList>::ListWrapperCache ListWrapperCache;
 
-    static PassRefPtr<SVGListPropertyTearOff<SVGTransformList>> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGTransformList& values, ListWrapperCache& wrappers)
+    static Ref<SVGListPropertyTearOff<SVGTransformList>> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGTransformList& values, ListWrapperCache& wrappers)
     {
         ASSERT(animatedProperty);
-        return adoptRef(new SVGTransformListPropertyTearOff(animatedProperty, role, values, wrappers));
+        return adoptRef(*new SVGTransformListPropertyTearOff(animatedProperty, role, values, wrappers));
     }
 
-    PassRefPtr<SVGPropertyTearOff<SVGTransform>> createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix, ExceptionCode& ec)
+    RefPtr<SVGPropertyTearOff<SVGTransform>> createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix, ExceptionCode& ec)
     {
         ASSERT(m_values);
         if (!matrix) {
             ec = TYPE_MISMATCH_ERR;
-            return 0;
+            return nullptr;
         }
         return SVGPropertyTearOff<SVGTransform>::create(m_values->createSVGTransformFromMatrix(matrix->propertyReference()));
     }
 
-    PassRefPtr<SVGPropertyTearOff<SVGTransform>> consolidate(ExceptionCode& ec)
+    RefPtr<SVGPropertyTearOff<SVGTransform>> consolidate(ExceptionCode& ec)
     {
         ASSERT(m_values);
         ASSERT(m_wrappers);
         if (!canAlterList(ec))
-            return 0;
+            return nullptr;
 
         ASSERT(m_values->size() == m_wrappers->size());
 
         // Spec: If the list was empty, then a value of null is returned.
         if (m_values->isEmpty())
-            return 0;
+            return nullptr;
 
         detachListWrappers(0);
         RefPtr<SVGPropertyTearOff<SVGTransform>> wrapper = SVGPropertyTearOff<SVGTransform>::create(m_values->consolidate());
         m_wrappers->append(wrapper);
 
         ASSERT(m_values->size() == m_wrappers->size());
-        return wrapper.release();
+        return wrapper;
     }
 
 private:

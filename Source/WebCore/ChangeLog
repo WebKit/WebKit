@@ -1,3 +1,89 @@
+2015-03-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove PassRefPtr from svg/properties classes.
+        https://bugs.webkit.org/show_bug.cgi?id=142063.
+
+        Reviewed by Darin Adler.
+        
+        Remove PassRefPtr from svg/properties classes. All the return types and
+        the local variables should be RefPtr. If we are sure the pointer can't
+        be null, we use Ref instead.
+
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::lookupOrCreateOrientTypeWrapper):
+        (WebCore::SVGMarkerElement::orientTypeAnimated):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        (WebCore::SVGPathElement::pathSegList):
+        (WebCore::SVGPathElement::animatedPathSegList):
+        * svg/SVGPathElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        * svg/SVGPolyElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper):
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::transform):
+        (WebCore::SVGViewSpec::viewBoxAnimated):
+        (WebCore::SVGViewSpec::preserveAspectRatioAnimated):
+        (WebCore::SVGViewSpec::lookupOrCreateViewBoxWrapper):
+        (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper):
+        (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper):
+        * svg/SVGViewSpec.h:
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::create):
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::create):
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::create):
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        (WebCore::SVGAnimatedPropertyTearOff::create):
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::create):
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h:
+        (WebCore::SVGAnimatedTransformListPropertyTearOff::create):
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::initializeValuesAndWrappers):
+        (WebCore::SVGListProperty::getItemValuesAndWrappers):
+        (WebCore::SVGListProperty::insertItemBeforeValuesAndWrappers):
+        (WebCore::SVGListProperty::replaceItemValuesAndWrappers):
+        (WebCore::SVGListProperty::removeItemValuesAndWrappers):
+        (WebCore::SVGListProperty::appendItemValuesAndWrappers):
+        * svg/properties/SVGListPropertyTearOff.h:
+        (WebCore::SVGListPropertyTearOff::create):
+        (WebCore::SVGListPropertyTearOff::initialize):
+        (WebCore::SVGListPropertyTearOff::getItem):
+        (WebCore::SVGListPropertyTearOff::insertItemBefore):
+        (WebCore::SVGListPropertyTearOff::replaceItem):
+        (WebCore::SVGListPropertyTearOff::removeItem):
+        (WebCore::SVGListPropertyTearOff::appendItem):
+        * svg/properties/SVGPathSegListPropertyTearOff.cpp:
+        (WebCore::SVGPathSegListPropertyTearOff::getItem):
+        (WebCore::SVGPathSegListPropertyTearOff::replaceItem):
+        (WebCore::SVGPathSegListPropertyTearOff::removeItem):
+        * svg/properties/SVGPathSegListPropertyTearOff.h:
+        (WebCore::SVGPathSegListPropertyTearOff::create):
+        (WebCore::SVGPathSegListPropertyTearOff::initialize):
+        (WebCore::SVGPathSegListPropertyTearOff::insertItemBefore):
+        (WebCore::SVGPathSegListPropertyTearOff::appendItem):
+        * svg/properties/SVGPropertyInfo.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        (WebCore::SVGStaticListPropertyTearOff::create):
+        * svg/properties/SVGStaticPropertyTearOff.h:
+        (WebCore::SVGStaticPropertyTearOff::create):
+        * svg/properties/SVGTransformListPropertyTearOff.h:
+        (WebCore::SVGTransformListPropertyTearOff::create):
+        (WebCore::SVGTransformListPropertyTearOff::createSVGTransformFromMatrix):
+        (WebCore::SVGTransformListPropertyTearOff::consolidate):
+
 2015-03-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build

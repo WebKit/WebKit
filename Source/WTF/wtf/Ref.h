@@ -148,6 +148,16 @@ template<typename T> template<typename U> inline Ref<T> Ref<T>::replace(Ref<U>&&
     return oldReference;
 }
 
+template<typename T, typename U> inline Ref<T> static_reference_cast(Ref<U>& reference)
+{
+    return Ref<T>(static_cast<T&>(reference.get()));
+}
+
+template<typename T, typename U> inline Ref<T> static_reference_cast(const Ref<U>& reference)
+{
+    return Ref<T>(static_cast<T&>(reference.copyRef().get()));
+}
+
 template <typename T>
 struct GetPtrHelper<Ref<T>> {
     typedef T* PtrType;
@@ -166,5 +176,6 @@ inline Ref<T> adoptRef(T& reference)
 
 using WTF::Ref;
 using WTF::adoptRef;
+using WTF::static_reference_cast;
 
 #endif // WTF_Ref_h

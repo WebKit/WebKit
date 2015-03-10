@@ -47,20 +47,20 @@ void SVGPathSegListPropertyTearOff::clear(ExceptionCode& ec)
     SVGPathSegListPropertyTearOff::Base::clearValues(ec);
 }
 
-SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::getItem(unsigned index, ExceptionCode& ec)
+SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::getItem(unsigned index, ExceptionCode& ec)
 {
     ListItemType returnedItem = Base::getItemValues(index, ec);
     if (returnedItem) {
         ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->contextElement() == contextElement());
         ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->role() == m_pathSegRole);
     }
-    return returnedItem.release();
+    return returnedItem;
 }
 
-SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::replaceItem(PassListItemType passNewItem, unsigned index, ExceptionCode& ec)
+SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::replaceItem(PtrListItemType newItem, unsigned index, ExceptionCode& ec)
 {
     // Not specified, but FF/Opera do it this way, and it's just sane.
-    if (!passNewItem) {
+    if (!newItem) {
         ec = SVGException::SVG_WRONG_TYPE_ERR;
         return 0;
     }
@@ -71,16 +71,15 @@ SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::r
         static_cast<SVGPathSegWithContext*>(replacedItem.get())->setContextAndRole(0, PathSegUndefinedRole);
     }
 
-    ListItemType newItem = passNewItem;
     return Base::replaceItemValues(newItem, index, ec);
 }
 
-SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::removeItem(unsigned index, ExceptionCode& ec)
+SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::removeItem(unsigned index, ExceptionCode& ec)
 {
     SVGPathSegListPropertyTearOff::ListItemType removedItem = SVGPathSegListPropertyTearOff::Base::removeItemValues(index, ec);
     if (removedItem)
         static_cast<SVGPathSegWithContext*>(removedItem.get())->setContextAndRole(0, PathSegUndefinedRole);
-    return removedItem.release();
+    return removedItem;
 }
 
 SVGPathElement* SVGPathSegListPropertyTearOff::contextElement() const

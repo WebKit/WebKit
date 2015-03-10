@@ -311,13 +311,13 @@ SVGPathByteStream* SVGPathElement::pathByteStream() const
     return static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property)->animatedPathByteStream();
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
+Ref<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
     SVGPathElement& ownerType = downcast<SVGPathElement>(*contextElement);
 
     if (SVGAnimatedProperty* property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(&ownerType, dPropertyInfo()))
-        return property;
+        return *property;
 
     // Build initial SVGPathSegList.
     buildSVGPathSegListFromByteStream(ownerType.m_pathByteStream.get(), &ownerType, ownerType.m_pathSegList.value, UnalteredParsing);
@@ -338,7 +338,7 @@ void SVGPathElement::synchronizeD(SVGElement* contextElement)
 SVGPathSegListPropertyTearOff* SVGPathElement::pathSegList()
 {
     m_pathSegList.shouldSynchronize = true;
-    return static_cast<SVGPathSegListPropertyTearOff*>(static_pointer_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this))->baseVal());
+    return static_cast<SVGPathSegListPropertyTearOff*>(static_reference_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this))->baseVal());
 }
 
 SVGPathSegListPropertyTearOff* SVGPathElement::normalizedPathSegList()
@@ -351,7 +351,7 @@ SVGPathSegListPropertyTearOff* SVGPathElement::animatedPathSegList()
 {
     m_pathSegList.shouldSynchronize = true;
     m_isAnimValObserved = true;
-    return static_cast<SVGPathSegListPropertyTearOff*>(static_pointer_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this))->animVal());
+    return static_cast<SVGPathSegListPropertyTearOff*>(static_reference_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this))->animVal());
 }
 
 SVGPathSegListPropertyTearOff* SVGPathElement::animatedNormalizedPathSegList()

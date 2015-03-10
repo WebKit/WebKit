@@ -109,7 +109,7 @@ private:
 
     // Custom 'd' property
     static void synchronizeD(SVGElement* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateDWrapper(SVGElement* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreateDWrapper(SVGElement* contextElement);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPathElement)
         DECLARE_ANIMATED_NUMBER(PathLength, pathLength)

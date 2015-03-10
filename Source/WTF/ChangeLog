@@ -1,3 +1,13 @@
+2015-03-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove PassRefPtr from svg/properties classes.
+        https://bugs.webkit.org/show_bug.cgi?id=142063.
+
+        Reviewed by Darin Adler.
+
+        * wtf/Ref.h:
+        (WTF::static_reference_cast): Add a stat_cast function to Ref<>.
+
 2015-03-10  Mark Lam  <mark.lam@apple.com>
 
         [Win] JSC Build Warnings Need to be Resolved.

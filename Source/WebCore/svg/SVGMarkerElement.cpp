@@ -239,7 +239,7 @@ void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
     ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoString);
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(SVGElement* contextElement)
+Ref<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
     SVGMarkerElement& ownerType = downcast<SVGMarkerElement>(*contextElement);
@@ -258,10 +258,10 @@ SVGMarkerOrientType& SVGMarkerElement::orientType() const
     return m_orientType.value;
 }
 
-PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> SVGMarkerElement::orientTypeAnimated()
+Ref<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> SVGMarkerElement::orientTypeAnimated()
 {
     m_orientType.shouldSynchronize = true;
-    return static_pointer_cast<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>>(lookupOrCreateOrientTypeWrapper(this));
+    return static_reference_cast<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>>(lookupOrCreateOrientTypeWrapper(this));
 }
 
 }

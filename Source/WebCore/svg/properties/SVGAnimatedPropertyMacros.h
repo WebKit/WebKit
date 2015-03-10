@@ -132,10 +132,10 @@ public: \
         m_##LowerProperty.isValid = validValue; \
     } \
 \
-    PassRefPtr<TearOffType> LowerProperty##Animated() \
+    Ref<TearOffType> LowerProperty##Animated() \
     { \
         m_##LowerProperty.shouldSynchronize = true; \
-        return static_pointer_cast<TearOffType>(lookupOrCreate##UpperProperty##Wrapper(this)); \
+        return static_reference_cast<TearOffType>(lookupOrCreate##UpperProperty##Wrapper(this)); \
     } \
 \
     bool LowerProperty##IsValid() const \
@@ -152,7 +152,7 @@ private: \
         m_##LowerProperty.synchronize(this, LowerProperty##PropertyInfo()->attributeName, value); \
     } \
 \
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreate##UpperProperty##Wrapper(SVGElement* maskedOwnerType) \
+    static Ref<SVGAnimatedProperty> lookupOrCreate##UpperProperty##Wrapper(SVGElement* maskedOwnerType) \
     { \
         ASSERT(maskedOwnerType); \
         UseOwnerType* ownerType = static_cast<UseOwnerType*>(maskedOwnerType); \

@@ -52,7 +52,7 @@ private:
 
     // Custom 'points' property
     static void synchronizePoints(SVGElement* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreatePointsWrapper(SVGElement* contextElement);
+    static Ref<SVGAnimatedProperty> lookupOrCreatePointsWrapper(SVGElement* contextElement);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPolyElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

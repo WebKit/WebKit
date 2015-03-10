@@ -153,10 +153,10 @@ public:
         synchronizeWrappersIfNeeded();
     }
 
-    static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& values)
+    static Ref<SVGAnimatedListPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& values)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, values));
+        return adoptRef(*new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, values));
     }
 
 protected:

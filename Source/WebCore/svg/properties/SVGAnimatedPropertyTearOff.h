@@ -57,10 +57,10 @@ public:
         return m_animVal.get();
     }
 
-    static PassRefPtr<SVGAnimatedPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
+    static Ref<SVGAnimatedPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, property));
+        return adoptRef(*new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, property));
     }
 
     PropertyType& currentAnimatedValue()

@@ -42,10 +42,10 @@ public:
         return static_cast<SVGListPropertyTearOff<SVGTransformList>*>(m_animVal.get());
     }
 
-    static PassRefPtr<SVGAnimatedTransformListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGTransformList& values)
+    static Ref<SVGAnimatedTransformListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGTransformList& values)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedTransformListPropertyTearOff(contextElement, attributeName, animatedPropertyType, values));
+        return adoptRef(*new SVGAnimatedTransformListPropertyTearOff(contextElement, attributeName, animatedPropertyType, values));
     }
 
 private:
