@@ -1,3 +1,21 @@
+2015-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Sam Weinig.
+
+        Rolling back in r181307 with a check for whether bmalloc is enabled, to
+        avoid crashes when running with ASan and GuardMalloc.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastRealloc):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::tryFastRealloc): Deleted.
+        * wtf/FastMalloc.h:
+
 2015-03-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         GCC: CRASH() should be annotated with NORETURN
