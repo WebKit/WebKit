@@ -466,6 +466,9 @@ Bug(EFL) fast/attachment/attachment-progress.html [ Missing ]
 Bug(EFL) fast/attachment/attachment-subtitle.html [ Missing ]
 Bug(EFL) fast/attachment/attachment-title.html [ Missing ]
 
+# Need a new baseline for EFL port. It was added by r72173.
+Bug(EFL) fast/css/line-height-determined-by-primary-font.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2158,3 +2161,13 @@ webkit.org/b/142483 fast/css/font-face-in-media-rule.html [ Failure ]
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
+
+# small-leak-foo tests have been failed since r181345
+webkit.org/b/142561 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Failure ]
+webkit.org/b/142561 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Failure ]
+webkit.org/b/142561 svg/animations/smil-leak-element-instances.svg [ Failure ]
+webkit.org/b/142561 svg/animations/smil-leak-elements.svg [ Failure ]
+
+webkit.org/b/142570 fast/css/outline-auto-empty-rects.html [ Failure ]
+
+webkit.org/b/142571 fast/css/vertical-text-overflow-ellipsis-text-align-center.html [ Failure ]

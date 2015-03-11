@@ -1,3 +1,11 @@
+2015-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening on 10th Mar.
+
+        Mark smil-leak-foo tests, 3 tests of fast/css to failure.
+
+        * platform/efl/TestExpectations:
+
 2015-03-09  Darin Adler  <darin@apple.com>
 
         Some event handler fixes
