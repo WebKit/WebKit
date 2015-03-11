@@ -1,3 +1,50 @@
+2015-03-11  Roger Fong  <roger_fong@apple.com>
+
+        A number of minor edits to the media controls on OSX.
+        https://bugs.webkit.org/show_bug.cgi?id=142551.
+        <rdar://problem/20114707>
+
+        Reviewed by Darin Adler.
+
+        This covers a slew of minor edits to the new media controls. They are as follows.
+        Small vertical placements adjustments to inline control elements.
+        Make sure buttons have no focus outlines.
+        Expand height of mute box that triggers the volume panel appearing.
+        Turn all button colors into an slightly transparent white.
+        Center status display text in fullscreen mode.
+        Lower position of captions container in fullscreen mode.
+        Show the controls on when done loading of the video an status display is hidden.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-panel button:focus):
+        (audio::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-play-button.paused):
+        (audio::-webkit-media-controls-panel .mute-box):
+        (video::-webkit-media-controls-volume-max-button):
+        (audio::-webkit-media-controls-panel .volume-box):
+        (video::-webkit-media-controls-volume-min-button):
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-closed-captions-container li.selected:hover::before):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-fullscreen-button.exit):
+        (audio::-webkit-media-controls-status-display):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (video:-webkit-full-screen::-webkit-media-controls-panel .volume-box):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-max-button):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-min-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button.paused):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-back-button):
+        (video:-webkit-full-screen::-webkit-media-controls-seek-forward-button):
+        (video:-webkit-full-screen::-webkit-media-controls-status-display):
+        (video:-webkit-full-screen::-webkit-media-controls-closed-captions-container):
+        (audio::-webkit-media-controls-panel button:active): Deleted.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.setStatusHidden):
+
 2015-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179340 and r179344.

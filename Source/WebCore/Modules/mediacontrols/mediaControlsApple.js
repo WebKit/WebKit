@@ -1312,11 +1312,13 @@ Controller.prototype = {
             this.controls.timeline.classList.remove(this.ClassNames.hidden);
             this.controls.remainingTime.classList.remove(this.ClassNames.hidden);
             this.setNeedsTimelineMetricsUpdate();
+            this.showControls();
         } else {
             this.controls.statusDisplay.classList.remove(this.ClassNames.hidden);
             this.controls.currentTime.classList.add(this.ClassNames.hidden);
             this.controls.timeline.classList.add(this.ClassNames.hidden);
             this.controls.remainingTime.classList.add(this.ClassNames.hidden);
+            this.hideControls();
         }
     },
 
