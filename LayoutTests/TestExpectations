@@ -132,6 +132,7 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 webkit.org/b/134769 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Skip ]
 
 webkit.org/b/141661 fast/text/emoji.html [ Failure ]
+webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Failure ]
 
 compositing/fixed-image-loading.html [ Skip ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Skip ]
