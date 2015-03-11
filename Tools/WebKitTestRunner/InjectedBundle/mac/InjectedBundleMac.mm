@@ -62,7 +62,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
             @"notationl": @"notational"
         },
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
-        @"SystemUIFontSelect": @"Neue",
+        @"AppleSystemFontOSSubversion": @(10),
 #endif
     };
 

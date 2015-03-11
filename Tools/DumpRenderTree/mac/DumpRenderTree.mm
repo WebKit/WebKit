@@ -936,7 +936,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"AppleShowScrollBars": @"Always",
         @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
-        @"SystemUIFontSelect": @"Neue",
+        @"AppleSystemFontOSSubversion": @(10),
 #endif
     };
 
