@@ -320,13 +320,11 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
         searchTerm = searchTerm.trim();
         if (!searchTerm.length) {
-            this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
-            this.contentTreeOutline = this._resourcesContentTreeOutline;
+            this._showResourcesContentTreeOutline();
             return;
         }
 
-        this.filterBar.placeholder = WebInspector.UIString("Filter Search Results");
-        this.contentTreeOutline = this._searchContentTreeOutline;
+        this._showSearchContentTreeOutline();
 
         // FIXME: Provide UI to toggle regex and case sensitive searches.
         var isCaseSensitive = false;
@@ -521,6 +519,18 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     // Private
 
+    _showResourcesContentTreeOutline: function()
+    {
+        this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
+        this.contentTreeOutline = this._resourcesContentTreeOutline;
+    },
+
+    _showSearchContentTreeOutline: function()
+    {
+        this.filterBar.placeholder = WebInspector.UIString("Filter Search Results");
+        this.contentTreeOutline = this._searchContentTreeOutline;
+    },
+
     _searchFieldChanged: function(event)
     {
         this.performSearch(event.target.value);
@@ -621,6 +631,9 @@ WebInspector.ResourceSidebarPanel.prototype = {
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.ResourceClusterContentView);
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.FrameContentView);
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.ScriptContentView);
+
+        // Break out of search tree outline if there was an active search.
+        this._showResourcesContentTreeOutline();
 
         function delayedWork()
         {

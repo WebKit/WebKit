@@ -1,5 +1,19 @@
 2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Reload after Global Search results in empty Resources Sidebar.
+        https://bugs.webkit.org/show_bug.cgi?id=142572
+
+        Reviewed by Timothy Hatcher.
+
+        If you reload when the search content tree outline is showing, break out
+        to show the resource tree outline.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._showResourcesContentTreeOutline):
+        (WebInspector.ResourceSidebarPanel.prototype._showSearchContentTreeOutline):
+
+2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: SearchResultTreeElement.representedObject is missing a saveIdentityToCookie implementation
         https://bugs.webkit.org/show_bug.cgi?id=134698
 
