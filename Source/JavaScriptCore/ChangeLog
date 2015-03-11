@@ -1,3 +1,26 @@
+2015-03-10  Mark Lam  <mark.lam@apple.com>
+
+        Use std::numeric_limits<unsigned>::max() instead of (unsigned)-1.
+        <https://webkit.org/b/142539>
+
+        Reviewed by Benjamin Poulain.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        (JSC::JIT::emitGetVirtualRegister):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * yarr/Yarr.h:
+
 2015-03-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         GCC: CRASH() should be annotated with NORETURN

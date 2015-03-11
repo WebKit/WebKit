@@ -75,7 +75,7 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     : JSInterfaceJIT(vm, codeBlock)
     , m_interpreter(vm->interpreter)
     , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
-    , m_bytecodeOffset((unsigned)-1)
+    , m_bytecodeOffset(std::numeric_limits<unsigned>::max())
     , m_getByIdIndex(UINT_MAX)
     , m_putByIdIndex(UINT_MAX)
     , m_byValInstructionIndex(UINT_MAX)
@@ -317,7 +317,7 @@ void JIT::privateCompileMainPass()
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
-    m_bytecodeOffset = (unsigned)-1;
+    m_bytecodeOffset = std::numeric_limits<unsigned>::max();
 #endif
 }
 
@@ -451,7 +451,7 @@ void JIT::privateCompileSlowCases()
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
-    m_bytecodeOffset = (unsigned)-1;
+    m_bytecodeOffset = std::numeric_limits<unsigned>::max();
 #endif
 }
 
@@ -524,7 +524,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 #endif
 
     if (m_codeBlock->codeType() == FunctionCode) {
-        ASSERT(m_bytecodeOffset == (unsigned)-1);
+        ASSERT(m_bytecodeOffset == std::numeric_limits<unsigned>::max());
         if (shouldEmitProfiling()) {
             for (int argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
@@ -593,7 +593,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).code());
 
 #if !ASSERT_DISABLED
-        m_bytecodeOffset = (unsigned)-1; // Reset this, in order to guard its use with ASSERTs.
+        m_bytecodeOffset = std::numeric_limits<unsigned>::max(); // Reset this, in order to guard its use with ASSERTs.
 #endif
 
         jump(beginLabel);
@@ -725,7 +725,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(), (unsigned)-1, FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
+        m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
         jumpToExceptionHandler();
     }
 
@@ -741,7 +741,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(), (unsigned)-1, FunctionPtr(lookupExceptionHandler).value()));
+        m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler).value()));
         jumpToExceptionHandler();
     }
 }
