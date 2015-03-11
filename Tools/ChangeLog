@@ -1,3 +1,13 @@
+2015-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Regression(r181257): WTF_WorkQueue.Simple is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=142560
+
+        Unreviewed attempt to improve test stability.
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp: Check the reference count for
+        the WorkQueue a little later to redue flakiness.
+
 2015-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate from SystemUIFontSelect to AppleSystemFontOSSubversion

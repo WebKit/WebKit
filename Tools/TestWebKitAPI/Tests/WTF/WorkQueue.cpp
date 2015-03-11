@@ -84,11 +84,10 @@ TEST(WTF_WorkQueue, Simple)
 
     m_testCompleted.wait(m_lock);
 
-    EXPECT_EQ(1, queue->refCount());
-
     EXPECT_TRUE(calledSimpleTest);
     EXPECT_TRUE(calledLongTest);
     EXPECT_TRUE(calledThirdTest);
+    EXPECT_EQ(1, queue->refCount());
 
     EXPECT_EQ(static_cast<size_t>(3), m_functionCallOrder.size());
     EXPECT_STREQ(simpleTestLabel, m_functionCallOrder[0].c_str());
