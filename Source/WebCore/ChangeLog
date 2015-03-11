@@ -1,5 +1,12 @@
 2015-03-10  Darin Adler  <darin@apple.com>
 
+        Try to fix the GTK build.
+
+        * html/HTMLVideoElement.idl: Work around gobject bindings generator limitation
+        by putting in a LANGUAGE_GOBJECT conditional.
+
+2015-03-10  Darin Adler  <darin@apple.com>
+
         Some event handler fixes
         https://bugs.webkit.org/show_bug.cgi?id=142474
 
