@@ -46,7 +46,7 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
-    , m_ignoreScalingConstraints(false)
+    , m_canIgnoreScalingConstraints(false)
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
@@ -97,13 +97,32 @@ IntSize ViewportConfiguration::layoutSize() const
     return IntSize(layoutWidth(), layoutHeight());
 }
 
+bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
+{
+    if (!m_canIgnoreScalingConstraints)
+        return false;
+
+    bool laidOutWiderThanViewport = m_contentSize.width() > layoutWidth();
+    if (m_viewportArguments.width == ViewportArguments::ValueDeviceWidth)
+        return laidOutWiderThanViewport;
+
+    bool laidOutTallerThanViewport = m_contentSize.height() > layoutHeight();
+    if (m_viewportArguments.height == ViewportArguments::ValueDeviceHeight)
+        return laidOutTallerThanViewport;
+
+    if (m_configuration.initialScaleIsSet && m_configuration.initialScale == 1)
+        return laidOutWiderThanViewport;
+
+    return false;
+}
+
 double ViewportConfiguration::initialScale() const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
     // If the document has specified its own initial scale, use it regardless.
     // This is guaranteed to be sanity checked already, so no need for MIN/MAX.
-    if (m_configuration.initialScaleIsSet && !m_ignoreScalingConstraints)
+    if (m_configuration.initialScaleIsSet && !shouldIgnoreScalingConstraints())
         return m_configuration.initialScale;
 
     // If not, it is up to us to determine the initial scale.
@@ -118,13 +137,13 @@ double ViewportConfiguration::initialScale() const
     double height = m_contentSize.height() > 0 ? m_contentSize.height() : layoutHeight();
     if (height > 0 && height * initialScale < minimumLayoutSize.height())
         initialScale = minimumLayoutSize.height() / height;
-    return std::min(std::max(initialScale, m_ignoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
+    return std::min(std::max(initialScale, shouldIgnoreScalingConstraints() ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
 }
 
 double ViewportConfiguration::minimumScale() const
 {
     // If we scale to fit, then this is our minimum scale as well.
-    if (!m_configuration.initialScaleIsSet || m_ignoreScalingConstraints)
+    if (!m_configuration.initialScaleIsSet || shouldIgnoreScalingConstraints())
         return initialScale();
 
     // If not, we still need to sanity check our value.
@@ -146,7 +165,7 @@ double ViewportConfiguration::minimumScale() const
 
 bool ViewportConfiguration::allowsUserScaling() const
 {
-    return m_ignoreScalingConstraints || m_configuration.allowsUserScaling;
+    return shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
 }
 
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
@@ -469,7 +488,9 @@ CString ViewportConfiguration::description() const
     ts.writeIndent();
     ts << "(computed minimum scale " << minimumScale() << ")\n";
     ts.writeIndent();
-    ts << "(computed layout size " << layoutSize() << ")";
+    ts << "(computed layout size " << layoutSize() << ")\n";
+    ts.writeIndent();
+    ts << "(ignoring scaling constraints " << (shouldIgnoreScalingConstraints() ? "true" : "false") << ")";
     ts.decreaseIndent();
 
     ts << ")\n";
@@ -479,7 +500,7 @@ CString ViewportConfiguration::description() const
 
 void ViewportConfiguration::dump() const
 {
-    fprintf(stderr, "%s", description().data());
+    WTFLogAlways("%s", description().data());
 }
 
 #endif

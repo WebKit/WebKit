@@ -1,3 +1,15 @@
+2015-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        Make it possible to zoom on pages that claim to lay out to device size and then fail to do so
+        https://bugs.webkit.org/show_bug.cgi?id=142549
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Flip the pref on by default.
+
 2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not look for child processes in the UI process binary path

@@ -1,3 +1,39 @@
+2015-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        Make it possible to zoom on pages that claim to lay out to device size and then fail to do so
+        https://bugs.webkit.org/show_bug.cgi?id=142549
+
+        Reviewed by Simon Fraser.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        Rename m_ignoreScalingConstraints to m_canIgnoreScalingConstraints,
+        because it being true does not guarantee that we will ignore scaling constraints,
+        but it being false does guarantee that we won't.
+
+        (WebCore::ViewportConfiguration::shouldIgnoreScalingConstraints):
+        Ignore scaling constraints if the page:
+            a) claimed to want to lay out to device-width and then laid out too wide
+            b) claimed to want to lay out to device-height and then laid out too tall
+            c) claimed to want to lay out with initialScale=1 and then laid out too wide
+
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        (WebCore::ViewportConfiguration::allowsUserScaling):
+        Call shouldIgnoreScalingConstraints() instead of looking at the local, so we can
+        have some more logic here (as above).
+
+        (WebCore::ViewportConfiguration::description):
+        Dump whether we're ignoring scaling constraints.
+
+        (WebCore::ViewportConfiguration::dump):
+        Use WTFLogAlways so that the output goes to various other logging mechanisms
+        instead of just stderr.
+
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::setCanIgnoreScalingConstraints):
+        (WebCore::ViewportConfiguration::setIgnoreScalingConstraints): Deleted.
+
 2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use out-of-band messaging for RenderBox::firstLineBaseline() and RenderBox::inlineBlockBaseline()
