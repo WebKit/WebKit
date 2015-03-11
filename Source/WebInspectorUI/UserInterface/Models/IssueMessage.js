@@ -45,6 +45,8 @@ WebInspector.IssueMessage = function(source, level, text, url, lineNumber, colum
     if (typeof columnNumber === "number" && columnNumber >= 0)
         this._columnNumber = columnNumber;
 
+    // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
+
     if (parameters && parameters !== "undefined") {
         this._parameters = [];
         for (var i = 0; i < parameters.length; ++i) {
