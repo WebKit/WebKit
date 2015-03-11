@@ -1,3 +1,15 @@
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r181278
+
+        Unreviewed.
+
+        Until Windows adopts the SVG -> OTF Converter, we should mark this test as Mac-only.
+
+        * platform/mac/svg/fonts/resources/svg-font-general.svg: Renamed from LayoutTests/svg/fonts/resources/svg-font-general.svg.
+        * platform/mac/svg/fonts/svg-font-general-expected.html: Renamed from LayoutTests/svg/fonts/svg-font-general-expected.html.
+        * platform/mac/svg/fonts/svg-font-general.html: Renamed from LayoutTests/svg/fonts/svg-font-general.html.
+
 2015-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181367.
