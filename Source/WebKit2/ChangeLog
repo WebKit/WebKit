@@ -1,3 +1,33 @@
+2015-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Anders Carlsson.
+
+        Part 1: Stop using tryFastRealloc.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::resize): Deleted.
+        * Shared/ShareableBitmap.h: Removed the resize function because it has
+        no clients.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::updateBackingStore): Changed to allocate a new
+        backing store instead of resizing the old one. This has three advantages:
+
+        (1) Might be more memory-efficient, since you don't have to keep the old
+        one around while allocating the new one.
+
+        (2) Avoids the overhead of realloc() copying the contents of the old
+        backing store even though we only want uninitialized memory.
+
+        (3) Makes resize failure consistent with initial allocation failure.
+        Previously, while initial allocation failure would set the backing store
+        to null, resize failure would keep the old wrong backing store and then
+        tell it not to paint. Now, resize failure also sets the backing store to
+        null.
+
 2015-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r180924): ASSERTION FAILED: !from.isEmpty() in WebCore::TransformationMatrix::rectToRect
