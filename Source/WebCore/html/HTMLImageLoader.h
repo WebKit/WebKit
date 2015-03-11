@@ -35,7 +35,7 @@ public:
     virtual void dispatchLoadEvent() override;
     virtual String sourceURI(const AtomicString&) const override;
 
-    virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
+    virtual void notifyFinished(CachedResource*) override;
 };
 
 }

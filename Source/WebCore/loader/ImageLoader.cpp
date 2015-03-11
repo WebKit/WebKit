@@ -272,13 +272,10 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
     updateFromElement();
 }
 
-void ImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
+void ImageLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
-    ASSERT(cachedImage == m_image.get());
-
-    if (!cachedImage->isLoaded())
-        return;
+    ASSERT(resource == m_image.get());
 
     m_imageComplete = true;
     if (!hasPendingBeforeLoadEvent())
@@ -289,7 +286,7 @@ void ImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
 
     if (element().fastHasAttribute(HTMLNames::crossoriginAttr)
         && !element().document().securityOrigin()->canRequest(image()->response().url())
-        && !cachedImage->passesAccessControlCheck(element().document().securityOrigin())) {
+        && !resource->passesAccessControlCheck(element().document().securityOrigin())) {
 
         setImageWithoutConsideringPendingLoadEvent(0);
 
@@ -307,7 +304,7 @@ void ImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
         return;
     }
 
-    if (cachedImage->wasCanceled()) {
+    if (resource->wasCanceled()) {
         m_hasPendingLoadEvent = false;
         // Only consider updating the protection ref-count of the Element immediately before returning
         // from this function as doing so might result in the destruction of this ImageLoader.
