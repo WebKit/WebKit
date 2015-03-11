@@ -258,6 +258,8 @@ enum class DocumentCompatibilityMode : unsigned char {
     LimitedQuirksMode = 1 << 2
 };
 
+enum DimensionsCheck { WidthDimensionsCheck = 0x1, HeightDimensionsCheck = 0x2, AllDimensionsCheck = 0x3 };
+
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext, public FontSelectorClient {
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
@@ -564,7 +566,9 @@ public:
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
-
+    
+    bool updateLayoutIfDimensionsOutOfDate(Element*, DimensionsCheck = AllDimensionsCheck);
+    
     AXObjectCache* existingAXObjectCache() const;
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();

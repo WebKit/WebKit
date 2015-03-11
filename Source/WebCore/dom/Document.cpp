@@ -1892,6 +1892,103 @@ Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* el
     return ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);
 }
 
+bool Document::updateLayoutIfDimensionsOutOfDate(Element* element, DimensionsCheck dimensionsCheck)
+{
+    ASSERT(isMainThread());
+    
+    // If the stylesheets haven't loaded, just give up and do a full layout ignoring pending stylesheets.
+    if (!haveStylesheetsLoaded()) {
+        updateLayoutIgnorePendingStylesheets();
+        return true;
+    }
+    
+    // Check for re-entrancy and assert (same code that is in updateLayout()).
+    FrameView* frameView = view();
+    if (frameView && frameView->isInLayout()) {
+        // View layout should not be re-entrant.
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+    
+    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+    
+    // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full
+    // layout.
+    bool requireFullLayout = false;
+    if (HTMLFrameOwnerElement* owner = ownerElement()) {
+        if (owner->document().updateLayoutIfDimensionsOutOfDate(owner))
+            requireFullLayout = true;
+    }
+    
+    updateStyleIfNeeded();
+    
+    RenderObject* renderer = element->renderer();
+    if (!renderer || renderer->needsLayout())
+        requireFullLayout = true;
+
+    bool isVertical = renderer && !renderer->isHorizontalWritingMode();
+    bool checkingLogicalWidth = ((dimensionsCheck & WidthDimensionsCheck) && !isVertical) || ((dimensionsCheck & HeightDimensionsCheck) && isVertical);
+    bool checkingLogicalHeight = ((dimensionsCheck & HeightDimensionsCheck) && !isVertical) || ((dimensionsCheck & WidthDimensionsCheck) && !isVertical);
+    bool hasSpecifiedLogicalHeight = renderer && renderer->style().logicalMinHeight() == Length(0, Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
+    
+    if (!requireFullLayout) {
+        RenderBox* previousBox = nullptr;
+        RenderBox* currentBox = nullptr;
+        
+        // Check our containing block chain. If anything in the chain needs a layout, then require a full layout.
+        for (RenderObject* currRenderer = element->renderer(); currRenderer && !currRenderer->isRenderView(); currRenderer = currRenderer->container()) {
+            
+            // Require the entire container chain to be boxes.
+            if (!is<RenderBox>(currRenderer)) {
+                requireFullLayout = true;
+                break;
+            }
+            
+            previousBox = currentBox;
+            currentBox = downcast<RenderBox>(currRenderer);
+            
+            // If a box needs layout for itself or if a box has changed children and sizes its width to
+            // its content, then require a full layout.
+            if (currentBox->selfNeedsLayout() ||
+                (checkingLogicalWidth && currRenderer->needsLayout() && currentBox->sizesLogicalWidthToFitContent(MainOrPreferredSize))) {
+                requireFullLayout = true;
+                break;
+            }
+            
+            // If a block contains floats and the child's height isn't specified, then
+            // give up also, since our height could end up being influenced by the floats.
+            if (checkingLogicalHeight && !hasSpecifiedLogicalHeight && currentBox->isRenderBlockFlow()) {
+                RenderBlockFlow* currentBlockFlow = downcast<RenderBlockFlow>(currentBox);
+                if (currentBlockFlow->containsFloats() && previousBox && !previousBox->isFloatingOrOutOfFlowPositioned()) {
+                    requireFullLayout = true;
+                    break;
+                }
+            }
+            
+            if (!currentBox->isRenderBlockFlow() || currentBox->isInline() || currentBox->isOutOfFlowPositioned() || currentBox->flowThreadContainingBlock() || currentBox->isWritingModeRoot()) {
+                // FIXME: For now require only block-level non-positioned
+                // block flows all the way back to the root. This limits the optimization
+                // for now, and we'll expand it in future patches to apply to more and more scenarios.
+                // Disallow regions/columns from having the optimization.
+                // Give up if the writing mode changes at all in the containing block chain.
+                requireFullLayout = true;
+                break;
+            }
+            
+            if (currRenderer == frameView->layoutRoot())
+                break;
+        }
+    }
+    
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+
+    // Only do a layout if changes have occurred that make it necessary.      
+    if (requireFullLayout && frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout()))
+        frameView->layout();
+    
+    return requireFullLayout;
+}
+
 bool Document::isPageBoxVisible(int pageIndex)
 {
     Ref<RenderStyle> pageStyle(ensureStyleResolver().styleForPage(pageIndex));

@@ -40,8 +40,9 @@
             ++currentPos;
 
             // Force a style recalc.
-            document.body.offsetWidth;
-
+            if (internals)
+                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                
             if (window.testRunner)
                 repaintTest();
             else

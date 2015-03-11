@@ -1,3 +1,21 @@
+2015-03-11  David Hyatt  <hyatt@apple.com>
+
+        Optimize offsetWidth and offsetHeight to avoid doing layouts.
+        https://bugs.webkit.org/show_bug.cgi?id=142544
+
+        Reviewed by Beth Dakin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        * dom/Document.h:
+        Added a new method that only updates layout if it determines that the desired dimensions are out
+        of date.
+
+        * dom/Element.cpp:
+        (WebCore::Element::offsetWidth):
+        (WebCore::Element::offsetHeight):
+        Patch offsetWidth and offsetHeight to call the new method rather than updateLayoutIgnorePendingStylesheets.
+
 2015-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181367.

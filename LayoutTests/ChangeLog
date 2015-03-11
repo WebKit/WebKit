@@ -1,3 +1,14 @@
+2015-03-11  David Hyatt  <hyatt@apple.com>
+
+        Optimize offsetWidth and offsetHeight to avoid doing layouts.
+        https://bugs.webkit.org/show_bug.cgi?id=142544
+
+        Reviewed by Beth Dakin.
+
+        * fast/images/repaint-subrect-grid.html:
+        Patch this test to use the window.internals update layout method rather than
+        relying on document.body.offsetWidth.
+
 2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] Test gardening after r181260
