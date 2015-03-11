@@ -52,6 +52,8 @@ public:
     void setNativeSurfaceHandleForCompositing(uint64_t);
 #endif
 
+    void forceResize() { sizeDidChange(); }
+
 private:
     // DrawingAreaProxy
     virtual void sizeDidChange();

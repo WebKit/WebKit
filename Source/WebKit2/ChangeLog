@@ -1,3 +1,25 @@
+2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Contents not shown when entering AC mode unless the window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=142347
+
+        Reviewed by Žan Doberšek.
+
+        The problem is once again that we are now creating the redirected
+        X window in realize method. When entering AC mode we resize the
+        redirected window to the drawing area size. Since the size hasn't
+        changed from the drawing area point of view, the web process is
+        not notified. The WebProcess always uses the window size, instead
+        of the root layer size, to make sure it's in sync, see the comment
+        in LayerTreeHostGtk::compositeLayersToContext(). So, we need to
+        enforce a resize when we change the size of the redirected window
+        when entering AC mode.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEnterAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (WebKit::DrawingAreaProxyImpl::forceResize):
+
 2015-03-09  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: tryFastMalloc shouldn't crash
