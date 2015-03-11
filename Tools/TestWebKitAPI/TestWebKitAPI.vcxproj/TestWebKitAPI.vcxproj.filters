@@ -169,6 +169,9 @@
     <ClCompile Include="..\Tests\WTF\WorkQueue.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\DateMath.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestWebKitAPIPostBuild.cmd" />

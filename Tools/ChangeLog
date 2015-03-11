@@ -1,3 +1,16 @@
+2015-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Add some DateMath tests to TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=142565
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/CMakeLists.txt: Add new DateMath.cpp file.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj: Ditto.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters: Ditto.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto."
+        * TestWebKitAPI/Tests/WTF/DateMath.cpp: Added.
+
 2015-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         Regression(r181257): WTF_WorkQueue.Simple is flaky

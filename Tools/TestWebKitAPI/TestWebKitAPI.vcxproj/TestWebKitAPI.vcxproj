@@ -313,6 +313,7 @@
     <ClCompile Include="..\Tests\WTF\cf\RetainPtrHashing.cpp" />
     <ClCompile Include="..\Tests\WTF\CheckedArithmeticOperations.cpp" />
     <ClCompile Include="..\Tests\WTF\CString.cpp" />
+    <ClCompile Include="..\Tests\WTF\DateMath.cpp" />
     <ClCompile Include="..\Tests\WTF\Deque.cpp" />
     <ClCompile Include="..\Tests\WTF\Functional.cpp" />
     <ClCompile Include="..\Tests\WTF\HashMap.cpp" />
