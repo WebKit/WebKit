@@ -1,3 +1,17 @@
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Inline block children do not have correct baselines if their children are also block elements
+        https://bugs.webkit.org/show_bug.cgi?id=142559
+
+        Reviewed by Darin Adler.
+
+        Perform the same computation on child block elements as child inline elements.
+
+        Test: fast/text/baseline-inline-block-block-children.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineBlockBaseline):
+
 2015-03-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake][GStreamer] Building EFL or GTK with ENABLE_VIDEO and without ENABLE_WEB_AUDIO is broken.
