@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWeakObjectMapRefInternal_h
-#define JSWeakObjectMapRefInternal_h
+#ifndef WeakGCMapInlines_h
+#define WeakGCMapInlines_h
 
+#include "HeapInlines.h"
 #include "WeakGCMap.h"
-#include <wtf/RefCounted.h>
 
 namespace JSC {
 
-class JSObject;
-
+template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+inline WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::WeakGCMap(VM& vm)
+    : m_vm(vm)
+{
+    vm.heap.registerWeakGCMap(this, [this]() {
+        pruneStaleEntries();
+    });
 }
 
-typedef void (*JSWeakMapDestroyedCallback)(struct OpaqueJSWeakObjectMap*, void*);
+template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+inline WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::~WeakGCMap()
+{
+    m_vm.heap.unregisterWeakGCMap(this);
+}
 
-typedef JSC::WeakGCMap<void*, JSC::JSObject> WeakMapType;
+template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::pruneStaleEntries()
+{
+    m_map.removeIf([](typename HashMapType::KeyValuePairType& entry) {
+        return !entry.value;
+    });
+}
 
-struct OpaqueJSWeakObjectMap : public RefCounted<OpaqueJSWeakObjectMap> {
-public:
-    static Ref<OpaqueJSWeakObjectMap> create(JSC::VM& vm, void* data, JSWeakMapDestroyedCallback callback)
-    {
-        return adoptRef(*new OpaqueJSWeakObjectMap(vm, data, callback));
-    }
+} // namespace JSC
 
-    WeakMapType& map() { return m_map; }
-    
-    ~OpaqueJSWeakObjectMap()
-    {
-        m_callback(this, m_data);
-    }
-
-private:
-    OpaqueJSWeakObjectMap(JSC::VM& vm, void* data, JSWeakMapDestroyedCallback callback)
-        : m_map(vm)
-        , m_data(data)
-        , m_callback(callback)
-    {
-    }
-    WeakMapType m_map;
-    void* m_data;
-    JSWeakMapDestroyedCallback m_callback;
-};
-
-
-#endif // JSWeakObjectMapInternal_h
+#endif // WeakGCMapInlines_h

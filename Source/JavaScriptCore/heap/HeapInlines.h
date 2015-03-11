@@ -289,6 +289,16 @@ inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()
         m_markListSet = std::make_unique<HashSet<MarkedArgumentBuffer*>>();
     return *m_markListSet;
 }
+
+inline void Heap::registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback)
+{
+    m_weakGCMaps.add(weakGCMap, WTF::move(pruningCallback));
+}
+
+inline void Heap::unregisterWeakGCMap(void* weakGCMap)
+{
+    m_weakGCMaps.remove(weakGCMap);
+}
     
 } // namespace JSC
 

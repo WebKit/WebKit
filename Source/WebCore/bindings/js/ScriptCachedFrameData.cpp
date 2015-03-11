@@ -38,9 +38,10 @@
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
+#include "ScriptController.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSLock.h>
-#include "ScriptController.h"
+#include <runtime/WeakGCMapInlines.h>
 
 using namespace JSC;
 

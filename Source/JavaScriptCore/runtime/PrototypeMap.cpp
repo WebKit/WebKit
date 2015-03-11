@@ -33,7 +33,7 @@ namespace JSC {
 
 void PrototypeMap::addPrototype(JSObject* object)
 {
-    m_prototypes.add(object, object);
+    m_prototypes.set(object, object);
 
     // Note that this method makes the somewhat odd decision to not check if this
     // object currently has indexed accessors. We could do that check here, and if
@@ -54,16 +54,16 @@ void PrototypeMap::addPrototype(JSObject* object)
 
 Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* prototype, unsigned inlineCapacity)
 {
-    StructureMap::AddResult addResult = m_structures.add(std::make_pair(prototype, inlineCapacity), nullptr);
-    if (!addResult.isNewEntry) {
+    auto key = std::make_pair(prototype, inlineCapacity);
+    if (Structure* structure = m_structures.get(key)) {
         ASSERT(isPrototype(prototype));
-        return addResult.iterator->value.get();
+        return structure;
     }
 
     addPrototype(prototype);
     Structure* structure = JSFinalObject::createStructure(
         prototype->globalObject()->vm(), prototype->globalObject(), prototype, inlineCapacity);
-    addResult.iterator->value = Weak<Structure>(structure);
+    m_structures.set(key, Weak<Structure>(structure));
     return structure;
 }
 

@@ -227,6 +227,9 @@ public:
 
     static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
 
+    void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
+    void unregisterWeakGCMap(void* weakGCMap);
+
 private:
     friend class CodeBlock;
     friend class CopiedBlock;
@@ -300,6 +303,7 @@ private:
     void resetVisitors();
 
     void reapWeakHandles();
+    void pruneStaleEntriesFromWeakGCMaps();
     void sweepArrayBuffers();
     void snapshotMarkedSpace();
     void deleteSourceProviderCaches();
@@ -393,6 +397,8 @@ private:
     Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
     unsigned m_delayedReleaseRecursionCount;
 #endif
+
+    HashMap<void*, std::function<void()>> m_weakGCMaps;
 };
 
 } // namespace JSC

@@ -1,3 +1,84 @@
+2015-03-09  Andreas Kling  <akling@apple.com>
+
+        Stale entries in WeakGCMaps are keeping tons of WeakBlocks alive unnecessarily.
+        <https://webkit.org/b/142115>
+        <rdar://problem/19992268>
+
+        Reviewed by Geoffrey Garen.
+
+        Prune stale entries from WeakGCMaps as part of every full garbage collection.
+        This frees up tons of previously-stuck WeakBlocks that were only sitting around
+        with finalized handles waiting to die.
+
+        Note that WeakGCMaps register/unregister themselves with the GC heap in their
+        ctor/dtor, so creating one now requires passing the VM.
+
+        Average time spent in the PruningStaleEntriesFromWeakGCMaps GC phase appears
+        to be between 0.01ms and 0.3ms, though I've seen a few longer ones at ~1.2ms.
+        It seems somewhat excessive to do this on every Eden collection, so it's only
+        doing work in full collections for now.
+
+        Because the GC may now mutate WeakGCMap below object allocation, I've made it
+        so that the classic HashMap::add() optimization can't be used with WeakGCMap.
+        This caused intermittent test failures when originally landed due to having
+        an invalid iterator on the stack after add() inserted a new entry and we
+        proceeded to allocate the new object, triggering GC.
+
+        * API/JSWeakObjectMapRefInternal.h:
+        (OpaqueJSWeakObjectMap::create):
+        (OpaqueJSWeakObjectMap::OpaqueJSWeakObjectMap):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * API/JSWrapperMap.mm:
+        (-[JSWrapperMap initWithContext:]):
+        (-[JSWrapperMap jsWrapperForObject:]): Pass VM to WeakGCMap constructor.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add WeakGCMapInlines.h and make
+        it project-private so WebCore clients can access it.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps): Added a new GC phase for pruning
+        stale entries from WeakGCMaps. This is only executed during full collections.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::registerWeakGCMap):
+        (JSC::Heap::unregisterWeakGCMap): Added a mechanism for WeakGCMaps to register
+        themselves with the Heap and provide a pruning callback.
+
+        * runtime/PrototypeMap.h:
+        (JSC::PrototypeMap::PrototypeMap):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::add): Pass VM to WeakGCMap constructor.
+
+        * runtime/JSCInlines.h: Add "WeakGCMapInlines.h"
+
+        * runtime/JSGlobalObject.cpp: Include "WeakGCMapInlines.h" so this builds.
+
+        * runtime/JSString.cpp:
+        (JSC::jsStringWithCacheSlowCase):
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::addPrototype):
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype): Remove HashMap add()
+        optimization since it's not safe in the GC-managed WeakGCMap world.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Pass VM to WeakGCMap constructor.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::set):
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::WeakGCMap): Deleted.
+        (JSC::WeakGCMap::gcMap): Deleted.
+        (JSC::WeakGCMap::gcMapIfNeeded): Deleted.
+        * runtime/WeakGCMapInlines.h: Added.
+        (JSC::WeakGCMap::WeakGCMap):
+        (JSC::WeakGCMap::~WeakGCMap):
+        (JSC::WeakGCMap::pruneStaleEntries): Moved ctor, dtor and pruning callback
+        to WeakGCMapInlines.h to fix interdependent header issues. Removed code that
+        prunes WeakGCMap at certain growth milestones and instead rely on the GC
+        callback for housekeeping.
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r173761): ASSERTION FAILED: !is8Bit() in StringImpl::characters16()

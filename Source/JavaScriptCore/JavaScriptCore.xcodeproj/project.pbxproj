@@ -1418,6 +1418,7 @@
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
+		AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ADDB1F6318D77DBE009B58A8 /* OpaqueRootSet.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */; };
 		B59F89391891F29F00D5CCDC /* UnlinkedInstructionStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */; };
@@ -3126,6 +3127,7 @@
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTable.cpp; sourceTree = "<group>"; };
+		AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMapInlines.h; sourceTree = "<group>"; };
 		ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueRootSet.h; sourceTree = "<group>"; };
 		B59F89371891AD3300D5CCDC /* UnlinkedInstructionStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedInstructionStream.h; sourceTree = "<group>"; };
 		B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedInstructionStream.cpp; sourceTree = "<group>"; };
@@ -4598,6 +4600,7 @@
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
 				FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
+				AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */,
 				A7CA3ADD17DA41AE006538AF /* WeakMapConstructor.cpp */,
 				A7CA3ADE17DA41AE006538AF /* WeakMapConstructor.h */,
 				A7CA3AE917DA5168006538AF /* WeakMapData.cpp */,
@@ -5492,6 +5495,7 @@
 				0F885E111849A3BE00F1E3FA /* BytecodeUseDef.h in Headers */,
 				0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */,
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
+				AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				A7C1EAEF17987AB600299DB2 /* CallFrameInlines.h in Headers */,
 				95E3BC050E1AE68200B2D1C1 /* CallIdentifier.h in Headers */,

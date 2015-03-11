@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,10 +47,8 @@ public:
     typedef typename HashMapType::iterator iterator;
     typedef typename HashMapType::const_iterator const_iterator;
 
-    WeakGCMap()
-        : m_gcThreshold(minGCThreshold)
-    {
-    }
+    explicit WeakGCMap(VM&);
+    ~WeakGCMap();
 
     ValueArg* get(const KeyType& key) const
     {
@@ -59,19 +57,7 @@ public:
 
     AddResult set(const KeyType& key, ValueType value)
     {
-        gcMapIfNeeded();
         return m_map.set(key, WTF::move(value));
-    }
-
-    ALWAYS_INLINE AddResult add(const KeyType& key, ValueType value)
-    {
-        gcMapIfNeeded();
-        AddResult addResult = m_map.fastAdd(key, nullptr);
-        if (!addResult.iterator->value) { // New value or found a zombie value.
-            addResult.isNewEntry = true;
-            addResult.iterator->value = WTF::move(value);
-        }
-        return addResult;
     }
 
     bool remove(const KeyType& key)
@@ -103,37 +89,12 @@ public:
         return find(key) != m_map.end();
     }
 
+    void pruneStaleEntries();
+
 private:
-    static const int minGCThreshold = 3;
-
-    NEVER_INLINE void gcMap()
-    {
-        Vector<KeyType, 4> zombies;
-
-        for (iterator it = m_map.begin(), end = m_map.end(); it != end; ++it) {
-            if (!it->value)
-                zombies.append(it->key);
-        }
-
-        for (size_t i = 0; i < zombies.size(); ++i)
-            m_map.remove(zombies[i]);
-    }
-
-    void gcMapIfNeeded()
-    {
-        if (m_map.size() < m_gcThreshold)
-            return;
-
-        gcMap();
-        m_gcThreshold = std::max(minGCThreshold, m_map.size() * 2 - 1);
-    }
-
     HashMapType m_map;
-    int m_gcThreshold;
+    VM& m_vm;
 };
-
-template<typename KeyArg, typename RawMappedArg, typename HashArg, typename KeyTraitsArg>
-const int WeakGCMap<KeyArg, RawMappedArg, HashArg, KeyTraitsArg>::minGCThreshold;
 
 } // namespace JSC
 
