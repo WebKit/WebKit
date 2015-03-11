@@ -1,5 +1,17 @@
 2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add an option to enable MiniBrowser for non developer builds and always install it
+        https://bugs.webkit.org/show_bug.cgi?id=126688
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add ENABLE_MINIBROWSER option, enabled by default for development
+        builds and disabled for production builds unless explicilty enabled.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not look for child processes in the UI process binary path
         https://bugs.webkit.org/show_bug.cgi?id=135752
 
