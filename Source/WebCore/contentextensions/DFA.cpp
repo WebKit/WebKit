@@ -78,7 +78,7 @@ static void printRange(bool firstRange, char rangeStart, char rangeEnd)
 static void printTransitions(const Vector<DFANode>& graph, unsigned sourceNodeId)
 {
     const DFANode& sourceNode = graph[sourceNodeId];
-    const HashMap<uint16_t, unsigned>& transitions = sourceNode.transitions;
+    const DFANodeTransitions& transitions = sourceNode.transitions;
 
     if (transitions.isEmpty() && !sourceNode.hasFallbackTransition)
         return;

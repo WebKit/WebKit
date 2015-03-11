@@ -41,7 +41,7 @@ namespace ContentExtensions {
 
 // FIXME: set a better initial size.
 // FIXME: include the hash inside NodeIdSet.
-typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> NodeIdSet;
+typedef NFANodeIndexSet NodeIdSet;
 
 static inline void epsilonClosureExcludingSelf(const Vector<NFANode>& nfaGraph, unsigned nodeId, unsigned epsilonTransitionCharacter, Vector<unsigned>& output)
 {
@@ -322,7 +322,8 @@ static inline void populateTransitions(SetTransitions& setTransitions, NodeIdSet
                 targetSet.add(targetNodId);
                 extendSetWithClosure(nfaNodeclosures, targetNodId, targetSet);
             }
-            targetSet.add(setFallbackTransition.begin(), setFallbackTransition.end());
+            if (transitionSlot.key)
+                targetSet.add(setFallbackTransition.begin(), setFallbackTransition.end());
         }
     }
 }
@@ -365,7 +366,6 @@ DFA NFAToDFA::convert(NFA& nfa)
         NodeIdSet setFallbackTransition;
         populateTransitions(transitionsFromClosedSet, setFallbackTransition, *uniqueNodeIdSetImpl, nfaGraph, nfaNodeClosures);
 
-        // FIXME: there should not be any transition on key 0.
         for (unsigned key = 0; key < transitionsFromClosedSet.size(); ++key) {
             NodeIdSet& targetNodeSet = transitionsFromClosedSet[key];
 

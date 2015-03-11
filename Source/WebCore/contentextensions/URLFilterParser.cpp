@@ -81,6 +81,13 @@ public:
         new (NotNull, &m_atomData.group) Group();
     }
 
+    enum EndOfLineAssertionTermTag { EndOfLineAssertionTerm };
+    explicit Term(EndOfLineAssertionTermTag)
+        : Term(CharacterSetTerm, false)
+    {
+        m_atomData.characterSet.characters.set(0);
+    }
+
     Term(const Term& other)
         : m_termType(other.m_termType)
         , m_quantifier(other.m_quantifier)
@@ -210,6 +217,11 @@ public:
             return afterRepeat;
         }
         }
+    }
+
+    bool isEndOfLineAssertion() const
+    {
+        return m_termType == TermType::CharacterSet && m_atomData.characterSet.characters.bitCount() == 1 && m_atomData.characterSet.characters.get(0);
     }
 
     Term& operator=(const Term& other)
@@ -498,12 +510,22 @@ public:
 
     void assertionBOL()
     {
-        fail(ASCIILiteral("Line boundary assertions are not supported yet."));
+        if (hasError())
+            return;
+
+        if (m_subtreeStart != m_subtreeEnd || m_floatingTerm.isValid() || !m_openGroups.isEmpty())
+            fail(ASCIILiteral("Start of line assertion can only appear as the first term in a filter."));
     }
 
     void assertionEOL()
     {
-        fail(ASCIILiteral("Line boundary assertions are not supported yet."));
+        if (hasError())
+            return;
+
+        sinkFloatingTermIfNecessary();
+        ASSERT(!m_floatingTerm.isValid());
+
+        m_floatingTerm = Term(Term::EndOfLineAssertionTerm);
     }
 
     void assertionWordBoundary(bool)
@@ -614,6 +636,15 @@ private:
 
         ASSERT(m_lastPrefixTreeEntry);
 
+        if (m_hasProcessedEndOfLineAssertion) {
+            fail(ASCIILiteral("The end of line assertion must be the last term in an expression."));
+            m_floatingTerm = Term();
+            return;
+        }
+
+        if (m_floatingTerm.isEndOfLineAssertion())
+            m_hasProcessedEndOfLineAssertion = true;
+
         if (!m_openGroups.isEmpty()) {
             m_openGroups.last().extendGroupSubpattern(m_floatingTerm);
             m_floatingTerm = Term();
@@ -656,6 +687,7 @@ private:
     PrefixTreeEntry* m_lastPrefixTreeEntry;
     Deque<Term> m_openGroups;
     Term m_floatingTerm;
+    bool m_hasProcessedEndOfLineAssertion { false };
 
     PrefixTreeEntry* m_newPrefixSubtreeRoot = nullptr;
     Term m_newPrefixStaringPoint;

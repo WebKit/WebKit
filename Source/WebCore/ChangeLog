@@ -1,3 +1,55 @@
+2015-03-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add basic support for BOL and EOL assertions to the URL Filter parser
+        https://bugs.webkit.org/show_bug.cgi?id=142568
+
+        Reviewed by Alex Christensen.
+
+        This patch adds heavily restricted support for BOL and EOL to the URL filter parser.
+
+        Both assertions must be the first/last term of their pattern. Any advanced combination
+        results in a parsing error.
+
+        The BOL assertion is easy to represent: currently, any pattern starts at the beginning
+        of a line and the NFA are generated accordingly.
+
+        I had two options to represent the EOL assertion:
+        1) Add a new special transition on EOL.
+        2) Add a new vector of actions to the states, conditional to the EOL input.
+
+        I picked the first option to avoid growing every state by a vector
+        that would be empty in the vast majority of cases.
+
+
+        On the matching side, the interpreter was modified to support transitions on '\0'.
+        DFABytecodeInstruction::CheckValue now stops when running on a character after
+        the end of the string.
+
+        DFABytecodeInstruction::Jump gets two fixes: First we now account for the index
+        to avoid going past the end of the input. Second, stop on '\0' too... the reason
+        is that the unconditional jump is only used for fallback edges of the DFA, fallback
+        edge are not supposed to accept '\0'.
+
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::printTransitions):
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFANode.h:
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::addTransition):
+        (WebCore::ContentExtensions::NFA::addEpsilonTransition):
+        (WebCore::ContentExtensions::printTransitions):
+        * contentextensions/NFANode.h:
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::populateTransitions):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::Term::Term):
+        (WebCore::ContentExtensions::Term::isEndOfLineAssertion):
+        (WebCore::ContentExtensions::GraphBuilder::assertionBOL):
+        (WebCore::ContentExtensions::GraphBuilder::assertionEOL):
+        (WebCore::ContentExtensions::GraphBuilder::sinkFloatingTermIfNecessary):
+
 2015-03-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Update fullscreen placeholder UI to use Vibrancy.

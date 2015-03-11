@@ -38,9 +38,12 @@ namespace ContentExtensions {
 
 // A DFANode abstract the transition table out of a DFA state. If a state is accepting, the DFANode also have
 // the actions for that state.
+
+typedef HashMap<uint16_t, unsigned, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> DFANodeTransitions;
+
 class DFANode {
 public:
-    HashMap<uint16_t, unsigned> transitions;
+    DFANodeTransitions transitions;
     bool hasFallbackTransition = false;
     unsigned fallbackTransition;
     Vector<uint64_t> actions;

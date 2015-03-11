@@ -157,4 +157,62 @@ TEST_F(ContentExtensionTest, PatternNestedGroups)
     testURL(backend, URL(URL(), "http://webkit.org/fobar"), { });
 }
 
+const char* matchPastEndOfStringFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".+\"}}]";
+
+TEST_F(ContentExtensionTest, MatchPastEndOfString)
+{
+    auto extensionData = ContentExtensions::compileRuleList(matchPastEndOfStringFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("MatchPastEndOfString", extension);
+
+    testURL(backend, URL(URL(), "http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
+}
+
+const char* startOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^foobar\"}}]";
+
+TEST_F(ContentExtensionTest, StartOfLineAssertion)
+{
+    auto extensionData = ContentExtensions::compileRuleList(startOfLineAssertionFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("StartOfLineAssertion", extension);
+
+    testURL(backend, URL(URL(), "foobar://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "foobars:///foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "foobarfoobar:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+
+    testURL(backend, URL(URL(), "http://webkit.org/foobarfoo"), { });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarf"), { });
+    testURL(backend, URL(URL(), "http://foobar.org/"), { });
+    testURL(backend, URL(URL(), "http://foobar.org/"), { });
+}
+
+const char* endOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*foobar$\"}}]";
+
+TEST_F(ContentExtensionTest, EndOfLineAssertion)
+{
+    auto extensionData = ContentExtensions::compileRuleList(endOfLineAssertionFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("EndOfLineAssertion", extension);
+
+    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "file:///foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testURL(backend, URL(URL(), "file:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+
+    testURL(backend, URL(URL(), "http://webkit.org/foobarfoo"), { });
+    testURL(backend, URL(URL(), "http://webkit.org/foobarf"), { });
+}
+
 } // namespace TestWebKitAPI

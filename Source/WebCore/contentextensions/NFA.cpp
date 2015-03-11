@@ -51,13 +51,12 @@ void NFA::addTransition(unsigned from, unsigned to, char character)
 {
     ASSERT(from < m_nodes.size());
     ASSERT(to < m_nodes.size());
-    ASSERT(character);
 
     NFANode& fromNode = m_nodes[from];
     if (fromNode.transitionsOnAnyCharacter.contains(to))
         return;
 
-    auto addResult = m_nodes[from].transitions.add(character, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
+    auto addResult = m_nodes[from].transitions.add(character, NFANodeIndexSet());
     addResult.iterator->value.add(to);
 }
 
@@ -66,7 +65,7 @@ void NFA::addEpsilonTransition(unsigned from, unsigned to)
     ASSERT(from < m_nodes.size());
     ASSERT(to < m_nodes.size());
 
-    auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
+    auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, NFANodeIndexSet());
     addResult.iterator->value.add(to);
 }
 
@@ -133,13 +132,13 @@ static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, 
 static void printTransitions(const Vector<NFANode>& graph, unsigned sourceNode, uint16_t epsilonTransitionCharacter)
 {
     const NFANode& node = graph[sourceNode];
-    const HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>>& transitions = node.transitions;
+    const HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>& transitions = node.transitions;
 
-    HashMap<unsigned, HashSet<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
+    HashMap<unsigned, HashSet<uint16_t, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
 
     for (const auto& transition : transitions) {
         for (unsigned targetNode : transition.value) {
-            transitionsPerTarget.add(targetNode, HashSet<uint16_t>());
+            transitionsPerTarget.add(targetNode, HashSet<uint16_t, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>());
             transitionsPerTarget.find(targetNode)->value.add(transition.key);
         }
     }

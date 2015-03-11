@@ -1,3 +1,13 @@
+2015-03-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add basic support for BOL and EOL assertions to the URL Filter parser
+        https://bugs.webkit.org/show_bug.cgi?id=142568
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for handling TLS errors to MiniBrowser
