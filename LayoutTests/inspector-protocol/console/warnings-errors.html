@@ -1,0 +1,46 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<link rel="stylesheet" href="../resources/errors.css">
+  <style>    div { * color: red; }</style>
+<style>div { * color: red; }
+div { * color: red; }
+   div {
+       *
+       color:
+       red;
+   }
+</style>
+<script src="../resources/errors.js" type="text/javascript" charset="utf-8"></script>
+  <script>   [].x.x   </script>
+<script>
+console.warn("warn 1"); console.error("error 1");
+   console.error("error 2");
+</script>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+
+    InspectorTest.sendCommand("Console.enable", {});
+
+    var consoleMessageCount = 0;
+    const expectedConsoleMessages = 15;
+
+    InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+        InspectorTest.log(JSON.stringify(simplifiedMessage));
+
+        if (++consoleMessageCount === expectedConsoleMessages)
+            InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that CSS/JavaScript errors and warnings are sent to the console with line and column information.<br>
+</p>
+</body>
+</html>

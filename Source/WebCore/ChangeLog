@@ -1,3 +1,52 @@
+2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS parser errors in the console should include column numbers
+        https://bugs.webkit.org/show_bug.cgi?id=114313
+
+        Reviewed by Benjamin Poulain.
+
+        Test: inspector-protocol/console/warnings-errors.html
+
+        * css/CSSParser.h:
+        (WebCore::CSSParser::currentCharacterOffset):
+        Get the current character offset depending on the source type.
+        Add instance variables to track column position and start
+        line / column for inline stylesheets.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        Initialize new instance variables.
+
+        (WebCore::CSSParser::currentLocation):
+        Update to include column information. Also, if we are on the first line
+        we may need to take into account a start column offset as well.
+
+        (WebCore::CSSParser::realLex):
+        When bumping the line number, reset the column offset for the next
+        line with the next character.
+
+        (WebCore::CSSParser::syntaxError):
+        (WebCore::CSSParser::logError):
+        Include column information.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseString):
+        (WebCore::StyleSheetContents::parseStringAtLineAndColumn):
+        Include column information.
+
+        * css/StyleSheetContents.h:
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::InlineStyleSheetOwner):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        Save and use column information later on.
+
+        * dom/InlineStyleSheetOwner.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+        Updated parser signature needs starting column and no longer has optional parameters.
+
 2015-03-10  Darin Adler  <darin@apple.com>
 
         Try to fix the GTK build.

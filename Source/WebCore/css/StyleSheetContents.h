@@ -62,7 +62,7 @@ public:
 
     void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
-    bool parseStringAtLine(const String&, int startLineNumber, bool);
+    bool parseStringAtLineAndColumn(const String&, int startLineNumber, int startColumnNumber, bool createdByParser);
 
     bool isCacheable() const;
 

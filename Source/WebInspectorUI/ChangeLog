@@ -1,5 +1,16 @@
 2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CSS parser errors in the console should include column numbers
+        https://bugs.webkit.org/show_bug.cgi?id=114313
+
+        Reviewed by Benjamin Poulain.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._linkifyLocation):
+        Column numbers in console messages are also 1 based and should be adjusted.
+
+2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: console.error output broken, does not produce ObjectTree
         https://bugs.webkit.org/show_bug.cgi?id=142554
 

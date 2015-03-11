@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: line 1: error script
+CONSOLE MESSAGE: line 1: warn script
+CONSOLE MESSAGE: line 5: error script
+CONSOLE MESSAGE: line 6: warn script
+CONSOLE MESSAGE: line 15: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: line 17: warn 1
+CONSOLE MESSAGE: line 17: error 1
+CONSOLE MESSAGE: line 18: error 2
+Tests that CSS/JavaScript errors and warnings are sent to the console with line and column information.
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"warnings-errors.html:5:20"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"warnings-errors.html:6:14"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"warnings-errors.html:7:7"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"warnings-errors.html:9:8"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:1:7"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:1:29"}
+{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:4:5"}
+{"source":"console-api","level":"error","text":"error script","location":"errors.js:1:14","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"warning","text":"warn script","location":"errors.js:1:44","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error script","location":"errors.js:5:18","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"warning","text":"warn script","location":"errors.js:6:17","parameters":[{"type":"string"}]}
+{"source":"javascript","level":"error","text":"TypeError: undefined is not an object (evaluating '[].x.x')","location":"warnings-errors.html:15:18"}
+{"source":"console-api","level":"warning","text":"warn 1","location":"warnings-errors.html:17:13","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error 1","location":"warnings-errors.html:17:38","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error 2","location":"warnings-errors.html:18:17","parameters":[{"type":"string"}]}
+
