@@ -1,3 +1,25 @@
+2015-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling super() in a base class results in a crash
+        https://bugs.webkit.org/show_bug.cgi?id=142563
+
+        Reviewed by Filip Pizlo.
+
+        The bug was caused by BytecodeGenerator trying to generate "super" expression inside the constructor of a base class.
+        Disallow that by keeping track of whether "super" has been used in the current scope or not (needsSuperBinding flag)
+        and then throwing a syntax error in parseFunctionInfo if it was used and the current scope wasn't the constructor of
+        a derived class.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo): Don't allow super() or super.foo outside the constructor of a derived class.
+        (JSC::Parser<LexerType>::parseClass): Pass in the constructor kind to parseGetterSetter.
+        (JSC::Parser<LexerType>::parseGetterSetter): Ditto to parseFunctionInfo.
+        (JSC::Parser<LexerType>::parseMemberExpression): Set needsSuperBinding flag true on the containing scope.
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::needsSuperBinding): Added.
+        (JSC::Scope::setNeedsSuperBinding): Added.
+
 2015-03-10  Darin Adler  <darin@apple.com>
 
         Some event handler fixes

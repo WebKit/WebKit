@@ -61,5 +61,11 @@ shouldBeTrue('x instanceof Object');
 shouldThrow('new (class extends null { constructor() { } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldThrow('new (class extends null { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldNotThrow('new (class extends null { constructor() { super() } })');
+shouldThrow('new (class { constructor() { super() } })', '"SyntaxError: Cannot call super() in a base class constructor."');
+shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
+shouldThrow('new (class extends Object { constructor() { function x() { super() } } })', '"SyntaxError: Cannot call super() outside of a class constructor."');
+shouldThrow('new (class extends Object { constructor() { function x() { super.method } } })', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('function x() { super.method(); }', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
 
 var successfullyParsed = true;

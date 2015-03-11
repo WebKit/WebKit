@@ -1,3 +1,15 @@
+2015-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling super() in a base class results in a crash
+        https://bugs.webkit.org/show_bug.cgi?id=142563
+
+        Reviewed by Filip Pizlo.
+
+        Added more test cases to an existing test.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+
 2015-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         svg/animations/smil-leak-*.svg tests are flaky.

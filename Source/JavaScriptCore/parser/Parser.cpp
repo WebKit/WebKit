@@ -1377,9 +1377,13 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         semanticFailIfTrue(m_vm->propertyNames->eval == *info.name, "'", info.name->impl(), "' is not a valid function name in strict mode");
     }
     if (functionScope->hasDirectSuper()) {
-        bool nameIsConstructor = info.name && *info.name == m_vm->propertyNames->constructor;
-        semanticFailIfTrue(mode != MethodMode || !nameIsConstructor, "Cannot call super() outside of a class constructor");
+        bool isClassConstructor = mode == MethodMode && info.name && *info.name == m_vm->propertyNames->constructor;
+        semanticFailIfTrue(!isClassConstructor, "Cannot call super() outside of a class constructor");
+        semanticFailIfTrue(constructorKind == ConstructorKind::Base, "Cannot call super() in a base class constructor");
     }
+    if (functionScope->needsSuperBinding())
+        semanticFailIfTrue(constructorKind == ConstructorKind::Base, "super can only be used in a method of a derived class");
+
     info.closeBraceOffset = m_token.m_data.offset;
     unsigned closeBraceLine = m_token.m_data.line;
     unsigned closeBraceLineStartOffset = m_token.m_data.lineStartOffset;
@@ -1503,7 +1507,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         if (isGetter || isSetter) {
             semanticFailIfTrue(isStaticMethod, "Cannot declare a static", stringForFunctionMode(isGetter ? GetterMode : SetterMode));
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
-            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter, methodStart, SuperBinding::Needed);
+            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter, methodStart, constructorKind, SuperBinding::Needed);
             failIfFalse(property, "Cannot parse this method");
         } else {
             ParserFunctionInfo<TreeBuilder> methodInfo;
@@ -2018,7 +2022,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset, SuperBinding superBinding)
+template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset,
+    ConstructorKind constructorKind, SuperBinding superBinding)
 {
     const Identifier* stringPropertyName = 0;
     double numericPropertyName = 0;
@@ -2033,10 +2038,10 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
     ParserFunctionInfo<TreeBuilder> info;
     if (type == PropertyNode::Getter) {
         failIfFalse(match(OPENPAREN), "Expected a parameter list for getter definition");
-        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, GetterMode, false, ConstructorKind::Base, info)), "Cannot parse getter definition");
+        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, GetterMode, false, constructorKind, info)), "Cannot parse getter definition");
     } else {
         failIfFalse(match(OPENPAREN), "Expected a parameter list for setter definition");
-        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, SetterMode, false, ConstructorKind::Base, info)), "Cannot parse setter definition");
+        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, SetterMode, false, constructorKind, info)), "Cannot parse setter definition");
     }
     if (stringPropertyName)
         return context.createGetterOrSetterProperty(location, type, strict, stringPropertyName, info, getterOrSetterStartOffset, superBinding);
@@ -2384,6 +2389,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     if (baseIsSuper) {
         base = context.superExpr(location);
         next();
+        currentScope()->setNeedsSuperBinding();
     } else
         base = parsePrimaryExpression(context);
 
