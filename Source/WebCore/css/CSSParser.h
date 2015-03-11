@@ -105,7 +105,7 @@ public:
 
     WEBCORE_EXPORT ~CSSParser();
 
-    void parseSheet(StyleSheetContents*, const String&, int startLineNumber, int startColumnNumber, RuleSourceDataList*, bool logErrors);
+    void parseSheet(StyleSheetContents*, const String&, int startLineNumber = 0, RuleSourceDataList* = nullptr, bool = false);
     PassRefPtr<StyleRuleBase> parseRule(StyleSheetContents*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(StyleSheetContents*, const String&);
     bool parseSupportsCondition(const String&);
@@ -464,8 +464,6 @@ private:
     inline unsigned tokenStartOffset();
     inline UChar tokenStartChar();
 
-    inline unsigned currentCharacterOffset();
-
     template <typename CharacterType>
     inline bool isIdentifierStart();
 
@@ -595,10 +593,6 @@ private:
     int m_lineNumber;
     int m_tokenStartLineNumber;
     int m_lastSelectorLineNumber;
-    int m_columnOffsetForLine;
-
-    int m_sheetStartLineNumber;
-    int m_sheetStartColumnNumber;
 
     bool m_allowImportRules;
     bool m_allowNamespaceDeclarations;
@@ -648,7 +642,7 @@ private:
     };
 
     bool isLoggingErrors();
-    void logError(const String& message, int lineNumber, int columnNumber);
+    void logError(const String& message, int lineNumber);
 
     bool validateCalculationUnit(ValueWithCalculation&, Units);
 
@@ -692,7 +686,6 @@ private:
 
 struct CSSParser::Location {
     int lineNumber;
-    int columnNumber;
     CSSParserString token;
 };
 
@@ -719,13 +712,6 @@ inline unsigned CSSParser::tokenStartOffset()
     if (is8BitSource())
         return m_tokenStart.ptr8 - m_dataStart8.get();
     return m_tokenStart.ptr16 - m_dataStart16.get();
-}
-
-inline unsigned CSSParser::currentCharacterOffset()
-{
-    if (is8BitSource())
-        return m_currentCharacter8 - m_dataStart8.get();
-    return m_currentCharacter16 - m_dataStart16.get();
 }
 
 inline UChar CSSParser::tokenStartChar()

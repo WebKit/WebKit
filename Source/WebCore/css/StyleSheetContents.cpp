@@ -291,7 +291,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     String sheetText = cachedStyleSheet->sheetText(&hasValidMIMEType);
 
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, 0, 0, nullptr, true);
+    p.parseSheet(this, sheetText, 0, 0, true);
 
     // If we're loading a stylesheet cross-origin, and the MIME type is not standard, require the CSS
     // to at least start with a syntactically valid CSS rule.
@@ -316,13 +316,13 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 
 bool StyleSheetContents::parseString(const String& sheetText)
 {
-    return parseStringAtLineAndColumn(sheetText, 0, 0, false);
+    return parseStringAtLine(sheetText, 0, false);
 }
 
-bool StyleSheetContents::parseStringAtLineAndColumn(const String& sheetText, int startLineNumber, int startColumnNumber, bool createdByParser)
+bool StyleSheetContents::parseStringAtLine(const String& sheetText, int startLineNumber, bool createdByParser)
 {
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, startLineNumber, startColumnNumber, nullptr, createdByParser);
+    p.parseSheet(this, sheetText, startLineNumber, 0, createdByParser);
 
     return true;
 }

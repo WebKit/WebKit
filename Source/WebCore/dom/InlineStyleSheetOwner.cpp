@@ -35,10 +35,10 @@ namespace WebCore {
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
     : m_isParsingChildren(createdByParser)
     , m_loading(false)
-    , m_startTextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst())
+    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
 {
     if (createdByParser && document.scriptableDocumentParser() && !document.isInDocumentWrite())
-        m_startTextPosition = document.scriptableDocumentParser()->textPosition();
+        m_startLineNumber = document.scriptableDocumentParser()->textPosition().m_line;
 }
 
 InlineStyleSheetOwner::~InlineStyleSheetOwner()
@@ -123,7 +123,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     if (!isValidCSSContentType(element, m_contentType))
         return;
-    if (!document.contentSecurityPolicy()->allowInlineStyle(document.url(), m_startTextPosition.m_line))
+    if (!document.contentSecurityPolicy()->allowInlineStyle(document.url(), m_startLineNumber))
         return;
 
     RefPtr<MediaQuerySet> mediaQueries;
@@ -144,7 +144,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     m_sheet = CSSStyleSheet::createInline(element, URL(), document.inputEncoding());
     m_sheet->setMediaQueries(mediaQueries.release());
     m_sheet->setTitle(element.title());
-    m_sheet->contents().parseStringAtLineAndColumn(text, m_startTextPosition.m_line.zeroBasedInt(), m_startTextPosition.m_column.zeroBasedInt(), m_isParsingChildren);
+    m_sheet->contents().parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);
 
     m_loading = false;
 
