@@ -1,3 +1,18 @@
+2015-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment>s should be created when dropping files onto contentEditable areas
+        https://bugs.webkit.org/show_bug.cgi?id=142494
+        <rdar://problem/19982553>
+
+        Reviewed by Anders Carlsson.
+
+        Covered by existing tests.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readFilenames):
+        Instead of inserting the dropped URLs as strings, make an <attachment>
+        for each.
+
 2015-03-11  David Hyatt  <hyatt@apple.com>
 
         Optimize offsetWidth and offsetHeight to avoid doing layouts.

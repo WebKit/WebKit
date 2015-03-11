@@ -1,3 +1,15 @@
+2015-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment>s should be created when dropping files onto contentEditable areas
+        https://bugs.webkit.org/show_bug.cgi?id=142494
+        <rdar://problem/19982553>
+
+        Reviewed by Anders Carlsson.
+
+        * editing/pasteboard/drag-files-to-editable-element-expected.txt:
+        * editing/pasteboard/drag-files-to-editable-element.html:
+        Update the test to expect <attachment>s instead of filenames.
+
 2015-03-11  David Hyatt  <hyatt@apple.com>
 
         Optimize offsetWidth and offsetHeight to avoid doing layouts.

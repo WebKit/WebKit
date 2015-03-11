@@ -7,13 +7,19 @@
 <div id="console"></div>
 <div id="editable" contentEditable=true style="width:200px; height:200px"></div>
 <script>
-description('If we drag files onto an editable area, then the filenames should be inserted into the editable area.');
+description('If we drag files onto an editable area, then attachments should be inserted into the editable area.');
 
 var editable = document.getElementById("editable");
 if (window.eventSender) {
     dragFilesOntoEditable(['foo', 'bar', 'baz']);
-    var result = editable.innerHTML.replace(/file.*?LayoutTests/g, "LayoutTests");
-    shouldBeEqualToString('result', '<div>LayoutTests/editing/pasteboard/foo</div><div>LayoutTests/editing/pasteboard/bar</div><div>LayoutTests/editing/pasteboard/baz</div>');
+    var resultChildren = editable.children;
+    var fileNames = "";
+    for (var i = 0; i < resultChildren.length; i++) {
+        var attachment = resultChildren[i];
+        shouldBeEqualToString('attachment.nodeName', 'ATTACHMENT');
+        fileNames += attachment.file.name + " ";
+    }
+    shouldBeEqualToString('fileNames', 'foo bar baz ');
     editable.innerHTML = '';
 }
 

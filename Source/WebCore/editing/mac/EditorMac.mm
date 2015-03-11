@@ -37,10 +37,12 @@
 #import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "File.h"
 #import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
 #import "FrameView.h"
+#import "HTMLAttachmentElement.h"
 #import "HTMLConverter.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
@@ -529,11 +531,17 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
 
     for (size_t i = 0; i < size; i++) {
         String text = paths[i];
+#if ENABLE(ATTACHMENT_ELEMENT)
+        RefPtr<HTMLAttachmentElement> attachment = HTMLAttachmentElement::create(attachmentTag, document);
+        attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
+        fragment->appendChild(attachment.release());
+#else
         text = frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text]);
 
         RefPtr<HTMLElement> paragraph = createDefaultParagraphElement(document);
         paragraph->appendChild(document.createTextNode(text));
         fragment->appendChild(paragraph.release());
+#endif
     }
 
     return true;
