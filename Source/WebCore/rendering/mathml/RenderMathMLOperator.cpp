@@ -1737,10 +1737,10 @@ void RenderMathMLOperator::updateStyle()
     }
 }
 
-int RenderMathMLOperator::firstLineBaseline() const
+Optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
     if (m_stretchyData.mode() != DrawNormal)
-        return m_stretchHeightAboveBaseline;
+        return Optional<int>(m_stretchHeightAboveBaseline);
     return RenderMathMLToken::firstLineBaseline();
 }
 

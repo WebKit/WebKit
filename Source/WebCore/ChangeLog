@@ -1,3 +1,80 @@
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use out-of-band messaging for RenderBox::firstLineBaseline() and RenderBox::inlineBlockBaseline()
+        https://bugs.webkit.org/show_bug.cgi?id=142569
+
+        Reviewed by David Hyatt.
+
+        Currently, RenderBox::firstLineBaseline() and RenderBox::inlineBlockBaseline() return -1 to mean
+        that its baseline should be skipped. Instead of using this sentinel value, this patch changes the
+        return type from int to Optional<int>.
+
+        No new tests because there is no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::firstLineBaseline):
+        (WebCore::RenderBlock::inlineBlockBaseline):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::firstLineBaseline):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::firstLineBaseline):
+        (WebCore::RenderBox::inlineBlockBaseline):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::baselinePosition):
+        (WebCore::RenderFlexibleBox::firstLineBaseline):
+        (WebCore::RenderFlexibleBox::inlineBlockBaseline):
+        (WebCore::RenderFlexibleBox::marginBoxAscentForChild):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        (WebCore::RenderTable::cellBefore):
+        (WebCore::RenderTable::cellAfter):
+        (WebCore::RenderTable::firstLineBlock):
+        (WebCore::RenderTable::baselinePosition):
+        (WebCore::RenderTable::inlineBlockBaseline):
+        (WebCore::RenderTable::firstLineBaseline):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::cellBaselinePosition):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstLineBaseline):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::baselinePosition):
+        (WebCore::RenderMathMLTable::firstLineBaseline):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::firstLineBaseline):
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::firstLineBaseline):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::firstLineBaseline):
+        (WebCore::RenderMathMLRoot::layout):
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layout):
+        (WebCore::RenderMathMLScripts::firstLineBaseline):
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::firstLineBaseline):
+        * rendering/mathml/RenderMathMLSpace.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::firstLineBaseline):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+
 2015-03-11  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment>s should be created when dropping files onto contentEditable areas

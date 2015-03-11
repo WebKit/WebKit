@@ -154,6 +154,15 @@ public:
         return std::forward<U>(value);
     }
 
+    template<typename U>
+    T valueOrCompute(U callback) const
+    {
+        if (m_isEngaged)
+            return *asPtr();
+
+        return callback();
+    }
+
 private:
     const T* asPtr() const { return reinterpret_cast<const T*>(&m_value); }
     T* asPtr() { return reinterpret_cast<T*>(&m_value); }

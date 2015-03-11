@@ -76,7 +76,7 @@ public:
     {
     }
     
-    virtual int firstLineBaseline() const override;
+    virtual Optional<int> firstLineBaseline() const override;
     
 private:
     virtual bool isRenderMathMLTable() const override { return true; }

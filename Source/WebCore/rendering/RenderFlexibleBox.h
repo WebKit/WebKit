@@ -49,8 +49,8 @@ public:
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    virtual int firstLineBaseline() const override;
-    virtual int inlineBlockBaseline(LineDirectionMode) const override;
+    virtual Optional<int> firstLineBaseline() const override;
+    virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 

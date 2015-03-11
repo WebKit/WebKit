@@ -60,7 +60,7 @@ protected:
 private:
     virtual bool isRenderMathMLRoot() const override final { return true; }
     virtual const char* renderName() const override { return "RenderMathMLRoot"; }
-    virtual int firstLineBaseline() const override;
+    virtual Optional<int> firstLineBaseline() const override;
     void updateStyle();
     void restructureWrappers();
 

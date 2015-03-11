@@ -72,11 +72,10 @@ int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLin
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
     
-    LayoutUnit baseline = firstLineBaseline(); // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
-    if (baseline != -1)
-        return baseline;
-    
-    return RenderFlexibleBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
+    return firstLineBaseline().valueOrCompute([&] {
+        return RenderFlexibleBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    });
 }
 
 const char* RenderMathMLBlock::renderName() const
@@ -299,7 +298,7 @@ bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const 
     return false;
 }
 
-int RenderMathMLTable::firstLineBaseline() const
+Optional<int> RenderMathMLTable::firstLineBaseline() const
 {
     // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBaseline() for baseline alignment, per
     // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a

@@ -521,8 +521,8 @@ public:
     
     RenderLayer* enclosingFloatPaintingLayer() const;
     
-    virtual int firstLineBaseline() const { return -1; }
-    virtual int inlineBlockBaseline(LineDirectionMode) const { return -1; } // Returns -1 if we should skip this box when computing the baseline of an inline-block.
+    virtual Optional<int> firstLineBaseline() const { return Optional<int>(); }
+    virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const { return Optional<int>(); } // Returns empty if we should skip this box when computing the baseline of an inline-block.
 
     bool shrinkToAvoidFloats() const;
     virtual bool avoidsFloats() const;

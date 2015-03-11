@@ -72,4 +72,25 @@ TEST(WTF_Optional, Destructor)
     EXPECT_TRUE(didCallDestructor);
 }
 
+TEST(WTF_Optional, Callback)
+{
+    bool called = false;
+    Optional<int> a;
+    int result = a.valueOrCompute([&] {
+        called = true;
+        return 300;
+    });
+    EXPECT_TRUE(called);
+    EXPECT_EQ(result, 300);
+
+    a = 250;
+    called = false;
+    result = a.valueOrCompute([&] {
+        called = true;
+        return 300;
+    });
+    EXPECT_FALSE(called);
+    EXPECT_EQ(result, 250);
+}
+
 } // namespace TestWebKitAPI

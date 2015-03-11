@@ -81,13 +81,11 @@ void RenderMathMLRow::layout()
         LayoutUnit childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
         if (is<RenderMathMLBlock>(*child)) {
             RenderMathMLBlock& mathmlChild = downcast<RenderMathMLBlock>(*child);
-            childHeightAboveBaseline = mathmlChild.firstLineBaseline();
-            if (childHeightAboveBaseline == -1)
-                childHeightAboveBaseline = mathmlChild.logicalHeight();
+            childHeightAboveBaseline = mathmlChild.firstLineBaseline().valueOr(mathmlChild.logicalHeight());
             childDepthBelowBaseline = mathmlChild.logicalHeight() - childHeightAboveBaseline;
         } else if (is<RenderMathMLTable>(*child)) {
             RenderMathMLTable& tableChild = downcast<RenderMathMLTable>(*child);
-            childHeightAboveBaseline = tableChild.firstLineBaseline();
+            childHeightAboveBaseline = tableChild.firstLineBaseline().valueOr(-1);
             childDepthBelowBaseline = tableChild.logicalHeight() - childHeightAboveBaseline;
         } else if (is<RenderBox>(*child)) {
             childHeightAboveBaseline = downcast<RenderBox>(*child).logicalHeight();

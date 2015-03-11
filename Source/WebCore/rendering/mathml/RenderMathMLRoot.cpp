@@ -250,11 +250,11 @@ void RenderMathMLRoot::updateStyle()
     }
 }
 
-int RenderMathMLRoot::firstLineBaseline() const
+Optional<int> RenderMathMLRoot::firstLineBaseline() const
 {
     if (!isEmpty()) {
         auto base = baseWrapper();
-        return static_cast<int>(lroundf(base->firstLineBaseline() + base->marginTop()));
+        return static_cast<int>(lroundf(base->firstLineBaseline().valueOr(-1) + base->marginTop()));
     }
 
     return RenderMathMLBlock::firstLineBaseline();
@@ -285,9 +285,7 @@ void RenderMathMLRoot::layout()
     if (radical) {
         // We stretch the radical sign to cover the height of the base wrapper.
         float baseHeight = base->logicalHeight();
-        float baseHeightAboveBaseline = base->firstLineBaseline();
-        if (baseHeightAboveBaseline == -1)
-            baseHeightAboveBaseline = baseHeight;
+        float baseHeightAboveBaseline = base->firstLineBaseline().valueOr(baseHeight);
         float baseDepthBelowBaseline = baseHeight - baseHeightAboveBaseline;
         baseHeightAboveBaseline += m_verticalGap;
         radical->stretchTo(baseHeightAboveBaseline, baseDepthBelowBaseline);

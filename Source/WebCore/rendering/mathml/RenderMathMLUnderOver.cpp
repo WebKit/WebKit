@@ -60,14 +60,14 @@ RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
     return downcast<RenderMathMLBlock>(*base).unembellishedOperator();
 }
 
-int RenderMathMLUnderOver::firstLineBaseline() const
+Optional<int> RenderMathMLUnderOver::firstLineBaseline() const
 {
     RenderBox* base = firstChildBox();
     if (!base)
-        return -1;
-    LayoutUnit baseline = base->firstLineBaseline();
-    if (baseline != -1)
-        baseline += base->logicalTop();
+        return Optional<int>();
+    Optional<int> baseline = base->firstLineBaseline();
+    if (baseline)
+        baseline.value() += static_cast<int>(base->logicalTop());
     return baseline;
 }
 

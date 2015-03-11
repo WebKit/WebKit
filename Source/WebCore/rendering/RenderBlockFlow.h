@@ -444,8 +444,8 @@ protected:
 
     void createFloatingObjects();
 
-    virtual int firstLineBaseline() const override;
-    virtual int inlineBlockBaseline(LineDirectionMode) const override;
+    virtual Optional<int> firstLineBaseline() const override;
+    virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
     virtual bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
     

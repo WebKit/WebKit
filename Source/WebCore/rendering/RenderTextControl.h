@@ -102,8 +102,8 @@ public:
     {
         return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
     }
-    virtual int firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
-    virtual int inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
+    virtual Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    virtual Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
 };
 

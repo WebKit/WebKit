@@ -45,7 +45,7 @@ private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return false; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void updateFromElement() override;
-    virtual int firstLineBaseline() const override;
+    virtual Optional<int> firstLineBaseline() const override;
     virtual void updateLogicalWidth() override;
     virtual void updateLogicalHeight() override;
 

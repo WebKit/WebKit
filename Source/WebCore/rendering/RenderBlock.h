@@ -346,8 +346,8 @@ protected:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;
     
-    virtual int firstLineBaseline() const override;
-    virtual int inlineBlockBaseline(LineDirectionMode) const override;
+    virtual Optional<int> firstLineBaseline() const override;
+    virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
     // Delay updating scrollbars until endAndCommitUpdateScrollInfoAfterLayoutTransaction() is called. These functions are used
     // when a flexbox is laying out its descendants. If multiple calls are made to beginUpdateScrollInfoAfterLayoutTransaction()

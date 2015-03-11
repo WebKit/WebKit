@@ -1332,7 +1332,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
 
     // Find the section and row to look in
     unsigned r = cell->rowIndex();
-    RenderTableSection* section = 0;
+    RenderTableSection* section = nullptr;
     unsigned rAbove = 0;
     if (r > 0) {
         // cell is not in the first row, so use the above row in its own section
@@ -1352,7 +1352,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
         RenderTableSection::CellStruct& aboveCell = section->cellAt(rAbove, effCol);
         return aboveCell.primaryCell();
     } else
-        return 0;
+        return nullptr;
 }
 
 RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
@@ -1361,7 +1361,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
 
     // Find the section and row to look in
     unsigned r = cell->rowIndex() + cell->rowSpan() - 1;
-    RenderTableSection* section = 0;
+    RenderTableSection* section = nullptr;
     unsigned rBelow = 0;
     if (r < cell->section()->numRows() - 1) {
         // The cell is not in the last row, so use the next row in the section.
@@ -1379,7 +1379,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
         RenderTableSection::CellStruct& belowCell = section->cellAt(rBelow, effCol);
         return belowCell.primaryCell();
     } else
-        return 0;
+        return nullptr;
 }
 
 RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
@@ -1389,7 +1389,7 @@ RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
     RenderTableSection* section = cell->section();
     unsigned effCol = colToEffCol(cell->col());
     if (!effCol)
-        return 0;
+        return nullptr;
     
     // If we hit a colspan back up to a real cell.
     RenderTableSection::CellStruct& prevCell = section->cellAt(cell->rowIndex(), effCol - 1);
@@ -1402,13 +1402,13 @@ RenderTableCell* RenderTable::cellAfter(const RenderTableCell* cell) const
 
     unsigned effCol = colToEffCol(cell->col() + cell->colSpan());
     if (effCol >= numEffCols())
-        return 0;
+        return nullptr;
     return cell->section()->primaryCellAt(cell->rowIndex(), effCol);
 }
 
 RenderBlock* RenderTable::firstLineBlock() const
 {
-    return 0;
+    return nullptr;
 }
 
 void RenderTable::updateFirstLetter()
@@ -1417,40 +1417,37 @@ void RenderTable::updateFirstLetter()
 
 int RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    LayoutUnit baseline = firstLineBaseline();
-    if (baseline != -1)
-        return baseline;
-
-    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    return firstLineBaseline().valueOrCompute([&] {
+        return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    });
 }
 
-int RenderTable::inlineBlockBaseline(LineDirectionMode) const
+Optional<int> RenderTable::inlineBlockBaseline(LineDirectionMode) const
 {
     // Tables are skipped when computing an inline-block's baseline.
-    return -1;
+    return Optional<int>();
 }
 
-int RenderTable::firstLineBaseline() const
+Optional<int> RenderTable::firstLineBaseline() const
 {
     // The baseline of a 'table' is the same as the 'inline-table' baseline per CSS 3 Flexbox (CSS 2.1
     // doesn't define the baseline of a 'table' only an 'inline-table').
     // This is also needed to properly determine the baseline of a cell if it has a table child.
 
     if (isWritingModeRoot())
-        return -1;
+        return Optional<int>();
 
     recalcSectionsIfNeeded();
 
     const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
     if (!topNonEmptySection)
-        return -1;
+        return Optional<int>();
 
-    int baseline = topNonEmptySection->firstLineBaseline();
-    if (baseline > 0)
-        return topNonEmptySection->logicalTop() + baseline;
+    if (Optional<int> baseline = topNonEmptySection->firstLineBaseline())
+        return Optional<int>(topNonEmptySection->logicalTop() + baseline.value());
 
     // FIXME: A table row always has a baseline per CSS 2.1. Will this return the right value?
-    return -1;
+    return Optional<int>();
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy, PaintPhase phase)

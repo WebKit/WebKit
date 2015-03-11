@@ -76,7 +76,7 @@ public:
     virtual void removeChild(RenderObject&) override;
     
     virtual RenderMathMLOperator* unembellishedOperator() override;
-    virtual int firstLineBaseline() const override;
+    virtual Optional<int> firstLineBaseline() const override;
 
 protected:
     virtual void layout() override;

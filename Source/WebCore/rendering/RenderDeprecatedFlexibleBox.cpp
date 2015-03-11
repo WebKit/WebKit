@@ -433,9 +433,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
             // Update our height and overflow height.
             if (style().boxAlign() == BBASELINE) {
-                LayoutUnit ascent = child->firstLineBaseline();
-                if (ascent == -1)
-                    ascent = child->height() + child->marginBottom();
+                LayoutUnit ascent = child->firstLineBaseline().valueOr(child->height() + child->marginBottom());
                 ascent += child->marginTop();
                 LayoutUnit descent = (child->height() + child->verticalMarginExtent()) - ascent;
 
@@ -510,9 +508,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                     childY += child->marginTop() + std::max<LayoutUnit>(0, (contentHeight() - (child->height() + child->verticalMarginExtent())) / 2);
                     break;
                 case BBASELINE: {
-                    LayoutUnit ascent = child->firstLineBaseline();
-                    if (ascent == -1)
-                        ascent = child->height() + child->marginBottom();
+                    LayoutUnit ascent = child->firstLineBaseline().valueOr(child->height() + child->marginBottom());
                     ascent += child->marginTop();
                     childY += child->marginTop() + (maxAscent - ascent);
                     break;

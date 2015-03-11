@@ -2988,42 +2988,45 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
     }
 }
 
-int RenderBlockFlow::firstLineBaseline() const
+Optional<int> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return -1;
+        return Optional<int>();
 
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
     if (!hasLines())
-        return -1;
+        return Optional<int>();
 
     if (auto simpleLineLayout = this->simpleLineLayout())
-        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout);
+        return Optional<int>(SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout));
 
     ASSERT(firstRootBox());
     return firstRootBox()->logicalTop() + firstLineStyle().fontMetrics().ascent(firstRootBox()->baselineType());
 }
 
-int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
+Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return -1;
+        return Optional<int>();
 
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
     float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
     float lastBaseline;
-    if (!childrenInline())
-        lastBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
-    else {
+    if (!childrenInline()) {
+        Optional<int> inlineBlockBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
+        if (!inlineBlockBaseline)
+            return inlineBlockBaseline;
+        lastBaseline = inlineBlockBaseline.value();
+    } else {
         if (!hasLines()) {
             if (!hasLineIfEmpty())
-                return -1;
+                return Optional<int>();
             const auto& fontMetrics = firstLineStyle().fontMetrics();
-            return fontMetrics.ascent()
+            return Optional<int>(fontMetrics.ascent()
                 + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
-                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight()));
         }
 
         if (auto simpleLineLayout = this->simpleLineLayout())
@@ -3037,7 +3040,7 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent
     // enough with the spec to not cause tons of breakages).
-    return style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline);
+    return Optional<int>(style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline));
 }
 
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
