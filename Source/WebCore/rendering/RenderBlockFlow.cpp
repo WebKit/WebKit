@@ -3014,12 +3014,20 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
     }
 
+    // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
+    float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
+    float lastBaseline;
     if (auto simpleLineLayout = this->simpleLineLayout())
-        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
-
-    bool isFirstLine = lastRootBox() == firstRootBox();
-    const RenderStyle& style = isFirstLine ? firstLineStyle() : this->style();
-    return lastRootBox()->logicalTop() + style.fontMetrics().ascent(lastRootBox()->baselineType());
+        lastBaseline = SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
+    else {
+        bool isFirstLine = lastRootBox() == firstRootBox();
+        const RenderStyle& style = isFirstLine ? firstLineStyle() : this->style();
+        lastBaseline = lastRootBox()->logicalTop() + style.fontMetrics().ascent(lastRootBox()->baselineType());
+    }
+    // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
+    // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent
+    // enough with the spec to not cause tons of breakages).
+    return style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline);
 }
 
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,

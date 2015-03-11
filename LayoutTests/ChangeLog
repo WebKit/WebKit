@@ -1,3 +1,21 @@
+2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large
+        https://bugs.webkit.org/show_bug.cgi?id=141783
+
+        Reviewed by David Hyatt.
+
+        Update expected results.
+
+        * css3/flexbox/child-overflow-expected.html:
+        * css3/flexbox/child-overflow.html:
+        * fast/css/inline-block-tricky-baselines-expected.html: Added.
+        * fast/css/inline-block-tricky-baselines.html: Added.
+        * fast/forms/textfield-overflow-by-value-update-expected.txt:
+        * fast/text/baseline-inline-block-expected.html: Added.
+        * fast/text/baseline-inline-block.html: Added.
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+
 2015-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Setting scroll-snap-desination to (100% 100%) locks up WebKit

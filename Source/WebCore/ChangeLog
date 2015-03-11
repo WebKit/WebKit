@@ -1,3 +1,33 @@
+2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large
+        https://bugs.webkit.org/show_bug.cgi?id=141783
+
+        Reviewed by David Hyatt.
+
+        When we have an inline-block element, and we want to find its baseline (to lay out other
+        elements on the same line) we loop through the element's children and ask them what their
+        baselines are. The children use the location of the top of their last line to compute this
+        value. However, if the child has overflow-y, this might not be the correct calculation.
+
+        This behavior is in the spec: "The baseline of an 'inline-block' is the baseline of its last
+        line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'
+        property has a computed value other than 'visible', in which case the baseline is the bottom
+        margin edge."
+            -- http://www.w3.org/TR/CSS21/visudet.html#leading
+
+        However, we believe that a better policy is, when overflow is not "visible," to place the
+        baseline at the bottom of the block if the contents overflowed in the Y direction, and to place
+        it at the bottom of the last line if the contents did not overflow in the Y direction. This is
+        partially consistent with previous behavior, and isn't too far from the spec to cause too many
+        breakages.
+
+        Test: fast/css/inline-block-tricky-baselines.html
+              fast/text/baseline-inline-block.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineBlockBaseline):
+
 2015-03-08  Chris Dumez  <cdumez@apple.com>
 
         Crash in WebCore::NotificationCenter::stop()
