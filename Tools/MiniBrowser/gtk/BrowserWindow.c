@@ -368,6 +368,24 @@ static gboolean webViewLoadFailed(WebKitWebView *webView, WebKitLoadEvent loadEv
     return FALSE;
 }
 
+static gboolean webViewLoadFailedWithTLSerrors(WebKitWebView *webView, const char *failingURI, GTlsCertificate *certificate, GTlsCertificateFlags errors, BrowserWindow *window)
+{
+    GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "%s", "Invalid TLS Certificate");
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Failed to load %s: Do you want to continue ignoring the TLS errors?", failingURI);
+    int response = gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+
+    if (response == GTK_RESPONSE_YES) {
+        SoupURI *uri = soup_uri_new(failingURI);
+        webkit_web_context_allow_tls_certificate_for_host(webkit_web_view_get_context(webView), certificate, uri->host);
+        soup_uri_free(uri);
+        webkit_web_view_load_uri(webView, failingURI);
+    }
+
+    return TRUE;
+}
+
 static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decision, WebKitPolicyDecisionType decisionType, BrowserWindow *window)
 {
     switch (decisionType) {
@@ -874,6 +892,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "notify::title", G_CALLBACK(webViewTitleChanged), window);
     g_signal_connect(window->webView, "create", G_CALLBACK(webViewCreate), window);
     g_signal_connect(window->webView, "load-failed", G_CALLBACK(webViewLoadFailed), window);
+    g_signal_connect(window->webView, "load-failed-with-tls-errors", G_CALLBACK(webViewLoadFailedWithTLSerrors), window);
     g_signal_connect(window->webView, "decide-policy", G_CALLBACK(webViewDecidePolicy), window);
     g_signal_connect(window->webView, "permission-request", G_CALLBACK(webViewDecidePermissionRequest), window);
     g_signal_connect(window->webView, "mouse-target-changed", G_CALLBACK(webViewMouseTargetChanged), window);
