@@ -875,10 +875,8 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         data = m_contentFilter->getReplacementData(length);
         loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
 
-        if (loadWasBlockedBeforeFinishing) {
+        if (loadWasBlockedBeforeFinishing)
             frameLoader()->client().contentFilterDidBlockLoad(m_contentFilter->unblockHandler());
-            m_contentFilter = nullptr;
-        }
     }
 #endif
 
@@ -892,8 +890,10 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
         commitLoad(data, length);
 
 #if ENABLE(CONTENT_FILTERING)
-    if (loadWasBlockedBeforeFinishing)
+    if (loadWasBlockedBeforeFinishing) {
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+        m_contentFilter = nullptr;
+    }
 #endif
 }
 
