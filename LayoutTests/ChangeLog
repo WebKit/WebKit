@@ -1,5 +1,19 @@
 2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Win] Test gardening after r181260
+
+        Unreviewed.
+
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Added.
+        * platform/win/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Added.
+
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Test gardening after r181278
 
         Unreviewed.
