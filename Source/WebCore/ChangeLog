@@ -1,3 +1,25 @@
+2015-03-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Update fullscreen placeholder UI to use Vibrancy.
+        https://bugs.webkit.org/show_bug.cgi?id=142586
+
+        Reviewed by Eric Carlson.
+
+        Update the fullscreen placeholder with a translucent vibrant appearance
+        using NSVisualEffectView. Since NSVisuaEffectView is only available for
+        OS X 10.10 and above, wrap the new implementation in a version check and
+        retain the old implementation.
+
+        Drive-by: Update the strings for the placeholder view with new HI guidance
+        as well.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::clickToExitFullScreenText):
+        * platform/mac/WebCoreFullScreenPlaceholderView.h:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        (-[WebCoreFullScreenPlaceholderView setExitWarningVisible:]):
+
 2015-03-11  Timothy Horton  <timothy_horton@apple.com>
 
         Make it possible to zoom on pages that claim to lay out to device size and then fail to do so

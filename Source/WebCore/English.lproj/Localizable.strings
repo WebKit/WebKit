@@ -167,7 +167,7 @@
 "Clear Recent Searches" = "Clear Recent Searches";
 
 /* Message to display in browser window when in webkit full screen mode. */
-"Click to exit full screen mode" = "Click to exit full screen mode";
+"Click to Exit Full Screen" = "Click to Exit Full Screen";
 
 /* Subtitle of the label to show on a snapshotted plug-in */
 "Click to restart" = "Click to restart";

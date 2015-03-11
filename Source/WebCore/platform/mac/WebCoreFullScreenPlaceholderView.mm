@@ -45,6 +45,38 @@ using namespace WebCore;
     if (!self)
         return nil;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    self.wantsLayer = YES;
+    self.autoresizesSubviews = YES;
+    self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
+    self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
+
+    _effectView = adoptNS([[NSVisualEffectView alloc] initWithFrame:frameRect]);
+    _effectView.get().wantsLayer = YES;
+    _effectView.get().autoresizesSubviews = YES;
+    _effectView.get().autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    _effectView.get().blendingMode = NSVisualEffectBlendingModeWithinWindow;
+    _effectView.get().hidden = YES;
+    _effectView.get().material = NSVisualEffectMaterialLight;
+    _effectView.get().state = NSVisualEffectStateActive;
+    [self addSubview:_effectView.get()];
+
+    _exitWarning = adoptNS([[NSTextField alloc] initWithFrame:NSZeroRect]);
+    _exitWarning.get().autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin;
+    _exitWarning.get().bordered = NO;
+    _exitWarning.get().drawsBackground = NO;
+    _exitWarning.get().editable = NO;
+    _exitWarning.get().font = [NSFont systemFontOfSize:27];
+    _exitWarning.get().selectable = NO;
+    _exitWarning.get().stringValue = clickToExitFullScreenText();
+    _exitWarning.get().textColor = [NSColor tertiaryLabelColor];
+    [_exitWarning sizeToFit];
+
+    NSRect warningFrame = [_exitWarning.get() frame];
+    warningFrame.origin = NSMakePoint((frameRect.size.width - warningFrame.size.width) / 2, frameRect.size.height / 2);
+    _exitWarning.get().frame = warningFrame;
+    [_effectView addSubview:_exitWarning.get()];
+#else
     [self setLayer:[CALayer layer]];
     [self setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawNever];
     [self setWantsLayer:YES];
@@ -55,6 +87,7 @@ using namespace WebCore;
     [_exitWarning.get() setFrame:warningFrame];
     [_exitWarning.get() setHidden:YES];
     [self addSubview:_exitWarning.get()];
+#endif
 
     return self;
 }
@@ -75,6 +108,9 @@ using namespace WebCore;
 
 - (void)setExitWarningVisible:(BOOL)visible
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    [_effectView setHidden:!visible];
+#else
     [_exitWarning.get() setHidden:!visible];
     if (visible) {
         CAFilter* filter = [CAFilter filterWithType:@"colorMonochrome"];
@@ -83,6 +119,7 @@ using namespace WebCore;
         [[self layer] setFilters:[NSArray arrayWithObject:filter]];
     } else
         [[self layer] setFilters:nil];
+#endif
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
