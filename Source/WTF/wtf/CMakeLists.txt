@@ -71,7 +71,6 @@ set(WTF_HEADERS
     PassRef.h
     PassRefPtr.h
     Platform.h
-    PossiblyNull.h
     PrintStream.h
     ProcessID.h
     RAMSize.h

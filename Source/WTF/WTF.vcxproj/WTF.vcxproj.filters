@@ -567,9 +567,6 @@
     <ClInclude Include="..\wtf\Platform.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\PossiblyNull.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\PrintStream.h">
       <Filter>wtf</Filter>
     </ClInclude>

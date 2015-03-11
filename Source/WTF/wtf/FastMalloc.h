@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2009, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,76 +23,78 @@
 
 #include <new>
 #include <stdlib.h>
-#include <wtf/PossiblyNull.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-    // These functions call CRASH() if an allocation fails.
-    WTF_EXPORT_PRIVATE void* fastMalloc(size_t);
-    WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t);
-    WTF_EXPORT_PRIVATE void* fastCalloc(size_t numElements, size_t elementSize);
-    WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t);
-    WTF_EXPORT_PRIVATE char* fastStrDup(const char*);
-    WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
-    WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
+class TryMallocReturnValue {
+public:
+    TryMallocReturnValue(void*);
+    TryMallocReturnValue(TryMallocReturnValue&&);
+    ~TryMallocReturnValue();
+    template<typename T> bool getValue(T*&) WARN_UNUSED_RETURN;
+private:
+    void operator=(TryMallocReturnValue&&) = delete;
+    mutable void* m_data;
+};
 
-    // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
-    WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
-    WTF_EXPORT_PRIVATE void fastAlignedFree(void*);
+// These functions call CRASH() if an allocation fails.
+WTF_EXPORT_PRIVATE void* fastMalloc(size_t);
+WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t);
+WTF_EXPORT_PRIVATE void* fastCalloc(size_t numElements, size_t elementSize);
+WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t);
+WTF_EXPORT_PRIVATE char* fastStrDup(const char*);
 
-    struct TryMallocReturnValue {
-        TryMallocReturnValue(void* data)
-            : m_data(data)
-        {
-        }
-        TryMallocReturnValue(const TryMallocReturnValue& source)
-            : m_data(source.m_data)
-        {
-            source.m_data = 0;
-        }
-        ~TryMallocReturnValue() { ASSERT(!m_data); }
-        template <typename T> bool getValue(T& data) WARN_UNUSED_RETURN;
-        template <typename T> operator PossiblyNull<T>()
-        { 
-            T value; 
-            getValue(value); 
-            return PossiblyNull<T>(value);
-        } 
-    private:
-        mutable void* m_data;
-    };
-    
-    template <typename T> bool TryMallocReturnValue::getValue(T& data)
-    {
-        union u { void* data; T target; } res;
-        res.data = m_data;
-        data = res.target;
-        bool returnValue = !!m_data;
-        m_data = 0;
-        return returnValue;
-    }
+WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t);
+TryMallocReturnValue tryFastZeroedMalloc(size_t);
+WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize);
+WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastRealloc(void*, size_t);
 
-    WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t n);
-    TryMallocReturnValue tryFastZeroedMalloc(size_t n);
-    WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size);
-    WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastRealloc(void* p, size_t n);
+WTF_EXPORT_PRIVATE void fastFree(void*);
 
-    WTF_EXPORT_PRIVATE void fastFree(void*);
+// Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
+WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
+WTF_EXPORT_PRIVATE void fastAlignedFree(void*);
 
-    WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();
-    WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemoryForThisThread();
-    
-    struct FastMallocStatistics {
-        size_t reservedVMBytes;
-        size_t committedVMBytes;
-        size_t freeListBytes;
-    };
-    WTF_EXPORT_PRIVATE FastMallocStatistics fastMallocStatistics();
+WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
+WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 
-    // This defines a type which holds an unsigned integer and is the same
-    // size as the minimally aligned memory allocation.
-    typedef unsigned long long AllocAlignmentInteger;
+WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();
+WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemoryForThisThread();
+
+struct FastMallocStatistics {
+    size_t reservedVMBytes;
+    size_t committedVMBytes;
+    size_t freeListBytes;
+};
+WTF_EXPORT_PRIVATE FastMallocStatistics fastMallocStatistics();
+
+// This defines a type which holds an unsigned integer and is the same
+// size as the minimally aligned memory allocation.
+typedef unsigned long long AllocAlignmentInteger;
+
+inline TryMallocReturnValue::TryMallocReturnValue(void* data)
+    : m_data(data)
+{
+}
+
+inline TryMallocReturnValue::TryMallocReturnValue(TryMallocReturnValue&& source)
+    : m_data(source.m_data)
+{
+    source.m_data = nullptr;
+}
+
+inline TryMallocReturnValue::~TryMallocReturnValue()
+{
+    ASSERT(!m_data);
+}
+
+template<typename T> inline bool TryMallocReturnValue::getValue(T*& data)
+{
+    data = static_cast<T*>(m_data);
+    m_data = nullptr;
+    return data;
+}
 
 } // namespace WTF
 

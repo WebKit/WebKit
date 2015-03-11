@@ -253,7 +253,6 @@
     <ClInclude Include="..\wtf\PassRef.h" />
     <ClInclude Include="..\wtf\PassRefPtr.h" />
     <ClInclude Include="..\wtf\Platform.h" />
-    <ClInclude Include="..\wtf\PossiblyNull.h" />
     <ClInclude Include="..\wtf\PrintStream.h" />
     <ClInclude Include="..\wtf\RAMSize.h" />
     <ClInclude Include="..\wtf\RandomNumber.h" />
