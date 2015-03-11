@@ -1,3 +1,16 @@
+2015-03-10  Matthew Mirman  <mmirman@apple.com>
+
+        Functions should have initialization precedence over arguments. 
+        https://bugs.webkit.org/show_bug.cgi?id=142550
+        rdar://problem/19702564
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeCapturedVariable):
+        * tests/stress/initialize_functions_after_arguments.js: Added.
+
 2015-03-10  Andreas Kling  <akling@apple.com>
 
         Eden collections should trigger sweep of MarkedBlocks containing new objects.

@@ -388,7 +388,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             continue;
         }
         auto simpleParameter = static_cast<const BindingNode*>(pattern);
-        if (capturedArguments.size() && capturedArguments[i]) {
+        if (capturedArguments.size() && capturedArguments[i] && !m_functions.contains(simpleParameter->boundProperty().impl())) {
             ASSERT((functionNode->hasCapturedVariables() && functionNode->captures(simpleParameter->boundProperty())) || shouldCaptureAllTheThings);
             index = capturedArguments[i]->index();
             RegisterID original(nextParameterIndex);
