@@ -735,11 +735,6 @@ webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure
 
 webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
-
 webkit.org/b/131244 svg/as-image/svg-as-image-canvas.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass Failure Crash Timeout ]

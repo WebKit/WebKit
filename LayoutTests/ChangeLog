@@ -1,3 +1,17 @@
+2015-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        svg/animations/smil-leak-*.svg tests are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=114280
+
+        Unreviewed.
+
+        Some svg tests were flaky on mac only but they became flaky on all ports
+        after r181345. They pass locally and on EWS but not on bots. Mark them to
+        be flaky on all ports till we figure out the problem with these tests.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-03-11  Tim Horton  <timothy_horton@apple.com>
 
         <attachment>s should be created when dropping files onto contentEditable areas
