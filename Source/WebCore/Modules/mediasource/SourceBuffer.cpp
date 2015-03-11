@@ -1999,9 +1999,9 @@ void SourceBuffer::reportExtraMemoryAllocated()
 
     JSC::JSLockHolder lock(scriptExecutionContext()->vm());
     if (extraMemoryCostDelta > 0) {
-        // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-        // https://bugs.webkit.org/show_bug.cgi?id=142593
-        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(extraMemoryCostDelta);
+        // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+        // https://bugs.webkit.org/show_bug.cgi?id=142595
+        scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
     }
 }
 

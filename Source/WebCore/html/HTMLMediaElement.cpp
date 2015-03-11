@@ -637,9 +637,9 @@ void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
             m_reportedExtraMemoryCost = extraMemoryCost;
 
             if (extraMemoryCostDelta > 0) {
-                // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-                // https://bugs.webkit.org/show_bug.cgi?id=142593
-                vm.heap.reportExtraMemoryAllocated(extraMemoryCostDelta);
+                // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+                // https://bugs.webkit.org/show_bug.cgi?id=142595
+                vm.heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
             }
         }
     }
