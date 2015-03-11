@@ -1,3 +1,16 @@
+2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GL_MAX_VARYING_FLOATS is not defined in OpenGL ES 2
+        https://bugs.webkit.org/show_bug.cgi?id=142529
+
+        Reviewed by Žan Doberšek.
+
+        Do not use GL_MAX_VARYING_FLOATS when platform is GTK+ and using
+        OpenGL ES 2.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking):
+
 2015-03-10  José Dapena Paz  <jdapena@igalia.com>
 
         Unreviewed. Fix GTK+ build with OpenGL ES 2 enabled.
