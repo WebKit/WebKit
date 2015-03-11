@@ -1618,6 +1618,7 @@
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */; };
+		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
 		FEF6835E174343CC00A32E25 /* JITStubsARM.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835A174343CC00A32E25 /* JITStubsARM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF6835F174343CC00A32E25 /* JITStubsARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF68360174343CC00A32E25 /* JITStubsX86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3351,6 +3352,7 @@
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WatchdogMac.cpp; sourceTree = "<group>"; };
+		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF6835A174343CC00A32E25 /* JITStubsARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM.h; sourceTree = "<group>"; };
 		FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARMv7.h; sourceTree = "<group>"; };
 		FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsX86_64.h; sourceTree = "<group>"; };
@@ -3705,6 +3707,7 @@
 		141211000A48772600480255 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */,
 				C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */,
 				C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */,
 				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
@@ -6739,6 +6742,7 @@
 				C20328201981979D0088B499 /* CustomGlobalObjectClassTest.c in Sources */,
 				C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */,
 				C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */,
+				FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 				86D2221A167EF9440024C804 /* testapi.mm in Sources */,
 			);

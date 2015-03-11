@@ -50,6 +50,7 @@
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
+void testCompareAndSwap();
 
 bool assertTrue(bool value, const char* message);
 extern void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -1191,6 +1192,8 @@ int main(int argc, char* argv[])
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
 #endif
+
+    testCompareAndSwap();
 
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
