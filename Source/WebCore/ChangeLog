@@ -1,3 +1,18 @@
+2015-03-10  José Dapena Paz  <jdapena@igalia.com>
+
+        Unreviewed. Fix GTK+ build with OpenGL ES 2 enabled.
+
+        Remove USE(OPENGL) ifdef from GLContext.cpp, since there's nothing
+        specific to OpenGL in that file, and everything depending on
+        configure options is already protected by USE(GLX) and USE(EGL)
+        ifdefs. This is causing linking issues when building with OpenGL
+        ES 2, because the header doesn't have the ifdef, and the cpp file
+        is not compiled leaving all the interface undefined.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * platform/graphics/GLContext.cpp:
+
 2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com> and José Dapena Paz  <jdapena@igalia.com>
 
         [GTK] Add a configure option to build with OpenGL ES 2
