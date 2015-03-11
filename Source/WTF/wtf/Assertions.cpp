@@ -320,7 +320,7 @@ void WTFCrash()
     WTFReportBacktrace();
     *(int *)(uintptr_t)0xbbadbeef = 0;
     // More reliable, but doesn't say BBADBEEF.
-#if COMPILER(CLANG)
+#if COMPILER(CLANG) || COMPILER(GCC)
     __builtin_trap();
 #else
     ((void(*)())0)();
@@ -334,7 +334,7 @@ void WTFCrashWithSecurityImplication()
     WTFReportBacktrace();
     *(int *)(uintptr_t)0xfbadbeef = 0;
     // More reliable, but doesn't say fbadbeef.
-#if COMPILER(CLANG)
+#if COMPILER(CLANG) || COMPILER(GCC)
     __builtin_trap();
 #else
     ((void(*)())0)();

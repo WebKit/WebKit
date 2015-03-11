@@ -1,3 +1,15 @@
+2015-03-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        GCC: CRASH() should be annotated with NORETURN
+        https://bugs.webkit.org/show_bug.cgi?id=142524
+
+        Reviewed by Anders Carlsson.
+
+        Add COMPILER(GCC) to #ifdefs that already exist for Clang.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2015-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: tryFastMalloc shouldn't crash

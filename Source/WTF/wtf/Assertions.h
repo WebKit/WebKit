@@ -112,7 +112,7 @@ extern "C" {
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#if COMPILER(CLANG) || COMPILER(MSVC)
+#if COMPILER(CLANG) || COMPILER(GCC) || COMPILER(MSVC)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
 #else
 #define NO_RETURN_DUE_TO_CRASH
