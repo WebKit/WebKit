@@ -37,10 +37,10 @@ PASS /*img*/ typeof (element["onsubmit"]) is "function"
 PASS /*img*/ typeof (element["onerror"]) is "function"
 PASS /*img*/ typeof (element["oninput"]) is "function"
 PASS /*img*/ typeof (element["oninvalid"]) is "function"
-FAIL /*img*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*img*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*img*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*img*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*img*/ typeof (element["ontouchstart"]) is "function"
+PASS /*img*/ typeof (element["ontouchmove"]) is "function"
+PASS /*img*/ typeof (element["ontouchend"]) is "function"
+PASS /*img*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*img*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*img*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*img*/ typeof (element["onabort"]) is "function"
@@ -81,10 +81,10 @@ PASS /*script*/ typeof (element["onsubmit"]) is "function"
 PASS /*script*/ typeof (element["onerror"]) is "function"
 PASS /*script*/ typeof (element["oninput"]) is "function"
 PASS /*script*/ typeof (element["oninvalid"]) is "function"
-FAIL /*script*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*script*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*script*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*script*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*script*/ typeof (element["ontouchstart"]) is "function"
+PASS /*script*/ typeof (element["ontouchmove"]) is "function"
+PASS /*script*/ typeof (element["ontouchend"]) is "function"
+PASS /*script*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*script*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*script*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*script*/ typeof (element["onabort"]) is "function"
@@ -125,10 +125,10 @@ PASS /*video*/ typeof (element["onsubmit"]) is "function"
 PASS /*video*/ typeof (element["onerror"]) is "function"
 PASS /*video*/ typeof (element["oninput"]) is "function"
 PASS /*video*/ typeof (element["oninvalid"]) is "function"
-FAIL /*video*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*video*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*video*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*video*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*video*/ typeof (element["ontouchstart"]) is "function"
+PASS /*video*/ typeof (element["ontouchmove"]) is "function"
+PASS /*video*/ typeof (element["ontouchend"]) is "function"
+PASS /*video*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*video*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*video*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*video*/ typeof (element["onabort"]) is "function"
@@ -169,10 +169,10 @@ PASS /*div*/ typeof (element["onsubmit"]) is "function"
 PASS /*div*/ typeof (element["onerror"]) is "function"
 PASS /*div*/ typeof (element["oninput"]) is "function"
 PASS /*div*/ typeof (element["oninvalid"]) is "function"
-FAIL /*div*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*div*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*div*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*div*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*div*/ typeof (element["ontouchstart"]) is "function"
+PASS /*div*/ typeof (element["ontouchmove"]) is "function"
+PASS /*div*/ typeof (element["ontouchend"]) is "function"
+PASS /*div*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*div*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*div*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*div*/ typeof (element["onabort"]) is "function"
@@ -213,10 +213,10 @@ PASS /*form*/ typeof (element["onsubmit"]) is "function"
 PASS /*form*/ typeof (element["onerror"]) is "function"
 PASS /*form*/ typeof (element["oninput"]) is "function"
 PASS /*form*/ typeof (element["oninvalid"]) is "function"
-FAIL /*form*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*form*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*form*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*form*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*form*/ typeof (element["ontouchstart"]) is "function"
+PASS /*form*/ typeof (element["ontouchmove"]) is "function"
+PASS /*form*/ typeof (element["ontouchend"]) is "function"
+PASS /*form*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*form*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*form*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*form*/ typeof (element["onabort"]) is "function"
@@ -257,10 +257,10 @@ PASS /*input*/ typeof (element["onsubmit"]) is "function"
 PASS /*input*/ typeof (element["onerror"]) is "function"
 PASS /*input*/ typeof (element["oninput"]) is "function"
 PASS /*input*/ typeof (element["oninvalid"]) is "function"
-FAIL /*input*/ typeof (element["ontouchstart"]) should be function. Was undefined.
-FAIL /*input*/ typeof (element["ontouchmove"]) should be function. Was undefined.
-FAIL /*input*/ typeof (element["ontouchend"]) should be function. Was undefined.
-FAIL /*input*/ typeof (element["ontouchcancel"]) should be function. Was undefined.
+PASS /*input*/ typeof (element["ontouchstart"]) is "function"
+PASS /*input*/ typeof (element["ontouchmove"]) is "function"
+PASS /*input*/ typeof (element["ontouchend"]) is "function"
+PASS /*input*/ typeof (element["ontouchcancel"]) is "function"
 PASS /*input*/ typeof (element["onwebkitfullscreenchange"]) is "function"
 PASS /*input*/ typeof (element["onwebkitfullscreenerror"]) is "function"
 PASS /*input*/ typeof (element["onabort"]) is "function"
