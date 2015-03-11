@@ -1,3 +1,14 @@
+2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com> and José Dapena Paz  <jdapena@igalia.com>
+
+        [GTK] Add a configure option to build with OpenGL ES 2
+        https://bugs.webkit.org/show_bug.cgi?id=142498
+
+        Reviewed by Martin Robinson.
+
+        Build GLES or GL specific files depending on the build options.
+
+        * PlatformGTK.cmake:
+
 2015-03-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Shrink the CSSPropertyID enum type
