@@ -1,3 +1,22 @@
+2015-03-11  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r181351.
+
+    2015-03-10  Enrica Casucci  <enrica@apple.com>
+
+            Add support for more emoji with variation.
+            https://bugs.webkit.org/show_bug.cgi?id=142548
+            rdar://problem/20105008
+
+            Reviewed by Tim Horton.
+
+            Update ICU rules to support new emoji with variation.
+
+            Test: editing/selection/extend-by-character-007.html
+
+            * platform/text/TextBreakIterator.cpp:
+            (WebCore::cursorMovementIterator):
+
 2015-03-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r181123.
