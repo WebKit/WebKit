@@ -1,3 +1,13 @@
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build
+
+        Unreviewed.
+
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        (WebKit::Download::resume):
+
 2015-03-10  Sam Weinig  <sam@webkit.org>
 
         Allow adding a button in input elements for auto fill related functionality

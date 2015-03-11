@@ -62,7 +62,10 @@ void Download::start()
     ASSERT(!m_delegate);
 
     m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_nsURLDownload = adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest(UpdateHTTPBody) delegate:m_delegate.get()]);
+#pragma clang diagnostic pop
 
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload setDeletesFileUponFailure:NO];
@@ -93,10 +96,16 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
+#pragma clang diagnostic pop
 
     auto nsData = adoptNS([[NSData alloc] initWithBytes:resumeData.data() length:resumeData.size()]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_nsURLDownload = adoptNS([[NSURLDownload alloc] initWithResumeData:nsData.get() delegate:m_delegate.get() path:path]);
+#pragma clang diagnostic pop
 
     m_request = [m_nsURLDownload request];
 
