@@ -77,7 +77,7 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
     else {
         StringImpl* impl = thisObject->m_value.impl();
         ASSERT(impl);
-        visitor.reportExtraMemoryUsage(thisObject, impl->costDuringGC());
+        visitor.reportExtraMemoryVisited(thisObject, impl->costDuringGC());
     }
 }
 
@@ -181,7 +181,7 @@ void JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (m_value.impl()->hasOneRef())
-        Heap::heap(this)->reportExtraMemoryCost(m_value.impl()->cost());
+        Heap::heap(this)->reportExtraMemoryAllocated(m_value.impl()->cost());
 }
 
 void JSRopeString::clearFibers() const
@@ -240,7 +240,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
     if (is8Bit()) {
         LChar* buffer;
         if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
-            Heap::heap(this)->reportExtraMemoryCost(newImpl->cost());
+            Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
             m_value = newImpl.release();
         } else {
             outOfMemory(exec);
@@ -254,7 +254,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
 
     UChar* buffer;
     if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
-        Heap::heap(this)->reportExtraMemoryCost(newImpl->cost());
+        Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
         m_value = newImpl.release();
     } else {
         outOfMemory(exec);

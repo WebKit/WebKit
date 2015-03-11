@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void reportExtraMemoryCostForCollectionIndexCache(size_t);
+void reportExtraMemoryAllocatedForCollectionIndexCache(size_t);
 
 template <class Collection, class Iterator>
 class CollectionIndexCache {
@@ -100,7 +100,7 @@ unsigned CollectionIndexCache<Collection, Iterator>::computeNodeCountUpdatingLis
     m_listValid = true;
 
     if (unsigned capacityDifference = m_cachedList.capacity() - oldCapacity)
-        reportExtraMemoryCostForCollectionIndexCache(capacityDifference * sizeof(NodeType*));
+        reportExtraMemoryAllocatedForCollectionIndexCache(capacityDifference * sizeof(NodeType*));
 
     return m_cachedList.size();
 }

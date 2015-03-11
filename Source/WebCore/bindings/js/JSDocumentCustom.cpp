@@ -109,7 +109,9 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
         for (Node* n = document; n; n = NodeTraversal::next(*n))
             nodeCount++;
         
-        exec->heap()->reportExtraMemoryCost(nodeCount * sizeof(Node));
+        // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
+        // https://bugs.webkit.org/show_bug.cgi?id=142593
+        exec->heap()->reportExtraMemoryAllocated(nodeCount * sizeof(Node));
     }
 
     return wrapper;

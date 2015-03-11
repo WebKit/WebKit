@@ -160,7 +160,7 @@ inline void CollectionNamedElementCache::didPopulate()
     m_didPopulate = true;
 #endif
     if (size_t cost = memoryCost())
-        reportExtraMemoryCostForCollectionIndexCache(cost);
+        reportExtraMemoryAllocatedForCollectionIndexCache(cost);
 }
 
 inline const Vector<Element*>* CollectionNamedElementCache::find(const StringToElementsMap& map, const AtomicString& key) const

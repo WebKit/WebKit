@@ -78,7 +78,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
             return;
     }
     
-    vm.heap.reportExtraMemoryCost(static_cast<size_t>(length) * elementSize);
+    vm.heap.reportExtraMemoryAllocated(static_cast<size_t>(length) * elementSize);
     
     m_structure = structure;
     m_mode = OversizeTypedArray;

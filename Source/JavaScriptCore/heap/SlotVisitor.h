@@ -105,7 +105,7 @@ public:
 
     void copyLater(JSCell*, CopyToken, void*, size_t);
     
-    void reportExtraMemoryUsage(JSCell* owner, size_t);
+    void reportExtraMemoryVisited(JSCell* owner, size_t);
     
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);
