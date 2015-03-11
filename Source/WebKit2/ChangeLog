@@ -1,3 +1,19 @@
+2015-03-10  Chris Dumez  <cdumez@apple.com>
+
+        5 tests fail on Apple Mac WK2 performance bots
+        https://bugs.webkit.org/show_bug.cgi?id=142485
+
+        Reviewed by Andreas Kling.
+
+        Only log errors in debug builds if SandboxExtension::createHandle() fails
+        so that performance tests don't fail because of it. Such error is not
+        fatal and is expected under certain circumstances. In particular,
+        SandboxExtension::createHandle() is sometimes called for non-existing
+        files (e.g. from NetworkResourceLoadParameters::encode()).
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandle):
+
 2015-03-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build

@@ -220,7 +220,7 @@ void SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     CString standardizedPath = resolveSymlinksInPath(fileSystemRepresentation([(NSString *)path stringByStandardizingPath]));
     handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
     if (!handle.m_sandboxExtension)
-        WTFLogAlways("Could not create a sandbox extension for '%s'", path.utf8().data());
+        LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
 }
 
 void SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
