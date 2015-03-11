@@ -47,9 +47,5 @@
     void reset();
     boolean checkValidity();
 
-#if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
-    [Conditional=REQUEST_AUTOCOMPLETE, NotEnumerable] attribute EventListener onautocomplete;
-    [Conditional=REQUEST_AUTOCOMPLETE, NotEnumerable] attribute EventListener onautocompleteerror;
-#endif
     [Conditional=REQUEST_AUTOCOMPLETE] void requestAutocomplete();
 };

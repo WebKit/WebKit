@@ -109,12 +109,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Custom] void customMethod();
     [Custom] void customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
 
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    attribute EventListener onfoo;
 
     // 'CallWith' extended attribute
     [CallWith=ScriptState] void withScriptStateVoid();

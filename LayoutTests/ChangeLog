@@ -1,3 +1,19 @@
+2015-03-09  Darin Adler  <darin@apple.com>
+
+        Some event handler fixes
+        https://bugs.webkit.org/show_bug.cgi?id=142474
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/event-handler-attributes-expected.txt: Updated for new tests and to
+        expect more tests to pass.
+
+        * fast/dom/event-handler-attributes.html: Added testing of event handlers on
+        non-HTML, non-SVG elements, and on SVG elements. Also removed
+        webkitpresentationmodechanged from the test, for now at least.
+
+        * fast/events/event-attribute-expected.txt: Updated to expect more tests to pass.
+
 2015-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         CSS scroll-snap-destination and scroll-snap-coordinate are not honoring position values

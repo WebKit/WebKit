@@ -163,12 +163,10 @@
     [GetterRaisesException] readonly attribute Storage sessionStorage;
     [GetterRaisesException] readonly attribute Storage localStorage;
 
-#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
     // This is the interface orientation in degrees. Some examples are:
     //  0 is straight up; -90 is when the device is rotated 90 clockwise;
     //  90 is when rotated counter clockwise.
-    readonly attribute long orientation;
-#endif
+    [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
 
     // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -178,22 +176,20 @@
     [DoNotCheckSecurity, Custom, RaisesException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, optional MessagePort messagePort, DOMString targetOrigin);
 #endif
 
-#if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
-    [Replaceable] readonly attribute Performance performance;
-#endif
+    [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
 
-#if defined(ENABLE_REQUEST_ANIMATION_FRAME) && ENABLE_REQUEST_ANIMATION_FRAME
-    long requestAnimationFrame(RequestAnimationFrameCallback callback);
-    void cancelAnimationFrame(long id);
-    long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
-    [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
-    [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
-#endif
+    [Conditional=REQUEST_ANIMATION_FRAME] long requestAnimationFrame(RequestAnimationFrameCallback callback);
+    [Conditional=REQUEST_ANIMATION_FRAME] void cancelAnimationFrame(long id);
+    [Conditional=REQUEST_ANIMATION_FRAME] long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
+    [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
+    [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 
     [Replaceable] readonly attribute DOMWindowCSS CSS;
 
-    // Events
     attribute EventListener onabort;
+    attribute EventListener onanimationend;
+    attribute EventListener onanimationiteration;
+    attribute EventListener onanimationstart;
     attribute EventListener onbeforeunload;
     attribute EventListener onblur;
     attribute EventListener oncanplay;
@@ -243,8 +239,10 @@
     attribute EventListener onpopstate;
     attribute EventListener onprogress;
     attribute EventListener onratechange;
+    attribute EventListener onreset;
     attribute EventListener onresize;
     attribute EventListener onscroll;
+    attribute EventListener onsearch;
     attribute EventListener onseeked;
     attribute EventListener onseeking;
     attribute EventListener onselect;
@@ -253,44 +251,29 @@
     attribute EventListener onsubmit;
     attribute EventListener onsuspend;
     attribute EventListener ontimeupdate;
+    attribute EventListener ontransitionend;
     attribute EventListener onunload;
     attribute EventListener onvolumechange;
     attribute EventListener onwaiting;
-    attribute EventListener onwheel;
-
-    // Not implemented yet.
-    // attribute EventListener onafterprint;
-    // attribute EventListener onbeforeprint;
-    // attribute EventListener onreadystatechange;
-    // attribute EventListener onredo;
-    // attribute EventListener onshow;
-    // attribute EventListener onundo;
-
-    // Webkit extensions
-    attribute EventListener onreset;
-    attribute EventListener onsearch;
     attribute EventListener onwebkitanimationend;
     attribute EventListener onwebkitanimationiteration;
     attribute EventListener onwebkitanimationstart;
-    attribute EventListener onanimationend;
-    attribute EventListener onanimationiteration;
-    attribute EventListener onanimationstart;
     attribute EventListener onwebkittransitionend;
-    attribute EventListener ontransitionend;
-#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
-    attribute EventListener onorientationchange;
-#endif
-    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
-    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
-    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
-    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
+    attribute EventListener onwheel;
+
+    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondevicemotion;
+    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondeviceorientation;
 
     [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturestart;
     [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturechange;
     [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongestureend;
 
-    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondevicemotion;
-    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondeviceorientation;
+    [Conditional=ORIENTATION_EVENTS] attribute EventListener onorientationchange;
+
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
 
     [Conditional=PROXIMITY_EVENTS] attribute EventListener onwebkitdeviceproximity;
 
@@ -300,13 +283,9 @@
     [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
 
     // EventTarget interface
-    [Custom] void addEventListener(DOMString type,
-                                  EventListener listener,
-                                  optional boolean useCapture);
-    [Custom] void removeEventListener(DOMString type,
-                                      EventListener listener,
-                                      optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    [Custom] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [Custom] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);

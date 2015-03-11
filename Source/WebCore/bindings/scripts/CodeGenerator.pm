@@ -686,15 +686,26 @@ sub GenerateConditionalStringFromAttributeValue
     my $generator = shift;
     my $conditional = shift;
 
-    my $operator = ($conditional =~ /&/ ? '&' : ($conditional =~ /\|/ ? '|' : ''));
-    if ($operator) {
-        # Avoid duplicated conditions.
-        my %conditions;
-        map { $conditions{$_} = 1 } split('\\' . $operator, $conditional);
-        return "ENABLE(" . join(") $operator$operator ENABLE(", sort keys %conditions) . ")";
-    } else {
-        return "ENABLE(" . $conditional . ")";
-    }
+    my %disjunction;
+    map {
+        my $expression = $_;
+        my %conjunction;
+        map { $conjunction{$_} = 1; } split(/&/, $expression);
+        $expression = "ENABLE(" . join(") && ENABLE(", sort keys %conjunction) . ")";
+        $disjunction{$expression} = 1
+    } split(/\|/, $conditional);
+
+    return "1" if keys %disjunction == 0;
+    return (%disjunction)[0] if keys %disjunction == 1;
+
+    my @parenthesized;
+    map {
+        my $expression = $_;
+        $expression = "($expression)" if $expression =~ / /;
+        push @parenthesized, $expression;
+    } sort keys %disjunction;
+
+    return join(" || ", @parenthesized);
 }
 
 sub GenerateCompileTimeCheckForEnumsIfNeeded

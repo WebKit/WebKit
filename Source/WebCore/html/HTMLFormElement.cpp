@@ -500,12 +500,6 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         else
             document().unregisterForPageCacheSuspensionCallbacks(this);
     }
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    else if (name == onautocompleteAttr)
-        setAttributeEventListener(eventNames().autocompleteEvent, name, value);
-    else if (name == onautocompleteerrorAttr)
-        setAttributeEventListener(eventNames().autocompleteerrorEvent, name, value);
-#endif
     else
         HTMLElement::parseAttribute(name, value);
 }

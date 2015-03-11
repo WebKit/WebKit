@@ -220,6 +220,8 @@ JSC::EncodedJSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC:
 void setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjCustomAttr(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestObjOnfoo(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -508,6 +510,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attrWithSetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithSetterException) },
     { "stringAttrWithGetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) },
     { "stringAttrWithSetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithSetterException) },
+    { "onfoo", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjOnfoo), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjOnfoo) },
     { "withScriptStateAttribute", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttribute) },
     { "withScriptExecutionContextAttribute", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAttribute) },
     { "withScriptStateAttributeRaises", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttributeRaises) },
@@ -1238,6 +1241,22 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* exec, JSObject* slotBase, EncodedJ
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
     return JSValue::encode(castedThis->customAttr(exec));
+}
+
+
+EncodedJSValue jsTestObjOnfoo(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestObj", "onfoo");
+        return throwGetterTypeError(*exec, "TestObj", "onfoo");
+    }
+    UNUSED_PARAM(exec);
+    return JSValue::encode(eventHandlerAttribute(castedThis->impl(), eventNames().fooEvent));
 }
 
 
@@ -2418,6 +2437,22 @@ void setJSTestObjCustomAttr(ExecState* exec, JSObject* baseObject, EncodedJSValu
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(exec);
     castedThis->setCustomAttr(exec, value);
+}
+
+
+void setJSTestObjOnfoo(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "onfoo");
+        else
+            throwSetterTypeError(*exec, "TestObj", "onfoo");
+        return;
+    }
+    setEventHandlerAttribute(*exec, *castedThis, castedThis->impl(), eventNames().fooEvent, value);
 }
 
 

@@ -545,62 +545,6 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
     } else if (name == mediagroupAttr)
         setMediaGroup(value);
-    else if (name == onabortAttr)
-        setAttributeEventListener(eventNames().abortEvent, name, value);
-    else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
-    else if (name == oncanplayAttr)
-        setAttributeEventListener(eventNames().canplayEvent, name, value);
-    else if (name == oncanplaythroughAttr)
-        setAttributeEventListener(eventNames().canplaythroughEvent, name, value);
-    else if (name == ondurationchangeAttr)
-        setAttributeEventListener(eventNames().durationchangeEvent, name, value);
-    else if (name == onemptiedAttr)
-        setAttributeEventListener(eventNames().emptiedEvent, name, value);
-    else if (name == onendedAttr)
-        setAttributeEventListener(eventNames().endedEvent, name, value);
-    else if (name == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, name, value);
-    else if (name == onloadeddataAttr)
-        setAttributeEventListener(eventNames().loadeddataEvent, name, value);
-    else if (name == onloadedmetadataAttr)
-        setAttributeEventListener(eventNames().loadedmetadataEvent, name, value);
-    else if (name == onloadstartAttr)
-        setAttributeEventListener(eventNames().loadstartEvent, name, value);
-    else if (name == onpauseAttr)
-        setAttributeEventListener(eventNames().pauseEvent, name, value);
-    else if (name == onplayAttr)
-        setAttributeEventListener(eventNames().playEvent, name, value);
-    else if (name == onplayingAttr)
-        setAttributeEventListener(eventNames().playingEvent, name, value);
-    else if (name == onprogressAttr)
-        setAttributeEventListener(eventNames().progressEvent, name, value);
-    else if (name == onratechangeAttr)
-        setAttributeEventListener(eventNames().ratechangeEvent, name, value);
-    else if (name == onseekedAttr)
-        setAttributeEventListener(eventNames().seekedEvent, name, value);
-    else if (name == onseekingAttr)
-        setAttributeEventListener(eventNames().seekingEvent, name, value);
-    else if (name == onstalledAttr)
-        setAttributeEventListener(eventNames().stalledEvent, name, value);
-    else if (name == onsuspendAttr)
-        setAttributeEventListener(eventNames().suspendEvent, name, value);
-    else if (name == ontimeupdateAttr)
-        setAttributeEventListener(eventNames().timeupdateEvent, name, value);
-    else if (name == onvolumechangeAttr)
-        setAttributeEventListener(eventNames().volumechangeEvent, name, value);
-    else if (name == onwaitingAttr)
-        setAttributeEventListener(eventNames().waitingEvent, name, value);
-    else if (name == onwebkitbeginfullscreenAttr)
-        setAttributeEventListener(eventNames().webkitbeginfullscreenEvent, name, value);
-    else if (name == onwebkitendfullscreenAttr)
-        setAttributeEventListener(eventNames().webkitendfullscreenEvent, name, value);
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    else if (name == onwebkitcurrentplaybacktargetiswirelesschangedAttr)
-        setAttributeEventListener(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent, name, value);
-    else if (name == onwebkitplaybacktargetavailabilitychangedAttr)
-        setAttributeEventListener(eventNames().webkitplaybacktargetavailabilitychangedEvent, name, value);
-#endif
     else
         HTMLElement::parseAttribute(name, value);
 }
@@ -3769,9 +3713,7 @@ void HTMLMediaElement::updateCaptionContainer()
 
     JSC::MarkedArgumentBuffer noArguments;
     JSC::call(exec, methodObject, callType, callData, controllerObject, noArguments);
-
-    if (exec->hadException())
-        exec->clearException();
+    exec->clearException();
 #endif
 }
     
@@ -5967,6 +5909,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
 
     JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
+    exec->clearException();
     JSC::JSObject* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
     if (!controllerObject)
         return;

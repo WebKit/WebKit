@@ -84,6 +84,7 @@ Event names we expect not to be able to set on the window object
 
 PASS testScriptAttribute(window, "beforecopy") is "none"
 PASS testScriptAttribute(window, "beforecut") is "none"
+PASS testScriptAttribute(window, "beforeload") is "none"
 PASS testScriptAttribute(window, "beforepaste") is "none"
 PASS testScriptAttribute(window, "copy") is "none"
 PASS testScriptAttribute(window, "cut") is "none"
@@ -98,7 +99,6 @@ PASS testScriptAttribute(window, "touchcancel") is "none"
 PASS testScriptAttribute(window, "touchend") is "none"
 PASS testScriptAttribute(window, "touchmove") is "none"
 PASS testScriptAttribute(window, "touchstart") is "none"
-PASS testScriptAttribute(window, "webkitpresentationmodechanged") is "none"
 
 Event names we expect to be able to set on the document
 
@@ -152,6 +152,7 @@ Event names we expect not to be able to set on the document
 PASS testScriptAttribute(document, "animationend") is "none"
 PASS testScriptAttribute(document, "animationiteration") is "none"
 PASS testScriptAttribute(document, "animationstart") is "none"
+PASS testScriptAttribute(document, "beforeload") is "none"
 PASS testScriptAttribute(document, "beforeunload") is "none"
 PASS testScriptAttribute(document, "canplay") is "none"
 PASS testScriptAttribute(document, "canplaythrough") is "none"
@@ -194,21 +195,21 @@ PASS testScriptAttribute(document, "waiting") is "none"
 PASS testScriptAttribute(document, "webkitanimationend") is "none"
 PASS testScriptAttribute(document, "webkitanimationiteration") is "none"
 PASS testScriptAttribute(document, "webkitanimationstart") is "none"
-PASS testScriptAttribute(document, "webkitpresentationmodechanged") is "none"
 PASS testScriptAttribute(document, "webkittransitionend") is "none"
 
 Event names we expect to be able to set on an element (tested on the <html> element)
 
 PASS testElementAttribute(element, "abort") is "target"
-FAIL testElementAttribute(element, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "animationend") is "target"
+PASS testElementAttribute(element, "animationiteration") is "target"
+PASS testElementAttribute(element, "animationstart") is "target"
 PASS testElementAttribute(element, "beforecopy") is "target"
 PASS testElementAttribute(element, "beforecut") is "target"
+PASS testElementAttribute(element, "beforeload") is "target"
 PASS testElementAttribute(element, "beforepaste") is "target"
 PASS testElementAttribute(element, "blur") is "target"
-FAIL testElementAttribute(element, "canplay") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "canplaythrough") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "canplay") is "target"
+PASS testElementAttribute(element, "canplaythrough") is "target"
 PASS testElementAttribute(element, "change") is "target"
 PASS testElementAttribute(element, "click") is "target"
 PASS testElementAttribute(element, "contextmenu") is "target"
@@ -222,22 +223,22 @@ PASS testElementAttribute(element, "dragleave") is "target"
 PASS testElementAttribute(element, "dragover") is "target"
 PASS testElementAttribute(element, "dragstart") is "target"
 PASS testElementAttribute(element, "drop") is "target"
-FAIL testElementAttribute(element, "durationchange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "emptied") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "ended") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "durationchange") is "target"
+PASS testElementAttribute(element, "emptied") is "target"
+PASS testElementAttribute(element, "ended") is "target"
 PASS testElementAttribute(element, "error") is "target"
 PASS testElementAttribute(element, "focus") is "target"
-FAIL testElementAttribute(element, "focusin") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "focusout") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "focusin") is "target"
+PASS testElementAttribute(element, "focusout") is "target"
 PASS testElementAttribute(element, "input") is "target"
 PASS testElementAttribute(element, "invalid") is "target"
 PASS testElementAttribute(element, "keydown") is "target"
 PASS testElementAttribute(element, "keypress") is "target"
 PASS testElementAttribute(element, "keyup") is "target"
 PASS testElementAttribute(element, "load") is "target"
-FAIL testElementAttribute(element, "loadeddata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "loadedmetadata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "loadeddata") is "target"
+PASS testElementAttribute(element, "loadedmetadata") is "target"
+PASS testElementAttribute(element, "loadstart") is "target"
 PASS testElementAttribute(element, "mousedown") is "target"
 PASS testElementAttribute(element, "mouseenter") is "target"
 PASS testElementAttribute(element, "mouseleave") is "target"
@@ -247,33 +248,32 @@ PASS testElementAttribute(element, "mouseover") is "target"
 PASS testElementAttribute(element, "mouseup") is "target"
 PASS testElementAttribute(element, "mousewheel") is "target"
 PASS testElementAttribute(element, "paste") is "target"
-FAIL testElementAttribute(element, "pause") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "play") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "playing") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "progress") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "ratechange") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "pause") is "target"
+PASS testElementAttribute(element, "play") is "target"
+PASS testElementAttribute(element, "playing") is "target"
+PASS testElementAttribute(element, "progress") is "target"
+PASS testElementAttribute(element, "ratechange") is "target"
 PASS testElementAttribute(element, "reset") is "target"
 PASS testElementAttribute(element, "scroll") is "target"
-FAIL testElementAttribute(element, "search") should be target. Was script: target; content: none.
-FAIL testElementAttribute(element, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "search") is "target"
+PASS testElementAttribute(element, "seeked") is "target"
+PASS testElementAttribute(element, "seeking") is "target"
 PASS testElementAttribute(element, "select") is "target"
 PASS testElementAttribute(element, "selectstart") is "target"
-FAIL testElementAttribute(element, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "stalled") is "target"
 PASS testElementAttribute(element, "submit") is "target"
-FAIL testElementAttribute(element, "suspend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "timeupdate") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "transitionend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "volumechange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "waiting") should be target. Was script: none; content: target.
+PASS testElementAttribute(element, "suspend") is "target"
+PASS testElementAttribute(element, "timeupdate") is "target"
+PASS testElementAttribute(element, "touchcancel") is "target"
+PASS testElementAttribute(element, "touchend") is "target"
+PASS testElementAttribute(element, "touchmove") is "target"
+PASS testElementAttribute(element, "touchstart") is "target"
+PASS testElementAttribute(element, "transitionend") is "target"
+PASS testElementAttribute(element, "volumechange") is "target"
+PASS testElementAttribute(element, "waiting") is "target"
 FAIL testElementAttribute(element, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(element, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(element, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(element, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(element, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(element, "wheel") is "target"
 
@@ -297,15 +297,16 @@ PASS testElementAttribute(element, "unload") is "none"
 Event names we expect to be able to set on an element (tested on the <input> element)
 
 PASS testElementAttribute(inputElement, "abort") is "target"
-FAIL testElementAttribute(inputElement, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "animationend") is "target"
+PASS testElementAttribute(inputElement, "animationiteration") is "target"
+PASS testElementAttribute(inputElement, "animationstart") is "target"
 PASS testElementAttribute(inputElement, "beforecopy") is "target"
 PASS testElementAttribute(inputElement, "beforecut") is "target"
+PASS testElementAttribute(inputElement, "beforeload") is "target"
 PASS testElementAttribute(inputElement, "beforepaste") is "target"
 PASS testElementAttribute(inputElement, "blur") is "target"
-FAIL testElementAttribute(inputElement, "canplay") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "canplaythrough") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "canplay") is "target"
+PASS testElementAttribute(inputElement, "canplaythrough") is "target"
 PASS testElementAttribute(inputElement, "change") is "target"
 PASS testElementAttribute(inputElement, "click") is "target"
 PASS testElementAttribute(inputElement, "contextmenu") is "target"
@@ -319,22 +320,22 @@ PASS testElementAttribute(inputElement, "dragleave") is "target"
 PASS testElementAttribute(inputElement, "dragover") is "target"
 PASS testElementAttribute(inputElement, "dragstart") is "target"
 PASS testElementAttribute(inputElement, "drop") is "target"
-FAIL testElementAttribute(inputElement, "durationchange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "emptied") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "ended") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "durationchange") is "target"
+PASS testElementAttribute(inputElement, "emptied") is "target"
+PASS testElementAttribute(inputElement, "ended") is "target"
 PASS testElementAttribute(inputElement, "error") is "target"
 PASS testElementAttribute(inputElement, "focus") is "target"
-FAIL testElementAttribute(inputElement, "focusin") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "focusout") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "focusin") is "target"
+PASS testElementAttribute(inputElement, "focusout") is "target"
 PASS testElementAttribute(inputElement, "input") is "target"
 PASS testElementAttribute(inputElement, "invalid") is "target"
 PASS testElementAttribute(inputElement, "keydown") is "target"
 PASS testElementAttribute(inputElement, "keypress") is "target"
 PASS testElementAttribute(inputElement, "keyup") is "target"
 PASS testElementAttribute(inputElement, "load") is "target"
-FAIL testElementAttribute(inputElement, "loadeddata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "loadedmetadata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "loadeddata") is "target"
+PASS testElementAttribute(inputElement, "loadedmetadata") is "target"
+PASS testElementAttribute(inputElement, "loadstart") is "target"
 PASS testElementAttribute(inputElement, "mousedown") is "target"
 PASS testElementAttribute(inputElement, "mouseenter") is "target"
 PASS testElementAttribute(inputElement, "mouseleave") is "target"
@@ -344,33 +345,32 @@ PASS testElementAttribute(inputElement, "mouseover") is "target"
 PASS testElementAttribute(inputElement, "mouseup") is "target"
 PASS testElementAttribute(inputElement, "mousewheel") is "target"
 PASS testElementAttribute(inputElement, "paste") is "target"
-FAIL testElementAttribute(inputElement, "pause") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "play") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "playing") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "progress") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "ratechange") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "pause") is "target"
+PASS testElementAttribute(inputElement, "play") is "target"
+PASS testElementAttribute(inputElement, "playing") is "target"
+PASS testElementAttribute(inputElement, "progress") is "target"
+PASS testElementAttribute(inputElement, "ratechange") is "target"
 PASS testElementAttribute(inputElement, "reset") is "target"
 PASS testElementAttribute(inputElement, "scroll") is "target"
 PASS testElementAttribute(inputElement, "search") is "target"
-FAIL testElementAttribute(inputElement, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "seeked") is "target"
+PASS testElementAttribute(inputElement, "seeking") is "target"
 PASS testElementAttribute(inputElement, "select") is "target"
 PASS testElementAttribute(inputElement, "selectstart") is "target"
-FAIL testElementAttribute(inputElement, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "stalled") is "target"
 PASS testElementAttribute(inputElement, "submit") is "target"
-FAIL testElementAttribute(inputElement, "suspend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "timeupdate") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "transitionend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "volumechange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "waiting") should be target. Was script: none; content: target.
+PASS testElementAttribute(inputElement, "suspend") is "target"
+PASS testElementAttribute(inputElement, "timeupdate") is "target"
+PASS testElementAttribute(inputElement, "touchcancel") is "target"
+PASS testElementAttribute(inputElement, "touchend") is "target"
+PASS testElementAttribute(inputElement, "touchmove") is "target"
+PASS testElementAttribute(inputElement, "touchstart") is "target"
+PASS testElementAttribute(inputElement, "transitionend") is "target"
+PASS testElementAttribute(inputElement, "volumechange") is "target"
+PASS testElementAttribute(inputElement, "waiting") is "target"
 FAIL testElementAttribute(inputElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(inputElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(inputElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(inputElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(inputElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(inputElement, "wheel") is "target"
 
@@ -394,11 +394,12 @@ PASS testElementAttribute(inputElement, "unload") is "none"
 Event names we expect to be able to set on an element (tested on the <audio> element)
 
 PASS testElementAttribute(audioElement, "abort") is "target"
-FAIL testElementAttribute(audioElement, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "animationend") is "target"
+PASS testElementAttribute(audioElement, "animationiteration") is "target"
+PASS testElementAttribute(audioElement, "animationstart") is "target"
 PASS testElementAttribute(audioElement, "beforecopy") is "target"
 PASS testElementAttribute(audioElement, "beforecut") is "target"
+PASS testElementAttribute(audioElement, "beforeload") is "target"
 PASS testElementAttribute(audioElement, "beforepaste") is "target"
 PASS testElementAttribute(audioElement, "blur") is "target"
 PASS testElementAttribute(audioElement, "canplay") is "target"
@@ -421,8 +422,8 @@ PASS testElementAttribute(audioElement, "emptied") is "target"
 PASS testElementAttribute(audioElement, "ended") is "target"
 PASS testElementAttribute(audioElement, "error") is "target"
 PASS testElementAttribute(audioElement, "focus") is "target"
-FAIL testElementAttribute(audioElement, "focusin") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "focusout") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "focusin") is "target"
+PASS testElementAttribute(audioElement, "focusout") is "target"
 PASS testElementAttribute(audioElement, "input") is "target"
 PASS testElementAttribute(audioElement, "invalid") is "target"
 PASS testElementAttribute(audioElement, "keydown") is "target"
@@ -431,7 +432,7 @@ PASS testElementAttribute(audioElement, "keyup") is "target"
 PASS testElementAttribute(audioElement, "load") is "target"
 PASS testElementAttribute(audioElement, "loadeddata") is "target"
 PASS testElementAttribute(audioElement, "loadedmetadata") is "target"
-FAIL testElementAttribute(audioElement, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "loadstart") is "target"
 PASS testElementAttribute(audioElement, "mousedown") is "target"
 PASS testElementAttribute(audioElement, "mouseenter") is "target"
 PASS testElementAttribute(audioElement, "mouseleave") is "target"
@@ -444,30 +445,29 @@ PASS testElementAttribute(audioElement, "paste") is "target"
 PASS testElementAttribute(audioElement, "pause") is "target"
 PASS testElementAttribute(audioElement, "play") is "target"
 PASS testElementAttribute(audioElement, "playing") is "target"
-FAIL testElementAttribute(audioElement, "progress") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "progress") is "target"
 PASS testElementAttribute(audioElement, "ratechange") is "target"
 PASS testElementAttribute(audioElement, "reset") is "target"
 PASS testElementAttribute(audioElement, "scroll") is "target"
-FAIL testElementAttribute(audioElement, "search") should be target. Was script: target; content: none.
-FAIL testElementAttribute(audioElement, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "search") is "target"
+PASS testElementAttribute(audioElement, "seeked") is "target"
+PASS testElementAttribute(audioElement, "seeking") is "target"
 PASS testElementAttribute(audioElement, "select") is "target"
 PASS testElementAttribute(audioElement, "selectstart") is "target"
-FAIL testElementAttribute(audioElement, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "stalled") is "target"
 PASS testElementAttribute(audioElement, "submit") is "target"
-FAIL testElementAttribute(audioElement, "suspend") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "suspend") is "target"
 PASS testElementAttribute(audioElement, "timeupdate") is "target"
-FAIL testElementAttribute(audioElement, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "transitionend") should be target. Was script: none; content: target.
+PASS testElementAttribute(audioElement, "touchcancel") is "target"
+PASS testElementAttribute(audioElement, "touchend") is "target"
+PASS testElementAttribute(audioElement, "touchmove") is "target"
+PASS testElementAttribute(audioElement, "touchstart") is "target"
+PASS testElementAttribute(audioElement, "transitionend") is "target"
 PASS testElementAttribute(audioElement, "volumechange") is "target"
 PASS testElementAttribute(audioElement, "waiting") is "target"
 FAIL testElementAttribute(audioElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(audioElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(audioElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(audioElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(audioElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(audioElement, "wheel") is "target"
 
@@ -491,11 +491,12 @@ PASS testElementAttribute(audioElement, "unload") is "none"
 Event names we expect to be able to set on an element (tested on the <video> element)
 
 PASS testElementAttribute(videoElement, "abort") is "target"
-FAIL testElementAttribute(videoElement, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "animationend") is "target"
+PASS testElementAttribute(videoElement, "animationiteration") is "target"
+PASS testElementAttribute(videoElement, "animationstart") is "target"
 PASS testElementAttribute(videoElement, "beforecopy") is "target"
 PASS testElementAttribute(videoElement, "beforecut") is "target"
+PASS testElementAttribute(videoElement, "beforeload") is "target"
 PASS testElementAttribute(videoElement, "beforepaste") is "target"
 PASS testElementAttribute(videoElement, "blur") is "target"
 PASS testElementAttribute(videoElement, "canplay") is "target"
@@ -518,8 +519,8 @@ PASS testElementAttribute(videoElement, "emptied") is "target"
 PASS testElementAttribute(videoElement, "ended") is "target"
 PASS testElementAttribute(videoElement, "error") is "target"
 PASS testElementAttribute(videoElement, "focus") is "target"
-FAIL testElementAttribute(videoElement, "focusin") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "focusout") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "focusin") is "target"
+PASS testElementAttribute(videoElement, "focusout") is "target"
 PASS testElementAttribute(videoElement, "input") is "target"
 PASS testElementAttribute(videoElement, "invalid") is "target"
 PASS testElementAttribute(videoElement, "keydown") is "target"
@@ -528,7 +529,7 @@ PASS testElementAttribute(videoElement, "keyup") is "target"
 PASS testElementAttribute(videoElement, "load") is "target"
 PASS testElementAttribute(videoElement, "loadeddata") is "target"
 PASS testElementAttribute(videoElement, "loadedmetadata") is "target"
-FAIL testElementAttribute(videoElement, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "loadstart") is "target"
 PASS testElementAttribute(videoElement, "mousedown") is "target"
 PASS testElementAttribute(videoElement, "mouseenter") is "target"
 PASS testElementAttribute(videoElement, "mouseleave") is "target"
@@ -541,30 +542,29 @@ PASS testElementAttribute(videoElement, "paste") is "target"
 PASS testElementAttribute(videoElement, "pause") is "target"
 PASS testElementAttribute(videoElement, "play") is "target"
 PASS testElementAttribute(videoElement, "playing") is "target"
-FAIL testElementAttribute(videoElement, "progress") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "progress") is "target"
 PASS testElementAttribute(videoElement, "ratechange") is "target"
 PASS testElementAttribute(videoElement, "reset") is "target"
 PASS testElementAttribute(videoElement, "scroll") is "target"
-FAIL testElementAttribute(videoElement, "search") should be target. Was script: target; content: none.
-FAIL testElementAttribute(videoElement, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "search") is "target"
+PASS testElementAttribute(videoElement, "seeked") is "target"
+PASS testElementAttribute(videoElement, "seeking") is "target"
 PASS testElementAttribute(videoElement, "select") is "target"
 PASS testElementAttribute(videoElement, "selectstart") is "target"
-FAIL testElementAttribute(videoElement, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "stalled") is "target"
 PASS testElementAttribute(videoElement, "submit") is "target"
-FAIL testElementAttribute(videoElement, "suspend") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "suspend") is "target"
 PASS testElementAttribute(videoElement, "timeupdate") is "target"
-FAIL testElementAttribute(videoElement, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "transitionend") should be target. Was script: none; content: target.
+PASS testElementAttribute(videoElement, "touchcancel") is "target"
+PASS testElementAttribute(videoElement, "touchend") is "target"
+PASS testElementAttribute(videoElement, "touchmove") is "target"
+PASS testElementAttribute(videoElement, "touchstart") is "target"
+PASS testElementAttribute(videoElement, "transitionend") is "target"
 PASS testElementAttribute(videoElement, "volumechange") is "target"
 PASS testElementAttribute(videoElement, "waiting") is "target"
 FAIL testElementAttribute(videoElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(videoElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(videoElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(videoElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(videoElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(videoElement, "wheel") is "target"
 
@@ -596,8 +596,8 @@ PASS testElementAttribute(bodyElement, "load") is "window"
 FAIL testElementAttribute(bodyElement, "message") should be window. Was script: window; content: none.
 PASS testElementAttribute(bodyElement, "offline") is "window"
 PASS testElementAttribute(bodyElement, "online") is "window"
-FAIL testElementAttribute(bodyElement, "pagehide") should be window. Was script: none; content: window.
-FAIL testElementAttribute(bodyElement, "pageshow") should be window. Was script: none; content: window.
+PASS testElementAttribute(bodyElement, "pagehide") is "window"
+PASS testElementAttribute(bodyElement, "pageshow") is "window"
 PASS testElementAttribute(bodyElement, "popstate") is "window"
 PASS testElementAttribute(bodyElement, "resize") is "window"
 PASS testElementAttribute(bodyElement, "storage") is "window"
@@ -610,14 +610,15 @@ FAIL testElementAttribute(bodyElement, "selectionchange") should be document. Wa
 Non-forwarded event names on <body> element
 
 PASS testElementAttribute(bodyElement, "abort") is "target"
-FAIL testElementAttribute(bodyElement, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "animationend") is "target"
+PASS testElementAttribute(bodyElement, "animationiteration") is "target"
+PASS testElementAttribute(bodyElement, "animationstart") is "target"
 PASS testElementAttribute(bodyElement, "beforecopy") is "target"
 PASS testElementAttribute(bodyElement, "beforecut") is "target"
+PASS testElementAttribute(bodyElement, "beforeload") is "target"
 PASS testElementAttribute(bodyElement, "beforepaste") is "target"
-FAIL testElementAttribute(bodyElement, "canplay") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "canplaythrough") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "canplay") is "target"
+PASS testElementAttribute(bodyElement, "canplaythrough") is "target"
 PASS testElementAttribute(bodyElement, "change") is "target"
 PASS testElementAttribute(bodyElement, "click") is "target"
 PASS testElementAttribute(bodyElement, "contextmenu") is "target"
@@ -631,19 +632,19 @@ PASS testElementAttribute(bodyElement, "dragleave") is "target"
 PASS testElementAttribute(bodyElement, "dragover") is "target"
 PASS testElementAttribute(bodyElement, "dragstart") is "target"
 PASS testElementAttribute(bodyElement, "drop") is "target"
-FAIL testElementAttribute(bodyElement, "durationchange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "emptied") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "ended") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "focusin") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "focusout") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "durationchange") is "target"
+PASS testElementAttribute(bodyElement, "emptied") is "target"
+PASS testElementAttribute(bodyElement, "ended") is "target"
+PASS testElementAttribute(bodyElement, "focusin") is "target"
+PASS testElementAttribute(bodyElement, "focusout") is "target"
 PASS testElementAttribute(bodyElement, "input") is "target"
 PASS testElementAttribute(bodyElement, "invalid") is "target"
 PASS testElementAttribute(bodyElement, "keydown") is "target"
 PASS testElementAttribute(bodyElement, "keypress") is "target"
 PASS testElementAttribute(bodyElement, "keyup") is "target"
-FAIL testElementAttribute(bodyElement, "loadeddata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "loadedmetadata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "loadeddata") is "target"
+PASS testElementAttribute(bodyElement, "loadedmetadata") is "target"
+PASS testElementAttribute(bodyElement, "loadstart") is "target"
 PASS testElementAttribute(bodyElement, "mousedown") is "target"
 PASS testElementAttribute(bodyElement, "mouseenter") is "target"
 PASS testElementAttribute(bodyElement, "mouseleave") is "target"
@@ -653,33 +654,32 @@ PASS testElementAttribute(bodyElement, "mouseover") is "target"
 PASS testElementAttribute(bodyElement, "mouseup") is "target"
 PASS testElementAttribute(bodyElement, "mousewheel") is "target"
 PASS testElementAttribute(bodyElement, "paste") is "target"
-FAIL testElementAttribute(bodyElement, "pause") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "play") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "playing") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "progress") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "ratechange") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "pause") is "target"
+PASS testElementAttribute(bodyElement, "play") is "target"
+PASS testElementAttribute(bodyElement, "playing") is "target"
+PASS testElementAttribute(bodyElement, "progress") is "target"
+PASS testElementAttribute(bodyElement, "ratechange") is "target"
 PASS testElementAttribute(bodyElement, "reset") is "target"
 FAIL testElementAttribute(bodyElement, "scroll") should be target. Was script: target; content: window.
-FAIL testElementAttribute(bodyElement, "search") should be target. Was script: target; content: none.
-FAIL testElementAttribute(bodyElement, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "search") is "target"
+PASS testElementAttribute(bodyElement, "seeked") is "target"
+PASS testElementAttribute(bodyElement, "seeking") is "target"
 PASS testElementAttribute(bodyElement, "select") is "target"
 PASS testElementAttribute(bodyElement, "selectstart") is "target"
-FAIL testElementAttribute(bodyElement, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "stalled") is "target"
 PASS testElementAttribute(bodyElement, "submit") is "target"
-FAIL testElementAttribute(bodyElement, "suspend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "timeupdate") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "transitionend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "volumechange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "waiting") should be target. Was script: none; content: target.
+PASS testElementAttribute(bodyElement, "suspend") is "target"
+PASS testElementAttribute(bodyElement, "timeupdate") is "target"
+PASS testElementAttribute(bodyElement, "touchcancel") is "target"
+PASS testElementAttribute(bodyElement, "touchend") is "target"
+PASS testElementAttribute(bodyElement, "touchmove") is "target"
+PASS testElementAttribute(bodyElement, "touchstart") is "target"
+PASS testElementAttribute(bodyElement, "transitionend") is "target"
+PASS testElementAttribute(bodyElement, "volumechange") is "target"
+PASS testElementAttribute(bodyElement, "waiting") is "target"
 FAIL testElementAttribute(bodyElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(bodyElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(bodyElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(bodyElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(bodyElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(bodyElement, "wheel") is "target"
 
@@ -713,14 +713,15 @@ FAIL testElementAttribute(framesetElement, "selectionchange") should be document
 Non-forwarded event names on <frameset> element
 
 PASS testElementAttribute(framesetElement, "abort") is "target"
-FAIL testElementAttribute(framesetElement, "animationend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "animationiteration") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "animationstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "animationend") is "target"
+PASS testElementAttribute(framesetElement, "animationiteration") is "target"
+PASS testElementAttribute(framesetElement, "animationstart") is "target"
 PASS testElementAttribute(framesetElement, "beforecopy") is "target"
 PASS testElementAttribute(framesetElement, "beforecut") is "target"
+PASS testElementAttribute(framesetElement, "beforeload") is "target"
 PASS testElementAttribute(framesetElement, "beforepaste") is "target"
-FAIL testElementAttribute(framesetElement, "canplay") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "canplaythrough") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "canplay") is "target"
+PASS testElementAttribute(framesetElement, "canplaythrough") is "target"
 PASS testElementAttribute(framesetElement, "change") is "target"
 PASS testElementAttribute(framesetElement, "click") is "target"
 PASS testElementAttribute(framesetElement, "contextmenu") is "target"
@@ -734,19 +735,19 @@ PASS testElementAttribute(framesetElement, "dragleave") is "target"
 PASS testElementAttribute(framesetElement, "dragover") is "target"
 PASS testElementAttribute(framesetElement, "dragstart") is "target"
 PASS testElementAttribute(framesetElement, "drop") is "target"
-FAIL testElementAttribute(framesetElement, "durationchange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "emptied") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "ended") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "focusin") should be target. Was script: none; content: window.
-FAIL testElementAttribute(framesetElement, "focusout") should be target. Was script: none; content: window.
+PASS testElementAttribute(framesetElement, "durationchange") is "target"
+PASS testElementAttribute(framesetElement, "emptied") is "target"
+PASS testElementAttribute(framesetElement, "ended") is "target"
+FAIL testElementAttribute(framesetElement, "focusin") should be target. Was script: target; content: window.
+FAIL testElementAttribute(framesetElement, "focusout") should be target. Was script: target; content: window.
 PASS testElementAttribute(framesetElement, "input") is "target"
 PASS testElementAttribute(framesetElement, "invalid") is "target"
 PASS testElementAttribute(framesetElement, "keydown") is "target"
 PASS testElementAttribute(framesetElement, "keypress") is "target"
 PASS testElementAttribute(framesetElement, "keyup") is "target"
-FAIL testElementAttribute(framesetElement, "loadeddata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "loadedmetadata") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "loadstart") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "loadeddata") is "target"
+PASS testElementAttribute(framesetElement, "loadedmetadata") is "target"
+PASS testElementAttribute(framesetElement, "loadstart") is "target"
 PASS testElementAttribute(framesetElement, "mousedown") is "target"
 PASS testElementAttribute(framesetElement, "mouseenter") is "target"
 PASS testElementAttribute(framesetElement, "mouseleave") is "target"
@@ -756,33 +757,32 @@ PASS testElementAttribute(framesetElement, "mouseover") is "target"
 PASS testElementAttribute(framesetElement, "mouseup") is "target"
 PASS testElementAttribute(framesetElement, "mousewheel") is "target"
 PASS testElementAttribute(framesetElement, "paste") is "target"
-FAIL testElementAttribute(framesetElement, "pause") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "play") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "playing") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "progress") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "ratechange") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "pause") is "target"
+PASS testElementAttribute(framesetElement, "play") is "target"
+PASS testElementAttribute(framesetElement, "playing") is "target"
+PASS testElementAttribute(framesetElement, "progress") is "target"
+PASS testElementAttribute(framesetElement, "ratechange") is "target"
 PASS testElementAttribute(framesetElement, "reset") is "target"
 FAIL testElementAttribute(framesetElement, "scroll") should be target. Was script: target; content: window.
-FAIL testElementAttribute(framesetElement, "search") should be target. Was script: target; content: none.
-FAIL testElementAttribute(framesetElement, "seeked") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "seeking") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "search") is "target"
+PASS testElementAttribute(framesetElement, "seeked") is "target"
+PASS testElementAttribute(framesetElement, "seeking") is "target"
 PASS testElementAttribute(framesetElement, "select") is "target"
 PASS testElementAttribute(framesetElement, "selectstart") is "target"
-FAIL testElementAttribute(framesetElement, "stalled") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "stalled") is "target"
 PASS testElementAttribute(framesetElement, "submit") is "target"
-FAIL testElementAttribute(framesetElement, "suspend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "timeupdate") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "touchcancel") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "touchend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "touchmove") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "touchstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "transitionend") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "volumechange") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "waiting") should be target. Was script: none; content: target.
+PASS testElementAttribute(framesetElement, "suspend") is "target"
+PASS testElementAttribute(framesetElement, "timeupdate") is "target"
+PASS testElementAttribute(framesetElement, "touchcancel") is "target"
+PASS testElementAttribute(framesetElement, "touchend") is "target"
+PASS testElementAttribute(framesetElement, "touchmove") is "target"
+PASS testElementAttribute(framesetElement, "touchstart") is "target"
+PASS testElementAttribute(framesetElement, "transitionend") is "target"
+PASS testElementAttribute(framesetElement, "volumechange") is "target"
+PASS testElementAttribute(framesetElement, "waiting") is "target"
 FAIL testElementAttribute(framesetElement, "webkitanimationend") should be target. Was script: none; content: target.
 FAIL testElementAttribute(framesetElement, "webkitanimationiteration") should be target. Was script: none; content: target.
 FAIL testElementAttribute(framesetElement, "webkitanimationstart") should be target. Was script: none; content: target.
-FAIL testElementAttribute(framesetElement, "webkitpresentationmodechanged") should be target. Was none.
 FAIL testElementAttribute(framesetElement, "webkittransitionend") should be target. Was script: none; content: target.
 PASS testElementAttribute(framesetElement, "wheel") is "target"
 
@@ -790,6 +790,197 @@ Event names we expect to not be able to set on <frameset> element
 
 PASS testElementAttribute(framesetElement, "noneventname") is "none"
 PASS testElementAttribute(framesetElement, "readystatechange") is "none"
+
+Event names we expect to be able to set on an element (tested on the SVG <rect> element)
+
+PASS testElementAttribute(rectElement, "abort") is "target"
+PASS testElementAttribute(rectElement, "animationend") is "target"
+PASS testElementAttribute(rectElement, "animationiteration") is "target"
+PASS testElementAttribute(rectElement, "animationstart") is "target"
+PASS testElementAttribute(rectElement, "beforecopy") is "target"
+PASS testElementAttribute(rectElement, "beforecut") is "target"
+PASS testElementAttribute(rectElement, "beforeload") is "target"
+PASS testElementAttribute(rectElement, "beforepaste") is "target"
+PASS testElementAttribute(rectElement, "blur") is "target"
+PASS testElementAttribute(rectElement, "canplay") is "target"
+PASS testElementAttribute(rectElement, "canplaythrough") is "target"
+PASS testElementAttribute(rectElement, "change") is "target"
+PASS testElementAttribute(rectElement, "click") is "target"
+PASS testElementAttribute(rectElement, "contextmenu") is "target"
+PASS testElementAttribute(rectElement, "copy") is "target"
+PASS testElementAttribute(rectElement, "cut") is "target"
+PASS testElementAttribute(rectElement, "dblclick") is "target"
+PASS testElementAttribute(rectElement, "drag") is "target"
+PASS testElementAttribute(rectElement, "dragend") is "target"
+PASS testElementAttribute(rectElement, "dragenter") is "target"
+PASS testElementAttribute(rectElement, "dragleave") is "target"
+PASS testElementAttribute(rectElement, "dragover") is "target"
+PASS testElementAttribute(rectElement, "dragstart") is "target"
+PASS testElementAttribute(rectElement, "drop") is "target"
+PASS testElementAttribute(rectElement, "durationchange") is "target"
+PASS testElementAttribute(rectElement, "emptied") is "target"
+PASS testElementAttribute(rectElement, "ended") is "target"
+PASS testElementAttribute(rectElement, "error") is "target"
+PASS testElementAttribute(rectElement, "focus") is "target"
+PASS testElementAttribute(rectElement, "focusin") is "target"
+PASS testElementAttribute(rectElement, "focusout") is "target"
+PASS testElementAttribute(rectElement, "input") is "target"
+PASS testElementAttribute(rectElement, "invalid") is "target"
+PASS testElementAttribute(rectElement, "keydown") is "target"
+PASS testElementAttribute(rectElement, "keypress") is "target"
+PASS testElementAttribute(rectElement, "keyup") is "target"
+PASS testElementAttribute(rectElement, "load") is "target"
+PASS testElementAttribute(rectElement, "loadeddata") is "target"
+PASS testElementAttribute(rectElement, "loadedmetadata") is "target"
+PASS testElementAttribute(rectElement, "loadstart") is "target"
+PASS testElementAttribute(rectElement, "mousedown") is "target"
+PASS testElementAttribute(rectElement, "mouseenter") is "target"
+PASS testElementAttribute(rectElement, "mouseleave") is "target"
+PASS testElementAttribute(rectElement, "mousemove") is "target"
+PASS testElementAttribute(rectElement, "mouseout") is "target"
+PASS testElementAttribute(rectElement, "mouseover") is "target"
+PASS testElementAttribute(rectElement, "mouseup") is "target"
+PASS testElementAttribute(rectElement, "mousewheel") is "target"
+PASS testElementAttribute(rectElement, "paste") is "target"
+PASS testElementAttribute(rectElement, "pause") is "target"
+PASS testElementAttribute(rectElement, "play") is "target"
+PASS testElementAttribute(rectElement, "playing") is "target"
+PASS testElementAttribute(rectElement, "progress") is "target"
+PASS testElementAttribute(rectElement, "ratechange") is "target"
+PASS testElementAttribute(rectElement, "reset") is "target"
+PASS testElementAttribute(rectElement, "scroll") is "target"
+PASS testElementAttribute(rectElement, "search") is "target"
+PASS testElementAttribute(rectElement, "seeked") is "target"
+PASS testElementAttribute(rectElement, "seeking") is "target"
+PASS testElementAttribute(rectElement, "select") is "target"
+PASS testElementAttribute(rectElement, "selectstart") is "target"
+PASS testElementAttribute(rectElement, "stalled") is "target"
+PASS testElementAttribute(rectElement, "submit") is "target"
+PASS testElementAttribute(rectElement, "suspend") is "target"
+PASS testElementAttribute(rectElement, "timeupdate") is "target"
+PASS testElementAttribute(rectElement, "touchcancel") is "target"
+PASS testElementAttribute(rectElement, "touchend") is "target"
+PASS testElementAttribute(rectElement, "touchmove") is "target"
+PASS testElementAttribute(rectElement, "touchstart") is "target"
+PASS testElementAttribute(rectElement, "transitionend") is "target"
+PASS testElementAttribute(rectElement, "volumechange") is "target"
+PASS testElementAttribute(rectElement, "waiting") is "target"
+FAIL testElementAttribute(rectElement, "webkitanimationend") should be target. Was script: none; content: target.
+FAIL testElementAttribute(rectElement, "webkitanimationiteration") should be target. Was script: none; content: target.
+FAIL testElementAttribute(rectElement, "webkitanimationstart") should be target. Was script: none; content: target.
+FAIL testElementAttribute(rectElement, "webkittransitionend") should be target. Was script: none; content: target.
+PASS testElementAttribute(rectElement, "wheel") is "target"
+
+Event names we expect not to be able to set on an element (tested on the SVG <rect> element)
+
+PASS testElementAttribute(rectElement, "beforeunload") is "none"
+PASS testElementAttribute(rectElement, "hashchange") is "none"
+PASS testElementAttribute(rectElement, "message") is "none"
+PASS testElementAttribute(rectElement, "noneventname") is "none"
+PASS testElementAttribute(rectElement, "offline") is "none"
+PASS testElementAttribute(rectElement, "online") is "none"
+PASS testElementAttribute(rectElement, "pagehide") is "none"
+PASS testElementAttribute(rectElement, "pageshow") is "none"
+PASS testElementAttribute(rectElement, "popstate") is "none"
+PASS testElementAttribute(rectElement, "readystatechange") is "none"
+PASS testElementAttribute(rectElement, "resize") is "none"
+PASS testElementAttribute(rectElement, "selectionchange") is "none"
+PASS testElementAttribute(rectElement, "storage") is "none"
+PASS testElementAttribute(rectElement, "unload") is "none"
+
+Event names on a non-HTML element
+
+FAIL testElementAttribute(nonHTMLElement, "abort") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "animationend") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "animationiteration") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "animationstart") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "beforecopy") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "beforecut") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "beforeload") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "beforepaste") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "beforeunload") is "none"
+FAIL testElementAttribute(nonHTMLElement, "blur") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "canplay") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "canplaythrough") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "change") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "click") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "contextmenu") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "copy") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "cut") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dblclick") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "drag") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dragend") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dragenter") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dragleave") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dragover") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "dragstart") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "drop") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "durationchange") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "emptied") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "ended") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "error") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "focus") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "focusin") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "focusout") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "hashchange") is "none"
+FAIL testElementAttribute(nonHTMLElement, "input") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "invalid") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "keydown") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "keypress") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "keyup") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "load") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "loadeddata") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "loadedmetadata") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "loadstart") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "message") is "none"
+FAIL testElementAttribute(nonHTMLElement, "mousedown") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mouseenter") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mouseleave") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mousemove") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mouseout") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mouseover") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mouseup") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "mousewheel") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "noneventname") is "none"
+PASS testElementAttribute(nonHTMLElement, "offline") is "none"
+PASS testElementAttribute(nonHTMLElement, "online") is "none"
+PASS testElementAttribute(nonHTMLElement, "pagehide") is "none"
+PASS testElementAttribute(nonHTMLElement, "pageshow") is "none"
+FAIL testElementAttribute(nonHTMLElement, "paste") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "pause") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "play") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "playing") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "popstate") is "none"
+FAIL testElementAttribute(nonHTMLElement, "progress") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "ratechange") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "readystatechange") is "none"
+FAIL testElementAttribute(nonHTMLElement, "reset") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "resize") is "none"
+FAIL testElementAttribute(nonHTMLElement, "scroll") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "search") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "seeked") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "seeking") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "select") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "selectionchange") is "none"
+FAIL testElementAttribute(nonHTMLElement, "selectstart") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "stalled") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "storage") is "none"
+FAIL testElementAttribute(nonHTMLElement, "submit") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "suspend") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "timeupdate") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "touchcancel") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "touchend") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "touchmove") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "touchstart") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "transitionend") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "unload") is "none"
+FAIL testElementAttribute(nonHTMLElement, "volumechange") should be none. Was script: target; content: none.
+FAIL testElementAttribute(nonHTMLElement, "waiting") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "webkitanimationend") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkitanimationiteration") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkitanimationstart") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkittransitionend") is "none"
+FAIL testElementAttribute(nonHTMLElement, "wheel") should be none. Was script: target; content: none.
 
 PASS successfullyParsed is true
 

@@ -156,6 +156,7 @@ Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const Strin
     args.append(jsNumber(id));
 
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
+    scriptState->clearException();
     if (result.isObject())
         return Deprecated::ScriptObject(scriptState, result.getObject());
 

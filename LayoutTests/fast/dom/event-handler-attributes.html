@@ -143,6 +143,7 @@ const elementEvents = [
     "animationstart",
     "beforecopy",
     "beforecut",
+    "beforeload",
     "beforepaste",
     "blur",
     "canplay",
@@ -211,7 +212,6 @@ const elementEvents = [
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
-    "webkitpresentationmodechanged",
     "webkittransitionend",
     "wheel",
 ];
@@ -366,12 +366,14 @@ function testArray(array, prefix, expected, sectionName)
     }
 }
 
+const nonHTMLElement = document.createElementNS("foo", "foo");
 const element = document.documentElement;
 const bodyElement = document.body;
 const audioElement = document.createElement("video");
 const framesetElement = document.createElement("frameset");
 const inputElement = document.createElement("input");
 const videoElement = document.createElement("video");
+const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
 testArray(windowEvents, "testScriptAttribute(window", "window", "Event names we expect to be able to set on the window object");
 testArray(arrayDifference(allEventNames, windowEvents), "testScriptAttribute(window", "none", "Event names we expect not to be able to set on the window object");
@@ -401,6 +403,11 @@ testArray(bodyElementDocumentForwardedEvents, "testElementAttribute(framesetElem
 testArray(arrayDifference(elementEvents, arrayUnion(bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "target", "Non-forwarded event names on &lt;frameset> element");
 testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "none", "Event names we expect to not be able to set on &lt;frameset> element");
 
+testArray(elementEvents, "testElementAttribute(rectElement", "target", "Event names we expect to be able to set on an element (tested on the SVG &lt;rect> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(rectElement", "none", "Event names we expect not to be able to set on an element (tested on the SVG &lt;rect> element)");
+
+testArray(allEventNames, "testElementAttribute(nonHTMLElement", "none", "Event names on a non-HTML element");
+
 endSection();
 
 /*
@@ -409,11 +416,9 @@ endSection();
 
 To make the results of this test platform independent, there is no testing here for conditional events.
 An alternative would be to always make these event handler attributes work even if the feature
-that sends the events is turned off. See list here of IDL files that indicate these conditional events.
+that sends the events is turned off. See list here of IDL files that include these conditional events.
 
-page/DOMWindow.idl:#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
-page/DOMWindow.idl:    attribute EventListener onorientationchange;
-page/DOMWindow.idl:#endif
+page/DOMWindow.idl:    [Conditional=ORIENTATION_EVENTS] attribute EventListener onorientationchange;
 page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
 page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
 page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
@@ -443,30 +448,25 @@ dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attrib
 dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
 dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
 
-dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
-dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
-dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
-dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyadded;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyerror;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeymessage;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
 dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
 dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocomplete;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocompleteerror;
+dom/Element.idl:    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventListener onwebkitpresentationmodechanged;
 dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
 dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
 dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
 dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
 
 html/HTMLBodyElement.idl:    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
 
 html/HTMLFrameSetElement.idl:    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
-
-html/HTMLFormElement.idl:    [Conditional=REQUEST_AUTOCOMPLETE, NotEnumerable] attribute EventListener onautocomplete;
-html/HTMLFormElement.idl:    [Conditional=REQUEST_AUTOCOMPLETE, NotEnumerable] attribute EventListener onautocompleteerror;
-
-html/HTMLMediaElement.idl:    attribute EventListener onwebkitkeyadded;
-html/HTMLMediaElement.idl:    attribute EventListener onwebkitkeyerror;
-html/HTMLMediaElement.idl:    attribute EventListener onwebkitkeymessage;
-html/HTMLMediaElement.idl:    [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
-html/HTMLMediaElement.idl:    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
-html/HTMLMediaElement.idl:    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
 
 ----------------
 

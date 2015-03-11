@@ -125,10 +125,6 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == webkitwirelessvideoplaybackdisabledAttr)
         mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
 #endif
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    else if (name == onwebkitpresentationmodechangedAttr)
-        setAttributeEventListener(eventNames().webkitpresentationmodechangedEvent, name, value);
-#endif
     else {
         HTMLMediaElement::parseAttribute(name, value);    
 

@@ -697,9 +697,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_inputType->srcAttributeChanged();
     else if (name == usemapAttr || name == accesskeyAttr) {
         // FIXME: ignore for the moment
-    } else if (name == onsearchAttr) {
-        // Search field and slider attributes all just cause updateFromElement to be called through style recalcing.
-        setAttributeEventListener(eventNames().searchEvent, name, value);
     } else if (name == resultsAttr) {
         m_maxResults = !value.isNull() ? std::min(value.toInt(), maxSavedResults) : -1;
         m_inputType->maxResultsAttributeChanged();

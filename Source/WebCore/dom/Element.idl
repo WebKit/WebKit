@@ -164,13 +164,26 @@
     [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;
     [Conditional=CSS_REGIONS] sequence<Range> webkitGetRegionFlowRanges();
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-    // Event handler DOM attributes
+    // FIXME: These should be on HTMLElement and SVGElement, not on Element.
+    // But we don't want to copy and paste this entire list; we can leave on Element
+    // for the moment since it doesn't do much real harm.
+
     [NotEnumerable] attribute EventListener onabort;
+    [NotEnumerable] attribute EventListener onanimationend;
+    [NotEnumerable] attribute EventListener onanimationiteration;
+    [NotEnumerable] attribute EventListener onanimationstart;
+    [NotEnumerable] attribute EventListener onbeforecopy;
+    [NotEnumerable] attribute EventListener onbeforecut;
+    [NotEnumerable] attribute EventListener onbeforeload;
+    [NotEnumerable] attribute EventListener onbeforepaste;
     [NotEnumerable] attribute EventListener onblur;
+    [NotEnumerable] attribute EventListener oncanplay;
+    [NotEnumerable] attribute EventListener oncanplaythrough;
     [NotEnumerable] attribute EventListener onchange;
     [NotEnumerable] attribute EventListener onclick;
     [NotEnumerable] attribute EventListener oncontextmenu;
+    [NotEnumerable] attribute EventListener oncopy;
+    [NotEnumerable] attribute EventListener oncut;
     [NotEnumerable] attribute EventListener ondblclick;
     [NotEnumerable] attribute EventListener ondrag;
     [NotEnumerable] attribute EventListener ondragend;
@@ -179,14 +192,22 @@
     [NotEnumerable] attribute EventListener ondragover;
     [NotEnumerable] attribute EventListener ondragstart;
     [NotEnumerable] attribute EventListener ondrop;
+    [NotEnumerable] attribute EventListener ondurationchange;
+    [NotEnumerable] attribute EventListener onemptied;
+    [NotEnumerable] attribute EventListener onended;
     [NotEnumerable] attribute EventListener onerror;
     [NotEnumerable] attribute EventListener onfocus;
+    [NotEnumerable] attribute EventListener onfocusin;
+    [NotEnumerable] attribute EventListener onfocusout;
     [NotEnumerable] attribute EventListener oninput;
     [NotEnumerable] attribute EventListener oninvalid;
     [NotEnumerable] attribute EventListener onkeydown;
     [NotEnumerable] attribute EventListener onkeypress;
     [NotEnumerable] attribute EventListener onkeyup;
     [NotEnumerable] attribute EventListener onload;
+    [NotEnumerable] attribute EventListener onloadeddata;
+    [NotEnumerable] attribute EventListener onloadedmetadata;
+    [NotEnumerable] attribute EventListener onloadstart;
     [NotEnumerable] attribute EventListener onmousedown;
     [NotEnumerable] attribute EventListener onmouseenter;
     [NotEnumerable] attribute EventListener onmouseleave;
@@ -195,55 +216,56 @@
     [NotEnumerable] attribute EventListener onmouseover;
     [NotEnumerable] attribute EventListener onmouseup;
     [NotEnumerable] attribute EventListener onmousewheel;
+    [NotEnumerable] attribute EventListener onpaste;
+    [NotEnumerable] attribute EventListener onpause;
+    [NotEnumerable] attribute EventListener onplay;
+    [NotEnumerable] attribute EventListener onplaying;
+    [NotEnumerable] attribute EventListener onprogress;
+    [NotEnumerable] attribute EventListener onratechange;
+    [NotEnumerable] attribute EventListener onreset;
     [NotEnumerable] attribute EventListener onscroll;
+    [NotEnumerable] attribute EventListener onsearch;
+    [NotEnumerable] attribute EventListener onseeked;
+    [NotEnumerable] attribute EventListener onseeking;
     [NotEnumerable] attribute EventListener onselect;
+    [NotEnumerable] attribute EventListener onselectstart;
+    [NotEnumerable] attribute EventListener onstalled;
     [NotEnumerable] attribute EventListener onsubmit;
+    [NotEnumerable] attribute EventListener onsuspend;
+    [NotEnumerable] attribute EventListener ontimeupdate;
+    [NotEnumerable] attribute EventListener ontouchcancel;
+    [NotEnumerable] attribute EventListener ontouchend;
+    [NotEnumerable] attribute EventListener ontouchmove;
+    [NotEnumerable] attribute EventListener ontouchstart;
+    [NotEnumerable] attribute EventListener ontransitionend;
+    [NotEnumerable] attribute EventListener onvolumechange;
+    [NotEnumerable] attribute EventListener onwaiting;
     [NotEnumerable] attribute EventListener onwheel;
 
-    // [NotEnumerable] attribute EventListener oncanplay;
-    // [NotEnumerable] attribute EventListener oncanplaythrough;
-    // [NotEnumerable] attribute EventListener ondurationchange;
-    // [NotEnumerable] attribute EventListener onemptied;
-    // [NotEnumerable] attribute EventListener onended;
-    // [NotEnumerable] attribute EventListener onloadeddata;
-    // [NotEnumerable] attribute EventListener onloadedmetadata;
-    // [NotEnumerable] attribute EventListener onloadstart;
-    // [NotEnumerable] attribute EventListener onpause;
-    // [NotEnumerable] attribute EventListener onplay;
-    // [NotEnumerable] attribute EventListener onplaying;
-    // [NotEnumerable] attribute EventListener onprogress;
-    // [NotEnumerable] attribute EventListener onratechange;
-    // [NotEnumerable] attribute EventListener onreadystatechange;
-    // [NotEnumerable] attribute EventListener onseeked;
-    // [NotEnumerable] attribute EventListener onseeking;
-    // [NotEnumerable] attribute EventListener onshow;
-    // [NotEnumerable] attribute EventListener onstalled;
-    // [NotEnumerable] attribute EventListener onsuspend;
-    // [NotEnumerable] attribute EventListener ontimeupdate;
-    // [NotEnumerable] attribute EventListener onvolumechange;
-    // [NotEnumerable] attribute EventListener onwaiting;
+    // FIXME: If event handler attributes are all not enumerable, is there really a need to have them be conditional?
+    // I suggest just including them all unconditionally even if the event in question won't ever be sent.
 
-    // WebKit extensions
-    [NotEnumerable] attribute EventListener onbeforecut;
-    [NotEnumerable] attribute EventListener oncut;
-    [NotEnumerable] attribute EventListener onbeforecopy;
-    [NotEnumerable] attribute EventListener oncopy;
-    [NotEnumerable] attribute EventListener onbeforepaste;
-    [NotEnumerable] attribute EventListener onpaste;
-    [NotEnumerable] attribute EventListener onreset;
-    [NotEnumerable] attribute EventListener onsearch;
-    [NotEnumerable] attribute EventListener onselectstart;
-    [NotEnumerable,Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
-    [NotEnumerable,Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
-    [NotEnumerable,Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
-    [NotEnumerable,Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyadded;
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyerror;
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeymessage;
+
+    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
+
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
+
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocomplete;
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocompleteerror;
+
+    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventListener onwebkitpresentationmodechanged;
+
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
     [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
-#endif
+
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
 };
 
 Element implements ChildNode;

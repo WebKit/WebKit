@@ -23,13 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if defined(ENABLE_VIDEO_PRESENTATION_MODE) && ENABLE_VIDEO_PRESENTATION_MODE
-enum VideoPresentationMode {
-    "fullscreen",
-    "optimized",
-    "inline"
-};
-#endif
+// FIXME: This should be Conditional=VIDEO_PRESENTATION_MODE.
+enum VideoPresentationMode { "fullscreen", "optimized", "inline" };
 
 [
     Conditional=VIDEO,
@@ -53,20 +48,13 @@ enum VideoPresentationMode {
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
 
-    // The number of frames that have been decoded and made available for
-    // playback.
+    // The number of frames that have been decoded and made available for playback.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDecodedFrameCount;
 
-    // The number of decoded frames that have been dropped by the player
-    // for performance reasons during playback.
+    // The number of decoded frames that have been dropped by the player for performance reasons during playback.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDroppedFrameCount;
 
-#if defined(ENABLE_VIDEO_PRESENTATION_MODE) && ENABLE_VIDEO_PRESENTATION_MODE
-    boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
-
-    readonly attribute VideoPresentationMode webkitPresentationMode;
-    void webkitSetPresentationMode(VideoPresentationMode mode);
-
-    attribute EventListener onwebkitpresentationmodechanged;
-#endif
+    [Conditional=VIDEO_PRESENTATION_MODE] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
+    [Conditional=VIDEO_PRESENTATION_MODE] readonly attribute VideoPresentationMode webkitPresentationMode;
+    [Conditional=VIDEO_PRESENTATION_MODE] void webkitSetPresentationMode(VideoPresentationMode mode);
 };

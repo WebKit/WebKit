@@ -1,3 +1,104 @@
+2015-03-10  Darin Adler  <darin@apple.com>
+
+        Some event handler fixes
+        https://bugs.webkit.org/show_bug.cgi?id=142474
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateConditionalStringFromAttributeValue): Improved the algorithm here to
+        handle combinations of & and | in conditional expressions; that's coming up when
+        combining conditionals for includes in NavigatorContentUtils.idl.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToImplIncludes): Removed the rudimentary attempt to split and merge
+        conditionals involving | here; instead we rely on the rules in the
+        GenerateConditionalStringFromAttributeValue to handle this.
+        (GenerateImplementation): Passed new "conditional" argument to JSValueToNative.
+        (GenerateParametersCheck): Pass "conditional" argument to AddToImplIncludes and
+        JSValueToNative.
+        (JSValueToNative): Changed to take "conditional" as an argument, since getting
+        it from the signature won't work for a method parameter.
+        (WriteData): Merge duplicates based on the result of the
+        GenerateConditionalStringFromAttributeValue function rather than on the values
+        passed into that function, since that function converts conditionals into a
+        canonical form and can make two strings equal that don't start out that way.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (SkipAttribute): Added code to guarantee we won't make Objective-C bindings
+        for event handlers. We will rename EventListener to EventHandler in a
+        subsequent patch.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Updated for a progression caused
+        by the better logic for conditional includes.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated for change to the test below.
+        * bindings/scripts/test/TestObj.idl: Added test of an event handler attribute.
+
+        * dom/Document.idl: Removed unneeded language #if around event handler
+        attributes. Removed all the commented out event handler attributes.
+        Sorted event handler attributes into a single section rather than separating
+        "standard" from "extensions". Sorted the conditional event handler attributes
+        into paragraphs at the bottom. We will probably make them all unconditional
+        in a subsequent patch.
+
+        * dom/Element.idl: Removed unneeded language #if around event handler
+        attributes. Removed all the commented out event handler attributes.
+        Moved event handler attributes here from all derived element classes to
+        match the approach from the HTML standard. Also resorted the attributes
+        as in Document above.
+
+        * html/HTMLBodyElement.idl: Removed unneeded language #if around event handler
+        attributes. Removed all the commented out event handler attributes.
+        Sorted event handler attributes into a single section rather than separating
+        "standard" from "overrides".
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::populateEventNameForAttributeLocalNameMap):
+        Added a few missing attribute names, and re-sorted a bit. Moved any from
+        element subclasses here.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseAttribute): Moved code to handle
+        oncomplete and oncompleteerror to Element and HTMLElement.
+        * html/HTMLFormElement.idl: Ditto.
+
+        * html/HTMLFrameSetElement.idl: Removed #if and resorted as above.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Moved code to handle
+        onsearch to HTMLElement.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Moved code to handle
+        all the event handler attributes to HTMLElement.
+        (WebCore::HTMLMediaElement::updateCaptionContainer): Removed a redundant
+        if statement I noticed while auditing all calls to JSC::call.
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot): Added clearException.
+        I noticed this was missing because a flawed earlier version of my patch was
+        causing the script to fail, leaving an exception behind that caused an
+        assertion later. So I audited all calls to JSC::call looking for this mistake.
+
+        * html/HTMLMediaElement.idl: Moved all the event handlers from here to
+        Element. Also changed everything possible to use Conditional instead of #if.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot): Added
+        clearException. Noticed it was missing while auditing all calls to JSC::call.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Moved event handler code to
+        HTMLElement.
+
+        * html/HTMLVideoElement.idl: Moved event handler to Element.idl and use
+        Conditional instead of #if.
+
+        * page/DOMWindow.idl: Use Conditional instead of #if and tidy up the event
+        handlers section.
+
+        * svg/svgattrs.in: Remove six unused attribute names. Presumably used in
+        some older scheme to implement event handlers but no longer used at all.
+
 2015-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         CSS scroll-snap-destination and scroll-snap-coordinate are not honoring position values
