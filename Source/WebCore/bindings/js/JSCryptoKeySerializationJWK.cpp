@@ -377,7 +377,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataOctetSequence
         return nullptr;
     }
 
-    return CryptoKeyDataOctetSequence::create(octetSequence);
+    return std::make_unique<CryptoKeyDataOctetSequence>(octetSequence);
 }
 
 std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents() const

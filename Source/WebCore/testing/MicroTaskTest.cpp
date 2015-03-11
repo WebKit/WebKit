@@ -35,9 +35,4 @@ void MicroTaskTest::run()
         m_document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, message.toString());
 }
 
-std::unique_ptr<MicroTaskTest> MicroTaskTest::create(WeakPtr<Document> document, int testNumber)
-{
-    return std::unique_ptr<MicroTaskTest>(new MicroTaskTest(document, testNumber));
-}
-
 } // namespace WebCore

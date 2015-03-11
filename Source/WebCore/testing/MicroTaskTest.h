@@ -30,16 +30,16 @@ class Document;
 
 class MicroTaskTest : public MicroTask {
 public:
-    virtual void run() override;
-    WEBCORE_TESTSUPPORT_EXPORT static std::unique_ptr<MicroTaskTest> create(WeakPtr<Document>, int testNumber);
-
-private:
     MicroTaskTest(WeakPtr<Document> document, int testNumber)
         : m_document(document)
         , m_testNumber(testNumber)
     {
     }
 
+    virtual void run() override;
+    WEBCORE_TESTSUPPORT_EXPORT static std::unique_ptr<MicroTaskTest> create(WeakPtr<Document>, int testNumber);
+
+private:
     WeakPtr<Document> m_document;
     int m_testNumber;
 };

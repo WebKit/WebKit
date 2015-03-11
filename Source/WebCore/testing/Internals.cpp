@@ -2549,7 +2549,7 @@ RefPtr<File> Internals::createFile(const String& path)
 void Internals::queueMicroTask(int testNumber)
 {
     if (contextDocument())
-        MicroTaskQueue::singleton().queueMicroTask(MicroTaskTest::create(contextDocument()->createWeakPtr(), testNumber));
+        MicroTaskQueue::singleton().queueMicroTask(std::make_unique<MicroTaskTest>(contextDocument()->createWeakPtr(), testNumber));
 }
 
 #if ENABLE(CONTENT_FILTERING)

@@ -1,3 +1,35 @@
+2015-03-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove unnecessary create() factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=142558
+
+        Reviewed by Darin Adler.
+
+        create() function which just returns new instance can be replaced with std::make_unique<>.
+
+        No new tests, no behavior changes.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::keyDataOctetSequence):
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::exportData):
+        * crypto/keys/CryptoKeyDataOctetSequence.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::exportData):
+        * crypto/keys/CryptoKeySerializationRaw.cpp:
+        (WebCore::CryptoKeySerializationRaw::keyData):
+        * platform/audio/mac/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::create): Deleted.
+        * platform/audio/mac/CARingBuffer.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::prepare):
+        * testing/Internals.cpp:
+        (WebCore::Internals::queueMicroTask):
+        * testing/MicroTaskTest.cpp:
+        (WebCore::MicroTaskTest::create): Deleted.
+        * testing/MicroTaskTest.h:
+        (WebCore::MicroTaskTest::MicroTaskTest):
+
 2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS parser errors in the console should include column numbers

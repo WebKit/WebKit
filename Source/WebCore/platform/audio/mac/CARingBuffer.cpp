@@ -37,11 +37,6 @@ const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize
 
 namespace WebCore {
 
-std::unique_ptr<CARingBuffer> CARingBuffer::create()
-{
-    return std::unique_ptr<CARingBuffer>(new CARingBuffer());
-}
-
 CARingBuffer::CARingBuffer()
     : m_channelCount(0)
     , m_frameCount(0)

@@ -80,7 +80,7 @@ void CryptoKeyHMAC::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&
 
 std::unique_ptr<CryptoKeyData> CryptoKeyHMAC::exportData() const
 {
-    return CryptoKeyDataOctetSequence::create(m_key);
+    return std::make_unique<CryptoKeyDataOctetSequence>(m_key);
 }
 
 } // namespace WebCore

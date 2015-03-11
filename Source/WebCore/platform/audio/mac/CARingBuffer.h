@@ -38,7 +38,7 @@ namespace WebCore {
 
 class CARingBuffer {
 public:
-    static std::unique_ptr<CARingBuffer> create();
+    CARingBuffer();
     ~CARingBuffer();
 
     enum Error {
@@ -56,8 +56,6 @@ public:
     uint32_t channelCount() const { return m_channelCount; }
 
 private:
-    CARingBuffer();
-
     size_t frameOffset(uint64_t frameNumber) { return (frameNumber & m_frameCountMask) * m_bytesPerFrame; }
 
     void clipTimeBounds(uint64_t& startRead, uint64_t& endRead);

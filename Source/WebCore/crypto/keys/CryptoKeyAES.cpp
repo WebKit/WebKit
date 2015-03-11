@@ -71,7 +71,7 @@ void CryptoKeyAES::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
 
 std::unique_ptr<CryptoKeyData> CryptoKeyAES::exportData() const
 {
-    return CryptoKeyDataOctetSequence::create(m_key);
+    return std::make_unique<CryptoKeyDataOctetSequence>(m_key);
 }
 
 } // namespace WebCore
