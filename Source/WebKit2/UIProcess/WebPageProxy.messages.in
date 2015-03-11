@@ -423,4 +423,6 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     DidPerformActionMenuHitTest(struct WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::UserData userData)
 #endif
+
+    HandleAutoFillButtonClick(WebKit::UserData userData);
 }

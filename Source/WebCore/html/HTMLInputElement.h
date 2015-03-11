@@ -151,6 +151,7 @@ public:
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
     virtual HTMLElement* placeholderElement() const override final;
+    WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
 
     bool checked() const { return m_isChecked; }
     void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
@@ -235,8 +236,11 @@ public:
 
     bool multiple() const;
 
-    bool isAutofilled() const { return m_isAutofilled; }
-    WEBCORE_EXPORT void setAutofilled(bool = true);
+    bool isAutoFilled() const { return m_isAutoFilled; }
+    WEBCORE_EXPORT void setAutoFilled(bool = true);
+
+    bool showAutoFillButton() const { return m_showAutoFillButton; }
+    WEBCORE_EXPORT void setShowAutoFillButton(bool);
 
     FileList* files();
     void setFiles(PassRefPtr<FileList>);
@@ -428,7 +432,8 @@ private:
     bool m_hasType : 1;
     bool m_isActivatedSubmit : 1;
     unsigned m_autocomplete : 2; // AutoCompleteSetting
-    bool m_isAutofilled : 1;
+    bool m_isAutoFilled : 1;
+    bool m_showAutoFillButton : 1;
 #if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1;
 #endif

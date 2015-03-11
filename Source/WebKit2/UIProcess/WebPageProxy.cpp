@@ -5592,4 +5592,9 @@ void WebPageProxy::setShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeM
     m_process->send(Messages::WebPage::SetShouldDispatchFakeMouseMoveEvents(shouldDispatchFakeMouseMoveEvents), m_pageID);
 }
 
+void WebPageProxy::handleAutoFillButtonClick(const UserData& userData)
+{
+    m_uiClient->didClickAutoFillButton(*this, m_process->transformHandlesToObjects(userData.object()).get());
+}
+
 } // namespace WebKit

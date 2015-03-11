@@ -445,6 +445,8 @@ public:
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
 
+    virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
+
 protected:
     virtual ~ChromeClient() { }
 };

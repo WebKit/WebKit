@@ -489,10 +489,6 @@ void InputType::blur()
     element().defaultBlur();
 }
 
-void InputType::capsLockStateMayHaveChanged()
-{
-}
-
 void InputType::createShadowSubtree()
 {
 }
@@ -925,6 +921,14 @@ void InputType::readonlyAttributeChanged()
 }
 
 void InputType::requiredAttributeChanged()
+{
+}
+
+void InputType::capsLockStateMayHaveChanged()
+{
+}
+
+void InputType::updateAutoFillButton()
 {
 }
 

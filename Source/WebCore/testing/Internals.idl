@@ -116,6 +116,7 @@ enum PageOverlayType {
     [RaisesException] boolean elementShouldAutoComplete(Element inputElement);
     [RaisesException] void setEditingValue(Element inputElement, DOMString value);
     [RaisesException] void setAutofilled(Element inputElement, boolean enabled);
+    [RaisesException] void setShowAutoFillButton(Element inputElement, boolean enabled);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
     [RaisesException] void paintControlTints();

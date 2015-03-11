@@ -1384,6 +1384,8 @@ private:
     void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, const UserData&);
 #endif
 
+    void handleAutoFillButtonClick(const UserData&);
+
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;

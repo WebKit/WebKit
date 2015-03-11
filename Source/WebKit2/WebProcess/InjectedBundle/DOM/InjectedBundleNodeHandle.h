@@ -47,25 +47,29 @@ class WebImage;
 
 class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle> {
 public:
-    static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
-    static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
+    static RefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
+    static RefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
+    static Ref<InjectedBundleNodeHandle> getOrCreate(WebCore::Node&);
 
     virtual ~InjectedBundleNodeHandle();
 
-    WebCore::Node* coreNode() const;
+    WebCore::Node* coreNode();
 
     // Convenience DOM Operations
-    PassRefPtr<InjectedBundleNodeHandle> document();
+    Ref<InjectedBundleNodeHandle> document();
 
     // Additional DOM Operations
     // Note: These should only be operations that are not exposed to JavaScript.
-    WebCore::IntRect elementBounds() const;
-    WebCore::IntRect renderRect(bool*) const;
+    WebCore::IntRect elementBounds();
+    WebCore::IntRect renderRect(bool*);
     PassRefPtr<WebImage> renderedImage(SnapshotOptions);
-    PassRefPtr<InjectedBundleRangeHandle> visibleRange() const;
+    PassRefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);
-    bool isHTMLInputElementAutofilled() const;
-    void setHTMLInputElementAutofilled(bool);
+    bool isHTMLInputElementAutoFilled() const;
+    void setHTMLInputElementAutoFilled(bool);
+    bool isHTMLInputElementAutoFillButtonEnabled() const;
+    void setHTMLInputElementAutoFillButtonEnabled(bool);
+    WebCore::IntRect htmlInputElementAutoFillButtonBounds();
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();
     bool isTextField() const;
@@ -77,10 +81,10 @@ public:
     PassRefPtr<WebFrame> htmlIFrameElementContentFrame();
 
 private:
-    static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);
-    InjectedBundleNodeHandle(WebCore::Node*);
+    static Ref<InjectedBundleNodeHandle> create(WebCore::Node&);
+    InjectedBundleNodeHandle(WebCore::Node&);
 
-    RefPtr<WebCore::Node> m_node;
+    Ref<WebCore::Node> m_node;
 };
 
 } // namespace WebKit

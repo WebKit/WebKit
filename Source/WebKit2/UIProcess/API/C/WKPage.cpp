@@ -1744,6 +1744,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
             m_client.isPlayingAudioDidChange(toAPI(&page), m_client.base.clientInfo);
         }
+
+        virtual void didClickAutoFillButton(WebPageProxy& page, API::Object* userInfo) override
+        {
+            if (!m_client.didClickAutoFillButton)
+                return;
+
+            m_client.didClickAutoFillButton(toAPI(&page), toAPI(userInfo), m_client.base.clientInfo);
+        }
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));

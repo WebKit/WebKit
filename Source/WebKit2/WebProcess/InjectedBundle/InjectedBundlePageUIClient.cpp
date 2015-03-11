@@ -28,6 +28,7 @@
 
 #include "APISecurityOrigin.h"
 #include "InjectedBundleHitTestResult.h"
+#include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
@@ -230,6 +231,16 @@ void InjectedBundlePageUIClient::didCancelTrackingPotentialLongMousePress(WebPag
 
     WKTypeRef userDataToPass = nullptr;
     m_client.didCancelTrackingPotentialLongMousePress(toAPI(page), &userDataToPass, m_client.base.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
+void InjectedBundlePageUIClient::didClickAutoFillButton(WebPage& page, InjectedBundleNodeHandle& nodeHandle, RefPtr<API::Object>& userData)
+{
+    if (!m_client.didClickAutoFillButton)
+        return;
+
+    WKTypeRef userDataToPass = nullptr;
+    m_client.didClickAutoFillButton(toAPI(&page), toAPI(&nodeHandle), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

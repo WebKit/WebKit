@@ -155,6 +155,8 @@ public:
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return WTF::move(defaultActions); }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
 #endif
+
+    virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
 };
 
 } // namespace API

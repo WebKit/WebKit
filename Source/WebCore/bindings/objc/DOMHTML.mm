@@ -182,7 +182,7 @@ using namespace WebCore;
 #if PLATFORM(IOS)
 - (BOOL)_isAutofilled
 {
-    return core(self)->isAutofilled();
+    return core(self)->isAutoFilled();
 }
 
 - (void)_setAutofilled:(BOOL)filled
@@ -190,7 +190,7 @@ using namespace WebCore;
     // This notifies the input element that the content has been autofilled
     // This allows WebKit to obey the -webkit-autofill pseudo style, which
     // changes the background color.
-    core(self)->setAutofilled(filled);
+    core(self)->setAutoFilled(filled);
 }
 #endif // PLATFORM(IOS)
 

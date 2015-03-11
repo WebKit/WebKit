@@ -45,7 +45,7 @@ ALWAYS_INLINE bool isAutofilled(const Element* element)
 {
     if (is<HTMLFormControlElement>(*element)) {
         if (const HTMLInputElement* inputElement = element->toInputElement())
-            return inputElement->isAutofilled();
+            return inputElement->isAutoFilled();
     }
     return false;
 }

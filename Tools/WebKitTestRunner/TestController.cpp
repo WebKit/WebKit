@@ -256,6 +256,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // didCancelTrackingPotentialLongMousePress
         0, // isPlayingAudioDidChange
         decidePolicyForUserMediaPermissionRequest,
+        0, // didClickAutofillButton
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -493,6 +494,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didCancelTrackingPotentialLongMousePress
         0, // isPlayingAudioDidChange
         decidePolicyForUserMediaPermissionRequest,
+        0, // didClickAutofillButton
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

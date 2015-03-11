@@ -1746,6 +1746,7 @@ set(WebCore_SOURCES
     html/parser/XSSAuditor.cpp
     html/parser/XSSAuditorDelegate.cpp
 
+    html/shadow/AutoFillButtonElement.cpp
     html/shadow/ContentDistributor.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/InsertionPoint.cpp

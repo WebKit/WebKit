@@ -215,8 +215,6 @@ public:
 
     virtual void blur();
 
-    virtual void capsLockStateMayHaveChanged();
-
     // Shadow tree handling
 
     virtual void createShadowSubtree();
@@ -227,6 +225,7 @@ public:
     virtual TextControlInnerTextElement* innerTextElement() const { return nullptr; }
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
     virtual HTMLElement* capsLockIndicatorElement() const { return nullptr; }
+    virtual HTMLElement* autoFillButtonElement() const { return nullptr; }
     virtual HTMLElement* resultsButtonElement() const { return nullptr; }
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }
@@ -275,6 +274,8 @@ public:
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
     virtual void requiredAttributeChanged();
+    virtual void capsLockStateMayHaveChanged();
+    virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
 
 #if ENABLE(DATALIST_ELEMENT)

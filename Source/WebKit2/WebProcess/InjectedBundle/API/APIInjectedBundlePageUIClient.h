@@ -33,6 +33,7 @@ class HitTestResult;
 }
 
 namespace WebKit {
+class InjectedBundleNodeHandle;
 class WebFrame;
 class WebPage;
 }
@@ -89,6 +90,8 @@ public:
     virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPage*, const WebCore::IntPoint&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
     virtual void didRecognizeLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
     virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
+
+    virtual void didClickAutoFillButton(WebKit::WebPage&, WebKit::InjectedBundleNodeHandle&, RefPtr<API::Object>&) { }
 };
 
 } // namespace InjectedBundle

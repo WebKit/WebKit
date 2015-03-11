@@ -109,7 +109,8 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_hasType(false)
     , m_isActivatedSubmit(false)
     , m_autocomplete(Uninitialized)
-    , m_isAutofilled(false)
+    , m_isAutoFilled(false)
+    , m_showAutoFillButton(false)
 #if ENABLE(DATALIST_ELEMENT)
     , m_hasNonEmptyList(false)
 #endif
@@ -202,6 +203,11 @@ HTMLElement* HTMLInputElement::innerSpinButtonElement() const
 HTMLElement* HTMLInputElement::capsLockIndicatorElement() const
 {
     return m_inputType->capsLockIndicatorElement();
+}
+
+HTMLElement* HTMLInputElement::autoFillButtonElement() const
+{
+    return m_inputType->autoFillButtonElement();
 }
 
 HTMLElement* HTMLInputElement::resultsButtonElement() const
@@ -835,7 +841,7 @@ void HTMLInputElement::reset()
     if (m_inputType->storesValueSeparateFromAttribute())
         setValue(String());
 
-    setAutofilled(false);
+    setAutoFilled(false);
     setChecked(fastHasAttribute(checkedAttr));
     m_reflectsCheckedAttribute = true;
 }
@@ -1056,8 +1062,8 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     updateValidity();
 
-    // Clear autofill flag (and yellow background) on user edit.
-    setAutofilled(false);
+    // Clear auto fill flag (and yellow background) on user edit.
+    setAutoFilled(false);
 }
 
 void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& state)
@@ -1289,13 +1295,22 @@ URL HTMLInputElement::src() const
     return document().completeURL(fastGetAttribute(srcAttr));
 }
 
-void HTMLInputElement::setAutofilled(bool autofilled)
+void HTMLInputElement::setAutoFilled(bool autoFilled)
 {
-    if (autofilled == m_isAutofilled)
+    if (autoFilled == m_isAutoFilled)
         return;
 
-    m_isAutofilled = autofilled;
+    m_isAutoFilled = autoFilled;
     setNeedsStyleRecalc();
+}
+
+void HTMLInputElement::setShowAutoFillButton(bool showAutoFillButton)
+{
+    if (showAutoFillButton == m_showAutoFillButton)
+        return;
+
+    m_showAutoFillButton = showAutoFillButton;
+    m_inputType->updateAutoFillButton();
 }
 
 FileList* HTMLInputElement::files()

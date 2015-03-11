@@ -1,3 +1,15 @@
+2015-03-10  Sam Weinig  <sam@webkit.org>
+
+        Allow adding a button in input elements for auto fill related functionality
+        <rdar://problem/19782066>
+        https://bugs.webkit.org/show_bug.cgi?id=142564
+
+        Reviewed by Anders Carlsson.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMHTMLInputElement _setAutofilled:]):
+        Update for consistent spelling of AutoFill.
+
 2015-03-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build

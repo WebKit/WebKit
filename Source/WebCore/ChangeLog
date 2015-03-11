@@ -1,3 +1,96 @@
+2015-03-10  Sam Weinig  <sam@webkit.org>
+
+        Allow adding a button in input elements for auto fill related functionality
+        <rdar://problem/19782066>
+        https://bugs.webkit.org/show_bug.cgi?id=142564
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/forms/input-auto-fill-button.html
+
+        - Adds a new button that can be shown in <input> elements - AutoFillButtonElement.
+        - Makes the spelling of AutoFill consistent throughout WebCore and WebKit (except
+          where not feasible due to exported API/SPI).
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * css/html.css:
+        (input::-webkit-auto-fill-button):
+        (input::-webkit-auto-fill-button:hover):
+        (input::-webkit-auto-fill-button:active):
+        Add default style rules for the AutoFill button based on the ones
+        used for caps lock indicator.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::autoFillButtonElement):
+        (WebCore::HTMLInputElement::reset):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::setAutoFilled):
+        (WebCore::HTMLInputElement::setShowAutoFillButton):
+        (WebCore::HTMLInputElement::setAutofilled): Deleted.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isAutoFilled):
+        (WebCore::HTMLInputElement::showAutoFillButton):
+        (WebCore::HTMLInputElement::isAutofilled): Deleted.
+        Add new bit to represent whether the AutoFill button should be shown
+        or not. By default it is not shown, and the client must enable it.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::updateAutoFillButton):
+        * html/InputType.h:
+        (WebCore::InputType::autoFillButtonElement):
+        Add new virtual methods for updating and accessing the AutoFill button.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::autoFillButtonElement):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        (WebCore::TextFieldInputType::shouldDrawAutoFillButton):
+        (WebCore::TextFieldInputType::autoFillButtonElementWasClicked):
+        (WebCore::TextFieldInputType::createContainer):
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        (WebCore::TextFieldInputType::updateAutoFillButton):
+        * html/TextFieldInputType.h:
+        Add support for adding the AutoFill to the shadow DOM of textfields. The implementation
+        is slightly different than for the caps lock indicator, because I didn't want to force
+        the creation of a container for all <input> elements just in case an AutoFill button was
+        added. Instead, if an AutoFill button is added, the container is created on the fly and
+        the existing DOM is updated to move into it. Once a container is created, it is never
+        removed.
+
+        * html/shadow/AutoFillButtonElement.cpp: Added.
+        (WebCore::AutoFillButtonElement::create):
+        (WebCore::AutoFillButtonElement::AutoFillButtonElement):
+        (WebCore::AutoFillButtonElement::defaultEventHandler):
+        * html/shadow/AutoFillButtonElement.h: Added.
+        Add div subclass that swallows the click event and forwards it to the ChromeClient.
+
+        * page/ChromeClient.h:
+        Add handleAutoFillButtonClick client function to inform WebKit that the AutoFill
+        button was clicked.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAutofilled):
+        (WebCore::Internals::setShowAutoFillButton):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Expose a new internals.setShowAutoFillButton() function to allow testing
+        of the AutoFill button from layout tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isValueAutofilled):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isAutofilled):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        Update for new spelling of AutoFill.
+
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored the JSC::Heap extra cost API for clarity and to make some known bugs more obvious

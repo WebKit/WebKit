@@ -31,6 +31,7 @@
 #ifndef TextFieldInputType_h
 #define TextFieldInputType_h
 
+#include "AutoFillButtonElement.h"
 #include "InputType.h"
 #include "SpinButtonElement.h"
 
@@ -41,7 +42,7 @@ class TextControlInnerTextElement;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
-class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner {
+class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner {
 protected:
     explicit TextFieldInputType(HTMLInputElement&);
     virtual ~TextFieldInputType();
@@ -53,6 +54,7 @@ protected:
     virtual TextControlInnerTextElement* innerTextElement() const override final;
     virtual HTMLElement* innerSpinButtonElement() const override final;
     virtual HTMLElement* capsLockIndicatorElement() const override final;
+    virtual HTMLElement* autoFillButtonElement() const override final;
 
 protected:
     virtual bool needsContainer() const;
@@ -96,6 +98,7 @@ private:
     virtual bool appendFormData(FormDataList&, bool multipart) const override final;
     virtual void subtreeHasChanged() override final;
     virtual void capsLockStateMayHaveChanged() override final;
+    virtual void updateAutoFillButton() override final;
 
     // SpinButtonElement::SpinButtonOwner functions.
     virtual void focusAndSelectSpinButtonOwner() override final;
@@ -104,9 +107,16 @@ private:
     virtual void spinButtonStepDown() override final;
     virtual void spinButtonStepUp() override final;
 
+    // AutoFillButtonElement::AutoFillButtonOwner
+    virtual void autoFillButtonElementWasClicked() override final;
+
     bool shouldHaveSpinButton() const;
     bool shouldHaveCapsLockIndicator() const;
     bool shouldDrawCapsLockIndicator() const;
+    bool shouldDrawAutoFillButton() const;
+
+    void createContainer();
+    void createAutoFillButton();
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
@@ -114,6 +124,7 @@ private:
     RefPtr<HTMLElement> m_placeholder;
     RefPtr<SpinButtonElement> m_innerSpinButton;
     RefPtr<HTMLElement> m_capsLockIndicator;
+    RefPtr<HTMLElement> m_autoFillButton;
 };
 
 } // namespace WebCore

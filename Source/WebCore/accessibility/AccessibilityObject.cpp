@@ -2028,7 +2028,7 @@ bool AccessibilityObject::isValueAutofilled() const
     if (!node || !is<HTMLInputElement>(*node))
         return false;
     
-    return downcast<HTMLInputElement>(*node).isAutofilled();
+    return downcast<HTMLInputElement>(*node).isAutoFilled();
 }
 
 const AtomicString& AccessibilityObject::placeholderValue() const

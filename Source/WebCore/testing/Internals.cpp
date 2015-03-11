@@ -1036,8 +1036,19 @@ void Internals::setAutofilled(Element* element, bool enabled, ExceptionCode& ec)
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    inputElement->setAutofilled(enabled);
+    inputElement->setAutoFilled(enabled);
 }
+
+void Internals::setShowAutoFillButton(Element* element, bool show, ExceptionCode& ec)
+{
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    inputElement->setShowAutoFillButton(show);
+}
+
 
 void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
 {

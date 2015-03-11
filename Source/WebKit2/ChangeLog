@@ -1,3 +1,87 @@
+2015-03-10  Sam Weinig  <sam@webkit.org>
+
+        Allow adding a button in input elements for auto fill related functionality
+        <rdar://problem/19782066>
+        https://bugs.webkit.org/show_bug.cgi?id=142564
+
+        Reviewed by Anders Carlsson.
+
+        - Adds new SPI to respond to clicks on the AutoFill button (both bundle and UIProcess).
+        - Adds new SPI to enable/disable the display of the AutoFill button on an element.
+        - Adds new SPI to get the bounds of the AutoFill button.
+        - Updates spelling of AutoFill to be consistent.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didClickAutoFillButton):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleAutoFillButtonClick):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didClickAutoFillButton):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didClickAutoFillButton):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleAutoFillButtonClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+        Pipe the didClickAutoFillButton to the SPI layer.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle HTMLInputElementIsAutoFilled]):
+        (-[WKWebProcessPlugInNodeHandle setHTMLInputElementIsAutoFilled:]):
+        Update for new spelling of AutoFill.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleGetHTMLInputElementAutoFilled):
+        (WKBundleNodeHandleSetHTMLInputElementAutoFilled):
+        Added. Replaces WKBundleNodeHandleGetHTMLInputElementAutofilled/WKBundleNodeHandleSetHTMLInputElementAutofilled
+        which are now deprecated due to inconsistent spelling of AutoFill.
+
+        (WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled):
+        (WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled):
+        (WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds):
+        Added.
+
+        (WKBundleNodeHandleGetHTMLInputElementAutofilled):
+        (WKBundleNodeHandleSetHTMLInputElementAutofilled):
+        Deprecated.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::getOrCreate):
+        (WebKit::InjectedBundleNodeHandle::create):
+        (WebKit::InjectedBundleNodeHandle::InjectedBundleNodeHandle):
+        (WebKit::InjectedBundleNodeHandle::~InjectedBundleNodeHandle):
+        (WebKit::InjectedBundleNodeHandle::coreNode):
+        (WebKit::InjectedBundleNodeHandle::document):
+        (WebKit::InjectedBundleNodeHandle::elementBounds):
+        (WebKit::InjectedBundleNodeHandle::renderRect):
+        (WebKit::InjectedBundleNodeHandle::renderedImage):
+        (WebKit::InjectedBundleNodeHandle::visibleRange):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementValueForUser):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFilled):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFilled):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::isTextField):
+        (WebKit::InjectedBundleNodeHandle::htmlTableCellElementCellAbove):
+        (WebKit::InjectedBundleNodeHandle::documentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutofilled): Deleted.
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutofilled): Deleted.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        Fix-up InjectedBundleNodeHandle to store its underlying Node in a Ref, rather than a RefPtr.
+        Add helpers to implement the new SPI for WKBundleNodeHandleRef.
+
 2015-03-11  Timothy Horton  <timothy_horton@apple.com>
 
         Make it possible to zoom on pages that claim to lay out to device size and then fail to do so

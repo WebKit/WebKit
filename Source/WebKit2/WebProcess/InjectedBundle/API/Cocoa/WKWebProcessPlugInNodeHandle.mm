@@ -70,12 +70,12 @@ using namespace WebKit;
 
 - (BOOL)HTMLInputElementIsAutoFilled
 {
-    return _nodeHandle->isHTMLInputElementAutofilled();
+    return _nodeHandle->isHTMLInputElementAutoFilled();
 }
 
 - (void)setHTMLInputElementIsAutoFilled:(BOOL)isAutoFilled
 {
-    _nodeHandle->setHTMLInputElementAutofilled(isAutoFilled);
+    _nodeHandle->setHTMLInputElementAutoFilled(isAutoFilled);
 }
 
 - (BOOL)HTMLInputElementIsUserEdited

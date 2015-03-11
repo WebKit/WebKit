@@ -506,7 +506,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (!thisInputElement || !otherInputElement)
         return false;
 
-    if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
+    if (thisInputElement->isAutoFilled() != otherInputElement->isAutoFilled())
         return false;
     if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
         return false;

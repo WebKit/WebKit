@@ -16208,6 +16208,7 @@
     <ClCompile Include="..\html\parser\TextDocumentParser.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditor.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp" />
+    <ClCompile Include="..\html\shadow\AutoFillButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp" />
     <ClCompile Include="..\html\shadow\DetailsMarkerControl.cpp" />
     <ClCompile Include="..\html\shadow\InsertionPoint.cpp" />
@@ -20970,6 +20971,7 @@
     <ClInclude Include="..\html\parser\TextDocumentParser.h" />
     <ClInclude Include="..\html\parser\XSSAuditor.h" />
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
+    <ClInclude Include="..\html\shadow\AutoFillButtonElement.h" />
     <ClInclude Include="..\html\shadow\ContentDistributor.h" />
     <ClInclude Include="..\html\shadow\DetailsMarkerControl.h" />
     <ClInclude Include="..\html\shadow\InsertionPoint.h" />

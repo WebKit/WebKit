@@ -1345,7 +1345,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAutofilled(
 {
     ASSERT(is<HTMLInputElement>(m_element));
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
-    inputElement.setAutofilled(!!filled);
+    inputElement.setAutoFilled(!!filled);
     return S_OK;
 }
 
@@ -1354,7 +1354,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isAutofilled(
 {
     ASSERT(is<HTMLInputElement>(m_element));
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
-    *result = inputElement.isAutofilled() ? TRUE : FALSE;
+    *result = inputElement.isAutoFilled() ? TRUE : FALSE;
     return S_OK;
 }
 

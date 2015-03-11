@@ -161,6 +161,7 @@ public:
     bool elementShouldAutoComplete(Element* inputElement, ExceptionCode&);
     void setEditingValue(Element* inputElement, const String&, ExceptionCode&);
     void setAutofilled(Element*, bool enabled, ExceptionCode&);
+    void setShowAutoFillButton(Element*, bool enabled, ExceptionCode&);
     void scrollElementToRect(Element*, long x, long y, long w, long h, ExceptionCode&);
 
     void paintControlTints(ExceptionCode&);

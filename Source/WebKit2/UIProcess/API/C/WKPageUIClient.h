@@ -91,8 +91,9 @@ typedef void (*WKPageDidRecognizeLongMousePressCallback)(WKPageRef page, WKTypeR
 typedef void (*WKPageDidCancelTrackingPotentialLongMousePressCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageIsPlayingAudioDidChangeCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo);
+typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 
-// Deprecated    
+// Deprecated
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void      (*WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
@@ -445,6 +446,7 @@ typedef struct WKPageUIClientV5 {
 
     // Version 5.
     WKPageDecidePolicyForUserMediaPermissionRequestCallback             decidePolicyForUserMediaPermissionRequest;
+    WKPageDidClickAutoFillButtonCallback                                didClickAutoFillButton;
 } WKPageUIClientV5;
 
 enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };

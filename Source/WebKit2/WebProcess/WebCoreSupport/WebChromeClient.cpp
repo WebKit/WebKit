@@ -30,6 +30,7 @@
 #include "APISecurityOrigin.h"
 #include "DrawingArea.h"
 #include "InjectedBundleNavigationAction.h"
+#include "InjectedBundleNodeHandle.h"
 #include "LayerTreeHost.h"
 #include "NavigationActionData.h"
 #include "PageBanner.h"
@@ -1099,6 +1100,18 @@ bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
 bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
 {
     return m_page->shouldDispatchFakeMouseMoveEvents();
+}
+
+void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
+{
+    RefPtr<API::Object> userData;
+
+    // Notify the bundle client.
+    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
+    m_page->injectedBundleUIClient().didClickAutoFillButton(*m_page, nodeHandle.get(), userData);
+
+    // Notify the UIProcess.
+    m_page->send(Messages::WebPageProxy::HandleAutoFillButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 } // namespace WebKit

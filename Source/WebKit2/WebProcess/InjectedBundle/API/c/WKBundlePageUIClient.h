@@ -57,6 +57,7 @@ typedef WKStringRef (*WKBundlePagePlugInCreateExtraScriptCallback)(const void *c
 typedef void (*WKBundlePageDidBeginTrackingPotentialLongMousePressCallback)(WKBundlePageRef page, WKPoint mouseDownPosition, WKBundleHitTestResultRef hitTestResult, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidRecognizeLongMousePressCallback)(WKBundlePageRef page, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidCancelTrackingPotentialLongMousePressCallback)(WKBundlePageRef page, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageDidClickAutoFillButtonCallback)(WKBundlePageRef page, WKBundleNodeHandleRef inputElement, WKTypeRef* userData, const void *clientInfo);
 
 typedef struct WKBundlePageUIClientBase {
     int                                                                 version;
@@ -169,6 +170,8 @@ typedef struct WKBundlePageUIClientV3 {
     WKBundlePageDidBeginTrackingPotentialLongMousePressCallback         didBeginTrackingPotentialLongMousePress;
     WKBundlePageDidRecognizeLongMousePressCallback                      didRecognizeLongMousePress;
     WKBundlePageDidCancelTrackingPotentialLongMousePressCallback        didCancelTrackingPotentialLongMousePress;
+
+    WKBundlePageDidClickAutoFillButtonCallback                          didClickAutoFillButton;
 } WKBundlePageUIClientV3;
 
 enum { kWKBundlePageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };

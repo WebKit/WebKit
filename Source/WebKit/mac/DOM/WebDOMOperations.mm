@@ -214,7 +214,7 @@ using namespace JSC;
 
 - (void)_setAutofilled:(BOOL)autofilled
 {
-    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutofilled(autofilled);
+    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilled(autofilled);
 }
 
 @end
