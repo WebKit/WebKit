@@ -281,20 +281,29 @@ void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* 
     }
 }
 
-void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
+void* Heap::allocateXLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
 {
-    BASSERT(isPowerOfTwo(alignment));
-    BASSERT(alignment >= xLargeAlignment);
-    BASSERT(size == roundUpToMultipleOf<xLargeAlignment>(size));
-
-    void* result = vmAllocate(alignment, size);
-    m_xLargeObjects.push(Range(result, size));
+    void* result = tryAllocateXLarge(lock, alignment, size);
+    RELEASE_BASSERT(result);
     return result;
 }
 
 void* Heap::allocateXLarge(std::lock_guard<StaticMutex>& lock, size_t size)
 {
     return allocateXLarge(lock, superChunkSize, size);
+}
+
+void* Heap::tryAllocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
+{
+    BASSERT(isPowerOfTwo(alignment));
+    BASSERT(alignment >= superChunkSize);
+    BASSERT(size == roundUpToMultipleOf<xLargeAlignment>(size));
+
+    void* result = tryVMAllocate(alignment, size);
+    if (!result)
+        return nullptr;
+    m_xLargeObjects.push(Range(result, size));
+    return result;
 }
 
 Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)

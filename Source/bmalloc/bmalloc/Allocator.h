@@ -41,6 +41,7 @@ public:
     Allocator(Heap*, Deallocator&);
     ~Allocator();
 
+    void* tryAllocate(size_t);
     void* allocate(size_t);
     void* allocate(size_t alignment, size_t);
     void* reallocate(void*, size_t);

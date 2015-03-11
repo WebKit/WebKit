@@ -1,3 +1,76 @@
+2015-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Sam Weinig.
+
+        Rolling back in r181307 with a check for whether bmalloc is enabled, to
+        avoid crashes when running with ASan and GuardMalloc.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate):
+        * bmalloc/Allocator.h:
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::tryAllocate):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::tryAllocateXLarge):
+        * bmalloc/Heap.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmAllocate):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryMalloc):
+        (bmalloc::api::realloc):
+        (bmalloc::api::free):
+
+2015-03-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181307.
+        https://bugs.webkit.org/show_bug.cgi?id=142525
+
+        Broke ASan tests (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "bmalloc: tryFastMalloc shouldn't crash"
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+        http://trac.webkit.org/changeset/181307
+
+2015-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Darin Adler.
+
+        Added support for tryMalloc.
+
+        We assume that non-x-large allocations always succeed, and we crash
+        otherwise, since normal allocation failure will just cause the next
+        non-try allocation or internal metadata allocation to fail, and it's
+        hard and not really useful to keep limping along after that. But
+        extra-large allocations can meaningfully fail, and we can recover.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::tryAllocateXLarge):
+        * bmalloc/Heap.h: Added support for non-crashy x-large allocation.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmAllocate): Added support for non-crashy VM allocation.
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryMalloc):
+        (bmalloc::api::realloc):
+        (bmalloc::api::free): Tried to clarify our behavior with some comments.
+        Unfortunately, calling what we do "malloc" is still not quite right, since
+        malloc returns null on failure and we don't.
+
 2015-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Don't branch when setting the owner of a large object

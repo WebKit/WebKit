@@ -31,24 +31,33 @@
 namespace bmalloc {
 namespace api {
 
+// Returns null on failure.
+inline void* tryMalloc(size_t size)
+{
+    return Cache::tryAllocate(size);
+}
+
+// Crashes on failure.
 inline void* malloc(size_t size)
 {
     return Cache::allocate(size);
 }
 
+// Crashes on failure.
 inline void* memalign(size_t alignment, size_t size)
 {
     return Cache::allocate(alignment, size);
 }
 
-inline void free(void* object)
-{
-    Cache::deallocate(object);
-}
-
+// Crashes on failure.
 inline void* realloc(void* object, size_t newSize)
 {
     return Cache::reallocate(object, newSize);
+}
+
+inline void free(void* object)
+{
+    Cache::deallocate(object);
 }
 
 inline void scavengeThisThread()

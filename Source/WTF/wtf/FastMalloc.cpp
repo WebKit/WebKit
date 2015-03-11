@@ -222,11 +222,6 @@ void fastFree(void* p)
     free(p);
 }
 
-TryMallocReturnValue tryFastRealloc(void* p, size_t n)
-{
-    return realloc(p, n);
-}
-
 void* fastRealloc(void* p, size_t n)
 {
     void* result = realloc(p, n);
@@ -272,10 +267,7 @@ namespace WTF {
 
 void* fastMalloc(size_t size)
 {
-    void* result = bmalloc::api::malloc(size);
-    if (!result)
-        CRASH();
-    return result;
+    return bmalloc::api::malloc(size);
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)
@@ -290,10 +282,7 @@ void* fastCalloc(size_t numElements, size_t elementSize)
 
 void* fastRealloc(void* object, size_t size)
 {
-    void* result = bmalloc::api::realloc(object, size);
-    if (!result)
-        CRASH();
-    return result;
+    return bmalloc::api::realloc(object, size);
 }
 
 void fastFree(void* object)
@@ -317,10 +306,7 @@ size_t fastMallocGoodSize(size_t size)
 
 void* fastAlignedMalloc(size_t alignment, size_t size) 
 {
-    void* result = bmalloc::api::memalign(alignment, size);
-    if (!result)
-        CRASH();
-    return result;
+    return bmalloc::api::memalign(alignment, size);
 }
 
 void fastAlignedFree(void* p) 
@@ -330,12 +316,7 @@ void fastAlignedFree(void* p)
 
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
-    return bmalloc::api::malloc(size);
-}
-    
-TryMallocReturnValue tryFastRealloc(void* object, size_t size)
-{
-    return bmalloc::api::realloc(object, size);
+    return bmalloc::api::tryMalloc(size);
 }
     
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)

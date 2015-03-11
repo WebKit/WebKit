@@ -56,6 +56,11 @@ Cache::Cache()
 {
 }
 
+NO_INLINE void* Cache::tryAllocateSlowCaseNullCache(size_t size)
+{
+    return PerThread<Cache>::getSlowCase()->allocator().tryAllocate(size);
+}
+
 NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t size)
 {
     return PerThread<Cache>::getSlowCase()->allocator().allocate(size);

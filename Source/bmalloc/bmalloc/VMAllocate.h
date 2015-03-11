@@ -73,11 +73,19 @@ inline void vmValidate(void* p, size_t vmSize)
     BASSERT(p == mask(p, ~(getpagesize() - 1)));
 }
 
-inline void* vmAllocate(size_t vmSize)
+inline void* tryVMAllocate(size_t vmSize)
 {
     vmValidate(vmSize);
     void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, BMALLOC_VM_TAG, 0);
-    RELEASE_BASSERT(result != MAP_FAILED);
+    if (result == MAP_FAILED)
+        return nullptr;
+    return result;
+}
+
+inline void* vmAllocate(size_t vmSize)
+{
+    void* result = tryVMAllocate(vmSize);
+    RELEASE_BASSERT(result);
     return result;
 }
 
@@ -90,13 +98,15 @@ inline void vmDeallocate(void* p, size_t vmSize)
 // Allocates vmSize bytes at a specified power-of-two alignment.
 // Use this function to create maskable memory regions.
 
-inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
+inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
 {
     vmValidate(vmSize);
     vmValidate(vmAlignment);
 
     size_t mappedSize = std::max(vmSize, vmAlignment) + vmAlignment;
-    char* mapped = static_cast<char*>(vmAllocate(mappedSize));
+    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize));
+    if (!mapped)
+        return nullptr;
     char* mappedEnd = mapped + mappedSize;
 
     char* aligned = roundUpToMultipleOf(vmAlignment, mapped);
@@ -109,6 +119,13 @@ inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
         vmDeallocate(alignedEnd, rightExtra);
 
     return aligned;
+}
+
+inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
+{
+    void* result = tryVMAllocate(vmAlignment, vmSize);
+    RELEASE_BASSERT(result);
+    return result;
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)

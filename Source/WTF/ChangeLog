@@ -1,3 +1,54 @@
+2015-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Sam Weinig.
+
+        Rolling back in r181307 with a check for whether bmalloc is enabled, to
+        avoid crashes when running with ASan and GuardMalloc.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastRealloc):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::tryFastRealloc): Deleted.
+        * wtf/FastMalloc.h:
+
+2015-03-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181307.
+        https://bugs.webkit.org/show_bug.cgi?id=142525
+
+        Broke ASan tests (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "bmalloc: tryFastMalloc shouldn't crash"
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+        http://trac.webkit.org/changeset/181307
+
+2015-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: tryFastMalloc shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=142443
+
+        Reviewed by Darin Adler.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastRealloc):
+        (WTF::fastAlignedMalloc): Don't check for null. bmalloc automatically
+        crashes on allocation failure, and we'd rather not pay for an extra check.
+
+        (WTF::tryFastMalloc): Added an opt-out API to return null rather than
+        crashing, since some clients need this.
+
+        (WTF::tryFastRealloc): Deleted. Unused.
+
+        * wtf/FastMalloc.h:
+
 2015-02-27  Darin Adler  <darin@apple.com>
 
         Remove unused PossiblyNull
