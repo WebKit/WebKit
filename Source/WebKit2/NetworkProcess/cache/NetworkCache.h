@@ -103,6 +103,7 @@ public:
     void update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
     void traverse(std::function<void (const Entry*)>&&);
+    void remove(const Entry&);
 
     void clear();
 

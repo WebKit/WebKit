@@ -59,6 +59,8 @@ public:
     void store(const Entry&, StoreCompletionHandler&&);
     void update(const Entry& updateEntry, const Entry& existingEntry, StoreCompletionHandler&&);
 
+    void remove(const Key&);
+
     // Null entry signals end.
     void traverse(std::function<void (const Entry*)>&&);
 
@@ -76,8 +78,6 @@ private:
     void initialize();
     void deleteOldVersions();
     void shrinkIfNeeded();
-
-    void removeEntry(const Key&);
 
     struct ReadOperation {
         Key key;
@@ -97,6 +97,7 @@ private:
 
     WorkQueue& ioQueue() { return m_ioQueue.get(); }
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
+    WorkQueue& deleteQueue() { return m_deleteQueue.get(); }
 
     const String m_baseDirectoryPath;
     const String m_directoryPath;
@@ -116,6 +117,7 @@ private:
 
     Ref<WorkQueue> m_ioQueue;
     Ref<WorkQueue> m_backgroundIOQueue;
+    Ref<WorkQueue> m_deleteQueue;
 };
 
 }

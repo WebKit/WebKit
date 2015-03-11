@@ -373,6 +373,13 @@ void Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry&
     });
 }
 
+void Cache::remove(const Entry& entry)
+{
+    ASSERT(isEnabled());
+
+    m_storage->remove(entry.storageEntry.key);
+}
+
 void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());

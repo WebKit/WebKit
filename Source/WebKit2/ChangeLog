@@ -1,3 +1,25 @@
+2015-03-10  Antti Koivisto  <antti@apple.com>
+
+        Add interface to delete disk cache entries
+        https://bugs.webkit.org/show_bug.cgi?id=142546
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::remove):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::remove):
+
+            Move deletion to a serial queue so we can't create large number of threads.
+
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::dispatchHeaderWriteOperation):
+        (WebKit::NetworkCache::Storage::removeEntry): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::deleteQueue):
+
 2015-03-10  Chris Dumez  <cdumez@apple.com>
 
         5 tests fail on Apple Mac WK2 performance bots
