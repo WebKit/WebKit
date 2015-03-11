@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "MediaStreamCenter.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/RetainPtr.h>

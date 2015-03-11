@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,31 +29,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamCenterMac_h
-#define MediaStreamCenterMac_h
+#include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
+#include "RealtimeMediaSourceCenter.h"
 
-#include "MediaStreamCenter.h"
-
-#include "RealtimeMediaSource.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
+#include "MediaStreamPrivate.h"
 
 namespace WebCore {
 
-class MediaStreamCenterMac final : public MediaStreamCenter {
-public:
-    MediaStreamCenterMac();
-    ~MediaStreamCenterMac();
+static RealtimeMediaSourceCenter*& mediaStreamCenterOverride()
+{
+    static RealtimeMediaSourceCenter* override;
+    return override;
+}
 
-    virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
-    virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
-    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
-};
+RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
+{
+    RealtimeMediaSourceCenter* override = mediaStreamCenterOverride();
+    if (override)
+        return *override;
+    
+    return RealtimeMediaSourceCenter::platformCenter();
+}
+
+void RealtimeMediaSourceCenter::setSharedStreamCenter(RealtimeMediaSourceCenter* center)
+{
+    mediaStreamCenterOverride() = center;
+}
+
+RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
+{
+}
+
+RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter()
+{
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamCenterMac_h

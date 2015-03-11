@@ -33,7 +33,6 @@
 #include "AudioStreamTrack.h"
 #include "Event.h"
 #include "ExceptionCode.h"
-#include "MediaStreamCenter.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
 #include "RealtimeMediaSource.h"

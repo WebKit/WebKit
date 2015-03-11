@@ -35,7 +35,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSource.h"
 
-#include "MediaStreamCenter.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "UUID.h"
 

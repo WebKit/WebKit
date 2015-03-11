@@ -40,12 +40,12 @@
 #include "MediaConstraintsImpl.h"
 #include "MediaSourceStates.h"
 #include "MediaStream.h"
-#include "MediaStreamCenter.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrackSourcesCallback.h"
 #include "MediaStreamTrackSourcesRequest.h"
 #include "MediaTrackConstraints.h"
 #include "NotImplemented.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "VideoStreamTrack.h"
 #include <wtf/Functional.h>
 #include <wtf/NeverDestroyed.h>
@@ -151,7 +151,7 @@ const AtomicString& MediaStreamTrack::readyState() const
 void MediaStreamTrack::getSources(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackSourcesCallback> callback, ExceptionCode& ec)
 {
     RefPtr<MediaStreamTrackSourcesRequest> request = MediaStreamTrackSourcesRequest::create(context, callback);
-    if (!MediaStreamCenter::singleton().getMediaStreamTrackSources(request.release()))
+    if (!RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(request.release()))
         ec = NOT_SUPPORTED_ERR;
 }
 

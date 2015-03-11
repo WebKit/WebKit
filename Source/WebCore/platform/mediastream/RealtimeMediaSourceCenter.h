@@ -29,44 +29,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef RealtimeMediaSourceCenter_h
+#define RealtimeMediaSourceCenter_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamCenter.h"
-
-#include "MediaStreamPrivate.h"
+#include "RealtimeMediaSource.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static MediaStreamCenter*& mediaStreamCenterOverride()
-{
-    static MediaStreamCenter* override;
-    return override;
-}
+class MediaConstraints;
+class MediaStreamCreationClient;
+class RealtimeMediaSourceStates;
+class MediaStreamTrackSourcesRequestClient;
 
-MediaStreamCenter& MediaStreamCenter::singleton()
-{
-    MediaStreamCenter* override = mediaStreamCenterOverride();
-    if (override)
-        return *override;
-    
-    return MediaStreamCenter::platformCenter();
-}
+class RealtimeMediaSourceCenter {
+public:
+    virtual ~RealtimeMediaSourceCenter();
 
-void MediaStreamCenter::setSharedStreamCenter(MediaStreamCenter* center)
-{
-    mediaStreamCenterOverride() = center;
-}
+    static RealtimeMediaSourceCenter& singleton();
+    static void setSharedStreamCenter(RealtimeMediaSourceCenter*);
 
-MediaStreamCenter::MediaStreamCenter()
-{
-}
+    virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
 
-MediaStreamCenter::~MediaStreamCenter()
-{
-}
+    virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
+
+    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) = 0;
+
+protected:
+    RealtimeMediaSourceCenter();
+
+    static RealtimeMediaSourceCenter& platformCenter();
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // RealtimeMediaSourceCenter_h

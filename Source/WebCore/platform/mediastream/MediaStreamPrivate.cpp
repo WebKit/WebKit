@@ -36,7 +36,6 @@
 
 #include "MediaStreamPrivate.h"
 
-#include "MediaStreamCenter.h"
 #include "UUID.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

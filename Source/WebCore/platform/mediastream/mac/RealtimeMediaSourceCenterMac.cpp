@@ -31,8 +31,7 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-
-#include "MediaStreamCenterMac.h"
+#include "RealtimeMediaSourceCenterMac.h"
 
 #include "AVCaptureDeviceManager.h"
 #include "MediaStreamCreationClient.h"
@@ -42,22 +41,22 @@
 
 namespace WebCore {
 
-MediaStreamCenter& MediaStreamCenter::platformCenter()
+RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
 {
     ASSERT(isMainThread());
-    DEPRECATED_DEFINE_STATIC_LOCAL(MediaStreamCenterMac, center, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RealtimeMediaSourceCenterMac, center, ());
     return center;
 }
 
-MediaStreamCenterMac::MediaStreamCenterMac()
+RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
 {
 }
 
-MediaStreamCenterMac::~MediaStreamCenterMac()
+RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void RealtimeMediaSourceCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
     
@@ -84,7 +83,7 @@ void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCrea
     client->constraintsValidated();
 }
     
-void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
     
@@ -124,7 +123,7 @@ void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClien
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
-bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
+bool RealtimeMediaSourceCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
 

@@ -34,7 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamCenter.h"
+#include "RealtimeMediaSourceCenter.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +45,7 @@ class MediaStreamPrivate;
 class RealtimeMediaSource;
 class MediaStreamSourcesQueryClient;
 
-class MediaStreamCenterGStreamer : public MediaStreamCenter {
+class MediaStreamCenterGStreamer : public RealtimeMediaSourceCenter {
 public:
     MediaStreamCenterGStreamer();
     ~MediaStreamCenterGStreamer();

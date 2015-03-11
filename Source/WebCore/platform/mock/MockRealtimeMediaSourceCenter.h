@@ -24,29 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockMediaStreamCenter_h
-#define MockMediaStreamCenter_h
+#ifndef MockRealtimeMediaSourceCenter_h
+#define MockRealtimeMediaSourceCenter_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamCenter.h"
+#include "RealtimeMediaSourceCenter.h"
 
 namespace WebCore {
 
-class MockMediaStreamCenter final : public MediaStreamCenter {
+class MockRealtimeMediaSourceCenter final : public RealtimeMediaSourceCenter {
 public:
-    WEBCORE_EXPORT static void registerMockMediaStreamCenter();
+    WEBCORE_EXPORT static void registerMockRealtimeMediaSourceCenter();
 
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
 
 private:
-    MockMediaStreamCenter() { }
+    MockRealtimeMediaSourceCenter() { }
 };
 
 }
 
-#endif // MockMediaStreamCenter_h
+#endif // MockRealtimeMediaSourceCenter_h
 
 #endif

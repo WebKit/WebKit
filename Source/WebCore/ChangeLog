@@ -1,3 +1,15 @@
+2015-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Rename MediaStreamCenter to RealtimeMediaSourceCenter
+        https://bugs.webkit.org/show_bug.cgi?id=142535
+
+        Reviewed by Eric Carlson.
+
+        As per bug title, rename MediaStreamCenter to
+        RealtimeMediaSourceCenter, this class manages
+        RealtimeMediaSources, not MediaStreams. Some un-needed includes of
+        the header were also removed.
+
 2015-03-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unnecessary create() factory functions

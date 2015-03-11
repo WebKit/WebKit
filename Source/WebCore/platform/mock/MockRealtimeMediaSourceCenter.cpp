@@ -28,8 +28,7 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-
-#include "MockMediaStreamCenter.h"
+#include "MockRealtimeMediaSourceCenter.h"
 
 #include "MediaConstraintsMock.h"
 #include "MediaStream.h"
@@ -117,18 +116,18 @@ static void initializeMockSources()
     mockSourceMap().add(mockSource2id, mockSource2.release());
 }
 
-void MockMediaStreamCenter::registerMockMediaStreamCenter()
+void MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MockMediaStreamCenter, center, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MockRealtimeMediaSourceCenter, center, ());
     static bool registered = false;
     if (!registered) {
         registered = true;
-        MediaStreamCenter::setSharedStreamCenter(&center);
+        RealtimeMediaSourceCenter::setSharedStreamCenter(&center);
         initializeMockSources();
     }
 }
 
-void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void MockRealtimeMediaSourceCenter::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
     
@@ -153,7 +152,7 @@ void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCre
     client->constraintsValidated();
 }
 
-void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
 
@@ -198,7 +197,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
-bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
+bool MockRealtimeMediaSourceCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
     Vector<RefPtr<TrackSourceInfo>> sources;

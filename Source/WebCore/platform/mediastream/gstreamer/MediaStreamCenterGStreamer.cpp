@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-MediaStreamCenter& MediaStreamCenter::platformCenter()
+RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
 {
     ASSERT(isMainThread());
     DEPRECATED_DEFINE_STATIC_LOCAL(MediaStreamCenterGStreamer, center, ());

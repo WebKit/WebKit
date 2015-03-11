@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Ericsson AB. All rights reserved.
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,43 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamCenter_h
-#define MediaStreamCenter_h
+#ifndef RealtimeMediaSourceCenterMac_h
+#define RealtimeMediaSourceCenterMac_h
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceCenter.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaConstraints;
-class MediaStreamCreationClient;
-class RealtimeMediaSourceStates;
-class MediaStreamTrackSourcesRequestClient;
-
-class MediaStreamCenter {
+class RealtimeMediaSourceCenterMac final : public RealtimeMediaSourceCenter {
 public:
-    virtual ~MediaStreamCenter();
+    RealtimeMediaSourceCenterMac();
+    ~RealtimeMediaSourceCenterMac();
 
-    static MediaStreamCenter& singleton();
-    static void setSharedStreamCenter(MediaStreamCenter*);
-
-    virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
-
-    virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
-
-    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) = 0;
-
-protected:
-    MediaStreamCenter();
-
-    static MediaStreamCenter& platformCenter();
+    virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
+    virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
+    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamCenter_h
+#endif // RealtimeMediaSourceCenterMac_h
