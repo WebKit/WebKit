@@ -1,3 +1,23 @@
+2015-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] 17 different JSC tests started to fail in DST
+        https://bugs.webkit.org/show_bug.cgi?id=142531
+
+        Reviewed by Chris Dumez.
+
+        The stock 'GetTimeZoneInformation' call does not always match the actual Daylight
+        Savings calendar. This results in a period of time when these tests fail.
+
+        If available, we should take advantage of the new 'GetTimeZoneInformationForYear',
+        which accesses a dynamic calendar of DST dates, which is presumbably updated by
+        Microsoft from year-to-year.
+
+        * wtf/DateMath.cpp:
+        (WTF::timeZoneInformationForYearFunction): New function to conditionally access
+        some Vista (and newer) functionality.
+        (WTF::calculateUTCOffset): Call new function (if available) to calculate proper UTC
+        time offset.
+
 2015-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Use unsigned for HashSet size.
