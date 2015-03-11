@@ -1,3 +1,13 @@
+2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not look for child processes in the UI process binary path
+        https://bugs.webkit.org/show_bug.cgi?id=135752
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/OptionsGTK.cmake: Add -DDEVELOPMENT_BUILD=1 to the
+        build for development builds.
+
 2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com> and José Dapena Paz  <jdapena@igalia.com>
 
         [GTK] Add a configure option to build with OpenGL ES 2
