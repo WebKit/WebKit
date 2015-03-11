@@ -1,3 +1,22 @@
+2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: SearchResultTreeElement.representedObject is missing a saveIdentityToCookie implementation
+        https://bugs.webkit.org/show_bug.cgi?id=134698
+
+        Reviewed by Timothy Hatcher.
+
+        This will restore selection of a global search tree element if you
+        close and reopen the inspector in such a case.
+
+        * UserInterface/Models/DOMSearchMatchObject.js:
+        (WebInspector.DOMSearchMatchObject.prototype.get resource):
+        (WebInspector.DOMSearchMatchObject.titleForDOMNode):
+        Cookie has the resource URL, DOM Node title, and text range.
+
+        * UserInterface/Models/SourceCodeSearchMatchObject.js:
+        (WebInspector.SourceCodeSearchMatchObject.prototype.get sourceCodeTextRange):
+        Cookie has the source code URL and text range.
+
 2015-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS parser errors in the console should include column numbers

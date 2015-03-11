@@ -44,10 +44,21 @@ WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName = "dom-
 WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName = "dom-match-character-data-icon";
 WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName = "dom-match-node-icon";
 
+WebInspector.DOMSearchMatchObject.TypeIdentifier = "dom-search-match-object";
+WebInspector.DOMSearchMatchObject.URLCookieKey = "resource-url";
+WebInspector.DOMSearchMatchObject.TitleKey = "title";
+WebInspector.DOMSearchMatchObject.TextRangeKey = "text-range";
+
 WebInspector.DOMSearchMatchObject.prototype = {
     constructor: WebInspector.DOMSearchMatchObject,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
+
+    get resource()
+    {
+        return this._resource;
+    },
 
     get domNode()
     {
@@ -77,9 +88,17 @@ WebInspector.DOMSearchMatchObject.prototype = {
         return this._sourceCodeTextRange;
     },
 
+    saveIdentityToCookie(cookie)
+    {
+        cookie[WebInspector.DOMSearchMatchObject.URLCookieKey] = this._resource.url.hash;
+        cookie[WebInspector.DOMSearchMatchObject.TitleKey] = this._title;
+        var textRange = this._sourceCodeTextRange.textRange;
+        cookie[WebInspector.DOMSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
+    },
+
     // Private
 
-    _generateClassName: function()
+    _generateClassName()
     {
         switch (this._domNode.nodeType()) {
         case Node.ELEMENT_NODE:
@@ -154,5 +173,3 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
         return domNode.nodeNameInCorrectCase();
     }
 };
-
-WebInspector.DOMSearchMatchObject.prototype.__proto__ = WebInspector.Object.prototype;

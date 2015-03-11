@@ -37,8 +37,13 @@ WebInspector.SourceCodeSearchMatchObject = function(sourceCode, lineText, search
 
 WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName = "source-code-match-icon";
 
+WebInspector.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
+WebInspector.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";
+WebInspector.SourceCodeSearchMatchObject.TextRangeKey = "text-range";
+
 WebInspector.SourceCodeSearchMatchObject.prototype = {
     constructor: WebInspector.SourceCodeSearchMatchObject,
+    __proto__: WebInspector.Object.prototype,
 
     get sourceCode()
     {
@@ -63,7 +68,14 @@ WebInspector.SourceCodeSearchMatchObject.prototype = {
     get sourceCodeTextRange()
     {
         return this._sourceCodeTextRange;
+    },
+
+    saveIdentityToCookie(cookie)
+    {
+        if (this._sourceCode.url)
+            cookie[WebInspector.SourceCodeSearchMatchObject.URLCookieKey] = this._sourceCode.url.hash;
+
+        var textRange = this._sourceCodeTextRange.textRange;
+        cookie[WebInspector.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
     }
 };
-
-WebInspector.SourceCodeSearchMatchObject.prototype.__proto__ = WebInspector.Object.prototype;
