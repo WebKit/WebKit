@@ -132,6 +132,11 @@ print GPERF << "EOF";
 #endif
 
 namespace WebCore {
+
+// Using std::numeric_limits<uint16_t>::max() here would be cleaner,
+// but is not possible due to missing constexpr support in MSVC 2013.
+static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint16_t.");
+
 EOF
 
 print GPERF "const char* const propertyNameStrings[numCSSProperties] = {\n";
@@ -276,7 +281,7 @@ class String;
 
 namespace WebCore {
 
-enum CSSPropertyID {
+enum CSSPropertyID : uint16_t {
     CSSPropertyInvalid = 0,
 EOF
 

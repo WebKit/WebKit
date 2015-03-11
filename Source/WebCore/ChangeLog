@@ -1,3 +1,21 @@
+2015-03-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Shrink the CSSPropertyID enum type
+        https://bugs.webkit.org/show_bug.cgi?id=142456
+
+        Reviewed by Sam Weinig.
+
+        Specify uint16_t as the base type for the CSSPropertyID enum.
+        This is enough to cover all of the CSS properties (429 at this moment,
+        with static_assert covering future changes). It halves the enum type size,
+        from 4 bytes to 2, reducing the size of various CSSPropertyID containers.
+
+        No new tests -- no change in behavior.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::propertyName): Remove the unnecessary propertyID < 0 check.
+        * css/makeprop.pl:
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large
