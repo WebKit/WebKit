@@ -4,13 +4,13 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\src;..\src\libGLESv2;..\include;..\include\KHR;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src;..\src\libGLESv2;..\include;..\include\KHR;$(DXSDK_DIR)\Include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ANGLE_DEFAULT_D3D11=1;ANGLE_ENABLE_D3D9;ANGLE_ENABLE_D3D11;NOMINMAX;ANGLE_WEBKIT_WIN;ANGLE_SKIP_DXGI_1_2_CHECK=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>../src/libGLESv2/libGLESv2.def</ModuleDefinitionFile>
       <AdditionalDependencies>d3d9.lib;dxguid.lib;translator_common$(DebugSuffix).lib;translator_hlsl$(DebugSuffix).lib;translator_glsl$(DebugSuffix).lib;preprocessor$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib$(PlatformTarget);$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>

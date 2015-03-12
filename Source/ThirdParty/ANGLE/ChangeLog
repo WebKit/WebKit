@@ -1,3 +1,11 @@
+2015-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for some DirectX SDK Installs
+
+        * ANGLE.vcxproj/libGLESv2Common.props: Correct path for Lib and
+        Include paths based on problems others have had building WebKit
+        under different Windows and DirectX revisions.
+
 2015-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Remove svn:keywords property.
