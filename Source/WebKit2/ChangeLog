@@ -1,3 +1,14 @@
+2015-03-12  Anders Carlsson  <andersca@apple.com>
+
+        WKErrorDomain should be declared nonnull
+        https://bugs.webkit.org/show_bug.cgi?id=142628
+
+        Reviewed by Antti Koivisto.
+
+        Add WK_ASSUME_NONNULL_BEGIN and WK_ASSUME_NONNULL_END so everything will be implicitly nonnull.
+
+        * UIProcess/API/Cocoa/WKError.h:
+
 2015-03-12  Ian Henderson  <ian@ianhenderson.org>
 
         PDFs don't snapshot properly in iOS Safari
