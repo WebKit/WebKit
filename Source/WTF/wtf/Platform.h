@@ -961,12 +961,6 @@
 #define ENABLE_COMPARE_AND_SWAP 1
 #endif
 
-/* [ARM] GC sometimes stuck in an infinite loop if parallel GC is enabled
- FIXME: Enable it once #141290 is fixed. */
-#if !defined(ENABLE_PARALLEL_GC) && OS(LINUX) && CPU(ARM_THUMB2)
-#define ENABLE_PARALLEL_GC 0
-#endif
-
 #if !defined(ENABLE_PARALLEL_GC) && (OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)) && ENABLE(COMPARE_AND_SWAP)
 #define ENABLE_PARALLEL_GC 1
 #endif
