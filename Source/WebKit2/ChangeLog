@@ -1,3 +1,15 @@
+2015-03-12  Ian Henderson  <ian@ianhenderson.org>
+
+        PDFs don't snapshot properly in iOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=142623
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        If we have a _customContentView, use UIView snapshotting instead of
+        trying to snapshot the web page.
+
 2015-03-12  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update AirPlay handling

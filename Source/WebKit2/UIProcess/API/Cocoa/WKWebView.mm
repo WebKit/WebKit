@@ -2446,9 +2446,30 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
-    CGRect snapshotRectInContentCoordinates = [self convertRect:rectInViewCoordinates toView:_contentView.get()];
-    CGFloat imageHeight = imageWidth / snapshotRectInContentCoordinates.size.width * snapshotRectInContentCoordinates.size.height;
+    CGRect snapshotRectInContentCoordinates = [self convertRect:rectInViewCoordinates toView:self._currentContentView];
+    CGFloat imageScale = imageWidth / snapshotRectInContentCoordinates.size.width;
+    CGFloat imageHeight = imageScale * snapshotRectInContentCoordinates.size.height;
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
+
+    if (_customContentView) {
+        UIGraphicsBeginImageContextWithOptions(imageSize, YES, 1);
+
+        UIView *customContentView = _customContentView.get();
+        [customContentView.backgroundColor set];
+        UIRectFill(CGRectMake(0, 0, imageWidth, imageHeight));
+
+        CGRect destinationRect = customContentView.bounds;
+        destinationRect.origin.x = -snapshotRectInContentCoordinates.origin.x * imageScale;
+        destinationRect.origin.y = -snapshotRectInContentCoordinates.origin.y * imageScale;
+        destinationRect.size.width *= imageScale;
+        destinationRect.size.height *= imageScale;
+        [customContentView drawViewHierarchyInRect:destinationRect afterScreenUpdates:NO];
+
+        completionHandler([UIGraphicsGetImageFromCurrentImageContext() CGImage]);
+
+        UIGraphicsEndImageContext();
+        return;
+    }
     
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
     _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {
