@@ -40,15 +40,19 @@ void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 {
     Base::finishCreation(vm);
     m_set.set(vm, this, iteratedObject);
-    m_iteratedObjectData.set(vm, this, iteratedObject->mapData());
 }
 
 void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSSetIterator* thisObject = jsCast<JSSetIterator*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());        
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_iteratedObjectData);
+    visitor.append(&thisObject->m_set);
+}
+
+void JSSetIterator::destroy(JSCell* cell)
+{
+    jsCast<JSSetIterator*>(cell)->~JSSetIterator();
 }
 
 JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)

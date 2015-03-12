@@ -64,6 +64,7 @@
 #include <runtime/JSSet.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/MapData.h>
+#include <runtime/MapDataInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>
@@ -87,7 +88,8 @@ static const unsigned maximumFilterRecursion = 40000;
 
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember,
     ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember,
-    MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue };
+    MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue,
+    SetDataStartVisitEntry, SetDataEndVisitKey };
 
 // These can't be reordered, and any new types must be added to the end of the list
 enum SerializationTag {
@@ -122,8 +124,9 @@ enum SerializationTag {
     SetObjectTag = 29,
     MapObjectTag = 30,
     NonMapPropertiesTag = 31,
+    NonSetPropertiesTag = 32,
 #if ENABLE(SUBTLE_CRYPTO)
-    CryptoKeyTag = 32,
+    CryptoKeyTag = 33,
 #endif
     ErrorTag = 255
 };
@@ -266,9 +269,10 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *
  * Map :- MapObjectTag MapData
  *
- * Set :- SetObjectTag MapData
+ * Set :- SetObjectTag SetData
  *
- * MapData :- (<key:Value><value:Value>) NonMapPropertiesTag (<name:StringData><value:Value>)* TerminatorTag
+ * MapData :- (<key:Value><value:Value>)* NonMapPropertiesTag (<name:StringData><value:Value>)* TerminatorTag
+ * SetData :- (<key:Value>)* NonSetPropertiesTag (<name:StringData><value:Value>)* TerminatorTag
  *
  * Terminal :-
  *      UndefinedTag
@@ -1216,9 +1220,11 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<uint32_t, 16> lengthStack;
     Vector<PropertyNameArray, 16> propertyStack;
     Vector<JSObject*, 32> inputObjectStack;
-    Vector<MapData*, 4> mapDataStack;
-    Vector<MapData::const_iterator, 4> iteratorStack;
-    Vector<JSValue, 4> iteratorValueStack;
+    Vector<JSMap*, 4> mapStack;
+    Vector<JSMap::const_iterator, 4> mapIteratorStack;
+    Vector<JSSet*, 4> setStack;
+    Vector<JSSet::const_iterator, 4> setIteratorStack;
+    Vector<JSValue, 4> mapIteratorValueStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;
@@ -1350,36 +1356,21 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSMap* inMap = jsCast<JSMap*>(inValue);
                 if (!startMap(inMap))
                     break;
-                MapData* mapData = inMap->mapData();
-                m_gcBuffer.append(mapData);
-                mapDataStack.append(mapData);
-                iteratorStack.append(mapData->begin());
+                m_gcBuffer.append(inMap);
+                mapStack.append(inMap);
+                mapIteratorStack.append(inMap->begin());
                 inputObjectStack.append(inMap);
-                goto mapDataStartVisitEntry;
-            }
-            setStartState: {
-                ASSERT(inValue.isObject());
-                if (inputObjectStack.size() > maximumFilterRecursion)
-                    return StackOverflowError;
-                JSSet* inSet = jsCast<JSSet*>(inValue);
-                if (!startSet(inSet))
-                    break;
-                MapData* mapData = inSet->mapData();
-                m_gcBuffer.append(mapData);
-                mapDataStack.append(mapData);
-                iteratorStack.append(mapData->begin());
-                inputObjectStack.append(inSet);
                 goto mapDataStartVisitEntry;
             }
             mapDataStartVisitEntry:
             case MapDataStartVisitEntry: {
-                MapData::const_iterator& ptr = iteratorStack.last();
-                MapData* mapData = mapDataStack.last();
-                if (ptr == mapData->end()) {
-                    iteratorStack.removeLast();
-                    mapDataStack.removeLast();
+                JSMap::const_iterator& ptr = mapIteratorStack.last();
+                JSMap* map = mapStack.last();
+                if (ptr == map->end()) {
+                    mapIteratorStack.removeLast();
+                    mapStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicCast<JSSet*>(object) || jsDynamicCast<JSMap*>(object));
+                    ASSERT(jsDynamicCast<JSMap*>(object));
                     propertyStack.append(PropertyNameArray(m_exec));
                     object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
                     write(NonMapPropertiesTag);
@@ -1388,20 +1379,58 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
                 inValue = ptr.key();
                 m_gcBuffer.append(ptr.value());
-                iteratorValueStack.append(ptr.value());
+                mapIteratorValueStack.append(ptr.value());
                 stateStack.append(MapDataEndVisitKey);
                 goto stateUnknown;
             }
             case MapDataEndVisitKey: {
-                inValue = iteratorValueStack.last();
-                iteratorValueStack.removeLast();
+                inValue = mapIteratorValueStack.last();
+                mapIteratorValueStack.removeLast();
                 stateStack.append(MapDataEndVisitValue);
                 goto stateUnknown;
             }
             case MapDataEndVisitValue: {
-                if (iteratorStack.last() != mapDataStack.last()->end())
-                    ++iteratorStack.last();
+                if (mapIteratorStack.last() != mapStack.last()->end())
+                    ++mapIteratorStack.last();
                 goto mapDataStartVisitEntry;
+            }
+
+            setStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return StackOverflowError;
+                JSSet* inSet = jsCast<JSSet*>(inValue);
+                if (!startSet(inSet))
+                    break;
+                m_gcBuffer.append(inSet);
+                setStack.append(inSet);
+                setIteratorStack.append(inSet->begin());
+                inputObjectStack.append(inSet);
+                goto setDataStartVisitEntry;
+            }
+            setDataStartVisitEntry:
+            case SetDataStartVisitEntry: {
+                JSSet::const_iterator& ptr = setIteratorStack.last();
+                JSSet* set = setStack.last();
+                if (ptr == set->end()) {
+                    setIteratorStack.removeLast();
+                    setStack.removeLast();
+                    JSObject* object = inputObjectStack.last();
+                    ASSERT(jsDynamicCast<JSSet*>(object));
+                    propertyStack.append(PropertyNameArray(m_exec));
+                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    write(NonSetPropertiesTag);
+                    indexStack.append(0);
+                    goto objectStartVisitMember;
+                }
+                inValue = ptr.key();
+                stateStack.append(SetDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case SetDataEndVisitKey: {
+                if (setIteratorStack.last() != setStack.last()->end())
+                    ++setIteratorStack.last();
+                goto setDataStartVisitEntry;
             }
 
             stateUnknown:
@@ -2360,9 +2389,10 @@ private:
         }
     }
 
-    bool consumeMapDataTerminationIfPossible()
+    template<SerializationTag Tag>
+    bool consumeCollectionDataTerminationIfPossible()
     {
-        if (readTag() == NonMapPropertiesTag)
+        if (readTag() == Tag)
             return true;
         m_ptr--;
         return false;
@@ -2384,8 +2414,9 @@ DeserializationResult CloneDeserializer::deserialize()
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
     Vector<JSObject*, 32> outputObjectStack;
-    Vector<JSValue, 4> keyStack;
-    Vector<MapData*, 4> mapDataStack;
+    Vector<JSValue, 4> mapKeyStack;
+    Vector<JSMap*, 4> mapStack;
+    Vector<JSSet*, 4> setStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue outValue;
@@ -2478,41 +2509,53 @@ DeserializationResult CloneDeserializer::deserialize()
             JSMap* map = JSMap::create(m_exec->vm(), m_globalObject->mapStructure());
             m_gcBuffer.append(map);
             outputObjectStack.append(map);
-            MapData* mapData = map->mapData();
-            mapDataStack.append(mapData);
+            mapStack.append(map);
             goto mapDataStartVisitEntry;
         }
+        mapDataStartVisitEntry:
+        case MapDataStartVisitEntry: {
+            if (consumeCollectionDataTerminationIfPossible<NonMapPropertiesTag>()) {
+                mapStack.removeLast();
+                goto objectStartVisitMember;
+            }
+            stateStack.append(MapDataEndVisitKey);
+            goto stateUnknown;
+        }
+        case MapDataEndVisitKey: {
+            mapKeyStack.append(outValue);
+            stateStack.append(MapDataEndVisitValue);
+            goto stateUnknown;
+        }
+        case MapDataEndVisitValue: {
+            mapStack.last()->set(m_exec, mapKeyStack.last(), outValue);
+            mapKeyStack.removeLast();
+            goto mapDataStartVisitEntry;
+        }
+
         setObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return std::make_pair(JSValue(), StackOverflowError);
             JSSet* set = JSSet::create(m_exec->vm(), m_globalObject->setStructure());
             m_gcBuffer.append(set);
             outputObjectStack.append(set);
-            MapData* mapData = set->mapData();
-            mapDataStack.append(mapData);
-            goto mapDataStartVisitEntry;
+            setStack.append(set);
+            goto setDataStartVisitEntry;
         }
-        mapDataStartVisitEntry:
-        case MapDataStartVisitEntry: {
-            if (consumeMapDataTerminationIfPossible()) {
-                mapDataStack.removeLast();
+        setDataStartVisitEntry:
+        case SetDataStartVisitEntry: {
+            if (consumeCollectionDataTerminationIfPossible<NonSetPropertiesTag>()) {
+                setStack.removeLast();
                 goto objectStartVisitMember;
             }
-            stateStack.append(MapDataEndVisitKey);
+            stateStack.append(SetDataEndVisitKey);
             goto stateUnknown;
         }
-
-        case MapDataEndVisitKey: {
-            keyStack.append(outValue);
-            stateStack.append(MapDataEndVisitValue);
-            goto stateUnknown;
+        case SetDataEndVisitKey: {
+            JSSet* set = setStack.last();
+            set->add(m_exec, outValue);
+            goto setDataStartVisitEntry;
         }
 
-        case MapDataEndVisitValue: {
-            mapDataStack.last()->set(m_exec, keyStack.last(), outValue);
-            keyStack.removeLast();
-            goto mapDataStartVisitEntry;
-        }
         stateUnknown:
         case StateUnknown:
             if (JSValue terminal = readTerminal()) {

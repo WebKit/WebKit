@@ -27,26 +27,62 @@
 #include "JSMap.h"
 
 #include "JSCJSValueInlines.h"
-#include "MapData.h"
+#include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
 namespace JSC {
-    
+
 const ClassInfo JSMap::s_info = { "Map", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMap) };
+
+void JSMap::destroy(JSCell* cell)
+{
+    jsCast<JSMap*>(cell)->~JSMap();
+}
 
 void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
-    JSMap* thisObject = jsCast<JSMap*>(cell);
-    visitor.append(&thisObject->m_mapData);
+    jsCast<JSMap*>(cell)->m_mapData.visitChildren(cell, visitor);
 }
 
-void JSMap::finishCreation(VM& vm)
+void JSMap::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
 {
-    Base::finishCreation(vm);
-    m_mapData.set(vm, this, MapData::create(vm));
+    Base::copyBackingStore(cell, visitor, token);
+    jsCast<JSMap*>(cell)->m_mapData.copyBackingStore(visitor, token);
 }
 
+bool JSMap::has(ExecState* exec, JSValue key)
+{
+    return m_mapData.contains(exec, key);
+}
+
+size_t JSMap::size(ExecState* exec)
+{
+    return m_mapData.size(exec);
+}
+
+JSValue JSMap::get(ExecState* exec, JSValue key)
+{
+    JSValue result = m_mapData.get(exec, key);
+    if (!result)
+        return jsUndefined();
+    return result;
+}
+
+void JSMap::set(ExecState* exec, JSValue key, JSValue value)
+{
+    m_mapData.set(exec, this, key, value);
+}
+
+void JSMap::clear(ExecState*)
+{
+    m_mapData.clear();
+}
+
+bool JSMap::remove(ExecState* exec, JSValue key)
+{
+    return m_mapData.remove(exec, key);
+}
 
 }

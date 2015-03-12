@@ -1,3 +1,151 @@
+2015-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Integrate MapData into JSMap and JSSet
+        https://bugs.webkit.org/show_bug.cgi?id=142556
+
+        Reviewed by Filip Pizlo.
+
+        This patch integrates MapData into JSMap and JSSet.
+        This removes 2 object allocation per one JSMap / JSSet.
+
+        MapDataImpl is specialized into MapData and SetData.
+        In the case of SetData, it does not have the dummy values
+        previously stored in the MapDataImpl. So the storage size of SetData
+        becomes the half of the previous implementation.
+
+        And now MapData and SetData are completely integrated into JSMap and JSSet,
+        these structures are not exposed to the other code even in WebCore world.
+
+        And at the same time, this patch fixes missing destroy functions
+        in JSMapIterator and JSSetIterator.
+        They are needed because MapData::const_iterator is a non-trivial destructor.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::destroy):
+        (JSC::JSMap::visitChildren):
+        (JSC::JSMap::copyBackingStore):
+        (JSC::JSMap::has):
+        (JSC::JSMap::size):
+        (JSC::JSMap::get):
+        (JSC::JSMap::set):
+        (JSC::JSMap::clear):
+        (JSC::JSMap::remove):
+        (JSC::JSMap::finishCreation): Deleted.
+        * runtime/JSMap.h:
+        (JSC::JSMap::Entry::key):
+        (JSC::JSMap::Entry::value):
+        (JSC::JSMap::Entry::visitChildren):
+        (JSC::JSMap::Entry::setKey):
+        (JSC::JSMap::Entry::setKeyWithoutWriteBarrier):
+        (JSC::JSMap::Entry::setValue):
+        (JSC::JSMap::Entry::clear):
+        (JSC::JSMap::begin):
+        (JSC::JSMap::end):
+        (JSC::JSMap::JSMap):
+        (JSC::JSMap::mapData): Deleted.
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::finishCreation):
+        (JSC::JSMapIterator::destroy):
+        (JSC::JSMapIterator::visitChildren):
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::JSMapIterator):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::destroy):
+        (JSC::JSSet::visitChildren):
+        (JSC::JSSet::copyBackingStore):
+        (JSC::JSSet::has):
+        (JSC::JSSet::size):
+        (JSC::JSSet::add):
+        (JSC::JSSet::clear):
+        (JSC::JSSet::remove):
+        (JSC::JSSet::finishCreation): Deleted.
+        * runtime/JSSet.h:
+        (JSC::JSSet::Entry::key):
+        (JSC::JSSet::Entry::value):
+        (JSC::JSSet::Entry::visitChildren):
+        (JSC::JSSet::Entry::setKey):
+        (JSC::JSSet::Entry::setKeyWithoutWriteBarrier):
+        (JSC::JSSet::Entry::setValue):
+        (JSC::JSSet::Entry::clear):
+        (JSC::JSSet::begin):
+        (JSC::JSSet::end):
+        (JSC::JSSet::JSSet):
+        (JSC::JSSet::mapData): Deleted.
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::finishCreation):
+        (JSC::JSSetIterator::visitChildren):
+        (JSC::JSSetIterator::destroy):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::JSSetIterator):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MapData.h:
+        (JSC::MapDataImpl::const_iterator::key):
+        (JSC::MapDataImpl::const_iterator::value):
+        (JSC::MapDataImpl::size):
+        (JSC::MapDataImpl<Entry>::MapDataImpl):
+        (JSC::MapDataImpl<Entry>::clear):
+        (JSC::MapDataImpl<Entry>::KeyType::KeyType):
+        (JSC::MapDataImpl<Entry>::const_iterator::internalIncrement):
+        (JSC::MapDataImpl<Entry>::const_iterator::ensureSlot):
+        (JSC::MapDataImpl<Entry>::const_iterator::const_iterator):
+        (JSC::MapDataImpl<Entry>::const_iterator::~const_iterator):
+        (JSC::MapDataImpl<Entry>::const_iterator::operator):
+        (JSC::=):
+        (JSC::MapData::const_iterator::key): Deleted.
+        (JSC::MapData::const_iterator::value): Deleted.
+        (JSC::MapData::create): Deleted.
+        (JSC::MapData::createStructure): Deleted.
+        (JSC::MapData::size): Deleted.
+        (JSC::MapData::clear): Deleted.
+        (JSC::MapData::KeyType::KeyType): Deleted.
+        (JSC::MapData::const_iterator::internalIncrement): Deleted.
+        (JSC::MapData::const_iterator::ensureSlot): Deleted.
+        (JSC::MapData::const_iterator::const_iterator): Deleted.
+        (JSC::MapData::const_iterator::~const_iterator): Deleted.
+        (JSC::MapData::const_iterator::operator*): Deleted.
+        (JSC::MapData::const_iterator::end): Deleted.
+        (JSC::MapData::const_iterator::operator!=): Deleted.
+        (JSC::MapData::const_iterator::operator==): Deleted.
+        * runtime/MapDataInlines.h: Renamed from Source/JavaScriptCore/runtime/MapData.cpp.
+        (JSC::MapDataImpl<Entry>::find):
+        (JSC::MapDataImpl<Entry>::contains):
+        (JSC::MapDataImpl<Entry>::add):
+        (JSC::MapDataImpl<Entry>::set):
+        (JSC::MapDataImpl<Entry>::get):
+        (JSC::MapDataImpl<Entry>::remove):
+        (JSC::MapDataImpl<Entry>::replaceAndPackBackingStore):
+        (JSC::MapDataImpl<Entry>::replaceBackingStore):
+        (JSC::MapDataImpl<Entry>::ensureSpaceForAppend):
+        (JSC::MapDataImpl<Entry>::visitChildren):
+        (JSC::MapDataImpl<Entry>::copyBackingStore):
+        * runtime/MapPrototype.cpp:
+        (JSC::getMap):
+        (JSC::mapProtoFuncClear):
+        (JSC::mapProtoFuncDelete):
+        (JSC::mapProtoFuncForEach):
+        (JSC::mapProtoFuncGet):
+        (JSC::mapProtoFuncHas):
+        (JSC::mapProtoFuncSet):
+        (JSC::mapProtoFuncSize):
+        (JSC::getMapData): Deleted.
+        * runtime/SetPrototype.cpp:
+        (JSC::getSet):
+        (JSC::setProtoFuncAdd):
+        (JSC::setProtoFuncClear):
+        (JSC::setProtoFuncDelete):
+        (JSC::setProtoFuncForEach):
+        (JSC::setProtoFuncHas):
+        (JSC::setProtoFuncSize):
+        (JSC::getMapData): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2015-03-12  Mark Lam  <mark.lam@apple.com>
 
         Use std::atomic for CodeBlock::m_visitAggregateHasBeenCalled.

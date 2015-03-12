@@ -1,3 +1,14 @@
+2015-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Integrate MapData into JSMap and JSSet
+        https://bugs.webkit.org/show_bug.cgi?id=142556
+
+        Reviewed by Filip Pizlo.
+
+        Test structure-clone implementation that becomes aware of the difference between Map and Set.
+
+        * fast/storage/serialized-script-value.html:
+
 2015-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         These hidpi filter tests pass sometimes.

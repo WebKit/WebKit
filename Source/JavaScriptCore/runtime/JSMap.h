@@ -26,15 +26,63 @@
 #ifndef JSMap_h
 #define JSMap_h
 
+#include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "MapData.h"
 
 namespace JSC {
 
-class MapData;
-
-class JSMap : public JSNonFinalObject {
+class JSMap : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
+
+    // Our marking functions expect Entry to maintain this layout, and have all
+    // fields be WriteBarrier<Unknown>
+    class Entry {
+    private:
+        WriteBarrier<Unknown> m_key;
+        WriteBarrier<Unknown> m_value;
+
+    public:
+        const WriteBarrier<Unknown>& key() const
+        {
+            return m_key;
+        }
+
+        const WriteBarrier<Unknown>& value() const
+        {
+            return m_value;
+        }
+
+        void visitChildren(SlotVisitor& visitor)
+        {
+            visitor.append(&m_key);
+            visitor.append(&m_value);
+        }
+
+        void setKey(VM& vm, const JSCell* owner, JSValue key)
+        {
+            m_key.set(vm, owner, key);
+        }
+
+        void setKeyWithoutWriteBarrier(JSValue key)
+        {
+            m_key.setWithoutWriteBarrier(key);
+        }
+
+        void setValue(VM& vm, const JSCell* owner, JSValue value)
+        {
+            m_value.set(vm, owner, value);
+        }
+
+        void clear()
+        {
+            m_key.clear();
+            m_value.clear();
+        }
+    };
+
+    typedef MapDataImpl<Entry> MapData;
 
     DECLARE_EXPORT_INFO;
 
@@ -55,19 +103,35 @@ public:
         return create(exec->vm(), structure);
     }
 
-    MapData* mapData() { return m_mapData.get(); }
+    typedef MapData::const_iterator const_iterator;
+
+    const_iterator begin() const
+    {
+        return m_mapData.begin();
+    }
+    const_iterator end() const
+    {
+        return m_mapData.end();
+    }
+    bool has(ExecState*, JSValue);
+    size_t size(ExecState*);
+    JSValue get(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE void set(ExecState*, JSValue key, JSValue value);
+    void clear(ExecState*);
+    bool remove(ExecState*, JSValue);
 
 private:
     JSMap(VM& vm, Structure* structure)
         : Base(vm, structure)
+        , m_mapData()
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&);
-
+    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+    static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
-    WriteBarrier<MapData> m_mapData;
+    MapData m_mapData;
 };
 
 }

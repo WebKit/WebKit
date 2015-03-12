@@ -772,7 +772,6 @@
     <ClCompile Include="..\runtime\LiteralParser.cpp" />
     <ClCompile Include="..\runtime\Lookup.cpp" />
     <ClCompile Include="..\runtime\MapConstructor.cpp" />
-    <ClCompile Include="..\runtime\MapData.cpp" />
     <ClCompile Include="..\runtime\MapIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\MapIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\MapPrototype.cpp" />
@@ -1572,6 +1571,7 @@
     <ClInclude Include="..\runtime\Lookup.h" />
     <ClInclude Include="..\runtime\MapConstructor.h" />
     <ClInclude Include="..\runtime\MapData.h" />
+    <ClInclude Include="..\runtime\MapDataInlines.h" />
     <ClInclude Include="..\runtime\MapIteratorConstructor.h" />
     <ClInclude Include="..\runtime\MapIteratorPrototype.h" />
     <ClInclude Include="..\runtime\MapPrototype.h" />

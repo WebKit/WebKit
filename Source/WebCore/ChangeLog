@@ -1,3 +1,23 @@
+2015-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Integrate MapData into JSMap and JSSet
+        https://bugs.webkit.org/show_bug.cgi?id=142556
+
+        Reviewed by Filip Pizlo.
+
+        Now Set has SetData and it's different from MapData.
+        And MapData/SetData are completely integrated into JSSet and JSMap.
+        Structured-cloning algorithm need to be aware of these changes.
+        And in the case of JSSet, since JSSet doesn't need dummy value for construction,
+        Structured-cloning only serialize the keys in JSSet.
+
+        * ForwardingHeaders/runtime/MapDataInlines.h: Added.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::consumeCollectionDataTerminationIfPossible):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::consumeMapDataTerminationIfPossible): Deleted.
+
 2015-03-12  Dan Bernstein  <mitz@apple.com>
 
         Finish up <rdar://problem/20086546> [Cocoa] Add an option to treat certificate chains with SHA1-signed certificates as insecure

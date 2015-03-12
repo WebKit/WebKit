@@ -80,18 +80,18 @@ public:
 private:
     JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, SetIterationKind kind)
         : Base(vm, structure)
-        , m_iterator(iteratedObject->mapData()->begin())
+        , m_iterator(iteratedObject->begin())
         , m_kind(kind)
     {
     }
 
+    static void destroy(JSCell*);
     void finishCreation(VM&, JSSet*);
     JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSSet> m_set;
-    WriteBarrier<MapData> m_iteratedObjectData;
-    MapData::const_iterator m_iterator;
+    JSSet::const_iterator m_iterator;
     SetIterationKind m_kind;
 };
 

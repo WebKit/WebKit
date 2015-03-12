@@ -268,7 +268,6 @@ public:
     Strong<Structure> unlinkedEvalCodeBlockStructure;
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> mapDataStructure;
     Strong<Structure> weakMapDataStructure;
 #if ENABLE(PROMISES)
     Strong<Structure> promiseDeferredStructure;

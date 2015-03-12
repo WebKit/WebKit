@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(map);
 
-    JSValue adderFunction = map->get(exec, exec->propertyNames().set);
+    JSValue adderFunction = map->JSObject::get(exec, exec->propertyNames().set);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

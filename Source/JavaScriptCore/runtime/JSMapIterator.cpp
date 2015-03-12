@@ -40,15 +40,19 @@ void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 {
     Base::finishCreation(vm);
     m_map.set(vm, this, iteratedObject);
-    m_iteratedObjectData.set(vm, this, iteratedObject->mapData());
+}
+
+void JSMapIterator::destroy(JSCell* cell)
+{
+    jsCast<JSMapIterator*>(cell)->~JSMapIterator();
 }
 
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());        
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_iteratedObjectData);
+    visitor.append(&thisObject->m_map);
 }
 
 JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)

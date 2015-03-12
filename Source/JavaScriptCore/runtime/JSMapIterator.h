@@ -82,18 +82,18 @@ public:
 private:
     JSMapIterator(VM& vm, Structure* structure, JSMap* iteratedObject, MapIterationKind kind)
         : Base(vm, structure)
-        , m_iterator(iteratedObject->mapData()->begin())
+        , m_iterator(iteratedObject->begin())
         , m_kind(kind)
     {
     }
 
+    static void destroy(JSCell*);
     void finishCreation(VM&, JSMap*);
     JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSMap> m_map;
-    WriteBarrier<MapData> m_iteratedObjectData;
-    MapData::const_iterator m_iterator;
+    JSMap::const_iterator m_iterator;
     MapIterationKind m_kind;
 };
 

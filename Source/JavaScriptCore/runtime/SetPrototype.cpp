@@ -34,7 +34,7 @@
 #include "JSFunctionInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
-#include "MapData.h"
+#include "MapDataInlines.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -75,50 +75,51 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
 }
 
-ALWAYS_INLINE static MapData* getMapData(CallFrame* callFrame, JSValue thisValue)
+ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
 {
     if (!thisValue.isObject()) {
         throwVMError(callFrame, createNotAnObjectError(callFrame, thisValue));
-        return 0;
+        return nullptr;
     }
     JSSet* set = jsDynamicCast<JSSet*>(thisValue);
     if (!set) {
         throwTypeError(callFrame, ASCIILiteral("Set operation called on non-Set object"));
-        return 0;
+        return nullptr;
     }
-    return set->mapData();
+    return set;
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSValue thisValue = callFrame->thisValue();
+    JSSet* set = getSet(callFrame, thisValue);
+    if (!set)
         return JSValue::encode(jsUndefined());
-    data->set(callFrame, callFrame->argument(0), callFrame->argument(0));
-    return JSValue::encode(callFrame->thisValue());
+    set->add(callFrame, callFrame->argument(0));
+    return JSValue::encode(thisValue);
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncClear(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
-    data->clear();
+    set->clear(callFrame);
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(data->remove(callFrame, callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(set->remove(callFrame, callFrame->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
     JSValue callBack = callFrame->argument(0);
     CallData callData;
@@ -130,13 +131,13 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(CallFrame* callFrame)
     if (callType == CallTypeJS) {
         JSFunction* function = jsCast<JSFunction*>(callBack);
         CachedCall cachedCall(callFrame, function, 1);
-        for (auto ptr = data->begin(), end = data->end(); ptr != end && !vm->exception(); ++ptr) {
+        for (auto ptr = set->begin(), end = set->end(); ptr != end && !vm->exception(); ++ptr) {
             cachedCall.setThis(thisValue);
             cachedCall.setArgument(0, ptr.key());
             cachedCall.call();
         }
     } else {
-        for (auto ptr = data->begin(), end = data->end(); ptr != end && !vm->exception(); ++ptr) {
+        for (auto ptr = set->begin(), end = set->end(); ptr != end && !vm->exception(); ++ptr) {
             MarkedArgumentBuffer args;
             args.append(ptr.key());
             JSC::call(callFrame, callBack, callType, callData, thisValue, args);
@@ -147,18 +148,18 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncHas(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(data->contains(callFrame, callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(set->has(callFrame, callFrame->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncSize(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(data->size(callFrame)));
+    return JSValue::encode(jsNumber(set->size(callFrame)));
 }
     
 EncodedJSValue JSC_HOST_CALL setProtoFuncValues(CallFrame* callFrame)

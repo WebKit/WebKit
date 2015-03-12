@@ -34,7 +34,7 @@
 #include "JSFunctionInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
-#include "MapData.h"
+#include "MapDataInlines.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -76,41 +76,41 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
 }
 
-ALWAYS_INLINE static MapData* getMapData(CallFrame* callFrame, JSValue thisValue)
+ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
 {
     if (!thisValue.isObject()) {
         throwVMError(callFrame, createNotAnObjectError(callFrame, thisValue));
-        return 0;
+        return nullptr;
     }
     JSMap* map = jsDynamicCast<JSMap*>(thisValue);
     if (!map) {
         throwTypeError(callFrame, ASCIILiteral("Map operation called on non-Map object"));
-        return 0;
+        return nullptr;
     }
-    return map->mapData();
+    return map;
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
-    data->clear();
+    map->clear(callFrame);
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(data->remove(callFrame, callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(map->remove(callFrame, callFrame->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
     JSValue callBack = callFrame->argument(0);
     CallData callData;
@@ -122,14 +122,14 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
     if (callType == CallTypeJS) {
         JSFunction* function = jsCast<JSFunction*>(callBack);
         CachedCall cachedCall(callFrame, function, 2);
-        for (auto ptr = data->begin(), end = data->end(); ptr != end && !vm->exception(); ++ptr) {
+        for (auto ptr = map->begin(), end = map->end(); ptr != end && !vm->exception(); ++ptr) {
             cachedCall.setThis(thisValue);
             cachedCall.setArgument(0, ptr.value());
             cachedCall.setArgument(1, ptr.key());
             cachedCall.call();
         }
     } else {
-        for (auto ptr = data->begin(), end = data->end(); ptr != end && !vm->exception(); ++ptr) {
+        for (auto ptr = map->begin(), end = map->end(); ptr != end && !vm->exception(); ++ptr) {
             MarkedArgumentBuffer args;
             args.append(ptr.value());
             args.append(ptr.key());
@@ -141,38 +141,36 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
-    JSValue result = data->get(callFrame, callFrame->argument(0));
-    if (!result)
-        result = jsUndefined();
-    return JSValue::encode(result);
+    return JSValue::encode(map->get(callFrame, callFrame->argument(0)));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncHas(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsBoolean(data->contains(callFrame, callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(map->has(callFrame, callFrame->argument(0))));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncSet(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSValue thisValue = callFrame->thisValue();
+    JSMap* map = getMap(callFrame, thisValue);
+    if (!map)
         return JSValue::encode(jsUndefined());
-    data->set(callFrame, callFrame->argument(0), callFrame->argument(1));
-    return JSValue::encode(callFrame->thisValue());
+    map->set(callFrame, callFrame->argument(0), callFrame->argument(1));
+    return JSValue::encode(thisValue);
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncSize(CallFrame* callFrame)
 {
-    MapData* data = getMapData(callFrame, callFrame->thisValue());
-    if (!data)
+    JSMap* map = getMap(callFrame, callFrame->thisValue());
+    if (!map)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(data->size(callFrame)));
+    return JSValue::encode(jsNumber(map->size(callFrame)));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(CallFrame* callFrame)

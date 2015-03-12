@@ -27,7 +27,7 @@
 #include "JSSet.h"
 
 #include "JSCJSValueInlines.h"
-#include "MapData.h"
+#include "MapDataInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
@@ -35,17 +35,46 @@ namespace JSC {
 
 const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(JSSet) };
 
+void JSSet::destroy(JSCell* cell)
+{
+    jsCast<JSSet*>(cell)->~JSSet();
+}
+
 void JSSet::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
-    JSSet* thisObject = jsCast<JSSet*>(cell);
-    visitor.append(&thisObject->m_mapData);
+    jsCast<JSSet*>(cell)->m_setData.visitChildren(cell, visitor);
 }
 
-void JSSet::finishCreation(VM& vm)
+void JSSet::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
 {
-    Base::finishCreation(vm);
-    m_mapData.set(vm, this, MapData::create(vm));
+    Base::copyBackingStore(cell, visitor, token);
+    jsCast<JSSet*>(cell)->m_setData.copyBackingStore(visitor, token);
+}
+
+bool JSSet::has(ExecState* exec, JSValue value)
+{
+    return m_setData.contains(exec, value);
+}
+
+size_t JSSet::size(ExecState* exec)
+{
+    return m_setData.size(exec);
+}
+
+void JSSet::add(ExecState* exec, JSValue value)
+{
+    m_setData.set(exec, this, value, value);
+}
+
+void JSSet::clear(ExecState*)
+{
+    m_setData.clear();
+}
+
+bool JSSet::remove(ExecState* exec, JSValue value)
+{
+    return m_setData.remove(exec, value);
 }
 
 }
