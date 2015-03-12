@@ -70,6 +70,10 @@
 #import <AppKit/NSTextAlternatives.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "WebMediaPlaybackTargetPickerProxyMac.h"
+#endif
+
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
 @end
@@ -788,6 +792,12 @@ void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
     [menu popUpMenuPositioningItem:nil atLocation:location inView:m_wkView];
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+std::unique_ptr<WebMediaPlaybackTargetPickerProxy> PageClientImpl::createPlaybackTargetPicker(WebPageProxy* page)
+{
+    return WebMediaPlaybackTargetPickerProxyMac::create(*page);
+}
+#endif
 
 } // namespace WebKit
 

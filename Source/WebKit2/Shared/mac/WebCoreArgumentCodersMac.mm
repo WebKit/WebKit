@@ -38,8 +38,6 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/SoftLinking.h>
-#import <objc/runtime.h>
 
 #if USE(CFNETWORK)
 #import <CFNetwork/CFURLRequest.h>

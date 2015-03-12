@@ -204,6 +204,10 @@ private:
 #if USE(DICTATION_ALTERNATIVES)
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 #endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    virtual std::unique_ptr<WebMediaPlaybackTargetPickerProxy> createPlaybackTargetPicker(WebPageProxy*) override;
+#endif
 };
 
 } // namespace WebKit

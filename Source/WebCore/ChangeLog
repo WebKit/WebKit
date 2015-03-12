@@ -1,3 +1,18 @@
+2015-03-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update AirPlay handling
+        https://bugs.webkit.org/show_bug.cgi?id=142541
+
+        Unreviewed, respond to post-review comments.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didChoosePlaybackTarget):
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::showPlaybackTargetPicker):
+        (WebCore::Page::didChoosePlaybackTarget):
+        (WebCore::Page::configurePlaybackTargetMonitoring):
+
 2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(PICTURE_SIZES) build

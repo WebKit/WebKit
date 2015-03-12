@@ -297,3 +297,18 @@
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
        (home-subpath "/Library/Input Methods"))
+
+;; AirPlay
+;; FIXME: remove this as described in rdar://19869448
+(allow mach-lookup
+    (global-name "com.apple.coremedia.endpoint.airplayuiagent")
+    (global-name "com.apple.coremedia.endpointstream.airplayuiagent")
+    (global-name "com.apple.coremedia.endpointplaybacksession.airplayuiagent")
+    (global-name "com.apple.coremedia.endpointpicker"))
+
+;; AirPlay
+(allow mach-lookup
+    (global-name "com.apple.coremedia.endpoint.xpc")
+    (global-name "com.apple.coremedia.endpointstream.xpc")
+    (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
+    (global-name "com.apple.coremedia.endpointpicker.xpc"))

@@ -312,6 +312,12 @@ private:
 
     virtual void handleAutoFillButtonClick(WebCore::HTMLInputElement&) override;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    virtual void showPlaybackTargetPicker(const WebCore::IntPoint&, bool) override;
+    virtual void startingMonitoringPlaybackTargets() override;
+    virtual void stopMonitoringPlaybackTargets() override;
+#endif
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

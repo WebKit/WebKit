@@ -411,4 +411,10 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    PlaybackTargetSelected(WebCore::MediaPlaybackTarget target)
+    PlaybackTargetAvailabilityDidChange(bool available)
+#endif
+
 }

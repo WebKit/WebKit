@@ -6527,6 +6527,9 @@ void Document::didChoosePlaybackTarget(MediaPlaybackTarget& device)
         client->didChoosePlaybackTarget(device);
     }
 
+    // Notify the client that requested the chooser last because if more than one
+    // is playing, only the last one to set the context will actually get to play
+    //  to the external device.
     if (clientThatRequestedPicker)
         clientThatRequestedPicker->didChoosePlaybackTarget(device);
 }

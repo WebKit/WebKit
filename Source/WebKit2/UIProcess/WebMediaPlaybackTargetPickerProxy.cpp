@@ -37,7 +37,7 @@ WebMediaPlaybackTargetPickerProxy::WebMediaPlaybackTargetPickerProxy(Client& cli
 
 WebMediaPlaybackTargetPickerProxy::~WebMediaPlaybackTargetPickerProxy()
 {
-    m_client = 0;
+    m_client = nullptr;
 }
 
 void WebMediaPlaybackTargetPickerProxy::showPlaybackTargetPicker(const WebCore::FloatRect&, bool)

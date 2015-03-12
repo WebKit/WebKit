@@ -1700,8 +1700,8 @@ void Page::setSessionID(SessionID sessionID)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void Page::showPlaybackTargetPicker(Document* document, const WebCore::IntPoint& location, bool isVideo)
 {
-
     m_documentRequestingPlaybackTargetPicker = document;
+
 #if PLATFORM(IOS)
     // FIXME: refactor iOS implementation.
     UNUSED_PARAM(location);
@@ -1725,6 +1725,9 @@ void Page::didChoosePlaybackTarget(MediaPlaybackTarget& target)
         frame->document()->didChoosePlaybackTarget(target);
     }
 
+    // Notify the document that requested the chooser last because if more than one element
+    // is playing the last one to set the context will be the one that actually gets to
+    //  play to the external device.
     if (documentThatRequestedPicker)
         documentThatRequestedPicker->didChoosePlaybackTarget(target);
 
@@ -1751,7 +1754,6 @@ void Page::configurePlaybackTargetMonitoring()
     if (m_requiresPlaybackTargetMonitoring == monitoringRequired)
         return;
     m_requiresPlaybackTargetMonitoring = monitoringRequired;
-
 
     if (monitoringRequired)
         chrome().client().startingMonitoringPlaybackTargets();

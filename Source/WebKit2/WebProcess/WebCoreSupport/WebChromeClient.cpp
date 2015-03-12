@@ -1114,4 +1114,24 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
     m_page->send(Messages::WebPageProxy::HandleAutoFillButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+void WebChromeClient::showPlaybackTargetPicker(const WebCore::IntPoint& position, bool isVideo)
+{
+    FrameView* frameView = m_page->mainFrame()->view();
+    FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
+    m_page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(rect, isVideo));
+}
+
+void WebChromeClient::startingMonitoringPlaybackTargets()
+{
+    m_page->send(Messages::WebPageProxy::StartingMonitoringPlaybackTargets());
+}
+
+void WebChromeClient::stopMonitoringPlaybackTargets()
+{
+    m_page->send(Messages::WebPageProxy::StopMonitoringPlaybackTargets());
+}
+#endif
+
+
 } // namespace WebKit

@@ -1,3 +1,27 @@
+2015-03-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update AirPlay handling
+        https://bugs.webkit.org/show_bug.cgi?id=142541
+
+        Unreviewed, respond to post-review comments and add previously reviewed changes
+        missed by a bungled merge.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        * UIProcess/WebMediaPlaybackTargetPickerProxy.cpp:
+        (WebKit::WebMediaPlaybackTargetPickerProxy::~WebMediaPlaybackTargetPickerProxy):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPlaybackTargetPicker):
+        * UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.h: Added.
+        * UIProcess/mac/WebMediaPlaybackTargetPickerProxyMac.mm: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-03-11  Antti Koivisto  <antti@apple.com>
 
         Cache traversal missing large entries

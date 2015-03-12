@@ -87,6 +87,10 @@
 #import <WebCore/htmlediting.h>
 #import <WebKitSystemInterface.h>
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <WebCore/MediaPlaybackTarget.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -1186,6 +1190,20 @@ void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTr
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().applyFontStyles(fontFamily, fontSize, fontTraits);
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+void WebPage::playbackTargetSelected(const WebCore::MediaPlaybackTarget& playbackTarget) const
+{
+    MediaPlaybackTarget nonConstTarget(playbackTarget.devicePickerContext());
+    m_page->didChoosePlaybackTarget(nonConstTarget);
+}
+
+void WebPage::playbackTargetAvailabilityDidChange(bool changed)
+{
+    m_page->playbackTargetAvailabilityDidChange(changed);
+}
+#endif
+
 
 } // namespace WebKit
 
