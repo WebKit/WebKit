@@ -1,5 +1,11 @@
 2015-03-12  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix (part 2).
+
+        * ANGLE.vcxproj/libGLESv2Common.props: Missed a directory separator.
+
+2015-03-12  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed build fix for some DirectX SDK Installs
 
         * ANGLE.vcxproj/libGLESv2Common.props: Correct path for Lib and

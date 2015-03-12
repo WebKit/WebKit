@@ -10,7 +10,7 @@
     <Link>
       <ModuleDefinitionFile>../src/libGLESv2/libGLESv2.def</ModuleDefinitionFile>
       <AdditionalDependencies>d3d9.lib;dxguid.lib;translator_common$(DebugSuffix).lib;translator_hlsl$(DebugSuffix).lib;translator_glsl$(DebugSuffix).lib;preprocessor$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib$(PlatformTarget);$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\$(PlatformTarget);$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
