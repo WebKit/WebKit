@@ -1,3 +1,25 @@
+2015-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: Crash under Heap::reportExtraMemoryAllocatedSlowCase for media element
+        https://bugs.webkit.org/show_bug.cgi?id=142636
+
+        Reviewed by Mark Hahnenberg.
+
+        This was a pre-existing bug that I made a lot worse in
+        <https://trac.webkit.org/changeset/181411>.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Compare size before
+        subtracting rather than subtracting and then comparing to zero. The
+        latter technique is not valid for unsigned integers, which will happily
+        underflow into giant numbers.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::reportExtraMemoryAllocated): This code was
+         technically correct, but I took the opportunity to clean it up a bit.
+         There's no need to do two checks here, and it smells bad to check for
+         a negative unsigned integer.
+
 2015-03-12  Sebastian Dröge  <sebastian@centricular.com>
 
         Stop using single-include headers that are only available since GStreamer >= 1.2.
