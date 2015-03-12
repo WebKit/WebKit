@@ -65,7 +65,7 @@ void CodeBlockSet::clearMarksForFullCollection()
 {
     for (CodeBlock* codeBlock : m_oldCodeBlocks) {
         codeBlock->m_mayBeExecuting = false;
-        codeBlock->m_visitAggregateHasBeenCalled = false;
+        codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
     }
 
     // We promote after we clear marks on the old generation CodeBlocks because
@@ -82,7 +82,7 @@ void CodeBlockSet::clearMarksForEdenCollection(const Vector<const JSCell*>& reme
             continue;
         executable->forEachCodeBlock([](CodeBlock* codeBlock) {
             codeBlock->m_mayBeExecuting = false;
-            codeBlock->m_visitAggregateHasBeenCalled = false;
+            codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
         });
     }
 }
