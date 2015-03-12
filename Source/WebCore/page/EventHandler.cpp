@@ -522,22 +522,30 @@ static inline bool dispatchSelectStart(Node* node)
     return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
 }
 
-static VisibleSelection expandSelectionToRespectUserSelectAll(Node* targetNode, const VisibleSelection& selection)
+static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
 #if ENABLE(USERSELECT_ALL)
-    Node* rootUserSelectAll = Position::rootUserSelectAllForNode(targetNode);
-    if (!rootUserSelectAll)
+    if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
+        return rootUserSelectAll;
+#endif
+
+    if (targetNode.shouldSelectOnMouseDown())
+        return &targetNode;
+
+    return nullptr;
+}
+
+static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNode, const VisibleSelection& selection)
+{
+    Node* nodeToSelect = nodeToSelectOnMouseDownForNode(targetNode);
+    if (!nodeToSelect)
         return selection;
 
     VisibleSelection newSelection(selection);
-    newSelection.setBase(positionBeforeNode(rootUserSelectAll).upstream(CanCrossEditingBoundary));
-    newSelection.setExtent(positionAfterNode(rootUserSelectAll).downstream(CanCrossEditingBoundary));
+    newSelection.setBase(positionBeforeNode(nodeToSelect).upstream(CanCrossEditingBoundary));
+    newSelection.setExtent(positionAfterNode(nodeToSelect).downstream(CanCrossEditingBoundary));
 
     return newSelection;
-#else
-    UNUSED_PARAM(targetNode);
-    return selection;
-#endif
 }
 
 bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& selection, TextGranularity granularity)
@@ -575,7 +583,7 @@ void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& resul
         if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
             newSelection.appendTrailingWhitespace();
 
-        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(targetNode, newSelection), WordGranularity);
     }
 }
 
@@ -601,7 +609,7 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
 
-        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(targetNode, newSelection), WordGranularity);
     }
 }
 
@@ -639,7 +647,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         newSelection.expandUsingGranularity(ParagraphGranularity);
     }
 
-    return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), ParagraphGranularity);
+    return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(targetNode, newSelection), ParagraphGranularity);
 }
 
 static int textDistance(const Position& start, const Position& end)
@@ -677,7 +685,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     TextGranularity granularity = CharacterGranularity;
 
     if (extendSelection && newSelection.isCaretOrRange()) {
-        VisibleSelection selectionInUserSelectAll = expandSelectionToRespectUserSelectAll(targetNode, VisibleSelection(pos));
+        VisibleSelection selectionInUserSelectAll = expandSelectionToRespectSelectOnMouseDown(targetNode, VisibleSelection(pos));
         if (selectionInUserSelectAll.isRange()) {
             if (comparePositions(selectionInUserSelectAll.start(), newSelection.start()) < 0)
                 pos = selectionInUserSelectAll.start();
@@ -704,7 +712,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
             newSelection.expandUsingGranularity(m_frame.selection().granularity());
         }
     } else
-        newSelection = expandSelectionToRespectUserSelectAll(targetNode, visiblePos);
+        newSelection = expandSelectionToRespectSelectOnMouseDown(targetNode, visiblePos);
 
     bool handled = updateSelectionForMouseDownDispatchingSelectStart(targetNode, newSelection, granularity);
 

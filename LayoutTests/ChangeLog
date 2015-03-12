@@ -1,3 +1,23 @@
+2015-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> shouldn't use "user-select: all"
+        https://bugs.webkit.org/show_bug.cgi?id=142453
+
+        Reviewed by Darin Adler.
+
+        * fast/attachment/attachment-select-on-click-inside-user-select-all.html: Added.
+        * fast/attachment/attachment-select-on-click.html: Added.
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-select-on-click-expected.txt: Added.
+        * platform/mac/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.png: Added.
+        * platform/mac/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt: Added.
+        * platform/mac-mavericks/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt: Added.
+        * platform/mac-mavericks/fast/attachment/attachment-select-on-click-expected.txt: Added.
+        Add two tests. One, for the basic functionality of clicking on an
+        <attachment> to select it. The second, to test that clicking on an
+        <attachment> inside a larger "user-select: all" element still selects
+        the whole "user-select: all" element.
+
 2015-03-11  Matthew Mirman  <mmirman@apple.com>
 
         Update windows test results

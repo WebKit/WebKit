@@ -1,3 +1,52 @@
+2015-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        <attachment> shouldn't use "user-select: all"
+        https://bugs.webkit.org/show_bug.cgi?id=142453
+
+        Reviewed by Darin Adler.
+
+        It turns out that "user-select: all" is rife with bugs; in lieu of fixing them
+        all (at least for now), let's not use "user-select: all" in the default stylesheet
+        for <attachment>. It's really overkill anyway, since <attachment> can't have children.
+        The only "user-select: all" behavior we actually want is select-on-click.
+        So, we'll implement that in a slightly different way.
+
+        Tests: fast/attachment/attachment-select-on-click-inside-user-select-all.html
+               fast/attachment/attachment-select-on-click.html
+
+        * css/html.css:
+        (attachment):
+        No more "user-select: all".
+
+        (attachment:focus): Deleted.
+        We stopped using attachment focus a while back and forgot to remove this.
+
+        * dom/Node.h:
+        (WebCore::Node::shouldSelectOnMouseDown):
+        Add a virtual function that Node subclasses can override to indicate they
+        should be selected on mouse down.
+
+        * html/HTMLAttachmentElement.h:
+        Override the aforementioned virtual function; <attachment> should always
+        be selected on mouse down.
+
+        * page/EventHandler.cpp:
+        (WebCore::nodeToSelectOnMouseDownForNode):
+        Determine which node should be selected when a mousedown hits the given node.
+        If there's any "user-select: all", we go with the outermost "user-select: all".
+        Otherwise, we give the node a chance to say that it wants to be selected itself.
+
+        (WebCore::expandSelectionToRespectSelectOnMouseDown):
+        Rename this function, it's not just about "user-select: all" anymore.
+        Make use of nodeToSelectOnMouseDownForNode.
+
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::expandSelectionToRespectUserSelectAll): Deleted.
+        Adjust to the new names.
+
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Users of Heap::deprecatedReportExtraMemory should switch to reportExtraMemoryAllocated+reportExtraMemoryVisited

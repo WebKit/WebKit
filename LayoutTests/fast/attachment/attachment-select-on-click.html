@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<div>text before <attachment id="attachment"></attachment> text after</div>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+var attachment = document.getElementById('attachment');
+attachment.file = file;
+
+window.onload = function () {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(attachment.offsetLeft + 10, attachment.offsetTop + 10);
+    eventSender.mouseDown(0);
+    eventSender.mouseUp(0);
+}
+</script>
+</body>
+</html>
