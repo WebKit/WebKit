@@ -1,3 +1,13 @@
+2015-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
 2015-03-11  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> shouldn't use "user-select: all"
