@@ -27,7 +27,7 @@
 #include "GRefPtrGStreamer.h"
 
 #include <gst/gst.h>
-#include <gst/video/video.h>
+#include <gst/video/video-frame.h>
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

@@ -24,8 +24,9 @@
 
 #include "IntSize.h"
 
-#include <gst/audio/audio.h>
+#include <gst/audio/audio-info.h>
 #include <gst/gst.h>
+#include <gst/video/video-info.h>
 #include <wtf/MathExtras.h>
 #include <wtf/gobject/GUniquePtr.h>
 

@@ -27,9 +27,8 @@
 
 #include <gio/gio.h>
 #include <gst/app/gstappsink.h>
-#include <gst/audio/audio.h>
+#include <gst/audio/audio-info.h>
 #include <gst/gst.h>
-#include <gst/pbutils/pbutils.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GThreadSafeMainLoopSource.h>
