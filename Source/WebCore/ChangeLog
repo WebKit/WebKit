@@ -1,3 +1,13 @@
+2015-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Finish up <rdar://problem/20086546> [Cocoa] Add an option to treat certificate chains with SHA1-signed certificates as insecure
+
+        Added back OS X bits that I couldn’t land initially in r181317 or had to remove in r181327.
+
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate):
+        * platform/spi/cocoa/SecuritySPI.h:
+
 2015-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: Crash under Heap::reportExtraMemoryAllocatedSlowCase for media element

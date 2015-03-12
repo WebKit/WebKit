@@ -33,7 +33,7 @@ namespace WebCore {
 
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
     if (!m_certificateChain)
         return false;
 
