@@ -1,3 +1,17 @@
+2015-03-12  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL gardening on 13th Mar.  
+        https://bugs.webkit.org/show_bug.cgi?id=142624
+
+        Rebaseline the missing test result.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/inserting/before-after-input-element-expected.png: Added.
+        * platform/efl/editing/inserting/before-after-input-element-expected.txt: Added.
+        * platform/efl/fast/css/css2-system-fonts-expected.txt: Added.
+        * platform/efl/fast/text/tatechuyoko-expected.png: Added.
+        * platform/efl/fast/text/tatechuyoko-expected.txt: Added.
+
 2015-03-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update test expectations after r181408.

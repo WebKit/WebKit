@@ -366,7 +366,6 @@ webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
 
 # Needs baselines
-editing/inserting/before-after-input-element.html [ Missing ]
 editing/selection/contains-boundaries.html [ Missing ]
 editing/selection/designmode-no-caret.html [ Timeout ]
 editing/selection/replaced-boundaries-3.html [ Missing ]
@@ -375,8 +374,6 @@ editing/style/5065910.html [ Missing ]
 editing/style/font-family-with-space.html [ Missing ]
 editing/style/smoosh-styles-001.html [ Missing ]
 editing/style/style-boundary-005.html [ Missing ]
-fast/css/css2-system-fonts.html [ Missing ]
-fast/text/tatechuyoko.html [ Missing ]
 
 # Test is failing due to a scrolling problem on second iteration.
 webkit.org/b/106240 fast/events/mouse-cursor-image-set.html [ Failure ]
