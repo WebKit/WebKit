@@ -80,14 +80,9 @@ void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int 
     RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
     dispatch_io_read(m_dispatchIO.get(), offset, size, dispatch_get_main_queue(), [channel, completionHandler, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
-        if (done) {
-            if (!didCallCompletionHandler) {
-                Data nullData;
-                completionHandler(nullData, error);
-            }
+        ASSERT_UNUSED(done, done || !didCallCompletionHandler);
+        if (didCallCompletionHandler)
             return;
-        }
-        ASSERT(!didCallCompletionHandler);
         DispatchPtr<dispatch_data_t> fileDataPtr(fileData);
         Data data(fileDataPtr);
         completionHandler(data, error);

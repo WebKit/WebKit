@@ -179,12 +179,19 @@ static bool decodeEntryMetaData(EntryMetaData& metaData, const Data& fileData)
 
 static bool decodeEntryHeader(const Data& fileData, EntryMetaData& metaData, Data& data)
 {
-    if (!decodeEntryMetaData(metaData, fileData))
+    if (!decodeEntryMetaData(metaData, fileData)) {
+        LOG(NetworkCacheStorage, "(NetworkProcess) meta data decode failure");
         return false;
-    if (metaData.cacheStorageVersion != Storage::version)
+    }
+
+    if (metaData.cacheStorageVersion != Storage::version) {
+        LOG(NetworkCacheStorage, "(NetworkProcess) version mismatch");
         return false;
-    if (metaData.headerOffset + metaData.headerSize > metaData.bodyOffset)
+    }
+    if (metaData.headerOffset + metaData.headerSize > metaData.bodyOffset) {
+        LOG(NetworkCacheStorage, "(NetworkProcess) body offset mismatch");
         return false;
+    }
 
     auto headerData = fileData.subrange(metaData.headerOffset, metaData.headerSize);
     if (metaData.headerChecksum != hashData(headerData)) {

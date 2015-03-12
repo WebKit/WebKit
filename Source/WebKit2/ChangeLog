@@ -1,3 +1,24 @@
+2015-03-11  Antti Koivisto  <antti@apple.com>
+
+        Cache traversal missing large entries
+        https://bugs.webkit.org/show_bug.cgi?id=142601
+
+        Reviewed by Andreas Kling.
+
+        When traversing cache entries we only read the header data from disk. This didn't work
+        correctly for entries larger than the read size.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::read):
+
+            Partial reads only receive one callback with 'done' set to true.
+            Ensure we actually return data in this case.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeEntryHeader):
+
+            Add some logging.
+
 2015-03-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update AirPlay handling
