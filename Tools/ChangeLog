@@ -1,3 +1,13 @@
+2015-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mavericks] Test snapshots are 1600x1200 on Retina devices
+        https://bugs.webkit.org/show_bug.cgi?id=142630
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm: (WTR::PlatformWebView::windowSnapshotImage):
+        Removed an ifdef that disabled the fix on Mavericks.
+
 2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove isWK2 cruft from webkitdirs.pm after r170426
