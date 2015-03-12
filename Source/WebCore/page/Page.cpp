@@ -104,6 +104,12 @@
 #include <replay/InputCursor.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "HTMLVideoElement.h"
+#include "MediaPlaybackTarget.h"
+#include "MediaPlaybackTargetPickerClient.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -1690,5 +1696,68 @@ void Page::setSessionID(SessionID sessionID)
     for (auto& view : pluginViews())
         view->privateBrowsingStateChanged(sessionID.isEphemeral());
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void Page::showPlaybackTargetPicker(Document* document, const WebCore::IntPoint& location, bool isVideo)
+{
+
+    m_documentRequestingPlaybackTargetPicker = document;
+#if PLATFORM(IOS)
+    // FIXME: refactor iOS implementation.
+    UNUSED_PARAM(location);
+    chrome().client().showPlaybackTargetPicker(isVideo);
+#else
+    chrome().client().showPlaybackTargetPicker(location, isVideo);
+#endif
+}
+
+void Page::didChoosePlaybackTarget(MediaPlaybackTarget& target)
+{
+    Document* documentThatRequestedPicker = nullptr;
+
+    m_playbackTarget = std::make_unique<MediaPlaybackTarget>(target.devicePickerContext());
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        Document* document = frame->document();
+        if (frame->document() == m_documentRequestingPlaybackTargetPicker) {
+            documentThatRequestedPicker = document;
+            continue;
+        }
+        frame->document()->didChoosePlaybackTarget(target);
+    }
+
+    if (documentThatRequestedPicker)
+        documentThatRequestedPicker->didChoosePlaybackTarget(target);
+
+    m_documentRequestingPlaybackTargetPicker = nullptr;
+}
+
+void Page::playbackTargetAvailabilityDidChange(bool available)
+{
+    m_hasWirelessPlaybackTarget = available;
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frame->document()->playbackTargetAvailabilityDidChange(available);
+}
+
+void Page::configurePlaybackTargetMonitoring()
+{
+    bool monitoringRequired = false;
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->document()->requiresPlaybackTargetRouteMonitoring()) {
+            monitoringRequired = true;
+            break;
+        }
+    }
+
+    if (m_requiresPlaybackTargetMonitoring == monitoringRequired)
+        return;
+    m_requiresPlaybackTargetMonitoring = monitoringRequired;
+
+
+    if (monitoringRequired)
+        chrome().client().startingMonitoringPlaybackTargets();
+    else
+        chrome().client().stopMonitoringPlaybackTargets();
+}
+#endif
 
 } // namespace WebCore

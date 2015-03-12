@@ -1,3 +1,88 @@
+2015-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update AirPlay handling
+        https://bugs.webkit.org/show_bug.cgi?id=142541
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker):
+        (WebCore::Document::addPlaybackTargetPickerClient):
+        (WebCore::Document::removePlaybackTargetPickerClient):
+        (WebCore::Document::configurePlaybackTargetMonitoring):
+        (WebCore::Document::requiresPlaybackTargetRouteMonitoring):
+        (WebCore::Document::playbackTargetAvailabilityDidChange):
+        (WebCore::Document::didChoosePlaybackTarget):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::HTMLMediaSession):
+        (WebCore::HTMLMediaSession::registerWithDocument):
+        (WebCore::HTMLMediaSession::unregisterWithDocument):
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker):
+        (WebCore::HTMLMediaSession::hasWirelessPlaybackTargets):
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::HTMLMediaSession::didChoosePlaybackTarget):
+        (WebCore::HTMLMediaSession::externalOutputDeviceAvailableDidChange):
+        (WebCore::HTMLMediaSession::requiresPlaybackTargetRouteMonitoring):
+        * html/HTMLMediaSession.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::didChoosePlaybackTarget):
+        (WebCore::Page::playbackTargetAvailabilityDidChange):
+        (WebCore::Page::configurePlaybackTargetMonitoring):
+        * page/Page.h:
+        (WebCore::Page::hasWirelessPlaybackTarget):
+        (WebCore::Page::playbackTarget):
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::clientDataBufferingTimerFired):
+        (WebCore::MediaSession::wirelessRoutesAvailableDidChange): Deleted.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSession::didChoosePlaybackTarget):
+        (WebCore::MediaSession::externalOutputDeviceAvailableDidChange):
+        (WebCore::MediaSession::requiresPlaybackTargetRouteMonitoring):
+        (WebCore::MediaSessionClient::setWirelessPlaybackTarget):
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::wirelessRoutesAvailableChanged): Deleted.
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::configureWireLessTargetMonitoring):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::externalOutputDeviceAvailableDidChange):
+        (-[WebMediaSessionHelper wirelessRoutesAvailableDidChange:]):
+        * platform/graphics/AVPlaybackTarget.h: Added.
+        (WebCore::AVPlaybackTarget::~AVPlaybackTarget):
+        (WebCore::AVPlaybackTarget::AVPlaybackTarget):
+        (WebCore::AVPlaybackTarget::setDevicePickerContext):
+        (WebCore::AVPlaybackTarget::devicePickerContext):
+        * platform/graphics/AVPlaybackTargetPickerClient.h: Added.
+        (WebCore::AVPlaybackTargetPickerClient::~AVPlaybackTargetPickerClient):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setWirelessPlaybackTarget):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setWirelessPlaybackTarget):
+        * platform/graphics/avfoundation/AVPlaybackTargetMac.mm: Added.
+        (WebCore::AVPlaybackTarget::encode):
+        (WebCore::AVPlaybackTarget::decode):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2015-03-11  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add resource type and load type triggers.

@@ -124,6 +124,8 @@ class LiveNodeList;
 class JSNode;
 class Locale;
 class MediaCanStartListener;
+class MediaPlaybackTarget;
+class MediaPlaybackTargetPickerClient;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
@@ -1218,6 +1220,16 @@ public:
     void pageMutedStateDidChange();
     WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void showPlaybackTargetPicker(const HTMLMediaElement&);
+    void didChoosePlaybackTarget(MediaPlaybackTarget&);
+    void addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
+    void removePlaybackTargetPickerClient(MediaPlaybackTargetPickerClient&);
+    bool requiresPlaybackTargetRouteMonitoring();
+    void configurePlaybackTargetMonitoring();
+    void playbackTargetAvailabilityDidChange(bool);
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1655,6 +1667,11 @@ private:
 
     HashSet<AudioProducer*> m_audioProducers;
     bool m_isPlayingAudio;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    HashSet<WebCore::MediaPlaybackTargetPickerClient*> m_playbackTargetClients;
+    bool m_playbackTargetsAvailable { false };
+#endif
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

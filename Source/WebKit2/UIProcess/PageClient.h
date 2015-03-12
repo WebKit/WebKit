@@ -34,6 +34,10 @@
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "WebMediaPlaybackTargetPickerProxy.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 
@@ -313,6 +317,11 @@ public:
 #if PLATFORM(MAC)
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) = 0;
 #endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    virtual std::unique_ptr<WebMediaPlaybackTargetPickerProxy> createPlaybackTargetPicker(WebPageProxy*) = 0;
+#endif
+
 };
 
 } // namespace WebKit

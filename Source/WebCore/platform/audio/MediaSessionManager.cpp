@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -283,14 +283,6 @@ void MediaSessionManager::applicationWillEnterForeground() const
         if (m_restrictions[session->mediaType()] & BackgroundProcessPlaybackRestricted)
             session->endInterruption(MediaSession::MayResumePlaying);
     }
-}
-
-void MediaSessionManager::wirelessRoutesAvailableChanged()
-{
-    LOG(Media, "MediaSessionManager::wirelessRoutesAvailableChanged");
-    Vector<MediaSession*> sessions = m_sessions;
-    for (auto* session : sessions)
-        session->wirelessRoutesAvailableDidChange();
 }
 
 #if !PLATFORM(COCOA)

@@ -31,7 +31,9 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Document.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
@@ -72,8 +74,28 @@ static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restri
 HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
     : MediaSession(client)
     , m_restrictions(NoRestrictions)
-    , m_hasPlaybackTargetAvailabilityListeners(false)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    , m_targetAvailabilityChangedTimer(*this, &HTMLMediaSession::targetAvailabilityChangedTimerFired)
+#endif
 {
+}
+
+void HTMLMediaSession::registerWithDocument(Document& document)
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    document.addPlaybackTargetPickerClient(*this);
+#else
+    UNUSED_PARAM(document);
+#endif
+}
+
+void HTMLMediaSession::unregisterWithDocument(Document& document)
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    document.removePlaybackTargetPickerClient(*this);
+#else
+    UNUSED_PARAM(document);
+#endif
 }
 
 void HTMLMediaSession::addBehaviorRestriction(BehaviorRestrictions restriction)
@@ -177,19 +199,20 @@ void HTMLMediaSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
     if (!showingPlaybackTargetPickerPermitted(element))
         return;
 
-#if PLATFORM(IOS)
-    element.document().frame()->page()->chrome().client().showPlaybackTargetPicker(element.hasVideo());
-#endif
+    m_haveRequestedPlaybackTargetPicker = true;
+    element.document().showPlaybackTargetPicker(element);
 }
 
-bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement& element) const
+bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement&) const
 {
-    UNUSED_PARAM(element);
+#if PLATFORM(IOS)
+    // FIXME: consolidate Mac and iOS implementations
+    m_hasPlaybackTargets = MediaSessionManager::sharedManager().hasWirelessTargetsAvailable();
+#endif
 
-    bool hasTargets = MediaSessionManager::sharedManager().hasWirelessTargetsAvailable();
-    LOG(Media, "HTMLMediaSession::hasWirelessPlaybackTargets - returning %s", hasTargets ? "TRUE" : "FALSE");
+    LOG(Media, "HTMLMediaSession::hasWirelessPlaybackTargets - returning %s", m_hasPlaybackTargets ? "TRUE" : "FALSE");
 
-    return hasTargets;
+    return m_hasPlaybackTargets;
 }
 
 bool HTMLMediaSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& element) const
@@ -244,7 +267,38 @@ void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMedia
     UNUSED_PARAM(element);
 
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
+
+#if PLATFORM(IOS)
     MediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+#else
+    element.document().configurePlaybackTargetMonitoring();
+#endif
+}
+
+void HTMLMediaSession::didChoosePlaybackTarget(MediaPlaybackTarget& device)
+{
+    m_haveRequestedPlaybackTargetPicker = false;
+    client().setWirelessPlaybackTarget(device);
+}
+
+void HTMLMediaSession::targetAvailabilityChangedTimerFired()
+{
+    client().wirelessRoutesAvailableDidChange();
+}
+
+void HTMLMediaSession::externalOutputDeviceAvailableDidChange(bool hasTargets) const
+{
+    if (m_hasPlaybackTargets == hasTargets)
+        return;
+
+    m_hasPlaybackTargets = hasTargets;
+    if (!m_targetAvailabilityChangedTimer.isActive())
+        m_targetAvailabilityChangedTimer.startOneShot(0);
+}
+
+bool HTMLMediaSession::requiresPlaybackTargetRouteMonitoring() const
+{
+    return m_hasPlaybackTargetAvailabilityListeners;
 }
 #endif
 

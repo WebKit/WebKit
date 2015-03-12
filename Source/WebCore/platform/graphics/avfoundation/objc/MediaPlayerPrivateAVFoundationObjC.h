@@ -34,6 +34,7 @@
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
+OBJC_CLASS AVOutputDevicePickerContext;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
@@ -59,13 +60,14 @@ typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
 
 namespace WebCore {
 
-class WebCoreAVFResourceLoader;
-class InbandMetadataTextTrackPrivateAVF;
-class InbandTextTrackPrivateAVFObjC;
 class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
+class InbandMetadataTextTrackPrivateAVF;
+class InbandTextTrackPrivateAVFObjC;
+class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class VideoTrackPrivateAVFObjC;
+class WebCoreAVFResourceLoader;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
@@ -274,6 +276,9 @@ private:
     virtual String wirelessPlaybackTargetName() const override;
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
     virtual bool wirelessVideoPlaybackDisabled() const override;
+#if !PLATFORM(IOS)
+    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) override;
+#endif
     virtual void setWirelessVideoPlaybackDisabled(bool) override;
     void updateDisableExternalPlayback();
 #endif
@@ -343,6 +348,10 @@ private:
 
 #if ENABLE(DATACUE_VALUE)
     RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+    RetainPtr<AVOutputDevicePickerContext> m_outputDevicePickerContext;
 #endif
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;

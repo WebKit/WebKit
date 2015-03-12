@@ -111,6 +111,10 @@
 #include "ArgumentCodersGtk.h"
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#include "WebMediaPlaybackTargetPickerProxy.h"
+#endif
+
 namespace API {
 class ContextMenuClient;
 class FindClient;
@@ -257,6 +261,9 @@ struct WebPageConfiguration {
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
+#endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    , public WebMediaPlaybackTargetPickerProxy::Client
 #endif
     , public WebPopupMenuProxy::Client
     , public IPC::MessageReceiver
@@ -999,6 +1006,17 @@ public:
     void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, bool shouldSample);
     void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, bool shouldSample);
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    WebMediaPlaybackTargetPickerProxy& devicePickerProxy();
+    void showPlaybackTargetPicker(const WebCore::FloatRect&, bool hasVideo);
+    void startingMonitoringPlaybackTargets();
+    void stopMonitoringPlaybackTargets();
+
+    // WebMediaPlaybackTargetPickerProxy::Client
+    virtual void didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget&) override;
+    virtual void externalOutputDeviceAvailableDidChange(bool) override;
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();
@@ -1663,6 +1681,10 @@ private:
     WebCore::ViewState::Flags m_potentiallyChangedViewStateFlags;
     bool m_viewStateChangeWantsSynchronousReply;
     Vector<uint64_t> m_nextViewStateChangeCallbacks;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    std::unique_ptr<WebMediaPlaybackTargetPickerProxy> m_playbackTargetPicker;
+#endif
 
     bool m_isPlayingAudio;
 };

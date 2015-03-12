@@ -38,9 +38,15 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SoftLinking.h>
+#import <objc/runtime.h>
 
 #if USE(CFNETWORK)
 #import <CFNetwork/CFURLRequest.h>
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#import <WebCore/MediaPlaybackTarget.h>
 #endif
 
 using namespace WebCore;
@@ -431,5 +437,32 @@ bool ArgumentCoder<ContentFilterUnblockHandler>::decode(ArgumentDecoder& decoder
     [unarchiver finishDecoding];
     return true;
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void ArgumentCoder<MediaPlaybackTarget>::encode(ArgumentEncoder& encoder, const MediaPlaybackTarget& target)
+{
+    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+    [archiver setRequiresSecureCoding:YES];
+    target.encode(archiver.get());
+    [archiver finishEncoding];
+    IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
+}
+
+bool ArgumentCoder<MediaPlaybackTarget>::decode(ArgumentDecoder& decoder, MediaPlaybackTarget& target)
+{
+    RetainPtr<CFDataRef> data;
+    if (!IPC::decode(decoder, data))
+        return false;
+
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
+    if (!MediaPlaybackTarget::decode(unarchiver.get(), target))
+        return false;
+    
+    [unarchiver finishDecoding];
+    return true;
+}
+#endif
 
 } // namespace IPC

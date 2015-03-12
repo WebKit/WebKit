@@ -95,6 +95,9 @@ public:
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled;
 #endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        bool m_mediaPlaybackAllowsAirPlay;
+#endif
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)

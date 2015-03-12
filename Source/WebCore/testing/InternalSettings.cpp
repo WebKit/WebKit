@@ -97,6 +97,9 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventEmulationEnabled(settings.isTouchEventEmulationEnabled())
 #endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    , m_mediaPlaybackAllowsAirPlay(settings.mediaPlaybackAllowsAirPlay())
+#endif
 {
 }
 
@@ -201,6 +204,9 @@ InternalSettings::InternalSettings(Page* page)
     , m_page(page)
     , m_backup(page->settings())
 {
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    page->settings().setMediaPlaybackAllowsAirPlay(false);
+#endif
 }
 
 void InternalSettings::resetToConsistentState()

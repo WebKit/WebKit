@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,7 +159,6 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
 }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {
     return [m_objcObserver hasWirelessTargetsAvailable];
@@ -184,8 +183,7 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
     else
         [m_objcObserver stopMonitoringAirPlayRoutes];
 }
-#endif
-    
+
 void MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
 {
     MediaSessionManager::sessionWillBeginPlayback(session);
@@ -231,6 +229,14 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) const
 {
     return session.state() == MediaSession::Playing || !session.isHidden() || session.displayType() == MediaSession::Optimized;
+}
+
+void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
+{
+    Vector<MediaSession*> sessionList = sessions();
+    bool haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
+    for (auto* session : sessionList)
+        session->externalOutputDeviceAvailableDidChange(haveTargets);
 }
 
 } // namespace WebCore
@@ -445,7 +451,7 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
         if (!_callback)
             return;
 
-        _callback->wirelessRoutesAvailableChanged();
+        _callback->externalOutputDeviceAvailableDidChange();
     });
 }
 @end

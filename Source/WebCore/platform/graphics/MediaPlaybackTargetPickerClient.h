@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManageriOS_h
-#define MediaSessionManageriOS_h
+#ifndef MediaPlaybackTargetPickerClient_h
+#define MediaPlaybackTargetPickerClient_h
 
-#if PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "MediaSessionManager.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS WebMediaSessionHelper;
-
-#if defined(__OBJC__) && __OBJC__
-extern NSString* WebUIApplicationWillResignActiveNotification;
-extern NSString* WebUIApplicationWillEnterForegroundNotification;
-extern NSString* WebUIApplicationDidBecomeActiveNotification;
-#endif
+#include "MediaPlaybackTarget.h"
 
 namespace WebCore {
 
-class MediaSessionManageriOS : public MediaSessionManager {
+class MediaPlaybackTarget;
+
+class MediaPlaybackTargetPickerClient {
 public:
-    virtual ~MediaSessionManageriOS();
+    virtual ~MediaPlaybackTargetPickerClient() { }
 
-    void externalOutputDeviceAvailableDidChange();
-    virtual bool hasWirelessTargetsAvailable() override;
+    virtual void didChoosePlaybackTarget(MediaPlaybackTarget&) = 0;
+    virtual void externalOutputDeviceAvailableDidChange(bool) const = 0;
 
-private:
-    friend class MediaSessionManager;
-
-    MediaSessionManageriOS();
-
-    virtual void sessionWillBeginPlayback(MediaSession&) override;
-    virtual void sessionWillEndPlayback(MediaSession&) override;
-    
-    void updateNowPlayingInfo();
-    
-    virtual void resetRestrictions() override;
-
-    virtual void configureWireLessTargetMonitoring() override;
-
-    virtual bool sessionCanLoadMedia(const MediaSession&) const override;
-    
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
+    virtual bool requiresPlaybackTargetRouteMonitoring() const = 0;
+    virtual bool requestedPlaybackTargetPicker() const = 0;
 };
 
 } // namespace WebCore
 
-#endif // MediaSessionManageriOS_h
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif // PLATFORM(IOS)
+#endif // MediaPlaybackTargetPickerClient_h

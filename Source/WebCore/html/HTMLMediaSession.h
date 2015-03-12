@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,11 @@
 
 #include "MediaPlayer.h"
 #include "MediaSession.h"
+#include "Timer.h"
 
 namespace WebCore {
 
+class Document;
 class HTMLMediaElement;
 class SourceBuffer;
 
@@ -41,14 +43,17 @@ public:
     explicit HTMLMediaSession(MediaSessionClient&);
     virtual ~HTMLMediaSession() { }
 
+    void registerWithDocument(Document&);
+    void unregisterWithDocument(Document&);
+
     bool playbackPermitted(const HTMLMediaElement&) const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
     bool fullscreenPermitted(const HTMLMediaElement&) const;
     bool pageAllowsDataLoading(const HTMLMediaElement&) const;
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
-
     bool currentPlaybackTargetIsWireless(const HTMLMediaElement&) const;
     void showPlaybackTargetPicker(const HTMLMediaElement&);
     bool hasWirelessPlaybackTargets(const HTMLMediaElement&) const;
@@ -58,6 +63,7 @@ public:
 
     void setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement&, bool);
 #endif
+
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
     WEBCORE_EXPORT bool allowsAlternateFullscreen(const HTMLMediaElement&) const;
     MediaPlayer::Preload effectivePreloadForElement(const HTMLMediaElement&) const;
@@ -87,10 +93,25 @@ public:
 #endif
 
 private:
-    virtual bool requiresPlaybackTargetRouteMonitoring() const override { return m_hasPlaybackTargetAvailabilityListeners; }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void targetAvailabilityChangedTimerFired();
+
+    // MediaPlaybackTargetPickerClient
+    virtual void didChoosePlaybackTarget(MediaPlaybackTarget&) override;
+    virtual void externalOutputDeviceAvailableDidChange(bool) const override;
+    virtual bool requiresPlaybackTargetRouteMonitoring() const override;
+    virtual bool requestedPlaybackTargetPicker() const override { return m_haveRequestedPlaybackTargetPicker; }
+#endif
 
     BehaviorRestrictions m_restrictions;
-    bool m_hasPlaybackTargetAvailabilityListeners;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    mutable Timer m_targetAvailabilityChangedTimer;
+    bool m_hasPlaybackTargetAvailabilityListeners { false };
+    mutable bool m_hasPlaybackTargets { false };
+    mutable bool m_haveRequestedPlaybackTargetPicker { false };
+#endif
 };
 
 }

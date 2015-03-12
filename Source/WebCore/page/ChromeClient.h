@@ -447,6 +447,12 @@ public:
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    virtual void showPlaybackTargetPicker(const WebCore::IntPoint&, bool) { }
+    virtual void startingMonitoringPlaybackTargets() { }
+    virtual void stopMonitoringPlaybackTargets() { }
+#endif
+
 protected:
     virtual ~ChromeClient() { }
 };

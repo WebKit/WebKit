@@ -425,4 +425,11 @@ messages -> WebPageProxy {
 #endif
 
     HandleAutoFillButtonClick(WebKit::UserData userData);
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    ShowPlaybackTargetPicker(WebCore::FloatRect pickerLocation, bool hasVideo)
+    StartingMonitoringPlaybackTargets()
+    StopMonitoringPlaybackTargets()
+#endif
+
 }

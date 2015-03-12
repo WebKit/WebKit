@@ -71,6 +71,7 @@ namespace WebCore {
 
 class AudioSourceProvider;
 class AuthenticationChallenge;
+class MediaPlaybackTarget;
 #if ENABLE(MEDIA_SOURCE)
 class MediaSourcePrivateClient;
 #endif
@@ -476,6 +477,8 @@ public:
 
     void currentPlaybackTargetIsWirelessChanged();
     void playbackTargetAvailabilityChanged();
+
+    void setWirelessPlaybackTarget(const MediaPlaybackTarget&);
 #endif
 
     double minFastReverseRate() const;

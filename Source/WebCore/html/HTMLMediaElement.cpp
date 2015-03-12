@@ -426,6 +426,8 @@ HTMLMediaElement::~HTMLMediaElement()
 
 void HTMLMediaElement::registerWithDocument(Document& document)
 {
+    m_mediaSession->registerWithDocument(document);
+
     if (m_isWaitingUntilMediaCanStart)
         document.addMediaCanStartListener(this);
 
@@ -451,6 +453,8 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
 {
+    m_mediaSession->unregisterWithDocument(document);
+
     if (m_isWaitingUntilMediaCanStart)
         document.removeMediaCanStartListener(this);
 
@@ -2471,6 +2475,9 @@ void HTMLMediaElement::refreshCachedTime() const
 
 void HTMLMediaElement::invalidateCachedTime() const
 {
+    if (!m_player->maximumDurationToCacheMediaTime())
+        return;
+
 #if !LOG_DISABLED
     if (m_cachedTime.isValid())
         LOG(Media, "HTMLMediaElement::invalidateCachedTime(%p)", this);
@@ -4855,6 +4862,13 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, m_mediaSession->hasWirelessPlaybackTargets(*this));
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
+}
+
+void HTMLMediaElement::setWirelessPlaybackTarget(const MediaPlaybackTarget& device)
+{
+    LOG(Media, "HTMLMediaElement::setWirelessPlaybackTarget(%p)", this);
+    if (m_player)
+        m_player->setWirelessPlaybackTarget(device);
 }
 #endif
 

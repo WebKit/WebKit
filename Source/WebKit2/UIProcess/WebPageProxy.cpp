@@ -5597,4 +5597,47 @@ void WebPageProxy::handleAutoFillButtonClick(const UserData& userData)
     m_uiClient->didClickAutoFillButton(*this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+
+WebMediaPlaybackTargetPickerProxy& WebPageProxy::devicePickerProxy()
+{
+    if (!m_playbackTargetPicker)
+        m_playbackTargetPicker = m_pageClient.createPlaybackTargetPicker(this);
+
+    return *m_playbackTargetPicker.get();
+}
+
+void WebPageProxy::showPlaybackTargetPicker(const WebCore::FloatRect& rect, bool hasVideo)
+{
+    devicePickerProxy().showPlaybackTargetPicker(m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo);
+}
+
+void WebPageProxy::startingMonitoringPlaybackTargets()
+{
+    devicePickerProxy().startingMonitoringPlaybackTargets();
+}
+
+void WebPageProxy::stopMonitoringPlaybackTargets()
+{
+    devicePickerProxy().stopMonitoringPlaybackTargets();
+}
+
+void WebPageProxy::didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget& target)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::PlaybackTargetSelected(target), m_pageID);
+}
+
+void WebPageProxy::externalOutputDeviceAvailableDidChange(bool available)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::PlaybackTargetAvailabilityDidChange(available), m_pageID);
+}
+
+#endif
+
 } // namespace WebKit

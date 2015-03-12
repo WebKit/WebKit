@@ -115,6 +115,12 @@ class ContentFilterUnblockHandler;
 }
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+namespace WebCore {
+class MediaPlaybackTarget;
+}
+#endif
+
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -453,6 +459,13 @@ template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
     static void encode(ArgumentEncoder&, const WebCore::TextIndicatorData&);
     static bool decode(ArgumentDecoder&, WebCore::TextIndicatorData&);
 };
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+template<> struct ArgumentCoder<WebCore::MediaPlaybackTarget> {
+    static void encode(ArgumentEncoder&, const WebCore::MediaPlaybackTarget&);
+    static bool decode(ArgumentDecoder&, WebCore::MediaPlaybackTarget&);
+};
+#endif
 
 } // namespace IPC
 

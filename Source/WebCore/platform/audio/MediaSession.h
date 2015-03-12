@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,20 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "MediaPlaybackTargetPickerClient.h"
+#endif
+
 namespace WebCore {
 
+class MediaPlaybackTarget;
 class MediaSessionClient;
 
-class MediaSession {
+class MediaSession
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    : public MediaPlaybackTargetPickerClient
+#endif
+{
 public:
     static std::unique_ptr<MediaSession> create(MediaSessionClient&);
 
@@ -99,9 +108,6 @@ public:
     bool canReceiveRemoteControlCommands() const;
     void didReceiveRemoteControlCommand(RemoteControlCommandType);
 
-    virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
-    void wirelessRoutesAvailableDidChange() const;
-
     enum DisplayType {
         Normal,
         Fullscreen,
@@ -110,6 +116,14 @@ public:
     DisplayType displayType() const;
 
     bool isHidden() const;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    // MediaPlaybackTargetPickerClient
+    virtual void didChoosePlaybackTarget(MediaPlaybackTarget&) override { }
+    virtual void externalOutputDeviceAvailableDidChange(bool) const override { }
+    virtual bool requiresPlaybackTargetRouteMonitoring() const override { return false; }
+    virtual bool requestedPlaybackTargetPicker() const override { return false; }
+#endif
 
 protected:
     MediaSessionClient& client() const { return m_client; }
@@ -150,7 +164,10 @@ public:
 
     virtual bool overrideBackgroundPlaybackRestriction() const = 0;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void wirelessRoutesAvailableDidChange() { }
+    virtual void setWirelessPlaybackTarget(const MediaPlaybackTarget&) { }
+#endif
 
 protected:
     virtual ~MediaSessionClient() { }

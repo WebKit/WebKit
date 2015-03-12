@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManageriOS_h
-#define MediaSessionManageriOS_h
+#ifndef WebMediaPlaybackTargetPickerProxy_h
+#define WebMediaPlaybackTargetPickerProxy_h
 
-#if PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "MediaSessionManager.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS WebMediaSessionHelper;
-
-#if defined(__OBJC__) && __OBJC__
-extern NSString* WebUIApplicationWillResignActiveNotification;
-extern NSString* WebUIApplicationWillEnterForegroundNotification;
-extern NSString* WebUIApplicationDidBecomeActiveNotification;
-#endif
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
+class FloatRect;
+class MediaPlaybackTarget;
+}
 
-class MediaSessionManageriOS : public MediaSessionManager {
+namespace WebKit {
+
+class WebPageProxy;
+
+class WebMediaPlaybackTargetPickerProxy {
 public:
-    virtual ~MediaSessionManageriOS();
+    class Client {
+    protected:
+        virtual ~Client() { }
 
-    void externalOutputDeviceAvailableDidChange();
-    virtual bool hasWirelessTargetsAvailable() override;
+    public:
+        virtual void didChoosePlaybackTarget(const WebCore::MediaPlaybackTarget&) = 0;
+        virtual void externalOutputDeviceAvailableDidChange(bool) = 0;
 
-private:
-    friend class MediaSessionManager;
+        void invalidate();
+    };
 
-    MediaSessionManageriOS();
+    virtual ~WebMediaPlaybackTargetPickerProxy();
 
-    virtual void sessionWillBeginPlayback(MediaSession&) override;
-    virtual void sessionWillEndPlayback(MediaSession&) override;
-    
-    void updateNowPlayingInfo();
-    
-    virtual void resetRestrictions() override;
+    virtual void showPlaybackTargetPicker(const WebCore::FloatRect&, bool);
+    virtual void startingMonitoringPlaybackTargets();
+    virtual void stopMonitoringPlaybackTargets();
 
-    virtual void configureWireLessTargetMonitoring() override;
+protected:
+    explicit WebMediaPlaybackTargetPickerProxy(Client&);
 
-    virtual bool sessionCanLoadMedia(const MediaSession&) const override;
-    
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
+    Client* m_client;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // MediaSessionManageriOS_h
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#endif // PLATFORM(IOS)
+#endif // WebMediaPlaybackTargetPickerProxy_h

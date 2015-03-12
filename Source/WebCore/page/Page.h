@@ -76,11 +76,13 @@ class FocusController;
 class Frame;
 class FrameLoaderClient;
 class HistoryItem;
+class HTMLMediaElement;
 class UserInputBridge;
 class InspectorClient;
 class InspectorController;
 class MainFrame;
 class MediaCanStartListener;
+class MediaPlaybackTarget;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -422,6 +424,16 @@ public:
     bool isMuted() const { return m_muted; }
     WEBCORE_EXPORT void setMuted(bool);
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void showPlaybackTargetPicker(Document*, const WebCore::IntPoint&, bool);
+    bool hasWirelessPlaybackTarget() const { return m_hasWirelessPlaybackTarget; }
+    MediaPlaybackTarget& playbackTarget() const { return *m_playbackTarget.get(); }
+    void configurePlaybackTargetMonitoring();
+
+    WEBCORE_EXPORT void didChoosePlaybackTarget(MediaPlaybackTarget&);
+    WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(bool);
+#endif
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -580,6 +592,13 @@ private:
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 
     SessionID m_sessionID;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    Document* m_documentRequestingPlaybackTargetPicker { nullptr };
+    std::unique_ptr<MediaPlaybackTarget> m_playbackTarget;
+    bool m_requiresPlaybackTargetMonitoring { false };
+    bool m_hasWirelessPlaybackTarget { false };
+#endif
 
     bool m_isClosing;
 

@@ -228,6 +228,10 @@
 #include <replay/InputCursor.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "HTMLVideoElement.h"
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -6449,6 +6453,84 @@ void Document::setInputCursor(PassRefPtr<InputCursor> cursor)
 {
     m_inputCursor = cursor;
 }
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void Document::showPlaybackTargetPicker(const HTMLMediaElement& element)
+{
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    page->showPlaybackTargetPicker(this, view()->lastKnownMousePosition(), is<HTMLVideoElement>(element));
+}
+
+void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& client)
+{
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    m_playbackTargetClients.add(&client);
+
+    client.didChoosePlaybackTarget(page->playbackTarget());
+    client.externalOutputDeviceAvailableDidChange(page->hasWirelessPlaybackTarget());
+}
+
+void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetPickerClient& client)
+{
+    m_playbackTargetClients.remove(&client);
+    configurePlaybackTargetMonitoring();
+}
+
+void Document::configurePlaybackTargetMonitoring()
+{
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    page->configurePlaybackTargetMonitoring();
+}
+
+bool Document::requiresPlaybackTargetRouteMonitoring()
+{
+    for (auto* client : m_playbackTargetClients) {
+        if (client->requiresPlaybackTargetRouteMonitoring()) {
+            return true;
+            break;
+        }
+    }
+
+    return false;
+}
+
+void Document::playbackTargetAvailabilityDidChange(bool available)
+{
+    if (m_playbackTargetsAvailable == available)
+        return;
+    m_playbackTargetsAvailable = available;
+
+    for (auto* client : m_playbackTargetClients)
+        client->externalOutputDeviceAvailableDidChange(available);
+}
+
+void Document::didChoosePlaybackTarget(MediaPlaybackTarget& device)
+{
+    MediaPlaybackTargetPickerClient* clientThatRequestedPicker = nullptr;
+
+    for (auto* client : m_playbackTargetClients) {
+        if (client->requestedPlaybackTargetPicker()) {
+            clientThatRequestedPicker = client;
+            continue;
+        }
+
+        client->didChoosePlaybackTarget(device);
+    }
+
+    if (clientThatRequestedPicker)
+        clientThatRequestedPicker->didChoosePlaybackTarget(device);
+}
+
 #endif
 
 } // namespace WebCore

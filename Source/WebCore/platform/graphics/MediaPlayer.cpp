@@ -867,6 +867,11 @@ void MediaPlayer::currentPlaybackTargetIsWirelessChanged()
 {
     m_client.mediaPlayerCurrentPlaybackTargetIsWirelessChanged(this);
 }
+
+void MediaPlayer::setWirelessPlaybackTarget(const MediaPlaybackTarget& device)
+{
+    m_private->setWirelessPlaybackTarget(device);
+}
 #endif
 
 double MediaPlayer::maxFastForwardRate() const

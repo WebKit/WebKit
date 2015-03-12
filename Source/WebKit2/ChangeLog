@@ -1,3 +1,71 @@
+2015-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update AirPlay handling
+        https://bugs.webkit.org/show_bug.cgi?id=142541
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<AVPlaybackTarget>::encode):
+        (IPC::ArgumentCoder<AVPlaybackTarget>::decode):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebAVPlaybackTargetPickerProxy.cpp: Added.
+        (WebKit::WebAVPlaybackTargetPickerProxy::WebAVPlaybackTargetPickerProxy):
+        (WebKit::WebAVPlaybackTargetPickerProxy::~WebAVPlaybackTargetPickerProxy):
+        (WebKit::WebAVPlaybackTargetPickerProxy::showPlaybackTargetPicker):
+        (WebKit::WebAVPlaybackTargetPickerProxy::startingMonitoringPlaybackTargets):
+        (WebKit::WebAVPlaybackTargetPickerProxy::stopMonitoringPlaybackTargets):
+        * UIProcess/WebAVPlaybackTargetPickerProxy.h: Added.
+        (WebKit::WebAVPlaybackTargetPickerProxy::Client::~Client):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::devicePickerProxy):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::startingMonitoringPlaybackTargets):
+        (WebKit::WebPageProxy::stopMonitoringPlaybackTargets):
+        (WebKit::WebPageProxy::didChoosePlaybackTarget):
+        (WebKit::WebPageProxy::externalOutputDeviceAvailableDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPlaybackTargetPicker):
+        * UIProcess/mac/WebAVPlaybackTargetPickerProxyMac.h: Added.
+        * UIProcess/mac/WebAVPlaybackTargetPickerProxyMac.mm: Added.
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::create):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::WebAVPlaybackTargetPickerProxyMac):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::~WebAVPlaybackTargetPickerProxyMac):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::outputeDeviceAvailabilityChangedTimerFired):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::availableDevicesDidChange):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::devicePicker):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::showPlaybackTargetPicker):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::currentDeviceDidChange):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::startingMonitoringPlaybackTargets):
+        (WebKit::WebAVPlaybackTargetPickerProxyMac::stopMonitoringPlaybackTargets):
+        (-[WebAVOutputDevicePickerMenuControllerHelper initWithCallback:]):
+        (-[WebAVOutputDevicePickerMenuControllerHelper clearCallback]):
+        (-[WebAVOutputDevicePickerMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebAVPlaybackTargetPicker.cpp: Added.
+        (WebKit::WebAVPlaybackTargetPicker::WebAVPlaybackTargetPicker):
+        (WebKit::WebAVPlaybackTargetPicker::showPlaybackDevicePicker):
+        (WebKit::WebAVPlaybackTargetPicker::configureWireLessTargetMonitoring):
+        (WebKit::WebAVPlaybackTargetPicker::addClient):
+        (WebKit::WebAVPlaybackTargetPicker::removeClient):
+        (WebKit::WebAVPlaybackTargetPicker::didChoosePlaybackTarget):
+        (WebKit::WebAVPlaybackTargetPicker::playbackTargetAvailabilityDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::showPlaybackTargetPicker):
+        (WebKit::WebChromeClient::startingMonitoringPlaybackTargets):
+        (WebKit::WebChromeClient::stopMonitoringPlaybackTargets):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected):
+        (WebKit::WebPage::playbackTargetAvailabilityDidChange):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the build
