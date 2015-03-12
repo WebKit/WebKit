@@ -1,3 +1,13 @@
+2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(PICTURE_SIZES) build
+        https://bugs.webkit.org/show_bug.cgi?id=142617
+
+        Reviewed by Darin Adler.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+
 2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up fix to r181426. Initialize TextPosition with zeros in case it gets used.
