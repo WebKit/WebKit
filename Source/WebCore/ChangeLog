@@ -1,3 +1,14 @@
+2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up fix to r181426. Initialize TextPosition with zeros in case it gets used.
+
+        Address ASSERT in LayoutTests/printing/page-format-data.html.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::InlineStyleSheetOwner):
+        In case the TextPosition gets used because it wasn't created by a parser,
+        zeros are more realistic values then beforeFirst.
+
 2015-03-11  Roger Fong  <roger_fong@apple.com>
 
         Media element time no longer updates while scrubbing following r181279.
