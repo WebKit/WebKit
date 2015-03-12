@@ -30,6 +30,9 @@ WebInspector.LogContentView = function(representedObject)
     this._nestingLevel = 0;
     this._selectedMessages = [];
 
+    // FIXME: Try to use a marker, instead of a list of messages that get re-added.
+    this._provisionalMessages = [];
+
     this.element.classList.add(WebInspector.LogContentView.StyleClassName);
 
     this.messagesElement = document.createElement("div");
@@ -88,6 +91,8 @@ WebInspector.LogContentView = function(representedObject)
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._messageAdded, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._previousMessageRepeatCountUpdated, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
+
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
 };
 
 WebInspector.LogContentView.Scopes = {
@@ -310,14 +315,20 @@ WebInspector.LogContentView.prototype = {
     {
         if (this._clearLogOnReloadSetting.value)  {
             this._clearLog();
+            this._reappendProvisionalMessages();
             return;
         }
 
         this._logViewController.startNewSession();
+
+        this._clearProvisionalState();
     },
 
     _messageAdded: function(event)
     {
+        if (this._startedProvisionalLoad)
+            this._provisionalMessages.push(event.data.message);
+
         var message = this._logViewController.appendConsoleMessage(event.data.message);
         if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
             this._filterMessages([message.toMessageElement()]);
@@ -969,6 +980,33 @@ WebInspector.LogContentView.prototype = {
         this._selectedSearchMatch.highlight.classList.add(WebInspector.LogContentView.SelectedStyleClassName);
 
         this._ensureMessageIsVisible(this._selectedSearchMatch.message);
+    },
+
+    _provisionalLoadStarted: function()
+    {
+        this._startedProvisionalLoad = true;
+    },
+
+    _reappendProvisionalMessages: function()
+    {
+        if (!this._startedProvisionalLoad)
+            return;
+
+        this._startedProvisionalLoad = false;
+
+        for (var provisionalMessage of this._provisionalMessages) {
+            var message = this._logViewController.appendConsoleMessage(provisionalMessage);
+            if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
+                this._filterMessages([message.toMessageElement()]);
+        }
+
+        this._provisionalMessages = [];
+    },
+
+    _clearProvisionalState: function()
+    {
+        this._startedProvisionalLoad = false;
+        this._provisionalMessages = [];        
     }
 };
 
