@@ -28,6 +28,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ public:
 
     void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
-    bool parseStringAtLine(const String&, int startLineNumber, bool);
+    bool parseStringAtPosition(const String&, const TextPosition&, bool createdByParser);
 
     bool isCacheable() const;
 

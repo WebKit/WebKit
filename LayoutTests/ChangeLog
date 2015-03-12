@@ -1,3 +1,18 @@
+2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS parser errors in the console should include column numbers
+        https://bugs.webkit.org/show_bug.cgi?id=114313
+
+        Reviewed by Darin Adler.
+
+        Test errors in both external and inline CSS and Scripts to ensure they have
+        expected line:column information.
+
+        * inspector-protocol/console/warnings-errors-expected.txt: Added.
+        * inspector-protocol/console/warnings-errors.html: Added.
+        * inspector-protocol/resources/errors.css: Added.
+        * inspector-protocol/resources/errors.js: Added.
+
 2015-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Rename the Mavericks result for input-auto-fill-button.html to use the

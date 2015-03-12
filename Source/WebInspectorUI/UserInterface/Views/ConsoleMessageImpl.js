@@ -199,6 +199,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     {
         // ConsoleMessage stack trace line numbers are one-based.
         lineNumber = lineNumber ? lineNumber - 1 : 0;
+        columnNumber = columnNumber ? columnNumber - 1 : 0;
 
         return WebInspector.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
     },

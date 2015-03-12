@@ -330,7 +330,11 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_token(0)
     , m_lineNumber(0)
     , m_tokenStartLineNumber(0)
+    , m_tokenStartColumnNumber(0)
     , m_lastSelectorLineNumber(0)
+    , m_columnOffsetForLine(0)
+    , m_sheetStartLineNumber(0)
+    , m_sheetStartColumnNumber(0)
     , m_allowImportRules(true)
     , m_allowNamespaceDeclarations(true)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -429,7 +433,7 @@ void CSSParser::setupParser(const char* prefix, unsigned prefixLength, StringVie
     m_lexFunc = &CSSParser::realLex<UChar>;
 }
 
-void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int startLineNumber, RuleSourceDataList* ruleSourceDataResult, bool logErrors)
+void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, const TextPosition& textPosition, RuleSourceDataList* ruleSourceDataResult, bool logErrors)
 {
     setStyleSheet(sheet);
     m_defaultNamespace = starAtom; // Reset the default namespace.
@@ -439,7 +443,10 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int 
 
     m_logErrors = logErrors && sheet->singleOwnerDocument() && !sheet->baseURL().isEmpty() && sheet->singleOwnerDocument()->page();
     m_ignoreErrorsInDeclaration = false;
-    m_lineNumber = startLineNumber;
+    m_sheetStartLineNumber = textPosition.m_line.zeroBasedInt();
+    m_sheetStartColumnNumber = textPosition.m_column.zeroBasedInt();
+    m_lineNumber = m_sheetStartLineNumber;
+    m_columnOffsetForLine = 0;
     setupParser("", string, "");
     cssyyparse(this);
     sheet->shrinkToFit();
@@ -10483,10 +10490,19 @@ CSSParser::Location CSSParser::currentLocation()
 {
     Location location;
     location.lineNumber = m_tokenStartLineNumber;
+    location.columnNumber = m_tokenStartColumnNumber;
+
+    ASSERT(location.lineNumber >= 0);
+    ASSERT(location.columnNumber >= 0);
+
+    if (location.lineNumber == m_sheetStartLineNumber)
+        location.columnNumber += m_sheetStartColumnNumber;
+
     if (is8BitSource())
         location.token.init(tokenStart<LChar>(), currentCharacter<LChar>() - tokenStart<LChar>());
     else
         location.token.init(tokenStart<UChar>(), currentCharacter<UChar>() - tokenStart<UChar>());
+
     return location;
 }
 
@@ -11358,6 +11374,7 @@ restartAfterComment:
     result = currentCharacter<SrcCharacterType>();
     setTokenStart(result);
     m_tokenStartLineNumber = m_lineNumber;
+    m_tokenStartColumnNumber = tokenStartOffset() - m_columnOffsetForLine;
     m_token = *currentCharacter<SrcCharacterType>();
     ++currentCharacter<SrcCharacterType>();
 
@@ -11580,8 +11597,10 @@ restartAfterComment:
         // Might start with a '\n'.
         --currentCharacter<SrcCharacterType>();
         do {
-            if (*currentCharacter<SrcCharacterType>() == '\n')
+            if (*currentCharacter<SrcCharacterType>() == '\n') {
                 ++m_lineNumber;
+                m_columnOffsetForLine = currentCharacterOffset() + 1;
+            }
             ++currentCharacter<SrcCharacterType>();
         } while (*currentCharacter<SrcCharacterType>() <= ' ' && (typesOfASCIICharacters[*currentCharacter<SrcCharacterType>()] == CharacterWhiteSpace));
         break;
@@ -11650,9 +11669,10 @@ restartAfterComment:
         if (*currentCharacter<SrcCharacterType>() == '*') {
             ++currentCharacter<SrcCharacterType>();
             while (currentCharacter<SrcCharacterType>()[0] != '*' || currentCharacter<SrcCharacterType>()[1] != '/') {
-                if (*currentCharacter<SrcCharacterType>() == '\n')
+                if (*currentCharacter<SrcCharacterType>() == '\n') {
                     ++m_lineNumber;
-                if (*currentCharacter<SrcCharacterType>() == '\0') {
+                    m_columnOffsetForLine = currentCharacterOffset() + 1;
+                } else if (*currentCharacter<SrcCharacterType>() == '\0') {
                     // Unterminated comments are simply ignored.
                     currentCharacter<SrcCharacterType>() -= 2;
                     break;
@@ -11869,14 +11889,15 @@ void CSSParser::syntaxError(const Location& location, SyntaxErrorType error)
 {
     if (!isLoggingErrors())
         return;
+
     StringBuilder builder;
     switch (error) {
     case PropertyDeclarationError:
         builder.appendLiteral("Invalid CSS property declaration at: ");
         break;
-
     default:
         builder.appendLiteral("Unexpected CSS token: ");
+        break;
     }
 
     if (location.token.is8Bit())
@@ -11884,7 +11905,7 @@ void CSSParser::syntaxError(const Location& location, SyntaxErrorType error)
     else
         builder.append(location.token.characters16(), location.token.length());
 
-    logError(builder.toString(), location.lineNumber);
+    logError(builder.toString(), location.lineNumber, location.columnNumber);
 
     m_ignoreErrorsInDeclaration = true;
 }
@@ -11894,11 +11915,10 @@ bool CSSParser::isLoggingErrors()
     return m_logErrors && !m_ignoreErrorsInDeclaration;
 }
 
-void CSSParser::logError(const String& message, int lineNumber)
+void CSSParser::logError(const String& message, int lineNumber, int columnNumber)
 {
-    // FIXME: <http://webkit.org/b/114313> CSS parser console message errors should include column numbers.
     PageConsoleClient& console = m_styleSheet->singleOwnerDocument()->page()->console();
-    console.addMessage(MessageSource::CSS, MessageLevel::Warning, message, m_styleSheet->baseURL().string(), lineNumber + 1, 0);
+    console.addMessage(MessageSource::CSS, MessageLevel::Warning, message, m_styleSheet->baseURL().string(), lineNumber + 1, columnNumber + 1);
 }
 
 PassRefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> popKeyframes)
