@@ -710,6 +710,9 @@ Controller.prototype = {
         if (this.controlsAreHidden())
             this.showControls();
         this.resetHideControlsTimer();
+        
+        if (this.scrubbing)
+            this.updateTime();
 
         if (!this.isDragging)
             return;
