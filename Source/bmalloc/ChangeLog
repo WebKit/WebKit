@@ -1,3 +1,28 @@
+2015-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion failure in bmalloc::LargeObject::validateSelf on Mavericks Debug layout test bot
+        https://bugs.webkit.org/show_bug.cgi?id=142642
+
+        Reviewed by Michael Saboff.
+
+        The typical backtrace to this crash shows the main thread trying to
+        realloc a large string while a DFG compiler thread tries to
+        free a large vector buffer.
+
+        I believe that this is a race condition -- at least in debug builds --
+        since the main thread will try to validate its object's neighbors
+        without holding a lock, even though those neighbors might be in the
+        midst of changing.
+
+        In general, there may be sneaky times when it is valid to look at an
+        object's metadata without holding the heap lock, but it is best not to
+        do so unless we have a really really good reason to.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Take a lock before reading the metadata
+        for this object, since we generally require any access to shared heap
+        metadata to take a lock.
+
 2015-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: tryFastMalloc shouldn't crash

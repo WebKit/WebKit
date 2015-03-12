@@ -129,6 +129,7 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case Large: {
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
         LargeObject largeObject(object);
         oldSize = largeObject.size();
         break;
