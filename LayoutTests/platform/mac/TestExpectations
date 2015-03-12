@@ -1152,11 +1152,11 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Timeout ]
 
 # These tests used to only fail with WK2, but on Yosemite, they also fail with WK1.
-webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
-webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
-webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
-webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
-webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
+webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
+webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
+webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
+webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 
 # FIXME: Needs bugzilla
 platform/mac/editing/input/undo-grouping-on-text-insertion.html [ Skip ]
