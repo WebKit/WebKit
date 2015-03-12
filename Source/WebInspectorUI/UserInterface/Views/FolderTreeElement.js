@@ -23,9 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FolderTreeElement = function(title, subtitle, representedObject)
+WebInspector.FolderTreeElement = function(title, subtitle, additionalClassNames, representedObject)
 {
-    WebInspector.GeneralTreeElement.call(this, WebInspector.FolderTreeElement.FolderIconStyleClassName, title, subtitle, representedObject, true);
+    var classNames;
+    if (!additionalClassNames)
+        classNames = [];
+    else if (additionalClassNames.constructor === Array)
+        classNames = additionalClassNames;
+    else if (typeof additionalClassNames === "string")
+        classNames = [additionalClassNames];
+
+    classNames.unshift(WebInspector.FolderTreeElement.FolderIconStyleClassName);
+
+    WebInspector.GeneralTreeElement.call(this, classNames, title, subtitle, representedObject, true);
 
     this.small = true;
 };
@@ -33,7 +43,7 @@ WebInspector.FolderTreeElement = function(title, subtitle, representedObject)
 WebInspector.FolderTreeElement.FolderIconStyleClassName = "folder-icon";
 
 WebInspector.FolderTreeElement.prototype = {
-    constructor: WebInspector.FolderTreeElement,
+    constructor: WebInspector.FolderTreeElement
 
     // No Methods or Properties
 };

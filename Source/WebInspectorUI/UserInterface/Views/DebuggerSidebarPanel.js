@@ -104,6 +104,7 @@ WebInspector.DebuggerSidebarPanel = function()
     // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
     this.element.classList.add(WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName);
 
+    this._globalBreakpointsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Global Breakpoints"), null, WebInspector.DebuggerSidebarPanel.GlobalIconStyleClassName);
     this._allExceptionsBreakpointTreeElement = new WebInspector.BreakpointTreeElement(WebInspector.debuggerManager.allExceptionsBreakpoint, WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName, WebInspector.UIString("All Exceptions"));
     this._allUncaughtExceptionsBreakpointTreeElement = new WebInspector.BreakpointTreeElement(WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint, WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName, WebInspector.UIString("All Uncaught Exceptions"));
 
@@ -114,8 +115,10 @@ WebInspector.DebuggerSidebarPanel = function()
     this._breakpointsContentTreeOutline.ondelete = this._breakpointTreeOutlineDeleteTreeElement.bind(this);
     this._breakpointsContentTreeOutline.oncontextmenu = this._breakpointTreeOutlineContextMenuTreeElement.bind(this);
 
-    this._breakpointsContentTreeOutline.appendChild(this._allExceptionsBreakpointTreeElement);
-    this._breakpointsContentTreeOutline.appendChild(this._allUncaughtExceptionsBreakpointTreeElement);
+    this._breakpointsContentTreeOutline.appendChild(this._globalBreakpointsFolderTreeElement);
+    this._globalBreakpointsFolderTreeElement.appendChild(this._allExceptionsBreakpointTreeElement);
+    this._globalBreakpointsFolderTreeElement.appendChild(this._allUncaughtExceptionsBreakpointTreeElement);
+    this._globalBreakpointsFolderTreeElement.expand();
 
     var breakpointsRow = new WebInspector.DetailsSectionRow;
     breakpointsRow.element.appendChild(this._breakpointsContentTreeOutline.element);
@@ -147,6 +150,7 @@ WebInspector.DebuggerSidebarPanel = function()
 WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName = "offset-sections";
 WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName = "breakpoint-exception-icon";
 WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName = "breakpoint-paused-icon";
+WebInspector.DebuggerSidebarPanel.GlobalIconStyleClassName = "global-breakpoints-icon";
 
 WebInspector.DebuggerSidebarPanel.SelectedAllExceptionsCookieKey = "debugger-sidebar-panel-all-exceptions-breakpoint";
 WebInspector.DebuggerSidebarPanel.SelectedAllUncaughtExceptionsCookieKey = "debugger-sidebar-panel-all-uncaught-exceptions-breakpoint";
@@ -524,7 +528,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     _breakpointTreeOutlineContextMenuTreeElement: function(event, treeElement)
     {
-        console.assert(treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement);
+        console.assert(treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement || treeElement.constructor === WebInspector.FolderTreeElement);
         if (!(treeElement instanceof WebInspector.ResourceTreeElement) && !(treeElement instanceof WebInspector.ScriptTreeElement))
             return;
 
@@ -600,7 +604,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
             return;
         }
 
-        if (!(treeElement instanceof WebInspector.BreakpointTreeElement))
+        if (!(treeElement instanceof WebInspector.BreakpointTreeElement) || treeElement.parent.constructor === WebInspector.FolderTreeElement)
             return;
 
         // Deselect any other tree elements to prevent two selections in the sidebar.
@@ -629,14 +633,9 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     _compareTopLevelTreeElements: function(a, b)
     {
-        if (a === this._allExceptionsBreakpointTreeElement)
+        if (a === this._globalBreakpointsFolderTreeElement)
             return -1;
-        if (b === this._allExceptionsBreakpointTreeElement)
-            return 1;
-
-        if (a === this._allUncaughtExceptionsBreakpointTreeElement)
-            return -1;
-        if (b === this._allUncaughtExceptionsBreakpointTreeElement)
+        if (b === this._globalBreakpointsFolderTreeElement)
             return 1;
 
         return a.mainTitle.localeCompare(b.mainTitle);

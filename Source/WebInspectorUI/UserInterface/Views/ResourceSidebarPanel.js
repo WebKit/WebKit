@@ -910,7 +910,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
             previousOnlyChild.flattened = false;
             this._resourcesContentTreeOutline.removeChild(previousOnlyChild);
 
-            var folderElement = new WebInspector.FolderTreeElement(folderName, null, null);
+            var folderElement = new WebInspector.FolderTreeElement(folderName);
             this._resourcesContentTreeOutline.insertChild(folderElement, insertionIndexForObjectInListSortedByFunction(folderElement, this._resourcesContentTreeOutline.children, this._compareTreeElements));
 
             folderElement.appendChild(previousOnlyChild);

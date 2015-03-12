@@ -1,3 +1,24 @@
+2015-03-12  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Debugger sidebar should group global breakpoints together
+        https://bugs.webkit.org/show_bug.cgi?id=142607
+
+        Reviewed by Timothy Hatcher.
+
+        Update the DebuggerSidebarPanel class to hold global breakpoints such as "All Exceptions" in one container. This
+        will be the place future such breakpoints are added.
+
+        * Localizations/en.lproj/localizedStrings.js: Added string.
+        * UserInterface/Main.html: Small rearrangement.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js: Change how exception breaking options are displayed.
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.DebuggerSidebarPanel.prototype._compareTopLevelTreeElements):
+
+        * UserInterface/Views/FolderTreeElement.js: Support additional classes for icons.
+        * UserInterface/Views/ResourceSidebarPanel.js: Change call to FolderTreeElement constructor.
+
 2015-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Console Errors during provisional document loads get lost with "Clear Log on Reload"
