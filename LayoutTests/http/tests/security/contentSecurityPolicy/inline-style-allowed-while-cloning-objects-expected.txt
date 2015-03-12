@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
+CONSOLE MESSAGE: line 1: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
 
 CONSOLE MESSAGE: line 79: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'self'".
 

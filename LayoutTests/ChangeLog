@@ -1,3 +1,10 @@
+2015-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up after JoePeck.
+
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed-while-cloning-objects-expected.txt:
+
 2015-03-12  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed EFL gardening on 13th Mar.  
