@@ -1,3 +1,12 @@
+2015-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update test expectations after r181408.
+
+        Also update with more debug assertions.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/forms/input-auto-fill-button-expected.txt: Added.
+
 2015-03-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS parser errors in the console should include column numbers
