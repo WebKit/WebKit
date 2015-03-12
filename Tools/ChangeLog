@@ -1,3 +1,12 @@
+2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Enable building EFL 1.13 with NEON support
+        https://bugs.webkit.org/show_bug.cgi?id=142619
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+
 2015-03-11  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add resource type and load type triggers.
