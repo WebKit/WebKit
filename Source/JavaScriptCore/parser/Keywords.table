@@ -30,7 +30,6 @@ do		DO
 while		WHILE
 else		ELSE
 in		INTOKEN
-static		STATICTOKEN
 super		SUPER
 switch		SWITCH
 throw		THROW
@@ -52,6 +51,7 @@ package         RESERVED_IF_STRICT
 private         RESERVED_IF_STRICT
 protected       RESERVED_IF_STRICT
 public          RESERVED_IF_STRICT
+static          RESERVED_IF_STRICT
 yield           RESERVED_IF_STRICT
 
 @end

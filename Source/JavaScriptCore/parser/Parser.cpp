@@ -1491,7 +1491,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         JSTokenLocation methodLocation(tokenLocation());
         unsigned methodStart = tokenStart();
 
-        bool isStaticMethod = match(STATICTOKEN);
+        // For backwards compatibility, "static" is a non-reserved keyword in non-strict mode.
+        bool isStaticMethod = match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm->propertyNames->staticKeyword;
         if (isStaticMethod)
             next();
 
