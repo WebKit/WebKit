@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionActions.h"
+#include "ResourceLoadInfo.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ namespace ContentExtensions {
 struct Trigger {
     String urlFilter;
     bool urlFilterIsCaseSensitive { false };
+    ResourceFlags flags { 0 };
 };
     
 struct Action {

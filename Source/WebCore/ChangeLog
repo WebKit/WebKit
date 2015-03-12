@@ -1,3 +1,46 @@
+2015-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add resource type and load type triggers.
+        https://bugs.webkit.org/show_bug.cgi?id=142422
+
+        Reviewed by Benjamin Poulain.
+
+        New API tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getTypeFlags):
+        (WebCore::ContentExtensions::loadTrigger):
+        * contentextensions/ContentExtensionRule.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForURL): Deleted.
+        * contentextensions/ContentExtensionsBackend.h:
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendConditionalAction):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        * contentextensions/DFABytecodeCompiler.h:
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h:
+        * loader/ResourceLoadInfo.cpp: Added.
+        (WebCore::toResourceType):
+        (WebCore::readResourceType):
+        (WebCore::readLoadType):
+        (WebCore::ResourceLoadInfo::isThirdParty):
+        (WebCore::ResourceLoadInfo::getResourceFlags):
+        * loader/ResourceLoadInfo.h: Added.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::actionsForResourceLoad):
+        (WebCore::UserContentController::actionsForURL): Deleted.
+        * page/UserContentController.h:
+
 2015-03-11  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

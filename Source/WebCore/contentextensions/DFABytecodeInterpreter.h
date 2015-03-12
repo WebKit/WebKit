@@ -47,7 +47,7 @@ public:
     
     typedef HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Actions;
     
-    Actions interpret(const CString&);
+    Actions interpret(const CString&, uint16_t flags);
 
 private:
     const DFABytecode* m_bytecode;

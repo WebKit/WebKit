@@ -46,6 +46,38 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
+static bool getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t(*stringToType)(const String&))
+{
+    if (!typeValue.isObject())
+        return true;
+
+    JSObject* object = typeValue.toObject(&exec);
+    if (!isJSArray(object)) {
+        WTFLogAlways("Invalid trigger flags array");
+        return false;
+    }
+
+    JSArray* array = jsCast<JSArray*>(object);
+    
+    unsigned length = array->length();
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue value = array->getIndex(&exec, i);
+        if (exec.hadException() || !value) {
+            WTFLogAlways("Invalid object in the trigger flags array.");
+            continue;
+        }
+        
+        String name = value.toWTFString(&exec);
+        uint16_t type = stringToType(name);
+        if (!type) {
+            WTFLogAlways("Invalid string in the trigger flags array.");
+            continue;
+        }
+        flags |= type;
+    }
+    return true;
+}
+    
 static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
     JSValue triggerObject = ruleObject.get(&exec, Identifier(&exec, "trigger"));
@@ -67,9 +99,17 @@ static bool loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
     }
     trigger.urlFilter = urlFilter;
 
-    JSValue urlFilterCaseObject = triggerObject.get(&exec, Identifier(&exec, "url-filter-is-case-sensitive"));
-    if (urlFilterCaseObject && !exec.hadException() && urlFilterCaseObject.isBoolean())
-        trigger.urlFilterIsCaseSensitive = urlFilterCaseObject.toBoolean(&exec);
+    JSValue urlFilterCaseValue = triggerObject.get(&exec, Identifier(&exec, "url-filter-is-case-sensitive"));
+    if (urlFilterCaseValue && !exec.hadException() && urlFilterCaseValue.isBoolean())
+        trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
+
+    JSValue resourceTypeValue = triggerObject.get(&exec, Identifier(&exec, "resource-type"));
+    if (resourceTypeValue && !exec.hadException() && !getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType))
+        return false;
+    
+    JSValue loadTypeValue = triggerObject.get(&exec, Identifier(&exec, "load-type"));
+    if (loadTypeValue && !exec.hadException() && !getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType))
+        return false;
 
     return true;
 }

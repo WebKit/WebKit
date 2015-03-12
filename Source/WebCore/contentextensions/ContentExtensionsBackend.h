@@ -37,6 +37,8 @@ namespace WebCore {
 
 class URL;
 
+struct ResourceLoadInfo;
+
 namespace ContentExtensions {
 
 class CompiledContentExtension;
@@ -57,7 +59,7 @@ public:
     WEBCORE_EXPORT void removeAllContentExtensions();
 
     // - Internal WebCore Interface.
-    WEBCORE_EXPORT Vector<Action> actionsForURL(const URL&);
+    WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
 
 private:
     HashMap<String, RefPtr<CompiledContentExtension>> m_contentExtensions;

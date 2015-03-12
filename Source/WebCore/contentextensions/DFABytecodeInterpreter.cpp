@@ -41,7 +41,7 @@ static inline IntType getBits(const DFABytecode* bytecode, unsigned bytecodeLeng
     return *reinterpret_cast<const IntType*>(&bytecode[index]);
 }
 
-DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString& urlCString)
+DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString& urlCString, uint16_t flags)
 {
     const char* url = urlCString.data();
     ASSERT(url);
@@ -84,6 +84,12 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
         case DFABytecodeInstruction::AppendAction:
             actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))));
             programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+            break;
+
+        case DFABytecodeInstruction::TestFlagsAndAppendAction:
+            if (flags & getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode)))
+                actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t))));
+            programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
             break;
 
         default:

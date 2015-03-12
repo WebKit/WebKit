@@ -53,6 +53,14 @@ void DFABytecodeCompiler::emitAppendAction(unsigned action)
     append<unsigned>(m_bytecode, action);
 }
 
+void DFABytecodeCompiler::emitTestFlagsAndAppendAction(uint16_t flags, unsigned action)
+{
+    ASSERT(flags);
+    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
+    append<uint16_t>(m_bytecode, flags);
+    append<unsigned>(m_bytecode, action);
+}
+
 void DFABytecodeCompiler::emitJump(unsigned destinationNodeIndex)
 {
     append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::Jump);
@@ -80,8 +88,13 @@ void DFABytecodeCompiler::compileNode(unsigned index)
     // Record starting index for linking.
     m_nodeStartOffsets[index] = m_bytecode.size();
 
-    for (uint64_t action : node.actions)
-        emitAppendAction(static_cast<unsigned>(action));
+    for (uint64_t action : node.actions) {
+        // High bits are used to store flags. See compileRuleList.
+        if (action & 0xFFFF00000000)
+            emitTestFlagsAndAppendAction(static_cast<uint16_t>(action >> 32), static_cast<unsigned>(action));
+        else
+            emitAppendAction(static_cast<unsigned>(action));
+    }
     
     for (const auto& transition : node.transitions)
         emitCheckValue(transition.key, transition.value);

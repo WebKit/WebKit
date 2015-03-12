@@ -116,7 +116,8 @@ CompiledContentExtensionData compileRuleList(const String& ruleList)
         const Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
-        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocations[ruleIndex]);
+        // High bits are used for flags. This should match how they are used in DFABytecodeCompiler::compileNode.
+        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, (static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]));
 
         if (!error.isNull()) {
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());

@@ -44,6 +44,7 @@ class URL;
 class UserScript;
 class UserStyleSheet;
 class UserMessageHandlerDescriptor;
+struct ResourceLoadInfo;
 
 namespace ContentExtensions {
 class CompiledContentExtension;
@@ -85,8 +86,7 @@ public:
     WEBCORE_EXPORT void removeUserContentExtension(const String& name);
     WEBCORE_EXPORT void removeAllUserContentExtensions();
     
-    // FIXME: Consider putting this (and other future content extension predicates) in its own class.
-    Vector<ContentExtensions::Action> actionsForURL(const URL&);
+    Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&);
 #endif
 
 private:

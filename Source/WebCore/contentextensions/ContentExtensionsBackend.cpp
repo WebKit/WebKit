@@ -30,6 +30,7 @@
 
 #include "CompiledContentExtension.h"
 #include "DFABytecodeInterpreter.h"
+#include "ResourceLoadInfo.h"
 #include "URL.h"
 #include <wtf/text/CString.h>
 
@@ -61,16 +62,17 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
-Vector<Action> ContentExtensionsBackend::actionsForURL(const URL& url)
+Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const
 {
-    const String& urlString = url.string();
+    const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const CString& urlCString = urlString.utf8();
 
     Vector<Action> finalActions;
+    ResourceFlags flags = resourceLoadInfo.getResourceFlags();
     for (auto& compiledContentExtension : m_contentExtensions.values()) {
         DFABytecodeInterpreter interpreter(compiledContentExtension->bytecode(), compiledContentExtension->bytecodeLength());
-        DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString);
+        DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString, flags);
         
         const SerializedActionByte* actions = compiledContentExtension->actions();
         const unsigned actionsLength = compiledContentExtension->actionsLength();

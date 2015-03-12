@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionsBackend.h>
+#include <WebCore/ResourceLoadInfo.h>
 #include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -92,15 +93,20 @@ private:
     ContentExtensions::CompiledContentExtensionData m_data;
 };
 
-void static testURL(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const URL& url, Vector<ContentExtensions::ActionType> expectedActions)
+void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions)
 {
-    auto actions = contentExtensionsBackend.actionsForURL(url);
+    auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
     EXPECT_EQ(expectedActions.size(), actions.size());
     if (expectedActions.size() != actions.size())
         return;
 
     for (unsigned i = 0; i < expectedActions.size(); ++i)
         EXPECT_EQ(expectedActions[i], actions[i].type());
+}
+
+ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
+{
+    return { URL(URL(), url), URL(URL(), url), resourceType };
 }
 
 const char* basicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}}]";
@@ -113,7 +119,7 @@ TEST_F(ContentExtensionTest, Basic)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", extension);
 
-    testURL(backend, URL(ParsedURLString, "http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
 }
 
 const char* patternsStartingWithGroupFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]";
@@ -126,11 +132,11 @@ TEST_F(ContentExtensionTest, PatternStartingWithGroup)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
 
-    testURL(backend, URL(URL(), "http://whatwg.org/webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://whatwg.org/webkit.org"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/"), { });
-    testURL(backend, URL(URL(), "http://whatwg.org/"), { });
-    testURL(backend, URL(URL(), "http://whatwg.org"), { });
+    testRequest(backend, mainDocumentRequest("http://whatwg.org/webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://whatwg.org/webkit.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://whatwg.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://whatwg.org"), { });
 }
 
 const char* patternNestedGroupsFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"http://webkit\\\\.org/(foo(bar)*)+\"}}]";
@@ -143,18 +149,17 @@ TEST_F(ContentExtensionTest, PatternNestedGroups)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("PatternNestedGroupsFilter", extension);
 
-    testURL(backend, URL(URL(), "http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
 
-
-    testURL(backend, URL(URL(), "http://webkit.org/"), { });
-    testURL(backend, URL(URL(), "http://webkit.org/bar"), { });
-    testURL(backend, URL(URL(), "http://webkit.org/fobar"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/bar"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/fobar"), { });
 }
 
 const char* matchPastEndOfStringFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".+\"}}]";
@@ -167,14 +172,14 @@ TEST_F(ContentExtensionTest, MatchPastEndOfString)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("MatchPastEndOfString", extension);
 
-    testURL(backend, URL(URL(), "http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foo"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarbar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foofoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foob"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foor"), { ContentExtensions::ActionType::BlockLoad });
 }
 
 const char* startOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^foobar\"}}]";
@@ -187,14 +192,14 @@ TEST_F(ContentExtensionTest, StartOfLineAssertion)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("StartOfLineAssertion", extension);
 
-    testURL(backend, URL(URL(), "foobar://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "foobars:///foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "foobarfoobar:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("foobar://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("foobars:///foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("foobarfoobar:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
 
-    testURL(backend, URL(URL(), "http://webkit.org/foobarfoo"), { });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarf"), { });
-    testURL(backend, URL(URL(), "http://foobar.org/"), { });
-    testURL(backend, URL(URL(), "http://foobar.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarfoo"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarf"), { });
+    testRequest(backend, mainDocumentRequest("http://foobar.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://foobar.org/"), { });
 }
 
 const char* endOfLineAssertionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*foobar$\"}}]";
@@ -207,12 +212,57 @@ TEST_F(ContentExtensionTest, EndOfLineAssertion)
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("EndOfLineAssertion", extension);
 
-    testURL(backend, URL(URL(), "http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "file:///foobar"), { ContentExtensions::ActionType::BlockLoad });
-    testURL(backend, URL(URL(), "file:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("file:///foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("file:///foobarfoobarfoobar"), { ContentExtensions::ActionType::BlockLoad });
 
-    testURL(backend, URL(URL(), "http://webkit.org/foobarfoo"), { });
-    testURL(backend, URL(URL(), "http://webkit.org/foobarf"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarfoo"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarf"), { });
+}
+    
+const char* loadTypeFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\",\"load-type\":[\"third-party\"]}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*whatwg.org\",\"load-type\":[\"first-party\"]}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*alwaysblock.pdf\"}}]";
+
+TEST_F(ContentExtensionTest, LoadType)
+{
+    auto extensionData = ContentExtensions::compileRuleList(loadTypeFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+        
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("LoadTypeFilter", extension);
+        
+    testRequest(backend, mainDocumentRequest("http://webkit.org"), { });
+    testRequest(backend, {URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document}, { ContentExtensions::ActionType::BlockLoad });
+        
+    testRequest(backend, mainDocumentRequest("http://whatwg.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, {URL(URL(), "http://whatwg.org"), URL(URL(), "http://not_whatwg.org"), ResourceType::Document}, { });
+    
+    testRequest(backend, mainDocumentRequest("http://foobar.org/alwaysblock.pdf"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, {URL(URL(), "http://foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), ResourceType::Document}, { ContentExtensions::ActionType::BlockLoad });
+}
+    
+const char* resourceTypeFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*block_all_types.org\",\"resource-type\":[\"document\",\"image\",\"style-sheet\",\"script\",\"font\",\"raw\",\"svg-document\",\"media\"]}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*block_only_images\",\"resource-type\":[\"image\"]}}]";
+    
+TEST_F(ContentExtensionTest, ResourceType)
+{
+    auto extensionData = ContentExtensions::compileRuleList(resourceTypeFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+        
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("ResourceTypeFilter", extension);
+
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Document), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::StyleSheet), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Script), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Font), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Raw), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::SVGDocument), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_all_types.org", ResourceType::Media), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://block_only_images.org", ResourceType::Document), { });
 }
 
 } // namespace TestWebKitAPI

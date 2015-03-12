@@ -23,54 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFABytecodeCompiler_h
-#define DFABytecodeCompiler_h
+#ifndef ResourceLoadInfo_h
+#define ResourceLoadInfo_h
 
-#if ENABLE(CONTENT_EXTENSIONS)
-
-#include "DFABytecode.h"
-#include "DFANode.h"
-#include <wtf/Vector.h>
+#include "CachedResource.h"
+#include "URL.h"
 
 namespace WebCore {
 
-namespace ContentExtensions {
-
-class DFA;
-
-class DFABytecodeCompiler {
-public:
-    DFABytecodeCompiler(const DFA& dfa, Vector<DFABytecode>& bytecode)
-        : m_bytecode(bytecode)
-        , m_dfa(dfa)
-    {
-    }
-    
-    void compile();
-
-private:
-    void compileNode(unsigned);
-
-    void emitAppendAction(unsigned);
-    void emitTestFlagsAndAppendAction(uint16_t flags, unsigned);
-    void emitJump(unsigned destinationNodeIndex);
-    void emitCheckValue(uint8_t value, unsigned destinationNodeIndex);
-    void emitTerminate();
-
-    Vector<DFABytecode>& m_bytecode;
-    const DFA& m_dfa;
-    
-    Vector<unsigned> m_nodeStartOffsets;
-    
-    // The first value is the index in the bytecode buffer where the jump is to be written.
-    // The second value is the index of the node to jump to.
-    Vector<std::pair<unsigned, unsigned>> m_linkRecords;
+enum class ResourceType : uint16_t {
+    Invalid = 0x0000,
+    Document = 0x0001,
+    Image = 0x0002,
+    StyleSheet = 0x0004,
+    Script = 0x0008,
+    Font = 0x0010,
+    Raw = 0x0020,
+    SVGDocument = 0x0040,
+    Media = 0x0080,
 };
 
-} // namespace ContentExtensions
+enum class LoadType : uint16_t {
+    Invalid = 0x0000,
+    FirstParty = 0x0100,
+    ThirdParty = 0x0200,
+};
+
+typedef uint16_t ResourceFlags;
+
+ResourceType toResourceType(CachedResource::Type);
+uint16_t readResourceType(const String&);
+uint16_t readLoadType(const String&);
+
+struct ResourceLoadInfo {
+    URL resourceURL;
+    URL mainDocumentURL;
+    ResourceType type;
+
+    bool isThirdParty() const;
+    ResourceFlags getResourceFlags() const;
+};
+
 
 } // namespace WebCore
 
-#endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // DFABytecodeCompiler_h
+#endif // ResourceLoadInfo_h

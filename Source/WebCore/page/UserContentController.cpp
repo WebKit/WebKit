@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "ResourceLoadInfo.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 
@@ -203,12 +204,12 @@ void UserContentController::removeAllUserContentExtensions()
     m_contentExtensionBackend->removeAllContentExtensions();
 }
 
-Vector<ContentExtensions::Action> UserContentController::actionsForURL(const URL& url)
+Vector<ContentExtensions::Action> UserContentController::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo)
 {
     if (!m_contentExtensionBackend)
         return Vector<ContentExtensions::Action>();
 
-    return m_contentExtensionBackend->actionsForURL(url);
+    return m_contentExtensionBackend->actionsForResourceLoad(resourceLoadInfo);
 }
 
 #endif
