@@ -1,3 +1,24 @@
+2015-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+        testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=138687
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy): Don't change system-wide
+        cookie accept policy when in testing mode. Also, update the policy in WebProcesses too,
+        as we still do some networking there.
+
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAlwaysAcceptCookies): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAlwaysAcceptCookies): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Remove WKBundleSetAlwaysAcceptCookies SPI, as WKTR now uses an API in UI process.
+
 2015-03-12  Anders Carlsson  <andersca@apple.com>
 
         WKErrorDomain should be declared nonnull

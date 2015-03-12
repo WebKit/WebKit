@@ -468,10 +468,6 @@ storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
 storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
 storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 
-# testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
-webkit.org/b/138687 http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
-webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
-
 # FIXME: Needs bugzilla (<rdar://problem/12829991>)
 # PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
 webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]

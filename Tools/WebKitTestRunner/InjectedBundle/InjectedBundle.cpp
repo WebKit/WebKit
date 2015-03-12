@@ -249,7 +249,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetAllowFileAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetPluginsEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
-    WKBundleSetAlwaysAcceptCookies(m_bundle, false); // FIXME: Do this from UI process, so that Networking process gets the preference, too.
     WKBundleSetSerialLoadingEnabled(m_bundle, false);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);

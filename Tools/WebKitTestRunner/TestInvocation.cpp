@@ -31,6 +31,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKCookieManager.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKDictionary.h>
 #include <WebKit/WKInspector.h>
@@ -150,6 +151,8 @@ void TestInvocation::invoke()
     m_textOutput.clear();
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
+
+    WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 
     // FIXME: We should clear out visited links here.
 
@@ -642,6 +645,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 #endif
         return result;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAlwaysAcceptCookies")) {
+        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
+        WKHTTPCookieAcceptPolicy policy = WKBooleanGetValue(accept) ? kWKHTTPCookieAcceptPolicyAlways : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        // FIXME: This updates the policy in WebProcess and in NetworkProcess asynchronously, which might break some tests' expectations.
+        WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), policy);
+        return 0;
+    }
+
     ASSERT_NOT_REACHED();
     return 0;
 }

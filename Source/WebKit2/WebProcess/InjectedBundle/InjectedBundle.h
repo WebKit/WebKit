@@ -97,7 +97,6 @@ public:
     WebConnection* webConnectionToUIProcess() const;
 
     // TestRunner only SPI
-    void setAlwaysAcceptCookies(bool);
     void overrideBoolPreferenceForTestRunner(WebPageGroupProxy*, const String& preference, bool enabled);
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
     void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);

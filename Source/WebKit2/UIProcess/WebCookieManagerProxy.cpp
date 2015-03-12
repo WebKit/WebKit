@@ -152,13 +152,21 @@ void WebCookieManagerProxy::cookiesDidChange()
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
 #if PLATFORM(COCOA)
-    persistHTTPCookieAcceptPolicy(policy);
+    if (!processPool()->isUsingTestingNetworkSession())
+        persistHTTPCookieAcceptPolicy(policy);
 #endif
 #if USE(SOUP)
     processPool()->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
-    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
+    // The policy is not sent to newly created processes (only Soup does that via setInitialHTTPCookieAcceptPolicy()). This is not a serious problem, because:
+    // - When testing, we only have one WebProcess and one NetworkProcess, and WebKitTestRunner never restarts them;
+    // - When not testing, Cocoa has the policy persisted, and thus new processes use it (even for ephemeral sessions).
+    processPool()->sendToAllProcesses(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
+#if ENABLE(NETWORK_PROCESS)
+    if (processPool()->usesNetworkProcess())
+        processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
+#endif
 }
 
 void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)> callbackFunction)

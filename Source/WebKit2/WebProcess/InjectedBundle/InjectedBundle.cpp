@@ -136,11 +136,6 @@ WebConnection* InjectedBundle::webConnectionToUIProcess() const
     return WebProcess::singleton().webConnectionToUIProcess();
 }
 
-void InjectedBundle::setAlwaysAcceptCookies(bool accept)
-{
-    WebProcess::singleton().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
-}
-
 void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* pageGroup, const String& preference, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

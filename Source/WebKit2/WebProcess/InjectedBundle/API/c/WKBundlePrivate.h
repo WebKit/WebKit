@@ -40,8 +40,7 @@
 extern "C" {
 #endif
 
-// TestRunner only SPI
-WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);
+// TestRunner only SPIs.
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
 WK_EXPORT void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKStringRef preference, bool enabled);
 WK_EXPORT void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);

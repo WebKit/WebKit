@@ -83,11 +83,6 @@ size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
     return toImpl(bundleRef)->javaScriptObjectsCount();
 }
 
-void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundleRef, bool accept)
-{
-    toImpl(bundleRef)->setAlwaysAcceptCookies(accept);
-}
-
 void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, _WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
 {
     toImpl(bundleRef)->addUserScript(toImpl(pageGroupRef), toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));

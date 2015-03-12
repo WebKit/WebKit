@@ -246,6 +246,7 @@ public:
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
     void useTestingNetworkSession();
+    bool isUsingTestingNetworkSession() const { return m_shouldUseTestingNetworkSession; }
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 

@@ -601,7 +601,11 @@ void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
 
 void TestRunner::setAlwaysAcceptCookies(bool accept)
 {
-    WKBundleSetAlwaysAcceptCookies(InjectedBundle::singleton().bundle(), accept);
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAlwaysAcceptCookies"));
+
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(accept));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), 0);
 }
 
 double TestRunner::preciseTime()

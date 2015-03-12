@@ -1,3 +1,24 @@
+2015-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+        testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=138687
+
+        Reviewed by Carlos Garcia Campos.
+
+        Always change cookie policy from UI process, as changing it from WebProcess doesn't
+        affect other processes.
+
+        The implementation is imperfect, because the change happens asynchronously, but I
+        don't expect it to be a problem in practice.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAlwaysAcceptCookies):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Enable building EFL 1.13 with NEON support

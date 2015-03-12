@@ -1557,9 +1557,6 @@ webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
 webkit.org/b/139357 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 webkit.org/b/139357 js/dom/constructor-length.html [ Failure ]
 
-# testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
-webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
-
 # PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
 webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
 

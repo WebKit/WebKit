@@ -1,3 +1,14 @@
+2015-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+        testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=138687
+
+        Unreviewed (only code changes were reviewed).
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        Unskip tests that used to be affected.
+
 2015-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up after JoePeck.
