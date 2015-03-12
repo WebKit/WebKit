@@ -204,6 +204,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @interface UIKeyboardImpl (StagingToRemove)
 - (void)didHandleWebKeyEvent;
+- (void)didHandleWebKeyEvent:(WebIOSEvent *)event;
 - (void)deleteFromInputWithFlags:(NSUInteger)flags;
 @end
 
@@ -2313,7 +2314,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 {
     if (event.type == WebEventKeyDown) {
         // FIXME: This is only for staging purposes.
-        if ([[UIKeyboardImpl sharedInstance] respondsToSelector:@selector(didHandleWebKeyEvent)])
+        if ([[UIKeyboardImpl sharedInstance] respondsToSelector:@selector(didHandleWebKeyEvent:)])
+            [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent:event];
+        else
             [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent];
     }
 }
