@@ -26,6 +26,7 @@
 
 [
     JSGenerateToNativeObject,
+    ReportExtraMemoryCost
 ] interface HTMLCanvasElement : HTMLElement {
 
     attribute long width;
