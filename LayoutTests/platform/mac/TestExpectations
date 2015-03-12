@@ -834,6 +834,8 @@ webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
 
+webkit.org/b/140183 compositing/backgrounds/background-image-with-negative-zindex.html [ ImageOnlyFailure ]
+
 webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Failure Timeout ]
 
 webkit.org/b/118153 compositing/repaint/positioned-movement.html [ Pass Failure ]

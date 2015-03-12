@@ -1,3 +1,10 @@
+2015-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark compositing/backgrounds/background-image-with-negative-zindex.html as
+        an image failure, since r179871 was rolled out.
+
+        * platform/mac/TestExpectations:
+
 2015-03-11  Timothy Horton  <timothy_horton@apple.com>
 
         <attachment> shouldn't use "user-select: all"
