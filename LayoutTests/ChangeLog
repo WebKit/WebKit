@@ -1,3 +1,19 @@
+2015-03-13  Doug Russell  <d_russell@apple.com>
+
+        AX: Provide API for assistive tech to ignore DOM key event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=142059
+
+        Reviewed by Beth Dakin.
+
+        Assistive technology applications on the desktop are heavily dependent on keyboard navigation being reliable. This is greatly hindered by sites that handle key events without updating keyboard selection and then consume the event. It is important for assistive technology apps to allow users to decide to ignore these handlers that are incorrect for their purposes.
+
+        This can be fixed by exposing, via a new accessibility attribute, a way to decide, for a given WebCore::Frame, to pre-empt DOM dispatch and instead let accessibility caret browsing take place.
+
+        * accessibility/parent-delete-expected.txt:
+        * platform/mac/accessibility/document-attributes-expected.txt:
+        * platform/mac/accessibility/prevent-keyboard-event-dispatch-expected.txt: Added.
+        * platform/mac/accessibility/prevent-keyboard-event-dispatch.html: Added.
+
 2015-03-13  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequests should not prevent a page from entering PageCache

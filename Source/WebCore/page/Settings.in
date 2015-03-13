@@ -45,6 +45,7 @@ maximumHTMLParserDOMTreeDepth type=unsigned, initial=defaultMaximumHTMLParserDOM
 loadsSiteIconsIgnoringImageLoadingSetting initial=false
 
 caretBrowsingEnabled initial=false
+preventKeyboardDOMEventDispatch initial=false
 localStorageEnabled initial=false
 allowUniversalAccessFromFileURLs initial=true
 allowFileAccessFromFileURLs initial=true

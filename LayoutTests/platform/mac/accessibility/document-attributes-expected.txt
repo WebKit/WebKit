@@ -27,6 +27,7 @@ AXLayoutCount: 2
 AXLoadingProgress: 1
 AXURL: LayoutTests/platform/mac/accessibility/document-attributes.html
 AXCaretBrowsingEnabled: 0
+AXPreventKeyboardDOMEventDispatch: 0
 AXElementBusy: 0
 
 

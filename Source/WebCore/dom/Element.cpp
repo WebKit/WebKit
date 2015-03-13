@@ -39,6 +39,7 @@
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
+#include "EventHandler.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
@@ -289,6 +290,10 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
     RefPtr<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
+    if (Frame* frame = document().frame()) {
+        if (frame->eventHandler().accessibilityPreventsEventPropogation(event.get()))
+            event->stopPropagation();
+    }
     return EventDispatcher::dispatchEvent(this, event) && !event->defaultHandled();
 }
 

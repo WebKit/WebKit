@@ -978,6 +978,11 @@ public:
     // other operations update type operations
     void updateBackingStore();
     
+#if PLATFORM(COCOA)
+    bool preventKeyboardDOMEventDispatch() const;
+    void setPreventKeyboardDOMEventDispatch(bool);
+#endif
+    
 #if PLATFORM(COCOA) && !PLATFORM(IOS)
     bool caretBrowsingEnabled() const;
     void setCaretBrowsingEnabled(bool);

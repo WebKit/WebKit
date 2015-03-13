@@ -28,5 +28,6 @@ AXLayoutCount: 2
 AXLoadingProgress: 1
 AXURL: LayoutTests/accessibility/parent-delete.html
 AXCaretBrowsingEnabled: 0
+AXPreventKeyboardDOMEventDispatch: 0
 AXElementBusy: 0
 

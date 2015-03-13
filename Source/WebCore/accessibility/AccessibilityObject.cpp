@@ -2605,4 +2605,20 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
     }
 }
 
+#if PLATFORM(COCOA)
+bool AccessibilityObject::preventKeyboardDOMEventDispatch() const
+{
+    Frame* frame = this->frame();
+    return frame && frame->settings().preventKeyboardDOMEventDispatch();
+}
+
+void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
+{
+    Frame* frame = this->frame();
+    if (!frame)
+        return;
+    frame->settings().setPreventKeyboardDOMEventDispatch(on);
+}
+#endif
+
 } // namespace WebCore
