@@ -1,3 +1,44 @@
+2015-03-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WebKit test infrastructure should automate the process of cloning W3C test suite and importing tests from it
+        https://bugs.webkit.org/show_bug.cgi?id=134764
+
+        Reviewed by Ryosuke Niwa.
+
+        TestDownloader is introduced to download W3C tests from the official
+        W3C tests repositories (https://github.com/w3c/web-platform-tests.git
+        and https://github.com/w3c/csswg-test.git).
+        TestDownloader clones the repositories and checkouts revisions of the tests
+        defined in LayoutTests/imported/w3c/resources/TestRepositories.
+
+        Similarly to https://codereview.chromium.org/148173016,
+        TestDownloader copies part of the files based on the rules
+        defined in LayoutTests/imported/w3c/resources/ImportExpectations.
+
+        TestDownloader is used by TestImporter when no source directory is provided.
+
+        * Scripts/webkitpy/w3c/test_downloader.py: Added.
+        (TestDownloader):
+        (TestDownloader.default_options):
+        (TestDownloader.load_test_repositories):
+        (TestDownloader.__init__):
+        (TestDownloader.checkout_test_repository):
+        (TestDownloader._init_paths_from_expectations):
+        (TestDownloader._add_test_suite_paths):
+        (TestDownloader._empty_directory):
+        (TestDownloader.copy_tests):
+        (TestDownloader.download_tests):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (parse_args):
+        (TestImporter.__init__):
+        (TestImporter.do_import):
+        (TestImporter.test_downloader):
+        (TestImporter.find_importable_tests.should_keep_subdir):
+        (TestImporter.should_convert_test_harness_links):
+        (TestImporter.import_tests):
+        (TestImporter.write_import_log):
+
 2015-03-12  Alexey Proskuryakov  <ap@apple.com>
 
         [Mavericks] Test snapshots are 1600x1200 on Retina devices

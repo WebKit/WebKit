@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+# Copyright (C) 2015 Canon Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,17 +29,15 @@
 # SUCH DAMAGE.
 
 """
- This script imports a directory of W3C CSS tests into WebKit.
-
- You must have checked out the W3C repository to your local drive.
+ This script imports W3C tests into WebKit, either from a local folder or by cloning W3C CSS and WPT repositories.
 
  This script will import the tests into WebKit following these rules:
 
-    - All tests are imported into LayoutTests/w3c
+    - All tests are by default imported into LayoutTests/w3c
 
     - Tests will be imported into a directory tree that
-      mirrors the CSS Mercurial repo. For example, <csswg_repo_root>/css2.1 is brought in
-      as LayoutTests/csswg/css2.1, maintaining the entire directory structure under that
+      mirrors the CSS and WPT repositories. For example, <csswg_repo_root>/css2.1 should be brought in
+      as LayoutTests/imported/w3c/csswg-tests/css2.1, maintaining the entire directory structure under that
 
     - By default, only reftests and jstest are imported. This can be overridden with a -a or --all
       argument
@@ -47,9 +46,15 @@
       they are overwritten with the idea that running this script would refresh files periodically.
       This can also be overridden by a -n or --no-overwrite flag
 
+    - If no import_directory is provided, the script will download the tests from the W3C github repositories.
+      The selection of tests and folders to import will be based on the following files:
+         1. LayoutTests/imported/w3c/resources/TestRepositories lists the repositories to clone, the corresponding revision to checkout and the infrastructure folders that need to be imported/skipped.
+         2. LayoutTests/imported/w3c/resources/ImportExpectations list the test suites or tests to NOT import.
+
     - All files are converted to work in WebKit:
-         1. Paths to testharness.js files are modified point to Webkit's copy of them in
-            LayoutTests/resources, using the correct relative path from the new location
+         1. Paths to testharness.js files are modified to point to Webkit's copy of them in
+            LayoutTests/resources, using the correct relative path from the new location.
+            This is applied to CSS tests but not to WPT tests.
          2. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
             list of what needs prefixes is read from Source/WebCore/CSS/CSSProperties.in
          3. Each reftest has its own copy of its reference file following the naming conventions
@@ -81,6 +86,7 @@ from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
+from webkitpy.w3c.test_downloader import TestDownloader
 
 CHANGESET_NOT_AVAILABLE = 'Not Available'
 
@@ -89,9 +95,9 @@ _log = logging.getLogger(__name__)
 
 def main(_argv, _stdout, _stderr):
     options, args = parse_args(_argv)
-    import_dir = args[0]
+    import_dir = args[0] if args else None
     filesystem = FileSystem()
-    if not filesystem.exists(import_dir):
+    if import_dir and not filesystem.exists(import_dir):
         sys.exit('Source directory %s not found!' % import_dir)
 
     configure_logging()
@@ -117,22 +123,31 @@ def configure_logging():
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(prog='import-w3c-tests w3c_test_source_directory')
+    parser = argparse.ArgumentParser(prog='import-w3c-tests [w3c_test_source_directory]')
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
     parser.add_argument('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
-        help='Do not change links (testharness js or css e.g.). By default, links are converted to point to WebKit testharness files.')
+       help='Do not change links (testharness js or css e.g.). This option only applies when providing a source directory, in which case by default, links are converted to point to WebKit testharness files. When tests are downloaded from W3C repository, links are converted for CSS tests and remain unchanged for WPT tests')
 
     parser.add_argument('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
     parser.add_argument('-d', '--dest-dir', dest='destination', default='w3c',
         help='Import into a specified directory relative to the LayoutTests root. By default, imports into w3c')
+
+    list_of_repositories = ' or '.join([test_repository['name'] for test_repository in TestDownloader.load_test_repositories()])
     parser.add_argument('-t', '--test-path', action='append', dest='test_paths', default=[],
-        help='Import only tests in the supplied subdirectory of the w3c_test_directory. Can be supplied multiple times to give multiple paths')
+         help='Import only tests in the supplied subdirectory of the source directory. Can be supplied multiple times to give multiple paths. For tests directly cloned from W3C repositories, use ' + list_of_repositories + ' prefixes to filter specific tests')
+
+    parser.add_argument('-v', '--verbose', action='store_true', default=False,
+         help='Print maximal log')
+    parser.add_argument('--no-fetch', action='store_false', dest='fetch', default=True,
+         help='Do not fetch the repositories. By default, repositories are fetched if a source directory is not provided')
+    parser.add_argument('--import-all', action='store_true', default=False,
+         help='Ignore the ImportExpectations file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
 
     options, args = parser.parse_known_args(args)
-    if len(args) != 1:
+    if len(args) > 1:
         parser.error('Incorrect number of arguments')
     return options, args
 
@@ -150,16 +165,38 @@ class TestImporter(object):
         self._webkit_root = webkit_finder.webkit_base()
 
         self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
+        self.layout_tests_w3c_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c')
+        self.tests_download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests')
+
+        self._test_downloader = None
 
         self.import_list = []
+        self._importing_downloaded_tests = source_directory is None
 
     def do_import(self):
-        if len(self.options.test_paths) == 0:
+        if not self.source_directory:
+            _log.info('Downloading W3C test repositories')
+            self.source_directory = self.filesystem.join(self.tests_download_path, 'to-be-imported')
+            self.filesystem.maybe_make_directory(self.tests_download_path)
+            self.filesystem.maybe_make_directory(self.source_directory)
+            self.test_downloader().download_tests(self.source_directory, self.options.test_paths)
+
+        if not self.options.test_paths or self._importing_downloaded_tests:
             self.find_importable_tests(self.source_directory)
         else:
             for test_path in self.options.test_paths:
                 self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
+
         self.import_tests()
+
+    def test_downloader(self):
+        if not self._test_downloader:
+            download_options = TestDownloader.default_options()
+            download_options.fetch = self.options.fetch
+            download_options.verbose = self.options.verbose
+            download_options.import_all = self.options.import_all
+            self._test_downloader = TestDownloader(self.tests_download_path, self.host, download_options)
+        return self._test_downloader
 
     def should_skip_file(self, filename):
         # For some reason the w3c repo contains random perl scripts we don't care about.
@@ -171,6 +208,8 @@ class TestImporter(object):
 
     def find_importable_tests(self, directory):
         def should_keep_subdir(filesystem, path):
+            if self._importing_downloaded_tests:
+                return True
             subdir = path[len(directory):]
             DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
             should_skip = filesystem.basename(subdir).startswith('.') or (subdir in DIRS_TO_SKIP)
@@ -236,6 +275,14 @@ class TestImporter(object):
                 # Only add this directory to the list if there's something to import
                 self.import_list.append({'dirname': root, 'copy_list': copy_list,
                     'reftests': reftests, 'jstests': jstests, 'total_tests': total_tests})
+
+    def should_convert_test_harness_links(self, test):
+        if self._importing_downloaded_tests:
+            for test_repository in self.test_downloader().test_repositories:
+                if test.startswith(test_repository['name']):
+                    return test_repository['convert_test_harness_links']
+            return True
+        return self.options.convert_test_harness_links
 
     def import_tests(self):
         total_imported_tests = 0
@@ -303,7 +350,7 @@ class TestImporter(object):
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, convert_test_harness_links=self.options.convert_test_harness_links)
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, convert_test_harness_links=self.should_convert_test_harness_links(subpath))
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)
@@ -382,10 +429,9 @@ class TestImporter(object):
         import_log = []
         import_log.append('The tests in this directory were imported from the W3C repository.\n')
         import_log.append('Do NOT modify these tests directly in Webkit.\n')
-        import_log.append('Instead, push changes to the W3C CSS repo:\n')
-        import_log.append('\thttp://hg.csswg.org/test\n')
-        import_log.append('Or create a pull request on the W3C CSS github:\n')
-        import_log.append('\thttps://github.com/w3c/csswg-test\n\n')
+        import_log.append('Instead, create a pull request on the W3C CSS or WPT github:\n')
+        import_log.append('\thttps://github.com/w3c/csswg-test\n')
+        import_log.append('\thttps://github.com/w3c/web-platform-tests\n\n')
         import_log.append('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
         import_log.append('Do NOT modify or remove this file\n\n')
         import_log.append('------------------------------------------------------------------------\n')

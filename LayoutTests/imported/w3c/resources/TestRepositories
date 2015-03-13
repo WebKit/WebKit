@@ -1,0 +1,35 @@
+[
+    {
+        "name": "csswg-tests",
+        "url": "https://github.com/w3c/csswg-test.git", 
+        "revision": "9f45f89",
+        "paths_to_skip": [
+            "work-in-progress",
+            "tools"
+        ],
+        "paths_to_import": [
+            "support"
+        ],
+        "convert_test_harness_links": true
+    },
+    {
+        "name": "web-platform-tests",
+        "url": "https://github.com/w3c/web-platform-tests.git", 
+        "revision": "990793d",
+        "paths_to_skip": [
+            "conformance-checkers",
+            "docs",
+            "old-tests"
+        ],
+        "paths_to_import": [
+            "common",
+            "fonts",
+            "images",
+            "resources",
+            "tools",
+            "config.default.json",
+            "serve.py"
+        ],
+        "convert_test_harness_links": false
+    }
+]

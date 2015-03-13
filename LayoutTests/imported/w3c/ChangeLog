@@ -1,3 +1,17 @@
+2015-03-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WebKit test infrastructure should automate the process of cloning W3C test suite and importing tests from it
+        https://bugs.webkit.org/show_bug.cgi?id=134764
+
+        Reviewed by Ryosuke Niwa.
+
+        TestRepositories defines the git repositories used to import tests.
+        It defines for each repository the infrastructure paths to always import, the paths to skip and the revision to use.
+        ImportExpectartions defines the tests to import.
+
+        * resources/ImportExpectations: Added.
+        * resources/TestRepositories: Added.
+
 2015-03-06  Carlos Alberto Lopez Perez <clopez@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Layout tests imported/w3c/web-platform-tests certificates should not be tracked on WebKit VCS
