@@ -3881,7 +3881,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 namespace {
 
 struct VerifyCapturedDef {
-    void operator()(CodeBlock* codeBlock, Instruction* instruction, OpcodeID opcodeID, int operand)
+    void operator()(CodeBlock* codeBlock, Instruction* instruction, OpcodeID opcodeID, int operand) const
     {
         unsigned bytecodeOffset = instruction - codeBlock->instructions().begin();
         

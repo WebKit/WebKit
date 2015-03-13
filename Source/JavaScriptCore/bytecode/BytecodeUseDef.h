@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace JSC {
 
 template<typename Functor>
 void computeUsesForBytecodeOffset(
-    CodeBlock* codeBlock, unsigned bytecodeOffset, Functor& functor)
+    CodeBlock* codeBlock, unsigned bytecodeOffset, const Functor& functor)
 {
     Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
@@ -235,7 +235,7 @@ void computeUsesForBytecodeOffset(
 }
 
 template<typename Functor>
-void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, Functor& functor)
+void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, const Functor& functor)
 {
     Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();

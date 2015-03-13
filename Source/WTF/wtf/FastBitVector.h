@@ -177,6 +177,22 @@ public:
         return result;
     }
     
+    template<typename Functor>
+    void forEachSetBit(const Functor& functor)
+    {
+        unsigned n = arrayLength();
+        for (unsigned i = 0; i < n; ++i) {
+            uint32_t word = m_array[i];
+            unsigned j = i << 5;
+            while (word) {
+                if (word & 1)
+                    functor(j);
+                word >>= 1;
+                j++;
+            }
+        }
+    }
+    
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
 private:

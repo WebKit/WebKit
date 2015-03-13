@@ -1,3 +1,35 @@
+2015-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecode liveness analysis should have more lambdas and fewer sets
+        https://bugs.webkit.org/show_bug.cgi?id=142647
+
+        Reviewed by Mark Lam.
+        
+        In bug 141174 I'll need to identify all of the bytecode kill sites. This requires hooking into
+        the bytecode analysis' stepOverFunction method, except in such a way that we observe uses that
+        are not in outs. This refactors stepOverFunction so that you can pass it use/def functors that
+        can either be used to propagate outs (as we do right now) or to additionally detect kills or
+        whatever else.
+        
+        In order to achieve this, the liveness analysis was moved off of maintaining uses/defs
+        bitvectors. This wasn't helping the abstraction and was probably inefficient. The new code
+        should be a bit faster since we don't have to clear uses/defs bitvectors on each instruction. On
+        the other hand, being able to intercept each use means that our code for exception handlers is
+        no longer a bitwise-merge; it requires finding set bits. Fortunately, this code only kicks in
+        for instructions inside a try, and its performance is O(live at catch), so that's probably not
+        bad.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::indexForOperand):
+        (JSC::stepOverInstruction):
+        (JSC::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::setForOperand): Deleted.
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+
 2015-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         "this" should be in TDZ until super is called in the constructor of a derived class
