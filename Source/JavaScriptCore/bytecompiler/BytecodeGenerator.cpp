@@ -68,7 +68,9 @@ ParserError BytecodeGenerator::generate()
         entry.second->bindValue(*this, entry.first.get());
     }
 
-    m_scopeNode->emitBytecode(*this);
+    bool callingClassConstructor = constructorKind() != ConstructorKind::None && !isConstructor();
+    if (!callingClassConstructor)
+        m_scopeNode->emitBytecode(*this);
 
     m_staticPropertyAnalyzer.kill();
 
@@ -401,12 +403,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     addCallee(functionNode, calleeRegister);
 
     if (isConstructor()) {
-        if (constructorKindIsDerived()) {
+        if (constructorKind() == ConstructorKind::Derived) {
             m_newTargetRegister = addVar();
             emitMove(m_newTargetRegister, &m_thisRegister);
             emitMove(&m_thisRegister, addConstantEmptyValue());
         } else
             emitCreateThis(&m_thisRegister);
+    } else if (constructorKind() != ConstructorKind::None) {
+        emitThrowTypeError("Cannot call a class constructor");
     } else if (functionNode->usesThis() || codeBlock->usesEval()) {
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         emitOpcode(op_to_this);
@@ -1912,7 +1916,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 
-    bool thisMightBeUninitialized = constructorKindIsDerived();
+    bool thisMightBeUninitialized = constructorKind() == ConstructorKind::Derived;
     bool srcIsThis = src->index() == m_thisRegister.index();
     if (isConstructor() && (!srcIsThis || thisMightBeUninitialized)) {
         RefPtr<Label> isObjectOrUndefinedLabel = newLabel();

@@ -271,9 +271,9 @@ namespace JSC {
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
 #if ENABLE(ES6_CLASS_SYNTAX)
-        bool constructorKindIsDerived() const { return m_codeBlock->constructorKindIsDerived(); }
+        ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
 #else
-        bool constructorKindIsDerived() const { return false; }
+        ConstructorKind constructorKind() const { return ConstructorKind::None; }
 #endif
 
         ParserError generate();

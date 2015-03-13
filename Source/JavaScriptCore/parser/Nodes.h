@@ -1587,7 +1587,7 @@ namespace JSC {
 
         int startStartOffset() const { return m_startStartOffset; }
         bool isInStrictContext() const { return m_isInStrictContext; }
-        bool constructorKindIsDerived() { return m_constructorKindIsDerived; }
+        ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
 
     protected:
         Identifier m_ident;
@@ -1600,8 +1600,8 @@ namespace JSC {
         unsigned m_endColumn;
         SourceCode m_source;
         int m_startStartOffset;
-        bool m_isInStrictContext : 1;
-        bool m_constructorKindIsDerived : 1;
+        unsigned m_isInStrictContext : 1;
+        unsigned m_constructorKind : 2;
     };
 
     class FunctionNode final : public ScopeNode {

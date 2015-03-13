@@ -173,8 +173,9 @@ FunctionBodyNode::FunctionBodyNode(ParserArena&, const JSTokenLocation& startLoc
     , m_endColumn(endColumn)
     , m_startStartOffset(startLocation.startOffset)
     , m_isInStrictContext(isInStrictContext)
-    , m_constructorKindIsDerived(constructorKind == ConstructorKind::Derived)
+    , m_constructorKind(static_cast<unsigned>(constructorKind))
 {
+    ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }
 
 void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, enum FunctionMode functionMode)

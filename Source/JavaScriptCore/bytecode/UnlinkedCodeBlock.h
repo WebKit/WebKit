@@ -65,21 +65,31 @@ typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, bool constructorKindIsDerived)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
-        , m_constructorKindIsDerived(constructorKindIsDerived)
+        , m_constructorKind(static_cast<unsigned>(constructorKind))
     {
+        ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
     }
-    bool m_needsActivation : 1;
-    bool m_usesEval : 1;
-    bool m_isStrictMode : 1;
-    bool m_isConstructor : 1;
-    bool m_isBuiltinFunction : 1;
-    bool m_constructorKindIsDerived : 1;
+
+    bool needsActivation() const { return m_needsActivation; }
+    bool usesEval() const { return m_usesEval; }
+    bool isStrictMode() const { return m_isStrictMode; }
+    bool isConstructor() const { return m_isConstructor; }
+    bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
+
+private:
+    unsigned m_needsActivation : 1;
+    unsigned m_usesEval : 1;
+    unsigned m_isStrictMode : 1;
+    unsigned m_isConstructor : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_constructorKind : 2;
 };
 
 enum UnlinkedFunctionKind {
@@ -118,7 +128,7 @@ public:
             return JSParseStrict;
         return JSParseNormal;
     }
-    bool constructorKindIsDerived() const { return m_constructorKindIsDerived; }
+    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
 
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
@@ -167,10 +177,10 @@ private:
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
-    bool m_isInStrictContext : 1;
-    bool m_hasCapturedVariables : 1;
-    bool m_isBuiltinFunction : 1;
-    bool m_constructorKindIsDerived : 1;
+    unsigned m_isInStrictContext : 1;
+    unsigned m_hasCapturedVariables : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_constructorKind : 2;
 
     Identifier m_name;
     Identifier m_inferredName;
@@ -346,7 +356,7 @@ public:
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
-    bool constructorKindIsDerived() const { return m_constructorKindIsDerived; }
+    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
 
     void shrinkToFit()
     {
@@ -532,14 +542,15 @@ private:
     VirtualRegister m_lexicalEnvironmentRegister;
     VirtualRegister m_globalObjectRegister;
 
-    bool m_needsFullScopeChain : 1;
-    bool m_usesEval : 1;
-    bool m_isNumericCompareFunction : 1;
-    bool m_isStrictMode : 1;
-    bool m_isConstructor : 1;
-    bool m_hasCapturedVariables : 1;
-    bool m_isBuiltinFunction : 1;
-    bool m_constructorKindIsDerived : 1;
+    unsigned m_needsFullScopeChain : 1;
+    unsigned m_usesEval : 1;
+    unsigned m_isNumericCompareFunction : 1;
+    unsigned m_isStrictMode : 1;
+    unsigned m_isConstructor : 1;
+    unsigned m_hasCapturedVariables : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_constructorKind : 2;
+
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;

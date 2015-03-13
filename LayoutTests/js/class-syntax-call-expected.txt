@@ -1,0 +1,12 @@
+PASS class A { constructor() {} }; window.A = A; new A did not throw exception.
+PASS A() threw exception TypeError: Cannot call a class constructor.
+PASS class B extends A { constructor() { super() } }; window.B = B; new A did not throw exception.
+PASS B() threw exception TypeError: Cannot call a class constructor.
+PASS new (class { constructor() {} })() did not throw exception.
+PASS (class { constructor() {} })() threw exception TypeError: Cannot call a class constructor.
+PASS new (class extends null { constructor() { super() } })() did not throw exception.
+PASS (class extends null { constructor() { super() } })() threw exception TypeError: Cannot call a class constructor.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
