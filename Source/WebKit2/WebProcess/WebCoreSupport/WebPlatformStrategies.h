@@ -31,6 +31,7 @@
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
+#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -67,6 +68,15 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins() override;
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
+    virtual void getWebVisiblePluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
+
+#if PLATFORM(MAC)
+    typedef HashMap<String, WebCore::PluginLoadClientPolicy> PluginLoadClientPoliciesByBundleVersion;
+    typedef HashMap<String, PluginLoadClientPoliciesByBundleVersion> PluginPolicyMapsByIdentifier;
+
+    virtual void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) override;
+    virtual void clearPluginClientPolicies() override;
+#endif
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
@@ -99,11 +109,16 @@ private:
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // WebCore::PluginStrategy implementation.
-    void populatePluginCache();
+    void populatePluginCache(const WebCore::Page&);
     bool m_pluginCacheIsPopulated;
     bool m_shouldRefreshPlugins;
     Vector<WebCore::PluginInfo> m_cachedPlugins;
     Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
+
+#if PLATFORM(MAC)
+    HashMap<String, PluginPolicyMapsByIdentifier> m_hostsToPluginIdentifierData;
+    bool pluginLoadClientPolicyForHost(const String&, const WebCore::PluginInfo&, WebCore::PluginLoadClientPolicy&) const;
+#endif // PLATFORM(MAC)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 };
 

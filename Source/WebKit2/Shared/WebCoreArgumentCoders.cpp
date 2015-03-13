@@ -566,9 +566,18 @@ bool ArgumentCoder<MimeClassInfo>::decode(ArgumentDecoder& decoder, MimeClassInf
 
 void ArgumentCoder<PluginInfo>::encode(ArgumentEncoder& encoder, const PluginInfo& pluginInfo)
 {
-    encoder << pluginInfo.name << pluginInfo.file << pluginInfo.desc << pluginInfo.mimes << pluginInfo.isApplicationPlugin;
+    encoder << pluginInfo.name;
+    encoder << pluginInfo.file;
+    encoder << pluginInfo.desc;
+    encoder << pluginInfo.mimes;
+    encoder << pluginInfo.isApplicationPlugin;
+    encoder.encodeEnum(pluginInfo.clientLoadPolicy);
+#if PLATFORM(MAC)
+    encoder << pluginInfo.bundleIdentifier;
+    encoder << pluginInfo.versionString;
+#endif
 }
-    
+
 bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& pluginInfo)
 {
     if (!decoder.decode(pluginInfo.name))
@@ -581,6 +590,15 @@ bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& plu
         return false;
     if (!decoder.decode(pluginInfo.isApplicationPlugin))
         return false;
+    PluginLoadClientPolicy clientLoadPolicy;
+    if (!decoder.decodeEnum(clientLoadPolicy))
+        return false;
+#if PLATFORM(MAC)
+    if (!decoder.decode(pluginInfo.bundleIdentifier))
+        return false;
+    if (!decoder.decode(pluginInfo.versionString))
+        return false;
+#endif
 
     return true;
 }

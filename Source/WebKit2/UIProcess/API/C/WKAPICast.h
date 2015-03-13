@@ -47,6 +47,7 @@
 #include "WebGrammarDetail.h"
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/Settings.h>
 
@@ -482,6 +483,25 @@ inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModu
     return kWKPluginLoadPolicyBlocked;
 }
 
+inline WKPluginLoadClientPolicy toWKPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy PluginLoadClientPolicy)
+{
+    switch (PluginLoadClientPolicy) {
+    case WebCore::PluginLoadClientPolicyUndefined:
+        return kWKPluginLoadClientPolicyUndefined;
+    case WebCore::PluginLoadClientPolicyBlock:
+        return kWKPluginLoadClientPolicyBlock;
+    case WebCore::PluginLoadClientPolicyAsk:
+        return kWKPluginLoadClientPolicyAsk;
+    case WebCore::PluginLoadClientPolicyAllow:
+        return kWKPluginLoadClientPolicyAllow;
+    case WebCore::PluginLoadClientPolicyAllowAlways:
+        return kWKPluginLoadClientPolicyAllowAlways;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKPluginLoadClientPolicyBlock;
+}
+
 inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy pluginLoadPolicy)
 {
     switch (pluginLoadPolicy) {
@@ -495,6 +515,25 @@ inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy plugin
     
     ASSERT_NOT_REACHED();
     return PluginModuleBlocked;
+}
+
+inline WebCore::PluginLoadClientPolicy toPluginLoadClientPolicy(WKPluginLoadClientPolicy pluginLoadClientPolicy)
+{
+    switch (pluginLoadClientPolicy) {
+    case kWKPluginLoadClientPolicyUndefined:
+        return WebCore::PluginLoadClientPolicyUndefined;
+    case kWKPluginLoadClientPolicyBlock:
+        return WebCore::PluginLoadClientPolicyBlock;
+    case kWKPluginLoadClientPolicyAsk:
+        return WebCore::PluginLoadClientPolicyAsk;
+    case kWKPluginLoadClientPolicyAllow:
+        return WebCore::PluginLoadClientPolicyAllow;
+    case kWKPluginLoadClientPolicyAllowAlways:
+        return WebCore::PluginLoadClientPolicyAllowAlways;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::PluginLoadClientPolicyBlock;
 }
 
 inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)

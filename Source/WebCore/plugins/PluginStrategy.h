@@ -36,6 +36,11 @@ class PluginStrategy {
 public:
     virtual void refreshPlugins() = 0;
     virtual void getPluginInfo(const Page*, Vector<PluginInfo>&) = 0;
+    virtual void getWebVisiblePluginInfo(const Page*, Vector<PluginInfo>&) = 0;
+#if PLATFORM(MAC)
+    virtual void setPluginLoadClientPolicy(PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) = 0;
+    virtual void clearPluginClientPolicies() = 0;
+#endif
 
 protected:
     virtual ~PluginStrategy() { }

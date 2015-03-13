@@ -42,7 +42,7 @@ DOMMimeType::~DOMMimeType()
 {
 }
 
-const String &DOMMimeType::type() const
+String DOMMimeType::type() const
 {
     return mimeClassInfo().type;
 }
@@ -60,9 +60,17 @@ String DOMMimeType::suffixes() const
     return builder.toString();
 }
 
-const String &DOMMimeType::description() const
+String DOMMimeType::description() const
 {
     return mimeClassInfo().desc;
+}
+
+MimeClassInfo DOMMimeType::mimeClassInfo() const
+{
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    return mimes[m_index];
 }
 
 PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
@@ -70,7 +78,10 @@ PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
     if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
 
-    return DOMPlugin::create(m_pluginData.get(), m_frame, m_pluginData->mimePluginIndices()[m_index]);
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    return DOMPlugin::create(m_pluginData.get(), m_frame, mimePluginIndices[m_index]);
 }
 
 } // namespace WebCore

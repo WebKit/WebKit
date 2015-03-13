@@ -399,7 +399,12 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         plugin.info.desc = plugin.info.file;
 
     plugin.info.isApplicationPlugin = false;
-    
+    plugin.info.clientLoadPolicy = PluginLoadClientPolicyUndefined;
+#if PLATFORM(MAC)
+    plugin.info.bundleIdentifier = plugin.bundleIdentifier;
+    plugin.info.versionString = plugin.versionString;
+#endif
+
     return true;
 }
 

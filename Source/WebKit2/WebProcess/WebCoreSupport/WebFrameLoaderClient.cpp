@@ -1447,8 +1447,11 @@ static bool pluginSupportsExtension(const PluginData& pluginData, const String& 
 {
     ASSERT(extension.lower() == extension);
 
-    for (size_t i = 0; i < pluginData.mimes().size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = pluginData.mimes()[i];
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    pluginData.getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    for (size_t i = 0; i < mimes.size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = mimes[i];
 
         if (mimeClassInfo.extensions.contains(extension))
             return true;
@@ -1483,9 +1486,9 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
         const PluginData& pluginData = webPage->corePage()->pluginData();
-        if (pluginData.supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
+        if (pluginData.supportsWebVisibleMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
             plugInSupportsMIMEType = true;
-        else if (pluginData.supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
+        else if (pluginData.supportsWebVisibleMimeType(mimeType, PluginData::OnlyApplicationPlugins))
             plugInSupportsMIMEType = true;
     }
     

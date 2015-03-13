@@ -539,6 +539,7 @@ PluginInfo PDFPlugin::pluginInfo()
     PluginInfo info;
     info.name = builtInPDFPluginName();
     info.isApplicationPlugin = true;
+    info.clientLoadPolicy = PluginLoadClientPolicyUndefined;
 
     MimeClassInfo pdfMimeClassInfo;
     pdfMimeClassInfo.type = "application/pdf";

@@ -146,7 +146,12 @@ using namespace WebCore;
     pluginInfo.name = theName;
 
     pluginInfo.isApplicationPlugin = false;
-    
+    pluginInfo.clientLoadPolicy = PluginLoadClientPolicyUndefined;
+#if PLATFORM(MAC)
+    pluginInfo.bundleIdentifier = self.bundleIdentifier;
+    pluginInfo.versionString = self.bundleVersion;
+#endif
+
     [self closeResourceFile:resRef];
     
     return YES;
