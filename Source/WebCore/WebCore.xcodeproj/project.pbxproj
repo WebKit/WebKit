@@ -1665,13 +1665,10 @@
 		498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914F0F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h */; };
 		498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */; };
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
-		498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770C21242C535002226BA /* DrawingBuffer.cpp */; };
-		498770DC1242C535002226BA /* DrawingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770C31242C535002226BA /* DrawingBuffer.h */; };
 		498770F01242C535002226BA /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D71242C535002226BA /* Texture.cpp */; };
 		498770F11242C535002226BA /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D81242C535002226BA /* Texture.h */; };
 		498770F21242C535002226BA /* TilingData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D91242C535002226BA /* TilingData.cpp */; };
 		498770F31242C535002226BA /* TilingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770DA1242C535002226BA /* TilingData.h */; };
-		498771531243F9FA002226BA /* DrawingBufferMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 498771521243F9FA002226BA /* DrawingBufferMac.mm */; };
 		4998AEC613F9D0EA0090B1AA /* RequestAnimationFrameCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4998AEC413F9D0EA0090B1AA /* RequestAnimationFrameCallback.h */; };
 		4998AECD13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4998AECB13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp */; };
 		4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4998AECC13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h */; };
@@ -8798,13 +8795,10 @@
 		498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		498391560F1E776900C23782 /* WebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSMatrix.h; sourceTree = "<group>"; };
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
-		498770C21242C535002226BA /* DrawingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingBuffer.cpp; path = gpu/DrawingBuffer.cpp; sourceTree = "<group>"; };
-		498770C31242C535002226BA /* DrawingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingBuffer.h; path = gpu/DrawingBuffer.h; sourceTree = "<group>"; };
 		498770D71242C535002226BA /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = gpu/Texture.cpp; sourceTree = "<group>"; };
 		498770D81242C535002226BA /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = gpu/Texture.h; sourceTree = "<group>"; };
 		498770D91242C535002226BA /* TilingData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TilingData.cpp; path = gpu/TilingData.cpp; sourceTree = "<group>"; };
 		498770DA1242C535002226BA /* TilingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TilingData.h; path = gpu/TilingData.h; sourceTree = "<group>"; };
-		498771521243F9FA002226BA /* DrawingBufferMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DrawingBufferMac.mm; path = gpu/mac/DrawingBufferMac.mm; sourceTree = "<group>"; };
 		4998AEC413F9D0EA0090B1AA /* RequestAnimationFrameCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestAnimationFrameCallback.h; sourceTree = "<group>"; };
 		4998AEC513F9D0EA0090B1AA /* RequestAnimationFrameCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RequestAnimationFrameCallback.idl; sourceTree = "<group>"; };
 		4998AECB13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRequestAnimationFrameCallback.cpp; sourceTree = "<group>"; };
@@ -16072,22 +16066,12 @@
 			isa = PBXGroup;
 			children = (
 				498771161242CD7F002226BA /* mac */,
-				498770C21242C535002226BA /* DrawingBuffer.cpp */,
-				498770C31242C535002226BA /* DrawingBuffer.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
 				498770DA1242C535002226BA /* TilingData.h */,
 			);
 			name = gpu;
-			sourceTree = "<group>";
-		};
-		498771161242CD7F002226BA /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				498771521243F9FA002226BA /* DrawingBufferMac.mm */,
-			);
-			name = mac;
 			sourceTree = "<group>";
 		};
 		499B3EC0128CCC1800E726C2 /* ca */ = {
@@ -24444,7 +24428,6 @@
 				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
-				498770DC1242C535002226BA /* DrawingBuffer.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
@@ -27958,8 +27941,6 @@
 				A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */,
 				0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */,
 				A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */,
-				498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */,
-				498771531243F9FA002226BA /* DrawingBufferMac.mm in Sources */,
 				FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */,
 				FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */,
 				FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */,

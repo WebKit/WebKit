@@ -7432,7 +7432,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\egl\GLContextEGL.cpp" />
-    <ClCompile Include="..\platform\graphics\gpu\DrawingBuffer.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp" />
     <ClCompile Include="..\platform\graphics\FormatConverter.cpp" />
@@ -19449,7 +19448,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h" />
-    <ClInclude Include="..\platform\graphics\gpu\DrawingBuffer.h" />
     <ClInclude Include="..\platform\graphics\gpu\Texture.h" />
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h" />
     <ClInclude Include="..\platform\graphics\FormatConverter.h" />

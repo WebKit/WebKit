@@ -28,7 +28,6 @@
 
 #include "ActiveDOMObject.h"
 #include "CanvasRenderingContext.h"
-#include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "Timer.h"
@@ -85,29 +84,6 @@ class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
-
-class ScopedDrawingBufferBinder {
-public:
-    ScopedDrawingBufferBinder(DrawingBuffer* drawingBuffer, WebGLFramebuffer* framebufferBinding)
-        : m_drawingBuffer(drawingBuffer)
-        , m_framebufferBinding(framebufferBinding)
-    {
-        // Commit DrawingBuffer if needed (e.g., for multisampling)
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->commit();
-    }
-    
-    ~ScopedDrawingBufferBinder()
-    {
-        // Restore DrawingBuffer if needed
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->bind();
-    }
-    
-private:
-    DrawingBuffer* m_drawingBuffer;
-    WebGLFramebuffer* m_framebufferBinding;
-};
 
 inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
 {
@@ -455,10 +431,6 @@ protected:
 
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
-
-    // Optional structure for rendering to a DrawingBuffer, instead of directly
-    // to the back-buffer of m_context.
-    RefPtr<DrawingBuffer> m_drawingBuffer;
 
     // Dispatches a context lost event once it is determined that one is needed.
     // This is used both for synthetic and real context losses. For real ones, it's

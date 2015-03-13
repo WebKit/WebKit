@@ -429,7 +429,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCa
     : CanvasRenderingContext(passedCanvas)
     , ActiveDOMObject(&passedCanvas->document())
     , m_context(0)
-    , m_drawingBuffer(0)
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreAllowed(false)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
@@ -448,7 +447,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCa
     : CanvasRenderingContext(passedCanvas)
     , ActiveDOMObject(&passedCanvas->document())
     , m_context(context)
-    , m_drawingBuffer(0)
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreAllowed(false)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
@@ -469,9 +467,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement* passedCa
 
     m_maxViewportDims[0] = m_maxViewportDims[1] = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
-
-    if (m_drawingBuffer)
-        m_drawingBuffer->bind();
 
     setupFlags();
     initializeNewContext();
@@ -547,9 +542,6 @@ void WebGLRenderingContextBase::initializeNewContext()
         initVertexAttrib0();
 
     IntSize canvasSize = clampedCanvasSize();
-    if (m_drawingBuffer)
-        m_drawingBuffer->reset(canvasSize);
-
     m_context->reshape(canvasSize.width(), canvasSize.height());
     m_context->viewport(0, 0, canvasSize.width(), canvasSize.height());
     m_context->scissor(0, 0, canvasSize.width(), canvasSize.height());
@@ -623,11 +615,6 @@ void WebGLRenderingContextBase::destroyGraphicsContext3D()
     if (m_isPendingPolicyResolution)
         return;
 
-    // The drawing buffer holds a context reference. It must also be destroyed
-    // in order for the context to be released.
-    if (m_drawingBuffer)
-        m_drawingBuffer.clear();
-
     if (m_context) {
         m_context->setContextLostCallback(nullptr);
         m_context->setErrorMessageCallback(nullptr);
@@ -641,9 +628,6 @@ void WebGLRenderingContextBase::markContextChanged()
         return;
 
     m_context->markContextChanged();
-
-    if (m_drawingBuffer)
-        m_drawingBuffer->markContentsChanged();
 
     m_layerCleared = false;
     RenderBox* renderBox = canvas()->renderBox();
@@ -697,13 +681,9 @@ bool WebGLRenderingContextBase::clearIfComposited(GC3Dbitfield mask)
         clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
         m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
     }
-    if (m_drawingBuffer)
-        m_drawingBuffer->clearFramebuffers(clearMask);
-    else {
-        if (m_framebufferBinding)
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
-        m_context->clear(clearMask);
-    }
+    if (m_framebufferBinding)
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
+    m_context->clear(clearMask);
 
     restoreStateAfterClear();
     if (m_framebufferBinding)
@@ -759,16 +739,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     canvas()->clearCopiedImage();
     m_markedCanvasDirty = false;
 
-    if (m_drawingBuffer)
-        m_drawingBuffer->commit();
-    m_context->paintRenderingResultsToCanvas(canvas()->buffer(), m_drawingBuffer.get());
-
-    if (m_drawingBuffer) {
-        if (m_framebufferBinding)
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
-        else
-            m_drawingBuffer->bind();
-    }
+    m_context->paintRenderingResultsToCanvas(canvas()->buffer());
 }
 
 PassRefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
@@ -776,18 +747,7 @@ PassRefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageDat
     if (isContextLostOrPending())
         return nullptr;
     clearIfComposited();
-    if (m_drawingBuffer)
-        m_drawingBuffer->commit();
-    RefPtr<ImageData> imageData = m_context->paintRenderingResultsToImageData(m_drawingBuffer.get());
-
-    if (m_drawingBuffer) {
-        if (m_framebufferBinding)
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
-        else
-            m_drawingBuffer->bind();
-    }
-
-    return imageData;
+    return m_context->paintRenderingResultsToImageData();
 }
 
 void WebGLRenderingContextBase::reshape(int width, int height)
@@ -815,11 +775,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
     // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
     // clear (and this matches what reshape will do).
-    if (m_drawingBuffer) {
-        m_drawingBuffer->reset(IntSize(width, height));
-        restoreStateAfterClear();
-    } else
-        m_context->reshape(width, height);
+    m_context->reshape(width, height);
 
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(m_textureUnits[m_activeTextureUnit].texture2DBinding.get()));
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
@@ -829,17 +785,11 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
 {
-    if (m_drawingBuffer)
-        return m_drawingBuffer->size().width();
-
     return m_context->getInternalFramebufferSize().width();
 }
 
 int WebGLRenderingContextBase::drawingBufferHeight() const
 {
-    if (m_drawingBuffer)
-        return m_drawingBuffer->size().height();
-
     return m_context->getInternalFramebufferSize().height();
 }
 
@@ -876,9 +826,6 @@ void WebGLRenderingContextBase::activeTexture(GC3Denum texture, ExceptionCode& e
     }
     m_activeTextureUnit = texture - GraphicsContext3D::TEXTURE0;
     m_context->activeTexture(texture);
-
-    if (m_drawingBuffer)
-        m_drawingBuffer->setActiveTextureUnit(texture);
 }
 
 void WebGLRenderingContextBase::attachShader(WebGLProgram* program, WebGLShader* shader, ExceptionCode& ec)
@@ -968,13 +915,7 @@ void WebGLRenderingContextBase::bindFramebuffer(GC3Denum target, WebGLFramebuffe
         return;
     }
     m_framebufferBinding = buffer;
-    if (m_drawingBuffer)
-        m_drawingBuffer->setFramebufferBinding(objectOrZero(m_framebufferBinding.get()));
-    if (!m_framebufferBinding && m_drawingBuffer) {
-        // Instead of binding fb 0, bind the drawing buffer.
-        m_drawingBuffer->bind();
-    } else
-        m_context->bindFramebuffer(target, objectOrZero(buffer));
+    m_context->bindFramebuffer(target, objectOrZero(buffer));
     if (buffer)
         buffer->setHasEverBeenBound();
     applyStencilTest();
@@ -1014,10 +955,6 @@ void WebGLRenderingContextBase::bindTexture(GC3Denum target, WebGLTexture* textu
     if (target == GraphicsContext3D::TEXTURE_2D) {
         m_textureUnits[m_activeTextureUnit].texture2DBinding = texture;
         maxLevel = m_maxTextureLevel;
-
-        if (m_drawingBuffer && !m_activeTextureUnit)
-            m_drawingBuffer->setTexture2DBinding(objectOrZero(texture));
-
     } else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
         m_textureUnits[m_activeTextureUnit].textureCubeMapBinding = texture;
         maxLevel = m_maxCubeMapTextureLevel;
@@ -1430,10 +1367,9 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
         return;
     }
     clearIfComposited();
-    if (isResourceSafe()) {
-        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+    if (isResourceSafe())
         m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    } else {
+    else {
         GC3Dint clippedX, clippedY;
         GC3Dsizei clippedWidth, clippedHeight;
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
@@ -1455,15 +1391,11 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
                 memset(zero.get(), 0, size);
             }
             m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
-            if (clippedWidth > 0 && clippedHeight > 0) {
-                ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+            if (clippedWidth > 0 && clippedHeight > 0)
                 m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y,
                                              clippedX, clippedY, clippedWidth, clippedHeight);
-            }
-        } else {
-            ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+        } else
             m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-        }
     }
 }
 
@@ -1565,12 +1497,7 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
         return;
     if (framebuffer == m_framebufferBinding) {
         m_framebufferBinding = 0;
-        if (m_drawingBuffer) {
-            m_drawingBuffer->setFramebufferBinding(0);
-            // Have to call bindFramebuffer here to bind back to internal fbo.
-            m_drawingBuffer->bind();
-        } else
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
 }
 
@@ -1658,11 +1585,8 @@ void WebGLRenderingContextBase::disable(GC3Denum cap)
         applyStencilTest();
         return;
     }
-    if (cap == GraphicsContext3D::SCISSOR_TEST) {
+    if (cap == GraphicsContext3D::SCISSOR_TEST)
         m_scissorEnabled = false;
-        if (m_drawingBuffer)
-            m_drawingBuffer->setScissorEnabled(m_scissorEnabled);
-    }
     m_context->disable(cap);
 }
 
@@ -1952,11 +1876,8 @@ void WebGLRenderingContextBase::enable(GC3Denum cap)
         applyStencilTest();
         return;
     }
-    if (cap == GraphicsContext3D::SCISSOR_TEST) {
+    if (cap == GraphicsContext3D::SCISSOR_TEST)
         m_scissorEnabled = true;
-        if (m_drawingBuffer)
-            m_drawingBuffer->setScissorEnabled(m_scissorEnabled);
-    }
     m_context->enable(cap);
 }
 
@@ -2203,17 +2124,12 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttribut
 
     // Also, we need to enforce requested values of "false" for depth
     // and stencil, regardless of the properties of the underlying
-    // GraphicsContext3D or DrawingBuffer.
+    // GraphicsContext3D.
     RefPtr<WebGLContextAttributes> attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
     if (!m_attributes.depth)
         attributes->setDepth(false);
     if (!m_attributes.stencil)
         attributes->setStencil(false);
-    if (m_drawingBuffer) {
-        // The DrawingBuffer obtains its parameters from GraphicsContext3D::getContextAttributes(),
-        // but it makes its own determination of whether multisampling is supported.
-        attributes->setAntialias(m_drawingBuffer->multisample());
-    }
     return attributes.release();
 }
 
@@ -2867,7 +2783,6 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
     void* data = pixels->baseAddress();
 
     {
-        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
         if (m_isRobustnessEXTSupported)
             m_context->getExtensions()->readnPixelsEXT(x, y, width, height, format, type, pixels->byteLength(), data);
         else
@@ -3828,12 +3743,6 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
 
     detachAndRemoveAllObjects();
 
-    if (m_drawingBuffer) {
-        // Make absolutely sure we do not refer to an already-deleted texture or framebuffer.
-        m_drawingBuffer->setTexture2DBinding(0);
-        m_drawingBuffer->setFramebufferBinding(0);
-    }
-
     // There is no direct way to clear errors from a GL implementation and
     // looping until getError() becomes NO_ERROR might cause an infinite loop if
     // the driver or context implementation had a bug. So, loop a reasonably
@@ -4118,14 +4027,14 @@ int WebGLRenderingContextBase::getBoundFramebufferWidth()
 {
     if (m_framebufferBinding && m_framebufferBinding->object())
         return m_framebufferBinding->getColorBufferWidth();
-    return m_drawingBuffer ? m_drawingBuffer->size().width() : m_context->getInternalFramebufferSize().width();
+    return m_context->getInternalFramebufferSize().width();
 }
 
 int WebGLRenderingContextBase::getBoundFramebufferHeight()
 {
     if (m_framebufferBinding && m_framebufferBinding->object())
         return m_framebufferBinding->getColorBufferHeight();
-    return m_drawingBuffer ? m_drawingBuffer->size().height() : m_context->getInternalFramebufferSize().height();
+    return m_context->getInternalFramebufferSize().height();
 }
 
 WebGLTexture* WebGLRenderingContextBase::validateTextureBinding(const char* functionName, GC3Denum target, bool useSixEnumsForCubeMap)
@@ -4840,15 +4749,6 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             // This likely shouldn't happen but is the best way to report it to the WebGL app.
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "", "error restoring context");
         return;
-    }
-
-    // Construct a new drawing buffer with the new GraphicsContext3D.
-    if (m_drawingBuffer) {
-        m_drawingBuffer->discardResources();
-        DrawingBuffer::PreserveDrawingBuffer preserve = m_attributes.preserveDrawingBuffer ? DrawingBuffer::Preserve : DrawingBuffer::Discard;
-        DrawingBuffer::AlphaRequirement alpha = m_attributes.alpha ? DrawingBuffer::Alpha : DrawingBuffer::Opaque;
-        m_drawingBuffer = DrawingBuffer::create(context.get(), m_drawingBuffer->size(), preserve, alpha);
-        m_drawingBuffer->bind();
     }
 
     m_context = context;

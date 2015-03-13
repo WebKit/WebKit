@@ -145,7 +145,7 @@ bool GraphicsContext3D::isResourceSafe()
     return false;
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer*)
+void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
 {
     int rowBytes = m_currentWidth * 4;
     int totalBytes = rowBytes * m_currentHeight;
@@ -184,7 +184,7 @@ bool GraphicsContext3D::paintCompositedResultsToCanvas(ImageBuffer*)
     return false;
 }
 
-PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer*)
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is
     // lossy.

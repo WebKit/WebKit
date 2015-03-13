@@ -3074,8 +3074,6 @@ if (WTF_USE_3D_GRAPHICS)
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/GraphicsContext3D.cpp
         platform/graphics/FormatConverter.cpp
-
-        platform/graphics/gpu/DrawingBuffer.cpp
     )
 endif ()
 

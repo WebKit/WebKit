@@ -1,3 +1,62 @@
+2015-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove DrawingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=142641
+
+        Reviewed by Darin Adler.
+
+        Remove the DrawingBuffer class. Objects of this type were only held in the
+        WebGLRenderingContext (later renamed to WebGLRenderingContextBase) on the
+        Chromium port, with the relevant code removed in r147888. Since then, the
+        m_drawingBuffer member variable has always been null.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::copyTexImage2D):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContext3D):
+        (WebCore::WebGLRenderingContextBase::markContextChanged):
+        (WebCore::WebGLRenderingContextBase::clearIfComposited):
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToCanvas):
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToImageData):
+        (WebCore::WebGLRenderingContextBase::reshape):
+        (WebCore::WebGLRenderingContextBase::drawingBufferWidth):
+        (WebCore::WebGLRenderingContextBase::drawingBufferHeight):
+        (WebCore::WebGLRenderingContextBase::activeTexture):
+        (WebCore::WebGLRenderingContextBase::bindFramebuffer):
+        (WebCore::WebGLRenderingContextBase::bindTexture):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::deleteFramebuffer):
+        (WebCore::WebGLRenderingContextBase::disable):
+        (WebCore::WebGLRenderingContextBase::enable):
+        (WebCore::WebGLRenderingContextBase::getContextAttributes):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::getBoundFramebufferWidth):
+        (WebCore::WebGLRenderingContextBase::getBoundFramebufferHeight):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::ScopedDrawingBufferBinder::ScopedDrawingBufferBinder): Deleted.
+        (WebCore::ScopedDrawingBufferBinder::~ScopedDrawingBufferBinder): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cairo/DrawingBufferCairo.cpp: Removed.
+        * platform/graphics/gpu/DrawingBuffer.cpp: Removed.
+        * platform/graphics/gpu/DrawingBuffer.h: Removed.
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm: Removed.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+
 2015-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r180726): Removing an empty line at the end of textarea clears the entire texture

@@ -84,7 +84,6 @@ const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 const Platform3DObject NullPlatform3DObject = 0;
 
 namespace WebCore {
-class DrawingBuffer;
 class Extensions3D;
 #if USE(OPENGL_ES_2)
 class Extensions3DOpenGLES;
@@ -1132,8 +1131,8 @@ public:
     bool layerComposited() const;
     void forceContextLost();
 
-    void paintRenderingResultsToCanvas(ImageBuffer*, DrawingBuffer*);
-    PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
+    void paintRenderingResultsToCanvas(ImageBuffer*);
+    PassRefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
 #if PLATFORM(IOS)

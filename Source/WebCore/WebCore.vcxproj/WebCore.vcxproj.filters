@@ -6511,9 +6511,6 @@
     <ClCompile Include="..\platform\graphics\OpenGLShims.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\gpu\DrawingBuffer.cpp">
-      <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp">
       <Filter>platform\graphics\gpu</Filter>
     </ClCompile>
@@ -13888,9 +13885,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\OpenGLShims.h">
       <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gpu\DrawingBuffer.h">
-      <Filter>platform\graphics\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gpu\Texture.h">
       <Filter>platform\graphics\gpu</Filter>

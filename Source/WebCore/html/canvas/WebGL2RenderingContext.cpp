@@ -1092,11 +1092,9 @@ void WebGL2RenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3D
         return;
     }
     clearIfComposited();
-    if (isResourceSafe()) {
-        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+    if (isResourceSafe())
         m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    } else {
-        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+    else {
         GC3Dint clippedX, clippedY;
         GC3Dsizei clippedWidth, clippedHeight;
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
