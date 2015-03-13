@@ -1,3 +1,23 @@
+2015-03-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::PutStackSinkingPhase should eliminate GetStacks that have an obviously known source
+        https://bugs.webkit.org/show_bug.cgi?id=141624
+
+        Reviewed by Oliver Hunt.
+        
+        This was an obvious omission from the original PutStackSinkingPhase. Previously, we would treat
+        GetStacks conservatively and assume that the stack slot escaped. That's pretty dumb, since a
+        GetStack is a local load of the stack. This change makes GetStack a no-op from the standpoint of
+        this phase's deferral analysis. At the end we either keep the GetStack (if there was no concrete
+        deferral) or we replace it with an identity over the value that would have been stored by the
+        deferred PutStack. Note that this might be a Phi that the phase creates, so this is strictly
+        stronger than what GCSE could do.
+        
+        This is probably not a speed-up now, but it will be very useful for the varargs simplification
+        done in bug 141174.
+
+        * dfg/DFGPutStackSinkingPhase.cpp:
+
 2015-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         Prohibit GC while sweeping

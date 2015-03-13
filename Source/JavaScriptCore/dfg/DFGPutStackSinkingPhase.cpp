@@ -221,6 +221,12 @@ public:
                         continue;
                     }
                     
+                    if (node->op() == GetStack) {
+                        // A GetStack doesn't affect anything, since we know which local we are reading
+                        // from.
+                        continue;
+                    }
+                    
                     auto escapeHandler = [&] (VirtualRegister operand) {
                         if (operand.isHeader())
                             return;
@@ -390,6 +396,28 @@ public:
                     deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
                     break;
                 }
+                    
+                case GetStack: {
+                    StackAccessData* data = node->stackAccessData();
+                    FlushFormat format = deferred.operand(data->local);
+                    if (!isConcrete(format)) {
+                        // This means there is no deferral. No deferral means that the most
+                        // authoritative value for this stack slot is what is stored in the stack. So,
+                        // keep the GetStack.
+                        break;
+                    }
+                    
+                    // We have a concrete deferral, which means a PutStack that hasn't executed yet. It
+                    // would have stored a value with a certain format. That format must match our
+                    // format. But more importantly, we can simply use the value that the PutStack would
+                    // have stored and get rid of the GetStack.
+                    DFG_ASSERT(m_graph, node, format == data->format);
+                    
+                    Node* incoming = mapping.operand(data->local);
+                    node->convertToIdentity();
+                    node->child1() = incoming->defaultEdge();
+                    break;
+                }
                 
                 default: {
                     auto escapeHandler = [&] (VirtualRegister operand) {
@@ -418,16 +446,6 @@ public:
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
                         [&] (VirtualRegister, Node*) { });
-                    
-                    // If we're a GetStack, then we also create a mapping.
-                    // FIXME: We should be able to just eliminate such GetLocals, when we know
-                    // what their incoming value will be.
-                    // https://bugs.webkit.org/show_bug.cgi?id=141624
-                    if (node->op() == GetStack) {
-                        StackAccessData* data = node->stackAccessData();
-                        VirtualRegister operand = data->local;
-                        mapping.operand(operand) = node;
-                    }
                     break;
                 } }
             }
