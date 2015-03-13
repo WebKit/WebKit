@@ -99,19 +99,16 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
     Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyValuesToVector(loaders, loadersCopy);
     for (auto& loader : loadersCopy) {
-        ResourceHandle* handle = loader->handle();
-        if (!handle)
-            return false;
-
         if (!loader->frameLoader())
             return false;
 
-        CachedResource* cachedResource = MemoryCache::singleton().resourceForURL(handle->firstRequest().url(), loader->frameLoader()->frame().page()->sessionID());
+        CachedResource* cachedResource = MemoryCache::singleton().resourceForURL(loader->request().url(), loader->frameLoader()->frame().page()->sessionID());
         if (!cachedResource)
             return false;
 
+        // Only image and XHR loads do prevent the page from entering the PageCache.
         // All non-image loads will prevent the page from entering the PageCache.
-        if (!cachedResource->isImage())
+        if (!cachedResource->isImage() && !cachedResource->areAllClientsXMLHttpRequests())
             return false;
     }
     return true;

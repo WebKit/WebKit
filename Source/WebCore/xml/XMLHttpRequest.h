@@ -205,6 +205,8 @@ private:
 
     void dispatchErrorEvents(const AtomicString&);
 
+    void resumeTimerFired();
+
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
     URL m_url;
@@ -254,6 +256,9 @@ private:
     // An enum corresponding to the allowed string values for the responseType attribute.
     ResponseTypeCode m_responseTypeCode;
     bool m_responseCacheIsValid;
+
+    Timer m_resumeTimer;
+    bool m_dispatchErrorOnResuming;
 };
 
 } // namespace WebCore

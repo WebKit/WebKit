@@ -1,3 +1,18 @@
+2015-03-13  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequests should not prevent a page from entering PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=142612
+        <rdar://problem/19923085>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a tests to make sure that loading XMLHttpRequests do not prevent a
+        page from entering PageCache.
+
+        * http/tests/navigation/page-cache-xhr-expected.txt: Added.
+        * http/tests/navigation/page-cache-xhr.html: Added.
+        * http/tests/navigation/resources/page-cache-helper.html: Added.
+
 2015-03-13  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed Gardening 13th March.

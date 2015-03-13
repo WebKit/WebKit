@@ -128,14 +128,11 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
     if (!frame.loader().documentLoader()->mainDocumentError().isNull()) {
         PCLOG("   -Main document has an error");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::mainDocumentErrorKey());
-#if !PLATFORM(IOS)
-        rejectReasons |= 1 << MainDocumentError;
-#else
+
         if (frame.loader().documentLoader()->mainDocumentError().isCancellation() && frame.loader().documentLoader()->subresourceLoadersArePageCacheAcceptable())
-            PCLOG("    -But, it was a cancellation and all loaders during the cancel were loading images.");
+            PCLOG("    -But, it was a cancellation and all loaders during the cancelation were loading images or XHR.");
         else
             rejectReasons |= 1 << MainDocumentError;
-#endif
     }
     if (frame.loader().documentLoader()->substituteData().isValid() && frame.loader().documentLoader()->substituteData().failingURL().isEmpty()) {
         PCLOG("   -Frame is an error page");
@@ -304,11 +301,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
     Document* document = frame.document();
     
     return documentLoader
-#if !PLATFORM(IOS)
-        && documentLoader->mainDocumentError().isNull()
-#else
         && (documentLoader->mainDocumentError().isNull() || (documentLoader->mainDocumentError().isCancellation() && documentLoader->subresourceLoadersArePageCacheAcceptable()))
-#endif
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame.page()->settings().pageCacheSupportsPlugins())

@@ -24,6 +24,7 @@
 #include "XMLHttpRequest.h"
 
 #include "Blob.h"
+#include "CachedResourceRequestInitiators.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
@@ -63,10 +64,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(RESOURCE_TIMING)
-#include "CachedResourceRequestInitiators.h"
-#endif
 
 namespace WebCore {
 
@@ -139,6 +136,8 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_progressEventThrottle(this)
     , m_responseTypeCode(ResponseTypeDefault)
     , m_responseCacheIsValid(false)
+    , m_resumeTimer(*this, &XMLHttpRequest::resumeTimerFired)
+    , m_dispatchErrorOnResuming(false)
 {
 #ifndef NDEBUG
     xmlHttpRequestCounter.increment();
@@ -764,9 +763,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     options.setAllowCredentials((m_sameOriginRequest || m_includeCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials);
     options.crossOriginRequestPolicy = UseAccessControl;
     options.securityOrigin = securityOrigin();
-#if ENABLE(RESOURCE_TIMING)
     options.initiator = cachedResourceRequestInitiators().xmlhttprequest;
-#endif
 
 #if ENABLE(XHR_TIMEOUT)
     if (m_timeoutMilliseconds)
@@ -1255,7 +1252,10 @@ void XMLHttpRequest::didTimeout()
 
 bool XMLHttpRequest::canSuspend() const
 {
-    return !m_loader;
+    // If the load event has not fired yet, cancelling the load in suspend() may cause
+    // the load event to be fired and arbitrary JS execution, which would be unsafe.
+    // Therefore, we prevent suspending in this case.
+    return document()->loadEventFinished();
 }
 
 const char* XMLHttpRequest::activeDOMObjectName() const
@@ -1263,18 +1263,50 @@ const char* XMLHttpRequest::activeDOMObjectName() const
     return "XMLHttpRequest";
 }
 
-void XMLHttpRequest::suspend(ReasonForSuspension)
+void XMLHttpRequest::suspend(ReasonForSuspension reason)
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+
     m_progressEventThrottle.suspend();
+
+    if (m_resumeTimer.isActive()) {
+        m_resumeTimer.stop();
+        m_dispatchErrorOnResuming = true;
+    }
+
+    if (reason == ActiveDOMObject::DocumentWillBecomeInactive && m_loader) {
+        // Going into PageCache, abort the request and dispatch a network error on resuming.
+        genericError();
+        m_dispatchErrorOnResuming = true;
+        bool aborted = internalAbort();
+        // It should not be possible to restart the load when aborting in suspend() because
+        // we are not allowed to execute in JS in suspend().
+        ASSERT_UNUSED(aborted, aborted);
+    }
 }
 
 void XMLHttpRequest::resume()
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+
     m_progressEventThrottle.resume();
+
+    // We are not allowed to execute arbitrary JS in resume() so dispatch
+    // the error event in a timer.
+    if (m_dispatchErrorOnResuming && !m_resumeTimer.isActive())
+        m_resumeTimer.startOneShot(0);
+}
+
+void XMLHttpRequest::resumeTimerFired()
+{
+    ASSERT(m_dispatchErrorOnResuming);
+    m_dispatchErrorOnResuming = false;
+    dispatchErrorEvents(eventNames().errorEvent);
 }
 
 void XMLHttpRequest::stop()
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
     internalAbort();
 }
 

@@ -1,3 +1,73 @@
+2015-03-13  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequests should not prevent a page from entering PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=142612
+        <rdar://problem/19923085>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make XMLHttpRequest ActiveDOMObjects suspendable in most cases to
+        drastically improve the likelihood of pages using them to enter
+        PageCache. XMLHttpRequest used to be only suspendable when not
+        loading. After this patch, if the XMLHttpRequest is loading when
+        navigating away from the page, it will be aborted and the page
+        will enter the PageCache. Upon restoring the page from PageCache,
+        the XMLHttpRequests' error handlers will be executed to give them
+        a chance to reload if they want to.
+
+        Test: http/tests/navigation/page-cache-xhr.html
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        Do not prevent a page to enter the page cache ff the main document has
+        an error that is a cancellation and all remaining subresource loaders
+        are for XHR. We extend the pre-existing mechanism used on iOS, which
+        allowed PageCaching if the remaining resource loads are for images.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        Mark XHR loaders as PageCache acceptable.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::isXMLHttpRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::areAllClientsXMLHttpRequests):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::isXMLHttpRequest):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::canSuspend):
+        Report that we can suspend XMLHttpRequests as long as the window load
+        event has already fired. If the window load event has not fired yet,
+        it would be unsafe to cancel the load in suspend() as it would
+        potentially cause arbitrary JS execution while suspending.
+
+        (WebCore::XMLHttpRequest::suspend):
+        If suspending for PageCache and the request is currently loading, abort
+        the load and mark that we should fire the error event upon restoring
+        from PageCache.
+
+        (WebCore::XMLHttpRequest::resume):
+        (WebCore::XMLHttpRequest::resumeTimerFired):
+        Upon resuming, fire the error event in a timer if the load was aborted
+        for suspending. We need to do this in a timer because we are not allowed
+        to execute arbitrary JS inside resume().
+
+        (WebCore::XMLHttpRequest::stop):
+        Add a assertion to make sure we are not firing event inside stop() as
+        this would potentially cause arbitrary JS execution and it would be
+        unsafe. It seems to me that our code is currently unsafe but the
+        assertion does not seem to be hit by our current layout tests. I am
+        adding the assertion as it would make it clear we have a bug and we
+        need to fix it.
+
+        * xml/XMLHttpRequest.h:
+
 2015-03-13  Joonghun Park  <jh718.park@samsung.com>
 
         Fix Debug build error 'comparison is always true due to limited range of data type [-Werror=type-limits]'

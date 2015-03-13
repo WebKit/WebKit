@@ -96,6 +96,8 @@ namespace WebCore {
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
         bool isAllowedRedirect(const URL&);
 
+        bool isXMLHttpRequest() const override final;
+
         SecurityOrigin* securityOrigin() const;
 
         CachedResourceHandle<CachedRawResource> m_resource;

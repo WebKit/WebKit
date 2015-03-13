@@ -34,6 +34,7 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Document.h"
@@ -416,6 +417,11 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
         return true;
 
     return m_sameOriginRequest && securityOrigin()->canRequest(url);
+}
+
+bool DocumentThreadableLoader::isXMLHttpRequest() const
+{
+    return m_options.initiator == cachedResourceRequestInitiators().xmlhttprequest;
 }
 
 SecurityOrigin* DocumentThreadableLoader::securityOrigin() const
