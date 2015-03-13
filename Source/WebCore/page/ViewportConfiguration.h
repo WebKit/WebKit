@@ -101,7 +101,10 @@ private:
     double viewportArgumentsLength(double length) const;
     int layoutWidth() const;
     int layoutHeight() const;
+
     bool shouldIgnoreScalingConstraints() const;
+    bool shouldIgnoreVerticalScalingConstraints() const;
+    bool shouldIgnoreHorizontalScalingConstraints() const;
 
     Parameters m_configuration;
     Parameters m_defaultConfiguration;

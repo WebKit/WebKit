@@ -1,3 +1,17 @@
+2015-03-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Sites that use a device-width viewport but don't have enough height to fill the view are scaled up
+        https://bugs.webkit.org/show_bug.cgi?id=142664
+        <rdar://problem/18859470>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _rubberBandOffsetForOffset:maxOffset:minOffset:range:outside:]):
+        Now that the WKContentView can (without pinching) be smaller than the unobscured
+        region of the WKWebView, we need to take that into account when deciding where
+        to retarget scrolling.
+
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
         Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.

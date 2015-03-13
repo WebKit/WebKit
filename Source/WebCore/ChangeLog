@@ -1,3 +1,30 @@
+2015-03-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Sites that use a device-width viewport but don't have enough height to fill the view are scaled up
+        https://bugs.webkit.org/show_bug.cgi?id=142664
+        <rdar://problem/18859470>
+
+        Reviewed by Benjamin Poulain.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints):
+        (WebCore::ViewportConfiguration::shouldIgnoreVerticalScalingConstraints):
+        (WebCore::ViewportConfiguration::shouldIgnoreScalingConstraints):
+        Split shouldIgnoreScalingConstraints into one for each dimension.
+
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        Don't force the initial and minimum scales to cover the whole view if the
+        page claims to want to lay out to device width but then lays out too big.
+        This will allow pages that misbehave in this way to scale down further
+        than they previously could, but will result in a region of empty background
+        color being exposed at the initial/minimum scale.
+
+        (WebCore::ViewportConfiguration::description):
+        Update the logging to show each dimension separately.
+
+        * page/ViewportConfiguration.h:
+
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
         Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.

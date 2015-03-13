@@ -97,7 +97,7 @@ IntSize ViewportConfiguration::layoutSize() const
     return IntSize(layoutWidth(), layoutHeight());
 }
 
-bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
+bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
 {
     if (!m_canIgnoreScalingConstraints)
         return false;
@@ -106,14 +106,27 @@ bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
     if (m_viewportArguments.width == ViewportArguments::ValueDeviceWidth)
         return laidOutWiderThanViewport;
 
-    bool laidOutTallerThanViewport = m_contentSize.height() > layoutHeight();
-    if (m_viewportArguments.height == ViewportArguments::ValueDeviceHeight)
-        return laidOutTallerThanViewport;
-
     if (m_configuration.initialScaleIsSet && m_configuration.initialScale == 1)
         return laidOutWiderThanViewport;
 
     return false;
+}
+
+bool ViewportConfiguration::shouldIgnoreVerticalScalingConstraints() const
+{
+    if (!m_canIgnoreScalingConstraints)
+        return false;
+
+    bool laidOutTallerThanViewport = m_contentSize.height() > layoutHeight();
+    if (m_viewportArguments.height == ViewportArguments::ValueDeviceHeight)
+        return laidOutTallerThanViewport;
+
+    return false;
+}
+
+bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
+{
+    return shouldIgnoreHorizontalScalingConstraints() || shouldIgnoreVerticalScalingConstraints();
 }
 
 double ViewportConfiguration::initialScale() const
@@ -130,12 +143,12 @@ double ViewportConfiguration::initialScale() const
     const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double width = m_contentSize.width() > 0 ? m_contentSize.width() : layoutWidth();
     double initialScale = 0;
-    if (width > 0)
+    if (width > 0 && !shouldIgnoreVerticalScalingConstraints())
         initialScale = minimumLayoutSize.width() / width;
 
-    // Prevent the intial scale from shrinking to a height smaller than our view's minimum height.
+    // Prevent the initial scale from shrinking to a height smaller than our view's minimum height.
     double height = m_contentSize.height() > 0 ? m_contentSize.height() : layoutHeight();
-    if (height > 0 && height * initialScale < minimumLayoutSize.height())
+    if (height > 0 && height * initialScale < minimumLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
         initialScale = minimumLayoutSize.height() / height;
     return std::min(std::max(initialScale, shouldIgnoreScalingConstraints() ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
 }
@@ -151,11 +164,11 @@ double ViewportConfiguration::minimumScale() const
 
     const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double contentWidth = m_contentSize.width();
-    if (contentWidth > 0 && contentWidth * minimumScale < minimumLayoutSize.width())
+    if (contentWidth > 0 && contentWidth * minimumScale < minimumLayoutSize.width() && !shouldIgnoreVerticalScalingConstraints())
         minimumScale = minimumLayoutSize.width() / contentWidth;
 
     double contentHeight = m_contentSize.height();
-    if (contentHeight > 0 && contentHeight * minimumScale < minimumLayoutSize.height())
+    if (contentHeight > 0 && contentHeight * minimumScale < minimumLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
         minimumScale = minimumLayoutSize.height() / contentHeight;
 
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
@@ -490,7 +503,9 @@ CString ViewportConfiguration::description() const
     ts.writeIndent();
     ts << "(computed layout size " << layoutSize() << ")\n";
     ts.writeIndent();
-    ts << "(ignoring scaling constraints " << (shouldIgnoreScalingConstraints() ? "true" : "false") << ")";
+    ts << "(ignoring horizontal scaling constraints " << (shouldIgnoreHorizontalScalingConstraints() ? "true" : "false") << ")\n";
+    ts.writeIndent();
+    ts << "(ignoring vertical scaling constraints " << (shouldIgnoreVerticalScalingConstraints() ? "true" : "false") << ")";
     ts.decreaseIndent();
 
     ts << ")\n";
