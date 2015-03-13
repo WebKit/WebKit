@@ -1,3 +1,23 @@
+2015-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        BytecodeGenerator needs to be re-entrant to support miranda functions
+        https://bugs.webkit.org/show_bug.cgi?id=142627
+
+        Reviewed by Filip Pizlo.
+
+        Made CodeCache::getGlobalCodeBlock and CodeCache::getFunctionExecutableFromGlobalCode re-entrant
+        by not keeping AddResult while invoking BytecodeGenerator::generate.
+
+        This is needed to support Miranda functions since they need to be lazily initialized.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::findCacheAndUpdateAge): Extracted from add.
+        (JSC::CodeCacheMap::addCache): Extracted from add.
+        (JSC::CodeCacheMap::add): Deleted.
+
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
         Introduce WTF::Atomic to wrap std::atomic for a friendlier CAS.

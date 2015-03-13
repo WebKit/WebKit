@@ -144,18 +144,15 @@ public:
     {
     }
 
-    AddResult add(const SourceCodeKey& key, const SourceCodeValue& value)
+    SourceCodeValue* findCacheAndUpdateAge(const SourceCodeKey& key)
     {
         prune();
 
-        AddResult addResult = m_map.add(key, value);
-        if (addResult.isNewEntry) {
-            m_size += key.length();
-            m_age += key.length();
-            return addResult;
-        }
+        iterator findResult = m_map.find(key);
+        if (findResult == m_map.end())
+            return nullptr;
 
-        int64_t age = m_age - addResult.iterator->value.age;
+        int64_t age = m_age - findResult->value.age;
         if (age > m_capacity) {
             // A requested object is older than the cache's capacity. We can
             // infer that requested objects are subject to high eviction probability,
@@ -170,7 +167,20 @@ public:
                 m_capacity = m_minCapacity;
         }
 
-        addResult.iterator->value.age = m_age;
+        findResult->value.age = m_age;
+        m_age += key.length();
+
+        return &findResult->value;
+    }
+
+    AddResult addCache(const SourceCodeKey& key, const SourceCodeValue& value)
+    {
+        prune();
+
+        AddResult addResult = m_map.add(key, value);
+        ASSERT(addResult.isNewEntry);
+
+        m_size += key.length();
         m_age += key.length();
         return addResult;
     }
