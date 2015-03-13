@@ -1,3 +1,93 @@
+2015-03-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Use UIDocumentMenuViewController to allow selection of files from
+        iCloud Drive in WKFileUploadPanel
+
+        Part of <https://bugs.webkit.org/show_bug.cgi?id=142596> WebKit on
+        iOS should support file upload from iCloud Drive
+        <rdar://problem/12178991>
+
+        Reviewed by Andy Estes.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Include UIDocumentMenuViewController_Private.h if it exists. If not,
+        declare this new SPI.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (fallbackIconForFile):
+        Create a UIDocumentInteractionController for the file, and return a
+        thumbnail image from its smallest icon.
+
+        (iconForImageFile):
+        If we can get a UIImage from the file, create a thumbnail from it.
+        Otherwise, call fallbackIconForFile().
+
+        (iconForVideoFile):
+        Code moved from -[_WKVideoFileUploadItem displayImage].
+
+        (iconForFile):
+        Get the file's extension, and get the extension's preferred UTI. If the
+        UTI is an image type, call iconForImageFile(). If it's a video type,
+        call iconForVideoFile(). Otherwise, return the fallback icon.
+
+        (-[_WKFileUploadItem initWithFileURL:]):
+        Added an initializer that takes a file URL.
+
+        (-[_WKFileUploadItem fileURL]):
+        (-[_WKImageFileUploadItem initWithFileURL:originalImage:]):
+        (-[_WKVideoFileUploadItem displayImage]):
+        (WKFileUploadPanel):
+        Inherit from UIDocumentPickerDelegate and UIDocumentMenuDelegate. Add
+        an ivar for the document menu controller.
+
+        (-[WKFileUploadPanel dealloc]):
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        If instances of UIDocumentMenuViewController respond to
+        -_setIgnoreApplicationEntitlementForImport:, meaning we can disable the
+        assertion that the current app has the iCloud Documents entitlement,
+        then show the document picker menu. Otherwise, show the current source
+        selection UI. The runtime check will be removed when a newer UIKit is
+        available.
+
+        (UTIsForMIMETypes):
+        Return the UTIs for the <input> element's "accept" attribute's MIME
+        type list.
+
+        (-[WKFileUploadPanel _mediaTypesForPickerSourceType:]):
+        Call UTIsForMIMETypes(). Fall back to available source types for this
+        picker type.
+
+        (-[WKFileUploadPanel _documentPickerMenuMediaTypes]):
+        Call UTIsForMIMETypes(). Fall back to the all-encompassing
+        "public.item" UTI.
+
+        (-[WKFileUploadPanel _photoLibraryButtonLabel]):
+        (-[WKFileUploadPanel _cameraButtonLabel]):
+        Factored out of -_showMediaSourceSelectionSheet. Return the
+        appropriate label for the camera button, based on whether it can take a
+        photo or video, or return nil if the camera is not available.
+
+        (-[WKFileUploadPanel _showMediaSourceSelectionSheet]):
+        Changed to use -_cameraButtonLabel and
+        -_presentForCurrentInterfaceIdiom:.
+
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Create a UIDocumentMenuViewController, and populate it with options to
+        open the photo library or take a picture or video. If iCloud Drive or
+        other document sources are available, they will be added automatically.
+
+        (-[WKFileUploadPanel _presentForCurrentInterfaceIdiom:]):
+        (-[WKFileUploadPanel documentMenu:didPickDocumentPicker:]):
+        (-[WKFileUploadPanel documentMenuWasCancelled:]):
+        (-[WKFileUploadPanel documentPicker:didPickDocumentAtURL:]):
+        (-[WKFileUploadPanel documentPickerWasCancelled:]):
+        (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+
+        (-[_WKImageFileUploadItem initWithFilePath:originalImage:]): Deleted.
+        (-[_WKImageFileUploadItem fileURL]): Deleted.
+        (-[_WKVideoFileUploadItem initWithFilePath:mediaURL:]): Deleted.
+        (-[_WKVideoFileUploadItem fileURL]): Deleted.
+
 2015-03-11  Enrica Casucci  <enrica@apple.com>
 
         Adopt new API for keyboard event handling.

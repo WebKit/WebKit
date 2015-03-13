@@ -69,6 +69,15 @@
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 
+// FIXME: Unconditionally include this file when a new SDK is available. <rdar://problem/20150072>
+#if defined(__has_include) && __has_include(<UIKit/UIDocumentMenuViewController_Private.h>)
+#import <UIKit/UIDocumentMenuViewController_Private.h>
+#else
+@interface UIDocumentMenuViewController (Details)
+@property (nonatomic, assign, setter = _setIgnoreApplicationEntitlementForImport:, getter = _ignoreApplicationEntitlementForImport) BOOL _ignoreApplicationEntitlementForImport;
+@end
+#endif
+
 #else
 
 @interface UIAlertController (Details)
@@ -656,6 +665,10 @@ typedef enum {
 - (void)setPaused:(BOOL)paused;
 - (void)sendScrollEventIfNecessaryWasUserScroll:(BOOL)userScroll;
 @property (nonatomic) BOOL inputViewObeysDOMFocus;
+@end
+
+@interface UIDocumentMenuViewController (Details)
+@property (nonatomic, assign, setter = _setIgnoreApplicationEntitlementForImport:, getter = _ignoreApplicationEntitlementForImport) BOOL _ignoreApplicationEntitlementForImport;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
