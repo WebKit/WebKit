@@ -1,3 +1,14 @@
+2015-03-13  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix typo restoreUserInterfaceForOptimizedFullscreeStopWithCompletionHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=142678
+
+        Reviewed by Eric Carlson.
+
+        Add the missing 'n' in "fullscreen".
+
+        * platform/spi/ios/AVKitSPI.h:
+
 2015-03-13  Timothy Horton  <timothy_horton@apple.com>
 
         Sites that use a device-width viewport but don't have enough height to fill the view are scaled up
