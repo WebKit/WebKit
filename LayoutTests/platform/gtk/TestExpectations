@@ -612,13 +612,8 @@ webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageO
 webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
 webkit.org/b/142289 fast/text/font-kerning.html [ ImageOnlyFailure ]
 webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
-webkit.org/b/142291 fast/regions/repaint/region-painting-in-composited-view.html [ ImageOnlyFailure ]
-webkit.org/b/142291 transforms/2d/perspective-not-fixed-container.html [ ImageOnlyFailure ]
-webkit.org/b/142291 transforms/hittest-translated-content-off-to-infinity-and-back.html [ ImageOnlyFailure ]
-webkit.org/b/142291 css3/calc/transforms-translate.html [ ImageOnlyFailure ]
-webkit.org/b/142291 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ ImageOnlyFailure ]
-webkit.org/b/142291 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
-webkit.org/b/142291 fast/regions/repaint/fixed-in-named-flow-cb-changed.html [ ImageOnlyFailure ]
+
+webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
 
 # TODO Scroll snap points
 css3/scroll-snap [ Skip ]
@@ -1309,6 +1304,8 @@ webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
 webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
+webkit.org/b/142670 media/video-background-tab-playback.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1553,8 +1550,6 @@ Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
 webkit.org/b/139357 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
 webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
-webkit.org/b/139357 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
-webkit.org/b/139357 js/dom/constructor-length.html [ Failure ]
 
 # PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
 webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
@@ -1744,7 +1739,6 @@ Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure Timeout ]
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
 # See also https://bugs.webkit.org/show_bug.cgi?id=54926
-webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Failure ]
 webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
 
 # Needs grammar checking implementation.
@@ -1839,8 +1833,6 @@ Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
 webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
-
-webkit.org/b/57346 fast/text/justify-ideograph-leading-expansion.html [ Failure ]
 
 webkit.org/b/83800 plugins/get-url-with-blank-target.html [ Failure ]
 
@@ -1947,11 +1939,7 @@ webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
 webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
 
-webkit.org/b/105296 webaudio/delaynode-max-nondefault-delay.html [ Failure ]
 webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure ]
-webkit.org/b/105296 webaudio/delaynode-scheduling.html [ Failure ]
-
-webkit.org/b/105299 webaudio/javascriptaudionode.html [ Failure ]
 
 webkit.org/b/115437 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/115437 fast/regions/region-content-flown-into-region.html [ ImageOnlyFailure ]
@@ -1994,7 +1982,6 @@ webkit.org/b/120596 css3/background/background-repeat-space-content.html [ Image
 webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
-webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
 
@@ -2206,9 +2193,6 @@ webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-tog
 
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
-webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
-webkit.org/b/133147 fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ ImageOnlyFailure ]
-
 webkit.org/b/133803 editing/deleting/delete-by-word-001.html [ Failure ]
 webkit.org/b/133803 editing/deleting/delete-by-word-002.html [ Failure ]
 webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure ]
@@ -2285,10 +2269,7 @@ webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFai
 
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
-webkit.org/b/136672 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
 webkit.org/b/136673 fast/text/empty-shadow.html [ ImageOnlyFailure ]
-
-webkit.org/b/136754 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 
@@ -2310,9 +2291,6 @@ webkit.org/b/138078 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyF
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
 webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
-
-webkit.org/b/139353 fast/css/css-selector-text.html [ Failure ]
-webkit.org/b/139353 fast/css/parsing-css-lang.html [ Failure ]
 
 webkit.org/b/139354 fast/repaint/selection-ruby-rl.html [ Failure ]
 
@@ -2364,6 +2342,13 @@ webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-mai
 
 webkit.org/b/142487 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
 webkit.org/b/142423 svg/fonts/svg-font-horiz-origin.html [ ImageOnlyFailure ]
+
+webkit.org/b/142666 fast/forms/input-auto-fill-button.html [ Failure ]
+webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
+webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
+
+webkit.org/b/142668 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
+webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
