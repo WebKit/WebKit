@@ -1,3 +1,14 @@
+2015-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Change the DFG crashLock to use std::atomic.
+        <https://webkit.org/b/142649>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::startCrashing):
+        (JSC::DFG::isCrashing):
+
 2015-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         Bytecode liveness analysis should have more lambdas and fewer sets
