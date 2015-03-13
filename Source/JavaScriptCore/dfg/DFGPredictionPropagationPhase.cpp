@@ -626,6 +626,7 @@ private:
         case SetArgument:
         case CheckStructure:
         case CheckCell:
+        case CheckNotEmpty:
         case CheckBadCell:
         case PutStructure:
         case TearOffArguments:

@@ -404,7 +404,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (constructorKindIsDerived()) {
             m_newTargetRegister = addVar();
             emitMove(m_newTargetRegister, &m_thisRegister);
-            emitLoad(&m_thisRegister, jsNull());
+            emitMove(&m_thisRegister, addConstantEmptyValue());
         } else
             emitCreateThis(&m_thisRegister);
     } else if (functionNode->usesThis() || codeBlock->usesEval()) {
@@ -1556,6 +1556,12 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
     return dst;
 }
 
+void BytecodeGenerator::emitTDZCheck(RegisterID* target)
+{
+    emitOpcode(op_check_tdz);
+    instructions().append(target->index());
+}
+
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
 {
     size_t begin = instructions().size();
@@ -1907,12 +1913,16 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
     }
 
     bool thisMightBeUninitialized = constructorKindIsDerived();
-    if (isConstructor() && (src->index() != m_thisRegister.index() || thisMightBeUninitialized)) {
+    bool srcIsThis = src->index() == m_thisRegister.index();
+    if (isConstructor() && (!srcIsThis || thisMightBeUninitialized)) {
         RefPtr<Label> isObjectOrUndefinedLabel = newLabel();
+
+        if (srcIsThis && thisMightBeUninitialized)
+            emitTDZCheck(src);
 
         emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectOrUndefinedLabel.get());
 
-        if (constructorKindIsDerived()) {
+        if (thisMightBeUninitialized) {
             emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isObjectOrUndefinedLabel.get());
             emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
         } else

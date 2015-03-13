@@ -110,6 +110,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCharAt:
     case CheckCell:
     case CheckBadCell:
+    case CheckNotEmpty:
     case StringCharCodeAt:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:

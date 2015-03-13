@@ -257,6 +257,12 @@ SLOW_PATH_DECL(slow_path_to_this)
     RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
+SLOW_PATH_DECL(slow_path_throw_tdz_error)
+{
+    BEGIN();
+    THROW(createReferenceError(exec, "Cannot access uninitialized variable."));
+}
+
 SLOW_PATH_DECL(slow_path_not)
 {
     BEGIN();

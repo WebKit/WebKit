@@ -185,7 +185,15 @@ private:
                 eliminated = true;
                 break;
             }
-                
+
+            case CheckNotEmpty: {
+                if (m_state.forNode(node->child1()).m_type & SpecEmpty)
+                    break;
+                node->convertToPhantom();
+                eliminated = true;
+                break;
+            }
+
             case CheckInBounds: {
                 JSValue left = m_state.forNode(node->child1()).value();
                 JSValue right = m_state.forNode(node->child2()).value();

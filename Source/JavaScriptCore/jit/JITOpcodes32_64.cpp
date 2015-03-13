@@ -997,6 +997,19 @@ void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEn
     slowPathCall.call();
 }
 
+void JIT::emit_op_check_tdz(Instruction* currentInstruction)
+{
+    emitLoadTag(currentInstruction[1].u.operand, regT0);
+    addSlowCase(branch32(Equal, regT0, TrustedImm32(JSValue::EmptyValueTag)));
+}
+
+void JIT::emitSlow_op_check_tdz(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_throw_tdz_error);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
     load32(m_vm->enabledProfilerAddress(), regT0);

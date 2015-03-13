@@ -56,6 +56,7 @@ void computeUsesForBytecodeOffset(
         return;
     case op_get_scope:
     case op_to_this:
+    case op_check_tdz:
     case op_pop_scope:
     case op_profile_will_call:
     case op_profile_did_call:
@@ -364,6 +365,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_mov:
     case op_new_object:
     case op_to_this:
+    case op_check_tdz:
     case op_init_lazy_reg:
     case op_get_scope:
     case op_create_arguments:

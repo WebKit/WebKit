@@ -187,6 +187,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_create_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_enter);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_callee);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_this);
+SLOW_PATH_HIDDEN_DECL(slow_path_throw_tdz_error);
 SLOW_PATH_HIDDEN_DECL(slow_path_not);
 SLOW_PATH_HIDDEN_DECL(slow_path_eq);
 SLOW_PATH_HIDDEN_DECL(slow_path_neq);

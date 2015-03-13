@@ -803,6 +803,16 @@ _llint_op_new_object:
     dispatch(4)
 
 
+_llint_op_check_tdz:
+    traceExecution()
+    loadpFromInstruction(1, t0)
+    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opNotTDZ
+    callSlowPath(_slow_path_throw_tdz_error)
+
+.opNotTDZ:
+    dispatch(2)
+
+
 _llint_op_mov:
     traceExecution()
     loadi 8[PC], t1

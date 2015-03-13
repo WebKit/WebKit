@@ -47,6 +47,7 @@ enum ExitKind : uint8_t {
     ExoticObjectMode, // We exited because some exotic object that we were accessing was in an exotic mode (like Arguments with slow arguments).
     NotStringObject, // We exited because we shouldn't have attempted to optimize string object access.
     VarargsOverflow, // We exited because a varargs call passed more arguments than we expected.
+    TDZFailure, // We exited because we were in the TDZ and accessed the variable.
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
     UncountableInvalidation, // We exited because the code block was invalidated; this means that we've already counted the reasons why the code block was invalidated.
     WatchdogTimerFired, // We exited because we need to service the watchdog timer.

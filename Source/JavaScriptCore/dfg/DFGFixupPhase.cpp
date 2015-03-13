@@ -1269,6 +1269,7 @@ private:
         case CountExecution:
         case ForceOSRExit:
         case CheckBadCell:
+        case CheckNotEmpty:
         case CheckWatchdogTimer:
         case Unreachable:
         case ExtractOSREntryLocal:

@@ -99,6 +99,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_enter:
     case op_touch_entry:
     case op_to_this:
+    case op_check_tdz:
     case op_create_this:
     case op_bitand:
     case op_bitor:

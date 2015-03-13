@@ -1,3 +1,99 @@
+2015-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        "this" should be in TDZ until super is called in the constructor of a derived class
+        https://bugs.webkit.org/show_bug.cgi?id=142527
+
+        Reviewed by Mark Hahnenberg.
+
+        DFG and FTL implementations co-authored by Filip Pizlo.
+
+        In ES6 class syntax, "this" register must be in the "temporal dead zone" (TDZ) and throw ReferenceError until
+        super() is called inside the constructor of a derived class.
+
+        Added op_check_tdz, a new OP code, which throws a reference error when the first operand is an empty value
+        to all tiers of JIT and LLint. The op code throws in the slow path on the basis that a TDZ error should be
+        a programming error and not a part of the programs' normal control flow. In DFG, this op code is represented
+        by a no-op must-generate node CheckNotEmpty modeled after CheckCell.
+
+        Also made the constructor of a derived class assign the empty value to "this" register rather than undefined
+        so that ThisNode can emit the op_check_tdz to check the initialized-ness of "this" in such a constructor.
+
+        * bytecode/BytecodeList.json: Added op_check_tdz.
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset): Ditto.
+        (JSC::computeDefsForBytecodeOffset): Ditto.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Ditto.
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString): Added TDZFailure.
+        * bytecode/ExitKind.h: Ditto.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Assign the empty value to "this" register to indicate it's in TDZ.
+        (JSC::BytecodeGenerator::emitTDZCheck): Added.
+        (JSC::BytecodeGenerator::emitReturn): Emit the TDZ check since "this" can still be in TDZ if super() was never
+        called. e.g. class B extends A { constructor() { } }
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode): Always emit the TDZ check if we're inside the constructor of a derived class.
+        We can't omit this check even if the result was ignored per spec.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Previously, empty value could never appear
+        in a local variable. This is no longer true so generalize this code. Also added the support for CheckNotEmpty.
+        Like CheckCell, we phantomize this DFG node in the constant folding phase if the type of the operand is already
+        found to be not empty. Otherwise filter out SpecEmpty.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Added op_check_tdz.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel): op_check_tdz can be compiled and inlined.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): CheckNotEmpty doesn't read or write values.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): Convert CheckNotEmpty to a phantom if non-emptiness had already
+        been proven for the operand prior to this node.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): CheckNotEmpty does not trigger GC.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): CheckNotEmpty is a no-op in the fixup phase.
+        * dfg/DFGNodeType.h: CheckNotEmpty cannot be removed even if the result was ignored. See ThisNode::emitBytecode.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): CheckNotEmpty doesn't return any value.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): CheckNotEmpty doesn't load from heap so it's safe.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Speculative the operand to be not empty. OSR exit if the speculation fails.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Ditto.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile): CheckNotEmpty can be compiled in FTL.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode): Calls compileCheckNotEmpty for CheckNotEmpty.
+        (JSC::FTL::LowerDFGToLLVM::compileCheckNotEmpty): OSR exit with "TDZFailure" if the operand is not empty.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Added op_check_tdz.
+        (JSC::JIT::privateCompileSlowCases): Ditto.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_tdz): Implements op_check_tdz in Baseline JIT.
+        (JSC::JIT::emitSlow_op_check_tdz): Ditto.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_check_tdz): Ditto.
+        (JSC::JIT::emitSlow_op_check_tdz): Ditto.
+        * llint/LowLevelInterpreter32_64.asm: Implements op_check_tdz in LLint.
+        * llint/LowLevelInterpreter64.asm: Ditto.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Throws a reference error for op_check_tdz. Shared by LLint and Baseline JIT.
+        * runtime/CommonSlowPaths.h:
+        * tests/stress/class-syntax-no-loop-tdz.js: Added.
+        * tests/stress/class-syntax-no-tdz-in-catch.js: Added.
+        * tests/stress/class-syntax-no-tdz-in-conditional.js: Added.
+        * tests/stress/class-syntax-no-tdz-in-loop-no-inline-super.js: Added.
+        * tests/stress/class-syntax-no-tdz-in-loop.js: Added.
+        * tests/stress/class-syntax-no-tdz.js: Added.
+        * tests/stress/class-syntax-tdz-in-catch.js: Added.
+        * tests/stress/class-syntax-tdz-in-conditional.js: Added.
+        * tests/stress/class-syntax-tdz-in-loop.js: Added.
+        * tests/stress/class-syntax-tdz.js: Added.
+
 2015-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Integrate MapData into JSMap and JSSet

@@ -70,6 +70,8 @@ const char* exitKindToString(ExitKind kind)
         return "NotStringObject";
     case VarargsOverflow:
         return "VarargsOverflow";
+    case TDZFailure:
+        return "TDZFailure";
     case Uncountable:
         return "Uncountable";
     case UncountableInvalidation:

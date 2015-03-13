@@ -2822,6 +2822,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_mov);
         }
 
+        case op_check_tdz: {
+            Node* op = get(VirtualRegister(currentInstruction[1].u.operand));
+            addToGraph(CheckNotEmpty, op);
+            NEXT_OPCODE(op_check_tdz);
+        }
+
         case op_check_has_instance:
             addToGraph(CheckHasInstance, get(VirtualRegister(currentInstruction[3].u.operand)));
             NEXT_OPCODE(op_check_has_instance);

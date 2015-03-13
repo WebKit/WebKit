@@ -687,6 +687,17 @@ _llint_op_new_object:
     dispatch(4)
 
 
+_llint_op_check_tdz:
+    traceExecution()
+    loadpFromInstruction(1, t0)
+    loadq [cfr, t0, 8], t0
+    bqneq t0, ValueEmpty, .opNotTDZ
+    callSlowPath(_slow_path_throw_tdz_error)
+
+.opNotTDZ:
+    dispatch(2)
+
+
 _llint_op_mov:
     traceExecution()
     loadisFromInstruction(2, t1)

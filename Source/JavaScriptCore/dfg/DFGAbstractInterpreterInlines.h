@@ -143,16 +143,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ExtractOSREntryLocal: {
-        if (!(node->unlinkedLocal().isArgument())
-            && m_graph.m_lazyVars.get(node->unlinkedLocal().toLocal())) {
-            // This is kind of pessimistic - we could know in some cases that the
-            // DFG code at the point of the OSR had already initialized the lazy
-            // variable. But maybe this is fine, since we're inserting OSR
-            // entrypoints very early in the pipeline - so any lazy initializations
-            // ought to be hoisted out anyway.
-            forNode(node).makeBytecodeTop();
-        } else
-            forNode(node).makeHeapTop();
+        forNode(node).makeBytecodeTop();
         break;
     }
             
@@ -1865,11 +1856,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             ASSERT(value);
             break;
         }
-        
         filterByValue(node->child1(), *node->cellOperand());
         break;
     }
+
+    case CheckNotEmpty: {
+        AbstractValue& value = forNode(node->child1());
+        if (!(value.m_type & SpecEmpty)) {
+            m_state.setFoundConstants(true);
+            break;
+        }
         
+        filter(value, ~SpecEmpty);
+        break;
+    }
+
     case CheckInBounds: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();

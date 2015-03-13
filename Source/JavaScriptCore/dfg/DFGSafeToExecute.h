@@ -178,6 +178,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case VarInjectionWatchpoint:
     case CheckCell:
     case CheckBadCell:
+    case CheckNotEmpty:
     case AllocationProfileWatchpoint:
     case RegExpExec:
     case RegExpTest:

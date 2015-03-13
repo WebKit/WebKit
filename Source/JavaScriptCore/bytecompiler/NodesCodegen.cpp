@@ -144,6 +144,9 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (generator.constructorKindIsDerived())
+        generator.emitTDZCheck(generator.thisRegister());
+
     if (dst == generator.ignoredResult())
         return 0;
 

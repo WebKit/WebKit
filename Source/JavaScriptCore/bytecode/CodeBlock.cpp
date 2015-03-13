@@ -789,6 +789,11 @@ void CodeBlock::dumpBytecode(
             out.print(" ", (++it)->u.toThisStatus);
             break;
         }
+        case op_check_tdz: {
+            int r0 = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "op_check_tdz", r0);
+            break;
+        }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             unsigned inferredInlineCapacity = (++it)->u.operand;

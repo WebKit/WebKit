@@ -546,6 +546,9 @@ private:
         case CheckCell:
             compileCheckCell();
             break;
+        case CheckNotEmpty:
+            compileCheckNotEmpty();
+            break;
         case CheckBadCell:
             compileCheckBadCell();
             break;
@@ -1862,7 +1865,12 @@ private:
     {
         terminate(BadCell);
     }
-    
+
+    void compileCheckNotEmpty()
+    {
+        speculate(TDZFailure, noValue(), nullptr, m_out.isZero64(lowJSValue(m_node->child1())));
+    }
+
     void compileGetExecutable()
     {
         LValue cell = lowCell(m_node->child1());
