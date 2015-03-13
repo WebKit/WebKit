@@ -1,3 +1,19 @@
+2015-03-13  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Rebaseline accessibility/color-well.html
+        https://bugs.webkit.org/show_bug.cgi?id=141697
+
+        Reviewed by Chris Fleizach.
+
+        The revision (r179922) which makes this test fail, implements a color
+        picker for GTK+ platform. So now we have different accessibility
+        information for a color input and we could update the expected file.
+
+        TestExpectations has also been updated.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/color-well-expected.txt:
+
 2015-03-13  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed GTK+ Gardening
