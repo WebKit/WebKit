@@ -39,7 +39,6 @@ CopiedSpace::CopiedSpace(Heap* heap)
     , m_shouldDoCopyPhase(false)
     , m_numberOfLoanedBlocks(0)
 {
-    m_toSpaceLock.Init();
 }
 
 CopiedSpace::~CopiedSpace()

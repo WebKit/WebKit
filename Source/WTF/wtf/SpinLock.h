@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SourceProvider.h"
+#ifndef SpinLock_h
+#define SpinLock_h
 
-#include "JSCInlines.h"
-#include <wtf/SpinLock.h>
-#include <wtf/StdLibExtras.h>
+#include <thread>
+#include <wtf/Atomics.h>
+#include <wtf/Locker.h>
 
-namespace JSC {
+namespace WTF {
 
-SourceProvider::SourceProvider(const String& url, const TextPosition& startPosition)
-    : m_url(url)
-    , m_startPosition(startPosition)
-    , m_validated(false)
-    , m_id(0)
-{
-}
+// SpinLockBase is a struct without an explicitly defined constructors so that
+// it can be initialized at compile time. See StaticSpinLock below.
+struct SpinLockBase {
 
-SourceProvider::~SourceProvider()
-{
-}
-
-static StaticSpinLock providerIdLock;
-
-void SourceProvider::getID()
-{
-    SpinLockHolder lock(&providerIdLock);
-    if (!m_id) {
-        static intptr_t nextProviderID = 0;
-        m_id = ++nextProviderID;
+    void lock()
+    {
+        while (!m_lock.compare_exchange_weak(0, 1, std::memory_order_acquire))
+            std::this_thread::yield();
     }
-}
 
-} // namespace JSC
+    void unlock()
+    {
+        m_lock.store(0, std::memory_order_release);
+    }
 
+    bool isLocked() const
+    {
+        return m_lock.load(std::memory_order_acquire);
+    }
+    
+    Atomic<unsigned> m_lock;
+};
+
+// SpinLock is for use as instance variables in structs and classes, not as
+// statics and globals.
+struct SpinLock : public SpinLockBase {
+    SpinLock()
+    {
+        m_lock.store(0, std::memory_order_relaxed);
+    }
+};
+
+// StaticSpinLock is for use as statics and globals, not as instance variables.
+typedef SpinLockBase StaticSpinLock;
+typedef Locker<SpinLockBase> SpinLockHolder;
+
+} // namespace WTF
+
+using WTF::StaticSpinLock;
+using WTF::SpinLock;
+using WTF::SpinLockHolder;
+
+#endif // SpinLock_h

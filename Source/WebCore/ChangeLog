@@ -1,3 +1,17 @@
+2015-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.
+        <https://webkit.org/b/142674>
+
+        Reviewed by Filip Pizlo.
+
+        No new tests because there is no new functionality. This is a refactoring effort.
+
+        * bindings/objc/WebScriptObject.mm:
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow initWithLayer:]):
+        (-[WAKWindow initWithFrame:]):
+
 2015-03-13  Doug Russell  <d_russell@apple.com>
 
         AX: Provide API for assistive tech to ignore DOM key event handlers

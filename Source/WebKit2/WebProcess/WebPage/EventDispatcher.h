@@ -34,7 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/TCSpinLock.h>
+#include <wtf/SpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {

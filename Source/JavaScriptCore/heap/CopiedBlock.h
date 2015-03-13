@@ -32,7 +32,7 @@
 #include "Options.h"
 #include <wtf/Atomics.h>
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/TCSpinLock.h>
+#include <wtf/SpinLock.h>
 
 namespace JSC {
 
@@ -152,7 +152,6 @@ inline CopiedBlock::CopiedBlock(size_t capacity)
     , m_liveObjects(0)
 #endif
 {
-    m_workListLock.Init();
     ASSERT(is8ByteAligned(reinterpret_cast<void*>(m_remaining)));
 }
 

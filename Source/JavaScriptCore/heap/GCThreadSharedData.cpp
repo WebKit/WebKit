@@ -81,7 +81,6 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
     , m_gcThreadsShouldWait(false)
     , m_currentPhase(NoPhase)
 {
-    m_copyLock.Init();
 #if ENABLE(PARALLEL_GC)
     // Grab the lock so the new GC threads can be properly initialized before they start running.
     std::unique_lock<std::mutex> lock(m_phaseMutex);

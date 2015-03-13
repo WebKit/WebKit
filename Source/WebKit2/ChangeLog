@@ -1,3 +1,17 @@
+2015-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.
+        <https://webkit.org/b/142674>
+
+        Reviewed by Filip Pizlo.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::ViewUpdateDispatcher):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
 2015-03-10  Conrad Shultz  <conrad_shultz@apple.com>
 
         Allow clients to selectively disable plug-ins

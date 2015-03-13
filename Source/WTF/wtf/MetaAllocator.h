@@ -37,7 +37,7 @@
 #include <wtf/RedBlackTree.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/TCSpinLock.h>
+#include <wtf/SpinLock.h>
 
 namespace WTF {
 

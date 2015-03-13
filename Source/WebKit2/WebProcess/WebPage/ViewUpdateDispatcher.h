@@ -31,7 +31,7 @@
 #include "VisibleContentRectUpdateInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
-#include <wtf/TCSpinLock.h>
+#include <wtf/SpinLock.h>
 
 namespace WebKit {
 

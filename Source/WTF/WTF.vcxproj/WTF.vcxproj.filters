@@ -612,6 +612,9 @@
     <ClInclude Include="..\wtf\SinglyLinkedList.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\SpinLock.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\StackBounds.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -631,9 +634,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\StringPrintStream.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\TCSpinLock.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\TemporaryChange.h">

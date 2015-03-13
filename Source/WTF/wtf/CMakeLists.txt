@@ -87,6 +87,7 @@ set(WTF_HEADERS
     SHA1.h
     SaturatedArithmetic.h
     SegmentedVector.h
+    SpinLock.h
     StackBounds.h
     StackStats.h
     StaticConstructors.h
@@ -95,7 +96,6 @@ set(WTF_HEADERS
     StringExtras.h
     StringHasher.h
     StringPrintStream.h
-    TCSpinLock.h
     ThreadIdentifierDataPthreads.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h

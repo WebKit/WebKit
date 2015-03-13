@@ -35,7 +35,7 @@ namespace JSC { namespace Profiler {
 
 static std::atomic<int> databaseCounter;
 
-static SpinLock registrationLock = SPINLOCK_INITIALIZER;
+static StaticSpinLock registrationLock;
 static std::atomic<int> didRegisterAtExit;
 static Database* firstDatabase;
 
@@ -138,14 +138,14 @@ void Database::addDatabaseToAtExit()
     if (++didRegisterAtExit == 1)
         atexit(atExitCallback);
     
-    TCMalloc_SpinLockHolder holder(&registrationLock);
+    SpinLockHolder holder(registrationLock);
     m_nextRegisteredDatabase = firstDatabase;
     firstDatabase = this;
 }
 
 void Database::removeDatabaseFromAtExit()
 {
-    TCMalloc_SpinLockHolder holder(&registrationLock);
+    SpinLockHolder holder(registrationLock);
     for (Database** current = &firstDatabase; *current; current = &(*current)->m_nextRegisteredDatabase) {
         if (*current != this)
             continue;
@@ -163,7 +163,7 @@ void Database::performAtExitSave() const
 
 Database* Database::removeFirstAtExitDatabase()
 {
-    TCMalloc_SpinLockHolder holder(&registrationLock);
+    SpinLockHolder holder(registrationLock);
     Database* result = firstDatabase;
     if (result) {
         firstDatabase = result->m_nextRegisteredDatabase;

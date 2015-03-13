@@ -34,17 +34,16 @@
 
 namespace JSC { namespace DFG {
 
-static Atomic<unsigned> crashLock;
+static StaticSpinLock crashLock;
 
 void startCrashing()
 {
-    while (!crashLock.compare_exchange_weak(0, 1, std::memory_order_acquire))
-        std::this_thread::yield();
+    crashLock.lock();
 }
 
 bool isCrashing()
 {
-    return !!crashLock.load(std::memory_order_acquire);
+    return crashLock.isLocked();
 }
 
 } } // namespace JSC::DFG

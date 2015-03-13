@@ -39,7 +39,6 @@
 #import "WeakGCMap.h"
 #import "WeakGCMapInlines.h"
 #import <wtf/HashSet.h>
-#import <wtf/TCSpinLock.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 

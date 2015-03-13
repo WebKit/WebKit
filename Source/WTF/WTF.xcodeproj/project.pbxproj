@@ -221,7 +221,6 @@
 		A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47311151A825B004123FF /* StdLibExtras.h */; };
 		A8A4742C151A825B004123FF /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47313151A825B004123FF /* StringExtras.h */; };
 		A8A4742D151A825B004123FF /* StringHasher.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47314151A825B004123FF /* StringHasher.h */; };
-		A8A47430151A825B004123FF /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47317151A825B004123FF /* TCSpinLock.h */; };
 		A8A47433151A825B004123FF /* TemporaryChange.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4731A151A825B004123FF /* TemporaryChange.h */; };
 		A8A47434151A825B004123FF /* ASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4731C151A825B004123FF /* ASCIIFastPath.h */; };
 		A8A47435151A825B004123FF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4731D151A825B004123FF /* AtomicString.cpp */; };
@@ -279,6 +278,7 @@
 		E4A0AD3A1A96245500536DF6 /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A0AD381A96245500536DF6 /* WorkQueue.h */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = EB95E1EF161A72410089A2F5 /* ByteOrder.h */; };
+		FE91E8811AB2A0200099895F /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE91E8801AB2A0200099895F /* SpinLock.h */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
 /* End PBXBuildFile section */
@@ -513,7 +513,6 @@
 		A8A47311151A825B004123FF /* StdLibExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdLibExtras.h; sourceTree = "<group>"; };
 		A8A47313151A825B004123FF /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtras.h; sourceTree = "<group>"; };
 		A8A47314151A825B004123FF /* StringHasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHasher.h; sourceTree = "<group>"; };
-		A8A47317151A825B004123FF /* TCSpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSpinLock.h; sourceTree = "<group>"; };
 		A8A4731A151A825B004123FF /* TemporaryChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryChange.h; sourceTree = "<group>"; };
 		A8A4731C151A825B004123FF /* ASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASCIIFastPath.h; sourceTree = "<group>"; };
 		A8A4731D151A825B004123FF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicString.cpp; sourceTree = "<group>"; };
@@ -571,6 +570,7 @@
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
+		FE91E8801AB2A0200099895F /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -850,6 +850,7 @@
 				A748745017A0BDAE00FA04CB /* SixCharacterHash.h */,
 				A8A4730C151A825B004123FF /* SizeLimits.cpp */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
+				FE91E8801AB2A0200099895F /* SpinLock.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
 				A8A4730F151A825B004123FF /* StackBounds.h */,
 				FEDACD3B1630F83F00C69634 /* StackStats.cpp */,
@@ -863,7 +864,6 @@
 				A8A47314151A825B004123FF /* StringHasher.h */,
 				0FDDBFA51666DFA300C55FEF /* StringPrintStream.cpp */,
 				0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */,
-				A8A47317151A825B004123FF /* TCSpinLock.h */,
 				A8A4731A151A825B004123FF /* TemporaryChange.h */,
 				A8A4732F151A825B004123FF /* ThreadFunctionInvocation.h */,
 				A8A47330151A825B004123FF /* ThreadIdentifierDataPthreads.cpp */,
@@ -1182,6 +1182,7 @@
 				A8A4743B151A825B004123FF /* StringBuffer.h in Headers */,
 				A8A4743D151A825B004123FF /* StringBuilder.h in Headers */,
 				A8A4743E151A825B004123FF /* StringConcatenate.h in Headers */,
+				FE91E8811AB2A0200099895F /* SpinLock.h in Headers */,
 				A8A4742C151A825B004123FF /* StringExtras.h in Headers */,
 				A8A4743F151A825B004123FF /* StringHash.h in Headers */,
 				A748745417A0BDAE00FA04CB /* StringHashDumpContext.h in Headers */,
@@ -1191,7 +1192,6 @@
 				0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */,
 				1AFDE6531953B23D00C48FFA /* Optional.h in Headers */,
 				A8A473B8151A825B004123FF /* strtod.h in Headers */,
-				A8A47430151A825B004123FF /* TCSpinLock.h in Headers */,
 				E15556F618A0CC18006F48FB /* CryptographicUtilities.h in Headers */,
 				83FBA93219DF459700F30ADB /* TypeCasts.h in Headers */,
 				1A6EB1E0187D0BD30030126F /* StringView.h in Headers */,

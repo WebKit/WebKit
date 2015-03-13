@@ -1,5 +1,47 @@
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
+        Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.
+        <https://webkit.org/b/142674>
+
+        Reviewed by Filip Pizlo.
+
+        We no longer use TCMalloc in our code, and we now have C++11.  This replaces the
+        TCMalloc_SpinLock with a new WTF::SpinLock based on WTF::Atomic (which is a
+        wrapper around std::atomic).
+
+        Note that there is a StaticSpinLock and a SpinLock:
+
+        1. StaticSpinLock is an alias for SpinLockBase, and its initialization relies on
+           static / global std:atomic being automatically initialized to 0 at compile time.
+           Hence, StaticSpinLock should only be used for statics / globals (including
+           static members of classes / structs).
+
+        2. SpinLock is derived from SpinLockBase, and adds a default constructor to
+           initialize its internal atomic value to 0.  Because SpinLock has a constructor,
+           it cannot be used for statics / globals.  Objects that want to embed a spin
+           lock as an instance field should use SpinLock so that it is initialized properly.
+           std::atomic will not automatically initialize instance fields to 0.  Hence,
+           StaticSpinLock will not work correctly as instance fields of a class / struct.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::~MetaAllocator):
+        (WTF::MetaAllocator::MetaAllocator):
+        * wtf/MetaAllocator.h:
+        * wtf/SpinLock.h: Added.
+        (WTF::SpinLockBase::lock):
+        (WTF::SpinLockBase::unlock):
+        (WTF::SpinLockBase::isLocked):
+        (WTF::SpinLockBase::slowLock):
+        (WTF::SpinLock::SpinLock):
+        * wtf/TCSpinLock.h: Removed.
+        * wtf/text/AtomicString.cpp:
+
+2015-03-13  Mark Lam  <mark.lam@apple.com>
+
         Introduce WTF::Atomic to wrap std::atomic for a friendlier CAS.
         <https://webkit.org/b/142661>
 

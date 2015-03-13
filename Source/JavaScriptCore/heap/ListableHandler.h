@@ -23,8 +23,8 @@
 #include <stdint.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/TCSpinLock.h>
 
 namespace JSC {
 
@@ -61,7 +61,6 @@ private:
         List()
             : m_first(0)
         {
-            m_lock.Init();
         }
         
         void addThreadSafe(T* handler)

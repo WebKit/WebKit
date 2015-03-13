@@ -48,7 +48,7 @@
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>
 #import <runtime/Completion.h>
-#import <wtf/TCSpinLock.h>
+#import <wtf/SpinLock.h>
 #import <wtf/Threading.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 #import <wtf/text/WTFString.h>
@@ -72,7 +72,7 @@ using JSC::makeSource;
 namespace WebCore {
 
 static NSMapTable* JSWrapperCache;
-static SpinLock spinLock = SPINLOCK_INITIALIZER;
+static StaticSpinLock spinLock;
 
 NSObject* getJSWrapper(JSObject* impl)
 {

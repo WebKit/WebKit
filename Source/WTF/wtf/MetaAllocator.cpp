@@ -43,7 +43,6 @@ MetaAllocator::~MetaAllocator()
         freeFreeSpaceNode(node);
         node = next;
     }
-    m_lock.Finalize();
 #ifndef NDEBUG
     ASSERT(!m_mallocBalance);
 #endif
@@ -129,8 +128,6 @@ MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
     , m_numFrees(0)
 #endif
 {
-    m_lock.Init();
-    
     for (m_logPageSize = 0; m_logPageSize < 32; ++m_logPageSize) {
         if (static_cast<size_t>(1) << m_logPageSize == m_pageSize)
             break;

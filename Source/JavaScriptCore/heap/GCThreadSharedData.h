@@ -33,7 +33,7 @@
 #include "WeakReferenceHarvester.h"
 #include <condition_variable>
 #include <wtf/HashSet.h>
-#include <wtf/TCSpinLock.h>
+#include <wtf/SpinLock.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

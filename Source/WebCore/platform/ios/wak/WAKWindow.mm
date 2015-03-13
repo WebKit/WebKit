@@ -36,7 +36,7 @@
 #import "WKContentObservation.h"
 #import "WKViewPrivate.h"
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/TCSpinLock.h>
+#import <wtf/SpinLock.h>
 
 WEBCORE_EXPORT NSString * const WAKWindowScreenScaleDidChangeNotification = @"WAKWindowScreenScaleDidChangeNotification";
 WEBCORE_EXPORT NSString * const WAKWindowVisibilityDidChangeNotification = @"WAKWindowVisibilityDidChangeNotification";
@@ -77,7 +77,6 @@ static id<OrientationProvider> gOrientationProvider;
 
     _frozenVisibleRect = CGRectNull;
 
-    _exposedScrollViewRectLock = SPINLOCK_INITIALIZER;
     _exposedScrollViewRect = CGRectNull;
 
     return self;
@@ -93,7 +92,6 @@ static id<OrientationProvider> gOrientationProvider;
     _frame = frame;
     _screenScale = wkGetScreenScaleFactor();
 
-    _exposedScrollViewRectLock = SPINLOCK_INITIALIZER;
     _exposedScrollViewRect = CGRectNull;
 
     return self;

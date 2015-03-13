@@ -33,7 +33,7 @@
 #include <wtf/unicode/UTF8.h>
 
 #if USE(WEB_THREAD)
-#include "TCSpinLock.h"
+#include "SpinLock.h"
 #endif
 
 namespace WTF {
@@ -47,7 +47,7 @@ static_assert(sizeof(AtomicString) == sizeof(String), "AtomicString and String m
 class AtomicStringTableLocker : public SpinLockHolder {
     WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
 
-    static SpinLock s_stringTableLock;
+    static StaticSpinLock s_stringTableLock;
 public:
     AtomicStringTableLocker()
         : SpinLockHolder(&s_stringTableLock)
@@ -55,7 +55,7 @@ public:
     }
 };
 
-SpinLock AtomicStringTableLocker::s_stringTableLock = SPINLOCK_INITIALIZER;
+StaticSpinLock AtomicStringTableLocker::s_stringTableLock;
 
 #else
 
