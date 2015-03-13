@@ -1645,7 +1645,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_isStrictMode(other.m_isStrictMode)
     , m_needsActivation(other.m_needsActivation)
     , m_mayBeExecuting(false)
-    , m_visitAggregateHasBeenCalled(false)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
@@ -1662,6 +1661,8 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
 {
+    m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+
     ASSERT(m_heap->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
@@ -1707,7 +1708,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_mayBeExecuting(false)
-    , m_visitAggregateHasBeenCalled(false)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -1719,6 +1719,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
 {
+    m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+
     ASSERT(m_heap->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
@@ -2202,8 +2204,7 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // I may be asked to scan myself more than once, and it may even happen concurrently.
     // To this end, use an atomic operation to check (and set) if I've been called already.
     // Only one thread may proceed past this point - whichever one wins the atomic set race.
-    bool expected = false;
-    bool setByMe = m_visitAggregateHasBeenCalled.compare_exchange_strong(expected, true, std::memory_order_acquire);
+    bool setByMe = m_visitAggregateHasBeenCalled.compare_exchange_strong(false, true, std::memory_order_acquire);
     if (!setByMe)
         return;
 #endif // ENABLE(PARALLEL_GC)

@@ -1,3 +1,20 @@
+2015-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Introduce WTF::Atomic to wrap std::atomic for a friendlier CAS.
+        <https://webkit.org/b/142661>
+
+        Reviewed by Filip Pizlo.
+
+        Changed CodeBlock, and the DFG's crashLock to use WTF::Atomic instead of
+        std::atomic.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::startCrashing):
+
 2015-03-12  Mark Lam  <mark.lam@apple.com>
 
         Change the DFG crashLock to use std::atomic.

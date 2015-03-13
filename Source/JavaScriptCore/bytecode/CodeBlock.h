@@ -1065,7 +1065,7 @@ private:
     bool m_isStrictMode;
     bool m_needsActivation;
     bool m_mayBeExecuting;
-    std::atomic<bool> m_visitAggregateHasBeenCalled;
+    Atomic<bool> m_visitAggregateHasBeenCalled;
 
     RefPtr<SourceProvider> m_source;
     unsigned m_sourceOffset;
