@@ -476,14 +476,46 @@ bool Position::atStartOfTree() const
 {
     if (isNull())
         return true;
-    return !findParent(containerNode()) && atFirstEditingPositionForNode();
+    if (findParent(containerNode()))
+        return false;
+
+    switch (m_anchorType) {
+    case PositionIsOffsetInAnchor:
+        return m_offset <= 0;
+    case PositionIsBeforeAnchor:
+        return !m_anchorNode->previousSibling();
+    case PositionIsAfterAnchor:
+        return false;
+    case PositionIsBeforeChildren:
+        return true;
+    case PositionIsAfterChildren:
+        return !lastOffsetForEditing(m_anchorNode.get());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool Position::atEndOfTree() const
 {
     if (isNull())
         return true;
-    return !findParent(containerNode()) && atLastEditingPositionForNode();
+    if (findParent(containerNode()))
+        return false;
+
+    switch (m_anchorType) {
+    case PositionIsOffsetInAnchor:
+        return m_offset >= lastOffsetForEditing(m_anchorNode.get());
+    case PositionIsBeforeAnchor:
+        return false;
+    case PositionIsAfterAnchor:
+        return !m_anchorNode->nextSibling();
+    case PositionIsBeforeChildren:
+        return !lastOffsetForEditing(m_anchorNode.get());
+    case PositionIsAfterChildren:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 // return first preceding DOM position rendered at a different location, or "this"
