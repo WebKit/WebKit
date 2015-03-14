@@ -1,3 +1,28 @@
+2015-03-14  Michael Saboff  <msaboff@apple.com>
+
+        ES6: Add binary and octal literal support
+        https://bugs.webkit.org/show_bug.cgi?id=142681
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a binary literal parser function, parseBinary(), to Lexer patterned after the octal parser.
+        Refactored the parseBinary, parseOctal and parseDecimal to use a constant size for the number of
+        characters to try and handle directly. Factored out the shifting past any prefix to be handled by
+        the caller. Added binary and octal parsing to toDouble() via helper functions.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseHex):
+        (JSC::Lexer<T>::parseBinary):
+        (JSC::Lexer<T>::parseOctal):
+        (JSC::Lexer<T>::parseDecimal):
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        * parser/ParserTokens.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::jsBinaryIntegerLiteral):
+        (JSC::jsOctalIntegerLiteral):
+        (JSC::toDouble):
+
 2015-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

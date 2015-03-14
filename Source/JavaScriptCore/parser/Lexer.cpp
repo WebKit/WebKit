@@ -1222,9 +1222,6 @@ ALWAYS_INLINE void Lexer<T>::parseHex(double& returnValue)
     uint32_t hexValue = 0;
     int maximumDigits = 7;
 
-    // Shift out the 'x' prefix.
-    shift();
-
     do {
         hexValue = (hexValue << 4) + toASCIIHexValue(m_current);
         shift();
@@ -1256,28 +1253,67 @@ ALWAYS_INLINE void Lexer<T>::parseHex(double& returnValue)
 }
 
 template <typename T>
+ALWAYS_INLINE bool Lexer<T>::parseBinary(double& returnValue)
+{
+    // Optimization: most binary values fit into 4 bytes.
+    uint32_t binaryValue = 0;
+    const unsigned maximumDigits = 32;
+    int digit = maximumDigits - 1;
+    // Temporary buffer for the digits. Makes easier
+    // to reconstruct the input characters when needed.
+    LChar digits[maximumDigits];
+
+    do {
+        binaryValue = (binaryValue << 1) + (m_current - '0');
+        digits[digit] = m_current;
+        shift();
+        --digit;
+    } while (isASCIIBinaryDigit(m_current) && digit >= 0);
+
+    if (!isASCIIDigit(m_current) && digit >= 0) {
+        returnValue = binaryValue;
+        return true;
+    }
+
+    for (int i = maximumDigits - 1; i > digit; --i)
+        record8(digits[i]);
+
+    while (isASCIIBinaryDigit(m_current)) {
+        record8(m_current);
+        shift();
+    }
+
+    if (isASCIIDigit(m_current))
+        return false;
+
+    returnValue = parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2);
+    return true;
+}
+
+template <typename T>
 ALWAYS_INLINE bool Lexer<T>::parseOctal(double& returnValue)
 {
     // Optimization: most octal values fit into 4 bytes.
     uint32_t octalValue = 0;
-    int maximumDigits = 9;
+    const unsigned maximumDigits = 10;
+    int digit = maximumDigits - 1;
     // Temporary buffer for the digits. Makes easier
     // to reconstruct the input characters when needed.
-    LChar digits[10];
+    LChar digits[maximumDigits];
 
     do {
         octalValue = octalValue * 8 + (m_current - '0');
-        digits[maximumDigits] = m_current;
+        digits[digit] = m_current;
         shift();
-        --maximumDigits;
-    } while (isASCIIOctalDigit(m_current) && maximumDigits >= 0);
+        --digit;
+    } while (isASCIIOctalDigit(m_current) && digit >= 0);
 
-    if (!isASCIIDigit(m_current) && maximumDigits >= 0) {
+    if (!isASCIIDigit(m_current) && digit >= 0) {
         returnValue = octalValue;
         return true;
     }
 
-    for (int i = 9; i > maximumDigits; --i)
+    for (int i = maximumDigits - 1; i > digit; --i)
          record8(digits[i]);
 
     while (isASCIIOctalDigit(m_current)) {
@@ -1301,24 +1337,25 @@ ALWAYS_INLINE bool Lexer<T>::parseDecimal(double& returnValue)
     // Since parseOctal may be executed before parseDecimal,
     // the m_buffer8 may hold ascii digits.
     if (!m_buffer8.size()) {
-        int maximumDigits = 9;
+        const unsigned maximumDigits = 10;
+        int digit = maximumDigits - 1;
         // Temporary buffer for the digits. Makes easier
         // to reconstruct the input characters when needed.
-        LChar digits[10];
+        LChar digits[maximumDigits];
 
         do {
             decimalValue = decimalValue * 10 + (m_current - '0');
-            digits[maximumDigits] = m_current;
+            digits[digit] = m_current;
             shift();
-            --maximumDigits;
-        } while (isASCIIDigit(m_current) && maximumDigits >= 0);
+            --digit;
+        } while (isASCIIDigit(m_current) && digit >= 0);
 
-        if (maximumDigits >= 0 && m_current != '.' && (m_current | 0x20) != 'e') {
+        if (digit >= 0 && m_current != '.' && (m_current | 0x20) != 'e') {
             returnValue = decimalValue;
             return true;
         }
 
-        for (int i = 9; i > maximumDigits; --i)
+        for (int i = maximumDigits - 1; i > digit; --i)
             record8(digits[i]);
     }
 
@@ -1688,10 +1725,55 @@ start:
                 token = INVALID_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
+
+            // Shift out the 'x' prefix.
+            shift();
+
             parseHex(tokenData->doubleValue);
             if (isIdentStart(m_current)) {
                 m_lexErrorMessage = ASCIILiteral("No space between hexadecimal literal and identifier");
                 token = INVALID_HEX_NUMBER_ERRORTOK;
+                goto returnError;
+            }
+            token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
+            m_buffer8.resize(0);
+            break;
+        }
+        if ((m_current | 0x20) == 'b') {
+            if (!isASCIIBinaryDigit(peek(1))) {
+                m_lexErrorMessage = ASCIILiteral("No binary digits after '0b'");
+                token = INVALID_BINARY_NUMBER_ERRORTOK;
+                goto returnError;
+            }
+
+            // Shift out the 'b' prefix.
+            shift();
+
+            parseBinary(tokenData->doubleValue);
+            if (isIdentStart(m_current)) {
+                m_lexErrorMessage = ASCIILiteral("No space between binary literal and identifier");
+                token = INVALID_BINARY_NUMBER_ERRORTOK;
+                goto returnError;
+            }
+            token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
+            m_buffer8.resize(0);
+            break;
+        }
+
+        if ((m_current | 0x20) == 'o') {
+            if (!isASCIIOctalDigit(peek(1))) {
+                m_lexErrorMessage = ASCIILiteral("No octal digits after '0o'");
+                token = INVALID_OCTAL_NUMBER_ERRORTOK;
+                goto returnError;
+            }
+
+            // Shift out the 'o' prefix.
+            shift();
+
+            parseOctal(tokenData->doubleValue);
+            if (isIdentStart(m_current)) {
+                m_lexErrorMessage = ASCIILiteral("No space between octal literal and identifier");
+                token = INVALID_OCTAL_NUMBER_ERRORTOK;
                 goto returnError;
             }
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);

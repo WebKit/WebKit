@@ -1,3 +1,14 @@
+2015-03-14  Michael Saboff  <msaboff@apple.com>
+
+        ES6: Add binary and octal literal support
+        https://bugs.webkit.org/show_bug.cgi?id=142681
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIBinaryDigit): New support function.
+        (WTF::isASCIIOctalDigit): Updated to use logical and (&&) instead of binary and (&).
+
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
         Replace TCSpinLock with a new WTF::SpinLock based on WTF::Atomic.

@@ -73,9 +73,14 @@ template<typename CharType> inline bool isASCIILower(CharType c)
     return c >= 'a' && c <= 'z';
 }
 
+template<typename CharType> inline bool isASCIIBinaryDigit(CharType c)
+{
+    return (c == '0') || (c == '1');
+}
+
 template<typename CharType> inline bool isASCIIOctalDigit(CharType c)
 {
-    return (c >= '0') & (c <= '7');
+    return (c >= '0') && (c <= '7');
 }
 
 template<typename CharType> inline bool isASCIIPrintable(CharType c)
@@ -166,6 +171,7 @@ using WTF::isASCIIAlphanumeric;
 using WTF::isASCIIDigit;
 using WTF::isASCIIHexDigit;
 using WTF::isASCIILower;
+using WTF::isASCIIBinaryDigit;
 using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
 using WTF::isASCIISpace;

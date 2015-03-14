@@ -343,7 +343,51 @@ static bool isInfinity(const CharType* data, const CharType* end)
         && data[7] == 'y';
 }
 
-// See ecma-262 9.3.1
+// See ecma-262 6th 11.8.3
+template <typename CharType>
+static double jsBinaryIntegerLiteral(const CharType*& data, const CharType* end)
+{
+    // Binary number.
+    data += 2;
+    const CharType* firstDigitPosition = data;
+    double number = 0;
+    while (true) {
+        number = number * 2 + (*data - '0');
+        ++data;
+        if (data == end)
+            break;
+        if (!isASCIIBinaryDigit(*data))
+            break;
+    }
+    if (number >= mantissaOverflowLowerBound)
+        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 2);
+
+    return number;
+}
+
+// See ecma-262 6th 11.8.3
+template <typename CharType>
+static double jsOctalIntegerLiteral(const CharType*& data, const CharType* end)
+{
+    // Octal number.
+    data += 2;
+    const CharType* firstDigitPosition = data;
+    double number = 0;
+    while (true) {
+        number = number * 8 + (*data - '0');
+        ++data;
+        if (data == end)
+            break;
+        if (!isASCIIOctalDigit(*data))
+            break;
+    }
+    if (number >= mantissaOverflowLowerBound)
+        number = parseIntOverflow(firstDigitPosition, data - firstDigitPosition, 8);
+    
+    return number;
+}
+
+// See ecma-262 6th 11.8.3
 template <typename CharType>
 static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
 {
@@ -365,7 +409,7 @@ static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
     return number;
 }
 
-// See ecma-262 9.3.1
+// See ecma-262 6th 11.8.3
 template <typename CharType>
 static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
 {
@@ -422,9 +466,16 @@ static double toDouble(const CharType* characters, unsigned size)
         return 0.0;
     
     double number;
-    if (characters[0] == '0' && characters + 2 < endCharacters && (characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
-        number = jsHexIntegerLiteral(characters, endCharacters);
-    else
+    if (characters[0] == '0' && characters + 2 < endCharacters) {
+        if ((characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
+            number = jsHexIntegerLiteral(characters, endCharacters);
+        else if ((characters[1] | 0x20) == 'o' && isASCIIOctalDigit(characters[2]))
+            number = jsOctalIntegerLiteral(characters, endCharacters);
+        else if ((characters[1] | 0x20) == 'b' && isASCIIBinaryDigit(characters[2]))
+            number = jsBinaryIntegerLiteral(characters, endCharacters);
+        else
+            number = jsStrDecimalLiteral(characters, endCharacters);
+    } else
         number = jsStrDecimalLiteral(characters, endCharacters);
     
     // Allow trailing white space.
@@ -438,7 +489,7 @@ static double toDouble(const CharType* characters, unsigned size)
     return number;
 }
 
-// See ecma-262 9.3.1
+// See ecma-262 6th 11.8.3
 double jsToNumber(const String& s)
 {
     unsigned size = s.length();

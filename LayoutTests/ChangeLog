@@ -1,3 +1,19 @@
+2015-03-14  Michael Saboff  <msaboff@apple.com>
+
+        ES6: Add binary and octal literal support
+        https://bugs.webkit.org/show_bug.cgi?id=142681
+
+        Reviewed by Ryosuke Niwa.
+
+        New tests.
+
+        * js/binary-literals-expected.txt: Added.
+        * js/binary-literals.html: Added.
+        * js/octal-literals-expected.txt: Added.
+        * js/octal-literals.html: Added.
+        * js/script-tests/binary-literals.js: Added.
+        * js/script-tests/octal-literals.js: Added.
+
 2015-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Class constructor should throw TypeError when "called"
