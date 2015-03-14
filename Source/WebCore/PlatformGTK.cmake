@@ -345,6 +345,16 @@ if (ENABLE_VIDEO)
             ${GSTREAMER_MPEGTS_LIBRARIES}
         )
     endif ()
+
+    if (USE_GSTREAMER_GL)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${GSTREAMER_GL_INCLUDE_DIRS}
+        )
+
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_GL_LIBRARIES}
+        )
+    endif ()
 endif ()
 
 if (ENABLE_WEB_AUDIO)

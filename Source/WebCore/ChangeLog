@@ -1,3 +1,36 @@
+2015-03-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] share GL context in pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=142693
+
+        Reviewed by Philippe Normand.
+
+        GstGL elements in a pipeline need to be aware of the application's
+        display and its GL context. This information is shared through context
+        messages between the pipeline and the browser.
+
+        This patch shares this context through a GStreamer's synchronous
+        message, using the GL information held in the web process.
+
+        This patch is based on the work of Philippe Normand for Bug 138562.
+
+        No new tests because this is platform specific and it depends in the
+        run-time availability and configurations of GstGL elements.
+
+        * PlatformGTK.cmake: appends the GstGL header files in the include
+        directories. Also its library directory is appended.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSyncMessageCallback): New callback function.
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        Initialize the new class attributes.
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage): New method
+        for handling synchronous messages from the pipeline. This method
+        currently only handles the GL context sharing.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Configures
+        the pipeline's bus to handle the synchronous messages.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add new
+        class methods and attributes.
+
 2015-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

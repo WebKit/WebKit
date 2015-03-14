@@ -51,7 +51,7 @@ public:
             sleep(30);
 #endif
 
-#if USE(COORDINATED_GRAPHICS_THREADED) && PLATFORM(X11)
+#if (USE(COORDINATED_GRAPHICS_THREADED) || USE(GSTREAMER_GL)) && PLATFORM(X11)
         XInitThreads();
 #endif
         gtk_init(nullptr, nullptr);

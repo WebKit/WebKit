@@ -1,3 +1,14 @@
+2015-03-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] share GL context in pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=142693
+
+        Reviewed by Philippe Normand.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp: Enable XInitThreads() if
+        GSTREAMER_GL is used, since GstGL elements use another thread for
+        queuing GL operations.
+
 2015-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.
