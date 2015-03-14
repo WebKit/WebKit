@@ -48,7 +48,7 @@ public:
     PassRefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
 private:
-    PluginInfo pluginInfo() const;
+    const PluginInfo& pluginInfo() const { return m_pluginData->plugins()[m_index]; }
 
     DOMPlugin(PluginData*, Frame*, unsigned index);
     RefPtr<PluginData> m_pluginData;

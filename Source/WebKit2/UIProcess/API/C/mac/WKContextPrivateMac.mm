@@ -52,20 +52,6 @@ bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugI
 #endif
 }
 
-void WKContextSetPluginLoadClientPolicy(WKContextRef contextRef, WKPluginLoadClientPolicy policy, WKStringRef host, WKStringRef bundleIdentifier, WKStringRef versionString)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(contextRef)->setPluginLoadClientPolicy(toPluginLoadClientPolicy(policy), toWTFString(host), toWTFString(bundleIdentifier), toWTFString(versionString));
-#endif
-}
-
-void WKContextClearPluginClientPolicies(WKContextRef contextRef)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(contextRef)->clearPluginClientPolicies();
-#endif
-}
-
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -88,7 +88,7 @@ private:
     PluginStrategy* m_pluginStrategy;
 };
 
-WEBCORE_EXPORT PlatformStrategies* platformStrategies();
+PlatformStrategies* platformStrategies();
 WEBCORE_EXPORT void setPlatformStrategies(PlatformStrategies*);
 bool hasPlatformStrategies();
     

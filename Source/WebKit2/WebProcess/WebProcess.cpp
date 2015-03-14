@@ -384,15 +384,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         Inspector::RemoteInspector::singleton().setParentProcessInformation(presenterApplicationPid(), auditData);
     }
 #endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    for (const auto& hostKeyValue : parameters.pluginLoadClientPolicies) {
-        for (const auto& bundleIdentifierKeyValue : hostKeyValue.value) {
-            for (const auto& versionStringKeyValue : bundleIdentifierKeyValue.value)
-                platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionStringKeyValue.value), hostKeyValue.key, bundleIdentifierKeyValue.key, versionStringKeyValue.key);
-        }
-    }
-#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -869,20 +860,6 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
         return;
 
     parentProcessConnection()->send(Messages::WebProcessPool::PlugInDidReceiveUserInteraction(plugInOriginHash, sessionID), 0);
-}
-
-void WebProcess::setPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(policy), host, bundleIdentifier, versionString);
-#endif
-}
-
-void WebProcess::clearPluginClientPolicies()
-{
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    platformStrategies()->pluginStrategy()->clearPluginClientPolicies();
-#endif
 }
 
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)

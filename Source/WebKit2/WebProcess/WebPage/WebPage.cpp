@@ -4426,11 +4426,11 @@ bool WebPage::canShowMIMEType(const String& MIMEType) const
         return true;
 
     const PluginData& pluginData = m_page->pluginData();
-    if (pluginData.supportsWebVisibleMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
+    if (pluginData.supportsMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
         return true;
 
     // We can use application plugins even if plugins aren't enabled.
-    if (pluginData.supportsWebVisibleMimeType(MIMEType, PluginData::OnlyApplicationPlugins))
+    if (pluginData.supportsMimeType(MIMEType, PluginData::OnlyApplicationPlugins))
         return true;
 
     return false;

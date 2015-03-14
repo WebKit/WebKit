@@ -1,3 +1,17 @@
+2015-03-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181483.
+        https://bugs.webkit.org/show_bug.cgi?id=142688
+
+        Caused use-after-free on many tests (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "Allow clients to selectively disable plug-ins"
+        https://bugs.webkit.org/show_bug.cgi?id=142506
+        http://trac.webkit.org/changeset/181483
+
 2015-03-13  Antti Koivisto  <antti@apple.com>
 
         Cache glyph widths to GlyphPages

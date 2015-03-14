@@ -683,10 +683,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     serviceController.refreshExistingServices();
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    parameters.pluginLoadClientPolicies = m_pluginLoadClientPolicies;
-#endif
-
 #if OS(LINUX)
     parameters.shouldEnableMemoryPressureReliefLogging = true;
 #endif
@@ -1421,33 +1417,6 @@ void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
     }
 
     m_client.plugInInformationBecameAvailable(this, API::Array::create(WTF::move(plugins)).get());
-}
-
-void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashMap<String, HashMap<String, uint8_t>> policiesByIdentifier;
-    if (m_pluginLoadClientPolicies.contains(host))
-        policiesByIdentifier = m_pluginLoadClientPolicies.get(host);
-
-    HashMap<String, uint8_t> versionsToPolicies;
-    if (policiesByIdentifier.contains(bundleIdentifier))
-        versionsToPolicies = policiesByIdentifier.get(bundleIdentifier);
-
-    versionsToPolicies.set(versionString, policy);
-    policiesByIdentifier.set(bundleIdentifier, versionsToPolicies);
-    m_pluginLoadClientPolicies.set(host, policiesByIdentifier);
-#endif
-
-    sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
-}
-
-void WebProcessPool::clearPluginClientPolicies()
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginLoadClientPolicies.clear();
-#endif
-    sendToAllProcesses(Messages::WebProcess::ClearPluginClientPolicies());
 }
 #endif
     

@@ -56,23 +56,16 @@ unsigned DOMPlugin::length() const
     return pluginInfo().mimes.size();
 }
 
-PluginInfo DOMPlugin::pluginInfo() const
-{
-    return m_pluginData->webVisiblePlugins()[m_index];
-}
-
 PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 {
     if (index >= pluginInfo().mimes.size())
         return 0;
 
-    MimeClassInfo mime = pluginInfo().mimes[index];
+    const MimeClassInfo& mime = pluginInfo().mimes[index];
 
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i] == mime && mimePluginIndices[i] == m_index)
+        if (mimes[i] == mime && m_pluginData->mimePluginIndices()[i] == m_index)
             return DOMMimeType::create(m_pluginData.get(), m_frame, i);
     }
     return 0;
@@ -80,9 +73,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 
 bool DOMPlugin::canGetItemsForName(const AtomicString& propertyName)
 {
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)
         if (mimes[i].type == propertyName)
             return true;
@@ -91,9 +82,7 @@ bool DOMPlugin::canGetItemsForName(const AtomicString& propertyName)
 
 PassRefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
 {
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)
         if (mimes[i].type == propertyName)
             return DOMMimeType::create(m_pluginData.get(), m_frame, i);

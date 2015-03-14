@@ -134,8 +134,3 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::
         outPlugins[i] = info;
     }
 }
-
-void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<PluginInfo>& plugins)
-{
-    getPluginInfo(page, plugins);
-}

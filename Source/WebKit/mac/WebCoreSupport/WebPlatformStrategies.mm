@@ -128,21 +128,6 @@ void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<PluginInfo>& plugins)
-{
-    getPluginInfo(page, plugins);
-}
-
-#if PLATFORM(MAC)
-void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy, const String&, const String&, const String&)
-{
-}
-
-void WebPlatformStrategies::clearPluginClientPolicies()
-{
-}
-#endif
-
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).getTypes(types);

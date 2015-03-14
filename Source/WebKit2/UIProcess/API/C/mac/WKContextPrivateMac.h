@@ -27,7 +27,6 @@
 #define WKContextPrivateMac_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKPluginLoadPolicy.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,9 +36,6 @@ WK_EXPORT bool WKContextGetProcessSuppressionEnabled(WKContextRef context);
 WK_EXPORT void WKContextSetProcessSuppressionEnabled(WKContextRef context, bool enabled);
 
 WK_EXPORT bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier);
-
-WK_EXPORT void WKContextSetPluginLoadClientPolicy(WKContextRef context, WKPluginLoadClientPolicy policy, WKStringRef host, WKStringRef bundleIdentifier, WKStringRef versionString);
-WK_EXPORT void WKContextClearPluginClientPolicies(WKContextRef context);
 
 WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
 

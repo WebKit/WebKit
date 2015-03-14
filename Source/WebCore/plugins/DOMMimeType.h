@@ -37,13 +37,13 @@ public:
     static Ref<DOMMimeType> create(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(pluginData, frame, index)); }
     ~DOMMimeType();
 
-    String type() const;
+    const String &type() const;
     String suffixes() const;
-    String description() const;
+    const String &description() const;
     PassRefPtr<DOMPlugin> enabledPlugin() const;
 
 private:
-    MimeClassInfo mimeClassInfo() const;
+    const MimeClassInfo& mimeClassInfo() const { return m_pluginData->mimes()[m_index]; }
 
     DOMMimeType(PassRefPtr<PluginData>, Frame*, unsigned index);
     RefPtr<PluginData> m_pluginData;

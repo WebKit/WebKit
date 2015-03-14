@@ -167,10 +167,6 @@ struct WebProcessCreationParameters {
     bool hasSelectionServices;
     bool hasRichContentServices;
 #endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
-#endif
 };
 
 } // namespace WebKit

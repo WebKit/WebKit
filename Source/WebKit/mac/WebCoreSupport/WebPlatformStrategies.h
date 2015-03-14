@@ -62,11 +62,6 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins() override;
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
-    virtual void getWebVisiblePluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
-#if PLATFORM(MAC)
-    virtual void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String&, const String&, const String&) override;
-    virtual void clearPluginClientPolicies() override;
-#endif
 
     // WebCore::LoaderStrategy
     // - Using default implementation.
