@@ -54,16 +54,9 @@ Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoadi
     : m_maxCharWidth(-1)
     , m_avgCharWidth(-1)
     , m_platformData(platformData)
-    , m_treatAsFixedPitch(false)
     , m_isCustomFont(isCustomFont)
     , m_isLoading(isLoading)
     , m_isTextOrientationFallback(isTextOrientationFallback)
-    , m_isBrokenIdeographFallback(false)
-    , m_mathData(nullptr)
-#if ENABLE(OPENTYPE_VERTICAL)
-    , m_verticalData(0)
-#endif
-    , m_hasVerticalGlyphs(false)
 {
     platformInit();
     platformGlyphInit();
@@ -79,21 +72,11 @@ Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoadi
 Font::Font(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     : m_platformData(FontPlatformData(fontSize, syntheticBold, syntheticItalic))
     , m_svgData(WTF::move(svgData))
-    , m_treatAsFixedPitch(false)
     , m_isCustomFont(true)
-    , m_isLoading(false)
-    , m_isTextOrientationFallback(false)
-    , m_isBrokenIdeographFallback(false)
-    , m_mathData(nullptr)
-#if ENABLE(OPENTYPE_VERTICAL)
-    , m_verticalData(0)
-#endif
-    , m_hasVerticalGlyphs(false)
-#if PLATFORM(IOS)
-    , m_shouldNotBeUsedForArabic(false)
-#endif
 {
     m_svgData->initializeFont(this, fontSize);
+    if (m_glyphPageZero)
+        m_glyphPageZero->setImmutable();
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -106,7 +89,7 @@ void Font::initCharWidths()
         static const UChar32 digitZeroChar = '0';
         Glyph digitZeroGlyph = glyphPageZero->glyphDataForCharacter(digitZeroChar).glyph;
         if (digitZeroGlyph)
-            m_avgCharWidth = widthForGlyph(digitZeroGlyph);
+            m_avgCharWidth = computeWidthForGlyph(digitZeroGlyph);
     }
 
     // If we can't retrieve the width of a '0', fall back to the x height.
@@ -121,35 +104,37 @@ void Font::platformGlyphInit()
 {
     auto* glyphPageZero = glyphPage(0);
     if (!glyphPageZero) {
-        m_spaceGlyph = 0;
-        m_spaceWidth = 0;
-        m_zeroGlyph = 0;
-        m_adjustedSpaceWidth = 0;
         determinePitch();
-        m_zeroWidthSpaceGlyph = 0;
         return;
     }
-
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph.
     m_zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
-
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width. Otherwise we round.
-    m_spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
-    m_zeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
-    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
+    auto spaceGlyphData = glyphPageZero->glyphDataForCharacter(' ');
+    m_spaceGlyph = spaceGlyphData.glyph;
+    m_spaceWidth = spaceGlyphData.width;
+    m_fontMetrics.setZeroWidth(glyphPageZero->glyphDataForCharacter('0').width);
     determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
+    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(m_spaceWidth) : roundf(m_spaceWidth);
+    m_glyphZeroWidth = computeWidthForGlyph(0);
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
     // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178> and Font::isZeroWidthSpaceGlyph()
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph)
         m_zeroWidthSpaceGlyph = 0;
+    else {
+        // Fixup the page zero now that we know the zero width glyph.
+        for (unsigned i = 0; i < GlyphPage::size; ++i) {
+            auto glyphData = m_glyphPageZero->glyphDataForIndex(i);
+            if (glyphData.glyph == m_zeroWidthSpaceGlyph)
+                m_glyphPageZero->setGlyphDataForIndex(i, { glyphData.glyph, 0, glyphData.font });
+        }
+    }
+    m_glyphPageZero->setImmutable();
 }
 
 Font::~Font()
@@ -171,7 +156,7 @@ static bool fillGlyphPage(GlyphPage& pageToFill, unsigned offset, unsigned lengt
     return hasGlyphs;
 }
 
-static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font* font)
+RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font* font)
 {
 #if PLATFORM(IOS)
     // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
@@ -244,8 +229,27 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font*
     if (!haveGlyphs)
         return nullptr;
 
-    glyphPage->setImmutable();
     return glyphPage;
+}
+
+float Font::computeWidthForGlyph(Glyph glyph) const
+{
+    if (isZeroWidthSpaceGlyph(glyph))
+        return 0;
+    float width;
+    if (isSVGFont())
+        width = m_svgData->widthForSVGGlyph(glyph, m_platformData.size());
+#if ENABLE(OPENTYPE_VERTICAL)
+    else if (m_verticalData)
+#if USE(CG) || USE(CAIRO)
+        width = m_verticalData->advanceHeight(this, glyph) + m_syntheticBoldOffset;
+#else
+        width = m_verticalData->advanceHeight(this, glyph);
+#endif
+#endif
+    else
+        width = platformWidthForGlyph(glyph);
+    return width;
 }
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const
@@ -253,13 +257,17 @@ const GlyphPage* Font::glyphPage(unsigned pageNumber) const
     if (!pageNumber) {
         if (!m_glyphPageZero)
             m_glyphPageZero = createAndFillGlyphPage(0, this);
+        // Zero page is marked immutable in platformGlyphInit.
         return m_glyphPageZero.get();
     }
     auto addResult = m_glyphPages.add(pageNumber, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = createAndFillGlyphPage(pageNumber, this);
-
-    return addResult.iterator->value.get();
+    auto& page = addResult.iterator->value;
+    if (addResult.isNewEntry) {
+        page = createAndFillGlyphPage(pageNumber, this);
+        if (page)
+            page->setImmutable();
+    }
+    return page.get();
 }
 
 Glyph Font::glyphForCharacter(UChar32 character) const
@@ -457,5 +465,11 @@ void Font::removeFromSystemFallbackCache()
             characterMap.remove(key);
     }
 }
+
+void GlyphPage::setGlyphDataForIndex(unsigned index, Glyph glyph, const Font* font)
+{
+    setGlyphDataForIndex(index, { glyph, font ? font->computeWidthForGlyph(glyph) : 0, font });
+}
+
 
 } // namespace WebCore

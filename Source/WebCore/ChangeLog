@@ -1,3 +1,63 @@
+2015-03-13  Antti Koivisto  <antti@apple.com>
+
+        Cache glyph widths to GlyphPages
+        https://bugs.webkit.org/show_bug.cgi?id=142028
+
+        Reviewed by Andreas Kling.
+
+        Currently we have a separate cache in Font for glyph widths. In practice we always need
+        the widths so we can just cache them in GlyphPages. This simplifies the code and removes
+        a per-character hash lookup from WidthIterator.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::initCharWidths):
+        (WebCore::Font::platformGlyphInit):
+        (WebCore::createAndFillGlyphPage):
+        (WebCore::Font::computeWidthForGlyph):
+
+            Rename to make it clear this doesn't cache.
+
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+
+            Initialize the width.
+            This could go to GlyphPage.cpp if we had one.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::glyphZeroWidth):
+        (WebCore::Font::isZeroWidthSpaceGlyph):
+        (WebCore::Font::zeroGlyph): Deleted.
+        (WebCore::Font::setZeroGlyph): Deleted.
+        (WebCore::Font::widthForGlyph): Deleted.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::offsetToMiddleOfGlyph):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForCharacter):
+        * platform/graphics/GlyphPage.h:
+        (WebCore::GlyphData::GlyphData):
+
+            Return width too as part of GlyphData.
+
+        (WebCore::GlyphPage::glyphDataForIndex):
+        (WebCore::GlyphPage::setGlyphDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+        (WebCore::GlyphPage::GlyphPage):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+
+            No need to lookup width separately now.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::advanceForGlyph):
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::missingGlyphForFont):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFont):
+
 2015-03-13  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Enable WIRELESS_PLAYBACK_TARGET

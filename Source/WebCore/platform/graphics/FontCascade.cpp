@@ -1339,7 +1339,7 @@ inline static float offsetToMiddleOfGlyph(const Font* fontData, Glyph glyph)
         return bounds.x() + bounds.width() / 2;
     }
     // FIXME: Use glyph bounds once they make sense for vertical fonts.
-    return fontData->widthForGlyph(glyph) / 2;
+    return fontData->computeWidthForGlyph(glyph) / 2;
 }
 
 inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer, size_t i)

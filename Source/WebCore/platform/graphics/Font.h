@@ -140,9 +140,8 @@ public:
     void setAvgCharWidth(float avgCharWidth) { m_avgCharWidth = avgCharWidth; }
 
     FloatRect boundsForGlyph(Glyph) const;
-    float widthForGlyph(Glyph) const;
-    FloatRect platformBoundsForGlyph(Glyph) const;
-    float platformWidthForGlyph(Glyph) const;
+
+    float computeWidthForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
@@ -151,6 +150,7 @@ public:
         m_spaceWidth = spaceWidth;
         m_adjustedSpaceWidth = spaceWidth;
     }
+    float glyphZeroWidth() const { return m_glyphZeroWidth; }
 
 #if USE(CG) || USE(CAIRO)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
@@ -161,8 +161,6 @@ public:
     Glyph zeroWidthSpaceGlyph() const { return m_zeroWidthSpaceGlyph; }
     void setZeroWidthSpaceGlyph(Glyph spaceGlyph) { m_zeroWidthSpaceGlyph = spaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
-    Glyph zeroGlyph() const { return m_zeroGlyph; }
-    void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
@@ -227,7 +225,12 @@ private:
     PassRefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
     PassRefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
 
+    float platformWidthForGlyph(Glyph) const;
+    FloatRect platformBoundsForGlyph(Glyph) const;
+
     void removeFromSystemFallbackCache();
+
+    friend RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font*);
 
 #if PLATFORM(WIN)
     void initGDIFont();
@@ -246,14 +249,13 @@ private:
     mutable RefPtr<GlyphPage> m_glyphPageZero;
     mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
-    mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 
-    bool m_treatAsFixedPitch;
-    bool m_isCustomFont; // Whether or not we are custom font loaded via @font-face
-    bool m_isLoading; // Whether or not this custom font is still in the act of loading.
+    bool m_treatAsFixedPitch { false };
+    bool m_isCustomFont { false }; // Whether or not we are custom font loaded via @font-face
+    bool m_isLoading { false }; // Whether or not this custom font is still in the act of loading.
 
-    bool m_isTextOrientationFallback;
-    bool m_isBrokenIdeographFallback;
+    bool m_isTextOrientationFallback { false };
+    bool m_isBrokenIdeographFallback { false };
 
     bool m_isUsedInSystemFallbackCache { false };
 
@@ -261,14 +263,15 @@ private:
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
-    bool m_hasVerticalGlyphs;
+    bool m_hasVerticalGlyphs { false };
 
-    Glyph m_spaceGlyph;
-    float m_spaceWidth;
-    Glyph m_zeroGlyph;
-    float m_adjustedSpaceWidth;
+    Glyph m_spaceGlyph { 0 };
+    float m_spaceWidth { 0 };
+    float m_adjustedSpaceWidth { 0 };
 
-    Glyph m_zeroWidthSpaceGlyph;
+    Glyph m_zeroWidthSpaceGlyph { 0 };
+
+    float m_glyphZeroWidth { 0 };
 
     struct DerivedFontData {
         explicit DerivedFontData(bool custom)
@@ -309,7 +312,7 @@ private:
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
 #if PLATFORM(IOS)
-    bool m_shouldNotBeUsedForArabic;
+    bool m_shouldNotBeUsedForArabic { false };
 #endif
 };
 
@@ -330,32 +333,6 @@ ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
         m_glyphToBoundsMap = std::make_unique<GlyphMetricsMap<FloatRect>>();
     m_glyphToBoundsMap->setMetricsForGlyph(glyph, bounds);
     return bounds;
-}
-
-ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
-{
-    if (isZeroWidthSpaceGlyph(glyph))
-        return 0;
-
-    float width = m_glyphToWidthMap.metricsForGlyph(glyph);
-    if (width != cGlyphSizeUnknown)
-        return width;
-
-    if (isSVGFont())
-        width = m_svgData->widthForSVGGlyph(glyph, m_platformData.size());
-#if ENABLE(OPENTYPE_VERTICAL)
-    else if (m_verticalData)
-#if USE(CG) || USE(CAIRO)
-        width = m_verticalData->advanceHeight(this, glyph) + m_syntheticBoldOffset;
-#else
-        width = m_verticalData->advanceHeight(this, glyph);
-#endif
-#endif
-    else
-        width = platformWidthForGlyph(glyph);
-
-    m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
-    return width;
 }
 
 } // namespace WebCore
