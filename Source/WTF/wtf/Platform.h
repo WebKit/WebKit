@@ -663,11 +663,6 @@
 #define ENABLE_JIT 1
 #endif
 
-/* Disable the YARR JIT for ARMv7k */
-#if !defined(ENABLE_YARR_JIT) && CPU(APPLE_ARMV7K)
-#define ENABLE_YARR_JIT 0
-#endif
-
 /* Do we have LLVM? */
 #if !defined(HAVE_LLVM) && OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && ENABLE(FTL_JIT) && (CPU(X86_64) || CPU(ARM64))
 #define HAVE_LLVM 1
@@ -825,7 +820,7 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT)
+#if !defined(ENABLE_YARR_JIT) && ENABLE(JIT)
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */

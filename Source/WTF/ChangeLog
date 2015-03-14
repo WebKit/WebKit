@@ -1,5 +1,16 @@
 2015-03-14  Michael Saboff  <msaboff@apple.com>
 
+        Disable Yarr JIT for ARMv7k
+        https://bugs.webkit.org/show_bug.cgi?id=142645
+
+        Rubber stamped by Geoffrey Garen.
+
+        Changed the setting of ENABLE_YARR_JIT to be predicated on ENABLED_JIT.
+
+        * wtf/Platform.h:
+
+2015-03-14  Michael Saboff  <msaboff@apple.com>
+
         ES6: Add binary and octal literal support
         https://bugs.webkit.org/show_bug.cgi?id=142681
 
