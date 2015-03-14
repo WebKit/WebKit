@@ -1,3 +1,15 @@
+2015-03-14  Dean Jackson  <dino@apple.com>
+
+        Feature flag for Animations Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=142699
+        <rdar://problem/20165097>
+
+        Reviewed by Brent Fulgham.
+
+        Add ENABLE_CSS_ANIMATIONS_LEVEL_2 and a runtime flag animationTriggersEnabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-03-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] share GL context in pipeline

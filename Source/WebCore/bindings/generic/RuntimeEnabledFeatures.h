@@ -196,6 +196,11 @@ public:
     bool gamepadsEnabled() const { return m_areGamepadsEnabled; }
 #endif
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    void setAnimationTriggersEnabled(bool areEnabled) { m_areAnimationTriggersEnabled = areEnabled; }
+    bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -269,6 +274,10 @@ private:
 
 #if ENABLE(GAMEPAD)
     bool m_areGamepadsEnabled;
+#endif
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    bool m_areAnimationTriggersEnabled;
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
