@@ -18,12 +18,16 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/mac"
+    "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
     "${WEBCORE_DIR}/platform/network/mac"
     "${WEBCORE_DIR}/platform/text/cf"
     "${WEBCORE_DIR}/platform/text/mac"
-    "${WEBCORE_DIR}/platform/mac"
+    "${WEBCORE_DIR}/platform/spi/cf"
+    "${WEBCORE_DIR}/platform/spi/cg"
+    "${WEBCORE_DIR}/platform/spi/cocoa"
+    "${WEBCORE_DIR}/platform/spi/mac"
     "${WEBCORE_DIR}/plugins/mac"
 
     "/usr/include/libxslt"
@@ -93,9 +97,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/opentype/OpenTypeMathData.cpp
 
-    platform/mac/AxisScrollSnapAnimator.mm
     platform/mac/BlockExceptions.mm
-    platform/mac/ContentFilterMac.mm
     platform/mac/ContextMenuItemMac.mm
     platform/mac/ContextMenuMac.mm
     platform/mac/CursorMac.mm
@@ -109,10 +111,8 @@ list(APPEND WebCore_SOURCES
     platform/mac/KillRingMac.mm
     platform/mac/Language.mm
     platform/mac/LocalCurrentGraphicsContext.mm
-    platform/mac/LocalizedStringsMac.cpp
     platform/mac/LoggingMac.mm
     platform/mac/MIMETypeRegistryMac.mm
-    platform/mac/MediaTimeMac.cpp
     platform/mac/NSScrollerImpDetails.mm
     platform/mac/PasteboardMac.mm
     platform/mac/PlatformClockCA.cpp
@@ -123,10 +123,8 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformSpeechSynthesisMac.mm
     platform/mac/PlatformSpeechSynthesizerMac.mm
     platform/mac/PublicSuffixMac.mm
-    platform/mac/PurgeableBufferMac.cpp
     platform/mac/SSLKeyGeneratorMac.cpp
     platform/mac/ScrollAnimatorMac.mm
-    platform/mac/ScrollController.mm
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformRepresentationMac.mm
@@ -216,6 +214,7 @@ set(WebCore_FORWARDING_HEADERS_FILES
     platform/DisplaySleepDisabler.h
     platform/mac/SoftLinking.h
     platform/network/cf/ResourceResponse.h
+    platform/spi/cg/CoreGraphicsSPI.h
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})

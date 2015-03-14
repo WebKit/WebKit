@@ -1,3 +1,15 @@
+2015-03-13  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=142680
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * Source/PlatformMac.cmake: Added stub.
+        * Source/cmake/OptionsMac.cmake:
+        Change defines to get CMake working.
+
 2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add an option to enable MiniBrowser for non developer builds and always install it

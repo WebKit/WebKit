@@ -1,3 +1,13 @@
+2015-03-13  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=142680
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformMac.cmake:
+        Generate TracingDtrace.h based on project.pbxproj.
+
 2015-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         Object allocation sinking phase shouldn't re-decorate previously sunken allocations on each fixpoint operation

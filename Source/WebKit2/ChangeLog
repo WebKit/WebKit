@@ -1,3 +1,12 @@
+2015-03-13  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=142680
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformMac.cmake: Added.
+
 2015-03-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181483.

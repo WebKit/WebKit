@@ -16,6 +16,8 @@ set(bmalloc_SOURCES
     bmalloc/mbmalloc.cpp
 )
 
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
 WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
 include_directories(${bmalloc_INCLUDE_DIRECTORIES})
 add_library(bmalloc STATIC ${bmalloc_SOURCES})

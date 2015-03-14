@@ -1,3 +1,14 @@
+2015-03-13  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=142680
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        Added Zone.cpp to Mac CMake builds.
+
 2015-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         Assertion failure in bmalloc::LargeObject::validateSelf on Mavericks Debug layout test bot
