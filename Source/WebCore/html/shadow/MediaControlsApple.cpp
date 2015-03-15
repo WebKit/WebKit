@@ -588,7 +588,7 @@ void MediaControlsAppleEventListener::handleEvent(ScriptExecutionContext*, Event
 {
     if (event->type() == eventNames().clickEvent)
         m_mediaControls->handleClickEvent(event);
-    else if ((event->type() == eventNames().wheelEvent || event->type() == eventNames().mousewheelEvent) && is<WheelEvent>(*event)) {
+    else if (eventNames().isWheelEventType(event->type()) && is<WheelEvent>(*event)) {
         WheelEvent& wheelEvent = downcast<WheelEvent>(*event);
         if (m_mediaControls->shouldClosedCaptionsContainerPreventPageScrolling(wheelEvent.wheelDeltaY()))
             wheelEvent.preventDefault();

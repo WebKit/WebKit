@@ -1,3 +1,16 @@
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up related to wheelEvent names
+        https://bugs.webkit.org/show_bug.cgi?id=142713
+
+        Reviewed by Anders Carlsson.
+
+        Add EventNames::isWheelEventType() and use it in places that test for the
+        two wheel event names.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+
 2015-03-15  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Presenting a modal sheet on top of a WKWebView causes it to lose focused, active state

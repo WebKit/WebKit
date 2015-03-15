@@ -1122,8 +1122,8 @@ public:
     void initDNSPrefetch();
 
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
-    WEBCORE_EXPORT void didAddWheelEventHandler();
-    WEBCORE_EXPORT void didRemoveWheelEventHandler();
+    void didAddWheelEventHandler(Node&);
+    void didRemoveWheelEventHandler(Node&);
 
     double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
     void updateLastHandledUserGestureTimestamp();
@@ -1134,8 +1134,8 @@ public:
     bool hasTouchEventHandlers() const { return false; }
 #endif
 
-    void didAddTouchEventHandler(Node*);
-    void didRemoveTouchEventHandler(Node*);
+    void didAddTouchEventHandler(Node&);
+    void didRemoveTouchEventHandler(Node&);
 
 #if ENABLE(TOUCH_EVENTS)
     void didRemoveEventTargetNode(Node*);

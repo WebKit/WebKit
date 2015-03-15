@@ -273,8 +273,6 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
     return CGRectZero;
 }
 
-#define ALLOW_SCROLL_LISTENERS 0
-
 static Node* ancestorRespondingToScrollWheelEvents(const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds)
 {
     if (nodeBounds)
@@ -282,13 +280,6 @@ static Node* ancestorRespondingToScrollWheelEvents(const HitTestResult& hitTestR
 
     Node* scrollingAncestor = nullptr;
     for (Node* node = hitTestResult.innerNode(); node && node != terminationNode && !node->hasTagName(HTMLNames::bodyTag); node = node->parentNode()) {
-#if ALLOW_SCROLL_LISTENERS
-        if (node->willRespondToMouseWheelEvents()) {
-            scrollingAncestor = node;
-            continue;
-        }
-#endif
-
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;

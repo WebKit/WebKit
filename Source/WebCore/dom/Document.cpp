@@ -5995,25 +5995,25 @@ static void wheelEventHandlerCountChanged(Document* document)
     scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
 }
 
-void Document::didAddWheelEventHandler()
+void Document::didAddWheelEventHandler(Node&)
 {
     ++m_wheelEventHandlerCount;
     wheelEventHandlerCountChanged(this);
 }
 
-void Document::didRemoveWheelEventHandler()
+void Document::didRemoveWheelEventHandler(Node&)
 {
     ASSERT(m_wheelEventHandlerCount > 0);
     --m_wheelEventHandlerCount;
     wheelEventHandlerCountChanged(this);
 }
 
-void Document::didAddTouchEventHandler(Node* handler)
+void Document::didAddTouchEventHandler(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!m_touchEventTargets.get())
         m_touchEventTargets = std::make_unique<TouchEventTargetSet>();
-    m_touchEventTargets->add(handler);
+    m_touchEventTargets->add(&handler);
     if (Document* parent = parentDocument()) {
         parent->didAddTouchEventHandler(this);
         return;
@@ -6027,13 +6027,13 @@ void Document::didAddTouchEventHandler(Node* handler)
 #endif
 }
 
-void Document::didRemoveTouchEventHandler(Node* handler)
+void Document::didRemoveTouchEventHandler(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!m_touchEventTargets.get())
         return;
     ASSERT(m_touchEventTargets->contains(handler));
-    m_touchEventTargets->remove(handler);
+    m_touchEventTargets->remove(&handler);
     if (Document* parent = parentDocument()) {
         parent->didRemoveTouchEventHandler(this);
         return;

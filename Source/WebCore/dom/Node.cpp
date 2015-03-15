@@ -1712,19 +1712,19 @@ void Node::didMoveToNewDocument(Document* oldDocument)
             cache->remove(this);
     }
 
-    unsigned numWheelEventHandlers = getEventListeners(eventNames().mousewheelEvent).size()
-        + getEventListeners(eventNames().wheelEvent).size();
+    unsigned numWheelEventHandlers = getEventListeners(eventNames().mousewheelEvent).size() + getEventListeners(eventNames().wheelEvent).size();
     for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
-        oldDocument->didRemoveWheelEventHandler();
-        document().didAddWheelEventHandler();
+        oldDocument->didRemoveWheelEventHandler(*this);
+        document().didAddWheelEventHandler(*this);
     }
 
     unsigned numTouchEventHandlers = 0;
     for (auto& name : eventNames().touchEventNames())
         numTouchEventHandlers += getEventListeners(name).size();
+
     for (unsigned i = 0; i < numTouchEventHandlers; ++i) {
-        oldDocument->didRemoveTouchEventHandler(this);
-        document().didAddTouchEventHandler(this);
+        oldDocument->didRemoveTouchEventHandler(*this);
+        document().didAddTouchEventHandler(*this);
     }
 
     if (auto* registry = mutationObserverRegistry()) {
@@ -1746,10 +1746,10 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
         return false;
 
     targetNode->document().addListenerTypeIfNeeded(eventType);
-    if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
-        targetNode->document().didAddWheelEventHandler();
+    if (eventNames().isWheelEventType(eventType))
+        targetNode->document().didAddWheelEventHandler(*targetNode);
     else if (eventNames().isTouchEventType(eventType))
-        targetNode->document().didAddTouchEventHandler(targetNode);
+        targetNode->document().didAddTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
@@ -1788,10 +1788,10 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
-    if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
-        targetNode->document().didRemoveWheelEventHandler();
+    if (eventNames().isWheelEventType(eventType))
+        targetNode->document().didRemoveWheelEventHandler(*targetNode);
     else if (eventNames().isTouchEventType(eventType))
-        targetNode->document().didRemoveTouchEventHandler(targetNode);
+        targetNode->document().didRemoveTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
@@ -2086,8 +2086,7 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
-    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && is<WheelEvent>(*event)) {
-
+    } else if (eventNames().isWheelEventType(eventType) && is<WheelEvent>(*event)) {
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;

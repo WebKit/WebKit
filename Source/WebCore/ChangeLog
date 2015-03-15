@@ -1,5 +1,35 @@
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up related to wheelEvent names
+        https://bugs.webkit.org/show_bug.cgi?id=142713
+
+        Reviewed by Anders Carlsson.
+
+        Add EventNames::isWheelEventType() and use it in places that test for the
+        two wheel event names.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didAddWheelEventHandler):
+        (WebCore::Document::didRemoveWheelEventHandler):
+        * dom/Document.h: No need for exports (I grepped). Pass the Node*, which
+        will be used in a later patch.
+        * dom/EventNames.h:
+        (WebCore::EventNames::isWheelEventType):
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::defaultEventHandler):
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsAppleEventListener::handleEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/ios/FrameIOS.mm:
+        (WebCore::ancestorRespondingToScrollWheelEvents): Remove dead code.
+
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
         Remove a redundant repaint when a layer becomes composited
         https://bugs.webkit.org/show_bug.cgi?id=142711
 

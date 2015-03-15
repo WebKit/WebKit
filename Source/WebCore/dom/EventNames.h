@@ -264,6 +264,7 @@ public:
 
     // FIXME: Inelegant to call these both event names and event types.
     // We should choose one term and stick to it.
+    bool isWheelEventType(const AtomicString& eventType) const;
     bool isGestureEventType(const AtomicString& eventType) const;
     bool isTouchEventType(const AtomicString& eventType) const;
 #if ENABLE(GAMEPAD)
@@ -297,6 +298,12 @@ inline bool EventNames::isTouchEventType(const AtomicString& eventType) const
         || eventType == touchmoveEvent
         || eventType == touchendEvent
         || eventType == touchcancelEvent;
+}
+
+inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
+{
+    return eventType == wheelEvent
+        || eventType == mousewheelEvent;
 }
 
 inline std::array<std::reference_wrapper<const AtomicString>, 4> EventNames::touchEventNames() const
