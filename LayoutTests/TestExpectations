@@ -71,6 +71,7 @@ webkit.org/b/140491 js/class-syntax-call.html [ Failure ]
 webkit.org/b/140491 js/class-syntax-declaration.html [ Failure ]
 webkit.org/b/140491 js/class-syntax-expression.html [ Failure ]
 webkit.org/b/140491 js/class-syntax-extends.html [ Failure ]
+webkit.org/b/140491 js/class-syntax-scoping.html [ Failure ]
 webkit.org/b/140491 js/class-syntax-super.html [ Failure ]
 
 # This test verifies dynamic manipulation of the mroot and msqrt elements.

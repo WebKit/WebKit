@@ -1,3 +1,18 @@
+2015-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        parseClass should popScope after pushScope
+        https://bugs.webkit.org/show_bug.cgi?id=142689
+
+        Reviewed by Benjamin Poulain.
+
+        Added a regression test for the test case that caught this bug.
+
+        * TestExpectations: Skipped the test since ES6 class syntax isn't enabled by default.
+        * js/class-syntax-scoping-expected.txt: Added.
+        * js/class-syntax-scoping.html: Added.
+        * js/script-tests/class-syntax-scoping.js: Added.
+        (test):
+
 2015-03-14  Michael Saboff  <msaboff@apple.com>
 
         ES6: Add binary and octal literal support

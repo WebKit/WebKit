@@ -1552,6 +1552,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     // FIXME: Create a Miranda function instead.
     semanticFailIfFalse(constructor, "Class declaration without a constructor is not supported yet");
 
+    failIfFalse(popScope(classScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
     return context.createClassExpr(location, *className, constructor, parentClass, instanceMethods, staticMethods);
