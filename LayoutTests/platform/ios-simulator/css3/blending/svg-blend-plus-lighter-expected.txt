@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x421
+  RenderBlock {HTML} at (0,0) size 800x421
+    RenderBody {BODY} at (8,8) size 784x405
+      RenderSVGRoot {svg} at (8,8) size 160x160
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGContainer {g} at (8,8) size 40x40
+            RenderSVGRect {rect} at (8,8) size 10x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (18,8) size 10x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (28,8) size 10x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (38,8) size 10x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGRect {rect} at (8,8) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGContainer {g} at (8,8) size 160x160 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+          RenderSVGContainer {use} at (8,8) size 160x160
+            RenderSVGContainer {g} at (8,8) size 160x160
+              RenderSVGRect {rect} at (8,8) size 40x160 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (48,8) size 40x160 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (88,8) size 40x160 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (128,8) size 40x160 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGContainer {use} at (8,8) size 160x160 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(40.00,0.00)}]
+            RenderSVGContainer {g} at (8,8) size 160x160
+              RenderSVGRect {rect} at (8,8) size 160x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,48) size 160x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,88) size 160x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,128) size 160x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderText {#text} at (0,0) size 0x0
