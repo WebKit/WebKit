@@ -83,7 +83,6 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
     LayoutUnit curSnapPositionShift = 0;
     LayoutUnit maxScrollOffset = scrollSize - viewSize;
     LayoutUnit lastSnapPosition = curSnapPositionShift;
-    snapOffsets.append(0);
     do {
         for (auto& snapPosition : snapOffsetSubsequence) {
             LayoutUnit potentialSnapPosition = curSnapPositionShift + snapPosition - destinationOffset;
@@ -98,6 +97,10 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
         }
         curSnapPositionShift = lastSnapPosition + repeatOffset;
     } while (hasRepeat && curSnapPositionShift < maxScrollOffset);
+
+    if (snapOffsets.isEmpty())
+        snapOffsets.append(0);
+
     // Always put a snap point on the maximum scroll offset.
     // Not a part of the spec, but necessary to prevent unreachable content when snapping.
     if (snapOffsets.last() != maxScrollOffset)

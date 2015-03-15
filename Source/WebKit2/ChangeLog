@@ -1,3 +1,28 @@
+2015-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] scroll snap points are animating to the wrong positions.
+        https://bugs.webkit.org/show_bug.cgi?id=142705
+        <rdar://problem/20136946>
+
+        Reviewed by Simon Fraser.
+
+        Scroll snapping was landing in the wrong place on iOS because of two problems:
+        (1) It was searching for the closest snap offset point using unscaled 'screen' pixels,
+        which caused it to always choose one of the earliest snap point options.
+        (2) It was then selecting a scaled snap point coordinate and passing it back to UIKit
+        to animate the snap. This caused it to select a target point beyond the 'screen' pixel
+        we want to hit.
+        
+        The solution to both problems are to scale the scroll destination UIKit suggests so that
+        we search among the scaled points with a valid value. Then, we need to scale the returned
+        value back to screen units before handing it back to UIKit to process.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillBeginDragging:]): Drive-by fix. Get rid of extra ';' at
+        the end of the line.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling):
+
 2015-03-14  Dean Jackson  <dino@apple.com>
 
         Feature flag for Animations Level 2
