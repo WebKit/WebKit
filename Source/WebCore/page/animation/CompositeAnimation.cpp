@@ -399,6 +399,42 @@ PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(CSSPro
     return retval;
 }
 
+bool CompositeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) const
+{
+    // If more than one transition and animation affect transform, give up.
+    bool seenTransformAnimation = false;
+    
+    for (auto& it : m_keyframeAnimations) {
+        if (KeyframeAnimation* anim = it.value.get()) {
+            if (!anim->hasAnimationForProperty(CSSPropertyWebkitTransform))
+                continue;
+
+            if (seenTransformAnimation)
+                return false;
+
+            seenTransformAnimation = true;
+
+            if (!anim->computeExtentOfTransformAnimation(bounds))
+                return false;
+        }
+    }
+
+    for (auto& it : m_transitions) {
+        if (ImplicitAnimation* anim = it.value.get()) {
+            if (anim->animatingProperty() != CSSPropertyWebkitTransform || !anim->hasStyle())
+                continue;
+
+            if (seenTransformAnimation)
+                return false;
+
+            if (!anim->computeExtentOfTransformAnimation(bounds))
+                return false;
+        }
+    }
+    
+    return true;
+}
+
 void CompositeAnimation::suspendAnimations()
 {
     if (m_suspended)

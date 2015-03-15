@@ -1,5 +1,126 @@
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Reduce the side-effects of animations turning off overlap testing
+        https://bugs.webkit.org/show_bug.cgi?id=92791
+
+        Reviewed by Dean Jackson.
+        
+        When a layer is running a transition or animation of the transform property,
+        we would simply disable overlap testing for later layers, which had the side-effect
+        of promoting lots of unrelated elements into layers temporarily.
+        
+        Fix by maintaining overlap, but computing an overlap extent that takes the animation
+        into account.
+        
+        Rotations are currently treated as full rotations. If an extent for the overlap is
+        hard to compute (e.g. 3d transforms, or matrix animations with a rotation component),
+        then we fall back to the current behavior.
+
+        Tests: compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html
+               compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html
+               compositing/layer-creation/mismatched-transform-transition-overlap.html
+               compositing/layer-creation/multiple-keyframes-animation-overlap.html
+               compositing/layer-creation/scale-rotation-animation-overlap.html
+               compositing/layer-creation/scale-rotation-transition-overlap.html
+               compositing/layer-creation/translate-animation-overlap.html
+               compositing/layer-creation/translate-scale-animation-overlap.html
+               compositing/layer-creation/translate-scale-transition-overlap.html
+               compositing/layer-creation/translate-transition-overlap.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::containsRotation):
+        (WebCore::AnimationBase::computeTransformedExtentViaTransformList): When we have matched
+        transform lists, we can map a rectangle through the various operations. Transform-origin
+        is used to shift the origin of the box first, and then unshift after. If we encounter
+        a rotation, for now assume it's a full rotation (a future patch could tighten this up).
+        (WebCore::AnimationBase::computeTransformedExtentViaMatrix): If we're using matrix
+        interpolation, we have to decompose the matrix to see if there's any rotation component,
+        and, if there is, fall back to current behavior.
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::computeExtentOfAnimation):
+        (WebCore::AnimationController::computeExtentOfAnimation):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::computeExtentOfTransformAnimation): Ask active keyframe
+        animations and transitions to compute the bounds extent.
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::computeExtentOfTransformAnimation): Compute the extent
+        of the start and end transforms, and union them.
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::getAnimatedStyle): Some nullptr goodness.
+        (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation): Compute an extent
+        for each keyframe, and take their union.
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::euclidianDistance): Use Pythagoras to compute a distance.
+        (WebCore::boundsOfRotatingRect): Given a rect whose location is relative
+        to the rotation origin, compute a bounds for the rotated rect by computing
+        the furthest corner from the origin, and sweeping out a circle.
+        * platform/graphics/GeometryUtilities.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        (WebCore::TransformOperation::isAffectedByTransformOrigin):
+        * platform/graphics/transforms/TransformOperations.cpp:
+        (WebCore::TransformOperations::affectedByTransformOrigin): Ask all the operations if
+        they are affected by transform-origin.
+        (WebCore::TransformOperations::blendByMatchingOperations): nullptr.
+        * platform/graphics/transforms/TransformOperations.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushMappingToContainer): Comment fix. Only take transforms into account
+        if the geometry map says so (which is most of the time).
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer): RenderLayerCompositor is now using the
+        geometry map in a way that is incompatible with this assertion; it deliberately ignores
+        transforms sometimes, so we can't easily verify that the mapping matches mapping through
+        renderers.
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor): Save and restore the UseTransforms
+        bit.
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::boundingBox): Whitespace.
+        (WebCore::RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimations): Helper
+        function to get the bounds of a layer, including descendants, when a transform animation is running.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::CompositingState::CompositingState): Add a ancestorHasTransformAnimation
+        flag to detect nested animated transforms.
+        (WebCore::RenderLayerCompositor::OverlapExtent::knownToBeHaveExtentUncertainty): This returns true when
+        the layer is animating transform, and the transition/animation is such that we can't easily compute the
+        bounds of the animation.
+        (WebCore::RenderLayerCompositor::computeExtent): const RenderLayer&.
+        Compute the animated bounds if there's a transform animation running.
+        (WebCore::RenderLayerCompositor::addToOverlapMap): const RenderLayer&
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive): const RenderLayer&
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Delay the call to pushMappingsToAncestor() until knowing if there's a transform animation running, and
+        if there is, push the mapping while ignoring transforms (since the transform is implicitly taken into account
+        for overlap via the computed animated bounds).
+        If this layer is running a transform animation, set the childState.ancestorHasTransformAnimation flag so
+        that descendants will know (nested transform animations fall back to current behavior).
+        The if (.... && isRunningAcceleratedTransformAnimation()) is what previously caused us to turn off overlap
+        testing in the face of animations. That now only happens if we were unable to easily compute the animation bounds.
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation): This previously tested whether an accelerated animation
+        was running, but that's timing sensitive; AnimationController can start the transform animation, but it's not yet
+        considered accelerated until we get an async callback from GraphicsLayer, yet this code needed to know if the
+        animation was running.
+        Since transform animations are always accelerated, we can just test for a running transform animation.
+        (WebCore::RenderLayerCompositor::isRunningAcceleratedTransformAnimation): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requireTransformOrigin): Some FIXME comments.
+
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up related to wheelEvent names
         https://bugs.webkit.org/show_bug.cgi?id=142713
 

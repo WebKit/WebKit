@@ -32,9 +32,10 @@
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
+#include "GeometryUtilities.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
-#include "RenderBoxModelObject.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -97,6 +98,39 @@ void ImplicitAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
         animatedStyle = RenderStyle::clone(m_toStyle.get());
 
     CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
+}
+
+bool ImplicitAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) const
+{
+    ASSERT(hasStyle());
+
+    if (!m_object->isBox())
+        return false;
+
+    ASSERT(m_animatingProperty == CSSPropertyWebkitTransform);
+
+    RenderBox& box = downcast<RenderBox>(*m_object);
+    FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
+
+    LayoutRect startBounds = bounds;
+    LayoutRect endBounds = bounds;
+
+    if (isTransformFunctionListValid()) {
+        if (!computeTransformedExtentViaTransformList(rendererBox, *m_fromStyle, startBounds))
+            return false;
+
+        if (!computeTransformedExtentViaTransformList(rendererBox, *m_toStyle, endBounds))
+            return false;
+    } else {
+        if (!computeTransformedExtentViaMatrix(rendererBox, *m_fromStyle, startBounds))
+            return false;
+
+        if (!computeTransformedExtentViaMatrix(rendererBox, *m_toStyle, endBounds))
+            return false;
+    }
+
+    bounds = unionRect(startBounds, endBounds);
+    return true;
 }
 
 bool ImplicitAnimation::startAnimation(double timeOffset)

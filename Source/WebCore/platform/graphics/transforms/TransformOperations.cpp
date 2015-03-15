@@ -63,6 +63,15 @@ bool TransformOperations::operationsMatch(const TransformOperations& other) cons
     return true;
 }
 
+bool TransformOperations::affectedByTransformOrigin() const
+{
+    for (const auto& operation : m_operations) {
+        if (operation->isAffectedByTransformOrigin())
+            return true;
+    }
+    return false;
+}
+
 TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const double& progress) const
 {
     TransformOperations result;
@@ -71,9 +80,9 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     unsigned toSize = operations().size();
     unsigned size = std::max(fromSize, toSize);
     for (unsigned i = 0; i < size; i++) {
-        RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : 0;
-        RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : 0;
-        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? fromOperation->blend(0, progress, true) : 0);
+        RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : nullptr;
+        RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : nullptr;
+        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? fromOperation->blend(nullptr, progress, true) : nullptr);
         if (blendedOperation)
             result.operations().append(blendedOperation);
         else {

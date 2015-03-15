@@ -988,6 +988,7 @@ const String& RenderStyle::contentAltText() const
     return rareNonInheritedData->m_altText;
 }
 
+// FIXME: use affectedByTransformOrigin().
 static inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
 {
     // transform-origin brackets the transform with translate operations.
@@ -1001,7 +1002,7 @@ static inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation
         if (type != TransformOperation::TRANSLATE_X
             && type != TransformOperation::TRANSLATE_Y
             && type != TransformOperation::TRANSLATE 
-            && type != TransformOperation::TRANSLATE_Z
+            && type != TransformOperation::TRANSLATE_Z // FIXME: doesn't this depend on transform origin?
             && type != TransformOperation::TRANSLATE_3D)
             return true;
     }

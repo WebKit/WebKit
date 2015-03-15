@@ -57,6 +57,7 @@ public:
 
     Ref<RenderStyle> animate(RenderElement&, RenderStyle* currentStyle, RenderStyle& targetStyle);
     PassRefPtr<RenderStyle> getAnimatedStyle() const;
+    bool computeExtentOfTransformAnimation(LayoutRect&) const;
 
     double timeToNextService() const;
     

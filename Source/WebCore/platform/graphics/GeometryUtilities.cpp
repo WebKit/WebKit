@@ -28,6 +28,12 @@
 
 namespace WebCore {
 
+float euclidianDistance(const FloatPoint& p1, const FloatPoint& p2)
+{
+    FloatSize delta = p1 - p2;
+    return sqrt(delta.width() * delta.width() + delta.height() * delta.height());
+}
+
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c)
 {
     if (p2.x() == p1.x())
@@ -113,6 +119,17 @@ FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRec
         destRect.inflateX(dx / 2);
     }
     return destRect;
+}
+
+FloatRect boundsOfRotatingRect(const FloatRect& r)
+{
+    // Compute the furthest corner from the origin.
+    float maxCornerDistance = euclidianDistance(FloatPoint(), r.minXMinYCorner());
+    maxCornerDistance = std::max(maxCornerDistance, euclidianDistance(FloatPoint(), r.maxXMinYCorner()));
+    maxCornerDistance = std::max(maxCornerDistance, euclidianDistance(FloatPoint(), r.minXMaxYCorner()));
+    maxCornerDistance = std::max(maxCornerDistance, euclidianDistance(FloatPoint(), r.maxXMaxYCorner()));
+    
+    return FloatRect(-maxCornerDistance, -maxCornerDistance, 2 * maxCornerDistance, 2 * maxCornerDistance);
 }
 
 }

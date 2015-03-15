@@ -58,6 +58,8 @@ public:
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle) override;
     virtual void reset(RenderStyle* to);
 
+    bool computeExtentOfTransformAnimation(LayoutRect&) const override;
+
     void setOverridden(bool);
     virtual bool overridden() const override { return m_overridden; }
 

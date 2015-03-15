@@ -39,12 +39,14 @@
 
 namespace WebCore {
 
-class AnimationController;
 class CompositeAnimation;
 class Element;
+class FloatRect;
+class LayoutRect;
 class RenderElement;
 class RenderStyle;
 class TimingFunction;
+
 class AnimationBase : public RefCounted<AnimationBase> {
     friend class CompositeAnimation;
     friend class CSSPropertyAnimation;
@@ -135,6 +137,8 @@ public:
 
     virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* /*currentStyle*/, RenderStyle* /*targetStyle*/, RefPtr<RenderStyle>& /*animatedStyle*/) = 0;
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& /*animatedStyle*/) = 0;
+
+    virtual bool computeExtentOfTransformAnimation(LayoutRect&) const = 0;
 
     virtual bool shouldFireEvents() const { return false; }
 
@@ -235,6 +239,10 @@ protected:
     void getTimeToNextEvent(double& time, bool& isLooping) const;
 
     double fractionalTime(double scale, double elapsedTime, double offset) const;
+
+    // These return true if we can easily compute a bounding box by applying the style's transform to the bounds rect.
+    bool computeTransformedExtentViaTransformList(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
+    bool computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
 
     AnimationState m_animationState;
 

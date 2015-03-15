@@ -487,15 +487,15 @@ public:
     bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const LayoutRect* cachedBoundingBox = nullptr) const;
 
     enum CalculateLayerBoundsFlag {
-        IncludeSelfTransform = 1 << 0,
-        UseLocalClipRectIfPossible = 1 << 1,
-        IncludeLayerFilterOutsets = 1 << 2,
-        ExcludeHiddenDescendants = 1 << 3,
-        DontConstrainForMask = 1 << 4,
-        IncludeCompositedDescendants = 1 << 5,
-        UseFragmentBoxesExcludingCompositing = 1 << 6,
-        UseFragmentBoxesIncludingCompositing = 1 << 7,
-        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets | UseFragmentBoxesExcludingCompositing
+        IncludeSelfTransform                    = 1 << 0,
+        UseLocalClipRectIfPossible              = 1 << 1,
+        IncludeLayerFilterOutsets               = 1 << 2,
+        ExcludeHiddenDescendants                = 1 << 3,
+        DontConstrainForMask                    = 1 << 4,
+        IncludeCompositedDescendants            = 1 << 5,
+        UseFragmentBoxesExcludingCompositing    = 1 << 6,
+        UseFragmentBoxesIncludingCompositing    = 1 << 7,
+        DefaultCalculateLayerBoundsFlags        = IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets | UseFragmentBoxesExcludingCompositing
     };
     typedef unsigned CalculateLayerBoundsFlags;
 
@@ -510,6 +510,10 @@ public:
 
     // Bounds used for layer overlap testing in RenderLayerCompositor.
     LayoutRect overlapBounds() const { return overlapBoundsIncludeChildren() ? calculateLayerBounds(this, LayoutSize()) : localBoundingBox(); }
+    
+    // Takes transform animations into account, returning true if they could be cheaply computed.
+    // Unlike overlapBounds, these bounds include descendant layers.
+    bool getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(LayoutRect&) const;
 
     // If true, this layer's children are included in its bounds for overlap testing.
     // We can't rely on the children's positions if this layer has a filter that could have moved the children's pixels around.

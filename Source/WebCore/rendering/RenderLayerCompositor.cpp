@@ -223,6 +223,7 @@ struct RenderLayerCompositor::CompositingState {
         : compositingAncestor(compAncestor)
         , subtreeIsCompositing(false)
         , testingOverlap(testOverlap)
+        , ancestorHasTransformAnimation(false)
 #if ENABLE(CSS_COMPOSITING)
         , hasNotIsolatedCompositedBlendingDescendants(false)
 #endif
@@ -236,6 +237,7 @@ struct RenderLayerCompositor::CompositingState {
         : compositingAncestor(other.compositingAncestor)
         , subtreeIsCompositing(other.subtreeIsCompositing)
         , testingOverlap(other.testingOverlap)
+        , ancestorHasTransformAnimation(other.ancestorHasTransformAnimation)
 #if ENABLE(CSS_COMPOSITING)
         , hasNotIsolatedCompositedBlendingDescendants(other.hasNotIsolatedCompositedBlendingDescendants)
 #endif
@@ -248,6 +250,7 @@ struct RenderLayerCompositor::CompositingState {
     RenderLayer* compositingAncestor;
     bool subtreeIsCompositing;
     bool testingOverlap;
+    bool ancestorHasTransformAnimation;
 #if ENABLE(CSS_COMPOSITING)
     bool hasNotIsolatedCompositedBlendingDescendants;
 #endif
@@ -259,6 +262,10 @@ struct RenderLayerCompositor::CompositingState {
 struct RenderLayerCompositor::OverlapExtent {
     LayoutRect bounds;
     bool extentComputed { false };
+    bool hasTransformAnimation { false };
+    bool animationCausesExtentUncertainty { false };
+
+    bool knownToBeHaveExtentUncertainty() const { return extentComputed && animationCausesExtentUncertainty; }
 };
 
 #if !LOG_DISABLED
@@ -1141,14 +1148,21 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
-void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& extent) const
+void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
     if (extent.extentComputed)
         return;
 
-    // FIXME: If this layer's overlap bounds include its children, we don't need to add its
-    // children's bounds to the overlap map.
-    extent.bounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layer.overlapBounds()));
+    LayoutRect layerBounds;
+    if (extent.hasTransformAnimation)
+        extent.animationCausesExtentUncertainty = !layer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(layerBounds);
+    else
+        layerBounds = layer.overlapBounds();
+    
+    // In the animating transform case, we avoid double-accounting for the transform because
+    // we told pushMappingsToAncestor() to ignore transforms earlier.
+    extent.bounds = enclosingLayoutRect(overlapMap.geometryMap().absoluteRect(layerBounds));
+
     // Empty rects never intersect, but we need them to for the purposes of overlap testing.
     if (extent.bounds.isEmpty())
         extent.bounds.setSize(LayoutSize(1, 1));
@@ -1156,7 +1170,7 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, RenderLa
     extent.extentComputed = true;
 }
 
-void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& extent)
+void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent)
 {
     if (layer.isRootLayer())
         return;
@@ -1176,7 +1190,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
     overlapMap.add(&layer, clipRect);
 }
 
-void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, RenderLayer& layer, RenderLayer* ancestorLayer)
+void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, const RenderLayer& layer, const RenderLayer* ancestorLayer)
 {
     if (!canBeComposited(layer) || overlapMap.contains(&layer))
         return;
@@ -1189,7 +1203,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     addToOverlapMap(overlapMap, layer, layerExtent);
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(&layer));
 #endif
 
     if (layer.isStackingContainer()) {
@@ -1255,21 +1269,23 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         return;
     }
 
-    overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer);
-    
     // Clear the flag
     layer.setHasCompositingDescendant(false);
     layer.setIndirectCompositingReason(RenderLayer::IndirectCompositingReason::None);
 
     // Check if the layer needs to be composited for direct reasons (e.g. 3D transform).
-    // We use this value to avoid checking the overlap map, if we know for sure the layer
-    // is already going to be composited for other reasons.
     bool willBeComposited = needsToBeComposited(layer);
-    bool mayHaveAnimatedTransform = willBeComposited && !layer.isRootLayer();
-
-    RenderLayer::IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None;
 
     OverlapExtent layerExtent;
+    // Use the fact that we're composited as a hint to check for an animating transform.
+    // FIXME: Maybe needsToBeComposited() should return a bitmask of reasons, to avoid the need to recompute things.
+    if (willBeComposited && !layer.isRootLayer())
+        layerExtent.hasTransformAnimation = isRunningTransformAnimation(layer.renderer());
+
+    bool respectTransforms = !layerExtent.hasTransformAnimation;
+    overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer, respectTransforms);
+
+    RenderLayer::IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None;
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && !overlapMap.isEmpty() && compositingState.testingOverlap) {
@@ -1313,6 +1329,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // This layer is going to be composited, so children can safely ignore the fact that there's an 
         // animation running behind this layer, meaning they can rely on the overlap map testing again.
         childState.testingOverlap = true;
+
+        computeExtent(overlapMap, layer, layerExtent);
+        childState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
+        // Too hard to compute animated bounds if both us and some ancestor is animating transform.
+        layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
     }
 
 #if !ASSERT_DISABLED
@@ -1377,6 +1398,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // All layers (even ones that aren't being composited) need to get added to
     // the overlap map. Layers that do not composite will draw into their
     // compositing ancestor's backing, and so are still considered for overlap.
+    // FIXME: When layerExtent has taken animation bounds into account, we also know that the bounds
+    // include descendants, so we don't need to add them all to the overlap map.
     if (childState.compositingAncestor && !childState.compositingAncestor->isRootLayer())
         addToOverlapMap(overlapMap, layer, layerExtent);
 
@@ -1405,17 +1428,16 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     if (childState.subtreeIsCompositing)
         compositingState.subtreeIsCompositing = true;
 
-    // Set the flag to say that this SC has compositing children.
+    // Set the flag to say that this layer has compositing children.
     layer.setHasCompositingDescendant(childState.subtreeIsCompositing);
 
-    // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping,
-    // so test that again.
+    // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping, so test that again.
     bool isCompositedClippingLayer = canBeComposited(layer) && clipsCompositingDescendants(layer);
 
     // Turn overlap testing off for later layers if it's already off, or if we have an animating transform.
     // Note that if the layer clips its descendants, there's no reason to propagate the child animation to the parent layers. That's because
     // we know for sure the animation is contained inside the clipping rectangle, which is already added to the overlap map.
-    if ((!childState.testingOverlap && !isCompositedClippingLayer) || (mayHaveAnimatedTransform && isRunningAcceleratedTransformAnimation(layer.renderer())))
+    if ((!childState.testingOverlap && !isCompositedClippingLayer) || layerExtent.knownToBeHaveExtentUncertainty())
         compositingState.testingOverlap = false;
     
     if (isCompositedClippingLayer) {
@@ -2783,12 +2805,12 @@ bool RenderLayerCompositor::requiresCompositingForScrolling(const RenderLayer& l
 }
 #endif
 
-bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderLayerModelObject& renderer) const
+bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& renderer) const
 {
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    return renderer.animation().isRunningAcceleratedAnimationOnRenderer(renderer, CSSPropertyWebkitTransform, AnimationBase::Running | AnimationBase::Paused);
+    return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform, AnimationBase::Running | AnimationBase::Paused);
 }
 
 // If an element has negative z-index children, those children render in front of the 

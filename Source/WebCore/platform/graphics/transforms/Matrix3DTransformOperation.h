@@ -41,6 +41,7 @@ public:
 
 private:    
     virtual bool isIdentity() const override { return m_matrix.isIdentity(); }
+    virtual bool isAffectedByTransformOrigin() const { return !isIdentity(); }
 
     virtual OperationType type() const override { return MATRIX_3D; }
     virtual bool isSameType(const TransformOperation& o) const override { return o.type() == MATRIX_3D; }

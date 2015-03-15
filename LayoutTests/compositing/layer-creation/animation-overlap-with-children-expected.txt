@@ -7,7 +7,7 @@ Should be composited
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 2
+      (children 1
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 262.00 212.00)
@@ -25,12 +25,6 @@ Should be composited
               (drawsContent 1)
             )
           )
-        )
-        (GraphicsLayer
-          (position 18.00 230.00)
-          (bounds 100.00 100.00)
-          (contentsOpaque 1)
-          (drawsContent 1)
         )
       )
     )

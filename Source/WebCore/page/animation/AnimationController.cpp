@@ -417,6 +417,18 @@ PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(
     return animatingStyle.release();
 }
 
+bool AnimationControllerPrivate::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
+{
+    ASSERT(renderer.isCSSAnimating());
+    ASSERT(m_compositeAnimations.contains(&renderer));
+
+    const CompositeAnimation& rendererAnimations = *m_compositeAnimations.get(&renderer);
+    if (!rendererAnimations.isAnimatingProperty(CSSPropertyWebkitTransform, false, AnimationBase::Running | AnimationBase::Paused))
+        return true;
+
+    return rendererAnimations.computeExtentOfTransformAnimation(bounds);
+}
+
 unsigned AnimationControllerPrivate::numberOfActiveAnimations(Document* document) const
 {
     unsigned count = 0;
@@ -575,6 +587,14 @@ PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderE
     if (!renderer.isCSSAnimating())
         return &renderer.style();
     return m_data->getAnimatedStyleForRenderer(renderer);
+}
+
+bool AnimationController::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
+{
+    if (!renderer.isCSSAnimating())
+        return true;
+
+    return m_data->computeExtentOfAnimation(renderer, bounds);
 }
 
 void AnimationController::notifyAnimationStarted(RenderElement&, double startTime)

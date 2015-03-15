@@ -338,9 +338,9 @@ private:
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
 
-    void computeExtent(const OverlapMap&, RenderLayer&, OverlapExtent&) const;
-    void addToOverlapMap(OverlapMap&, RenderLayer&, OverlapExtent&);
-    void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
+    void computeExtent(const OverlapMap&, const RenderLayer&, OverlapExtent&) const;
+    void addToOverlapMap(OverlapMap&, const RenderLayer&, OverlapExtent&);
+    void addToOverlapMapRecursive(OverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr);
 
     void updateCompositingLayersTimerFired();
 
@@ -368,7 +368,7 @@ private:
     void removeCompositedChildren(RenderLayer&);
 
     bool layerHas3DContent(const RenderLayer&) const;
-    bool isRunningAcceleratedTransformAnimation(RenderLayerModelObject&) const;
+    bool isRunningTransformAnimation(RenderLayerModelObject&) const;
 
     void appendDocumentOverlayLayers(Vector<GraphicsLayer*>&);
     bool hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const;

@@ -66,6 +66,8 @@ public:
 
     virtual OperationType type() const = 0;
     virtual bool isSameType(const TransformOperation&) const { return false; }
+
+    virtual bool isAffectedByTransformOrigin() const { return false; }
     
     bool is3DOperation() const
     {

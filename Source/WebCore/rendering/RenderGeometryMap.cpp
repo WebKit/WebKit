@@ -134,13 +134,6 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
         result = transformState.lastPlanarQuad();
     }
 
-#if !ASSERT_DISABLED
-    FloatRect rendererMappedResult = m_mapping.last().m_renderer->localToContainerQuad(rect, container, m_mapCoordinatesFlags).boundingBox();
-    // Inspector creates renderers with negative width <https://bugs.webkit.org/show_bug.cgi?id=87194>.
-    // Taking FloatQuad bounds avoids spurious assertions because of that.
-    ASSERT(enclosingIntRect(rendererMappedResult) == enclosingIntRect(result.boundingBox()));
-#endif
-
     return result;
 }
 
@@ -178,8 +171,11 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
     return true;
 }
 
-void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer)
+void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool respectTransforms)
 {
+    MapCoordinatesFlags newFlags = respectTransforms ? m_mapCoordinatesFlags : m_mapCoordinatesFlags & ~UseTransforms;
+    TemporaryChange<MapCoordinatesFlags> flagsChange(m_mapCoordinatesFlags, newFlags);
+
     const RenderLayerModelObject& renderer = layer->renderer();
 
     // We have to visit all the renderers to detect flipped blocks. This might defeat the gains

@@ -97,7 +97,7 @@ public:
     FloatQuad mapToContainer(const FloatRect&, const RenderLayerModelObject*) const;
     
     // Called by code walking the renderer or layer trees.
-    void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer);
+    void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer, bool respectTransforms = true);
     void popMappingsToAncestor(const RenderLayer*);
     void pushMappingsToAncestor(const RenderObject*, const RenderLayerModelObject* ancestorRenderer);
     void popMappingsToAncestor(const RenderLayerModelObject*);

@@ -34,7 +34,8 @@
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
-#include "RenderBoxModelObject.h"
+#include "GeometryUtilities.h"
+#include "RenderBox.h"
 #include "RenderStyle.h"
 #include "StyleResolver.h"
 
@@ -159,9 +160,9 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
         // Get the from/to styles and progress between
-        const RenderStyle* fromStyle = 0;
-        const RenderStyle* toStyle = 0;
-        double progress = 0.0;
+        const RenderStyle* fromStyle = nullptr;
+        const RenderStyle* toStyle = nullptr;
+        double progress = 0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
 
         bool needsAnim = CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
@@ -189,13 +190,47 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
     HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
         // Get the from/to styles and progress between
-        const RenderStyle* fromStyle = 0;
-        const RenderStyle* toStyle = 0;
-        double progress = 0.0;
+        const RenderStyle* fromStyle = nullptr;
+        const RenderStyle* toStyle = nullptr;
+        double progress = 0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
 
         CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
     }
+}
+
+bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) const
+{
+    ASSERT(m_keyframes.containsProperty(CSSPropertyWebkitTransform));
+
+    RenderBox& box = downcast<RenderBox>(*m_object);
+    FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
+
+    FloatRect cumulativeBounds = bounds;
+
+    size_t numKeyframes = m_keyframes.size();
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        const KeyframeValue& currKeyFrame = m_keyframes[i];
+
+        if (!currKeyFrame.containsProperty(CSSPropertyWebkitTransform))
+            continue;
+
+        LayoutRect keyframeBounds = bounds;
+        
+        bool canCompute;
+        if (isTransformFunctionListValid())
+            canCompute = computeTransformedExtentViaTransformList(rendererBox, *currKeyFrame.style(), keyframeBounds);
+        else
+            canCompute = computeTransformedExtentViaMatrix(rendererBox, *currKeyFrame.style(), keyframeBounds);
+        
+        if (!canCompute)
+            return false;
+        
+        cumulativeBounds.unite(keyframeBounds);
+    }
+
+    bounds = LayoutRect(cumulativeBounds);
+    return true;
 }
 
 bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const

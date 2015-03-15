@@ -48,6 +48,8 @@ public:
     virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
     virtual void getAnimatedStyle(RefPtr<RenderStyle>&) override;
 
+    bool computeExtentOfTransformAnimation(LayoutRect&) const override;
+
     const KeyframeList& keyframes() const { return m_keyframes; }
 
     const AtomicString& name() const { return m_keyframes.animationName(); }
@@ -76,6 +78,10 @@ protected:
     bool sendAnimationEvent(const AtomicString&, double elapsedTime);
 
     virtual bool affectsProperty(CSSPropertyID) const override;
+
+    bool computeExtentOfAnimationForMatrixAnimation(const FloatRect& rendererBox, LayoutRect&) const;
+
+    bool computeExtentOfAnimationForMatchingTransformLists(const FloatRect& rendererBox, LayoutRect&) const;
 
     void validateTransformFunctionList();
     void checkForMatchingFilterFunctionLists();
