@@ -536,7 +536,7 @@ void RenderNamedFlowFragment::absoluteQuadsForBoxInRegion(Vector<FloatQuad>& qua
         return;
 
     CurrentRenderRegionMaintainer regionMaintainer(*this);
-    quads.append(renderer->localToAbsoluteQuad(FloatRect(fragmentRect), 0 /* mode */, wasFixed));
+    quads.append(renderer->localToAbsoluteQuad(FloatRect(fragmentRect), UseTransforms, wasFixed));
 }
 
 } // namespace WebCore

@@ -175,7 +175,7 @@ Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layou
     Vector<FloatQuad> quads;
     auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
     for (const auto& run : resolver.rangeForRenderer(renderer))
-        quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), 0, wasFixed));
+        quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
     return quads;
 }
 

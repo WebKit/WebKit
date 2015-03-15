@@ -550,13 +550,13 @@ Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& ren
                     boundaries.setX(selectionRect.x());
                 }
             }
-            rects.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed).enclosingBoundingBox());
+            rects.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed).enclosingBoundingBox());
             continue;
         }
         // FIXME: This code is wrong. It's converting local to absolute twice. http://webkit.org/b/65722
         FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
         if (!rect.isZero())
-            rects.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed).enclosingBoundingBox());
+            rects.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed).enclosingBoundingBox());
     }
     return rects;
 }
@@ -576,7 +576,7 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer,
             else
                 boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
         }
-        quads.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed));
+        quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
     }
     return quads;
 }
@@ -598,12 +598,12 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& r
                     boundaries.setX(selectionRect.x());
                 }
             }
-            quads.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed));
+            quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
             continue;
         }
         FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
         if (!rect.isZero())
-            quads.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed));
+            quads.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed));
     }
     return quads;
 }

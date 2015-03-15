@@ -1738,9 +1738,8 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
     if (!shouldPaintSelectionGaps())
         return GapRects();
 
-    TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
-    mapLocalToContainer(repaintContainer, transformState, ApplyContainerFlip | UseTransforms);
-    LayoutPoint offsetFromRepaintContainer(transformState.mappedPoint() - scrolledContentOffset());
+    FloatPoint containerPoint = localToContainerPoint(FloatPoint(), repaintContainer, UseTransforms);
+    LayoutPoint offsetFromRepaintContainer(containerPoint - scrolledContentOffset());
 
     LogicalSelectionOffsetCaches cache(*this);
     LayoutUnit lastTop = 0;
@@ -3330,7 +3329,7 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     // https://bugs.webkit.org/show_bug.cgi?id=46781
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (!flowThread || !flowThread->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
-        quads.append(localToAbsoluteQuad(localRect, 0 /* mode */, wasFixed));
+        quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 
     if (isAnonymousBlockContinuation())
         continuation()->absoluteQuads(quads, wasFixed);

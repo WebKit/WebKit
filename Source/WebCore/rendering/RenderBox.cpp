@@ -618,7 +618,7 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     if (flowThread && flowThread->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
         return;
 
-    quads.append(localToAbsoluteQuad(localRect, 0 /* mode */, wasFixed));
+    quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 
 void RenderBox::updateLayerTransform()

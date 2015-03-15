@@ -52,7 +52,7 @@ private:
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override final;
     virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed = false) const override final;
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override final;
+    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override final;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override final;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
 
@@ -61,7 +61,7 @@ private:
     virtual void willBeDestroyed() override final;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = nullptr) override final;
     virtual void removeChild(RenderObject&) override final;
 };
 

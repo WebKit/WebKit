@@ -2228,7 +2228,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
-        renderer->localToContainerPoint(FloatPoint(), nullptr, 0, &inFixed);
+        renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
         
         if (inFixed && elementFrame.isMainFrame()) {

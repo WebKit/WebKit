@@ -69,7 +69,7 @@ public:
     static LayoutRect clippedOverflowRectForRepaint(const RenderElement&, const RenderLayerModelObject* repaintContainer);
     static void computeFloatRectForRepaint(const RenderElement&, const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed);
     static const RenderElement& localToParentTransform(const RenderElement&, AffineTransform &);
-    static void mapLocalToContainer(const RenderElement&, const RenderLayerModelObject* repaintContainer, TransformState&, bool* wasFixed = 0);
+    static void mapLocalToContainer(const RenderElement&, const RenderLayerModelObject* repaintContainer, TransformState&, bool* wasFixed);
     static const RenderElement* pushMappingToContainer(const RenderElement&, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&);
     static bool checkForSVGRepaintDuringLayout(const RenderElement&);
 

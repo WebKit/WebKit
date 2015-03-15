@@ -1,3 +1,75 @@
+2015-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up use of flags in localToContainer-type functions
+        https://bugs.webkit.org/show_bug.cgi?id=142704
+
+        Reviewed by Alexey Proskuryakov.
+        
+        RenderObject::localToContainerQuad() had the questionable behavior of always
+        enforcing UseTransforms in the flags. However, a future patch will need to call
+        localToContainerQuad() without this flag.
+        
+        Fix by requiring callers of localToAbsoluteQuad(), localToContainerQuad(), localToContainerPoint(),
+        and absoluteToLocalQuad() to pass the UseTransforms flag in, providing it as a default argument.
+        
+        The default value of the MapCoordinatesFlags parameter to mapLocalToContainer(),
+        a lower-level function, is removed.
+        
+        Sprinkle a few more nullptrs around.
+        
+        No behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint): call the higher-level localToContainerPoint()
+        instead of mapLocalToContainer().
+        (WebCore::RenderBlock::absoluteQuads): Pass UseTransforms.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads): Ditto.
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGeometryMap.h:
+        (WebCore::RenderGeometryMap::absolutePoint):
+        (WebCore::RenderGeometryMap::absoluteRect):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionRects): This function was erroneously passing
+        'false' as flags. Pass UseTransforms instead (but no behavior change since
+        UseTransforms was forced on lower down).
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): UseTransforms is the parameter default, remove it.
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::absoluteQuads):
+        (WebCore::RenderLineBreak::collectSelectionRects): Another erroneous 'false'.
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::absoluteQuadsForBoxInRegion):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToContainerQuad): Here's where we no longer force
+        the UseTransforms bit.
+        (WebCore::RenderObject::localToContainerPoint): Also here.
+        * rendering/RenderObject.h: I prefer bit flags lined up. Makes it easier to spot errors.
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRects): Another bad 'false'.
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::absoluteRectsForRange):
+        (WebCore::RenderTextLineBoxes::absoluteQuads):
+        (WebCore::RenderTextLineBoxes::absoluteQuadsForRange):
+        * rendering/RenderView.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::collectAbsoluteQuads):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::absoluteQuads): Another bad 'false'.
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::absoluteQuads):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.h:
+
 2015-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] scroll snap points are animating to the wrong positions...

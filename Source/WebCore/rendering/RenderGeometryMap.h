@@ -82,12 +82,12 @@ public:
 
     FloatPoint absolutePoint(const FloatPoint& p) const
     {
-        return mapToContainer(p, 0);
+        return mapToContainer(p, nullptr);
     }
 
     FloatRect absoluteRect(const FloatRect& rect) const
     {
-        return mapToContainer(rect, 0).boundingBox();
+        return mapToContainer(rect, nullptr).boundingBox();
     }
 
     // Map to a container. Will assert that the container has been pushed onto this map.
@@ -110,11 +110,11 @@ public:
     void push(const RenderObject*, const TransformationMatrix&, bool accumulatingTransform = false, bool isNonUniform = false, bool isFixedPosition = false, bool hasTransform = false);
 
     // RenderView gets special treatment, because it applies the scroll offset only for elements inside in fixed position.
-    void pushView(const RenderView*, const LayoutSize& scrollOffset, const TransformationMatrix* = 0);
+    void pushView(const RenderView*, const LayoutSize& scrollOffset, const TransformationMatrix* = nullptr);
     void pushRenderFlowThread(const RenderFlowThread*);
 
 private:
-    void mapToContainer(TransformState&, const RenderLayerModelObject* container = 0) const;
+    void mapToContainer(TransformState&, const RenderLayerModelObject* container = nullptr) const;
 
     void stepInserted(const RenderGeometryMapStep&);
     void stepRemoved(const RenderGeometryMapStep&);
