@@ -42,23 +42,18 @@
     [RaisesException] void swapCache();
     void abort();
 
-    // events
-    attribute EventListener onchecking;
-    attribute EventListener onerror;
-    attribute EventListener onnoupdate;
-    attribute EventListener ondownloading;
-    attribute EventListener onprogress;
-    attribute EventListener onupdateready;
-    attribute EventListener oncached;
-    attribute EventListener onobsolete;
+    attribute EventHandler onchecking;
+    attribute EventHandler onerror;
+    attribute EventHandler onnoupdate;
+    attribute EventHandler ondownloading;
+    attribute EventHandler onprogress;
+    attribute EventHandler onupdateready;
+    attribute EventHandler oncached;
+    attribute EventHandler onobsolete;
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

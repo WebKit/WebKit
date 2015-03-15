@@ -120,15 +120,11 @@
     readonly attribute boolean          isContentEditable;
 
     void inspect();
-#endif /* defined(LANGUAGE_OBJECTIVE_C) */
+#endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 #endif
 

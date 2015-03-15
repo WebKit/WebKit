@@ -56,18 +56,14 @@
     readonly attribute FileError error;
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 
-    attribute EventListener onloadstart;
-    attribute EventListener onprogress;
-    attribute EventListener onload;
-    attribute EventListener onabort;
-    attribute EventListener onerror;
-    attribute EventListener onloadend;
+    attribute EventHandler onloadstart;
+    attribute EventHandler onprogress;
+    attribute EventHandler onload;
+    attribute EventHandler onabort;
+    attribute EventHandler onerror;
+    attribute EventHandler onloadend;
 };

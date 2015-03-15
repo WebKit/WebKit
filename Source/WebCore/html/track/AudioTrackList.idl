@@ -34,16 +34,12 @@
     getter AudioTrack item(unsigned long index);
     AudioTrack getTrackById(DOMString id);
 
-    attribute EventListener onchange;
-    attribute EventListener onaddtrack;
-    attribute EventListener onremovetrack;
+    attribute EventHandler onchange;
+    attribute EventHandler onaddtrack;
+    attribute EventHandler onremovetrack;
 
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

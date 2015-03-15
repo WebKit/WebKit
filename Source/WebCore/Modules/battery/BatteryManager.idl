@@ -29,17 +29,13 @@
     readonly attribute unrestricted double dischargingTime;
     readonly attribute unrestricted double level;
 
-    attribute EventListener onchargingchange;
-    attribute EventListener onchargingtimechange;
-    attribute EventListener ondischargingtimechange;
-    attribute EventListener onlevelchange;
+    attribute EventHandler onchargingchange;
+    attribute EventHandler onchargingtimechange;
+    attribute EventHandler ondischargingtimechange;
+    attribute EventHandler onlevelchange;
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };

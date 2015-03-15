@@ -26,22 +26,30 @@ interface HTMLBodyElement : HTMLElement {
     [Reflect] attribute DOMString text;
     [Reflect] attribute DOMString vLink;
 
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onbeforeunload;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onblur;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onerror;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onfocus;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onhashchange;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onload;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onmessage;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onoffline;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener ononline;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onpagehide;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onpageshow;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onpopstate;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onresize;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onstorage;
-    [NotEnumerable, JSWindowEventListener] attribute EventListener onunload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onbeforeunload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusin;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusout;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onhashchange;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onmessage;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onoffline;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler ononline;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onorientationchange;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onpagehide;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onpageshow;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onpopstate;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onresize;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onstorage;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onunload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealbottom;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealleft;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealright;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitwillrevealtop;
 
-    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
+    [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
 };
 

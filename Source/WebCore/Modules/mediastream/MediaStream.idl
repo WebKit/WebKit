@@ -45,18 +45,14 @@
 
     readonly attribute boolean active;
 
-    attribute EventListener onactive;
-    attribute EventListener oninactive;
-    attribute EventListener onaddtrack;
-    attribute EventListener onremovetrack;
+    attribute EventHandler onactive;
+    attribute EventHandler oninactive;
+    attribute EventHandler onaddtrack;
+    attribute EventHandler onremovetrack;
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };
 

@@ -162,9 +162,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
         if (inDocument() && !m_lowercasedUsemap.isNull())
             document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
-    } else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
-    else if (name == compositeAttr) {
+    } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendModeNormal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))

@@ -31,21 +31,16 @@
     EventTarget,
 ] interface XMLHttpRequestUpload {
     // From XMLHttpRequestEventTarget
-    // event handler attributes
-    attribute EventListener onabort;
-    attribute EventListener onerror;
-    attribute EventListener onload;
-    attribute EventListener onloadend;
-    attribute EventListener onloadstart;
-    attribute EventListener onprogress;
+    attribute EventHandler onabort;
+    attribute EventHandler onerror;
+    attribute EventHandler onload;
+    attribute EventHandler onloadend;
+    attribute EventHandler onloadstart;
+    attribute EventHandler onprogress;
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

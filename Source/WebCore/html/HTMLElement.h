@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2009, 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,9 +99,9 @@ public:
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem() { return 0; }
 
-    static void populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>&);
-
     bool hasTagName(const HTMLQualifiedName& name) const { return hasLocalName(name.localName()); }
+
+    static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
@@ -121,6 +121,10 @@ protected:
     virtual void childrenChanged(const ChildChange&) override;
     void calculateAndAdjustDirectionality();
 
+    typedef HashMap<AtomicStringImpl*, AtomicString> EventHandlerNameMap;
+    template<size_t tableSize> static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const (&table)[tableSize]);
+    static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
+
 private:
     virtual String nodeName() const override final;
 
@@ -129,7 +133,7 @@ private:
     virtual HTMLFormElement* virtualForm() const;
 
     Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
-    RefPtr<DocumentFragment> textToFragment(const String&, ExceptionCode&);
+    Ref<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 
     void dirAttributeChanged(const AtomicString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
@@ -137,12 +141,20 @@ private:
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 
     TranslateAttributeMode translateAttributeMode() const;
+
+    static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const table[], size_t tableSize);
+    static EventHandlerNameMap createEventHandlerNameMap();
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)
     : StyledElement(tagName, document, type)
 {
     ASSERT(tagName.localName().impl());
+}
+
+template<size_t tableSize> inline void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const QualifiedName* const (&table)[tableSize])
+{
+    populateEventHandlerNameMap(map, table, tableSize);
 }
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const

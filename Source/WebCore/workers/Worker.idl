@@ -32,7 +32,7 @@
     ActiveDOMObject,
 ] interface Worker : EventTarget {
 
-    attribute EventListener onmessage;
+    attribute EventHandler onmessage;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Custom, RaisesException] void postMessage(SerializedScriptValue message, optional Array messagePorts);

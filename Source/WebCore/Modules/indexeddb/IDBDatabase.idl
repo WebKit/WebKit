@@ -41,9 +41,9 @@
     [CallWith=ScriptExecutionContext, RaisesException] IDBTransaction transaction(sequence<DOMString> storeNames, [Default=NullString] optional DOMString mode);
     void close();
 
-    attribute EventListener onabort;
-    attribute EventListener onerror;
-    attribute EventListener onversionchange;
+    attribute EventHandler onabort;
+    attribute EventHandler onerror;
+    attribute EventHandler onversionchange;
 
 };
 

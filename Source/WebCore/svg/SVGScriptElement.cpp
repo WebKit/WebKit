@@ -55,62 +55,24 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
-bool SVGScriptElement::isSupportedAttribute(const QualifiedName& attrName)
-{
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::typeAttr);
-        supportedAttributes.get().add(HTMLNames::onerrorAttr);
-    }
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
-}
-
 void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(name)) {
-        SVGElement::parseAttribute(name, value);
-        return;
-    }
-
-    if (name == SVGNames::typeAttr)
-        return;
-
-    if (name == HTMLNames::onerrorAttr) {
-        setAttributeEventListener(eventNames().errorEvent, name, value);
-        return;
-    }
-
-    if (SVGURIReference::parseAttribute(name, value))
-        return;
-    if (SVGExternalResourcesRequired::parseAttribute(name, value))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGElement::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
-        return;
-    }
-
     InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::typeAttr || attrName == HTMLNames::onerrorAttr)
-        return;
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         handleSourceAttribute(href());
         return;
     }
 
-    if (SVGExternalResourcesRequired::handleAttributeChange(this, attrName))
-        return;
-
-    ASSERT_NOT_REACHED();
+    SVGExternalResourcesRequired::handleAttributeChange(this, attrName);
+    SVGElement::svgAttributeChanged(attrName);
 }
 
 Node::InsertionNotificationRequest SVGScriptElement::insertedInto(ContainerNode& rootParent)

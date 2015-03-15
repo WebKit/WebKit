@@ -40,17 +40,12 @@
     [RaisesException] void update(Uint8Array key);
     void close();
     
-    // EventListeners
-    attribute EventListener onwebkitkeyadded;
-    attribute EventListener onwebkitkeyerror;
-    attribute EventListener onwebkitkeymessage;
+    attribute EventHandler onwebkitkeyadded;
+    attribute EventHandler onwebkitkeyerror;
+    attribute EventHandler onwebkitkeymessage;
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

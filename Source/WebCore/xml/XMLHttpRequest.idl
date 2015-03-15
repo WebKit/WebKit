@@ -44,17 +44,15 @@ enum XMLHttpRequestResponseType {
     EventTarget,
 ] interface XMLHttpRequest {
     // From XMLHttpRequestEventTarget
-    // event handler attributes
-    attribute EventListener onabort;
-    attribute EventListener onerror;
-    attribute EventListener onload;
-    attribute EventListener onloadend;
-    attribute EventListener onloadstart;
-    attribute EventListener onprogress;
-    [Conditional=XHR_TIMEOUT] attribute EventListener ontimeout;
+    attribute EventHandler onabort;
+    attribute EventHandler onerror;
+    attribute EventHandler onload;
+    attribute EventHandler onloadend;
+    attribute EventHandler onloadstart;
+    attribute EventHandler onprogress;
+    [Conditional=XHR_TIMEOUT] attribute EventHandler ontimeout;
 
-    // event handler attributes
-    attribute EventListener onreadystatechange;
+    attribute EventHandler onreadystatechange;
 
     // state
     const unsigned short UNSENT = 0;
@@ -95,11 +93,7 @@ enum XMLHttpRequestResponseType {
     [RaisesException] void overrideMimeType(DOMString override);
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

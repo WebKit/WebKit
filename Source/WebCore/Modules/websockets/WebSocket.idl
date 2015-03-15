@@ -53,10 +53,10 @@
     readonly attribute unsigned long bufferedAmount;
 
     // networking
-    attribute EventListener onopen;
-    attribute EventListener onmessage;
-    attribute EventListener onerror;
-    attribute EventListener onclose;
+    attribute EventHandler onopen;
+    attribute EventHandler onmessage;
+    attribute EventHandler onerror;
+    attribute EventHandler onclose;
 
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString protocol;
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString extensions;
@@ -71,11 +71,7 @@
     [RaisesException] void close([Clamp] optional unsigned short code, optional DOMString reason);
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

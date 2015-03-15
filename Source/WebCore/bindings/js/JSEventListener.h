@@ -82,8 +82,12 @@ JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomicString& eventType);
 void setEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, EventTarget&, const AtomicString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-JSC::JSValue windowForwardedEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
-void setWindowForwardedEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
+JSC::JSValue windowEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
+void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
+
+// Like the functions above, but for attributes that forward event handlers to the document rather than setting them on the target.
+JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
+void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
 
 Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
 Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);

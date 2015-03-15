@@ -1228,7 +1228,7 @@
 // Protocols
 
 @protocol DOMEventListener <NSObject> 10_4
-- (void)handleEvent:(DOMEvent *)evt;
+- (void)handleEvent:(DOMEvent *)event;
 @end
 
 @protocol DOMEventTarget <NSObject, NSCopying> 10_4

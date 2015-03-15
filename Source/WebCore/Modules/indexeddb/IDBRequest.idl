@@ -40,6 +40,6 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute DOMString readyState;
 
-    attribute EventListener onsuccess;
-    attribute EventListener onerror;
+    attribute EventHandler onsuccess;
+    attribute EventHandler onerror;
 };

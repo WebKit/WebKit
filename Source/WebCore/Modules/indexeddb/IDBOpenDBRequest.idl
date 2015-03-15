@@ -29,6 +29,6 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface IDBOpenDBRequest : IDBRequest {
-    attribute EventListener onblocked;
-    attribute EventListener onupgradeneeded;
+    attribute EventHandler onblocked;
+    attribute EventHandler onupgradeneeded;
 };

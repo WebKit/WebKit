@@ -237,9 +237,7 @@ sub SkipAttribute {
         return 1;
     }
 
-    if ($attribute->signature->type eq "EventListener") {
-        return 1;
-    }
+    return 1 if $attribute->signature->type eq "EventHandler";
 
     if ($attribute->signature->type eq "MediaQueryListListener") {
         return 1;

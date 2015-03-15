@@ -53,5 +53,5 @@
     [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteGrainOn(unrestricted double when, unrestricted double grainOffset, unrestricted double grainDuration);
     [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(unrestricted double when);
     
-    attribute EventListener onended;
+    attribute EventHandler onended;
 };

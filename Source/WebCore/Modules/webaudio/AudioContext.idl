@@ -83,7 +83,7 @@
 
     // Offline rendering
     // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
-    attribute EventListener oncomplete;
+    attribute EventHandler oncomplete;
     void startRendering();
 
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();

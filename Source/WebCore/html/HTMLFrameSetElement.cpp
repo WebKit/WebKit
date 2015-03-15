@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLBodyElement.h"
 #include "HTMLNames.h"
 #include "Length.h"
 #include "MouseEvent.h"
@@ -81,16 +82,28 @@ void HTMLFrameSetElement::collectStyleForPresentationAttribute(const QualifiedNa
 void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == rowsAttr) {
+        // FIXME: What is the right thing to do when removing this attribute?
+        // Why not treat it the same way we treat setting it to the empty string?
         if (!value.isNull()) {
             m_rowLengths = newLengthArray(value.string(), m_totalRows);
+            // FIXME: Would be nice to optimize the case where m_rowLengths did not change.
             setNeedsStyleRecalc();
         }
-    } else if (name == colsAttr) {
+        return;
+    }
+
+    if (name == colsAttr) {
+        // FIXME: What is the right thing to do when removing this attribute?
+        // Why not treat it the same way we treat setting it to the empty string?
         if (!value.isNull()) {
             m_colLengths = newLengthArray(value.string(), m_totalCols);
+            // FIXME: Would be nice to optimize the case where m_colLengths did not change.
             setNeedsStyleRecalc();
         }
-    } else if (name == frameborderAttr) {
+        return;
+    }
+
+    if (name == frameborderAttr) {
         if (!value.isNull()) {
             if (equalIgnoringCase(value, "no") || equalIgnoringCase(value, "0")) {
                 m_frameborder = false;
@@ -102,50 +115,40 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const Atomic
             m_frameborder = false;
             m_frameborderSet = false;
         }
-    } else if (name == noresizeAttr) {
+        // FIXME: Do we need to trigger repainting?
+        return;
+    }
+
+    if (name == noresizeAttr) {
+        // FIXME: This should set m_noresize to false if the value is null.
         m_noresize = true;
-    } else if (name == borderAttr) {
+        return;
+    }
+
+    if (name == borderAttr) {
         if (!value.isNull()) {
             m_border = value.toInt();
             m_borderSet = true;
         } else
             m_borderSet = false;
-    } else if (name == bordercolorAttr)
+        // FIXME: Do we need to trigger repainting?
+        return;
+    }
+
+    if (name == bordercolorAttr) {
         m_borderColorSet = !value.isEmpty();
-    else if (name == onloadAttr)
-        document().setWindowAttributeEventListener(eventNames().loadEvent, name, value);
-    else if (name == onbeforeunloadAttr)
-        document().setWindowAttributeEventListener(eventNames().beforeunloadEvent, name, value);
-    else if (name == onunloadAttr)
-        document().setWindowAttributeEventListener(eventNames().unloadEvent, name, value);
-    else if (name == onblurAttr)
-        document().setWindowAttributeEventListener(eventNames().blurEvent, name, value);
-    else if (name == onfocusAttr)
-        document().setWindowAttributeEventListener(eventNames().focusEvent, name, value);
-    else if (name == onfocusinAttr)
-        document().setWindowAttributeEventListener(eventNames().focusinEvent, name, value);
-    else if (name == onfocusoutAttr)
-        document().setWindowAttributeEventListener(eventNames().focusoutEvent, name, value);
-#if ENABLE(ORIENTATION_EVENTS)
-    else if (name == onorientationchangeAttr)
-        document().setWindowAttributeEventListener(eventNames().orientationchangeEvent, name, value);
-#endif
-    else if (name == onhashchangeAttr)
-        document().setWindowAttributeEventListener(eventNames().hashchangeEvent, name, value);
-    else if (name == onresizeAttr)
-        document().setWindowAttributeEventListener(eventNames().resizeEvent, name, value);
-    else if (name == onscrollAttr)
-        document().setWindowAttributeEventListener(eventNames().scrollEvent, name, value);
-    else if (name == onstorageAttr)
-        document().setWindowAttributeEventListener(eventNames().storageEvent, name, value);
-    else if (name == ononlineAttr)
-        document().setWindowAttributeEventListener(eventNames().onlineEvent, name, value);
-    else if (name == onofflineAttr)
-        document().setWindowAttributeEventListener(eventNames().offlineEvent, name, value);
-    else if (name == onpopstateAttr)
-        document().setWindowAttributeEventListener(eventNames().popstateEvent, name, value);
-    else
-        HTMLElement::parseAttribute(name, value);
+        // FIXME: Clearly wrong: This can overwrite the value inherited from the parent frameset.
+        // FIXME: Do we need to trigger repainting?
+        return;
+    }
+
+    auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name);
+    if (!eventName.isNull()) {
+        document().setWindowAttributeEventListener(eventName, name, value);
+        return;
+    }
+
+    HTMLElement::parseAttribute(name, value);
 }
 
 bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)

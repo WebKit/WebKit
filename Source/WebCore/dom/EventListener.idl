@@ -24,6 +24,5 @@
     ObjCProtocol,
     CPPPureInterface,
 ] interface EventListener {
-    void               handleEvent(Event evt);
+    void handleEvent(Event event);
 };
-

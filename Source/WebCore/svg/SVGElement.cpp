@@ -510,9 +510,12 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 
 void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == HTMLNames::classAttr)
+    if (name == HTMLNames::classAttr) {
         setClassNameBaseValue(value);
-    else if (name == HTMLNames::tabindexAttr) {
+        return;
+    }
+
+    if (name == HTMLNames::tabindexAttr) {
         int tabindex = 0;
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
@@ -520,21 +523,16 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(std::max(static_cast<int>(std::numeric_limits<short>::min()), std::min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
-    } else if (SVGLangSpace::parseAttribute(name, value))
         return;
-    else {
-        // FIXME: Can we do this even faster by checking the local name "on" prefix before we do anything with the map?
-        // See HTMLElement::parseAttribute().
-        static NeverDestroyed<HashMap<AtomicStringImpl*, AtomicString>> eventNamesGlobal;
-        auto& eventNames = eventNamesGlobal.get();
-        if (eventNames.isEmpty())
-            HTMLElement::populateEventNameForAttributeLocalNameMap(eventNames);
-        const AtomicString& eventName = eventNames.get(name.localName().impl());
-        if (!eventName.isNull())
-            setAttributeEventListener(eventName, name, value);
-        else
-            StyledElement::parseAttribute(name, value);
     }
+
+    auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
+    if (!eventName.isNull()) {
+        setAttributeEventListener(eventName, name, value);
+        return;
+    }
+
+    SVGLangSpace::parseAttribute(name, value);
 }
 
 Vector<AnimatedPropertyType> SVGElement::animatedPropertyTypesForAttribute(const QualifiedName& attributeName)

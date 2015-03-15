@@ -160,8 +160,6 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         process();
     } else if (name == disabledAttr)
         setDisabledState(!value.isNull());
-    else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else {
         if (name == titleAttr && m_sheet)
             m_sheet->setTitle(value);

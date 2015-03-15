@@ -111,7 +111,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
 
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    attribute EventListener onfoo;
+    attribute EventHandler onfoo;
 
     // 'CallWith' extended attribute
     [CallWith=ScriptState] void withScriptStateVoid();

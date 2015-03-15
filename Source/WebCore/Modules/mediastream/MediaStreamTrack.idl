@@ -34,15 +34,15 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     readonly attribute DOMString kind;
     readonly attribute DOMString id;
     readonly attribute DOMString label;
-             attribute boolean enabled;
+    attribute boolean enabled;
     readonly attribute boolean muted;
-    attribute EventListener onmute;
-    attribute EventListener onunmute;
+    attribute EventHandler onmute;
+    attribute EventHandler onunmute;
     readonly attribute boolean _readonly;
     readonly attribute boolean remote;
     readonly attribute MediaStreamTrackState readyState;
-    attribute EventListener onstarted;
-    attribute EventListener onended;
+    attribute EventHandler onstarted;
+    attribute EventHandler onended;
 
     [CallWith=ScriptExecutionContext, RaisesException] static void getSources(MediaStreamTrackSourcesCallback callback);
 
@@ -54,17 +54,13 @@ enum MediaStreamTrackState { "new", "live", "ended" };
 
     void applyConstraints(Dictionary constraints);
 
-    attribute EventListener onoverconstrained;
+    attribute EventHandler onoverconstrained;
     MediaStreamTrack clone();
     [ImplementedAs=stopProducingData] void stop();
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };
 

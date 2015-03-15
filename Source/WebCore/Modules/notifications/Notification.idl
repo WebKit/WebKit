@@ -39,42 +39,25 @@
 #endif
 ] interface Notification {
     void show();
-#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    void cancel();
-#endif
-#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-    void close();
-#endif
+    [Conditional=LEGACY_NOTIFICATIONS] void cancel();
+    [Conditional=NOTIFICATIONS] void close();
 
+    [Conditional=NOTIFICATIONS, CallWith=ScriptExecutionContext] static readonly attribute DOMString permission;
+    [Conditional=NOTIFICATIONS, CallWith=ScriptExecutionContext] static void requestPermission(optional NotificationPermissionCallback callback);
 
-#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-    [CallWith=ScriptExecutionContext] static readonly attribute DOMString permission;
-    [CallWith=ScriptExecutionContext] static void requestPermission(optional NotificationPermissionCallback callback);
-#endif
+    attribute EventHandler onclick;
+    attribute EventHandler onclose;
+    attribute EventHandler ondisplay;
+    attribute EventHandler onerror;
+    attribute EventHandler onshow;
 
-    attribute EventListener onshow;
-#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    attribute EventListener ondisplay;
-#endif
-    attribute EventListener onerror;
-    attribute EventListener onclose;
-    attribute EventListener onclick;
-
-#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    attribute DOMString dir;
-    attribute DOMString replaceId;
-#endif
-#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-    attribute DOMString tag;
-#endif
+    [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString dir;
+    [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString replaceId;
+    [Conditional=NOTIFICATIONS] attribute DOMString tag;
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

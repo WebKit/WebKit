@@ -1,3 +1,17 @@
+2015-03-14  Darin Adler  <darin@apple.com>
+
+        More event handler improvements
+        https://bugs.webkit.org/show_bug.cgi?id=142701
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/event-handler-attributes-expected.txt: Updated to expect more passing tests,
+        and to accomodate some changes to what's tested and expected.
+
+        * fast/dom/event-handler-attributes.html: Update test to cover more events since we
+        no longer compile the event handlers conditionally; it's OK to have some handlers for
+        events even if the features in question aren't turned on.
+
 2015-03-15  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] REGRESSION (r181191): Add results for css3/blending/svg-blend-plus-lighter.html

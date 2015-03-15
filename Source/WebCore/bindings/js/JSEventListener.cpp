@@ -24,6 +24,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "HTMLElement.h"
+#include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
@@ -204,16 +205,31 @@ void setEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, Eve
     target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, wrapper));
 }
 
-JSC::JSValue windowForwardedEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
+JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
 {
     auto& document = element.document();
     return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType), document);
 }
 
-void setWindowForwardedEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
+void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
 {
     ASSERT(wrapper.globalObject());
     element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *wrapper.globalObject()));
+}
+
+JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
+{
+    auto& document = element.document();
+    return eventHandlerAttribute(document.getAttributeEventListener(eventType), document);
+}
+
+void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
+{
+    ASSERT(wrapper.globalObject());
+    auto& document = element.document();
+    auto* documentWrapper = jsDocumentCast(toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
+    ASSERT(documentWrapper);
+    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *documentWrapper));
 }
 
 } // namespace WebCore

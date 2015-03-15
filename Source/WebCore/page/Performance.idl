@@ -47,7 +47,7 @@
     void webkitClearResourceTimings();
     void webkitSetResourceTimingBufferSize(unsigned long maxSize);
 
-    attribute EventListener onwebkitresourcetimingbufferfull;
+    attribute EventHandler onwebkitresourcetimingbufferfull;
 #endif
 
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/

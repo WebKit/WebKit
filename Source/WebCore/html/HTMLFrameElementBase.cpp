@@ -118,11 +118,6 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         else if (equalIgnoringCase(value, "no"))
             m_scrolling = ScrollbarAlwaysOff;
         // FIXME: If we are already attached, this has no effect.
-    } else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
-    else if (name == onbeforeunloadAttr) {
-        // FIXME: should <frame> elements have beforeunload handlers?
-        setAttributeEventListener(eventNames().beforeunloadEvent, name, value);
     } else
         HTMLFrameOwnerElement::parseAttribute(name, value);
 }

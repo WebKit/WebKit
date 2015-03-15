@@ -1,3 +1,249 @@
+2015-03-14  Darin Adler  <darin@apple.com>
+
+        More event handler improvements
+        https://bugs.webkit.org/show_bug.cgi?id=142701
+
+        Reviewed by Anders Carlsson.
+
+        These are the improvements:
+
+        - Use EventHandler rather than EventListener as the the type for event handler
+          attributes. This matches the HTML specification, and also makes sense, since
+          EventListener means something else (and we use it to mean that!). Also renamed
+          JSWindowEventListener to WindowEventHandler. Even though this only affects the
+          JavaScript code generated, it's not really a JavaScript-specific flag.
+
+        - Tweak formatting on addEventListener/removeEventListener/dispatchEvent in
+          all the IDL files where the appear. This includes changing the spelling from
+          "evt" to "event". Some day we should fix this so these functions only need to
+          appear in EventTarget.idl.
+
+        - Tweak formatting a bit on the IDL files we had to modify anyway.
+
+        - Use [Conditional] more often and #if less often in IDL files.
+
+        - Added a new [DocumentEventHandler] attribute for the selectionchange event.
+          This involved adding new event handler attribute functions to JSEventListener.h
+          for use by the JavaScript bindings.
+
+        - Removed a little unused code from the JavaScript code bindings generator.
+
+        - Improved the mechanism used by HTMLElement and SVGElement to share the list of
+          content attributes that are event handlers so there is only one map rather than
+          two. Made a similar mechanism so that HTMLBodyElement and HTMLFrameSetElement
+          can share the list of window event handlers.
+
+        - Followed the HTML specification by putting all the event handler support in
+          the HTMLElement class rather than having event handlers apply only a the
+          particular element that uses those events. We already did this for most of
+          our event handlers, but we are now doing it for all of them.
+
+        * Modules/battery/BatteryManager.idl: Use EventHandler instead of EventListener
+        as appropriate. Also reformatted addEventListener/removeEventListener/dispatchEvent.
+        * Modules/encryptedmedia/MediaKeySession.idl: Ditto.
+        * Modules/indexeddb/IDBDatabase.idl: Ditto.
+        * Modules/indexeddb/IDBOpenDBRequest.idl: Ditto.
+        * Modules/indexeddb/IDBRequest.idl: Ditto.
+        * Modules/indexeddb/IDBTransaction.idl: Ditto.
+        * Modules/mediastream/MediaStream.idl: Ditto.
+        * Modules/mediastream/MediaStreamTrack.idl: Ditto.
+        * Modules/mediastream/RTCDTMFSender.idl: Ditto.
+        * Modules/mediastream/RTCDataChannel.idl: Ditto.
+        * Modules/mediastream/RTCPeerConnection.idl: Ditto.
+        * Modules/speech/SpeechSynthesisUtterance.idl: Ditto.
+        * Modules/webaudio/AudioBufferSourceNode.idl: Ditto.
+        * Modules/webaudio/AudioContext.idl: Ditto.
+        * Modules/webaudio/OscillatorNode.idl: Ditto.
+        * Modules/webaudio/ScriptProcessorNode.idl: Ditto.
+        * Modules/websockets/WebSocket.idl: Ditto.
+        * css/FontLoader.idl: Ditto.
+        * dom/EventListener.idl: Ditto.
+        * dom/EventTarget.idl: Ditto.
+        * dom/MessagePort.idl: Ditto.
+        * dom/Node.idl: Ditto.
+        * dom/WebKitNamedFlow.idl: Ditto.
+        * fileapi/FileReader.idl: Ditto.
+        * html/MediaController.idl: Ditto.
+        * html/track/AudioTrackList.idl: Ditto.
+        * html/track/TextTrackCue.idl: Ditto.
+        * html/track/TextTrackList.idl: Ditto.
+        * html/track/VideoTrackList.idl: Ditto.
+        * loader/appcache/DOMApplicationCache.idl: Ditto.
+        * page/EventSource.idl: Ditto.
+        * page/Performance.idl: Ditto.
+        * workers/AbstractWorker.idl: Ditto.
+        * workers/DedicatedWorkerGlobalScope.idl: Ditto.
+        * workers/Worker.idl: Ditto.
+        * workers/WorkerGlobalScope.idl: Ditto.
+        * xml/XMLHttpRequest.idl: Ditto.
+        * xml/XMLHttpRequestUpload.idl: Ditto.
+
+        * Modules/notifications/Notification.idl: Did the above, but also used
+        [Conditional] instead of #if throughout.
+        * html/track/TextTrack.idl: Ditto.
+
+        * Modules/webaudio/AudioNode.idl: Tweaked paragraphing of this file.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::windowEventHandlerAttribute): Renamed to take the word "forwarded"
+        out of this. More closely matches the terminology used in IDL files and the
+        HTML specification.
+        (WebCore::setWindowEventHandlerAttribute): Ditto.
+        (WebCore::documentEventHandlerAttribute): Added.
+        (WebCore::setDocumentEventHandlerAttribute): Added.
+        * bindings/js/JSEventListener.h: Updated for above changes.
+
+        * bindings/objc/PublicDOMInterfaces.h: Renamed argument from "evt" to "event".
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipAttribute): Skip attributes of type "EventHandler" rather than attributes
+        of type "EventListener".
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (SkipAttribute): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Look for the type EventHandler instead of the type
+        EventListener for event handler attributes. Also added code to handle the new
+        DocumentEventHandler, and use the name WindowEventHandler instead of the name
+        JSWindowEventListener. Removed unneeded preflight check to see if we have
+        writable attributes; it was not doing us any good. (That caused a lot of code
+        to be un-indented and makes the diff hard to read.)
+
+        * bindings/scripts/IDLAttributes.txt: Removed JSWindowEventListener, and added
+        WindowEventHandler and DocumentEventHandler.
+
+        * bindings/scripts/test/TestObj.idl: Use the type EventHandler instead of the
+        type EventListener. The test output is unchanged, though.
+
+        * dom/Document.idl: Got rid of the conditionals and merged all the event handler
+        attributes into a single sorted, unconditional list. Added some that were missing,
+        as detected by the event-handler-attributes.html test.
+
+        * dom/Element.idl: Ditto. This includes moving attributes here that were formerly
+        only in certain element classes. Note that the script event handler attribute
+        support is still here, even though it should be in HTMLElement and SVGElement
+        instead. There's a FIXME about that, but no real urgency in fixing it.
+
+        * html/HTMLAttributeNames.in: Added onmessage. Previously, the support for this
+        was from the script attribute only, not the content attribute.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createWindowEventHandlerNameMap): Added. This
+        contains the list of all the window event handlers that can be set on a body
+        or frameset element and which are triggered by events on the window.
+        (WebCore::HTMLBodyElement::eventNameForWindowEventHandlerAttribute): Added.
+        This is the function to call to use the map above. Given an attribute, it
+        returns either null if it is not a window event handler attribute, or the
+        event type if it is one.
+        (WebCore::HTMLBodyElement::parseAttribute): Updated to use the new
+        functions above. Handling of these attributes is now unconditional, but
+        also we don't have to keep the nested if statements here up to date, just
+        the list of event handler attributes names in the map create function above.
+
+        * html/HTMLBodyElement.h: Added public eventNameForWindowEventHandlerAttribute
+        and private createWindowEventHandlerNameMap functions.
+
+        * html/HTMLBodyElement.idl: Updated to use WindowEventHandler, DocumentEventHandler,
+        and EventHandler. Also made everything unconditional. Also filled out the list here
+        to match the list handled as content attributes. All covered by the test.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap): Added. Replaces the old
+        populate function. Changed the list of event handler attributes to be a bit more
+        complete, and to be entirely unconditional. Also refactored this function to use
+        a new populateEventHandlerNameMap helper, shared with HTMLBodyElement.
+        (WebCore::HTMLElement::populateEventHandlerNameMap): Added. Factors out the code
+        that both this class and HTMLBodyElement use to build event handler name maps.
+        (WebCore::HTMLElement::eventNameForEventHandlerAttribute): Added. This is the
+        function that call to use the map above. Given an attribute it returns either
+        null if it is not an event handler attribute, or the event type if it is one.
+        This is actually two functions. One is a protected function for use by both this
+        class and HTMLBodyElement so they can share things like the optimization to look
+        for the "on" prefix. The other is the public function that we actually use in
+        HTMLElement and SVGElement.
+        (WebCore::HTMLElement::editabilityFromContentEditableAttr): Tweaked and refactored
+        to use lineageOfType. Would have been even simpler if this took an element instead
+        of a node. Unrelated to the event handler changes.
+        (WebCore::HTMLElement::parseAttribute): Removed long-obsolete code that decided
+        whether to call through to the base class. The base class function is empty and
+        never needs to be called, and in any case there is no value in doing work to
+        decide whether to call through to an empty function. Changed the style of the
+        function to use early return instead of else. Worth considering whether we want
+        to return early or call through to base class in this family of functions. It's
+        more efficient to return early, but doesn't work well if both the derived class
+        and base class want to respond to changes to the same attribute. The new logic
+        for event handler attributes is more straightforward than the old, since the
+        eventNameForEventHandlerAttribute has the logic.
+        (WebCore::HTMLElement::textToFragment): Tweaked and refactored a bit, and also
+        changed to return a Ref since this never fails and needs to return null.
+
+        * html/HTMLElement.h: Updated for above changes. This includes a template version
+        of populateEventHandlerNameMap that extracts the array size at compile time and
+        passes it to the non-template function that does the work.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute): Removed unneeded code to handle
+        event handler attributes handled by HTMLElement.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Ditto.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute): Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute): Ditto.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseAttribute): Ditto.
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute): Changed function to early return
+        style, and added FIXMEs about the many problems in the attribute handling code.
+        Replaced all the code to handle window event handlers with a new bit of code that
+        calls HTMLBodyElement::eventNameForWindowEventHandlerAttribute.
+
+        * html/HTMLFrameSetElement.idl: Changed to match the list of window event handlers
+        in HTMLBodyElement.idl, although I did not add the document event handler here.
+        As in the various other cases, having some extra event handlers does not seem to
+        do harm and this is covered by the event-handler-attributes.html test.
+
+        * html/HTMLMarqueeElement.idl: Renamed EventListener to EventHandler in comment.
+
+        * page/DOMWindow.idl: As with Element and Document, removed conditionals, and
+        filled out the list of event handlers so all the tests in
+        event-handler-attributes.html will pass.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute): Changed code to the early return style,
+        and replaced the event handler attribute code with new much simpler code that
+        uses the new HTMLElement::eventNameForEventHandlerAttribute. Also changed the
+        way we call through to base classes. Just call through to the
+        SVGLangSpace::parseAttribute function unconditionally, and don't try to use
+        early return style to arbitrate among base classes. We should make this
+        simplification throughout the SVG code; there's no need for the complexity
+        that was there before just to cut down slightly on calls through to base
+        class parseAttribute functions.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute): Changed some of this code to the
+        early return style and corrected some comments about the window event handler
+        attributes here. These could use some further testing and might later need to be
+        properly supported when the attributes are set in script, not just in content.
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGScriptElement::parseAttribute): Changed this function to use the
+        early return style and also to call through to all three base classes. This is
+        a pattern we should follow elsewhere in SVG to simplify the code. There is no
+        need for the supportedAttributes sets like the one in this calass, and the code
+        is unnecessarily complex, perhaps in an attempt to optimize performance. I'm
+        pretty sure the old code was slower than this new code will be. No need for the
+        extra hash table lookup every time. Also removed handling of event handler
+        attribute which is taken care of by SVGElement now.
+        (WebCore::SVGScriptElement::svgAttributeChanged): Made similar changes for
+        the same reason as in parseAttribute. This function really needs a new name:
+        It's the same as parseAttribute, except it's also used when implementing
+        changes due to SVG animation.
+
+        * svg/SVGScriptElement.h: Removed isSupportedAttribute.
+
 2015-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up use of flags in localToContainer-type functions

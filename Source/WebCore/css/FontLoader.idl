@@ -36,22 +36,18 @@
     GenerateIsReachable=ImplDocument,
 ] interface FontLoader {
 
-    attribute EventListener onloading;
-    attribute EventListener onloadingdone;
-    attribute EventListener onloadstart;
-    attribute EventListener onload;
-    attribute EventListener onerror;
+    attribute EventHandler onloading;
+    attribute EventHandler onloadingdone;
+    attribute EventHandler onloadstart;
+    attribute EventHandler onload;
+    attribute EventHandler onerror;
 
     boolean checkFont(DOMString font, [Default=NullString] optional DOMString text);
     void loadFont(Dictionary params);
     void notifyWhenFontsReady(VoidCallback callback);
     readonly attribute boolean loading;
 
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

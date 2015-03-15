@@ -37,14 +37,10 @@
 
     [RaisesException] void insertDTMF(DOMString tones, optional long duration, optional long interToneGap);
 
-    attribute EventListener ontonechange;
+    attribute EventHandler ontonechange;
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };

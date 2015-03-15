@@ -36,20 +36,16 @@
     attribute unrestricted float rate;
     attribute unrestricted float pitch;
 
-    attribute EventListener onstart;
-    attribute EventListener onend;
-    attribute EventListener onerror;
-    attribute EventListener onpause;
-    attribute EventListener onresume;
-    attribute EventListener onmark;
-    attribute EventListener onboundary;
+    attribute EventHandler onstart;
+    attribute EventHandler onend;
+    attribute EventHandler onerror;
+    attribute EventHandler onpause;
+    attribute EventHandler onresume;
+    attribute EventHandler onmark;
+    attribute EventHandler onboundary;
 
     // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

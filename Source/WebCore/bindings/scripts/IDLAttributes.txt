@@ -55,6 +55,7 @@ DoNotCheckConstants
 DoNotCheckSecurity
 DoNotCheckSecurityOnGetter
 DoNotCheckSecurityOnSetter
+DocumentEventHandler
 EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
@@ -82,7 +83,6 @@ JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
 JSLegacyParent=*
-JSWindowEventListener
 MasqueradesAsUndefined
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
@@ -115,6 +115,7 @@ TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL
+WindowEventHandler
 
 # PLATFORM(IOS)
 AppleCopyright

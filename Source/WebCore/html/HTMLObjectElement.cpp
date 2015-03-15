@@ -128,9 +128,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     } else if (name == classidAttr) {
         invalidateRenderer = true;
         setNeedsWidgetUpdate(true);
-    } else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
-    else
+    } else
         HTMLPlugInImageElement::parseAttribute(name, value);
 
     if (!invalidateRenderer || !inDocument() || !renderer())

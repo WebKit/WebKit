@@ -215,6 +215,7 @@ onload
 onloadeddata
 onloadedmetadata
 onloadstart
+onmessage
 onmousedown
 onmouseenter
 onmouseleave

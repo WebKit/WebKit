@@ -25,6 +25,8 @@ const windowEvents = [
     "click",
     "contextmenu",
     "dblclick",
+    "devicemotion",
+    "deviceorientation",
     "drag",
     "dragend",
     "dragenter",
@@ -37,6 +39,9 @@ const windowEvents = [
     "ended",
     "error",
     "focus",
+    "gesturechange",
+    "gestureend",
+    "gesturestart",
     "hashchange",
     "input",
     "invalid",
@@ -58,6 +63,7 @@ const windowEvents = [
     "mousewheel",
     "offline",
     "online",
+    "orientationchange",
     "pagehide",
     "pageshow",
     "pause",
@@ -78,6 +84,10 @@ const windowEvents = [
     "submit",
     "suspend",
     "timeupdate",
+    "touchcancel",
+    "touchend",
+    "touchmove",
+    "touchstart",
     "transitionend",
     "unload",
     "volumechange",
@@ -85,7 +95,12 @@ const windowEvents = [
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
+    "webkitdeviceproximity",
     "webkittransitionend",
+    "webkitwillrevealbottom",
+    "webkitwillrevealleft",
+    "webkitwillrevealright",
+    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -125,14 +140,27 @@ const documentEvents = [
     "mouseup",
     "mousewheel",
     "paste",
+    "pointerlockchange",
+    "pointerlockerror",
     "readystatechange",
     "reset",
     "scroll",
     "search",
+    "securitypolicyviolation",
     "select",
     "selectionchange",
     "selectstart",
     "submit",
+    "touchcancel",
+    "touchend",
+    "touchmove",
+    "touchstart",
+    "webkitfullscreenchange",
+    "webkitfullscreenerror",
+    "webkitwillrevealbottom",
+    "webkitwillrevealleft",
+    "webkitwillrevealright",
+    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -141,6 +169,8 @@ const elementEvents = [
     "animationend",
     "animationiteration",
     "animationstart",
+    "autocomplete",
+    "autocompleteerror",
     "beforecopy",
     "beforecut",
     "beforeload",
@@ -168,6 +198,9 @@ const elementEvents = [
     "focus",
     "focusin",
     "focusout",
+    "gesturechange",
+    "gestureend",
+    "gesturestart",
     "input",
     "invalid",
     "keydown",
@@ -212,7 +245,20 @@ const elementEvents = [
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
+    "webkitcurrentplaybacktargetiswirelesschanged",
+    "webkitfullscreenchange",
+    "webkitfullscreenerror",
+    "webkitkeyadded",
+    "webkitkeyerror",
+    "webkitkeymessage",
+    "webkitneedkey",
+    "webkitplaybacktargetavailabilitychanged",
+    "webkitpresentationmodechanged",
     "webkittransitionend",
+    "webkitwillrevealbottom",
+    "webkitwillrevealleft",
+    "webkitwillrevealright",
+    "webkitwillrevealtop",
     "wheel",
 ];
 
@@ -221,17 +267,24 @@ const bodyElementWindowForwardedEvents = [
     "blur",
     "error",
     "focus",
+    "focusin",
+    "focusout",
     "hashchange",
     "load",
     "message",
     "offline",
     "online",
+    "orientationchange",
     "pagehide",
     "pageshow",
     "popstate",
     "resize",
     "storage",
     "unload",
+    "webkitwillrevealbottom",
+    "webkitwillrevealleft",
+    "webkitwillrevealright",
+    "webkitwillrevealtop",
 ];
 
 const bodyElementDocumentForwardedEvents = [
@@ -417,52 +470,6 @@ endSection();
 To make the results of this test platform independent, there is no testing here for conditional events.
 An alternative would be to always make these event handler attributes work even if the feature
 that sends the events is turned off. See list here of IDL files that include these conditional events.
-
-page/DOMWindow.idl:    [Conditional=ORIENTATION_EVENTS] attribute EventListener onorientationchange;
-page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
-page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
-page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
-page/DOMWindow.idl:    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
-page/DOMWindow.idl:    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturestart;
-page/DOMWindow.idl:    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturechange;
-page/DOMWindow.idl:    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongestureend;
-page/DOMWindow.idl:    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondevicemotion;
-page/DOMWindow.idl:    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondeviceorientation;
-page/DOMWindow.idl:    [Conditional=PROXIMITY_EVENTS] attribute EventListener onwebkitdeviceproximity;
-page/DOMWindow.idl:    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
-page/DOMWindow.idl:    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
-page/DOMWindow.idl:    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
-page/DOMWindow.idl:    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
-
-dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
-dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
-dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
-dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
-dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
-dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
-dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onpointerlockchange;
-dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onpointerlockerror;
-dom/Document.idl:    [NotEnumerable, Conditional=CSP_NEXT] attribute EventListener onsecuritypolicyviolation;
-dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
-dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
-dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
-dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
-
-dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyadded;
-dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeyerror;
-dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventListener onwebkitkeymessage;
-dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
-dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
-dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
-dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocomplete;
-dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocompleteerror;
-dom/Element.idl:    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventListener onwebkitpresentationmodechanged;
-dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
-dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
-dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
-dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
-dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitcurrentplaybacktargetiswirelesschanged;
-dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventListener onwebkitplaybacktargetavailabilitychanged;
 
 html/HTMLBodyElement.idl:    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
 

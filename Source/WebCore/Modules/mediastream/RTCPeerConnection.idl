@@ -75,21 +75,17 @@
 
     [RaisesException] void close();
 
-    attribute EventListener onnegotiationneeded;
-    attribute EventListener onicecandidate;
-    attribute EventListener onsignalingstatechange;
-    attribute EventListener onaddstream;
-    attribute EventListener onremovestream;
-    attribute EventListener oniceconnectionstatechange;
-    attribute EventListener ondatachannel;
+    attribute EventHandler onnegotiationneeded;
+    attribute EventHandler onicecandidate;
+    attribute EventHandler onsignalingstatechange;
+    attribute EventHandler onaddstream;
+    attribute EventHandler onremovestream;
+    attribute EventHandler oniceconnectionstatechange;
+    attribute EventHandler ondatachannel;
 
     // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };
 

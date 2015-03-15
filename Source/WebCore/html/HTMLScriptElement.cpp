@@ -64,8 +64,6 @@ void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicSt
         handleSourceAttribute(value);
     else if (name == asyncAttr)
         handleAsyncAttribute();
-    else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else
         HTMLElement::parseAttribute(name, value);
 }

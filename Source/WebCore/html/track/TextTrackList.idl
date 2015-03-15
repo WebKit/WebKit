@@ -33,16 +33,12 @@
     getter TextTrack item(unsigned long index);
     TextTrack getTrackById(DOMString id);
 
-    attribute EventListener onaddtrack;
-    attribute EventListener onchange;
-    attribute EventListener onremovetrack;
+    attribute EventHandler onaddtrack;
+    attribute EventHandler onchange;
+    attribute EventHandler onremovetrack;
 
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

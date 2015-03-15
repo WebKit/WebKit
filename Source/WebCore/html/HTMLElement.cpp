@@ -248,13 +248,17 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         StyledElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>& map)
+HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
 {
-    static const QualifiedName* const simpleTable[] = {
+    EventHandlerNameMap map;
+
+    static const QualifiedName* const table[] = {
         &onabortAttr,
         &onanimationendAttr,
         &onanimationiterationAttr,
         &onanimationstartAttr,
+        &onautocompleteAttr,
+        &onautocompleteerrorAttr,
         &onbeforecopyAttr,
         &onbeforecutAttr,
         &onbeforeloadAttr,
@@ -282,6 +286,9 @@ void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicString
         &onfocusAttr,
         &onfocusinAttr,
         &onfocusoutAttr,
+        &ongesturechangeAttr,
+        &ongestureendAttr,
+        &ongesturestartAttr,
         &oninputAttr,
         &oninvalidAttr,
         &onkeydownAttr,
@@ -324,88 +331,105 @@ void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicString
         &onvolumechangeAttr,
         &onwaitingAttr,
         &onwebkitbeginfullscreenAttr,
+        &onwebkitcurrentplaybacktargetiswirelesschangedAttr,
         &onwebkitendfullscreenAttr,
-        &onwheelAttr,
-#if ENABLE(FULLSCREEN_API)
         &onwebkitfullscreenchangeAttr,
         &onwebkitfullscreenerrorAttr,
-#endif
-#if ENABLE(IOS_GESTURE_EVENTS)
-        &ongesturechangeAttr,
-        &ongestureendAttr,
-        &ongesturestartAttr,
-#endif
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-        &onautocompleteAttr,
-        &onautocompleteerrorAttr,
-#endif
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+        &onwebkitkeyaddedAttr,
+        &onwebkitkeyerrorAttr,
+        &onwebkitkeymessageAttr,
+        &onwebkitneedkeyAttr,
+        &onwebkitplaybacktargetavailabilitychangedAttr,
         &onwebkitpresentationmodechangedAttr,
-#endif
-#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
         &onwebkitwillrevealbottomAttr,
         &onwebkitwillrevealleftAttr,
         &onwebkitwillrevealrightAttr,
         &onwebkitwillrevealtopAttr,
-#endif
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        &onwebkitcurrentplaybacktargetiswirelesschangedAttr,
-        &onwebkitplaybacktargetavailabilitychangedAttr,
-#endif
+        &onwheelAttr,
     };
 
-    for (unsigned i = 0, size = WTF_ARRAY_LENGTH(simpleTable); i < size; ++i) {
-        // FIXME: Would be nice to check these against the actual event names in eventNames().
-        // Not obvious how to do that simply, though.
-        const AtomicString& attributeName = simpleTable[i]->localName();
+    populateEventHandlerNameMap(map, table);
 
-        // Remove the "on" prefix. Requires some memory allocation and computing a hash, but
-        // by not using pointers from eventNames(), simpleTable can be initialized at compile time.
-        AtomicString eventName = attributeName.string().substring(2);
-
-        map.add(attributeName.impl(), eventName);
-    }
-
-    struct CustomMapping {
+    struct UnusualMapping {
         const QualifiedName& attributeName;
         const AtomicString& eventName;
     };
 
-    const CustomMapping customTable[] = {
+    const UnusualMapping unusualPairsTable[] = {
         { onwebkitanimationendAttr, eventNames().webkitAnimationEndEvent },
         { onwebkitanimationiterationAttr, eventNames().webkitAnimationIterationEvent },
         { onwebkitanimationstartAttr, eventNames().webkitAnimationStartEvent },
         { onwebkittransitionendAttr, eventNames().webkitTransitionEndEvent },
     };
 
-    for (unsigned i = 0, size = WTF_ARRAY_LENGTH(customTable); i < size; ++i)
-        map.add(customTable[i].attributeName.localName().impl(), customTable[i].eventName);
+    for (auto& entry : unusualPairsTable)
+        map.add(entry.attributeName.localName().impl(), entry.eventName);
+
+    return map;
+}
+
+void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const QualifiedName* const table[], size_t tableSize)
+{
+    for (size_t i = 0; i < tableSize; ++i) {
+        auto* entry = table[i];
+
+        // FIXME: Would be nice to check these against the actual event names in eventNames().
+        // Not obvious how to do that simply, though.
+        auto& attributeName = entry->localName();
+
+        // Remove the "on" prefix. Requires some memory allocation and computing a hash, but by not
+        // using pointers from eventNames(), the passed-in table can be initialized at compile time.
+        AtomicString eventName = attributeName.string().substring(2);
+
+        map.add(attributeName.impl(), WTF::move(eventName));
+    }
+}
+
+const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap& map)
+{
+    ASSERT(!attributeName.localName().isNull());
+
+    // Event handler attributes have no namespace.
+    if (!attributeName.namespaceURI().isNull())
+        return nullAtom;
+
+    // Fast early return for names that don't start with "on".
+    AtomicStringImpl& localName = *attributeName.localName().impl();
+    if (localName.length() < 3 || localName[0] != 'o' || localName[1] != 'n')
+        return nullAtom;
+
+    auto it = map.find(&localName);
+    return it == map.end() ? nullAtom : it->value;
+}
+
+const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName)
+{
+    static NeverDestroyed<EventHandlerNameMap> map = createEventHandlerNameMap();
+    return eventNameForEventHandlerAttribute(attributeName, map.get());
 }
 
 Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& node)
 {
-    const Node* currentNode = &node;
-    do {
-        if (is<HTMLElement>(*currentNode)) {
-            switch (contentEditableType(downcast<HTMLElement>(*currentNode))) {
+    if (auto* startElement = is<Element>(node) ? &downcast<Element>(node) : node.parentElement()) {
+        for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
+            switch (contentEditableType(element)) {
             case ContentEditableType::True:
-                return Node::Editability::CanEditRichly;
+                return Editability::CanEditRichly;
             case ContentEditableType::PlaintextOnly:
-                return Node::Editability::CanEditPlainText;
+                return Editability::CanEditPlainText;
             case ContentEditableType::False:
-                return Node::Editability::ReadOnly;
+                return Editability::ReadOnly;
             case ContentEditableType::Inherit:
                 break;
             }
         }
-        currentNode = currentNode->parentNode();
-    } while (currentNode);
+    }
 
-    const Document& document = node.document();
+    auto& document = node.document();
     if (is<HTMLDocument>(document))
-        return downcast<HTMLDocument>(document).inDesignMode() ? Node::Editability::CanEditRichly : Node::Editability::ReadOnly;
+        return downcast<HTMLDocument>(document).inDesignMode() ? Editability::CanEditRichly : Editability::ReadOnly;
 
-    return Node::Editability::ReadOnly;
+    return Editability::ReadOnly;
 }
 
 bool HTMLElement::matchesReadWritePseudoClass() const
@@ -415,39 +439,38 @@ bool HTMLElement::matchesReadWritePseudoClass() const
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == HTMLNames::idAttr || name == HTMLNames::classAttr || name == HTMLNames::styleAttr)
-        return StyledElement::parseAttribute(name, value);
-
-    if (name == dirAttr)
+    if (name == dirAttr) {
         dirAttributeChanged(value);
-    else if (name == tabindexAttr) {
-        int tabindex = 0;
+        return;
+    }
+
+    if (name == tabindexAttr) {
+        int tabIndex = 0;
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
-        else if (parseHTMLInteger(value, tabindex)) {
-            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-            setTabIndexExplicitly(std::max(static_cast<int>(std::numeric_limits<short>::min()), std::min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
+        else if (parseHTMLInteger(value, tabIndex)) {
+            // Clamp tab index to a 16-bit value to match Firefox's behavior.
+            setTabIndexExplicitly(std::max(-0x8000, std::min(tabIndex, 0x7FFF)));
         }
-    } else if (name.namespaceURI().isNull()) {
-        // FIXME: Can we do this even faster by checking the local name "on" prefix before we do anything with the map?
-        static NeverDestroyed<HashMap<AtomicStringImpl*, AtomicString>> eventNamesGlobal;
-        auto& eventNames = eventNamesGlobal.get();
-        if (eventNames.isEmpty())
-            populateEventNameForAttributeLocalNameMap(eventNames);
-        const AtomicString& eventName = eventNames.get(name.localName().impl());
-        if (!eventName.isNull())
-            setAttributeEventListener(eventName, name, value);
+        return;
     }
+
+    auto& eventName = eventNameForEventHandlerAttribute(name);
+    if (!eventName.isNull())
+        setAttributeEventListener(eventName, name, value);
 }
 
-RefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
+Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
-    unsigned int i, length = text.length();
-    UChar c = 0;
-    for (unsigned int start = 0; start < length; ) {
+    ec = 0;
+
+    auto fragment = DocumentFragment::create(document());
+
+    for (unsigned start = 0, length = text.length(); start < length; ) {
 
         // Find next line break.
+        UChar c;
+        unsigned i;
         for (i = start; i < length; i++) {
             c = text[i];
             if (c == '\r' || c == '\n')
@@ -456,16 +479,18 @@ RefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, Excepti
 
         fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
         if (ec)
-            return nullptr;
+            break;
 
-        if (c == '\r' || c == '\n') {
-            fragment->appendChild(HTMLBRElement::create(document()), ec);
-            if (ec)
-                return nullptr;
-            // Make sure \r\n doesn't result in two line breaks.
-            if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
-                i++;
-        }
+        if (i == length)
+            break;
+
+        fragment->appendChild(HTMLBRElement::create(document()), ec);
+        if (ec)
+            break;
+
+        // Make sure \r\n doesn't result in two line breaks.
+        if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
+            ++i;
 
         start = i + 1; // Character after line break.
     }

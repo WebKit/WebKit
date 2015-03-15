@@ -41,7 +41,6 @@
     [RaisesException] void postMessage(DOMString message, optional MessagePort messagePort);
 #endif
 
-             attribute EventListener onmessage;
-
+    attribute EventHandler onmessage;
 };
 
