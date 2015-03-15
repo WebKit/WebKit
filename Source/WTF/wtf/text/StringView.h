@@ -31,6 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/LChar.h>
+#include <wtf/text/StringCommon.h>
 
 // FIXME: Enabling the StringView lifetime checking causes the MSVC build to fail. Figure out why.
 // FIXME: Enable StringView lifetime checking once the underlying assertions have been fixed.
@@ -505,14 +506,7 @@ inline bool equal(StringView a, const char* b)
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)
 {
-    unsigned aLength = a.length();
-    if (aLength != b.length()) 
-        return false;
-    for (size_t i = 0; i < aLength; ++i) {
-        if (toASCIILower(a[i]) != toASCIILower(b[i]))
-            return false;
-    }
-    return true;
+    return equalIgnoringASCIICaseCommon(a, b);
 }
 
 class StringView::CodePoints {

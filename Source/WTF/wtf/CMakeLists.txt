@@ -129,6 +129,7 @@ set(WTF_HEADERS
     text/IntegerToStringConversion.h
     text/LChar.h
     text/StringBuffer.h
+    text/StringCommon.h
     text/StringHash.h
     text/StringImpl.h
     text/StringView.h

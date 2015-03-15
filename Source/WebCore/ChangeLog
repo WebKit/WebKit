@@ -1,3 +1,26 @@
+2015-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Change the exact attribute matching to be ASCII case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=142609
+
+        Reviewed by Darin Adler.
+
+        In CSS, testing attribute values should be ASCII case-insensitive,
+        previously we were using full unicode case conversion.
+
+        Test: fast/selectors/attribute-exact-value-match-is-ascii-case-insensitive.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseKeyframeSelector):
+        The CSS parser has its own fast version for ASCII case insensitive.
+        This code was using the general equalIgnoringASCIICase() which was causing name conflicts,
+        change that to the normal CSS parser version.
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::equalIgnoringASCIICase): Deleted.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+
 2015-03-15  Brent Fulgham  <bfulgham@apple.com>
 
         scroll snap points do not properly account for zoomed pages

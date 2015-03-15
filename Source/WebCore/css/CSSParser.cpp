@@ -4774,9 +4774,9 @@ Vector<double> CSSParser::parseKeyframeSelector(const String& selector) {
         String cur = strings[i].stripWhiteSpace();
 
         // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
-        if (equalIgnoringASCIICase(cur, "from"))
+        if (equalIgnoringCase(cur, "from"))
             key = 0;
-        else if (equalIgnoringASCIICase(cur, "to"))
+        else if (equalIgnoringCase(cur, "to"))
             key = 1;
         else if (cur.endsWith('%')) {
             double k = cur.substring(0, cur.length() - 1).toDouble();

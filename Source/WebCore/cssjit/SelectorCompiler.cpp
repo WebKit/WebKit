@@ -2934,7 +2934,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), valueStringImpl);
 
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-        functionCall.setFunctionAddress(WTF::equalIgnoringCaseNonNull);
+        functionCall.setFunctionAddress(WTF::equalIgnoringASCIICaseNonNull);
         functionCall.setTwoArguments(valueStringImpl, expectedValueRegister);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 
@@ -2947,7 +2947,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
 
         Assembler::Jump skipCaseInsensitiveComparison = m_assembler.branchPtr(Assembler::Equal, valueStringImpl, expectedValueRegister);
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-        functionCall.setFunctionAddress(WTF::equalIgnoringCaseNonNull);
+        functionCall.setFunctionAddress(WTF::equalIgnoringASCIICaseNonNull);
         functionCall.setTwoArguments(valueStringImpl, expectedValueRegister);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
         skipCaseInsensitiveComparison.link(&m_assembler);

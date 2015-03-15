@@ -120,17 +120,6 @@ ALWAYS_INLINE bool isWindowInactive(const Element* element)
     return !element->document().page()->focusController().isActive();
 }
 
-ALWAYS_INLINE bool equalIgnoringASCIICase(const String& a, const String& b)
-{
-    if (a.length() != b.length()) 
-        return false;
-    for (size_t i = 0; i < a.length(); ++i) {
-        if (toASCIILower(a[i]) != toASCIILower(b[i]))
-            return false;
-    }
-    return true;
-}
-
 ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, StringView range, unsigned languageLength, unsigned& position)
 {
     unsigned languageSubtagsStartIndex = position;

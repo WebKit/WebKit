@@ -2018,6 +2018,27 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
     return equal(a, b);
 }
 
+bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
+{
+    return equalIgnoringASCIICaseCommon(a, b);
+}
+
+bool equalIgnoringASCIICase(const StringImpl* a, const StringImpl*b)
+{
+    if (a == b)
+        return true;
+    if (!a || !b)
+        return false;
+    return equalIgnoringASCIICaseCommon(*a, *b);
+}
+
+bool equalIgnoringASCIICaseNonNull(const StringImpl* a, const StringImpl* b)
+{
+    ASSERT(a);
+    ASSERT(b);
+    return equalIgnoringASCIICaseCommon(*a, *b);
+}
+
 UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
 {
     for (unsigned i = 0; i < m_length; ++i) {

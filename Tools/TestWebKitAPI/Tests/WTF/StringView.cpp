@@ -142,4 +142,77 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}));
 }
 
+TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
+{
+    RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");
+    RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG");
+    RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg");
+    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef");
+
+    StringView stringViewA(*a.get());
+    StringView stringViewB(*b.get());
+    StringView stringViewC(*c.get());
+    StringView emptyStringView(*empty.get());
+    StringView shorterStringView(*shorter.get());
+
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewC));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewC));
+
+    // Identity.
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewA));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewC, stringViewC));
+
+    // Transitivity.
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewC));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewC));
+
+    // Negative cases.
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewA, emptyStringView));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, emptyStringView));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewC, emptyStringView));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewA, shorterStringView));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, shorterStringView));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewC, shorterStringView));
+}
+
+TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
+{
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    StringView stringViewA(*a.get());
+    StringView stringViewB(*b.get());
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewA));
+}
+
+TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
+{
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"));
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"));
+    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"));
+    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"));
+    StringView stringViewA(*a.get());
+    StringView stringViewB(*b.get());
+    StringView stringViewC(*c.get());
+    StringView stringViewD(*d.get());
+
+    // Identity.
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewA));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewB, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewC, stringViewC));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewD, stringViewD));
+
+    // All combination.
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewA, stringViewB));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewC));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewD));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, stringViewC));
+    ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, stringViewD));
+    ASSERT_TRUE(equalIgnoringASCIICase(stringViewC, stringViewD));
+}
+
 } // namespace TestWebKitAPI

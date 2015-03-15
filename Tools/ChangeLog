@@ -1,3 +1,13 @@
+2015-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Change the exact attribute matching to be ASCII case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=142609
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+
 2015-03-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         WebKit test infrastructure should automate the process of cloning W3C test suite and importing tests from it

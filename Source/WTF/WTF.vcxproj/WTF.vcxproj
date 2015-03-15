@@ -291,6 +291,7 @@
     <ClInclude Include="..\wtf\text\LChar.h" />
     <ClInclude Include="..\wtf\text\StringBuffer.h" />
     <ClInclude Include="..\wtf\text\StringBuilder.h" />
+    <ClInclude Include="..\wtf\text\StringCommon.h" />
     <ClInclude Include="..\wtf\text\StringConcatenate.h" />
     <ClInclude Include="..\wtf\text\StringHash.h" />
     <ClInclude Include="..\wtf\text\StringImpl.h" />

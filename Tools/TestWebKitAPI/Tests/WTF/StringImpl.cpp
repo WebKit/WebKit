@@ -99,4 +99,69 @@ TEST(WTF, StringImplReplaceWithLiteral)
     ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"));
 }
 
+TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
+{
+    RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");
+    RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG");
+    RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg");
+    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef");
+
+    // Identity.
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), a.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(b.get(), b.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(c.get(), c.get()));
+
+    // Transitivity.
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), b.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(b.get(), c.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), c.get()));
+
+    // Negative cases.
+    ASSERT_FALSE(equalIgnoringASCIICase(a.get(), empty.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), empty.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(c.get(), empty.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(a.get(), shorter.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), shorter.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(c.get(), shorter.get()));
+}
+
+TEST(WTF, StringImplEqualIgnoringASCIICaseWithNull)
+{
+    RefPtr<StringImpl> reference = StringImpl::createFromLiteral("aBcDeFG");
+    ASSERT_FALSE(equalIgnoringASCIICase(nullptr, reference.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(reference.get(), nullptr));
+    ASSERT_TRUE(equalIgnoringASCIICase(nullptr, nullptr));
+}
+
+TEST(WTF, StringImplEqualIgnoringASCIICaseWithEmpty)
+{
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), b.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(b.get(), a.get()));
+}
+
+TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
+{
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"));
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"));
+    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"));
+    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"));
+
+    // Identity.
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), a.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(b.get(), b.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(c.get(), c.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(d.get(), d.get()));
+
+    // All combination.
+    ASSERT_FALSE(equalIgnoringASCIICase(a.get(), b.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), c.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), d.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), c.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), d.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(c.get(), d.get()));
+}
+
 } // namespace TestWebKitAPI

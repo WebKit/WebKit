@@ -327,6 +327,9 @@
     <ClInclude Include="..\wtf\text\StringBuilder.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\text\StringCommon.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\text\StringConcatenate.h">
       <Filter>text</Filter>
     </ClInclude>

@@ -1,3 +1,39 @@
+2015-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Change the exact attribute matching to be ASCII case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=142609
+
+        Reviewed by Darin Adler.
+
+        Add support for ASCII case insensitive comparisons to all the string
+        classes.
+
+        The new file StringCommon.h has the common algorithm to avoid repeating
+        the same code with different types.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * wtf/ASCIICType.h:
+        (WTF::toASCIILower):
+        * wtf/CMakeLists.txt:
+        * wtf/text/AtomicString.h:
+        (WTF::equalIgnoringASCIICase):
+        * wtf/text/StringCommon.h: Added.
+        (WTF::equalIgnoringASCIICase):
+        (WTF::equalIgnoringASCIICaseCommon):
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalIgnoringASCIICase):
+        (WTF::equalIgnoringASCIICaseNonNull):
+        (WTF::StringImpl::utf8Impl):
+        (WTF::StringImpl::defaultWritingDirection): Deleted.
+        (WTF::StringImpl::adopt): Deleted.
+        (WTF::StringImpl::sizeInBytes): Deleted.
+        (WTF::putUTF8Triple): Deleted.
+        (WTF::StringImpl::utf8): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isSubString): Deleted.
+        (WTF::find): Deleted.
+
 2015-03-14  Michael Saboff  <msaboff@apple.com>
 
         Disable Yarr JIT for ARMv7k
