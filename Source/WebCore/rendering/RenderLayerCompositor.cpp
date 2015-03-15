@@ -1447,10 +1447,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 #endif
     }
     
-    // If the layer is going into compositing mode, repaint its old location.
     ASSERT(willBeComposited == needsToBeComposited(layer));
-    if (!layer.isComposited() && willBeComposited)
-        repaintOnCompositingChange(layer);
 
     // Update backing now, so that we can use isComposited() reliably during tree traversal in rebuildCompositingLayerTree().
     if (updateBacking(layer, CompositingChangeRepaintNow, willBeComposited ? BackingRequired::Yes : BackingRequired::No))
