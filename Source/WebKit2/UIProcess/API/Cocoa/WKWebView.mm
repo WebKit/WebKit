@@ -650,6 +650,11 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     return [_contentView browsingContextController];
 }
 
+- (BOOL)becomeFirstResponder
+{
+    return [_contentView becomeFirstResponder] || [super becomeFirstResponder];
+}
+
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
 {
     return CGFloor(input * deviceScaleFactor) / deviceScaleFactor;
@@ -1770,6 +1775,17 @@ static int32_t activeOrientation(WKWebView *webView)
 {
     return webView->_overridesInterfaceOrientation ? deviceOrientationForUIInterfaceOrientation(webView->_interfaceOrientationOverride) : webView->_page->deviceOrientation();
 }
+
+- (void (^)(void))_retainActiveFocusedState
+{
+    ++_activeFocusedStateRetainCount;
+
+    // FIXME: Use something like CompletionHandlerCallChecker to ensure that the returned block is called before it's released.
+    return [[[self] {
+        --_activeFocusedStateRetainCount;
+    } copy] autorelease];
+}
+
 #endif
 
 - (void)_didRelaunchProcess

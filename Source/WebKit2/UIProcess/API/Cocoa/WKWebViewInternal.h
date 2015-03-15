@@ -60,6 +60,10 @@ struct PrintInfo;
     RetainPtr<WKWebViewConfiguration> _configuration;
 
     RefPtr<WebKit::WebPageProxy> _page;
+
+#if PLATFORM(IOS)
+    NSUInteger _activeFocusedStateRetainCount;
+#endif
 }
 
 #if PLATFORM(IOS)

@@ -517,9 +517,13 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 {
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
-    // We need to complete the editing operation before we blur the element.
-    [_inputPeripheral endEditing];
-    _page->blurAssistedNode();
+
+    if (!_webView->_activeFocusedStateRetainCount) {
+        // We need to complete the editing operation before we blur the element.
+        [_inputPeripheral endEditing];
+        _page->blurAssistedNode();
+    }
+
     [self _cancelInteraction];
     [_webSelectionAssistant resignedFirstResponder];
     [_textSelectionAssistant deactivateSelection];

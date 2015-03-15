@@ -151,6 +151,10 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_killWebContentProcess;
 - (void)_didRelaunchProcess;
 
+// Puts the view into a state where being taken out of the view hierarchy and resigning first responder
+// will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
+- (void (^)(void))_retainActiveFocusedState WK_AVAILABLE(NA, WK_IOS_TBA);
+
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;
