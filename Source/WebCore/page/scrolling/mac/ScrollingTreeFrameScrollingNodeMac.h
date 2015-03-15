@@ -82,6 +82,7 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+    float pageScaleFactor() const override;
 #endif
 
     void logExposedUnfilledArea();

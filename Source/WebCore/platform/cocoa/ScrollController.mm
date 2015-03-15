@@ -684,9 +684,11 @@ void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnap
     if (snapState.m_snapOffsets.isEmpty())
         return;
 
-    projectedScrollDestination = std::min(std::max(projectedScrollDestination, snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
+    float scaleFactor = m_client->pageScaleFactor();
+    
+    projectedScrollDestination = std::min(std::max(LayoutUnit(projectedScrollDestination / scaleFactor), snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
     snapState.m_initialOffset = offset;
-    snapState.m_targetOffset = closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta);
+    snapState.m_targetOffset = scaleFactor * closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta);
     if (snapState.m_initialOffset == snapState.m_targetOffset)
         return;
     

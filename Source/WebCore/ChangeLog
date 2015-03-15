@@ -1,3 +1,24 @@
+2015-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        scroll snap points do not properly account for zoomed pages
+        https://bugs.webkit.org/show_bug.cgi?id=142706
+        <rdar://problem/20165771>
+
+        Reviewed by Anders Carlsson.
+
+        When a WebView is zoomed (such that it has a non-unity pageScaleFactor), we need to account for this
+        scaling value when selecting our correct scroll snap point target, as well as when specifying the
+        pixel location for our animation to target.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::pageScaleFactor): Added new delegate method.
+        * platform/cocoa/ScrollController.h:
+        (WebCore::ScrollControllerClient::pageScaleFactor): Added new default delegate.
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::beginScrollSnapAnimation): Calculate the correct scroll target
+        based on the page scale factor.
+
 2015-03-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix run-bindings-tests on the WinCairo bot

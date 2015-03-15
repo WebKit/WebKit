@@ -558,6 +558,11 @@ void ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis(ScrollEventAxis a
 
     immediateScrollBy(change - currentPosition);
 }
+
+float ScrollingTreeFrameScrollingNodeMac::pageScaleFactor() const
+{
+    return frameScaleFactor();
+}
 #endif
 
 } // namespace WebCore

@@ -86,7 +86,11 @@ public:
     virtual void stopScrollSnapTimer(ScrollEventAxis)
     {
         // Override to perform client-specific scroll snap point end logic
-        
+    }
+
+    virtual float pageScaleFactor() const
+    {
+        return 1.0f;
     }
 #endif
 };
