@@ -1,3 +1,9 @@
+2015-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Document more debug assertions for later review.
+
+        * platform/win/TestExpectations:
+
 2015-03-14  Darin Adler  <darin@apple.com>
 
         More event handler improvements
