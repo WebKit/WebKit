@@ -216,6 +216,10 @@ namespace JSC {
 #endif
             NOP = 0xe1a00000,
             DMB_SY = 0xf57ff05f,
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+            SDIV = 0x0710f010,
+            UDIV = 0x0730f010,
+#endif
         };
 
         enum {
@@ -476,6 +480,26 @@ namespace JSC {
         {
             m_buffer.putInt(toARMWord(cc) | MULL | RN(rdhi) | RD(rdlo) | RS(rn) | RM(rm));
         }
+
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+        template<int datasize>
+        void sdiv(int rd, int rn, int rm, Condition cc = AL)
+        {
+            static_assert(datasize == 32, "sdiv datasize must be 32 for armv7s");
+            ASSERT(rd != ARMRegisters::pc);
+            ASSERT(rn != ARMRegisters::pc);
+            ASSERT(rm != ARMRegisters::pc);
+            m_buffer.putInt(toARMWord(cc) | SDIV | RN(rd) | RM(rn) | RS(rm));
+        }
+
+        void udiv(int rd, int rn, int rm, Condition cc = AL)
+        {
+            ASSERT(rd != ARMRegisters::pc);
+            ASSERT(rn != ARMRegisters::pc);
+            ASSERT(rm != ARMRegisters::pc);
+            m_buffer.putInt(toARMWord(cc) | UDIV | RN(rd) | RM(rn) | RS(rm));
+        }
+#endif
 
         void vmov_f64(int dd, int dm, Condition cc = AL)
         {

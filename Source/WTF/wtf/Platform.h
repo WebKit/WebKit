@@ -334,6 +334,10 @@
 #define WTF_CPU_APPLE_ARMV7S 1
 #endif
 
+#if defined(__ARM_ARCH_EXT_IDIV__) || CPU(APPLE_ARMV7S)
+#define HAVE_ARM_IDIV_INSTRUCTIONS 1
+#endif
+
 #endif /* ARM */
 
 #if CPU(ARM) || CPU(MIPS) || CPU(SH4)

@@ -39,9 +39,9 @@
 
 namespace JSC {
 
-inline bool isARMv7s()
+inline bool isARMv7IDIVSupported()
 {
-#if CPU(APPLE_ARMV7S)
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
     return true;
 #else
     return false;
@@ -66,9 +66,9 @@ inline bool isX86()
 #endif
 }
 
-inline bool optimizeForARMv7s()
+inline bool optimizeForARMv7IDIVSupported()
 {
-    return isARMv7s() && Options::enableArchitectureSpecificOptimizations();
+    return isARMv7IDIVSupported() && Options::enableArchitectureSpecificOptimizations();
 }
 
 inline bool optimizeForARM64()
