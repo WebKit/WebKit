@@ -1,3 +1,24 @@
+2015-03-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r179340 and r179344.
+        https://bugs.webkit.org/show_bug.cgi?id=142598
+
+        Caused images to stay alive forever when navigating away from
+        the page before they finish loading. (Requested by kling on
+        #webkit).
+
+        Reverted changesets:
+
+        "CachedImage: ensure clients overrides imageChanged instead of
+        notifyFinished"
+        https://bugs.webkit.org/show_bug.cgi?id=140722
+        http://trac.webkit.org/changeset/179340
+
+        "HTMLImageLoader: fix build failure on assert condition after
+        r179340"
+        https://bugs.webkit.org/show_bug.cgi?id=140722
+        http://trac.webkit.org/changeset/179344
+
 2015-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: Crash under Heap::reportExtraMemoryAllocatedSlowCase for media element

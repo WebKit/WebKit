@@ -72,15 +72,12 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
     return stripLeadingAndTrailingHTMLSpaces(attr);
 }
 
-void HTMLImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
+void HTMLImageLoader::notifyFinished(CachedResource*)
 {
-    ASSERT(cachedImage == image());
-
-    if (!cachedImage->isLoaded())
-        return;
+    CachedImage* cachedImage = image();
 
     Ref<Element> protect(element());
-    ImageLoader::imageChanged(cachedImage);
+    ImageLoader::notifyFinished(cachedImage);
 
     bool loadError = cachedImage->errorOccurred() || cachedImage->response().httpStatusCode() >= 400;
     if (!loadError) {
