@@ -1,3 +1,25 @@
+2015-03-16  Dean Jackson  <dino@apple.com>
+
+        Expose WK2 preference for Animation Triggers runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=142744
+
+        Reviewed by Anders Carlsson.
+
+        Expose CSSAnimationTriggersEnabled, linking it to the runtime enabled
+        feature flag.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSAnimationTriggersEnabled):
+        (WKPreferencesGetCSSAnimationTriggersEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        (WebKit::InjectedBundle::setCSSAnimationTriggersEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-03-16  Conrad Shultz  <conrad_shultz@apple.com>
 
         Allow clients to selectively disable plug-ins

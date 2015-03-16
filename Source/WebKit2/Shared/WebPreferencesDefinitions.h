@@ -106,6 +106,7 @@
     macro(WebGLEnabled, webGLEnabled, Bool, bool, true) \
     macro(ForceSoftwareWebGLRendering, forceSoftwareWebGLRendering, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
+    macro(CSSAnimationTriggersEnabled, cssAnimationTriggersEnabled, Bool, bool, true) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
     macro(CSSCompositingEnabled, cssCompositingEnabled, Bool, bool, true) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \

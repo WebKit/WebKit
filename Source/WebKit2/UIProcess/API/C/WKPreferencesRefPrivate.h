@@ -108,6 +108,10 @@ WK_EXPORT void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef, bool
 WK_EXPORT bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef);
 
 // Defaults to true
+WK_EXPORT void WKPreferencesSetCSSAnimationTriggersEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetCSSAnimationTriggersEnabled(WKPreferencesRef);
+
+// Defaults to true
 WK_EXPORT void WKPreferencesSetCSSRegionsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCSSRegionsEnabled(WKPreferencesRef);
 

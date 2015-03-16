@@ -2696,6 +2696,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     
     settings.setAggressiveTileRetentionEnabled(store.getBoolValueForKey(WebPreferencesKey::aggressiveTileRetentionEnabledKey()));
     settings.setTemporaryTileCohortRetentionEnabled(store.getBoolValueForKey(WebPreferencesKey::temporaryTileCohortRetentionEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(store.getBoolValueForKey(WebPreferencesKey::cssAnimationTriggersEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(store.getBoolValueForKey(WebPreferencesKey::cssRegionsEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(store.getBoolValueForKey(WebPreferencesKey::cssCompositingEnabledKey()));
     settings.setWebGLEnabled(store.getBoolValueForKey(WebPreferencesKey::webGLEnabledKey()));

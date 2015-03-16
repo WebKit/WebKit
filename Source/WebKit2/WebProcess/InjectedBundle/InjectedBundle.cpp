@@ -173,6 +173,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     }
 #endif
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    if (preference == "WebKitCSSAnimationTriggersEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
+#endif
+
 #if ENABLE(CSS_REGIONS)
     if (preference == "WebKitCSSRegionsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
@@ -603,6 +608,15 @@ void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
 void InjectedBundle::setSerialLoadingEnabled(bool enabled)
 {
     resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
+}
+
+void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
+{
+#if ENABLE(CSS_REGIONS)
+    RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 void InjectedBundle::setCSSRegionsEnabled(bool enabled)
