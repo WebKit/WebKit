@@ -19042,7 +19042,7 @@
     <ClInclude Include="..\html\canvas\WebGLTransformFeedback.h" />
     <ClInclude Include="..\html\canvas\WebGLUniformLocation.h" />
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObject.h" />
-    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectBase.h” />
+    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectBase.h" />
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectOES.h" />
     <ClInclude Include="..\html\track\AudioTrack.h" />
     <ClInclude Include="..\html\track\AudioTrackList.h" />
