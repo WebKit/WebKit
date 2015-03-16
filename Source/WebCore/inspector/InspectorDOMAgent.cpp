@@ -108,13 +108,13 @@ static Color parseColor(const RefPtr<InspectorObject>&& colorObject)
     if (!colorObject)
         return Color::transparent;
 
-    int r;
-    int g;
-    int b;
+    int r = 0;
+    int g = 0;
+    int b = 0;
     if (!colorObject->getInteger("r", r) || !colorObject->getInteger("g", g) || !colorObject->getInteger("b", b))
         return Color::transparent;
 
-    double a;
+    double a = 1.0;
     if (!colorObject->getDouble("a", a))
         return Color(r, g, b);
 

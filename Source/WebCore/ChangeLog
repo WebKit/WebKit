@@ -1,3 +1,13 @@
+2015-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Potentially uninitialized Inspector values
+        https://bugs.webkit.org/show_bug.cgi?id=142730
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::parseColor): Make sure color values are given an initial value.
+
 2015-03-16  Brady Eidson  <beidson@apple.com>
 
         URLs visited during private browsing show up in WebpageIcons.db
