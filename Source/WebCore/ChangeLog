@@ -1,3 +1,18 @@
+2015-03-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r181565.
+
+    2015-03-16  Brady Eidson  <beidson@apple.com>
+
+            URLs visited during private browsing show up in WebpageIcons.db
+            rdar://problem/11254910 and https://bugs.webkit.org/show_bug.cgi?id=142733
+
+            Patch by Sam Weinig. Reviewed by Brady Eidson.
+
+            * loader/icon/IconController.cpp:
+            (WebCore::IconController::startLoader): Bail early here if the page is using an ephemeral session.
+            (WebCore::IconController::continueLoadWithDecision): Instead of here.
+
 2015-03-11  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for rdar://problem/20128856.
