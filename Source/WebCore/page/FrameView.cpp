@@ -2976,6 +2976,14 @@ void FrameView::performPostLayoutTasks()
 
     sendResizeEventIfNeeded();
     viewportContentsChanged();
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (!frame().isMainFrame()) {
+        updateSnapOffsets();
+        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+            return scrollAnimator->updateScrollAnimatorsAndTimers();
+    }
+#endif
 }
 
 IntSize FrameView::sizeForResizeEvent() const

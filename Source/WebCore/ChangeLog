@@ -1,3 +1,23 @@
+2015-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll snap points are not supported on iframe content
+        https://bugs.webkit.org/show_bug.cgi?id=142582
+        <rdar://problem/20121319>
+
+        Tested by css3/scroll-snap/scroll-snap-iframe.html
+
+        Reviewed by Simon Fraser.
+
+        The scroll snap points were not being applied to the iframe contents because the code
+        that sets up the scroll snap point content is not called for iframes.
+
+        To correct this, we need to make sure the snap offsets are set during post-frame layout
+        for iframes. We also need to make sure (on Mac) that the scroll animator and timers are updated.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks): Call 'updateSnapOffsets' if the frame is not a
+        MainFrame. Also notify scroll animators they need to update their snap point settings.
+
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add the same is<RenderBox> test to KeyframeAnimation::computeExtentOfTransformAnimation()

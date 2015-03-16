@@ -1,3 +1,16 @@
+2015-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll snap points are not supported on iframe content
+        https://bugs.webkit.org/show_bug.cgi?id=142582
+        <rdar://problem/20121319>
+
+        Reviewed by Simon Fraser.
+
+        * css3/scroll-snap/resources: Added.
+        * css3/scroll-snap/resources/iframe-content.html: Added.
+        * css3/scroll-snap/scroll-snap-iframe-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-iframe.html: Added.
+
 2015-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better handle displaying -0
