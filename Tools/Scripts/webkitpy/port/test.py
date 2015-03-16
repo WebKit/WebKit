@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import base64
 import sys
 import time
 
@@ -99,7 +98,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 71
+TOTAL_TESTS = 72
 TOTAL_SKIPS = 9
 TOTAL_RETRIES = 14
 
@@ -107,6 +106,9 @@ UNEXPECTED_PASSES = 7
 UNEXPECTED_FAILURES = 17
 
 def unit_test_list():
+    silent_audio = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    silent_audio_with_single_bit_difference = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    audio2 = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
     tests = TestList()
     tests.add('failures/expected/crash.html', crash=True)
     tests.add('failures/expected/exception.html', exception=True)
@@ -120,7 +122,7 @@ def unit_test_list():
               actual_checksum='image_checksum_fail-checksum',
               actual_image='image_checksum_fail-png')
     tests.add('failures/expected/audio.html',
-              actual_audio=base64.b64encode('audio_fail-wav'), expected_audio='audio-wav',
+              actual_audio=silent_audio, expected_audio=audio2,
               actual_text=None, expected_text=None,
               actual_image=None, expected_image=None,
               actual_checksum=None)
@@ -181,7 +183,12 @@ layer at (0,0) size 800x34
     tests.add('passes/error.html', error='stuff going to stderr')
     tests.add('passes/image.html')
     tests.add('passes/audio.html',
-              actual_audio=base64.b64encode('audio-wav'), expected_audio='audio-wav',
+              actual_audio=silent_audio, expected_audio=silent_audio,
+              actual_text=None, expected_text=None,
+              actual_image=None, expected_image=None,
+              actual_checksum=None)
+    tests.add('passes/audio-tolerance.html',
+              actual_audio=silent_audio_with_single_bit_difference, expected_audio=silent_audio,
               actual_text=None, expected_text=None,
               actual_image=None, expected_image=None,
               actual_checksum=None)
@@ -558,7 +565,7 @@ class TestDriver(Driver):
             actual_text = actual_text + ' ' + ' '.join(test_args)
 
         if test.actual_audio:
-            audio = base64.b64decode(test.actual_audio)
+            audio = test.actual_audio
         crashed_process_name = None
         crashed_pid = None
         if test.crash:

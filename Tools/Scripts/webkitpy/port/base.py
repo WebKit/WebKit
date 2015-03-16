@@ -50,6 +50,7 @@ from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
@@ -282,7 +283,9 @@ class Port(object):
         return expected_text != actual_text
 
     def do_audio_results_differ(self, expected_audio, actual_audio):
-        return expected_audio != actual_audio
+        if expected_audio == actual_audio:
+            return False
+        return not WaveDiff(expected_audio, actual_audio).filesAreIdenticalWithinTolerance()
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
         """Compare two images and return a tuple of an image diff, a percentage difference (0-100), and an error string.

@@ -659,6 +659,7 @@ function tableRow(testObject)
     if (actual.indexOf('AUDIO') != -1) {
         row += resultLink(testPrefix, '-expected.wav', 'expected audio');
         row += resultLink(testPrefix, '-actual.wav', 'actual audio');
+        row += resultLink(testPrefix, '-diff.txt', 'textual diff');
     }
 
     if (actual.indexOf('MISSING') != -1) {

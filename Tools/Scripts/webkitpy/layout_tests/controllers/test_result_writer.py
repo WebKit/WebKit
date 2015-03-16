@@ -29,6 +29,7 @@
 
 import logging
 
+from webkitpy.common.wavediff import WaveDiff
 from webkitpy.layout_tests.models import test_failures
 
 
@@ -160,6 +161,10 @@ class TestResultWriter(object):
 
     def write_audio_files(self, actual_audio, expected_audio):
         self.write_output_files('.wav', actual_audio, expected_audio)
+
+    def create_audio_diff_and_write_result(self, actual_audio, expected_audio):
+        diff_filename = self.output_filename(self.FILENAME_SUFFIX_DIFF + '.txt')
+        self._write_text_file(diff_filename, WaveDiff(expected_audio, actual_audio).diffText())
 
     def write_image_files(self, actual_image, expected_image):
         self.write_output_files('.png', actual_image, expected_image)

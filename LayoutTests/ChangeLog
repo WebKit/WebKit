@@ -1,3 +1,14 @@
+2015-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Add tolerance to WebAudio tests
+        https://bugs.webkit.org/show_bug.cgi?id=142676
+
+        Reviewed by Tim Horton.
+
+        * fast/harness/results.html: Display a diff link for audio tests, as we now have the diff.
+
+        * platform/mac/TestExpectations: Unmark tests that should now pass everywhere.
+
 2015-03-16  Chris Dumez  <cdumez@apple.com>
 
         Make DatabaseContext suspendable if there is no pending database activity

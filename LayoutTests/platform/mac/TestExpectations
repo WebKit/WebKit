@@ -617,7 +617,6 @@ webaudio/mediastreamaudiodestinationnode.html [ Failure ]
 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webaudio/codec-tests/vorbis/ [ WontFix ]
 webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
-[ Mavericks ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 
 # Text Autosizing is not enabled.
 webkit.org/b/84186 fast/text-autosizing
@@ -759,13 +758,9 @@ webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 # webkit.org/b/100846, webkit.org/b/136715
 inspector-protocol/debugger
 
-webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Pass Failure ]
-
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Failure ]
-
-webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Pass Failure ]
 
 # These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.
 webkit.org/b/87748 fast/forms/select/optgroup-clicking.html [ Skip ]
@@ -1089,10 +1084,6 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 # Some inspector tests failing after r173992
 webkit.org/b/137157 [ Release ] inspector/page/main-frame-resource.html [ Pass Failure ]
 [ Debug ] inspector/page/main-frame-resource.html [ Pass Failure Slow ]
-
-# FIXME: Needs bugzilla (<rdar://problem/15393179>)
-[ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
-[ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Pass Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
 

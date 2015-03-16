@@ -1,5 +1,26 @@
 2015-03-16  Alexey Proskuryakov  <ap@apple.com>
 
+        Add tolerance to WebAudio tests
+        https://bugs.webkit.org/show_bug.cgi?id=142676
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/common/wavediff.py: Added. Based on Jer Noble's work.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.create_audio_diff_and_write_result):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureAudio.write_failure):
+        * Scripts/webkitpy/port/base.py:
+        (Port.do_audio_results_differ):
+        Diff audio failures.
+
+        * Scripts/webkitpy/port/test.py: Added a test for the tolerance, fixed existing
+        tests to use real parseable WAV data, and got rid of base64, which there didn't
+        seem to have been any reason for.
+
+2015-03-16  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] fast/forms/text-control-intrinsic-widths.html fails when MS Office is installed
         https://bugs.webkit.org/show_bug.cgi?id=142720
 

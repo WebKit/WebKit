@@ -122,6 +122,7 @@ class FailureText(TestFailure):
 class FailureAudio(TestFailure):
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_audio_files(driver_output.audio, expected_driver_output.audio)
+        writer.create_audio_diff_and_write_result(driver_output.audio, expected_driver_output.audio)
 
 
 class FailureTimeout(TestFailure):
