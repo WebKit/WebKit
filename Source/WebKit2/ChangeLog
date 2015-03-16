@@ -1,3 +1,15 @@
+2015-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] REGRESSION (r181511): Most layout tests crash with a NULL deref
+
+        Follow-up fix for:
+        [iOS] Presenting a modal sheet on top of a WKWebView causes it to lose focused, active state
+        <http://webkit.org/b/142702>
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewWindowActive): Add NULL check for m_webView.
+        (WebKit::PageClientImpl::isViewFocused): Ditto.
+
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up related to wheelEvent names
