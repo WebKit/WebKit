@@ -135,6 +135,8 @@ public:
 
     bool shouldAccelerate(const IntSize&) const;
 
+    size_t memoryCost() const;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
