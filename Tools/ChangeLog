@@ -1,3 +1,19 @@
+2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add an option to enable MiniBrowser for non developer builds and always install it
+        https://bugs.webkit.org/show_bug.cgi?id=126688
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Build testing tools only for developer builds,
+        but MiniBrowser when ENABLE_MINIBROWSER option is ON.
+        * MiniBrowser/gtk/CMakeLists.txt: Only add
+        -DWEBKIT_INJECTED_BUNDLE_PATH to the build for developer builds,
+        and add a rule to install the MiniBrowser.
+        * MiniBrowser/gtk/main.c:
+        (main): Only set WEBKIT_INJECTED_BUNDLE_PATH env var for developer
+        builds.
+
 2015-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/sync-request-on-max-conns might fail after finished
