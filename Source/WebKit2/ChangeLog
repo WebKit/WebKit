@@ -1,3 +1,21 @@
+2015-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not look for child processes in the UI process binary path
+        https://bugs.webkit.org/show_bug.cgi?id=135752
+
+        Reviewed by Gustavo Noronha Silva.
+
+        It's only useful for internal tools and tests, but never when
+        installed, since we don't install the processes in the bin dir but
+        in the libexec dir.
+
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::findWebKitProcess): Only look or the executables in the
+        UI process binary path or WEBKIT_EXEC_PATH for development builds.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleDirectory): Only check
+        WEBKIT_INJECTED_BUNDLE_PATH env var for development builds.
+
 2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Contents not shown when entering AC mode unless the window is resized

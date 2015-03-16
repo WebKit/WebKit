@@ -248,6 +248,10 @@ add_definitions(-DUSER_AGENT_GTK_MAJOR_VERSION=601)
 add_definitions(-DUSER_AGENT_GTK_MINOR_VERSION=1)
 add_definitions(-DWEBKITGTK_API_VERSION_STRING="${WEBKITGTK_API_VERSION}")
 
+if (DEVELOPER_MODE)
+    add_definitions(-DDEVELOPMENT_BUILD=1)
+endif ()
+
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set(GSTREAMER_COMPONENTS app pbutils)
     add_definitions(-DWTF_USE_GSTREAMER)
