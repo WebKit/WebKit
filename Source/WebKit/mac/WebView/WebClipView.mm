@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,6 +110,18 @@ using namespace WebCore;
     [super _immediateScrollToPoint:newOrigin];
 
     [[self window] _enableDelayedWindowDisplay];
+
+    // We may hit this immediate scrolling code during a layout operation trigged by an AppKit call. When
+    // this happens, WebCore will not paint. So, we need to mark this region dirty so that it paints properly.
+    WebFrameView *webFrameView = (WebFrameView *)[[self superview] superview];
+    if ([webFrameView isKindOfClass:[WebFrameView class]]) {
+        if (Frame* coreFrame = core([webFrameView webFrame])) {
+            if (FrameView* frameView = coreFrame->view()) {
+                if (!frameView->inPaintableState())
+                    [self setNeedsDisplay:YES];
+            }
+        }
+    }
 
     _isScrolling = NO;
 }

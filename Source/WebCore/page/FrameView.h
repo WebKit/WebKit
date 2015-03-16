@@ -113,6 +113,7 @@ public:
     void unscheduleRelayout();
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase == InLayout; }
+    WEBCORE_EXPORT bool inPaintableState() { return m_layoutPhase != InLayout && m_layoutPhase != InViewSizeAdjust && m_layoutPhase != InPostLayout; }
 
     RenderObject* layoutRoot(bool onlyDuringLayout = false) const;
     void clearLayoutRoot() { m_layoutRoot = nullptr; }
