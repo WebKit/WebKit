@@ -1,3 +1,18 @@
+2015-03-13  Joonghun Park  <jh718.park@samsung.com>
+
+        Fix Debug build error 'comparison is always true due to limited range of data type [-Werror=type-limits]'
+        https://bugs.webkit.org/show_bug.cgi?id=142652
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests, no behavior changes.
+
+        Now CSSPropertyID type is uint16_t, so propertyID >= 0 check is needed no more.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::propertyName):
+        * css/makeprop.pl:
+
 2015-03-12  Sebastian Dröge  <sebastian@centricular.com>
 
         Stop using single-include headers that are only available since GStreamer >= 1.2.
