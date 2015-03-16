@@ -1170,24 +1170,6 @@ GC3Denum WebGLRenderingContextBase::checkFramebufferStatus(GC3Denum target)
     return result;
 }
 
-void WebGLRenderingContextBase::clear(GC3Dbitfield mask)
-{
-    if (isContextLostOrPending())
-        return;
-    if (mask & ~(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT)) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clear", "invalid mask");
-        return;
-    }
-    const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
-        synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
-        return;
-    }
-    if (!clearIfComposited(mask))
-        m_context->clear(mask);
-    markContextChanged();
-}
-
 void WebGLRenderingContextBase::clearColor(GC3Dfloat r, GC3Dfloat g, GC3Dfloat b, GC3Dfloat a)
 {
     if (isContextLostOrPending())
@@ -1806,6 +1788,86 @@ bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GC3
         return false;
     }
 
+    return true;
+}
+
+bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primitiveCount)
+{
+    if (isContextLostOrPending() || !validateDrawMode(functionName, mode))
+    return false;
+    
+    if (!validateStencilSettings(functionName))
+    return false;
+    
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        break;
+    case GraphicsContext3D::UNSIGNED_INT:
+        if (m_oesElementIndexUint && !isWebGL2())
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid type");
+        return false;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid type");
+        return false;
+    }
+    
+    if (count < 0 || offset < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "count or offset < 0");
+        return false;
+    }
+    
+    if (!count) {
+        markContextChanged();
+        return false;
+    }
+    
+    if (primitiveCount < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "primcount < 0");
+        return false;
+    }
+    
+    if (!m_boundVertexArrayObject->getElementArrayBuffer()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no ELEMENT_ARRAY_BUFFER bound");
+        return false;
+    }
+    
+    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
+        // Ensure we have a valid rendering state
+        if (!validateElementArraySize(count, type, static_cast<GC3Dintptr>(offset))) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "request out of bounds for current ELEMENT_ARRAY_BUFFER");
+            return false;
+        }
+        if (!count)
+            return false;
+        
+        Checked<GC3Dint, RecordOverflow> checkedCount(count);
+        Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
+        if (checkedCount.hasOverflowed() || checkedPrimitiveCount.hasOverflowed()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+            return false;
+        }
+        
+        if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+            if (!validateIndexArrayPrecise(checkedCount.unsafeGet(), type, static_cast<GC3Dintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+                synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
+                return false;
+            }
+        }
+    } else {
+        if (!validateVertexAttributes(0)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attribs not setup correctly");
+            return false;
+        }
+    }
+    
+    const char* reason = "framebuffer incomplete";
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), !isResourceSafe(), &reason)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, functionName, reason);
+        return false;
+    }
+    
     return true;
 }
 
@@ -2515,7 +2577,7 @@ WebGLGetInfo WebGLRenderingContextBase::getVertexAttrib(GC3Duint index, GC3Denum
 
     const WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(index);
 
-    if (m_angleInstancedArrays && pname == GraphicsContext3D::VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE)
+    if ((isWebGL2() || m_angleInstancedArrays) && pname == GraphicsContext3D::VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE)
         return WebGLGetInfo(state.divisor);
 
     switch (pname) {

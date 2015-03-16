@@ -145,7 +145,7 @@ public:
     void bufferSubData(GC3Denum target, long long offset, ArrayBufferView* data, ExceptionCode&);
 
     GC3Denum checkFramebufferStatus(GC3Denum target);
-    void clear(GC3Dbitfield mask);
+    virtual void clear(GC3Dbitfield mask) = 0;
     void clearColor(GC3Dfloat red, GC3Dfloat green, GC3Dfloat blue, GC3Dfloat alpha);
     void clearDepth(GC3Dfloat);
     void clearStencil(GC3Dint);
@@ -354,7 +354,7 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
-    // ANGLE_instanced_arrays extension functions.
+    // Instanced Array helper functions.
     void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
     void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
@@ -421,7 +421,7 @@ protected:
     bool validateWebGLObject(const char*, WebGLObject*);
 
     bool validateDrawArrays(const char* functionName, GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    virtual bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primcount) = 0;
+    bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primcount);
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);

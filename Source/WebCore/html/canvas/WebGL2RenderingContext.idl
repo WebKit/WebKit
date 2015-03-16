@@ -326,6 +326,7 @@ typedef unrestricted float GLclampf;
     const GLenum MAX_ELEMENT_INDEX                             = 0x8D6B;
     const GLenum NUM_SAMPLE_COUNTS                             = 0x9380;
     const GLenum TEXTURE_IMMUTABLE_LEVELS                      = 0x82DF;
+    const GLenum VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE             = 0x88FE;
 
     const GLuint64 TIMEOUT_IGNORED                             = 0xFFFFFFFFFFFFFFFF;
 

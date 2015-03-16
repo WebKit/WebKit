@@ -1,3 +1,37 @@
+2015-03-16  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Instancing draw calls.
+        https://bugs.webkit.org/show_bug.cgi?id=126939.
+        <rdar://problem/15002379>
+
+        Reviewed by Dean Jackson.
+
+        Tested by a modified version of the 1.0.3 conformance tests:
+        conformance/extensions/angle-instanced-arrays.html
+        conformance/extensions/angle-instanced-arrays-out-of-bounds.html
+
+        These tests will be landed along with other modified extension conformance tests
+        once approval from Khronos is received.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::clear): Generate error if clearing an integer color buffer.
+        (WebCore::WebGL2RenderingContext::vertexAttribDivisor): Call method from base class.
+        (WebCore::WebGL2RenderingContext::drawArraysInstanced): Ditto.
+        (WebCore::WebGL2RenderingContext::drawElementsInstanced): Ditto.
+        (WebCore::WebGL2RenderingContext::isIntegerFormat): Ditto.
+        (WebCore::WebGL2RenderingContext::validateDrawElements): Deleted. Move back to base class.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl: Add a missing enum.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::clear): Copied from WebGLRenderingContextBase.
+        (WebCore::WebGLRenderingContext::validateDrawElements): Deleted. Move back to base class.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp: 
+        (WebCore::WebGLRenderingContextBase::clear): Deleted. Moved to WebGLRenderingContext.
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib): Check for WebGL2 context.
+        (WebCore::WebGLRenderingContext::validateDrawElements): Ditto.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2015-03-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r181572.
