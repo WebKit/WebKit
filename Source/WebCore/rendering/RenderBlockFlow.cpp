@@ -3002,27 +3002,28 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
     if (isWritingModeRoot() && !isRubyRun())
         return -1;
 
-    if (!childrenInline())
-        return RenderBlock::inlineBlockBaseline(lineDirection);
-
-    if (!hasLines()) {
-        if (!hasLineIfEmpty())
-            return -1;
-        const FontMetrics& fontMetrics = firstLineStyle().fontMetrics();
-        return fontMetrics.ascent()
-             + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
-             + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
-    }
-
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
     float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
     float lastBaseline;
-    if (auto simpleLineLayout = this->simpleLineLayout())
-        lastBaseline = SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
+    if (!childrenInline())
+        lastBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
     else {
-        bool isFirstLine = lastRootBox() == firstRootBox();
-        const RenderStyle& style = isFirstLine ? firstLineStyle() : this->style();
-        lastBaseline = lastRootBox()->logicalTop() + style.fontMetrics().ascent(lastRootBox()->baselineType());
+        if (!hasLines()) {
+            if (!hasLineIfEmpty())
+                return -1;
+            const auto& fontMetrics = firstLineStyle().fontMetrics();
+            return fontMetrics.ascent()
+                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+        }
+
+        if (auto simpleLineLayout = this->simpleLineLayout())
+            lastBaseline = SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
+        else {
+            bool isFirstLine = lastRootBox() == firstRootBox();
+            const auto& style = isFirstLine ? firstLineStyle() : this->style();
+            lastBaseline = lastRootBox()->logicalTop() + style.fontMetrics().ascent(lastRootBox()->baselineType());
+        }
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent

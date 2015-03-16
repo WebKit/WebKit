@@ -1,3 +1,13 @@
+2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Inline block children do not have correct baselines if their children are also block elements
+        https://bugs.webkit.org/show_bug.cgi?id=142559
+
+        Reviewed by Darin Adler.
+
+        * fast/text/baseline-inline-block-block-children-expected.html: Added.
+        * fast/text/baseline-inline-block-block-children.html: Added.
+
 2015-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r176978): Inline-blocks with overflowing contents have ascents that are too large
