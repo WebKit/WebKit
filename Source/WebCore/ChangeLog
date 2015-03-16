@@ -1,3 +1,13 @@
+2015-03-16  Brady Eidson  <beidson@apple.com>
+
+        Addressing additional review feedback after http://trac.webkit.org/changeset/181565
+        https://bugs.webkit.org/show_bug.cgi?id=142604
+
+        Reviewed by Darin Adler.
+
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::startLoader): Null check page()
+
 2015-03-16  Roger Fong  <roger_fong@apple.com>
 
         [Win] Unreviewed build fix attempt after r181571.
