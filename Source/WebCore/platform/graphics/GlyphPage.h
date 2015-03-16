@@ -44,16 +44,13 @@ class Font;
 // Holds the glyph index and the corresponding Font information for a given
 // character.
 struct GlyphData {
-    GlyphData() { }
-    GlyphData(Glyph glyph, float width, const Font* font)
-        : glyph(glyph)
-        , width(width)
-        , font(font)
-    { }
-
-    Glyph glyph { 0 };
-    float width { 0 };
-    const Font* font { nullptr };
+    GlyphData(Glyph g = 0, const Font* f = 0)
+        : glyph(g)
+        , font(f)
+    {
+    }
+    Glyph glyph;
+    const Font* font;
 };
 
 #if COMPILER(MSVC)
@@ -112,10 +109,9 @@ public:
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         Glyph glyph = m_glyphs[index];
-        float width = m_widths[index];
         if (hasPerGlyphFontData())
-            return { glyph, width, m_perGlyphFontData[index] };
-        return { glyph, width, glyph ? m_fontForAllGlyphs : nullptr };
+            return GlyphData(glyph, m_perGlyphFontData[index]);
+        return GlyphData(glyph, glyph ? m_fontForAllGlyphs : 0);
     }
 
     ALWAYS_INLINE Glyph glyphAt(unsigned index) const
@@ -132,29 +128,31 @@ public:
         return m_glyphs[index] ? m_fontForAllGlyphs : 0;
     }
 
-    void setGlyphDataForCharacter(UChar32 c, const GlyphData& glyphData)
+    void setGlyphDataForCharacter(UChar32 c, Glyph g, const Font* f)
     {
-        setGlyphDataForIndex(indexForCharacter(c), glyphData);
+        setGlyphDataForIndex(indexForCharacter(c), g, f);
     }
 
-    void setGlyphDataForIndex(unsigned index, Glyph, const Font*);
-
-    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    void setGlyphDataForIndex(unsigned index, Glyph glyph, const Font* font)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         ASSERT(!m_isImmutable);
-
-        m_glyphs[index] = glyphData.glyph;
-        m_widths[index] = glyphData.width;
+        
+        m_glyphs[index] = glyph;
 
         // GlyphPage getters will always return a null Font* for glyph #0 if there's no per-glyph font array.
         if (hasPerGlyphFontData()) {
-            m_perGlyphFontData[index] =  glyphData.glyph ?  glyphData.font : 0;
+            m_perGlyphFontData[index] = glyph ? font : 0;
             return;
         }
 
         // A single-font GlyphPage already assigned m_fontForAllGlyphs in the constructor.
-        ASSERT(!glyphData.glyph || glyphData.font == m_fontForAllGlyphs);
+        ASSERT(!glyph || font == m_fontForAllGlyphs);
+    }
+
+    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    {
+        setGlyphDataForIndex(index, glyphData.glyph, glyphData.font);
     }
 
     // Implemented by the platform.
@@ -170,7 +168,6 @@ private:
         : m_fontForAllGlyphs(fontForAllGlyphs)
     {
         memset(m_glyphs, 0, sizeof(m_glyphs));
-        memset(m_widths, 0, sizeof(m_widths));
         if (hasPerGlyphFontData())
             memset(m_perGlyphFontData, 0, sizeof(Font*) * GlyphPage::size);
         ++s_count;
@@ -178,9 +175,8 @@ private:
 
     bool hasPerGlyphFontData() const { return !m_fontForAllGlyphs; }
 
-    const Font* m_fontForAllGlyphs { nullptr };
+    const Font* m_fontForAllGlyphs;
     Glyph m_glyphs[size];
-    float m_widths[size];
 
     bool m_isImmutable { false };
     // NOTE: This array has (GlyphPage::size) elements if m_fontForAllGlyphs is null.

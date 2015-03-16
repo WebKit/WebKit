@@ -79,7 +79,7 @@ void SVGFontData::initializeFont(Font* font, float fontSize)
     if (!xHeight && glyphPageZero) {
         // Fallback if x_heightAttr is not specified for the font element.
         Glyph letterXGlyph = glyphPageZero->glyphDataForCharacter('x').glyph;
-        xHeight = letterXGlyph ? font->computeWidthForGlyph(letterXGlyph) : 2 * ascent / 3;
+        xHeight = letterXGlyph ? font->widthForGlyph(letterXGlyph) : 2 * ascent / 3;
     }
 
     FontMetrics& fontMetrics = font->fontMetrics();
@@ -99,17 +99,17 @@ void SVGFontData::initializeFont(Font* font, float fontSize)
     }
 
     // Calculate space width.
-    auto spaceGlyphData = glyphPageZero->glyphDataForCharacter(' ');
-    font->setSpaceGlyph(spaceGlyphData.glyph);
-    font->setSpaceWidths(spaceGlyphData.width);
+    Glyph spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
+    font->setSpaceGlyph(spaceGlyph);
+    font->setSpaceWidths(font->widthForGlyph(spaceGlyph));
 
     // Estimate average character width.
-    auto numeralZeroGlyphData = glyphPageZero->glyphDataForCharacter('0');
-    font->setAvgCharWidth(numeralZeroGlyphData.glyph ? numeralZeroGlyphData.width : font->spaceWidth());
+    Glyph numeralZeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
+    font->setAvgCharWidth(numeralZeroGlyph ? font->widthForGlyph(numeralZeroGlyph) : font->spaceWidth());
 
     // Estimate maximum character width.
-    auto letterWGlyphData = glyphPageZero->glyphDataForCharacter('W');
-    font->setMaxCharWidth(letterWGlyphData.glyph ? letterWGlyphData.width : ascent);
+    Glyph letterWGlyph = glyphPageZero->glyphDataForCharacter('W').glyph;
+    font->setMaxCharWidth(letterWGlyph ? font->widthForGlyph(letterWGlyph) : ascent);
 }
 
 float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
@@ -177,7 +177,6 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
             SVGGlyph& svgGlyph = glyphs[0];
             iterator.setLastGlyphName(svgGlyph.glyphName);
             glyphData.glyph = svgGlyph.tableEntry;
-            glyphData.width = glyphData.font->computeWidthForGlyph(glyphData.glyph);
             advanceLength = svgGlyph.unicodeStringLength;
             return true;
         }
@@ -201,7 +200,6 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
             continue;
         iterator.setLastGlyphName(svgGlyph.glyphName);
         glyphData.glyph = svgGlyph.tableEntry;
-        glyphData.width = glyphData.font->computeWidthForGlyph(glyphData.glyph);
         advanceLength = svgGlyph.unicodeStringLength;
         return true;
     }

@@ -387,7 +387,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontDescripti
             cachedPage = GlyphPage::createCopyForMixedFonts(*cachedPage);
 
         glyphData = glyphDataForNormalVariant(c, description);
-        cachedPage->setGlyphDataForCharacter(c, glyphData);
+        cachedPage->setGlyphDataForCharacter(c, glyphData.glyph, glyphData.font);
     }
     return glyphData;
 }
