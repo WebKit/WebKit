@@ -1,3 +1,26 @@
+2015-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Use std::atomic for CodeBlock::m_visitAggregateHasBeenCalled.
+        <https://webkit.org/b/142640>
+
+        Reviewed by Mark Hahnenberg.
+
+        We used to spin our own compare and swap on a uint8_t.  Now that we can
+        use C++11, let's use std::atomic instead.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        - The CAS here needs std::memory_order_acquire ordering because it
+          requires lock acquisition semantics to visit the CodeBlock.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::clearMarksForEdenCollection):
+        - These can go with relaxed ordering because they are all done before
+          the GC starts parallel marking.
+
 2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the incremental build issue revealed by r181419
