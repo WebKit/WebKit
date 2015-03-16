@@ -458,10 +458,12 @@ webkit.org/b/141894 fast/attachment/attachment-rendering.html [ Failure ]
 # EFL port doesn't fully support EME yet.
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
 
-# Need to have baseline since r181114.
+# Need to have baseline since r181114 and r181418.
 Bug(EFL) fast/attachment/attachment-progress.html [ Missing ]
 Bug(EFL) fast/attachment/attachment-subtitle.html [ Missing ]
 Bug(EFL) fast/attachment/attachment-title.html [ Missing ]
+Bug(EFL) fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
+Bug(EFL) fast/attachment/attachment-select-on-click.html [ Missing ]
 
 # Need a new baseline for EFL port. It was added by r72173.
 Bug(EFL) fast/css/line-height-determined-by-primary-font.html [ Failure ]
@@ -483,6 +485,7 @@ webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Time
 webkit.org/b/105870 webaudio/audiobuffersource.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode-connect-order.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode-channel-rules.html [ Pass Crash ]
+webkit.org/b/105870 webaudio/mediastreamaudiosourcenode.html [ Crash Timeout ]
 
 # Media regressions after updating to gstreamer 1.0.
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]
@@ -2094,7 +2097,6 @@ webkit.org/b/141631 fast/forms/basic-buttons.html [ Failure ]
 webkit.org/b/141631 fast/forms/datalist/datalist-child-validation.html [ Failure ]
 webkit.org/b/141631 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/141631 fast/forms/searchfield-heights.html [ Failure ]
-webkit.org/b/141631 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
 webkit.org/b/141630 accessibility/press-targets-center-point.html [ Failure ]
 
 # Need to have new baseline
@@ -2143,6 +2145,8 @@ webkit.org/b/142451 fast/text/emphasis-vertical.html [ Failure ]
 
 webkit.org/b/142452 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 webkit.org/b/142452 fast/writing-mode/broken-ideographic-font.html [ Failure ]
+webkit.org/b/142452 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
+webkit.org/b/142452 fast/writing-mode/text-orientation-basic.html [ Failure ]
 
 # Need new baseline since r181260.
 webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]

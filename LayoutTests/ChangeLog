@@ -1,3 +1,13 @@
+2015-03-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Unreviewed EFL gardening on 16th Mar.
+
+        Mark attachment tests to missing, Set writing mode tests to failure.
+        Unskip fast/forms/textfield-overflow-by-value-update.html which is
+        passing on EFL bot.
+
+        * platform/efl/TestExpectations:
+
 2015-03-15  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS: fix the case-insensitive matching of the attribute selectors Begin, End and Hyphen
