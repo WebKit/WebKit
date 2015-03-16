@@ -612,7 +612,7 @@ void InjectedBundle::setSerialLoadingEnabled(bool enabled)
 
 void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
 {
-#if ENABLE(CSS_REGIONS)
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);

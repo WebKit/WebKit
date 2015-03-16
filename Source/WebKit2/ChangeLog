@@ -1,3 +1,10 @@
+2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r181578.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setCSSAnimationTriggersEnabled): Copy/paste error fixed.
+
 2015-03-16  Dean Jackson  <dino@apple.com>
 
         Expose WK2 preference for Animation Triggers runtime flag
