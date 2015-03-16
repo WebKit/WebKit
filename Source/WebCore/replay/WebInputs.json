@@ -67,6 +67,13 @@
                 "header": "plugins/PluginData.h"
             },
             {
+                "name": "PluginLoadClientPolicy", "mode": "SCALAR", "storage": "uint8_t",
+                "flags": ["ENUM"],
+                "values": ["PluginLoadClientPolicyUndefined", "PluginLoadClientPolicyBlock", "PluginLoadClientPolicyAsk", "PluginLoadClientPolicyAllow", "PluginLoadClientPolicyAllowAlways"],
+                "header": "plugins/PluginData.h"
+            },
+
+            {
                 "name": "ScrollDirection", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "values": ["ScrollUp", "ScrollDown", "ScrollLeft", "ScrollRight"],

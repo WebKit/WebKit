@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/IDBFactoryBackendInterface.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/MainFrame.h>
@@ -266,7 +267,8 @@ void WebPlatformStrategies::refreshPlugins()
 void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebCore::PluginInfo>& plugins)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    populatePluginCache();
+    ASSERT_ARG(page, page);
+    populatePluginCache(*page);
 
     if (page->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin)) {
         plugins = m_cachedPlugins;
@@ -280,20 +282,103 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPlatformStrategies::populatePluginCache()
+void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<PluginInfo>& plugins)
 {
-    if (m_pluginCacheIsPopulated)
-        return;
+    ASSERT_ARG(page, page);
+    ASSERT_ARG(plugins, plugins.isEmpty());
 
-    ASSERT(m_cachedPlugins.isEmpty());
-    
-    // FIXME: Should we do something in case of error here?
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0))
-        return;
+    getPluginInfo(page, plugins);
 
-    m_shouldRefreshPlugins = false;
-    m_pluginCacheIsPopulated = true;
+#if PLATFORM(MAC)
+    for (int32_t i = plugins.size() - 1; i >= 0; --i) {
+        PluginInfo& info = plugins.at(i);
+        PluginLoadClientPolicy clientPolicy = info.clientLoadPolicy;
+        // Allow built-in plugins. Also tentatively allow plugins that the client might later selectively permit.
+        if (info.isApplicationPlugin || clientPolicy == PluginLoadClientPolicyAsk)
+            continue;
+
+        if (clientPolicy == PluginLoadClientPolicyBlock)
+            plugins.remove(i);
+    }
+#endif
+}
+
+#if PLATFORM(MAC)
+void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
+{
+    String hostToSet = host.isNull() || !host.length() ? "*" : host;
+    String bundleIdentifierToSet = bundleIdentifier.isNull() || !bundleIdentifier.length() ? "*" : bundleIdentifier;
+    String versionStringToSet = versionString.isNull() || !versionString.length() ? "*" : versionString;
+
+    PluginPolicyMapsByIdentifier policiesByIdentifier;
+    if (m_hostsToPluginIdentifierData.contains(hostToSet))
+        policiesByIdentifier = m_hostsToPluginIdentifierData.get(hostToSet);
+
+    PluginLoadClientPoliciesByBundleVersion versionsToPolicies;
+    if (policiesByIdentifier.contains(bundleIdentifierToSet))
+        versionsToPolicies = policiesByIdentifier.get(bundleIdentifierToSet);
+
+    versionsToPolicies.set(versionStringToSet, clientPolicy);
+    policiesByIdentifier.set(bundleIdentifierToSet, versionsToPolicies);
+    m_hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
+}
+
+void WebPlatformStrategies::clearPluginClientPolicies()
+{
+    m_hostsToPluginIdentifierData.clear();
+}
+
+#endif
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#if PLATFORM(MAC)
+bool WebPlatformStrategies::pluginLoadClientPolicyForHost(const String& host, const PluginInfo& info, PluginLoadClientPolicy& policy) const
+{
+    String hostToLookUp = host;
+    if (!m_hostsToPluginIdentifierData.contains(hostToLookUp))
+        hostToLookUp = "*";
+    if (!m_hostsToPluginIdentifierData.contains(hostToLookUp))
+        return false;
+
+    PluginPolicyMapsByIdentifier policiesByIdentifier = m_hostsToPluginIdentifierData.get(hostToLookUp);
+    String identifier = info.bundleIdentifier;
+    if (!identifier || !policiesByIdentifier.contains(identifier))
+        identifier = "*";
+    if (!policiesByIdentifier.contains(identifier))
+        return false;
+
+    PluginLoadClientPoliciesByBundleVersion versionsToPolicies = policiesByIdentifier.get(identifier);
+    String version = info.versionString;
+    if (!version || !versionsToPolicies.contains(version))
+        version = "*";
+    if (!versionsToPolicies.contains(version))
+        return false;
+
+    policy = versionsToPolicies.get(version);
+    return true;
+}
+#endif // PLATFORM(MAC)
+
+void WebPlatformStrategies::populatePluginCache(const WebCore::Page& page)
+{
+    if (!m_pluginCacheIsPopulated) {
+        if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0))
+            return;
+
+        m_shouldRefreshPlugins = false;
+        m_pluginCacheIsPopulated = true;
+    }
+
+#if PLATFORM(MAC)
+    String pageHost = page.mainFrame().loader().documentLoader()->responseURL().host();
+    for (PluginInfo& info : m_cachedPlugins) {
+        PluginLoadClientPolicy clientPolicy;
+        if (pluginLoadClientPolicyForHost(pageHost, info, clientPolicy))
+            info.clientLoadPolicy = clientPolicy;
+    }
+#else
+    UNUSED_PARAM(page);
+#endif // not PLATFORM(MAC)
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

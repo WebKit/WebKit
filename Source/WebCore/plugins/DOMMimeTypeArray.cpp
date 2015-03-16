@@ -48,7 +48,11 @@ unsigned DOMMimeTypeArray::length() const
     PluginData* data = getPluginData();
     if (!data)
         return 0;
-    return data->mimes().size();
+
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    return mimes.size();
 }
 
 PassRefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
@@ -56,7 +60,11 @@ PassRefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
     PluginData* data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
+
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+
     if (index >= mimes.size())
         return 0;
     return DOMMimeType::create(data, m_frame, index);
@@ -67,7 +75,10 @@ bool DOMMimeTypeArray::canGetItemsForName(const AtomicString& propertyName)
     PluginData *data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
+
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i].type == propertyName)
             return true;
@@ -80,7 +91,10 @@ PassRefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& property
     PluginData *data = getPluginData();
     if (!data)
         return 0;
-    const Vector<MimeClassInfo>& mimes = data->mimes();
+
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i].type == propertyName)
             return DOMMimeType::create(data, m_frame, i);

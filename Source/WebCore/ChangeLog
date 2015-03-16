@@ -1,3 +1,134 @@
+2015-03-16  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Allow clients to selectively disable plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=142506
+
+        Reviewed by Anders Carlsson.
+
+        Add new functionality allow clients to declaratively disable individual plug-ins (in a manner that conceals them
+        from the page). As part of this:
+
+        1) Introduce the concept of web-visible plug-ins and related concepts, as distinct from the real underlying
+           set of plug-ins.
+
+        2) Where applicable, plumb additional information about plug-ins (specifically, bundle identification) deeper
+           down the stack.
+
+        3) Add generic functionality to PluginStrategy to support filtering plug-ins for visibility and introduce
+           a concrete implementation thereof in WebPlatformStrategies in WebKit2.
+
+        4) Add messaging infrastructure to allow clients to set and clear plug-in policies.
+
+        While currently only used in a very limited manner, the new declarative plug-in policies are written generically
+        so that they could be easily used in the future to reduce synchronous messaging to the client when loading plug-ins.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        Update to reflect function rename.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::findPluginMIMETypeFromURL):
+        Adopt getWebVisibleMimesAndPluginIndices().
+        (WebCore::logPluginRequest):
+        Update to reflect function rename.
+        (WebCore::SubframeLoader::shouldUsePlugin):
+        Ditto.
+
+        * platform/PlatformStrategies.h:
+        Export platformStrategies(), since it is now used in WebProcess.cpp.
+
+        * plugins/DOMMimeType.cpp:
+        (WebCore::DOMMimeType::type):
+        (WebCore::DOMMimeType::description):
+        (WebCore::DOMMimeType::mimeClassInfo):
+        Adopt getWebVisibleMimesAndPluginIndices().
+        (WebCore::DOMMimeType::enabledPlugin):
+        Ditto.
+
+        * plugins/DOMMimeType.h:
+        Don't return references in a few places where it is no longer safe to do so.
+        (WebCore::DOMMimeType::mimeClassInfo): Deleted.
+
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::length):
+        Adopt getWebVisibleMimesAndPluginIndices().
+        (WebCore::DOMMimeTypeArray::item):
+        Ditto.
+        (WebCore::DOMMimeTypeArray::canGetItemsForName):
+        Ditto.
+        (WebCore::DOMMimeTypeArray::namedItem):
+        Ditto.
+
+        * plugins/DOMPlugin.cpp:
+        (WebCore::DOMPlugin::pluginInfo):
+        Adopt getWebVisiblePlugins().
+        (WebCore::DOMPlugin::item):
+        Adopt getWebVisibleMimesAndPluginIndices().
+        (WebCore::DOMPlugin::canGetItemsForName):
+        Ditto.
+        (WebCore::DOMPlugin::namedItem):
+        Ditto.
+
+        * plugins/DOMPlugin.h:
+        (WebCore::DOMPlugin::pluginInfo): Deleted.
+
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::length):
+        Adopt getWebVisiblePlugins().
+        (WebCore::DOMPluginArray::item):
+        Ditto.
+        (WebCore::DOMPluginArray::canGetItemsForName):
+        Ditto.
+        (WebCore::DOMPluginArray::namedItem):
+        Ditto.
+
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::PluginData):
+        Stash the passed-in Page and call initPlugins().
+        (WebCore::PluginData::getWebVisiblePlugins):
+        New member function; call through to PluginStrategy::getWebVisiblePluginInfo().
+        (WebCore::PluginData::getWebVisibleMimesAndPluginIndices):
+        New member function; build up the mimes and mimePluginIndices vectors in the same manner as before, but
+        limited to the web-visible plug-ins.
+        (WebCore::PluginData::supportsWebVisibleMimeType):
+        Renamed from supportsMimeType(); update to work in terms of web-visible plug-ins.
+        (WebCore::PluginData::pluginInfoForWebVisibleMimeType):
+        Renamed from pluginInfoForMimeType(); ditto.
+        (WebCore::PluginData::pluginNameForWebVisibleMimeType):
+        Renamed from pluginNameForMimeType(); ditto.
+        (WebCore::PluginData::pluginFileForWebVisibleMimeType):
+        Renamed from pluginFileForMimeType(); ditto.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::supportsMimeType): Deleted.
+        (WebCore::PluginData::pluginInfoForMimeType): Deleted.
+        (WebCore::PluginData::pluginNameForMimeType): Deleted.
+        (WebCore::PluginData::pluginFileForMimeType): Deleted.
+
+        * plugins/PluginData.h:
+        Add a member variable for the associate Page; declare the PluginLoadClientPolicy enumeration; add
+        new members to PluginInfo for the clientLoadPolicy and bundle information.
+        (WebCore::PluginData::PluginData):
+        Replace some member functions with new ones that will hide plug-ins upon request from the client;
+        (WebCore::PluginData::mimes): Deleted.
+        (WebCore::PluginData::mimePluginIndices): Deleted.
+
+        * plugins/PluginStrategy.h:
+        Declare new member functions for retrieving web-visible plug-ins and setting/clearing plug-in policies.
+
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PluginData>::encodeValue):
+        Remove now-obsolete code for handling MIME types and add a FIXME.
+        (JSC::DeserializedPluginData::DeserializedPluginData):
+        (JSC::EncodingTraits<PluginData>::decodeValue):
+        Ditto.
+        (JSC::EncodingTraits<PluginInfo>::encodeValue):
+        Handle the new members in PluginInfo.
+        (JSC::EncodingTraits<PluginInfo>::decodeValue):
+        Ditto.
+
+        * replay/WebInputs.json:
+        Teach Replay about PluginLoadClientPolicy.
+
 2015-03-16  Max Stepin  <maxstepin@gmail.com>
 
         Add APNG support
