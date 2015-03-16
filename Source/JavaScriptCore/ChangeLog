@@ -1,5 +1,16 @@
 2015-03-12  Mark Lam  <mark.lam@apple.com>
 
+        Change the DFG crashLock to use std::atomic.
+        <https://webkit.org/b/142649>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::startCrashing):
+        (JSC::DFG::isCrashing):
+
+2015-03-12  Mark Lam  <mark.lam@apple.com>
+
         Use std::atomic for CodeBlock::m_visitAggregateHasBeenCalled.
         <https://webkit.org/b/142640>
 
