@@ -1,3 +1,85 @@
+2015-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Rename ConsoleMessage and ConsoleMessageImpl to LegacyConsoleMessage and LegacyConsoleMessageImpl respectively
+        https://bugs.webkit.org/show_bug.cgi?id=142712
+
+        As a first step of ConsoleMessage refactoring (https://bugs.webkit.org/show_bug.cgi?id=142599):
+
+          - Rename WebInspector.ConsoleMessage class to WebInspector.LegacyConsoleMessage
+          - Rename WebInspector.ConsoleMessageImpl class to WebInspector.LegacyConsoleMessageImpl
+          - Rename ConsoleMessage.js file to LegacyConsoleMessage.js
+          - Rename ConsoleMessageImpl file to LegacyConsoleMessageImpl.js
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessage):
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messageWasAdded):
+        * UserInterface/Main.html:
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard.prototype._incrementConsoleMessageType):
+        * UserInterface/Views/ConsoleCommandResult.js:
+        (WebInspector.ConsoleCommandResult):
+        (WebInspector.ConsoleCommandResult.prototype.toMessageElement):
+        * UserInterface/Views/ConsoleGroup.js:
+        (WebInspector.ConsoleGroup.prototype.render):
+        * UserInterface/Views/LegacyConsoleMessage.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ConsoleMessage.js.
+        (WebInspector.LegacyConsoleMessage):
+        (WebInspector.LegacyConsoleMessage.prototype.isErrorOrWarning):
+        (WebInspector.LegacyConsoleMessage.prototype.updateRepeatCount):
+        (WebInspector.LegacyConsoleMessage.prototype.clone):
+        (WebInspector.LegacyConsoleMessage.create):
+        * UserInterface/Views/LegacyConsoleMessageImpl.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ConsoleMessageImpl.js.
+        (WebInspector.LegacyConsoleMessageImpl):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._shouldDumpStackTrace):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._shouldHideURL):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._firstNonNativeCallFrame):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get message):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get formattedMessage):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._linkifyLocation):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._linkifyCallFrame):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.isErrorOrWarning):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._format):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._isExpandable):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsValue):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsObject):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsString):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsNode):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._rootPropertyPathForObject):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._userProvidedColumnNames):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatParameterAsTable):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.stringFormatter):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.floatFormatter):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.integerFormatter):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.styleFormatter):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.isWhitelistedProperty):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.append):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._formatWithSubstitutionString):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.decorateMessageElement):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.toMessageElement):
+        (WebInspector.LegacyConsoleMessageImpl.prototype._populateStackTraceTreeElement):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.updateRepeatCount):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.toString):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get text):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.isEqual):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get stackTrace):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.clone):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get levelString):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.get clipboardPrefixString):
+        (WebInspector.LegacyConsoleMessageImpl.prototype.toClipboardString):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessage):
+        (WebInspector.LogContentView.prototype._messageAdded):
+        (WebInspector.LogContentView.prototype._filterMessages):
+        (WebInspector.LogContentView.prototype._reappendProvisionalMessages):
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2015-03-12  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Debugger sidebar should group global breakpoints together

@@ -315,8 +315,8 @@
     <None Include="..\UserInterface\ConsoleCommand.js" />
     <None Include="..\UserInterface\ConsoleCommandResult.js" />
     <None Include="..\UserInterface\ConsoleGroup.js" />
-    <None Include="..\UserInterface\ConsoleMessage.js" />
-    <None Include="..\UserInterface\ConsoleMessageImpl.js" />
+    <None Include="..\UserInterface\LegacyConsoleMessage.js" />
+    <None Include="..\UserInterface\LegacyConsoleMessageImpl.js" />
     <None Include="..\UserInterface\ConsoleObserver.js" />
     <None Include="..\UserInterface\ConsolePrompt.css" />
     <None Include="..\UserInterface\ConsolePrompt.js" />
