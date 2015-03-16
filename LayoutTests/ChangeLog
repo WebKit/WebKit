@@ -1,3 +1,9 @@
+2015-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] APNG is not supported on Windows (but it IS supported on WinCairo)
+
+        * platform/win/TestExpectations:
+
 2015-03-16  Chris Dumez  <cdumez@apple.com>
 
         Mark fast/images/animated-png.html as [ Crash ImageOnlyFailure ]
