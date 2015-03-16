@@ -158,6 +158,10 @@ SOFT_LINK(libGLESv2, glUniformMatrix3fv, void, GL_APIENTRY, (GLint location, GLs
 SOFT_LINK(libGLESv2, glUniformMatrix4fv, void, GL_APIENTRY, (GLint location, GLsizei count, GLboolean transpose, const GLfloat* value), (location, count, transpose, value));
 SOFT_LINK(libGLESv2, glUseProgram, void, GL_APIENTRY, (GLuint program), (program));
 SOFT_LINK(libGLESv2, glValidateProgram, void, GL_APIENTRY, (GLuint program), (program));
+SOFT_LINK(libGLESv2, glBindVertexArray, void, GL_APIENTRY, (GLuint array), (array));
+SOFT_LINK(libGLESv2, glDeleteVertexArrays, void, GL_APIENTRY, (GLsizei n, const GLuint* arrays), (n, arrays));
+SOFT_LINK(libGLESv2, glGenVertexArrays, void, GL_APIENTRY, (GLsizei n, const GLuint* arrays), (n, arrays));
+SOFT_LINK(libGLESv2, glIsVertexArray, GLboolean, GL_APIENTRY, (GLuint array), (array));
 SOFT_LINK(libGLESv2, glVertexAttrib1f, void, GL_APIENTRY, (GLuint indx, GLfloat x), (indx, x));
 SOFT_LINK(libGLESv2, glVertexAttrib1fv, void, GL_APIENTRY, (GLuint indx, const GLfloat* values), (indx, values));
 SOFT_LINK(libGLESv2, glVertexAttrib2f, void, GL_APIENTRY, (GLuint indx, GLfloat x, GLfloat y), (indx, x, y));
