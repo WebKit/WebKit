@@ -24,7 +24,7 @@
 #include "AudioBus.h"
 #include "AudioSourceProviderClient.h"
 #include <gst/app/gstappsink.h>
-#include <gst/audio/audio.h>
+#include <gst/audio/audio-info.h>
 #include <gst/base/gstadapter.h>
 #include <wtf/gobject/GMutexLocker.h>
 

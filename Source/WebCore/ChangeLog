@@ -1,3 +1,23 @@
+2015-03-12  Sebastian Dröge  <sebastian@centricular.com>
+
+        Stop using single-include headers that are only available since GStreamer >= 1.2.
+
+        https://bugs.webkit.org/show_bug.cgi?id=142537
+
+        Reviewed by Philippe Normand.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        Instead of using single-include headers for the GStreamer libraries,
+        directly include the headers we need. The single-include headers were
+        only added in 1.2, and this would be the only reason why we would
+        depend on 1.2.
+
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Users of Heap::deprecatedReportExtraMemory should switch to reportExtraMemoryAllocated+reportExtraMemoryVisited

@@ -19,7 +19,7 @@
 #include "Logging.h"
 
 #include <gst/gst.h>
-#include <gst/video/video.h>
+#include <gst/video/video-format.h>
 
 #define LOG_MEDIA_MESSAGE(...) do { \
     GST_DEBUG(__VA_ARGS__); \
