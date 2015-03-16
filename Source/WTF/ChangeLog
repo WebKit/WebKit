@@ -1,3 +1,16 @@
+2015-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Change WTF::ByteSpinLock to use std::atomic.
+        <https://webkit.org/b/142644>
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/ByteSpinLock.h:
+        (WTF::ByteSpinLock::ByteSpinLock):
+        (WTF::ByteSpinLock::lock):
+        (WTF::ByteSpinLock::unlock):
+        (WTF::ByteSpinLock::isHeld):
+
 2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM][Linux] GC sometimes stuck in an infinite loop if parallel GC is enabled

@@ -26,9 +26,9 @@
 #ifndef ByteSpinLock_h
 #define ByteSpinLock_h
 
+#include <atomic>
 #include <thread>
 #include <wtf/Assertions.h>
-#include <wtf/Atomics.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
@@ -38,27 +38,28 @@ class ByteSpinLock {
     WTF_MAKE_NONCOPYABLE(ByteSpinLock);
 public:
     ByteSpinLock()
-        : m_lock(0)
+        : m_lock(false)
     {
     }
 
     void lock()
     {
-        while (!weakCompareAndSwap(&m_lock, 0, 1))
+        bool expected = false;
+        while (!m_lock.compare_exchange_weak(expected, true, std::memory_order_acquire)) {
             std::this_thread::yield();
-        memoryBarrierAfterLock();
+            expected = false;
+        }
     }
     
     void unlock()
     {
-        memoryBarrierBeforeUnlock();
-        m_lock = 0;
+        m_lock.store(false, std::memory_order_release);
     }
     
-    bool isHeld() const { return !!m_lock; }
+    bool isHeld() const { return m_lock.load(std::memory_order_acquire); }
     
 private:
-    uint8_t m_lock;
+    std::atomic<bool> m_lock;
 };
 
 typedef Locker<ByteSpinLock> ByteSpinLocker;
