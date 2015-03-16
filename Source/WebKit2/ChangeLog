@@ -1,3 +1,12 @@
+2015-03-16  Przemyslaw Piorkowski  <p.piorkowski@samsung.com>
+
+        [EFL][WK2] REGRESSION(r178526): test_ewk2_storage_manager has been failed for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=141249
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Enable test_ewk2_storage_manager for EFL port - it is passing now.
+
 2015-03-16  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] REGRESSION (r181511): Most layout tests crash with a NULL deref
