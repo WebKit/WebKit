@@ -1,3 +1,32 @@
+2015-03-15  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Adopt new NEFilterSource SPI
+        https://bugs.webkit.org/show_bug.cgi?id=142710
+        rdar://problem/19023855
+
+        Reviewed by Dan Bernstein.
+
+        Teach NetworkExtensionContentFilter to use a new, alternate NEFilterSource SPI on platforms where it is available.
+
+        * platform/ContentFilter.cpp:
+        (WebCore::ContentFilter::types): Renamed HAVE(NE_FILTER_SOURCE) to HAVE(NETWORK_EXTENSION).
+        * platform/cocoa/NetworkExtensionContentFilter.h: Renamed member variables to remove redundancy, forward-declared NEFilterSourceStatus,
+        added a dispatch_semaphore member variable to avoid creating and destroying multiple semaphores, and made m_originalData a SharedBuffer.
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (decisionInfoReplacementData): Returned the replacement data from a decision handler info dictionary.
+        (WebCore::createNEFilterSource): Created either an old-style or new-style NEFilterSource object.
+        (WebCore::NetworkExtensionContentFilter::NetworkExtensionContentFilter): Called receivedResponse:decisionHandler: when using the new SPI.
+        (WebCore::NetworkExtensionContentFilter::~NetworkExtensionContentFilter): Released the dispatch_semaphore.
+        (WebCore::NetworkExtensionContentFilter::addData): Appended the copied NSData to m_originalData, avoiding an additional copy previously
+        being made by NSMutableData. Used the new receivedData:decisionHandler: SPI when appropriate.
+        (WebCore::NetworkExtensionContentFilter::finishedAddingData): Used the new finishedLoadingWithDecisionHandler: SPI when appropriate.
+        (WebCore::NetworkExtensionContentFilter::needsMoreData): Changed m_neFilterSourceStatus to m_status.
+        (WebCore::NetworkExtensionContentFilter::didBlockData): Ditto.
+        (WebCore::NetworkExtensionContentFilter::getReplacementData): Returned the replacement data from NEFilterSource if the load was blocked.
+        Otherwise, returned the original data.
+        (WebCore::NetworkExtensionContentFilter::handleDecision): Added a helper to set m_status and m_replacementData, and to signal m_semaphore.
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Declared the new NEFilterSource SPI on platforms that support it.
+
 2015-03-15  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll snap points are not supported on iframe content

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define HAVE_MODERN_NE_FILTER_SOURCE (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <NetworkExtension/NEFilterSource.h>
@@ -44,7 +46,7 @@ typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
 @interface NEFilterSource : NSObject
 @end
 
-@interface NEFilterSource (Details)
+@interface NEFilterSource (WKLegacyDetails)
 + (BOOL)filterRequired;
 - (id)initWithURL:(NSURL *)url direction:(NEFilterSourceDirection)direction socketIdentifier:(uint64_t)socketIdentifier;
 - (void)addData:(NSData *)data withCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
@@ -54,5 +56,18 @@ typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
 @property (readonly) NEFilterSourceDirection direction;
 @property (readonly) uint64_t socketIdentifier;
 @end
+
+#if HAVE(MODERN_NE_FILTER_SOURCE)
+typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary *);
+
+@interface NEFilterSource (WKModernDetails)
+- (id)initWithDecisionQueue:(dispatch_queue_t)queue;
+- (void)willSendRequest:(NSURLRequest *)request decisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+- (void)receivedResponse:(NSURLResponse *)response decisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+- (void)receivedData:(NSData *)data decisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+- (void)finishedLoadingWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+- (void)remediateWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+@end
+#endif
 
 #endif

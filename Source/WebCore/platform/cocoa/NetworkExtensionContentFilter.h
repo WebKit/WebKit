@@ -27,12 +27,20 @@
 #define NetworkExtensionContentFilter_h
 
 #include "ContentFilter.h"
+#include "SharedBuffer.h"
+#include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
+#include <wtf/OSObjectPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
-#define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
+#define HAVE_NETWORK_EXTENSION PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
+
+enum NEFilterSourceStatus : NSInteger;
 
 OBJC_CLASS NEFilterSource;
+OBJC_CLASS NSData;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMutableData;
 
 namespace WebCore {
@@ -46,7 +54,6 @@ public:
     static bool canHandleResponse(const ResourceResponse&);
     static std::unique_ptr<NetworkExtensionContentFilter> create(const ResourceResponse&);
 
-    ~NetworkExtensionContentFilter() override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
     bool needsMoreData() const override;
@@ -56,11 +63,14 @@ public:
 
 private:
     explicit NetworkExtensionContentFilter(const ResourceResponse&);
+    void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
-    long m_neFilterSourceStatus;
+    NEFilterSourceStatus m_status;
+    OSObjectPtr<dispatch_queue_t> m_queue;
+    OSObjectPtr<dispatch_semaphore_t> m_semaphore;
+    Ref<SharedBuffer> m_originalData;
+    RetainPtr<NSData> m_replacementData;
     RetainPtr<NEFilterSource> m_neFilterSource;
-    dispatch_queue_t m_neFilterSourceQueue;
-    RetainPtr<NSMutableData> m_originalData;
 };
 
 } // namespace WebCore
