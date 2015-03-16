@@ -1,3 +1,25 @@
+2015-03-14  Michael Saboff  <msaboff@apple.com>
+
+        Disable Yarr JIT for ARMv7k
+        https://bugs.webkit.org/show_bug.cgi?id=142645
+
+        Rubber stamped by Geoffrey Garen.
+
+        Changed the setting of ENABLE_YARR_JIT to be predicated on ENABLED_JIT.
+
+        * wtf/Platform.h:
+
+2015-03-12  Michael Saboff  <msaboff@apple.com>
+
+        Disable Yarr JIT for ARMv7k
+        https://bugs.webkit.org/show_bug.cgi?id=142645
+
+        Reviewed by Oliver Hunt.
+
+        Make the setting of ENABLE_YARR_JIT match ENABLE_JIT for ARMv7k.
+
+        * wtf/Platform.h:
+
 2015-03-12  Mark Lam  <mark.lam@apple.com>
 
         Change WTF::ByteSpinLock to use std::atomic.

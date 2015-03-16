@@ -656,7 +656,7 @@
 #endif
 #endif /* !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32_64) */
 
-/* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k and Windows. */
+/* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && !CPU(APPLE_ARMV7K)
@@ -820,7 +820,7 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT)
+#if !defined(ENABLE_YARR_JIT) && ENABLE(JIT)
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */
