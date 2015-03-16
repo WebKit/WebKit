@@ -1,3 +1,16 @@
+2015-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add new Notification classes to GTK+ API documentation.
+
+        Add WebKitNotification and WebKitNotificationPermissionRequest to
+        the documentation and fix some other typos causing warnings when
+        generating HTML documentation.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2015-03-16  Przemyslaw Piorkowski  <p.piorkowski@samsung.com>
 
         [EFL][WK2] REGRESSION(r178526): test_ewk2_storage_manager has been failed for a long time

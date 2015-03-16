@@ -242,7 +242,7 @@ void webkit_user_script_unref(WebKitUserScript* userScript)
  * *host* and *path* components can contain the wildcard character (`*`) to
  * represent zero or more other characters.
  *
- * Returns: A new #WebKitScript
+ * Returns: A new #WebKitUserScript
  *
  * Since: 2.6
  */
