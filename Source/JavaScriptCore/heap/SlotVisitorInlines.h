@@ -252,27 +252,9 @@ inline void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, si
     }
 }
     
-inline void SlotVisitor::reportExtraMemoryUsage(JSCell* owner, size_t size)
+inline void SlotVisitor::reportExtraMemoryVisited(JSCell* owner, size_t size)
 {
-#if ENABLE(GGC)
-    // We don't want to double-count the extra memory that was reported in previous collections.
-    if (heap()->operationInProgress() == EdenCollection && Heap::isRemembered(owner))
-        return;
-#else
-    UNUSED_PARAM(owner);
-#endif
-
-    size_t* counter = &m_shared.m_vm->heap.m_extraMemoryUsage;
-    
-#if ENABLE(COMPARE_AND_SWAP)
-    for (;;) {
-        size_t oldSize = *counter;
-        if (WTF::weakCompareAndSwapSize(counter, oldSize, oldSize + size))
-            return;
-    }
-#else
-    (*counter) += size;
-#endif
+    heap()->reportExtraMemoryVisited(owner, size);
 }
 
 inline Heap* SlotVisitor::heap() const

@@ -1,3 +1,69 @@
+2015-03-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored the JSC::Heap extra cost API for clarity and to make some known bugs more obvious
+        https://bugs.webkit.org/show_bug.cgi?id=142589
+
+        Reviewed by Andreas Kling.
+
+        * API/JSBase.cpp:
+        (JSReportExtraMemoryCost): Added a FIXME to annotate a known bug.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode): Updated for rename.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reportExtraMemoryAllocatedSlowCase):
+        (JSC::Heap::deprecatedReportExtraMemorySlowCase): Renamed our reporting
+        APIs to clarify their relationship to each other: One must report extra
+        memory at the time of allocation, and at the time the GC visits it.
+
+        (JSC::Heap::extraMemorySize):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::sizeAfterCollect):
+        (JSC::Heap::willStartCollection): Updated for renames. Added explicit
+        API for deprecated users who can't use our best API.
+ 
+        (JSC::Heap::reportExtraMemoryCostSlowCase): Deleted.
+        (JSC::Heap::extraSize): Deleted.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::reportExtraMemoryAllocated):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::deprecatedReportExtraMemory):
+        (JSC::Heap::reportExtraMemoryCost): Deleted. Ditto.
+
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::reportExtraMemoryUsage): Deleted. Moved this
+        functionality into the Heap since it's pretty detailed in its access
+        to the heap.
+
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren): Updated for
+        renames.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        (JSC::JSRopeString::resolveRopeToAtomicString):
+        (JSC::JSRopeString::resolveRope):
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation): Updated for renames.
+
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add): Added FIXME.
+
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::visitChildren): Updated for rename.
+
 2015-03-10  Mark Lam  <mark.lam@apple.com>
 
         Use std::numeric_limits<unsigned>::max() instead of (unsigned)-1.

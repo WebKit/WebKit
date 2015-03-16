@@ -310,7 +310,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_blockAllocator()
     , m_objectSpace(this)
     , m_storageSpace(this)
-    , m_extraMemoryUsage(0)
+    , m_extraMemorySize(0)
+    , m_deprecatedExtraMemorySize(0)
     , m_machineThreads(this)
     , m_sharedData(vm)
     , m_slotVisitor(m_sharedData)
@@ -378,21 +379,16 @@ void Heap::releaseDelayedReleasedObjects()
 #endif
 }
 
-void Heap::reportExtraMemoryCostSlowCase(size_t cost)
+void Heap::reportExtraMemoryAllocatedSlowCase(size_t size)
 {
-    // Our frequency of garbage collection tries to balance memory use against speed
-    // by collecting based on the number of newly created values. However, for values
-    // that hold on to a great deal of memory that's not in the form of other JS values,
-    // that is not good enough - in some cases a lot of those objects can pile up and
-    // use crazy amounts of memory without a GC happening. So we track these extra
-    // memory costs. Only unusually large objects are noted, and we only keep track
-    // of this extra cost until the next GC. In garbage collected languages, most values
-    // are either very short lived temporaries, or have extremely long lifetimes. So
-    // if a large value survives one garbage collection, there is not much point to
-    // collecting more frequently as long as it stays alive.
-
-    didAllocate(cost);
+    didAllocate(size);
     collectIfNecessaryOrDefer();
+}
+
+void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
+{
+    m_deprecatedExtraMemorySize += size;
+    reportExtraMemoryAllocatedSlowCase(size);
 }
 
 void Heap::reportAbandonedObjectGraph()
@@ -840,19 +836,19 @@ size_t Heap::objectCount()
     return m_objectSpace.objectCount();
 }
 
-size_t Heap::extraSize()
+size_t Heap::extraMemorySize()
 {
-    return m_extraMemoryUsage + m_arrayBuffers.size();
+    return m_extraMemorySize + m_deprecatedExtraMemorySize + m_arrayBuffers.size();
 }
 
 size_t Heap::size()
 {
-    return m_objectSpace.size() + m_storageSpace.size() + extraSize();
+    return m_objectSpace.size() + m_storageSpace.size() + extraMemorySize();
 }
 
 size_t Heap::capacity()
 {
-    return m_objectSpace.capacity() + m_storageSpace.capacity() + extraSize();
+    return m_objectSpace.capacity() + m_storageSpace.capacity() + extraMemorySize();
 }
 
 size_t Heap::sizeAfterCollect()
@@ -862,7 +858,7 @@ size_t Heap::sizeAfterCollect()
     // rather than all used (including dead) copied bytes, thus it's 
     // always the case that m_totalBytesCopied <= m_storageSpace.size(). 
     ASSERT(m_totalBytesCopied <= m_storageSpace.size());
-    return m_totalBytesVisited + m_totalBytesCopied + extraSize();
+    return m_totalBytesVisited + m_totalBytesCopied + extraMemorySize();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -1110,7 +1106,8 @@ void Heap::willStartCollection(HeapOperation collectionType)
     }
     if (m_operationInProgress == FullCollection) {
         m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
-        m_extraMemoryUsage = 0;
+        m_extraMemorySize = 0;
+        m_deprecatedExtraMemorySize = 0;
 
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();

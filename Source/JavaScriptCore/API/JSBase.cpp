@@ -138,7 +138,10 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
     }
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
-    exec->vm().heap.reportExtraMemoryCost(size);
+
+    // FIXME: switch to deprecatedReportExtraMemory.
+    // https://bugs.webkit.org/show_bug.cgi?id=142593
+    exec->vm().heap.reportExtraMemoryAllocated(size);
 }
 
 extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);

@@ -189,7 +189,7 @@ private:
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
     size_t extraMemoryCost() const;
-    void reportExtraMemoryCost();
+    void reportExtraMemoryAllocated();
 
     std::unique_ptr<PlatformTimeRanges> bufferedAccountingForEndOfStream() const;
 

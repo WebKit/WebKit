@@ -571,7 +571,7 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
     // 6. Asynchronously run the buffer append algorithm.
     m_appendBufferTimer.startOneShot(0);
 
-    reportExtraMemoryCost();
+    reportExtraMemoryAllocated();
 }
 
 void SourceBuffer::appendBufferTimerFired()
@@ -657,7 +657,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
             provideMediaData(trackBuffer, trackID);
     }
 
-    reportExtraMemoryCost();
+    reportExtraMemoryAllocated();
     if (extraMemoryCost() > this->maximumBufferSize())
         m_bufferFull = true;
 
@@ -1978,7 +1978,7 @@ size_t SourceBuffer::extraMemoryCost() const
     return extraMemoryCost;
 }
 
-void SourceBuffer::reportExtraMemoryCost()
+void SourceBuffer::reportExtraMemoryAllocated()
 {
     size_t extraMemoryCost = this->extraMemoryCost();
     if (extraMemoryCost < m_reportedExtraMemoryCost)
@@ -1988,8 +1988,11 @@ void SourceBuffer::reportExtraMemoryCost()
     m_reportedExtraMemoryCost = extraMemoryCost;
 
     JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-    if (extraMemoryCostDelta > 0)
-        scriptExecutionContext()->vm().heap.reportExtraMemoryCost(extraMemoryCostDelta);
+    if (extraMemoryCostDelta > 0) {
+        // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
+        // https://bugs.webkit.org/show_bug.cgi?id=142593
+        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(extraMemoryCostDelta);
+    }
 }
 
 Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& trackID)

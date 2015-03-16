@@ -80,7 +80,9 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
     AddResult result = m_map.add(i, entry);
     size_t capacity = m_map.capacity();
     if (capacity != m_reportedCapacity) {
-        Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
+        // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
+        // https://bugs.webkit.org/show_bug.cgi?id=142593
+        Heap::heap(array)->reportExtraMemoryAllocated((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
         m_reportedCapacity = capacity;
     }
     return result;

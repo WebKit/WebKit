@@ -1665,7 +1665,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     }
     
     m_heap->m_codeBlocks.add(this);
-    m_heap->reportExtraMemoryCost(sizeof(CodeBlock));
+    m_heap->reportExtraMemoryAllocated(sizeof(CodeBlock));
 }
 
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
@@ -2142,7 +2142,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         dumpBytecode();
     
     m_heap->m_codeBlocks.add(this);
-    m_heap->reportExtraMemoryCost(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));
+    m_heap->reportExtraMemoryAllocated(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));
 }
 
 CodeBlock::~CodeBlock()
@@ -2234,15 +2234,15 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
         otherBlock->visitAggregate(visitor);
 
-    visitor.reportExtraMemoryUsage(ownerExecutable(), sizeof(CodeBlock));
+    visitor.reportExtraMemoryVisited(ownerExecutable(), sizeof(CodeBlock));
     if (m_jitCode)
-        visitor.reportExtraMemoryUsage(ownerExecutable(), m_jitCode->size());
+        visitor.reportExtraMemoryVisited(ownerExecutable(), m_jitCode->size());
     if (m_instructions.size()) {
         // Divide by refCount() because m_instructions points to something that is shared
         // by multiple CodeBlocks, and we only want to count it towards the heap size once.
         // Having each CodeBlock report only its proportional share of the size is one way
         // of accomplishing this.
-        visitor.reportExtraMemoryUsage(ownerExecutable(), m_instructions.size() * sizeof(Instruction) / m_instructions.refCount());
+        visitor.reportExtraMemoryVisited(ownerExecutable(), m_instructions.size() * sizeof(Instruction) / m_instructions.refCount());
     }
 
     visitor.append(&m_unlinkedCode);

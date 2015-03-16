@@ -2857,7 +2857,7 @@ sub GenerateImplementation
         }
         push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{"JSCustomMarkFunction"};
         if ($interface->extendedAttributes->{"ReportExtraMemoryCost"}) {
-            push(@implContent, "    visitor.reportExtraMemoryUsage(cell, thisObject->impl().memoryCost());\n");
+            push(@implContent, "    visitor.reportExtraMemoryVisited(cell, thisObject->impl().memoryCost());\n");
         }
         if ($numCachedAttributes > 0) {
             foreach (@{$interface->attributes}) {
@@ -3072,7 +3072,7 @@ END
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ReportExtraMemoryCost"};
-    globalObject->vm().heap.reportExtraMemoryCost(impl->memoryCost());
+    globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
         if ($svgPropertyType) {

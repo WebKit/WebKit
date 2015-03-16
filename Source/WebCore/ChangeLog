@@ -1,3 +1,45 @@
+2015-03-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored the JSC::Heap extra cost API for clarity and to make some known bugs more obvious
+        https://bugs.webkit.org/show_bug.cgi?id=142589
+
+        Reviewed by Andreas Kling.
+
+        Updated for renames to JSC extra cost APIs.
+
+        Added FIXMEs to our 10 use cases that are currently wrong, including
+        canvas, which is the cause of https://bugs.webkit.org/show_bug.cgi?id=142457.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::reportExtraMemoryAllocated):
+        (WebCore::SourceBuffer::reportExtraMemoryCost): Deleted.
+        * Modules/mediasource/SourceBuffer.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::createWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/CollectionIndexCache.cpp:
+        (WebCore::reportExtraMemoryAllocatedForCollectionIndexCache):
+        (WebCore::reportExtraMemoryCostForCollectionIndexCache): Deleted.
+        * dom/CollectionIndexCache.h:
+        (WebCore::Iterator>::computeNodeCountUpdatingListCache):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCollection.h:
+        (WebCore::CollectionNamedElementCache::didPopulate):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::imageChanged):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+
 2015-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Inline block children do not have correct baselines if their children are also block elements

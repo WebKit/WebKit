@@ -273,7 +273,7 @@ public:
     void setJITCode(PassRefPtr<JITCode> code)
     {
         ASSERT(m_heap->isDeferred());
-        m_heap->reportExtraMemoryCost(code->size());
+        m_heap->reportExtraMemoryAllocated(code->size());
         ConcurrentJITLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
         m_jitCode = code;

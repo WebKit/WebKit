@@ -30,11 +30,13 @@
 
 namespace WebCore {
 
-void reportExtraMemoryCostForCollectionIndexCache(size_t cost)
+void reportExtraMemoryAllocatedForCollectionIndexCache(size_t cost)
 {
     JSC::VM& vm = JSDOMWindowBase::commonVM();
     JSC::JSLockHolder lock(vm);
-    vm.heap.reportExtraMemoryCost(cost);
+    // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
+    // https://bugs.webkit.org/show_bug.cgi?id=142593
+    vm.heap.reportExtraMemoryAllocated(cost);
 }
 
 }
