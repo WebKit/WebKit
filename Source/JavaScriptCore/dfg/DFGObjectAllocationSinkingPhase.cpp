@@ -581,10 +581,12 @@ private:
                 promoteHeapAccess(
                     node,
                     [&] (PromotedHeapLocation location, Edge) {
-                        locations.add(location);
+                        if (m_sinkCandidates.contains(location.base()))
+                            locations.add(location);
                     },
                     [&] (PromotedHeapLocation location) {
-                        locations.add(location);
+                        if (m_sinkCandidates.contains(location.base()))
+                            locations.add(location);
                     });
             }
         }
@@ -636,6 +638,8 @@ private:
                 promoteHeapAccess(
                     node,
                     [&] (PromotedHeapLocation location, Edge value) {
+                        if (!m_sinkCandidates.contains(location.base()))
+                            return;
                         SSACalculator::Variable* variable = m_locationToVariable.get(location);
                         m_ssaCalculator.newDef(variable, block, value.node());
                     },
@@ -687,10 +691,12 @@ private:
                 promoteHeapAccess(
                     node,
                     [&] (PromotedHeapLocation location, Edge value) {
-                        m_localMapping.set(location, value.node());
+                        if (m_sinkCandidates.contains(location.base()))
+                            m_localMapping.set(location, value.node());
                     },
                     [&] (PromotedHeapLocation location) {
-                        node->replaceWith(resolve(block, location));
+                        if (m_sinkCandidates.contains(location.base()))
+                            node->replaceWith(resolve(block, location));
                     });
             }
             
