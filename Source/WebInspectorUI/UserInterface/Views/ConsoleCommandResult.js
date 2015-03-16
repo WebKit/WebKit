@@ -29,14 +29,14 @@
 
 WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand, savedResultIndex)
 {
-    var level = (wasThrown ? WebInspector.LegacyConsoleMessage.MessageLevel.Error : WebInspector.LegacyConsoleMessage.MessageLevel.Log);
+    var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
     this.savedResultIndex = savedResultIndex;
 
     if (this.savedResultIndex && this.savedResultIndex > WebInspector.ConsoleCommandResult.maximumSavedResultIndex)
         WebInspector.ConsoleCommandResult.maximumSavedResultIndex = this.savedResultIndex;
 
-    WebInspector.LegacyConsoleMessageImpl.call(this, WebInspector.LegacyConsoleMessage.MessageSource.JS, level, "", null, WebInspector.LegacyConsoleMessage.MessageType.Result, undefined, undefined, undefined, undefined, [result]);
+    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, "", null, WebInspector.ConsoleMessage.MessageType.Result, undefined, undefined, undefined, undefined, [result]);
 };
 
 WebInspector.ConsoleCommandResult.maximumSavedResultIndex = 0;
@@ -55,7 +55,7 @@ WebInspector.ConsoleCommandResult.prototype = {
 
     toMessageElement: function()
     {
-        var element = WebInspector.LegacyConsoleMessageImpl.prototype.toMessageElement.call(this);
+        var element = WebInspector.ConsoleMessageImpl.prototype.toMessageElement.call(this);
         element.classList.add("console-user-command-result");
         if (!element.getAttribute("data-labelprefix"))
             element.setAttribute("data-labelprefix", WebInspector.UIString("Output: "));
@@ -68,4 +68,4 @@ WebInspector.ConsoleCommandResult.prototype = {
     }
 };
 
-WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.LegacyConsoleMessageImpl.prototype;
+WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessageImpl.prototype;

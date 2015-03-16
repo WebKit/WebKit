@@ -28,12 +28,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LegacyConsoleMessageImpl = function(source, level, message, linkifier, type, url, line, column, repeatCount, parameters, stackTrace, request)
+WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, type, url, line, column, repeatCount, parameters, stackTrace, request)
 {
-    WebInspector.LegacyConsoleMessage.call(this, source, level, url, line, column, repeatCount);
+    WebInspector.ConsoleMessage.call(this, source, level, url, line, column, repeatCount);
 
     this._linkifier = linkifier;
-    this.type = type || WebInspector.LegacyConsoleMessage.MessageType.Log;
+    this.type = type || WebInspector.ConsoleMessage.MessageType.Log;
     this._messageText = message;
     this._parameters = parameters;
     this._stackTrace = stackTrace;
@@ -52,7 +52,7 @@ WebInspector.LegacyConsoleMessageImpl = function(source, level, message, linkifi
     };
 };
 
-WebInspector.LegacyConsoleMessageImpl.prototype = {
+WebInspector.ConsoleMessageImpl.prototype = {
 
     enforcesClipboardPrefixString: true,
 
@@ -62,18 +62,18 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
         this._formattedMessage.className = "console-message-text";
 
         var messageText;
-        if (this.source === WebInspector.LegacyConsoleMessage.MessageSource.ConsoleAPI) {
+        if (this.source === WebInspector.ConsoleMessage.MessageSource.ConsoleAPI) {
             switch (this.type) {
-                case WebInspector.LegacyConsoleMessage.MessageType.Trace:
+                case WebInspector.ConsoleMessage.MessageType.Trace:
                     messageText = document.createTextNode("console.trace()");
                     break;
-                case WebInspector.LegacyConsoleMessage.MessageType.Assert:
+                case WebInspector.ConsoleMessage.MessageType.Assert:
                     var args = [WebInspector.UIString("Assertion failed:")];
                     if (this._parameters)
                         args = args.concat(this._parameters);
                     messageText = this._format(args);
                     break;
-                case WebInspector.LegacyConsoleMessage.MessageType.Dir:
+                case WebInspector.ConsoleMessage.MessageType.Dir:
                     var obj = this._parameters ? this._parameters[0] : undefined;
                     var args = ["%O", obj];
                     messageText = this._format(args);
@@ -82,7 +82,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                     var args = this._parameters || [this._messageText];
                     messageText = this._format(args);
             }
-        } else if (this.source === WebInspector.LegacyConsoleMessage.MessageSource.Network) {
+        } else if (this.source === WebInspector.ConsoleMessage.MessageSource.Network) {
             if (this._request) {
                 this._stackTrace = this._request.stackTrace;
                 if (this._request.initiator && this._request.initiator.url) {
@@ -90,7 +90,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                     this.line = this._request.initiator.lineNumber;
                 }
                 messageText = document.createElement("span");
-                if (this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Error) {
+                if (this.level === WebInspector.ConsoleMessage.MessageLevel.Error) {
                     messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
                     messageText.appendChild(WebInspector.linkifyRequestAsNode(this._request));
                     if (this._request.failed)
@@ -113,7 +113,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
             messageText = this._format(args);
         }
 
-        if (this.source !== WebInspector.LegacyConsoleMessage.MessageSource.Network || this._request) {
+        if (this.source !== WebInspector.ConsoleMessage.MessageSource.Network || this._request) {
             var firstNonNativeCallFrame = this._firstNonNativeCallFrame();
             if (firstNonNativeCallFrame) {
                 var urlElement = this._linkifyCallFrame(firstNonNativeCallFrame);
@@ -145,7 +145,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
             var root = new TreeElement(content, null, true);
             content.treeElementForTest = root;
             treeOutline.appendChild(root);
-            if (this.type === WebInspector.LegacyConsoleMessage.MessageType.Trace)
+            if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
                 root.expand();
 
             this._populateStackTraceTreeElement(root);
@@ -158,7 +158,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
 
     _shouldDumpStackTrace: function()
     {
-        return !!this._stackTrace && this._stackTrace.length && (this.source === WebInspector.LegacyConsoleMessage.MessageSource.Network || this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Error || this.type === WebInspector.LegacyConsoleMessage.MessageType.Trace);
+        return !!this._stackTrace && this._stackTrace.length && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
     },
 
     _shouldHideURL: function(url)
@@ -211,7 +211,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
 
     isErrorOrWarning: function()
     {
-        return (this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Warning || this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Error);
+        return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
     },
 
     _format: function(parameters)
@@ -235,7 +235,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
         }
 
         // There can be string log and string eval result. We distinguish between them based on message type.
-        var shouldFormatMessage = WebInspector.RemoteObject.type(parameters[0]) === "string" && this.type !== WebInspector.LegacyConsoleMessage.MessageType.Result;
+        var shouldFormatMessage = WebInspector.RemoteObject.type(parameters[0]) === "string" && this.type !== WebInspector.ConsoleMessage.MessageType.Result;
 
         if (shouldFormatMessage) {
             // Multiple parameters with the first being a format string. Save unused substitutions.
@@ -245,7 +245,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
                 formattedResult.appendChild(document.createTextNode(" "));
         }
 
-        if (this.type === WebInspector.LegacyConsoleMessage.MessageType.Table) {
+        if (this.type === WebInspector.ConsoleMessage.MessageType.Table) {
             formattedResult.appendChild(this._formatParameterAsTable(parameters));
             return formattedResult;
         }
@@ -561,29 +561,29 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
         this._element = element;
 
         switch (this.level) {
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Tip:
+            case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 element.classList.add("console-tip-level");
                 element.setAttribute("data-labelprefix", WebInspector.UIString("Tip: "));
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Log:
+            case WebInspector.ConsoleMessage.MessageLevel.Log:
                 element.classList.add("console-log-level");
                 element.setAttribute("data-labelprefix", WebInspector.UIString("Log: "));
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Debug:
+            case WebInspector.ConsoleMessage.MessageLevel.Debug:
                 element.classList.add("console-debug-level");
                 element.setAttribute("data-labelprefix", WebInspector.UIString("Debug: "));
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Warning:
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 element.classList.add("console-warning-level");
                 element.setAttribute("data-labelprefix", WebInspector.UIString("Warning: "));
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Error:
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
                 element.classList.add("console-error-level");
                 element.setAttribute("data-labelprefix", WebInspector.UIString("Error: "));
                 break;
         }
 
-        if (this.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroup || this.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed)
+        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup || this.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
             element.classList.add("console-group-title");
 
         element.appendChild(this.formattedMessage);
@@ -640,51 +640,51 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
     {
         var sourceString;
         switch (this.source) {
-            case WebInspector.LegacyConsoleMessage.MessageSource.HTML:
+            case WebInspector.ConsoleMessage.MessageSource.HTML:
                 sourceString = "HTML";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageSource.XML:
+            case WebInspector.ConsoleMessage.MessageSource.XML:
                 sourceString = "XML";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageSource.JS:
+            case WebInspector.ConsoleMessage.MessageSource.JS:
                 sourceString = "JS";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageSource.Network:
+            case WebInspector.ConsoleMessage.MessageSource.Network:
                 sourceString = "Network";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageSource.ConsoleAPI:
+            case WebInspector.ConsoleMessage.MessageSource.ConsoleAPI:
                 sourceString = "ConsoleAPI";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageSource.Other:
+            case WebInspector.ConsoleMessage.MessageSource.Other:
                 sourceString = "Other";
                 break;
         }
 
         var typeString;
         switch (this.type) {
-            case WebInspector.LegacyConsoleMessage.MessageType.Log:
+            case WebInspector.ConsoleMessage.MessageType.Log:
                 typeString = "Log";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.Dir:
+            case WebInspector.ConsoleMessage.MessageType.Dir:
                 typeString = "Dir";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.DirXML:
+            case WebInspector.ConsoleMessage.MessageType.DirXML:
                 typeString = "Dir XML";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.Trace:
+            case WebInspector.ConsoleMessage.MessageType.Trace:
                 typeString = "Trace";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed:
-            case WebInspector.LegacyConsoleMessage.MessageType.StartGroup:
+            case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
+            case WebInspector.ConsoleMessage.MessageType.StartGroup:
                 typeString = "Start Group";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.EndGroup:
+            case WebInspector.ConsoleMessage.MessageType.EndGroup:
                 typeString = "End Group";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.Assert:
+            case WebInspector.ConsoleMessage.MessageType.Assert:
                 typeString = "Assert";
                 break;
-            case WebInspector.LegacyConsoleMessage.MessageType.Result:
+            case WebInspector.ConsoleMessage.MessageType.Result:
                 typeString = "Result";
                 break;
         }
@@ -732,21 +732,21 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
 
     clone: function()
     {
-        return WebInspector.LegacyConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.column, this.repeatCount, this._parameters, this._stackTrace, this._request);
+        return WebInspector.ConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.column, this.repeatCount, this._parameters, this._stackTrace, this._request);
     },
 
     get levelString()
     {
         switch (this.level) {
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Tip:
+            case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 return "Tip";
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Log:
+            case WebInspector.ConsoleMessage.MessageLevel.Log:
                 return "Log";
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Warning:
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 return "Warning";
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Debug:
+            case WebInspector.ConsoleMessage.MessageLevel.Debug:
                 return "Debug";
-            case WebInspector.LegacyConsoleMessage.MessageLevel.Error:
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
                 return "Error";
         }
     },
@@ -764,7 +764,7 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
         if (this._formattedMessage && !isTrace)
             clipboardString = this._formattedMessage.querySelector("span").innerText;
         else
-            clipboardString = this.type === WebInspector.LegacyConsoleMessage.MessageType.Trace ? "console.trace()" : this._message || this._messageText;
+            clipboardString = this.type === WebInspector.ConsoleMessage.MessageType.Trace ? "console.trace()" : this._message || this._messageText;
 
         if (!isPrefixOptional || this.enforcesClipboardPrefixString)
             clipboardString = this.clipboardPrefixString + clipboardString;
@@ -798,4 +798,4 @@ WebInspector.LegacyConsoleMessageImpl.prototype = {
     }
 };
 
-WebInspector.LegacyConsoleMessageImpl.prototype.__proto__ = WebInspector.LegacyConsoleMessage.prototype;
+WebInspector.ConsoleMessageImpl.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;

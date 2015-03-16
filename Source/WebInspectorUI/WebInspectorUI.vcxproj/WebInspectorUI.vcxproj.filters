@@ -195,10 +195,10 @@
     <None Include="..\UserInterface\ConsoleGroup.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LegacyConsoleMessage.js">
+    <None Include="..\UserInterface\ConsoleMessage.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LegacyConsoleMessageImpl.js">
+    <None Include="..\UserInterface\ConsoleMessageImpl.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\ConsoleObserver.js">

@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LegacyConsoleMessage = function(source, level, url, line, column, repeatCount)
+WebInspector.ConsoleMessage = function(source, level, url, line, column, repeatCount)
 {
     this.source = source;
     this.level = level;
@@ -42,10 +42,10 @@ WebInspector.LegacyConsoleMessage = function(source, level, url, line, column, r
     this.totalRepeatCount = repeatCount;
 };
 
-WebInspector.LegacyConsoleMessage.prototype = {
+WebInspector.ConsoleMessage.prototype = {
     isErrorOrWarning: function()
     {
-        return (this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Warning || this.level === WebInspector.LegacyConsoleMessage.MessageLevel.Error);
+        return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
     },
 
     updateRepeatCount: function()
@@ -59,13 +59,13 @@ WebInspector.LegacyConsoleMessage.prototype = {
     }
 };
 
-WebInspector.LegacyConsoleMessage.create = function(source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
+WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
 {
-    return new WebInspector.LegacyConsoleMessageImpl(source, level, message, null, type, url, line, column, repeatCount, parameters, stackTrace, request);
+    return new WebInspector.ConsoleMessageImpl(source, level, message, null, type, url, line, column, repeatCount, parameters, stackTrace, request);
 };
 
 // FIXME: Switch to ConsoleAgent.ConsoleMessageSource.
-WebInspector.LegacyConsoleMessage.MessageSource = {
+WebInspector.ConsoleMessage.MessageSource = {
     HTML: "html",
     XML: "xml",
     JS: "javascript",
@@ -75,7 +75,7 @@ WebInspector.LegacyConsoleMessage.MessageSource = {
 };
 
 // FIXME: Switch to ConsoleAgent.ConsoleMessageType.
-WebInspector.LegacyConsoleMessage.MessageType = {
+WebInspector.ConsoleMessage.MessageType = {
     Log: "log",
     Dir: "dir",
     DirXML: "dirxml",
@@ -89,7 +89,7 @@ WebInspector.LegacyConsoleMessage.MessageType = {
 };
 
 // FIXME: Switch to ConsoleAgent.ConsoleMessageLevel.
-WebInspector.LegacyConsoleMessage.MessageLevel = {
+WebInspector.ConsoleMessage.MessageLevel = {
     Tip: "tip",
     Log: "log",
     Warning: "warning",

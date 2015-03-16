@@ -276,12 +276,12 @@ WebInspector.JavaScriptLogViewController.prototype = {
         if (!repeatCountWasInterrupted)
             this._previousMessage = msg;
 
-        if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.EndGroup) {
+        if (msg.type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
             var parentGroup = this._currentConsoleGroup.parentGroup;
             if (parentGroup)
                 this._currentConsoleGroup = parentGroup;
         } else {
-            if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed) {
+            if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
                 var group = new WebInspector.ConsoleGroup(this._currentConsoleGroup);
                 var groupElement = group.render(msg);
                 this._currentConsoleGroup.append(groupElement);
@@ -290,7 +290,7 @@ WebInspector.JavaScriptLogViewController.prototype = {
                 this._currentConsoleGroup.addMessage(msg);
         }
 
-        if (msg.type === WebInspector.LegacyConsoleMessage.MessageType.Result || wasScrolledToBottom)
+        if (msg.type === WebInspector.ConsoleMessage.MessageType.Result || wasScrolledToBottom)
             this.scrollToBottom();
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessage === "function")

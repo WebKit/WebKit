@@ -176,7 +176,7 @@ WebInspector.LogContentView.prototype = {
         WebInspector.quickConsole.updateLayout();
 
         // Nest the message.
-        if (message.type !== WebInspector.LegacyConsoleMessage.MessageType.EndGroup) {
+        if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
             var x = 16 * this._nestingLevel;
             var messageElement = message.toMessageElement();
             messageElement.style.left = x + "px";
@@ -185,11 +185,11 @@ WebInspector.LogContentView.prototype = {
 
         // Update the nesting level.
         switch (message.type) {
-        case WebInspector.LegacyConsoleMessage.MessageType.StartGroup:
-        case WebInspector.LegacyConsoleMessage.MessageType.StartGroupCollapsed:
+        case WebInspector.ConsoleMessage.MessageType.StartGroup:
+        case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
             ++this._nestingLevel;
             break;
-        case WebInspector.LegacyConsoleMessage.MessageType.EndGroup:
+        case WebInspector.ConsoleMessage.MessageType.EndGroup:
             --this._nestingLevel;
             break;
         }
@@ -202,7 +202,7 @@ WebInspector.LogContentView.prototype = {
 
         // We only auto show the console if the message is a result.
         // This is when the user evaluated something directly in the prompt.
-        if (message.type !== WebInspector.LegacyConsoleMessage.MessageType.Result)
+        if (message.type !== WebInspector.ConsoleMessage.MessageType.Result)
             return;
 
         if (!WebInspector.isShowingConsoleView())
@@ -330,7 +330,7 @@ WebInspector.LogContentView.prototype = {
             this._provisionalMessages.push(event.data.message);
 
         var message = this._logViewController.appendConsoleMessage(event.data.message);
-        if (message.type !== WebInspector.LegacyConsoleMessage.MessageType.EndGroup)
+        if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
             this._filterMessages([message.toMessageElement()]);
     },
 
@@ -677,14 +677,14 @@ WebInspector.LogContentView.prototype = {
             var visible = showsAll || message.command instanceof WebInspector.ConsoleCommand || message.message instanceof WebInspector.ConsoleCommandResult;
             if (!visible) {
                 switch(message.message.level) {
-                    case WebInspector.LegacyConsoleMessage.MessageLevel.Warning:
+                    case WebInspector.ConsoleMessage.MessageLevel.Warning:
                         visible = showsWarnings;
                         break;
-                    case WebInspector.LegacyConsoleMessage.MessageLevel.Error:
+                    case WebInspector.ConsoleMessage.MessageLevel.Error:
                         visible = showsErrors;
                         break;
-                    case WebInspector.LegacyConsoleMessage.MessageLevel.Log:
-                    case WebInspector.LegacyConsoleMessage.MessageLevel.Debug:
+                    case WebInspector.ConsoleMessage.MessageLevel.Log:
+                    case WebInspector.ConsoleMessage.MessageLevel.Debug:
                         visible = showsLogs;
                         break;
                 }
@@ -996,7 +996,7 @@ WebInspector.LogContentView.prototype = {
 
         for (var provisionalMessage of this._provisionalMessages) {
             var message = this._logViewController.appendConsoleMessage(provisionalMessage);
-            if (message.type !== WebInspector.LegacyConsoleMessage.MessageType.EndGroup)
+            if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
                 this._filterMessages([message.toMessageElement()]);
         }
 
