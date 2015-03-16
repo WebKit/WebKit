@@ -1,3 +1,10 @@
+2015-03-15  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the iOS build after r181522.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2015-03-15  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Adopt new NEFilterSource SPI

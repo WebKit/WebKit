@@ -2980,8 +2980,10 @@ void FrameView::performPostLayoutTasks()
 #if ENABLE(CSS_SCROLL_SNAP)
     if (!frame().isMainFrame()) {
         updateSnapOffsets();
+#if PLATFORM(MAC)
         if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
             return scrollAnimator->updateScrollAnimatorsAndTimers();
+#endif
     }
 #endif
 }
