@@ -1,3 +1,12 @@
+2015-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark fast/images/animated-png.html as crashing
+
+        Mark fast/images/animated-png.html as crashing on Yosemite. This test
+        was introduced in r181553.
+
+        * platform/mac/TestExpectations:
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update Map/Set to treat -0 and 0 as the same value
