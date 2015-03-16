@@ -27,6 +27,9 @@
 #define PNGImageDecoder_h
 
 #include "ImageDecoder.h"
+#if ENABLE(APNG)
+#include <png.h>
+#endif
 
 namespace WebCore {
 
@@ -40,6 +43,10 @@ namespace WebCore {
 
         // ImageDecoder
         virtual String filenameExtension() const { return "png"; }
+#if ENABLE(APNG)
+        virtual size_t frameCount() override { return m_frameCount; }
+        virtual int repetitionCount() const override { return m_playCount-1; }
+#endif
         virtual bool isSizeAvailable();
         virtual bool setSize(unsigned width, unsigned height);
         virtual ImageFrame* frameBufferAtIndex(size_t index);
@@ -52,10 +59,25 @@ namespace WebCore {
         void headerAvailable();
         void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
         void pngComplete();
+#if ENABLE(APNG)
+        void readChunks(png_unknown_chunkp);
+        void frameHeader();
+
+        void init();
+        virtual void clearFrameBufferCache(size_t clearBeforeFrame);
+#endif
 
         bool isComplete() const
         {
-            return !m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == ImageFrame::FrameComplete);
+            if (m_frameBufferCache.isEmpty())
+                return false;
+
+            for (auto& imageFrame : m_frameBufferCache) {
+                if (imageFrame.status() != ImageFrame::FrameComplete)
+                    return false;
+            }
+
+            return true;
         }
 
     private:
@@ -63,9 +85,43 @@ namespace WebCore {
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize);
+#if ENABLE(APNG)
+        void initFrameBuffer(size_t frameIndex);
+        void frameComplete();
+        int processingStart(png_unknown_chunkp);
+        int processingFinish();
+        void fallbackNotAnimated();
+#endif
 
         std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
+        unsigned m_currentFrame;
+#if ENABLE(APNG)
+        png_structp m_png;
+        png_infop m_info;
+        bool m_isAnimated;
+        bool m_frameInfo;
+        bool m_frameIsHidden;
+        bool m_hasInfo;
+        int m_gamma;
+        size_t m_frameCount;
+        unsigned m_playCount;
+        unsigned m_totalFrames;
+        unsigned m_sizePLTE;
+        unsigned m_sizetRNS;
+        unsigned m_sequenceNumber;
+        unsigned m_width;
+        unsigned m_height;
+        unsigned m_xOffset;
+        unsigned m_yOffset;
+        unsigned m_delayNumerator;
+        unsigned m_delayDenominator;
+        unsigned m_dispose;
+        unsigned m_blend;
+        png_byte m_dataIHDR[12 + 13];
+        png_byte m_dataPLTE[12 + 256 * 3];
+        png_byte m_datatRNS[12 + 256];
+#endif
     };
 
 } // namespace WebCore
