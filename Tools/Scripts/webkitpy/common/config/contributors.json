@@ -2070,6 +2070,17 @@
             "diegoyam"
          ]
       },
+      "Nikita Vasilyev" : {
+         "emails" : [
+            "nvasilyev@apple.com",
+            "me@elv1s.ru"
+         ],
+         "expertise" : "Web Inspector",
+         "nicks" : [
+            "NVI",
+            "nvasilyev"
+         ]
+      },
       "Nima Ghanavatian" : {
          "emails" : [
             "nghanavatian@blackberry.com",
@@ -4435,17 +4446,6 @@
          "expertise" : "The Chromium Port, Graphics, Skia, CoreGraphics",
          "nicks" : [
             "thakis"
-         ]
-      },
-      "Nikita Vasilyev" : {
-         "emails" : [
-            "nvasilyev@apple.com",
-            "me@elv1s.ru"
-         ],
-         "expertise" : "Web Inspector",
-         "nicks" : [
-            "NVI",
-            "nvasilyev"
          ]
       },
       "Nikolas Zimmermann" : {
