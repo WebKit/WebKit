@@ -1380,18 +1380,25 @@ bool StringImpl::startsWith(const StringImpl* str) const
 {
     if (!str)
         return false;
+    return ::WTF::startsWith(*this, *str);
+}
 
-    if (str->length() > length())
+bool StringImpl::startsWith(const StringImpl& str) const
+{
+    return ::WTF::startsWith(*this, str);
+}
+
+bool StringImpl::startsWithIgnoringASCIICase(const StringImpl* prefix) const
+{
+    if (!prefix)
         return false;
 
-    if (is8Bit()) {
-        if (str->is8Bit())
-            return equal(characters8(), str->characters8(), str->length());
-        return equal(characters8(), str->characters16(), str->length());
-    }
-    if (str->is8Bit())
-        return equal(characters16(), str->characters8(), str->length());
-    return equal(characters16(), str->characters16(), str->length());
+    return ::WTF::startsWithIgnoringASCIICase(*this, *prefix);
+}
+
+bool StringImpl::startsWithIgnoringASCIICase(const StringImpl& prefix) const
+{
+    return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
 }
 
 bool StringImpl::startsWith(UChar character) const
@@ -1412,6 +1419,19 @@ bool StringImpl::hasInfixStartingAt(const StringImpl& matchString, unsigned star
     return equalInner(*this, startOffset, matchString);
 }
 
+bool StringImpl::endsWith(StringImpl* suffix)
+{
+    if (!suffix)
+        return false;
+
+    return ::WTF::endsWith(*this, *suffix);
+}
+
+bool StringImpl::endsWith(StringImpl& suffix)
+{
+    return ::WTF::endsWith(*this, suffix);
+}
+
 bool StringImpl::endsWith(StringImpl* matchString, bool caseSensitive)
 {
     ASSERT(matchString);
@@ -1420,6 +1440,19 @@ bool StringImpl::endsWith(StringImpl* matchString, bool caseSensitive)
         return (caseSensitive ? find(matchString, start) : findIgnoringCase(matchString, start)) == start;
     }
     return false;
+}
+
+bool StringImpl::endsWithIgnoringASCIICase(const StringImpl* suffix) const
+{
+    if (!suffix)
+        return false;
+
+    return ::WTF::endsWithIgnoringASCIICase(*this, *suffix);
+}
+
+bool StringImpl::endsWithIgnoringASCIICase(const StringImpl& suffix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
 bool StringImpl::endsWith(UChar character) const
@@ -1824,34 +1857,9 @@ Ref<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* replacement
     return newImpl;
 }
 
-static ALWAYS_INLINE bool stringImplContentEqual(const StringImpl& a, const StringImpl& b)
-{
-    unsigned aLength = a.length();
-    unsigned bLength = b.length();
-    if (aLength != bLength)
-        return false;
-
-    if (a.is8Bit()) {
-        if (b.is8Bit())
-            return equal(a.characters8(), b.characters8(), aLength);
-
-        return equal(a.characters8(), b.characters16(), aLength);
-    }
-
-    if (b.is8Bit())
-        return equal(a.characters16(), b.characters8(), aLength);
-
-    return equal(a.characters16(), b.characters16(), aLength);
-}
-
 bool equal(const StringImpl* a, const StringImpl* b)
 {
-    if (a == b)
-        return true;
-    if (!a || !b)
-        return false;
-
-    return stringImplContentEqual(*a, *b);
+    return equalCommon(a, b);
 }
 
 template <typename CharType>
@@ -1916,10 +1924,7 @@ bool equal(const StringImpl* a, const LChar* b)
 
 bool equal(const StringImpl& a, const StringImpl& b)
 {
-    if (&a == &b)
-        return true;
-
-    return stringImplContentEqual(a, b);
+    return equalCommon(a, b);
 }
 
 bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)

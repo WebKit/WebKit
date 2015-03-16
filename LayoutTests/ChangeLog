@@ -1,3 +1,17 @@
+2015-03-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS: fix the case-insensitive matching of the attribute selectors Begin, End and Hyphen
+        https://bugs.webkit.org/show_bug.cgi?id=142715
+
+        Reviewed by Brent Fulgham.
+
+        * fast/selectors/attribute-endswith-value-matching-is-ascii-case-insensitive-expected.txt: Added.
+        * fast/selectors/attribute-endswith-value-matching-is-ascii-case-insensitive.html: Added.
+        * fast/selectors/attribute-hyphen-value-matching-is-ascii-case-insensitive-expected.txt: Added.
+        * fast/selectors/attribute-hyphen-value-matching-is-ascii-case-insensitive.html: Added.
+        * fast/selectors/attribute-startswith-value-matching-is-ascii-case-insensitive-expected.txt: Added.
+        * fast/selectors/attribute-startswith-value-matching-is-ascii-case-insensitive.html: Added.
+
 2015-03-15  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll snap points are not supported on iframe content

@@ -118,6 +118,26 @@ void StringView::setUnderlyingString(const StringView& string)
     adoptUnderlyingString(underlyingString);
 }
 
+bool StringView::startsWith(const StringView& prefix) const
+{
+    return ::WTF::startsWith(*this, prefix);
+}
+
+bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+}
+
+bool StringView::endsWith(const StringView& prefix) const
+{
+    return ::WTF::startsWith(*this, prefix);
+}
+
+bool StringView::endsWithIgnoringASCIICase(const StringView& prefix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+}
+
 }
 
 #endif

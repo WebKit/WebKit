@@ -1,3 +1,62 @@
+2015-03-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS: fix the case-insensitive matching of the attribute selectors Begin, End and Hyphen
+        https://bugs.webkit.org/show_bug.cgi?id=142715
+
+        Reviewed by Brent Fulgham.
+
+        Add the necessary infrastructure to test startsWith() and endsWith() with
+        ASCII case-insentive comparisons.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::startsWith):
+        (WTF::AtomicString::startsWithIgnoringASCIICase):
+        (WTF::AtomicString::endsWith):
+        (WTF::AtomicString::endsWithIgnoringASCIICase):
+
+        * wtf/text/StringCommon.h:
+        (WTF::loadUnaligned):
+        (WTF::equal):
+        I moved the low level equal() code from StringImpl to StringCommon
+        since it is used by both StringImpl and StringView.
+
+        (WTF::equalCommon):
+        (WTF::equalIgnoringASCIICaseCommon):
+        Ideally we should drop the "Common" part of the name but StringView
+        wants this inline for some reason. I prefered keeping the current behavior
+        since I don't know how StringView's matching performance was evaluated.
+
+        (WTF::startsWith):
+        (WTF::startsWithIgnoringASCIICase):
+        (WTF::endsWith):
+        (WTF::endsWithIgnoringASCIICase):
+        Make all that code shared between StringView and Stringimpl.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::startsWith):
+        (WTF::StringImpl::startsWithIgnoringASCIICase):
+        (WTF::StringImpl::endsWith):
+        (WTF::StringImpl::endsWithIgnoringASCIICase):
+        (WTF::equal):
+        (WTF::stringImplContentEqual): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::loadUnaligned): Deleted.
+        (WTF::equal): Deleted.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::startsWith):
+        (WTF::StringView::startsWithIgnoringASCIICase):
+        (WTF::StringView::endsWith):
+        (WTF::StringView::endsWithIgnoringASCIICase):
+        * wtf/text/StringView.h:
+        Since those are new, we can safely make them out-of-line and
+        evaluate the inlining impact as needed.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::startsWithIgnoringASCIICase):
+        (WTF::String::endsWith):
+        (WTF::String::endsWithIgnoringASCIICase):
+
 2015-03-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Change the exact attribute matching to be ASCII case-insensitive

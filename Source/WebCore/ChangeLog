@@ -1,3 +1,29 @@
+2015-03-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS: fix the case-insensitive matching of the attribute selectors Begin, End and Hyphen
+        https://bugs.webkit.org/show_bug.cgi?id=142715
+
+        Reviewed by Brent Fulgham.
+
+        Fix attribute matching with:
+        -Begin: [a^=b].
+        -End: [a$=b].
+        -Hyphen: [a|=b].
+
+        Tests: fast/selectors/attribute-endswith-value-matching-is-ascii-case-insensitive.html
+               fast/selectors/attribute-hyphen-value-matching-is-ascii-case-insensitive.html
+               fast/selectors/attribute-startswith-value-matching-is-ascii-case-insensitive.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches):
+        I forgot to change CSSSelector::Exact in my last patch.
+        The tests could not catch that since we use the CSS JIT almost everywhere.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::attributeValueBeginsWith):
+        (WebCore::SelectorCompiler::attributeValueEndsWith):
+        (WebCore::SelectorCompiler::attributeValueMatchHyphenRule):
+
 2015-03-15  Dan Bernstein  <mitz@apple.com>
 
         Fixed the iOS build after r181522.

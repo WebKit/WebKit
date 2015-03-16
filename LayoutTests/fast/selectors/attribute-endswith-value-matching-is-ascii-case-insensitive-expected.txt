@@ -1,0 +1,417 @@
+When matching attributes case insensitively, it should be ASCII case insensitive. This test verifies the behavior when matching the end of the values (e.g. [a$="b"])
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing "[data-attribute$=Web-É-Kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit]')[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-Kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit]')[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=web-É-kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit]')[0].id is "target2"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit]')[0].id is "target2"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=WEB-É-KIT]"
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT]')[0].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-KIT]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT]')[0].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=Web-é-Kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-é-Kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-é-Kit]')[0].id is "target4"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=é-Kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-Kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=é-Kit]')[0].id is "target4"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=web-é-kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-é-kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=web-é-kit]')[0].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[data-attribute$=é-kit]"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-kit]').length is 1
+PASS document.querySelectorAll('#test-root [data-attribute$=é-kit]')[0].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[data-attribute$=Web-É-Kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-É-Kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-Kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-Kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=web-É-kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-É-kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=WEB-É-KIT i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=WEB-É-KIT i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=É-KIT i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT i]').length is 3
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [data-attribute$=É-KIT i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[data-attribute$=Web-é-Kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-é-Kit i]').length is 2
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-é-Kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [data-attribute$=Web-é-Kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[data-attribute$=é-Kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-Kit i]').length is 2
+PASS document.querySelectorAll('#test-root [data-attribute$=é-Kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-Kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[data-attribute$=web-é-kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-é-kit i]').length is 2
+PASS document.querySelectorAll('#test-root [data-attribute$=web-é-kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [data-attribute$=web-é-kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[data-attribute$=é-kit i]"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-kit i]').length is 2
+PASS document.querySelectorAll('#test-root [data-attribute$=é-kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [data-attribute$=é-kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=WEB-é-KIT]"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-KIT]"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=Web-é-Kit]"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-Kit]"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=Web-é-kit]"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-kit]"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-kit]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=web-É-kit]"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=É-kit]"
+PASS document.querySelectorAll('#test-root [multiple$=É-kit]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=É-kit]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=É-kit]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=web-É-Kit]"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=É-Kit]"
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=WEB-é-KIT i]"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=WEB-é-KIT i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-KIT i]"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-KIT i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=Web-é-Kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-Kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-Kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-Kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=Web-é-kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=Web-é-kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=é-kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit i]').length is 3
+PASS document.querySelectorAll('#test-root [multiple$=é-kit i]')[0].id is "target1"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit i]')[1].id is "target2"
+PASS document.querySelectorAll('#test-root [multiple$=é-kit i]')[2].id is "target3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "[multiple$=web-É-kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit i]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=É-kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=É-kit i]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=É-kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=É-kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=web-É-Kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit i]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=web-É-Kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "[multiple$=É-Kit i]"
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit i]').length is 2
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit i]')[0].id is "target4"
+PASS document.querySelectorAll('#test-root [multiple$=É-Kit i]')[1].id is "target5"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

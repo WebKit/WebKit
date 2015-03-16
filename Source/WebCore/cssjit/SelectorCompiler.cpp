@@ -2803,10 +2803,12 @@ enum CaseSensitivity {
 template<CaseSensitivity caseSensitivity>
 static bool attributeValueBeginsWith(const Attribute* attribute, AtomicStringImpl* expectedString)
 {
+    ASSERT(expectedString);
+
     AtomicStringImpl& valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
-        return valueImpl.startsWith(expectedString);
-    return valueImpl.startsWith(expectedString, false);
+        return valueImpl.startsWith(*expectedString);
+    return valueImpl.startsWithIgnoringASCIICase(*expectedString);
 }
 
 template<CaseSensitivity caseSensitivity>
@@ -2821,24 +2823,28 @@ static bool attributeValueContains(const Attribute* attribute, AtomicStringImpl*
 template<CaseSensitivity caseSensitivity>
 static bool attributeValueEndsWith(const Attribute* attribute, AtomicStringImpl* expectedString)
 {
+    ASSERT(expectedString);
+
     AtomicStringImpl& valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
-        return valueImpl.endsWith(expectedString);
-    return valueImpl.endsWith(expectedString, false);
+        return valueImpl.endsWith(*expectedString);
+    return valueImpl.endsWithIgnoringASCIICase(*expectedString);
 }
 
 template<CaseSensitivity caseSensitivity>
 static bool attributeValueMatchHyphenRule(const Attribute* attribute, AtomicStringImpl* expectedString)
 {
+    ASSERT(expectedString);
+
     AtomicStringImpl& valueImpl = *attribute->value().impl();
     if (valueImpl.length() < expectedString->length())
         return false;
 
     bool valueStartsWithExpectedString;
     if (caseSensitivity == CaseSensitive)
-        valueStartsWithExpectedString = valueImpl.startsWith(expectedString);
+        valueStartsWithExpectedString = valueImpl.startsWith(*expectedString);
     else
-        valueStartsWithExpectedString = valueImpl.startsWith(expectedString, false);
+        valueStartsWithExpectedString = valueImpl.startsWithIgnoringASCIICase(*expectedString);
 
     if (!valueStartsWithExpectedString)
         return false;

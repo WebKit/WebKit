@@ -420,7 +420,7 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     case CSSSelector::Set:
         break;
     case CSSSelector::Exact:
-        if (caseSensitive ? selectorValue != value : !equalIgnoringCase(selectorValue, value))
+        if (caseSensitive ? selectorValue != value : !equalIgnoringASCIICase(selectorValue, value))
             return false;
         break;
     case CSSSelector::List:
@@ -450,18 +450,37 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
             return false;
         break;
     case CSSSelector::Begin:
-        if (!value.startsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
+        if (selectorValue.isEmpty())
             return false;
+        if (caseSensitive) {
+            if (!value.startsWith(selectorValue))
+                return false;
+        } else {
+            if (!value.startsWithIgnoringASCIICase(selectorValue))
+                return false;
+        }
         break;
     case CSSSelector::End:
-        if (!value.endsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
+        if (selectorValue.isEmpty())
             return false;
+        if (caseSensitive) {
+            if (!value.endsWith(selectorValue))
+                return false;
+        } else {
+            if (!value.endsWithIgnoringASCIICase(selectorValue))
+                return false;
+        }
         break;
     case CSSSelector::Hyphen:
         if (value.length() < selectorValue.length())
             return false;
-        if (!value.startsWith(selectorValue, caseSensitive))
-            return false;
+        if (caseSensitive) {
+            if (!value.startsWith(selectorValue))
+                return false;
+        } else {
+            if (!value.startsWithIgnoringASCIICase(selectorValue))
+                return false;
+        }
         // It they start the same, check for exact match or following '-':
         if (value.length() != selectorValue.length() && value[selectorValue.length()] != '-')
             return false;

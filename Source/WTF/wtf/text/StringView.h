@@ -106,6 +106,12 @@ public:
     size_t find(UChar, unsigned start = 0) const;
     bool contains(UChar) const;
 
+    bool startsWith(const StringView&) const;
+    bool startsWithIgnoringASCIICase(const StringView&) const;
+
+    bool endsWith(const StringView&) const;
+    bool endsWithIgnoringASCIICase(const StringView&) const;
+
     int toInt(bool& isValid) const;
     float toFloat(bool& isValid) const;
 
@@ -469,22 +475,7 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 
 inline bool equal(StringView a, StringView b)
 {
-    unsigned aLength = a.length();
-    unsigned bLength = b.length();
-    if (aLength != bLength)
-        return false;
-
-    if (a.is8Bit()) {
-        if (b.is8Bit())
-            return equal(a.characters8(), b.characters8(), aLength);
-
-        return equal(a.characters8(), b.characters16(), aLength);
-    }
-
-    if (b.is8Bit())
-        return equal(a.characters16(), b.characters8(), aLength);
-
-    return equal(a.characters16(), b.characters16(), aLength);
+    return equalCommon(a, b);
 }
 
 inline bool equal(StringView a, const LChar* b)
