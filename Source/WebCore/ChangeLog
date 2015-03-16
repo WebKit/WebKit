@@ -1,3 +1,18 @@
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove a redundant repaint when a layer becomes composited
+        https://bugs.webkit.org/show_bug.cgi?id=142711
+
+        Reviewed by Anders Carlsson.
+
+        RenderLayerCompositor::computeCompositingRequirements() doesn't need to call
+        repaintOnCompositingChange() when a layer is going to become composited,
+        because updateBacking() does exactly the same thing. I used an assertion
+        and ran the tests to ensure this wasn't a behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2015-03-14  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         RenderBlock::imageChange() calling const methods on exit
