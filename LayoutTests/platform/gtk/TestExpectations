@@ -460,6 +460,10 @@ Bug(GTK) fast/css/style-scoped [ Skip ]
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap
 
+# TODO Animation triggers not supported
+animations/trigger-computed-style.html [ Skip ]
+animations/trigger-parsing.html [ Skip ]
+
 # ENABLE(SHADOW_DOM) is disabled.
 Bug(GTK) fast/dom/shadow [ Skip ]
 Bug(GTK) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]

@@ -1,3 +1,88 @@
+2015-03-16  Dean Jackson  <dino@apple.com>
+
+        Parsing and Style Resolution of Container-based Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142687
+        <rdar://problem/20170007>
+
+        Reviewed by Simon Fraser.
+
+        This is the beginning of a prototype implementation of
+        CSS Animation Triggers, as described by
+        https://lists.w3.org/Archives/Public/www-style/2014Sep/0135.html
+
+        In this patch we parse and resolve the value of a new
+        CSS property "-webkit-animation-trigger". At the moment it
+        only accepts one function value "container-scroll", which
+        will trigger the animation at an absolute position within
+        an element's scrolling container. We expect the syntax to
+        change in the near future, as the spec is written.
+
+        Tests: animations/trigger-computed-style.html
+               animations/trigger-parsing.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add the new files.
+
+        * css/CSSAnimationTriggerScrollValue.cpp: Added.
+        (WebCore::CSSAnimationTriggerScrollValue::customCSSText): Output text for computed style.
+        (WebCore::CSSAnimationTriggerScrollValue::equals): Compare two values.
+        * css/CSSAnimationTriggerScrollValue.h: Added. This holds the CSS side of the
+        scroll trigger. This name may change in the future to better represent the
+        type of trigger, but it is good enough for now.
+        (WebCore::CSSAnimationTriggerScrollValue::create):
+        (WebCore::CSSAnimationTriggerScrollValue::startValue):
+        (WebCore::CSSAnimationTriggerScrollValue::endValue):
+        (WebCore::CSSAnimationTriggerScrollValue::CSSAnimationTriggerScrollValue):
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createAnimationTriggerValue): Maps an AnimationTrigger into a CSSValue.
+        (WebCore::getAnimationTriggerValue): Gets the current computed style.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseAnimationTrigger): Parse the "container-scroll" function
+        and record the value as a CSSAnimationTriggerScrollValue.
+        (WebCore::CSSParser::parseAnimationProperty): Handle the new property.
+        * css/CSSParser.h:
+
+        * css/CSSPropertyNames.in: Add "-webkit-animation-trigger".
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTrigger): Map a CSSValue into a trigger value on
+        an Animation object.
+        * css/CSSToStyleMap.h:
+
+        * css/CSSValue.cpp: Handle the new CSSValue type.
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isAnimationTriggerScrollValue):
+
+        * platform/animation/Animation.h: Add AnimationTrigger as a new field.
+        (WebCore::Animation::isTriggerSet):
+        (WebCore::Animation::isEmpty):
+
+        * platform/animation/AnimationTrigger.h: Added. New base class and subclasses for
+        "auto" and the scrolling trigger.
+        (WebCore::AnimationTrigger::~AnimationTrigger):
+        (WebCore::AnimationTrigger::type):
+        (WebCore::AnimationTrigger::isAutoAnimationTrigger):
+        (WebCore::AnimationTrigger::isScrollAnimationTrigger):
+        (WebCore::AnimationTrigger::AnimationTrigger):
+        (WebCore::AutoAnimationTrigger::create):
+        (WebCore::AutoAnimationTrigger::~AutoAnimationTrigger):
+        (WebCore::AutoAnimationTrigger::AutoAnimationTrigger):
+        (WebCore::ScrollAnimationTrigger::create):
+        (WebCore::ScrollAnimationTrigger::~ScrollAnimationTrigger):
+        (WebCore::ScrollAnimationTrigger::startValue):
+        (WebCore::ScrollAnimationTrigger::setStartValue):
+        (WebCore::ScrollAnimationTrigger::endValue):
+        (WebCore::ScrollAnimationTrigger::setEndValue):
+        (WebCore::ScrollAnimationTrigger::hasEndValue):
+        (WebCore::ScrollAnimationTrigger::setHasEndValue):
+        (WebCore::ScrollAnimationTrigger::ScrollAnimationTrigger):
+
 2015-03-15  Roger Fong  <roger_fong@apple.com>
 
         [WebGL2] Vertex Array Objects.

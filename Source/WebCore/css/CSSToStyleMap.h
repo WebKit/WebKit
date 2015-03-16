@@ -67,6 +67,9 @@ public:
     void mapAnimationPlayState(Animation&, CSSValue&);
     void mapAnimationProperty(Animation&, CSSValue&);
     void mapAnimationTimingFunction(Animation&, CSSValue&);
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    void mapAnimationTrigger(Animation&, CSSValue&);
+#endif
 
     void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue&, NinePieceImage&);

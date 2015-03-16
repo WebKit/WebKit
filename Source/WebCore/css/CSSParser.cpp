@@ -28,6 +28,7 @@
 #include "config.h"
 #include "CSSParser.h"
 
+#include "CSSAnimationTriggerScrollValue.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
@@ -2689,6 +2690,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitAnimationPlayState:
     case CSSPropertyWebkitAnimationIterationCount:
     case CSSPropertyWebkitAnimationTimingFunction:
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    case CSSPropertyWebkitAnimationTrigger:
+#endif
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
     case CSSPropertyTransitionTimingFunction:
@@ -4743,6 +4747,51 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationPlayState()
     return nullptr;
 }
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+PassRefPtr<CSSValue> CSSParser::parseAnimationTrigger()
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueAuto)
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+
+    if (value->unit != CSSParserValue::Function)
+        return nullptr;
+
+    CSSParserValueList* args = value->function->args.get();
+
+    if (equalIgnoringCase(value->function->name, "container-scroll(")) {
+        if (!args || (args->size() != 1 && args->size() != 3))
+            return nullptr;
+
+        CSSParserValue* argument = args->current();
+        ValueWithCalculation firstArgumentWithCalculation(*argument);
+        if (!validateUnit(firstArgumentWithCalculation, FLength))
+            return nullptr;
+
+        RefPtr<CSSValue> startValue = createPrimitiveNumericValue(firstArgumentWithCalculation);
+
+        argument = args->next();
+
+        if (!argument)
+            return CSSAnimationTriggerScrollValue::create(startValue.release());
+
+        if (!isComma(argument))
+            return nullptr;
+
+        argument = args->next();
+        ValueWithCalculation secondArgumentWithCalculation(*argument);
+        if (!validateUnit(secondArgumentWithCalculation, FLength))
+            return nullptr;
+
+        RefPtr<CSSValue> endValue = createPrimitiveNumericValue(secondArgumentWithCalculation);
+
+        return CSSAnimationTriggerScrollValue::create(startValue.release(), endValue.release());
+    }
+
+    return 0;
+}
+#endif
+
 PassRefPtr<CSSValue> CSSParser::parseAnimationProperty(AnimationParseContext& context)
 {
     CSSParserValue& value = *m_valueList->current();
@@ -4980,6 +5029,13 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
                 if (currValue)
                     m_valueList->next();
                 break;
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+            case CSSPropertyWebkitAnimationTrigger:
+                currValue = parseAnimationTrigger();
+                if (currValue)
+                    m_valueList->next();
+                break;
+#endif
             default:
                 ASSERT_NOT_REACHED();
                 return false;

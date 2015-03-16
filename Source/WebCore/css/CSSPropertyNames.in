@@ -367,6 +367,9 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-animation-name [AnimationProperty, NameForMethods=Name]
 -webkit-animation-play-state [AnimationProperty, NameForMethods=PlayState]
 -webkit-animation-timing-function [AnimationProperty, NameForMethods=TimingFunction]
+#if defined(ENABLE_CSS_ANIMATIONS_LEVEL_2) && ENABLE_CSS_ANIMATIONS_LEVEL_2
+-webkit-animation-trigger [AnimationProperty, NameForMethods=Trigger]
+#endif
 -webkit-appearance
 -webkit-aspect-ratio [Inherited, Custom=All]
 -webkit-backface-visibility

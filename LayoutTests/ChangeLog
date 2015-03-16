@@ -1,3 +1,23 @@
+2015-03-16  Dean Jackson  <dino@apple.com>
+
+        Parsing and Style Resolution of Container-based Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=142687
+        <rdar://problem/20170007>
+
+        Reviewed by Simon Fraser.
+
+        New tests that exercise the parser and computed style
+        of -webkit-animation-trigger.
+
+        * animations/script-tests/trigger-computed-style.js: Added.
+        (testComputedTriggerRule):
+        * animations/script-tests/trigger-parsing.js: Added.
+        (testTriggerRule):
+        * animations/trigger-computed-style-expected.txt: Added.
+        * animations/trigger-computed-style.html: Added.
+        * animations/trigger-parsing-expected.txt: Added.
+        * animations/trigger-parsing.html: Added.
+
 2015-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] fast/forms/text-control-intrinsic-widths.html fails when MS Office is installed

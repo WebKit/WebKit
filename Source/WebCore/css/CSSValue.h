@@ -105,6 +105,10 @@ public:
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
     bool isWebKitCSSResourceValue() const { return m_classType == WebKitCSSResourceClass; }
 
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    bool isAnimationTriggerScrollValue() const { return m_classType == AnimationTriggerScrollClass; }
+#endif
+
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
     { 
@@ -164,6 +168,10 @@ protected:
         SVGColorClass,
         SVGPaintClass,
         WebKitCSSResourceClass,
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+        AnimationTriggerScrollClass,
+#endif
 
         // List class types must appear after ValueListClass.
         ValueListClass,

@@ -28,6 +28,7 @@
 #include "AnimationController.h"
 #include "BasicShapeFunctions.h"
 #include "BasicShapes.h"
+#include "CSSAnimationTriggerScrollValue.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
@@ -85,6 +86,10 @@
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "LengthRepeat.h"
 #include "StyleScrollSnapPoints.h"
+#endif
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+#include "AnimationTrigger.h"
 #endif
 
 namespace WebCore {
@@ -1220,6 +1225,37 @@ static Ref<CSSValueList> getTimingFunctionValue(const AnimationList* animList)
         list.get().append(createTimingFunctionValue(Animation::initialTimingFunction().get()));
     return list;
 }
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+static Ref<CSSValue> createAnimationTriggerValue(const AnimationTrigger* trigger, const RenderStyle* style)
+{
+    switch (trigger->type()) {
+    case AnimationTrigger::AnimationTriggerType::ScrollAnimationTriggerType: {
+        const ScrollAnimationTrigger* scrollAnimationTrigger = static_cast<const ScrollAnimationTrigger*>(trigger);
+        if (scrollAnimationTrigger->endValue().isAuto())
+            return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger->startValue(), style));
+        else
+            return CSSAnimationTriggerScrollValue::create(zoomAdjustedPixelValueForLength(scrollAnimationTrigger->startValue(), style),
+                                                          zoomAdjustedPixelValueForLength(scrollAnimationTrigger->endValue(), style));
+    }
+    default:
+        ASSERT(trigger->type() == AnimationTrigger::AnimationTriggerType::AutoAnimationTriggerType);
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+    }
+}
+
+static Ref<CSSValueList> getAnimationTriggerValue(const AnimationList* animList, const RenderStyle* style)
+{
+    auto list = CSSValueList::createCommaSeparated();
+    if (animList) {
+        for (size_t i = 0; i < animList->size(); ++i)
+            list.get().append(createAnimationTriggerValue(animList->animation(i).trigger().get(), style));
+    } else
+        list.get().append(createAnimationTriggerValue(Animation::initialTrigger().get(), style));
+
+    return list;
+}
+#endif
 
 static Ref<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
 {
@@ -2720,6 +2756,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyAnimationTimingFunction:
         case CSSPropertyWebkitAnimationTimingFunction:
             return getTimingFunctionValue(style->animations());
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+        case CSSPropertyWebkitAnimationTrigger:
+            return getAnimationTriggerValue(style->animations(), style.get());
+#endif
         case CSSPropertyWebkitAppearance:
             return cssValuePool().createValue(style->appearance());
         case CSSPropertyWebkitAspectRatio:
