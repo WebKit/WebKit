@@ -1,5 +1,15 @@
 2015-03-16  Alexey Proskuryakov  <ap@apple.com>
 
+        Update results of fast/text/international/bidi-mirror-he-ar.html after <http://trac.webkit.org/changeset/181569>
+
+        Yosemite results now match Mavericks. I'm not 100% sure why the results changed
+        (probably different order of font fallback), but the test clearly still passes.
+
+        * platform/mac-mavericks/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+
+2015-03-16  Alexey Proskuryakov  <ap@apple.com>
+
         Add tolerance to WebAudio tests
         https://bugs.webkit.org/show_bug.cgi?id=142676
 
