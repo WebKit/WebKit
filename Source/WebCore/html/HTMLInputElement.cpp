@@ -518,9 +518,9 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
     if (hasTouchEventHandler != m_hasTouchEventHandler) {
         if (hasTouchEventHandler)
-            document().didAddTouchEventHandler(this);
+            document().didAddTouchEventHandler(*this);
         else
-            document().didRemoveTouchEventHandler(this);
+            document().didRemoveTouchEventHandler(*this);
         m_hasTouchEventHandler = hasTouchEventHandler;
     }
 #endif
@@ -1515,7 +1515,7 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
-        document().didAddTouchEventHandler(this);
+        document().didAddTouchEventHandler(*this);
 #endif
 
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);

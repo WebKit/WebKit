@@ -1,5 +1,13 @@
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
+        And another fix. Thanks to Hunseop Jeong for the fix.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the touch-event build.
 
         * dom/Document.cpp:
