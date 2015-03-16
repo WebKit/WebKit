@@ -34,9 +34,9 @@ void reportExtraMemoryAllocatedForCollectionIndexCache(size_t cost)
 {
     JSC::VM& vm = JSDOMWindowBase::commonVM();
     JSC::JSLockHolder lock(vm);
-    // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-    // https://bugs.webkit.org/show_bug.cgi?id=142593
-    vm.heap.reportExtraMemoryAllocated(cost);
+    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+    // https://bugs.webkit.org/show_bug.cgi?id=142595
+    vm.heap.deprecatedReportExtraMemory(cost);
 }
 
 }

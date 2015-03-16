@@ -1,5 +1,24 @@
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Many users of Heap::reportExtraMemory* are wrong, causing lots of memory growth
+        https://bugs.webkit.org/show_bug.cgi?id=142593
+
+        Reviewed by Andreas Kling.
+
+        Adopt deprecatedReportExtraMemory as a short-term fix for runaway
+        memory growth in these cases where we have not adopted
+        reportExtraMemoryVisited.
+
+        Long-term, we should use reportExtraMemoryAllocated+reportExtraMemoryVisited.
+        That's tracked by https://bugs.webkit.org/show_bug.cgi?id=142595.
+
+        * API/JSBase.cpp:
+        (JSReportExtraMemoryCost):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add):
+
+2015-03-11  Geoffrey Garen  <ggaren@apple.com>
+
         Refactored the JSC::Heap extra cost API for clarity and to make some known bugs more obvious
         https://bugs.webkit.org/show_bug.cgi?id=142589
 

@@ -62,9 +62,9 @@ bool JSNodeList::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
 JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)
 {
-    // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-    // https://bugs.webkit.org/show_bug.cgi?id=142593
-    globalObject.vm().heap.reportExtraMemoryAllocated(nodeList.memoryCost());
+    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+    // https://bugs.webkit.org/show_bug.cgi?id=142595
+    globalObject.vm().heap.deprecatedReportExtraMemory(nodeList.memoryCost());
     return createNewWrapper<JSNodeList>(&globalObject, &nodeList);
 }
 

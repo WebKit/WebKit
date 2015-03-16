@@ -87,9 +87,9 @@ void HTMLImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
         if (!element().inDocument()) {
             JSC::VM& vm = JSDOMWindowBase::commonVM();
             JSC::JSLockHolder lock(vm);
-            // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-            // https://bugs.webkit.org/show_bug.cgi?id=142593
-            vm.heap.reportExtraMemoryAllocated(cachedImage->encodedSize());
+            // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+            // https://bugs.webkit.org/show_bug.cgi?id=142595
+            vm.heap.deprecatedReportExtraMemory(cachedImage->encodedSize());
         }
     }
 

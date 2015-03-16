@@ -1,3 +1,61 @@
+2015-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: Crash under Heap::reportExtraMemoryAllocatedSlowCase for media element
+        https://bugs.webkit.org/show_bug.cgi?id=142636
+
+        Reviewed by Mark Hahnenberg.
+
+        This was a pre-existing bug that I made a lot worse in
+        <https://trac.webkit.org/changeset/181411>.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Compare size before
+        subtracting rather than subtracting and then comparing to zero. The
+        latter technique is not valid for unsigned integers, which will happily
+        underflow into giant numbers.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::reportExtraMemoryAllocated): This code was
+         technically correct, but I took the opportunity to clean it up a bit.
+         There's no need to do two checks here, and it smells bad to check for
+         a negative unsigned integer.
+
+2015-03-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Many users of Heap::reportExtraMemory* are wrong, causing lots of memory growth
+        https://bugs.webkit.org/show_bug.cgi?id=142593
+
+        Reviewed by Andreas Kling.
+
+        Adopt deprecatedReportExtraMemory as a short-term fix for runaway
+        memory growth in these cases where we have not adopted
+        reportExtraMemoryVisited.
+
+        Long-term, we should use reportExtraMemoryAllocated+reportExtraMemoryVisited.
+        That's tracked by https://bugs.webkit.org/show_bug.cgi?id=142595.
+
+        Using IOSDebug, I can see that the canvas stress test @ http://jsfiddle.net/fvyw4ba0/,
+        which used to keep > 1000 1MB NonVolatile GPU allocations live, now keeps about 10 live.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::reportExtraMemoryAllocated):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::createWrapper):
+        * dom/CollectionIndexCache.cpp:
+        (WebCore::reportExtraMemoryAllocatedForCollectionIndexCache):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::imageChanged):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored the JSC::Heap extra cost API for clarity and to make some known bugs more obvious

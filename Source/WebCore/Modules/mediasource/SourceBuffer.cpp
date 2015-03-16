@@ -1981,18 +1981,16 @@ size_t SourceBuffer::extraMemoryCost() const
 void SourceBuffer::reportExtraMemoryAllocated()
 {
     size_t extraMemoryCost = this->extraMemoryCost();
-    if (extraMemoryCost < m_reportedExtraMemoryCost)
+    if (extraMemoryCost <= m_reportedExtraMemoryCost)
         return;
 
     size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
     m_reportedExtraMemoryCost = extraMemoryCost;
 
     JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-    if (extraMemoryCostDelta > 0) {
-        // FIXME: Switch to deprecatedReportExtraMemory, or adopt reportExtraMemoryVisited.
-        // https://bugs.webkit.org/show_bug.cgi?id=142593
-        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(extraMemoryCostDelta);
-    }
+    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+    // https://bugs.webkit.org/show_bug.cgi?id=142595
+    scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
 Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& trackID)
