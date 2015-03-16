@@ -1,3 +1,15 @@
+2015-03-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake][GStreamer] Building EFL or GTK with ENABLE_VIDEO and without ENABLE_WEB_AUDIO is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=142577
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests, this is a build fix.
+
+        * PlatformEfl.cmake: Include GSTREAMER_AUDIO_LIBRARIES on the link step both for ENABLE_VIDEO and ENABLE_WEB_AUDIO.
+        * PlatformGTK.cmake: Idem.
+
 2015-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GL_MAX_VARYING_FLOATS is not defined in OpenGL ES 2
