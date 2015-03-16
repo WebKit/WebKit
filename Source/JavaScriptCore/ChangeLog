@@ -1,3 +1,12 @@
+2015-03-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Fix the incremental build issue revealed by r181419
+        https://bugs.webkit.org/show_bug.cgi?id=142613
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2015-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Many users of Heap::reportExtraMemory* are wrong, causing lots of memory growth
