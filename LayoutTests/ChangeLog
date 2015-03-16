@@ -1,3 +1,12 @@
+2015-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip inspector-protocol/dom-debugger/node-removed.html.
+
+        It looks like it was an actual failure caused by a patch being
+        processed by EWS.
+
+        * TestExpectations:
+
 2015-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         inspector-protocol/dom-debugger/node-removed.html crashes on EWS
