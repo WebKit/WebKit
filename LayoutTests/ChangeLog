@@ -1,5 +1,13 @@
 2015-03-16  Chris Dumez  <cdumez@apple.com>
 
+        Mark fast/images/animated-png.html as [ Crash ImageOnlyFailure ]
+
+        It seems to fail instead of crash on Yosemite WK1.
+
+        * platform/mac/TestExpectations:
+
+2015-03-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark fast/images/animated-png.html as crashing
 
         Mark fast/images/animated-png.html as crashing on Yosemite. This test
