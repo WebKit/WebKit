@@ -1,5 +1,21 @@
 2015-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Console Scrolls Unexpectedly when Clicking inside un-selected Expanding Object
+        https://bugs.webkit.org/show_bug.cgi?id=142655
+
+        Don't scroll when selection change is triggered by clicking, e.g.
+        only scroll on arrow up and down key press events.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._mousemove):
+        (WebInspector.LogContentView.prototype._updateMessagesSelection):
+        (WebInspector.LogContentView.prototype._upArrowWasPressed):
+        (WebInspector.LogContentView.prototype._downArrowWasPressed):
+
+2015-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Rename ConsoleMessage and ConsoleMessageImpl to LegacyConsoleMessage and LegacyConsoleMessageImpl respectively
         https://bugs.webkit.org/show_bug.cgi?id=142712
 
