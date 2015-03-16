@@ -33,15 +33,12 @@
 
 namespace JSC { namespace DFG {
 
-static std::atomic<unsigned> crashLock;
+static Atomic<unsigned> crashLock;
 
 void startCrashing()
 {
-    unsigned expected = 0;
-    while (!crashLock.compare_exchange_weak(expected, 1, std::memory_order_acquire)) {
+    while (!crashLock.compare_exchange_weak(0, 1, std::memory_order_acquire))
         std::this_thread::yield();
-        expected = 0;
-    }
 }
 
 bool isCrashing()

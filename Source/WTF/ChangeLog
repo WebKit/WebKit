@@ -1,3 +1,31 @@
+2015-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Introduce WTF::Atomic to wrap std::atomic for a friendlier CAS.
+        <https://webkit.org/b/142661>
+
+        Reviewed by Filip Pizlo.
+
+        The CAS functions provided by std::atomic takes a reference to the expected
+        value and modifies it if the CAS fails.  However, in a lot of our CAS usage,
+        we don't want the expected value to change.  The solution to this is to
+        provide a WTF::Atomic struct that wraps std::atomic, and provide CAS
+        methods that won't alter the expected value if the CAS fails.
+
+        The method names in WTF::Atomic are chosen to be identical to those
+        in std::atomic so that WTF::Atomic can be a simple drop in replacement
+        for std::atomic.
+
+        Also changed ByteSpinLock to use WTF::Atomic instead of std::atomic.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::load):
+        (WTF::Atomic::store):
+        (WTF::Atomic::compare_exchange_weak):
+        (WTF::Atomic::compare_exchange_strong):
+        * wtf/ByteSpinLock.h:
+        (WTF::ByteSpinLock::ByteSpinLock):
+        (WTF::ByteSpinLock::lock):
+
 2015-03-14  Michael Saboff  <msaboff@apple.com>
 
         Disable Yarr JIT for ARMv7k
