@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CSSValue.h"
 
-#include "CSSAnimationTriggerScrollValue.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCalculationValue.h"
@@ -227,10 +226,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<SVGColor>(*this, other);
         case SVGPaintClass:
             return compareCSSValues<SVGPaint>(*this, other);
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        case AnimationTriggerScrollClass:
-            return compareCSSValues<CSSAnimationTriggerScrollValue>(*this, other);
-#endif
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -317,10 +312,6 @@ String CSSValue::cssText() const
         return downcast<SVGColor>(*this).customCSSText();
     case SVGPaintClass:
         return downcast<SVGPaint>(*this).customCSSText();
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    case AnimationTriggerScrollClass:
-        return downcast<CSSAnimationTriggerScrollValue>(*this).customCSSText();
-#endif
     case WebKitCSSResourceClass:
         return downcast<WebKitCSSResourceValue>(*this).customCSSText();
     }
@@ -435,11 +426,6 @@ void CSSValue::destroy()
     case SVGPaintClass:
         delete downcast<SVGPaint>(this);
         return;
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    case AnimationTriggerScrollClass:
-        delete downcast<CSSAnimationTriggerScrollValue>(this);
-        return;
-#endif
     case WebKitCSSResourceClass:
         delete downcast<WebKitCSSResourceValue>(this);
         return;

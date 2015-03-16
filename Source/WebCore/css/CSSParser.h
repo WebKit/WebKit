@@ -181,9 +181,6 @@ public:
     PassRefPtr<CSSValue> parseAnimationPlayState();
     PassRefPtr<CSSValue> parseAnimationProperty(AnimationParseContext&);
     PassRefPtr<CSSValue> parseAnimationTimingFunction();
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    PassRefPtr<CSSValue> parseAnimationTrigger();
-#endif
     static Vector<double> parseKeyframeSelector(const String&);
 
     bool parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);

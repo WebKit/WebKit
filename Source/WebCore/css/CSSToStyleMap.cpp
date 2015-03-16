@@ -29,7 +29,6 @@
 #include "CSSToStyleMap.h"
 
 #include "Animation.h"
-#include "CSSAnimationTriggerScrollValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
@@ -513,38 +512,6 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, CSSValue& v
         animation.setTimingFunction(StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart()));
     }
 }
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-void CSSToStyleMap::mapAnimationTrigger(Animation& animation, CSSValue& value)
-{
-    if (value.isInitialValue()) {
-        animation.setTrigger(Animation::initialTrigger());
-        return;
-    }
-
-    if (value.isPrimitiveValue()) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        if (primitiveValue.getValueID() == CSSValueAuto)
-            animation.setTrigger(AutoAnimationTrigger::create());
-        return;
-    }
-
-    if (value.isAnimationTriggerScrollValue()) {
-        auto& scrollTrigger = downcast<CSSAnimationTriggerScrollValue>(value);
-
-        const CSSPrimitiveValue* startValue = downcast<CSSPrimitiveValue>(scrollTrigger.startValue());
-        Length startLength = startValue->computeLength<Length>(m_resolver->state().cssToLengthConversionData());
-
-        Length endLength;
-        if (scrollTrigger.hasEndValue()) {
-            const CSSPrimitiveValue* endValue = downcast<CSSPrimitiveValue>(scrollTrigger.endValue());
-            endLength = endValue->computeLength<Length>(m_resolver->state().cssToLengthConversionData());
-        }
-
-        animation.setTrigger(ScrollAnimationTrigger::create(startLength, endLength));
-    }
-}
-#endif
 
 void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
 {

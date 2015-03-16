@@ -62,10 +62,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 # Need a scroll snap point implementation
 css3/scroll-snap [ Skip ]
 
-# TODO Animation triggers not supported
-animations/trigger-computed-style.html [ Skip ]
-animations/trigger-parsing.html [ Skip ]
-
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------

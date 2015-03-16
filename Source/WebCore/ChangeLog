@@ -1,3 +1,18 @@
+2015-03-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r181572.
+        https://bugs.webkit.org/show_bug.cgi?id=142755
+
+        Caused weird test failures in transitions and animations
+        (Requested by dino on #webkit).
+
+        Reverted changeset:
+
+        "Parsing and Style Resolution of Container-based Animation
+        Triggers"
+        https://bugs.webkit.org/show_bug.cgi?id=142687
+        http://trac.webkit.org/changeset/181572
+
 2015-03-16  Yoav Weiss  <yoav@yoav.ws>
 
         Remove setCachedImage from HTMLImageElement since it is not used
