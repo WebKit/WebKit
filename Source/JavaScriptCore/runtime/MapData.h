@@ -152,7 +152,7 @@ ALWAYS_INLINE MapDataImpl<Entry>::KeyType::KeyType(JSValue v)
         return;
     }
     double d = v.asDouble();
-    if (std::isnan(d) || (std::signbit(d) && d == 0.0)) {
+    if (std::isnan(d)) {
         value = v;
         return;
     }

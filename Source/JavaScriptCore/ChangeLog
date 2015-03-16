@@ -1,3 +1,14 @@
+2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update Map/Set to treat -0 and 0 as the same value
+        https://bugs.webkit.org/show_bug.cgi?id=142709
+
+        Reviewed by Csaba Osztrogonác.
+
+        * runtime/MapData.h:
+        (JSC::MapDataImpl<Entry>::KeyType::KeyType):
+        No longer special case -0. It will be treated as the same as 0.
+
 2015-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better handle displaying -0

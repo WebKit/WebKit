@@ -46,12 +46,13 @@ PASS Set.prototype.entries.length is 0
 PASS set.size is 0
 PASS set.add(-0) is set
 PASS set.add(0) is set
+PASS set.size is 1
 PASS set.add(Infinity) is set
 PASS set.add(-Infinity) is set
 PASS set.add(NaN) is set
 PASS set.add('0') is set
 PASS set.add(0.1) is set
-PASS set.size is 7
+PASS set.size is 6
 PASS set.has(-0) is true
 PASS set.has(0) is true
 PASS set.has(Infinity) is true
@@ -60,7 +61,7 @@ PASS set.has(NaN) is true
 PASS set.has('0') is true
 PASS set.has(0.1) is true
 PASS set.delete(-0) is true
-PASS set.delete(0) is true
+PASS set.delete(0) is false
 PASS set.delete(Infinity) is true
 PASS set.delete(-Infinity) is true
 PASS set.delete(NaN) is true

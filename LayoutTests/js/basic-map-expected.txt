@@ -37,13 +37,14 @@ PASS Map.prototype.entries.length is 0
 PASS map.size is 0
 PASS map.set(-0, 1) is map
 PASS map.set(0, 2) is map
+PASS map.size is 1
 PASS map.set(Infinity, 3) is map
 PASS map.set(-Infinity, 4) is map
 PASS map.set(NaN, 5) is map
 PASS map.set('0', 6) is map
 PASS map.set(0.1, 7) is map
-PASS map.size is 7
-PASS map.get(-0) is 1
+PASS map.size is 6
+PASS map.get(-0) is 2
 PASS map.get(0) is 2
 PASS map.get(Infinity) is 3
 PASS map.get(-Infinity) is 4
@@ -58,7 +59,7 @@ PASS map.has(NaN) is true
 PASS map.has('0') is true
 PASS map.has(0.1) is true
 PASS map.delete(-0) is true
-PASS map.delete(0) is true
+PASS map.delete(0) is false
 PASS map.delete(Infinity) is true
 PASS map.delete(-Infinity) is true
 PASS map.delete(NaN) is true
