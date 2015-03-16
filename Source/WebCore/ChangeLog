@@ -1,5 +1,13 @@
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the touch-event build.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didAddTouchEventHandler):
+        (WebCore::Document::didRemoveTouchEventHandler):
+
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
         Reduce the side-effects of animations turning off overlap testing
         https://bugs.webkit.org/show_bug.cgi?id=92791
 

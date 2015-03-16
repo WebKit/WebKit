@@ -6015,7 +6015,7 @@ void Document::didAddTouchEventHandler(Node& handler)
         m_touchEventTargets = std::make_unique<TouchEventTargetSet>();
     m_touchEventTargets->add(&handler);
     if (Document* parent = parentDocument()) {
-        parent->didAddTouchEventHandler(this);
+        parent->didAddTouchEventHandler(*this);
         return;
     }
     if (Page* page = this->page()) {
@@ -6032,10 +6032,10 @@ void Document::didRemoveTouchEventHandler(Node& handler)
 #if ENABLE(TOUCH_EVENTS)
     if (!m_touchEventTargets.get())
         return;
-    ASSERT(m_touchEventTargets->contains(handler));
+    ASSERT(m_touchEventTargets->contains(&handler));
     m_touchEventTargets->remove(&handler);
     if (Document* parent = parentDocument()) {
-        parent->didRemoveTouchEventHandler(this);
+        parent->didRemoveTouchEventHandler(*this);
         return;
     }
 
