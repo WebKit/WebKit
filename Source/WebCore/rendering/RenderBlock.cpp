@@ -951,16 +951,6 @@ static RenderBlockRareData& ensureRareData(const RenderBlock* block)
     return *rareData.get();
 }
 
-#if ENABLE(CSS_SHAPES)
-void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
-{
-    RenderBox::imageChanged(image);
-
-    if (!parent() || !everHadLayout())
-        return;
-}
-#endif
-
 void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
 {
     // Regions changing widths can force us to relayout our children.

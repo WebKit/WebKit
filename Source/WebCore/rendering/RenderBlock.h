@@ -302,11 +302,6 @@ public:
     void checkPositionedObjectsNeedLayout();
 #endif
 
-
-#if ENABLE(CSS_SHAPES)
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
-#endif
-
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
     virtual bool canHaveChildren() const override { return true; }

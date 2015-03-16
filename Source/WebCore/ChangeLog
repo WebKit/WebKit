@@ -1,3 +1,16 @@
+2015-03-14  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        RenderBlock::imageChange() calling const methods on exit
+        https://bugs.webkit.org/show_bug.cgi?id=142648
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, no change on behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::imageChanged): Deleted.
+        * rendering/RenderBlock.h:
+
 2015-03-13  Joonghun Park  <jh718.park@samsung.com>
 
         Fix Debug build error 'comparison is always true due to limited range of data type [-Werror=type-limits]'
