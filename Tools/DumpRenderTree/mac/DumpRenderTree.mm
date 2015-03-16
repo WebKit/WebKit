@@ -473,6 +473,48 @@ static void swizzleNSFontManagerMethods()
     appKitAvailableFontsIMP = method_setImplementation(availableFontsMethod, (IMP)drt_NSFontManager_availableFonts);
 }
 
+// Activating system copies of these fonts overrides any others that could be preferred, such as ones
+// in /Library/Fonts/Microsoft, and which don't always have the same metrics.
+// FIXME: Switch to a solution from <rdar://problem/19553550> once it's available.
+static void activateSystemCoreWebFonts()
+{
+    NSArray *coreWebFontNames = @[
+        @"Andale Mono",
+        @"Arial",
+        @"Arial Black",
+        @"Comic Sans MS",
+        @"Courier New",
+        @"Georgia",
+        @"Impact",
+        @"Times New Roman",
+        @"Trebuchet MS",
+        @"Verdana",
+        @"Webdings"
+    ];
+
+    NSArray *fontFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:@"/Library/Fonts" isDirectory:YES]
+        includingPropertiesForKeys:@[NSURLFileResourceTypeKey, NSURLNameKey] options:0 error:0];
+
+    for (NSURL *fontURL in fontFiles) {
+        NSString *resourceType;
+        NSString *fileName;
+        if (![fontURL getResourceValue:&resourceType forKey:NSURLFileResourceTypeKey error:0]
+            || ![fontURL getResourceValue:&fileName forKey:NSURLNameKey error:0])
+            continue;
+        if (![resourceType isEqualToString:NSURLFileResourceTypeRegular])
+            continue;
+
+        // Activate all font variations, such as Arial Bold Italic.ttf. This algorithm is not 100% precise, as it
+        // also activates e.g. Arial Unicode, which is not a variation of Arial.
+        for (NSString *coreWebFontName in coreWebFontNames) {
+            if ([fileName hasPrefix:coreWebFontName]) {
+                CTFontManagerRegisterFontsForURL((CFURLRef)fontURL, kCTFontManagerScopeProcess, 0);
+                break;
+            }
+        }
+    }
+}
+
 static void activateTestingFonts()
 {
     static const char* fontFileNames[] = {
@@ -508,6 +550,7 @@ static void activateTestingFonts()
 static void adjustFonts()
 {
     swizzleNSFontManagerMethods();
+    activateSystemCoreWebFonts();
     activateTestingFonts();
 }
 #else

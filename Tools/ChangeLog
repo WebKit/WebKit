@@ -1,3 +1,20 @@
+2015-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] fast/forms/text-control-intrinsic-widths.html fails when MS Office is installed
+        https://bugs.webkit.org/show_bug.cgi?id=142720
+
+        Reviewed by Myles C. Maxfield.
+
+        Activate system copies of Microsoft fonts for the current process, thus overriding
+        any other ones that could be preferred by the system otherwise.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateSystemCoreWebFonts):
+        (adjustFonts):
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::activateSystemCoreWebFonts):
+        (WTR::activateFonts):
+
 2015-03-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Created Streams API watchlist
