@@ -161,7 +161,7 @@ void IconController::startLoader()
 
     if (iconDatabase().supportsAsynchronousMode()) {
         // FIXME (<rdar://problem/9168605>) - We should support in-memory-only private browsing icons in asynchronous icon database mode.
-        if (m_frame.page()->usesEphemeralSession())
+        if (m_frame.page() && m_frame.page()->usesEphemeralSession())
             return;
 
         m_frame.loader().documentLoader()->getIconLoadDecisionForIconURL(urlString);
