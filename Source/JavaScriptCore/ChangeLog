@@ -1,3 +1,20 @@
+2015-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better handle displaying -0
+        https://bugs.webkit.org/show_bug.cgi?id=142708
+
+        Reviewed by Timothy Hatcher.
+
+        Modeled after a blink change:
+
+        Patch by <aandrey@chromium.org>
+        DevTools: DevTools: Show -0 for negative zero in console
+        https://src.chromium.org/viewvc/blink?revision=162605&view=revision
+
+        * inspector/InjectedScriptSource.js:
+        When creating a description string, or preview value string
+        for -0, be sure the string is "-0" and not "0".
+
 2015-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         parseClass should popScope after pushScope

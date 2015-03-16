@@ -36,6 +36,7 @@ function test()
         {expression: "Number.MIN_VALUE"},
         {expression: "NaN"},
         {expression: "Infinity"},
+        {expression: "-Infinity"},
 
         // Strings
         {expression: "''"},
@@ -71,7 +72,7 @@ function test()
 
         // Array
         {expression: "[]"},
-        {expression: "[1, 2]"},
+        {expression: "[0, -0, 1, 2]"},
         {expression: "[[1],[2],[3]]"},
         {expression: "[true, 1, 1.234, 'string', /regex/]"},
         {expression: "[{a:1}, {b:2}, {c:2}]"},
@@ -88,6 +89,7 @@ function test()
         // Object
         {expression: "({})"},
         {expression: "({a: 1})"},
+        {expression: "({a: 1, b: 0, c: -0})"},
         {expression: "({a: 1, b: \"string\", c: /regex/, d: Symbol('sym')})"},
         {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
         {expression: "function Foo() {}; new Foo"},

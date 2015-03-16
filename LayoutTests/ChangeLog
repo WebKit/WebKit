@@ -1,3 +1,20 @@
+2015-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better handle displaying -0
+        https://bugs.webkit.org/show_bug.cgi?id=142708
+
+        Reviewed by Timothy Hatcher.
+
+        Add tests for -0 in different places.
+        I don't understand yet why the test says "0" for
+        the property previews of "-0". Everything behaves
+        correctly, but I can't see to make the test show
+        the right value appear in the test. That is worth
+        investigating separately though.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the side-effects of animations turning off overlap testing

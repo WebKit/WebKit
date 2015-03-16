@@ -59,7 +59,7 @@ EXPRESSION: 0
 EXPRESSION: -0
 {
   "_type": "number",
-  "_description": "0",
+  "_description": "-0",
   "_value": 0
 }
 
@@ -132,6 +132,14 @@ EXPRESSION: Infinity
 {
   "_type": "number",
   "_description": "Infinity",
+  "_value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: -Infinity
+{
+  "_type": "number",
+  "_description": "-Infinity",
   "_value": null
 }
 
@@ -532,28 +540,38 @@ EXPRESSION: []
 }
 
 -----------------------------------------------------
-EXPRESSION: [1, 2]
+EXPRESSION: [0, -0, 1, 2]
 {
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
   "_description": "Array",
-  "_size": 2,
+  "_size": 4,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
     "_lossless": true,
     "_overflow": false,
-    "_size": 2,
+    "_size": 4,
     "_properties": [
       {
         "_name": "0",
         "_type": "number",
-        "_value": "1"
+        "_value": "0"
       },
       {
         "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "3",
         "_type": "number",
         "_value": "2"
       }
@@ -1459,6 +1477,38 @@ EXPRESSION: ({a: 1})
         "_name": "a",
         "_type": "number",
         "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: 0, c: -0})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "c",
+        "_type": "number",
+        "_value": "0"
       }
     ],
     "_entries": null

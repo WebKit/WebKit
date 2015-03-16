@@ -39,6 +39,14 @@ function toString(obj)
     return String(obj);
 }
 
+function toStringDescription(obj)
+{
+    if (obj === 0 && 1 / obj < 0)
+        return "-0";
+
+    return toString(obj);
+}
+
 function isUInt32(obj)
 {
     if (typeof obj === "number")
@@ -424,7 +432,7 @@ InjectedScript.prototype = {
     {
         var remoteObject = this._wrapObject(value, objectGroup);
         try {
-            remoteObject.description = toString(value);
+            remoteObject.description = toStringDescription(value);
         } catch (e) {}
         return {
             wasThrown: true,
@@ -895,7 +903,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
 
         // Provide user-friendly number values.
         if (this.type === "number")
-            this.description = object + "";
+            this.description = toStringDescription(object);
         return;
     }
 
@@ -1056,7 +1064,7 @@ InjectedScript.RemoteObject.prototype = {
                     value = this._abbreviateString(value, maxLength, true);
                     preview.lossless = false;
                 }
-                this._appendPropertyPreview(preview, internal, {name, type, value: toString(value)}, propertiesThreshold);
+                this._appendPropertyPreview(preview, internal, {name, type, value: toStringDescription(value)}, propertiesThreshold);
                 continue;
             }
 
