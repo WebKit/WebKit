@@ -1,3 +1,37 @@
+2015-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Prohibit GC while sweeping
+        https://bugs.webkit.org/show_bug.cgi?id=142638
+
+        Reviewed by Andreas Kling.
+
+        I noticed in https://bugs.webkit.org/show_bug.cgi?id=142636 that a GC
+        could trigger a sweep which could trigger another GC. Yo Dawg.
+
+        I tried to figure out whether this could cause problems or not and it
+        made me cross-eyed.
+
+        (Some clients like to report extra memory cost during deallocation as a
+        way to indicate that the GC now owns something exclusively. It's
+        arguably a bug to communicate with the GC in this way, but we shouldn't
+        do crazy when this happens.)
+
+        This patch makes explicit the fact that we don't allow GC while sweeping.
+
+        Usually, sweeping implicitly defers GC by virtue of happening during
+        allocation. But not always.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage): Defer GC while sweeping due to an
+        explicit GC request.
+
+        (JSC::Heap::didFinishCollection): Make sure that zombifying sweep
+        defers GC by not returning to the non-GC state until we're all done.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::sweepNextBlock): Defer GC while sweeping due
+        to a timer.
+
 2015-03-13  Mark Lam  <mark.lam@apple.com>
 
         Introduce WTF::Atomic to wrap std::atomic for a friendlier CAS.

@@ -974,6 +974,8 @@ void Heap::collectAllGarbage()
     collect(FullCollection);
 
     SamplingRegion samplingRegion("Garbage Collection: Sweeping");
+
+    DeferGCForAWhile deferGC(*this);
     m_objectSpace.sweep();
     m_objectSpace.shrink();
 }
@@ -1276,10 +1278,6 @@ void Heap::didFinishCollection(double gcStartTime)
 
     if (Options::recordGCPauseTimes())
         HeapStatistics::recordGCPauseTime(gcStartTime, gcEndTime);
-    RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
-
-    m_operationInProgress = NoOperation;
-    JAVASCRIPTCORE_GC_END();
 
     if (Options::useZombieMode())
         zombifyDeadObjects();
@@ -1292,6 +1290,10 @@ void Heap::didFinishCollection(double gcStartTime)
 
     if (Options::logGC() == GCLogging::Verbose)
         GCLogging::dumpObjectGraph(this);
+
+    RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
+    m_operationInProgress = NoOperation;
+    JAVASCRIPTCORE_GC_END();
 }
 
 void Heap::resumeCompilerThreads()
