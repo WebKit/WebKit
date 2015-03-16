@@ -1,3 +1,17 @@
+2015-03-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake][EFL] Rearrange OptionEFL.cmake to improve readability 
+        https://bugs.webkit.org/show_bug.cgi?id=142722
+
+        Reviewed by Csaba Osztrogonác.
+
+        Categorize to define cmake variables, to find necessary packages,
+        use upper case for "glib_conponents" cmake variable name, re-arrange
+        wrong alphabet sorting, and so on.
+
+        * CMakeLists.txt: Remove WinCE port.
+        * Source/cmake/OptionsEfl.cmake:
+
 2015-03-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] share GL context in pipeline

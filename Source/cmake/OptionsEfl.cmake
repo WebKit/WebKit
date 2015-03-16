@@ -3,8 +3,6 @@ set(PROJECT_VERSION_MINOR 11)
 set(PROJECT_VERSION_MICRO 0)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_MICRO})
 
-add_definitions(-DBUILDING_EFL__=1)
-
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBKIT2 ON)
 
@@ -13,29 +11,8 @@ if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR)
 endif ()
 
-find_package(Cairo 1.10.2 REQUIRED)
-find_package(Fontconfig 2.8.0 REQUIRED)
-find_package(Sqlite REQUIRED)
-find_package(LibXml2 2.8.0 REQUIRED)
-find_package(LibXslt 1.1.7 REQUIRED)
-find_package(ICU REQUIRED)
-find_package(Threads REQUIRED)
-find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
-find_package(WebP REQUIRED)
-find_package(ZLIB REQUIRED)
-
-set(glib_components gio gobject gthread)
-if (ENABLE_GEOLOCATION)
-    list(APPEND glib_components gio-unix)
-endif ()
-find_package(GLIB 2.38.0 REQUIRED COMPONENTS ${glib_components})
-find_package(LibSoup 2.42.0 REQUIRED)
-
 set(WTF_USE_SOUP 1)
 set(WTF_USE_UDIS86 1)
-
-add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 
 set(WTF_LIBRARY_TYPE STATIC)
 set(WTF_OUTPUT_NAME wtf_efl)
@@ -43,12 +20,37 @@ set(JavaScriptCore_OUTPUT_NAME javascriptcore_efl)
 set(WebCore_OUTPUT_NAME webcore_efl)
 set(WebKit2_OUTPUT_NAME ewebkit2)
 
+set(CPACK_SOURCE_GENERATOR TBZ2)
+set(GLIB_COMPONENTS gio gobject gthread)
 set(DATA_INSTALL_DIR "share/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
 set(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebCore/platform/efl/DefaultTheme)
-file(MAKE_DIRECTORY ${THEME_BINARY_DIR})
+set(WEB_INSPECTOR_DIR "${DATA_INSTALL_DIR}/inspector")
+set(WEBINSPECTORUI_DIR "${CMAKE_SOURCE_DIR}/Source/WebInspectorUI")
 
+# FIXME: Consider to use linker script
+if (NOT SHARED_CORE AND NOT DEVELOPER_MODE)
+    set(CMAKE_C_FLAGS_RELEASE "-fvisibility=hidden ${CMAKE_C_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-fvisibility=hidden ${CMAKE_CXX_FLAGS_RELEASE}")
+endif ()
+
+# Optimize binary size for release builds by removing dead sections on unix/gcc.
+if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffunction-sections -fdata-sections")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffunction-sections -fdata-sections -fno-rtti")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -Wl,--gc-sections")
+endif ()
+
+add_definitions(-DBUILDING_EFL__=1)
+add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}"
                 -DDEFAULT_THEME_DIR="${THEME_BINARY_DIR}")
+add_definitions(-DWEB_INSPECTOR_DIR=\"${CMAKE_BINARY_DIR}/${WEB_INSPECTOR_DIR}\")
+add_definitions(-DWEB_INSPECTOR_INSTALL_DIR=\"${CMAKE_INSTALL_PREFIX}/${WEB_INSPECTOR_DIR}\")
+
+# EWebKit2 tests need a hint to find out where processes such as WebProcess are located at.
+add_definitions(-DWEBKIT_EXEC_PATH=\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\")
+
+file(MAKE_DIRECTORY ${THEME_BINARY_DIR})
 
 WEBKIT_OPTION_BEGIN()
 
@@ -58,7 +60,6 @@ if (DEVELOPER_MODE)
 else ()
     set(ENABLE_TOOLS OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS OFF)
-
     set(WEBKIT2_VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/eflsymbols.filter")
 endif ()
 
@@ -70,8 +71,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_DEVICE_ADAPTATION ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_GRID_LAYOUT OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_IMAGE_SET ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_REGIONS ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_SELECTORS_LEVEL4 ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_SCROLL_SNAP OFF)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_SELECTORS_LEVEL4 ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CUSTOM_SCHEME_HANDLER ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DATALIST_ELEMENT ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DOM4_EVENTS_CONSTRUCTOR ON)
@@ -84,8 +85,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_FULLSCREEN_API ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GAMEPAD OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GAMEPAD_DEPRECATED ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GEOLOCATION ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_INDEXED_DATABASE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_INDEXED_DATABASE_IN_WORKERS OFF)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_INDEXED_DATABASE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_INPUT_TYPE_COLOR ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LINK_PREFETCH ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_CAPTURE ON)
@@ -127,6 +128,19 @@ endif ()
 
 WEBKIT_OPTION_END()
 
+# Begin to find necessary packages for EFL port.
+find_package(Cairo 1.10.2 REQUIRED)
+find_package(Fontconfig 2.8.0 REQUIRED)
+find_package(LibXml2 2.8.0 REQUIRED)
+find_package(LibXslt 1.1.7 REQUIRED)
+find_package(ICU REQUIRED)
+find_package(JPEG REQUIRED)
+find_package(PNG REQUIRED)
+find_package(Sqlite REQUIRED)
+find_package(Threads REQUIRED)
+find_package(WebP REQUIRED)
+find_package(ZLIB REQUIRED)
+
 option(ENABLE_ECORE_X "Enable Ecore_X specific usage (cursor, bell)" ON)
 if (ENABLE_ECORE_X)
     # We need Xext.h to disable Xlib error messages  when running WTR on Xvfb.
@@ -148,19 +162,26 @@ else ()
     set(EFL_REQUIRED_VERSION 1.8)
 endif ()
 
-find_package(Eo ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
-find_package(Eina ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
-find_package(Evas ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Ecore ${EFL_REQUIRED_VERSION} COMPONENTS Evas File Input Imf Imf_Evas ${ECORE_ADDITIONAL_COMPONENTS} CONFIG)
 find_package(Edje ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Eet ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Eeze ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Efreet ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
+find_package(Eina ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
+find_package(Eo ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
+find_package(Evas ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 
 find_package(Freetype2 2.4.2 REQUIRED)
+find_package(GLIB 2.38.0 REQUIRED COMPONENTS ${GLIB_COMPONENTS})
 find_package(HarfBuzz 0.9.2 REQUIRED)
+find_package(LibSoup 2.42.0 REQUIRED)
+
+if (ENABLE_BATTERY_STATUS)
+    find_package(Eldbus ${EFL_REQUIRED_VERSION} CONFIG)
+endif ()
 
 if (ENABLE_GEOLOCATION)
+    list(APPEND GLIB_COMPONENTS gio-unix)
     find_package(GeoClue2 2.1.5)
     if (GEOCLUE2_FOUND)
       set(WTF_USE_GEOCLUE2 1)
@@ -178,10 +199,6 @@ if (WTF_OS_UNIX)
     set(ENABLE_X11_TARGET ON)
     add_definitions(-DXP_UNIX)
 endif (WTF_OS_UNIX)
-
-if (ENABLE_BATTERY_STATUS)
-    find_package(Eldbus ${EFL_REQUIRED_VERSION} CONFIG)
-endif ()
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set(GSTREAMER_COMPONENTS app mpegts pbutils)
@@ -207,24 +224,20 @@ endif ()
 
 add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
 add_definitions(-DWTF_USE_COORDINATED_GRAPHICS_MULTIPROCESS=1)
-add_definitions(-DWTF_USE_TILED_BACKING_STORE=1)
-
 add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
+add_definitions(-DWTF_USE_TILED_BACKING_STORE=1)
 
 set(WTF_USE_3D_GRAPHICS 1)
 add_definitions(-DWTF_USE_3D_GRAPHICS=1)
-
 add_definitions(-DWTF_USE_GRAPHICS_SURFACE=1)
 
 option(ENABLE_GLES2 "Enable GLES Support")
 if (ENABLE_GLES2)
     find_package(GLES REQUIRED)
-
     set(WTF_USE_OPENGL_ES_2 1)
     add_definitions(-DWTF_USE_OPENGL_ES_2=1)
 else ()
     find_package(OpenGL REQUIRED)
-
     set(WTF_USE_OPENGL 1)
     add_definitions(-DWTF_USE_OPENGL=1)
 endif ()
@@ -246,34 +259,13 @@ if (ENABLE_WEBGL AND OPENGLX_FOUND)
     endif ()
 endif ()
 
-set(WEB_INSPECTOR_DIR "${DATA_INSTALL_DIR}/inspector")
-set(WEBINSPECTORUI_DIR "${CMAKE_SOURCE_DIR}/Source/WebInspectorUI")
-add_definitions(-DWEB_INSPECTOR_DIR=\"${CMAKE_BINARY_DIR}/${WEB_INSPECTOR_DIR}\")
-add_definitions(-DWEB_INSPECTOR_INSTALL_DIR=\"${CMAKE_INSTALL_PREFIX}/${WEB_INSPECTOR_DIR}\")
-
 if (ENABLE_SECCOMP_FILTERS)
     find_package(LibSeccomp REQUIRED)
-endif ()
-
-set(CPACK_SOURCE_GENERATOR TBZ2)
-
-# Optimize binary size for release builds by removing dead sections on unix/gcc.
-if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffunction-sections -fdata-sections")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffunction-sections -fdata-sections -fno-rtti")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -Wl,--gc-sections")
-endif ()
-
-# FIXME: Consider to use linker script
-if (NOT SHARED_CORE AND NOT DEVELOPER_MODE)
-    set(CMAKE_C_FLAGS_RELEASE "-fvisibility=hidden ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-fvisibility=hidden ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ()
 
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
 endif ()
-
 
 if (ENABLE_SPEECH_SYNTHESIS)
     find_package(Espeak REQUIRED)
@@ -288,9 +280,6 @@ if (ENABLE_FTL_JIT)
         add_definitions(-DENABLE_FTL_NATIVE_CALL_INLINING=1)
     endif ()
 endif ()
-
-# [E]WebKit2 tests need a hint to find out where processes such as WebProcess are located at.
-add_definitions(-DWEBKIT_EXEC_PATH=\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\")
 
 if (ENABLE_SUBTLE_CRYPTO)
     find_package(GnuTLS 3.0.0 REQUIRED)
