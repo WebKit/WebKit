@@ -1,3 +1,50 @@
+2015-03-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::PutStackSinkingPhase should eliminate GetStacks that have an obviously known source, and emit GetStacks when the stack's value is needed and none is deferred
+        https://bugs.webkit.org/show_bug.cgi?id=141624
+
+        Reviewed by Geoffrey Garen.
+
+        Not eliminating GetStacks was an obvious omission from the original PutStackSinkingPhase.
+        Previously, we would treat GetStacks conservatively and assume that the stack slot
+        escaped. That's pretty dumb, since a GetStack is a local load of the stack. This change
+        makes GetStack a no-op from the standpoint of this phase's deferral analysis. At the end
+        we either keep the GetStack (if there was no concrete deferral) or we replace it with an
+        identity over the value that would have been stored by the deferred PutStack. Note that
+        this might be a Phi that the phase creates, so this is strictly stronger than what GCSE
+        could do.
+        
+        But this change revealed the fact that this phase never correctly handled side effects in
+        case that we had done a GetStack, then a side-effect, and then found ourselves wanting the
+        value on the stack due to (for example) a Phi on a deferred PutStack and that GetStack.
+        Basically, it's only correct to use the SSA converter's incoming value mapping if we have
+        a concrete deferral - since anything but a concrete deferral may imply that the value has
+        been clobbered.
+        
+        This has no performance change. I believe that the bug was previously benign because we
+        have so few operations that clobber the stack anymore, and most of those get used in a
+        very idiomatic way. The GetStack elimination will be very useful for the varargs
+        simplification that is part of bug 141174.
+        
+        This includes a test for the case that Speedometer hit, plus tests for the other cases I
+        thought of once I realized the deeper issue.
+
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * tests/stress/get-stack-identity-due-to-sinking.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/get-stack-mapping-with-dead-get-stack.js: Added.
+        (bar):
+        (foo):
+        * tests/stress/get-stack-mapping.js: Added.
+        (bar):
+        (foo):
+        * tests/stress/weird-put-stack-varargs.js: Added.
+        (baz):
+        (foo):
+        (fuzz):
+        (bar):
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update Map/Set to treat -0 and 0 as the same value

@@ -221,6 +221,12 @@ public:
                         continue;
                     }
                     
+                    if (node->op() == GetStack) {
+                        // A GetStack doesn't affect anything, since we know which local we are reading
+                        // from.
+                        continue;
+                    }
+                    
                     auto escapeHandler = [&] (VirtualRegister operand) {
                         if (operand.isHeader())
                             return;
@@ -390,6 +396,29 @@ public:
                     deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
                     break;
                 }
+                    
+                case GetStack: {
+                    StackAccessData* data = node->stackAccessData();
+                    FlushFormat format = deferred.operand(data->local);
+                    if (!isConcrete(format)) {
+                        // This means there is no deferral. No deferral means that the most
+                        // authoritative value for this stack slot is what is stored in the stack. So,
+                        // keep the GetStack.
+                        mapping.operand(data->local) = node;
+                        break;
+                    }
+                    
+                    // We have a concrete deferral, which means a PutStack that hasn't executed yet. It
+                    // would have stored a value with a certain format. That format must match our
+                    // format. But more importantly, we can simply use the value that the PutStack would
+                    // have stored and get rid of the GetStack.
+                    DFG_ASSERT(m_graph, node, format == data->format);
+                    
+                    Node* incoming = mapping.operand(data->local);
+                    node->child1() = incoming->defaultEdge();
+                    node->convertToIdentity();
+                    break;
+                }
                 
                 default: {
                     auto escapeHandler = [&] (VirtualRegister operand) {
@@ -418,16 +447,6 @@ public:
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
                         [&] (VirtualRegister, Node*) { });
-                    
-                    // If we're a GetStack, then we also create a mapping.
-                    // FIXME: We should be able to just eliminate such GetLocals, when we know
-                    // what their incoming value will be.
-                    // https://bugs.webkit.org/show_bug.cgi?id=141624
-                    if (node->op() == GetStack) {
-                        StackAccessData* data = node->stackAccessData();
-                        VirtualRegister operand = data->local;
-                        mapping.operand(operand) = node;
-                    }
                     break;
                 } }
             }
@@ -444,34 +463,24 @@ public:
                     FlushFormat format = deferredAtHead[successorBlock].operand(operand);
                     DFG_ASSERT(m_graph, nullptr, isConcrete(format));
                     UseKind useKind = useKindFor(format);
-                    Node* incoming = mapping.operand(operand);
-                    if (!incoming) {
-                        // This can totally happen, see tests/stress/put-local-conservative.js.
-                        // This arises because deferral and liveness are both conservative.
-                        // Conservative liveness means that a load from a *different* closure
-                        // variable may lead us to believe that our local is live. Conservative
-                        // deferral may lead us to believe that the local doesn't have a top deferral
-                        // because someone has done something that would have forced it to be
-                        // materialized. The basic pattern is:
-                        //
-                        // GetClosureVar(loc42) // loc42's deferral is now bottom
-                        // if (predicate1)
-                        //     PutClosureVar(loc42) // prevent GCSE of our GetClosureVar's
-                        // if (predicate2)
-                        //     PutStack(loc42) // we now have a concrete deferral
-                        // // we still have the concrete deferral because we merged with bottom
-                        // GetClosureVar(loc42) // force materialization
-                        //
-                        // We will have a Phi with no incoming value form the basic block that
-                        // bypassed the PutStack.
-                        
-                        // Note: we sort of could have used the equivalent of LLVM's undef here. The
-                        // point is that it's OK to just leave random bits in the local if we're
-                        // coming down this path. But, we don't have a way of saying that in our IR
-                        // right now and anyway it probably doesn't matter that much.
-                        
-                        incoming = insertionSet.insertBottomConstantForUse(
-                            upsilonInsertionPoint, upsilonOrigin, useKind).node();
+                    
+                    // We need to get a value for the stack slot. This phase doesn't really have a
+                    // good way of determining if a stack location got clobbered. It just knows if
+                    // there is a deferral. The lack of a deferral might mean that a PutStack or
+                    // GetStack had never happened, or it might mean that the value was read, or
+                    // that it was written. It's OK for us to make some bad decisions here, since
+                    // GCSE will clean it up anyway.
+                    Node* incoming;
+                    if (isConcrete(deferred.operand(operand))) {
+                        incoming = mapping.operand(operand);
+                        DFG_ASSERT(m_graph, phiNode, incoming);
+                    } else {
+                        // Issue a GetStack to get the value. This might introduce some redundancy
+                        // into the code, but if it's bad enough, GCSE will clean it up.
+                        incoming = insertionSet.insertNode(
+                            upsilonInsertionPoint, SpecNone, GetStack, upsilonOrigin,
+                            OpInfo(m_graph.m_stackAccessData.add(operand, format)));
+                        incoming->setResult(resultFor(format));
                     }
                     
                     insertionSet.insertNode(
