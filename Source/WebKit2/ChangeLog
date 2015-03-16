@@ -1,5 +1,12 @@
 2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more URTBF after r181578.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2015-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r181578.
 
         * WebProcess/InjectedBundle/InjectedBundle.cpp:
