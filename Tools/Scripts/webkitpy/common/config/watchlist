@@ -295,6 +295,12 @@
                         r"|LayoutTests/media/encrypted-media/"
                         r"|LayoutTests/media/media-source/",
         },
+        "StreamsAPI": {
+            "filename": r"Source/WebCore/Modules/streams/"
+                        r"|Source/WebCore/bindings/js/ReadableStreamJSSource\.(h|cpp)"
+                        r"|Source/WebCore/bindings/js/JSReadableStreamCustom.cpp"
+                        r"|LayoutTests/streams/",
+        },
         "MacAndIOSTextLayoutAndRendering": {
             "filename": r"Source/WebCore/loader/cache/CachedFont\.(h|cpp)"
                         r"|Source/WebCore/rendering/.*Inline.*Box\.(h|cpp)"
@@ -359,6 +365,7 @@
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
         "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio.correia@openbossa.org" ],
         "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
+        "StreamsAPI": [ "benjamin@webkit.org", "calvaris@igalia.com", "youennf@gmail.com" ],
         "Track": [ "eric.carlson@apple.com", "philipj@opera.com", "calvaris@igalia.com" ],
         "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio.correia@openbossa.org" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com", "kondapallykalyan@gmail.com", "roger_fong@apple.com" ],

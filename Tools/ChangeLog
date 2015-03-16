@@ -1,3 +1,13 @@
+2015-03-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Created Streams API watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=142684
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/common/config/watchlist: Created StreamsAPI
+        watchlist and added Benjamin, Youenn and me to it.
+
 2015-03-15  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS: fix the case-insensitive matching of the attribute selectors Begin, End and Hyphen
