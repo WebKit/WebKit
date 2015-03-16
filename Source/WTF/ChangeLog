@@ -1,3 +1,20 @@
+2015-03-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix StringView after r181525
+        Unreviewed.
+
+        Fix 2 silly mistakes I made in r181525.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::startsWith):
+        (WTF::StringView::startsWithIgnoringASCIICase):
+        (WTF::StringView::endsWith):
+        (WTF::StringView::endsWithIgnoringASCIICase):
+        The implementation was inside the #ifdef.
+
+        * wtf/text/StringView.h:
+        The symbols were not exported.
+
 2015-03-16  Max Stepin  <maxstepin@gmail.com>
 
         Add APNG support

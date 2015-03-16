@@ -31,9 +31,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-#if CHECK_STRINGVIEW_LIFETIME
-
 namespace WTF {
+
+bool StringView::startsWith(const StringView& prefix) const
+{
+    return ::WTF::startsWith(*this, prefix);
+}
+
+bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+}
+
+bool StringView::endsWith(const StringView& prefix) const
+{
+    return ::WTF::startsWith(*this, prefix);
+}
+
+bool StringView::endsWithIgnoringASCIICase(const StringView& prefix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
+}
+
+#if CHECK_STRINGVIEW_LIFETIME
 
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.
 
@@ -118,26 +138,6 @@ void StringView::setUnderlyingString(const StringView& string)
     adoptUnderlyingString(underlyingString);
 }
 
-bool StringView::startsWith(const StringView& prefix) const
-{
-    return ::WTF::startsWith(*this, prefix);
-}
+#endif // CHECK_STRINGVIEW_LIFETIME
 
-bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
-{
-    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
-}
-
-bool StringView::endsWith(const StringView& prefix) const
-{
-    return ::WTF::startsWith(*this, prefix);
-}
-
-bool StringView::endsWithIgnoringASCIICase(const StringView& prefix) const
-{
-    return ::WTF::endsWithIgnoringASCIICase(*this, prefix);
-}
-
-}
-
-#endif
+} // namespace WTF

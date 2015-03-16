@@ -106,11 +106,11 @@ public:
     size_t find(UChar, unsigned start = 0) const;
     bool contains(UChar) const;
 
-    bool startsWith(const StringView&) const;
-    bool startsWithIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_STRING_API bool startsWith(const StringView&) const;
+    WTF_EXPORT_STRING_API bool startsWithIgnoringASCIICase(const StringView&) const;
 
-    bool endsWith(const StringView&) const;
-    bool endsWithIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_STRING_API bool endsWith(const StringView&) const;
+    WTF_EXPORT_STRING_API bool endsWithIgnoringASCIICase(const StringView&) const;
 
     int toInt(bool& isValid) const;
     float toFloat(bool& isValid) const;
