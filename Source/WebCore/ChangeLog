@@ -1,3 +1,36 @@
+2015-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Make DatabaseContext suspendable if there is no pending database activity
+        https://bugs.webkit.org/show_bug.cgi?id=142716
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Make DatabaseContext suspendable if there is no pending database
+        activity, i.e:
+        - No pending Database creation JS callback
+        - No pending transaction(s)
+
+        Suspending is safe in this case because we are not going to interrupt
+        any database activity, nor fire any JS event.
+
+        This greatly increases the likelihood of pages using websql to enter
+        the PageCache.
+
+        Tests: fast/history/page-cache-webdatabase-no-transaction-db.html
+               fast/history/page-cache-webdatabase-pending-transaction.html
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::hasPendingTransaction):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::canSuspend):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::hasPendingDatabaseActivity):
+        * Modules/webdatabase/DatabaseThread.h:
+
 2015-03-16  Brady Eidson  <beidson@apple.com>
 
         Addressing additional review feedback after http://trac.webkit.org/changeset/181565

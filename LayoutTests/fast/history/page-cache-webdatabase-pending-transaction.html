@@ -3,7 +3,7 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description('Tests that a page with an open WebDatabase does not go into the page cache.');
+description('Tests that a page with an open WebDatabase that has pending transactions does not go into the page cache.');
 window.jsTestIsAsync = true;
 
 if (window.testRunner) {
@@ -35,10 +35,22 @@ window.addEventListener("pagehide", function(event) {
 
 window.addEventListener('load', function() {
     // Open the database.
-    db = openDatabase("PageCacheTest", "", "Page Cache Test", 10, function (createdDb) {
+    db = openDatabase("PageCacheTest", "", "Page Cache Test", 32768);
+
+    db.transaction(function(tx) {
         // Force a back navigation back to this page.
         window.sessionStorage.page_cache_open_webdatabase_test_started = true;
         window.location.href = "resources/page-cache-helper.html";
+
+        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
+    });
+
+    db.transaction(function(tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS2 (id unique, log)');
+    });
+
+    db.transaction(function(tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS3 (id unique, log)');
     });
 }, false);
 

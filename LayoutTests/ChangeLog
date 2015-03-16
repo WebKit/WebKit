@@ -1,3 +1,19 @@
+2015-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Make DatabaseContext suspendable if there is no pending database activity
+        https://bugs.webkit.org/show_bug.cgi?id=142716
+        <rdar://problem/19923085>
+
+        Reviewed by Andreas Kling.
+
+        Add layout tests to check page-cacheability when WebSQL is used,
+        depending if there is pending database activity or not.
+
+        * fast/history/page-cache-webdatabase-no-transaction-db-expected.txt: Added.
+        * fast/history/page-cache-webdatabase-no-transaction-db.html: Copied from LayoutTests/fast/history/page-cache-webdatabase-opened-db.html.
+        * fast/history/page-cache-webdatabase-pending-transaction-expected.txt: Renamed from LayoutTests/fast/history/page-cache-webdatabase-opened-db-expected.txt.
+        * fast/history/page-cache-webdatabase-pending-transaction.html: Renamed from LayoutTests/fast/history/page-cache-webdatabase-opened-db.html.
+
 2015-03-16  Dean Jackson  <dino@apple.com>
 
         Parsing and Style Resolution of Container-based Animation Triggers

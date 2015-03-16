@@ -207,6 +207,12 @@ void Database::inProgressTransactionCompleted()
     scheduleTransaction();
 }
 
+bool Database::hasPendingTransaction()
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    return m_transactionInProgress || !m_transactionQueue.isEmpty();
+}
+
 SQLTransactionClient* Database::transactionClient() const
 {
     return databaseContext()->databaseThread()->transactionClient();

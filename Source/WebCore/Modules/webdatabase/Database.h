@@ -58,6 +58,11 @@ public:
     void scheduleTransactionStep(SQLTransactionBackend*);
     void inProgressTransactionCompleted();
 
+    bool hasPendingTransaction();
+
+    bool hasPendingCreationEvent() const { return m_hasPendingCreationEvent; }
+    void setHasPendingCreationEvent(bool value) { m_hasPendingCreationEvent = value; }
+
     SQLTransactionClient* transactionClient() const;
     SQLTransactionCoordinator* transactionCoordinator() const;
 
@@ -105,6 +110,7 @@ private:
     RefPtr<DatabaseContext> m_databaseContext;
 
     bool m_deleted;
+    bool m_hasPendingCreationEvent { false };
 
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.

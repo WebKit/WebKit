@@ -263,4 +263,14 @@ void DatabaseThread::unscheduleDatabaseTasks(Database* database)
     SameDatabasePredicate predicate(database);
     m_queue.removeIf(predicate);
 }
+
+bool DatabaseThread::hasPendingDatabaseActivity() const
+{
+    for (auto& database : m_openDatabaseSet) {
+        if (database->hasPendingCreationEvent() || database->hasPendingTransaction())
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore
