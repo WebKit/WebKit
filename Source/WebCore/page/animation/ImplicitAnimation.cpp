@@ -104,8 +104,8 @@ bool ImplicitAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
 {
     ASSERT(hasStyle());
 
-    if (!m_object->isBox())
-        return false;
+    if (!is<RenderBox>(m_object))
+        return true; // Non-boxes don't get transformed;
 
     ASSERT(m_animatingProperty == CSSPropertyWebkitTransform);
 

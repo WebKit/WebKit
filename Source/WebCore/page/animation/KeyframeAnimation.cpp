@@ -203,6 +203,9 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
 {
     ASSERT(m_keyframes.containsProperty(CSSPropertyWebkitTransform));
 
+    if (!is<RenderBox>(m_object))
+        return true; // Non-boxes don't get transformed;
+
     RenderBox& box = downcast<RenderBox>(*m_object);
     FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
 

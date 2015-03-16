@@ -1,5 +1,18 @@
 2015-03-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Add the same is<RenderBox> test to KeyframeAnimation::computeExtentOfTransformAnimation()
+        that ImplicitAnimation::computeExtentOfTransformAnimation() has, and change the latter
+        to the more canonical is<RenderBox>() form.
+        
+        Fixes an assertion in animations/animation-on-inline-crash.html
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::computeExtentOfTransformAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation):
+
+2015-03-15  Simon Fraser  <simon.fraser@apple.com>
+
         And another fix. Thanks to Hunseop Jeong for the fix.
 
         * html/HTMLInputElement.cpp:
