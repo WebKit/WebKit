@@ -190,6 +190,8 @@ public:
 
 protected:
     virtual void initializeVertexArrayObjects() override;
+    virtual GC3Dint getMaxDrawBuffers() override;
+    virtual GC3Dint getMaxColorAttachments() override;
     virtual bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) override;
     virtual bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primitiveCount) override;
     virtual bool validateBlendEquation(const char* functionName, GC3Denum mode) override;
@@ -206,6 +208,7 @@ protected:
         ArrayBufferView* pixels,
         NullDisposition) override;
     virtual bool validateCapability(const char* functionName, GC3Denum cap) override;
+    virtual bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) override;
     
 private:
     GC3Denum baseInternalFormatFromInternalFormat(GC3Denum internalformat);

@@ -1,3 +1,39 @@
+2015-03-16  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Multiple Render Targets.
+        https://bugs.webkit.org/show_bug.cgi?id=126994.
+        <rdar://problem/15815766>
+
+        Reviewed by Dean Jackson.
+
+        Tested by a modified version of the 1.0.3 conformance test:
+        conformance/extensions/webgl-draw-buffers.html
+        This test will be landed along with other modified extension conformance tests
+        once approval from Khronos is received.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::drawBuffers): Mostly the same as WebGLDrawBuffers::drawBuffersWEBGL.
+        Returns different error messages, uses non EXT enums.
+        (WebCore::WebGL2RenderingContext::clearBufferiv): This actually does nothing for now but the validation has been implemented.
+        (WebCore::WebGL2RenderingContext::clearBufferuiv): Ditto.
+        (WebCore::WebGL2RenderingContext::clearBufferfv): Ditto.
+        (WebCore::WebGL2RenderingContext::clearBufferfi): Ditto.
+        (WebCore::WebGL2RenderingContext::validateFramebufferFuncParameters): Removes the extension object check.
+        (WebCore::WebGL2RenderingContext::getMaxDrawBuffers):
+        (WebCore::WebGL2RenderingContext::getMaxColorAttachments): Must return the same thing as getMaxDrawBuffers.
+        (WebCore::WebGL2RenderingContext::getParameter): Remove extension object checks.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters): Copied from WebGLRenderingContextBase.
+        (WebCore::WebGLRenderingContext::getMaxDrawBuffers): Ditto.
+        (WebCore::WebGLRenderingContext::getMaxColorAttachments): Ditto.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateFramebufferFuncParameters): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2015-03-16  Dean Jackson  <dino@apple.com>
 
         Parsing and Style Resolution of Container-based Animation Triggers

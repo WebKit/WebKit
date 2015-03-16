@@ -361,6 +361,29 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
     }
 }
 
+bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
+{
+    if (target != GraphicsContext3D::FRAMEBUFFER) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
+        return false;
+    }
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        break;
+    default:
+        if (m_webglDrawBuffers
+            && attachment > GraphicsContext3D::COLOR_ATTACHMENT0
+            && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
+        return false;
+    }
+    return true;
+}
+    
 void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     if (isContextLostOrPending())
@@ -1113,6 +1136,27 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     }
 }
 
+GC3Dint WebGLRenderingContext::getMaxDrawBuffers()
+{
+    if (!supportsDrawBuffers())
+        return 0;
+    if (!m_maxDrawBuffers)
+        m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &m_maxDrawBuffers);
+    if (!m_maxColorAttachments)
+        m_context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+    // WEBGL_draw_buffers requires MAX_COLOR_ATTACHMENTS >= MAX_DRAW_BUFFERS.
+    return std::min(m_maxDrawBuffers, m_maxColorAttachments);
+}
+
+GC3Dint WebGLRenderingContext::getMaxColorAttachments()
+{
+    if (!supportsDrawBuffers())
+        return 0;
+    if (!m_maxColorAttachments)
+        m_context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+    return m_maxColorAttachments;
+}
+    
 bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired)
 {
     // Performs conservative validation by caching a maximum index of

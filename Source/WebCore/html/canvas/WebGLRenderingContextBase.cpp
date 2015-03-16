@@ -4346,29 +4346,6 @@ void WebGLRenderingContextBase::printWarningToConsole(const String& message)
     canvas()->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
 }
 
-bool WebGLRenderingContextBase::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
-{
-    if (target != GraphicsContext3D::FRAMEBUFFER) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
-        return false;
-    }
-    switch (attachment) {
-    case GraphicsContext3D::COLOR_ATTACHMENT0:
-    case GraphicsContext3D::DEPTH_ATTACHMENT:
-    case GraphicsContext3D::STENCIL_ATTACHMENT:
-    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-        break;
-    default:
-        if (m_webglDrawBuffers
-            && attachment > GraphicsContext3D::COLOR_ATTACHMENT0
-            && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
-            break;
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
-        return false;
-    }
-    return true;
-}
-
 bool WebGLRenderingContextBase::validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst)
 {
     if (((src == GraphicsContext3D::CONSTANT_COLOR || src == GraphicsContext3D::ONE_MINUS_CONSTANT_COLOR)

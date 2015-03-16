@@ -485,36 +485,129 @@ void WebGL2RenderingContext::drawRangeElements(GC3Denum mode, GC3Duint start, GC
 
 void WebGL2RenderingContext::drawBuffers(Vector<GC3Denum> buffers)
 {
-    UNUSED_PARAM(buffers);
+    if (isContextLost())
+        return;
+    GC3Dsizei n = buffers.size();
+    const GC3Denum* bufs = buffers.data();
+    if (!m_framebufferBinding) {
+        if (n != 1) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffers", "more than one buffer");
+            return;
+        }
+        if (bufs[0] != GraphicsContext3D::BACK && bufs[0] != GraphicsContext3D::NONE) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffers", "BACK or NONE");
+            return;
+        }
+        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
+        GC3Denum value = (bufs[0] == GraphicsContext3D::BACK) ? GraphicsContext3D::COLOR_ATTACHMENT0 : GraphicsContext3D::NONE;
+        graphicsContext3D()->getExtensions()->drawBuffersEXT(1, &value);
+        setBackDrawBuffer(bufs[0]);
+    } else {
+        if (n > getMaxDrawBuffers()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffers", "more than max draw buffers");
+            return;
+        }
+        for (GC3Dsizei i = 0; i < n; ++i) {
+            if (bufs[i] != GraphicsContext3D::NONE && bufs[i] != static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + i)) {
+                synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffers", "COLOR_ATTACHMENTi or NONE");
+                return;
+            }
+        }
+        m_framebufferBinding->drawBuffers(buffers);
+    }
 }
 
 void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, Int32Array* value)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(drawbuffer);
     UNUSED_PARAM(value);
+    switch (buffer) {
+    case GraphicsContext3D::COLOR:
+        if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferiv", "buffer index out of range");
+            return;
+        }
+        // TODO: Call clearBufferiv, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::STENCIL:
+        if (drawbuffer) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferiv", "buffer index must be 0");
+            return;
+        }
+        // TODO: Call clearBufferiv, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::DEPTH:
+    case GraphicsContext3D::DEPTH_STENCIL:
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clearBufferiv", "buffer argument must be COLOR or STENCIL");
+        break;
+    }
 }
 
 void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, Uint32Array* value)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(drawbuffer);
     UNUSED_PARAM(value);
+    switch (buffer) {
+    case GraphicsContext3D::COLOR:
+        if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferuiv", "buffer index out of range");
+            return;
+        }
+        // TODO: Call clearBufferuiv, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::DEPTH:
+    case GraphicsContext3D::STENCIL:
+    case GraphicsContext3D::DEPTH_STENCIL:
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clearBufferuiv", "buffer argument must be COLOR");
+        break;
+    }
 }
 
 void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, Float32Array* value)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(drawbuffer);
     UNUSED_PARAM(value);
+    switch (buffer) {
+    case GraphicsContext3D::COLOR:
+        if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferfv", "buffer index out of range");
+            return;
+        }
+        // TODO: Call clearBufferfv, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::DEPTH:
+        if (drawbuffer) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferfv", "buffer index must be 0");
+            return;
+        }
+        // TODO: Call clearBufferfv, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::STENCIL:
+    case GraphicsContext3D::DEPTH_STENCIL:
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clearBufferfv", "buffer argument must be COLOR OR DEPTH");
+        break;
+    }
 }
 
 void WebGL2RenderingContext::clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, GC3Dfloat depth, GC3Dint stencil)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(drawbuffer);
     UNUSED_PARAM(depth);
     UNUSED_PARAM(stencil);
+    switch (buffer) {
+    case GraphicsContext3D::DEPTH_STENCIL:
+        if (drawbuffer) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clearBufferfv", "buffer index must be 0");
+            return;
+        }
+        // TODO: Call clearBufferfi, requires gl3.h and ES3/gl.h
+        break;
+    case GraphicsContext3D::COLOR:
+    case GraphicsContext3D::DEPTH:
+    case GraphicsContext3D::STENCIL:
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clearBufferfv", "buffer argument must be DEPTH_STENCIL");
+        break;
+    }
 }
 
 PassRefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
@@ -1019,6 +1112,43 @@ WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum 
             return WebGLGetInfo();
         }
     }
+}
+
+bool WebGL2RenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
+{
+    if (target != GraphicsContext3D::FRAMEBUFFER) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
+        return false;
+    }
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        break;
+    default:
+        if (attachment > GraphicsContext3D::COLOR_ATTACHMENT0
+            && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
+        return false;
+    }
+    return true;
+}
+
+GC3Dint WebGL2RenderingContext::getMaxDrawBuffers()
+{
+    if (!m_maxDrawBuffers)
+        m_context->getIntegerv(GraphicsContext3D::MAX_DRAW_BUFFERS, &m_maxDrawBuffers);
+    return m_maxDrawBuffers;
+}
+
+GC3Dint WebGL2RenderingContext::getMaxColorAttachments()
+{
+    // DrawBuffers requires MAX_COLOR_ATTACHMENTS == MAX_DRAW_BUFFERS
+    if (!m_maxColorAttachments)
+        m_context->getIntegerv(GraphicsContext3D::MAX_DRAW_BUFFERS, &m_maxColorAttachments);
+    return m_maxColorAttachments;
 }
 
 void WebGL2RenderingContext::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
@@ -2203,8 +2333,6 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
         return WebGLGetInfo();
         }
         break;
-    case GraphicsContext3D::COPY_READ_BUFFER:
-    case GraphicsContext3D::COPY_WRITE_BUFFER:
     case GraphicsContext3D::DRAW_BUFFER0:
     case GraphicsContext3D::DRAW_BUFFER1:
     case GraphicsContext3D::DRAW_BUFFER2:
@@ -2220,7 +2348,16 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::DRAW_BUFFER12:
     case GraphicsContext3D::DRAW_BUFFER13:
     case GraphicsContext3D::DRAW_BUFFER14:
-    case GraphicsContext3D::DRAW_BUFFER15:
+    case GraphicsContext3D::DRAW_BUFFER15: {
+        GC3Dint value = GraphicsContext3D::NONE;
+        if (m_framebufferBinding)
+            value = m_framebufferBinding->getDrawBuffer(pname);
+        else // emulated backbuffer
+            value = m_backDrawBuffer;
+        return WebGLGetInfo(value);
+        }
+    case GraphicsContext3D::COPY_READ_BUFFER:
+    case GraphicsContext3D::COPY_WRITE_BUFFER:
     case GraphicsContext3D::PIXEL_PACK_BUFFER_BINDING:   
     case GraphicsContext3D::PIXEL_UNPACK_BUFFER_BINDING:
     case GraphicsContext3D::READ_BUFFER:

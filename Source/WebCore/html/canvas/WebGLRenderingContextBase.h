@@ -566,7 +566,7 @@ protected:
     bool m_hasRequestedPolicyResolution;
     bool isContextLostOrPending();
 
-    // Enabled extension objects.
+    // Enabled extension objects. FIXME: Move these to WebGL1RenderingContext, not needed for WebGL2
     std::unique_ptr<EXTFragDepth> m_extFragDepth;
     std::unique_ptr<EXTBlendMinMax> m_extBlendMinMax;
     std::unique_ptr<EXTsRGB> m_extsRGB;
@@ -743,7 +743,7 @@ protected:
 
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.
-    bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment);
+    virtual bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) = 0;
 
     // Helper function to validate blend equation mode.
     virtual bool validateBlendEquation(const char* functionName, GC3Denum) = 0;
@@ -824,10 +824,8 @@ protected:
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
     IntSize clampedCanvasSize();
 
-    // First time called, if EXT_draw_buffers is supported, query the value; otherwise return 0.
-    // Later, return the cached value.
-    GC3Dint getMaxDrawBuffers();
-    GC3Dint getMaxColorAttachments();
+    virtual GC3Dint getMaxDrawBuffers() = 0;
+    virtual GC3Dint getMaxColorAttachments() = 0;
 
     void setBackDrawBuffer(GC3Denum);
 
