@@ -30,12 +30,6 @@
 
 #include "WebGLGetInfo.h"
 
-#include "WebGLBuffer.h"
-#include "WebGLFramebuffer.h"
-#include "WebGLProgram.h"
-#include "WebGLRenderbuffer.h"
-#include "WebGLTexture.h"
-#include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
 #include <runtime/Uint32Array.h>
@@ -236,6 +230,17 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value)
     , m_int(0)
     , m_unsignedInt(0)
     , m_int64(0)
+    , m_webglVertexArrayObjectOES(value)
+{
+}
+
+WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject> value)
+    : m_type(kTypeWebGLVertexArrayObject)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
+    , m_int64(0)
     , m_webglVertexArrayObject(value)
 {
 }
@@ -348,6 +353,12 @@ PassRefPtr<Uint32Array> WebGLGetInfo::getWebGLUnsignedIntArray() const
 PassRefPtr<WebGLVertexArrayObjectOES> WebGLGetInfo::getWebGLVertexArrayObjectOES() const
 {
     ASSERT(getType() == kTypeWebGLVertexArrayObjectOES);
+    return m_webglVertexArrayObjectOES;
+}
+
+PassRefPtr<WebGLVertexArrayObject> WebGLGetInfo::getWebGLVertexArrayObject() const
+{
+    ASSERT(getType() == kTypeWebGLVertexArrayObject);
     return m_webglVertexArrayObject;
 }
 

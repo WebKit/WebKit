@@ -189,6 +189,7 @@ public:
 #endif
 
 protected:
+    virtual void initializeVertexArrayObjects() override;
     virtual bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) override;
     virtual bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements, GC3Dsizei primitiveCount) override;
     virtual bool validateBlendEquation(const char* functionName, GC3Denum mode) override;

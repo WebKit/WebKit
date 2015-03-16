@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -6681,6 +6681,7 @@
     <ClCompile Include="..\html\canvas\WebGLTransformFeedback.cpp" />
     <ClCompile Include="..\html\canvas\WebGLUniformLocation.cpp" />
     <ClCompile Include="..\html\canvas\WebGLVertexArrayObject.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLVertexArrayObjectBase.cpp" />
     <ClCompile Include="..\html\canvas\WebGLVertexArrayObjectOES.cpp" />
     <ClCompile Include="..\html\track\AudioTrack.cpp" />
     <ClCompile Include="..\html\track\AudioTrackList.cpp" />
@@ -19041,6 +19042,7 @@
     <ClInclude Include="..\html\canvas\WebGLTransformFeedback.h" />
     <ClInclude Include="..\html\canvas\WebGLUniformLocation.h" />
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObject.h" />
+    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectBase.h” />
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectOES.h" />
     <ClInclude Include="..\html\track\AudioTrack.h" />
     <ClInclude Include="..\html\track\AudioTrackList.h" />

@@ -28,14 +28,14 @@
 #if ENABLE(WEBGL)
 #include "WebGLVertexArrayObject.h"
 
+#include "WebGL2RenderingContext.h"
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
     
-PassRefPtr<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase* ctx, VAOType type)
 {
-    return adoptRef(new WebGLVertexArrayObject(ctx));
+    return adoptRef(new WebGLVertexArrayObject(ctx, type));
 }
 
 WebGLVertexArrayObject::~WebGLVertexArrayObject()
@@ -43,17 +43,36 @@ WebGLVertexArrayObject::~WebGLVertexArrayObject()
     deleteObject(0);
 }
 
-WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase* ctx)
-    : WebGLSharedObject(ctx)
+WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase* ctx, VAOType type)
+    : WebGLVertexArrayObjectBase(ctx, type)
 {
-    // FIXME: Call createVertexArray from GraphicsContext3D.
+    switch (m_type) {
+    case VAOTypeDefault:
+        break;
+    default:
+        setObject(context()->graphicsContext3D()->createVertexArray());
+        break;
+    }
 }
 
 void WebGLVertexArrayObject::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
-    UNUSED_PARAM(context3d);
-    UNUSED_PARAM(object);
-    // FIXME: Call deleteVertexArray from GraphicsContext3D.
+    switch (m_type) {
+    case VAOTypeDefault:
+        break;
+    default:
+        context3d->deleteVertexArray(object);
+        break;
+    }
+    
+    if (m_boundElementArrayBuffer)
+        m_boundElementArrayBuffer->onDetached(context3d);
+    
+    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
+        VertexAttribState& state = m_vertexAttribState[i];
+        if (state.bufferBinding)
+            state.bufferBinding->onDetached(context3d);
+    }
 }
 
 }

@@ -373,8 +373,11 @@ protected:
     friend class WebGLCompressedTextureS3TC;
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
+    friend class WebGLVertexArrayObject;
+    friend class WebGLVertexArrayObjectBase;
 
     virtual void initializeNewContext();
+    virtual void initializeVertexArrayObjects() = 0;
     void setupFlags();
 
     // ActiveDOMObject
@@ -447,10 +450,10 @@ protected:
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;
-    
-    RefPtr<WebGLVertexArrayObjectOES> m_defaultVertexArrayObject;
-    RefPtr<WebGLVertexArrayObjectOES> m_boundVertexArrayObject;
-    void setBoundVertexArrayObject(PassRefPtr<WebGLVertexArrayObjectOES> arrayObject)
+
+    RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
+    RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
+    void setBoundVertexArrayObject(PassRefPtr<WebGLVertexArrayObjectBase> arrayObject)
     {
         if (arrayObject)
             m_boundVertexArrayObject = arrayObject;

@@ -1118,6 +1118,12 @@ public:
     void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount);
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
+    // VertexArrayOject calls
+    Platform3DObject createVertexArray();
+    void deleteVertexArray(Platform3DObject);
+    GC3Dboolean isVertexArray(Platform3DObject);
+    void bindVertexArray(Platform3DObject);
+
 #if PLATFORM(GTK) || PLATFORM(EFL) || USE(CAIRO)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, PlatformContextCairo* context);

@@ -1,3 +1,93 @@
+2015-03-15  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Vertex Array Objects.
+        https://bugs.webkit.org/show_bug.cgi?id=126944.
+        <rdar://problem/15002455>
+
+        Reviewed by Dean Jackson.
+
+        Tested by a modified version of the 1.0.3 conformance test:
+        conformance/extensions/oes-vertex-array-object.html
+        This test will be landed along with other modified extension conformance tests
+        once approval from Khronos is received.
+
+        * html/canvas/OESVertexArrayObject.cpp: Associate extension calls only with WebGLRenderingContext.
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGLRenderingContext::getParameter):
+        * html/canvas/WebGL2RenderingContext.cpp: Implement vertex array object calls as part WebGL2 context.
+        (WebCore::WebGL2RenderingContext::createVertexArray):
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        (WebCore::WebGL2RenderingContext::isVertexArray):
+        (WebCore::WebGL2RenderingContext::bindVertexArray):
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGL2RenderingContext::getParameter):
+
+        Duplicate extension object vertex array object extension methods in GraphicsContext3D.
+        Implementation may change after we upgrade to newer GL headers and profile.
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::createVertexArray):
+        (WebCore::GraphicsContext3D::deleteVertexArray):
+        (WebCore::GraphicsContext3D::isVertexArray):
+        (WebCore::GraphicsContext3D::bindVertexArray):
+
+        Have WebGLVertexArrayObjectOES and WebGLVertexArrayObject inherit from WebGLRenderingContextBase.
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::create):
+        (WebCore::WebGLVertexArrayObject::WebGLVertexArrayObject): Use GraphicsContext3D implementation of createVertexArray.
+        (WebCore::WebGLVertexArrayObject::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObject.h:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp: Added.
+        (WebCore::WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase):
+        (WebCore::WebGLVertexArrayObjectBase::setElementArrayBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribState):
+        (WebCore::WebGLVertexArrayObjectBase::unbindBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribDivisor):
+        * html/canvas/WebGLVertexArrayObjectBase.h: Added.
+        (WebCore::WebGLVertexArrayObjectBase::~WebGLVertexArrayObjectBase):
+        (WebCore::WebGLVertexArrayObjectBase::VertexAttribState::VertexAttribState):
+        (WebCore::WebGLVertexArrayObjectBase::VertexAttribState::isBound):
+        (WebCore::WebGLVertexArrayObjectBase::VertexAttribState::validateBinding):
+        (WebCore::WebGLVertexArrayObjectBase::isDefaultObject):
+        (WebCore::WebGLVertexArrayObjectBase::hasEverBeenBound):
+        (WebCore::WebGLVertexArrayObjectBase::setHasEverBeenBound):
+        (WebCore::WebGLVertexArrayObjectBase::getElementArrayBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::getVertexAttribState):
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl):
+        (WebCore::WebGLVertexArrayObjectOES::setElementArrayBuffer): Deleted.
+        (WebCore::WebGLVertexArrayObjectOES::setVertexAttribState): Deleted.
+        (WebCore::WebGLVertexArrayObjectOES::unbindBuffer): Deleted.
+        (WebCore::WebGLVertexArrayObjectOES::setVertexAttribDivisor): Deleted.
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+
+        * html/canvas/WebGLRenderingContextBase.cpp: Use WebGLVertexArrayObjectBase class.
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::validateVertexAttributes):
+        (WebCore::WebGLRenderingContextBase::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib):
+        (WebCore::WebGLRenderingContextBase::initVertexAttrib0):
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0):
+        (WebCore::WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::setBoundVertexArrayObject):
+
+        Handle construction of WebGLGetInfo using WebGLVertexArrayObject.
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getWebGLVertexArrayObjectOES):
+        (WebCore::WebGLGetInfo::getWebGLVertexArrayObject):
+        * html/canvas/WebGLGetInfo.h:
+
 2015-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         Potentially uninitialized Inspector values

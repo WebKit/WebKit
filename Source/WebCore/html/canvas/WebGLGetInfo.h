@@ -32,6 +32,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
+#include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
@@ -70,6 +71,7 @@ public:
         kTypeWebGLUnsignedByteArray,
         kTypeWebGLUnsignedIntArray,
         kTypeWebGLVertexArrayObjectOES,
+        kTypeWebGLVertexArrayObject,
     };
 
     explicit WebGLGetInfo(bool value);
@@ -93,6 +95,7 @@ public:
     explicit WebGLGetInfo(PassRefPtr<Uint8Array> value);
     explicit WebGLGetInfo(PassRefPtr<Uint32Array> value);
     explicit WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value);
+    explicit WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject> value);
 
     ~WebGLGetInfo();
 
@@ -117,6 +120,7 @@ public:
     PassRefPtr<Uint8Array> getWebGLUnsignedByteArray() const;
     PassRefPtr<Uint32Array> getWebGLUnsignedIntArray() const;
     PassRefPtr<WebGLVertexArrayObjectOES> getWebGLVertexArrayObjectOES() const;
+    PassRefPtr<WebGLVertexArrayObject> getWebGLVertexArrayObject() const;
 
 private:
     Type m_type;
@@ -138,7 +142,8 @@ private:
     RefPtr<WebGLTexture> m_webglTexture;
     RefPtr<Uint8Array> m_webglUnsignedByteArray;
     RefPtr<Uint32Array> m_webglUnsignedIntArray;
-    RefPtr<WebGLVertexArrayObjectOES> m_webglVertexArrayObject;
+    RefPtr<WebGLVertexArrayObjectOES> m_webglVertexArrayObjectOES;
+    RefPtr<WebGLVertexArrayObject> m_webglVertexArrayObject;
 };
 
 } // namespace WebCore

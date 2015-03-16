@@ -26,26 +26,25 @@
 #ifndef WebGLVertexArrayObject_h
 #define WebGLVertexArrayObject_h
 
-#include "WebGLSharedObject.h"
+#include "WebGLBuffer.h"
+#include "WebGLContextObject.h"
+#include "WebGLVertexArrayObjectBase.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLVertexArrayObject final : public WebGLSharedObject {
+class WebGL2RenderingContext;
+
+class WebGLVertexArrayObject final : public WebGLVertexArrayObjectBase {
 public:
+    static PassRefPtr<WebGLVertexArrayObject> create(WebGLRenderingContextBase*, VAOType);
     virtual ~WebGLVertexArrayObject();
-
-    static PassRefPtr<WebGLVertexArrayObject> create(WebGLRenderingContextBase*);
-
-protected:
-    WebGLVertexArrayObject(WebGLRenderingContextBase*);
-
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
-
 private:
-    virtual bool isTransformFeedback() const override { return true; }
+    WebGLVertexArrayObject(WebGLRenderingContextBase*, VAOType);
+    bool isTransformFeedback() const { return true; }
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 };
 
 } // namespace WebCore

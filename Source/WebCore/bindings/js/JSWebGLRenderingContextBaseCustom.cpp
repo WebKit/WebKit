@@ -68,6 +68,7 @@
 #include "JSWebGLShader.h"
 #include "JSWebGLTexture.h"
 #include "JSWebGLUniformLocation.h"
+#include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
@@ -92,6 +93,7 @@
 #include "WebGLLoseContext.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Error.h>
 #include <runtime/JSTypedArrays.h>
@@ -150,6 +152,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return toJS(exec, globalObject, info.getWebGLUnsignedByteArray());
     case WebGLGetInfo::kTypeWebGLUnsignedIntArray:
         return toJS(exec, globalObject, info.getWebGLUnsignedIntArray());
+    case WebGLGetInfo::kTypeWebGLVertexArrayObject:
+        return toJS(exec, globalObject, info.getWebGLVertexArrayObject());
     case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
         return toJS(exec, globalObject, info.getWebGLVertexArrayObjectOES());
     default:

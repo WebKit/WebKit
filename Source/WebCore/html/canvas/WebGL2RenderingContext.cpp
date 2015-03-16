@@ -60,13 +60,22 @@ namespace WebCore {
 WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, GraphicsContext3D::Attributes attributes)
     : WebGLRenderingContextBase(passedCanvas, attributes)
 {
-    initializeShaderExtensions();
 }
 
 WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, PassRefPtr<GraphicsContext3D> context,
     GraphicsContext3D::Attributes attributes) : WebGLRenderingContextBase(passedCanvas, context, attributes)
 {
     initializeShaderExtensions();
+    initializeVertexArrayObjects();
+}
+
+void WebGL2RenderingContext::initializeVertexArrayObjects()
+{
+    m_defaultVertexArrayObject = WebGLVertexArrayObject::create(this, WebGLVertexArrayObject::VAOTypeDefault);
+    addContextObject(m_defaultVertexArrayObject.get());
+    m_boundVertexArrayObject = m_defaultVertexArrayObject;
+    if (!isGLES2Compliant())
+        initVertexAttrib0();
 }
 
 void WebGL2RenderingContext::initializeShaderExtensions()
@@ -768,23 +777,57 @@ void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram* program, GC3Duint
 
 PassRefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 {
-    return nullptr;
+    if (isContextLost())
+        return 0;
+    
+    RefPtr<WebGLVertexArrayObject> o = WebGLVertexArrayObject::create(this, WebGLVertexArrayObject::VAOTypeUser);
+    addContextObject(o.get());
+    return o.release();
 }
 
-void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* vertexArray)
+void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    UNUSED_PARAM(vertexArray);
+    if (!arrayObject || isContextLost())
+        return;
+    
+    if (arrayObject->isDeleted())
+        return;
+    
+    if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject)
+        setBoundVertexArrayObject(0);
+    
+    arrayObject->deleteObject(graphicsContext3D());
 }
 
-GC3Dboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* vertexArray)
+GC3Dboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    UNUSED_PARAM(vertexArray);
-    return false;
+    if (!arrayObject || isContextLost())
+        return 0;
+    
+    if (!arrayObject->hasEverBeenBound() || !arrayObject->validate(0, this))
+        return 0;
+    
+    return m_context->isVertexArray(arrayObject->object());
 }
 
-void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* vertexArray)
+void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    UNUSED_PARAM(vertexArray);
+    if (isContextLost())
+        return;
+    
+    if (arrayObject && (arrayObject->isDeleted() || !arrayObject->validate(0, this) || !m_contextObjects.contains(arrayObject))) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+    if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
+        m_context->bindVertexArray(arrayObject->object());
+        
+        arrayObject->setHasEverBeenBound();
+        setBoundVertexArrayObject(arrayObject);
+    } else {
+        m_context->bindVertexArray(m_defaultVertexArrayObject->object());
+        setBoundVertexArrayObject(m_defaultVertexArrayObject);
+    }
 }
 
 WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
@@ -2154,6 +2197,12 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
         return getBooleanParameter(pname);
     case GraphicsContext3D::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
         return getIntParameter(pname);
+    case GraphicsContext3D::VERTEX_ARRAY_BINDING: {
+        if (!m_boundVertexArrayObject->isDefaultObject())
+            return WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject>(static_cast<WebGLVertexArrayObject*>(m_boundVertexArrayObject.get())));
+        return WebGLGetInfo();
+        }
+        break;
     case GraphicsContext3D::COPY_READ_BUFFER:
     case GraphicsContext3D::COPY_WRITE_BUFFER:
     case GraphicsContext3D::DRAW_BUFFER0:
@@ -2181,7 +2230,6 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
     case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
     case GraphicsContext3D::UNIFORM_BUFFER_BINDING:
-    case GraphicsContext3D::VERTEX_ARRAY_BINDING:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "parameter name not yet supported");
         return WebGLGetInfo();
     default:
