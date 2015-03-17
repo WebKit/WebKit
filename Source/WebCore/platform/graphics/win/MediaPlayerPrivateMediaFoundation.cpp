@@ -204,18 +204,21 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
         return;
 
     LayoutSize scrollOffset;
+    IntPoint positionInWindow(m_lastPaintRect.location());
 
     FrameView* view = nullptr;
     if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader()->document())
         view = m_player->cachedResourceLoader()->document()->view();
-    if (view)
-        scrollOffset = view->scrollOffsetForFixedPosition();
 
-    int xPos = -scrollOffset.width().toInt() + m_lastPaintRect.x();
-    int yPos = -scrollOffset.height().toInt() + m_lastPaintRect.y();
+    if (view) {
+        scrollOffset = view->scrollOffsetForFixedPosition();
+        positionInWindow = view->convertToContainingWindow(m_lastPaintRect.location());
+    }
+
+    positionInWindow.move(-scrollOffset.width().toInt(), -scrollOffset.height().toInt());
 
     if (m_hwndVideo && !m_lastPaintRect.isEmpty())
-        ::MoveWindow(m_hwndVideo, xPos, yPos, m_size.width(), m_size.height(), FALSE);
+        ::MoveWindow(m_hwndVideo, positionInWindow.x(), positionInWindow.y(), m_size.width(), m_size.height(), FALSE);
 
     RECT rc = { 0, 0, m_size.width(), m_size.height() };
     m_videoDisplay->SetVideoPosition(nullptr, &rc);
