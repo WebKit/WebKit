@@ -73,6 +73,22 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValue);
             break;
 
+        case DFABytecodeInstruction::CheckValueRange: {
+            if (urlIndexIsAfterEndOfString)
+                return actions;
+
+            char character = url[urlIndex];
+            if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode))
+                && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t))) {
+                programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t));
+                if (!character)
+                    urlIndexIsAfterEndOfString = true;
+                urlIndex++; // This represents an edge in the DFA.
+            } else
+                programCounter += instructionSizeWithArguments(DFABytecodeInstruction::CheckValueRange);
+            break;
+        }
+
         case DFABytecodeInstruction::Jump:
             if (!url[urlIndex] || urlIndexIsAfterEndOfString)
                 return actions;

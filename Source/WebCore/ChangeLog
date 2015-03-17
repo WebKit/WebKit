@@ -1,3 +1,48 @@
+2015-03-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        Compile character ranges targeting the same state as range check in the bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=142759
+
+        Reviewed by Alex Christensen.
+
+        Previously, character ranges would be compiled as many individual character checks.
+        For example, a transition on "[a-z]" would do 26 character checks + jump, which leads
+        to enormous matchines.
+
+        With this patch, we find the ranges at lowering time and generate a single instruction
+        for them: "CheckValueRange". This helps making the machine denser when the input
+        use character sets.
+
+        The second part of this patch goes further in the case where the transitions out of
+        a state cover the entire alphabet. In that case, we create a fallback transition
+        on the fly and remove all the ranges made useless.
+        That case is common when ranges are used with inverse character set (e.g. [^a]+a).
+
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValueRange):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNodeTransitions):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileCheckForRange):
+        * contentextensions/DFABytecodeCompiler.h:
+        Extend the compiler to detect ranges and lower them as CheckValueRange.
+
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Range checks in the interpreter.
+
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::setFinal):
+        This assertion does not make sense with the current codebase. Actions are "compressed",
+        it is possible to have two patterns with the same action.
+
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::simplifyTransitions):
+        A very simple DFA optimization function: it only reduce the strength of ranges.
+
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+
 2015-03-17  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r181423): Crash @ generatedcontent.org at com.apple.WebCore: WebCore::MediaPlayer::maximumDurationToCacheMediaTime const + 4

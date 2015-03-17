@@ -30,6 +30,7 @@
 
 #include "ContentExtensionRule.h"
 #include "DFA.h"
+#include "DFANode.h"
 
 namespace WebCore {
     
@@ -76,6 +77,18 @@ void DFABytecodeCompiler::emitCheckValue(uint8_t value, unsigned destinationNode
     append<unsigned>(m_bytecode, 0); // This value will be set when linking.
 }
 
+void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex)
+{
+    ASSERT_WITH_MESSAGE(lowValue != highValue, "A single value check should be emitted for single values.");
+    ASSERT_WITH_MESSAGE(lowValue < highValue, "The instruction semantic impose lowValue is smaller than highValue.");
+
+    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::CheckValueRange);
+    append<uint8_t>(m_bytecode, lowValue);
+    append<uint8_t>(m_bytecode, highValue);
+    m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
+    append<unsigned>(m_bytecode, 0);
+}
+
 void DFABytecodeCompiler::emitTerminate()
 {
     append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::Terminate);
@@ -95,16 +108,63 @@ void DFABytecodeCompiler::compileNode(unsigned index)
         else
             emitAppendAction(static_cast<unsigned>(action));
     }
-    
-    for (const auto& transition : node.transitions)
-        emitCheckValue(transition.key, transition.value);
-    
+    compileNodeTransitions(node);
+}
+
+void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
+{
+    bool hasRangeMin = false;
+    uint16_t rangeMin;
+    unsigned rangeDestination = 0;
+
+    for (unsigned char i = 0; i < 128; ++i) {
+        auto transitionIterator = node.transitions.find(i);
+        if (transitionIterator == node.transitions.end()) {
+            if (hasRangeMin) {
+                ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition && node.fallbackTransition == rangeDestination), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
+
+                unsigned char lastHighValue = i - 1;
+                compileCheckForRange(rangeMin, lastHighValue, rangeDestination);
+                hasRangeMin = false;
+            }
+            continue;
+        }
+
+        if (!hasRangeMin) {
+            hasRangeMin = true;
+            rangeMin = transitionIterator->key;
+            rangeDestination = transitionIterator->value;
+        } else {
+            if (transitionIterator->value == rangeDestination)
+                continue;
+
+            unsigned char lastHighValue = i - 1;
+            compileCheckForRange(rangeMin, lastHighValue, rangeDestination);
+            rangeMin = i;
+            rangeDestination = transitionIterator->value;
+        }
+    }
+    if (hasRangeMin)
+        compileCheckForRange(rangeMin, 127, rangeDestination);
+
     if (node.hasFallbackTransition)
         emitJump(node.fallbackTransition);
     else
         emitTerminate();
 }
-    
+
+void DFABytecodeCompiler::compileCheckForRange(uint16_t lowValue, uint16_t highValue, unsigned destinationNodeIndex)
+{
+    ASSERT_WITH_MESSAGE(lowValue < 128, "The DFA engine only supports the ASCII alphabet.");
+    ASSERT_WITH_MESSAGE(highValue < 128, "The DFA engine only supports the ASCII alphabet.");
+    ASSERT(lowValue <= highValue);
+
+    if (lowValue == highValue)
+        emitCheckValue(lowValue, destinationNodeIndex);
+    else
+        emitCheckValueRange(lowValue, highValue, destinationNodeIndex);
+}
+
 void DFABytecodeCompiler::compile()
 {
     ASSERT(!m_bytecode.size());

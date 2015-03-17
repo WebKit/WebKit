@@ -122,6 +122,56 @@ TEST_F(ContentExtensionTest, Basic)
     testRequest(backend, mainDocumentRequest("http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
 }
 
+TEST_F(ContentExtensionTest, RangeBasic)
+{
+    const char* rangeBasicFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*w[0-9]c\", \"url-filter-is-case-sensitive\":true}},{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\".*[A-H][a-z]cko\", \"url-filter-is-case-sensitive\":true}}]";
+    auto extensionData = ContentExtensions::compileRuleList(rangeBasicFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("PatternNestedGroupsFilter", extension);
+
+    testRequest(backend, mainDocumentRequest("http://w3c.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("w2c://whatwg.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/w0c"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/wac"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/wAc"), { });
+
+    // Note: URL parsing and canonicalization lowercase the scheme and hostname.
+    testRequest(backend, mainDocumentRequest("Aacko://webkit.org"), { });
+    testRequest(backend, mainDocumentRequest("aacko://webkit.org"), { });
+    testRequest(backend, mainDocumentRequest("http://gCcko.org/"), { });
+    testRequest(backend, mainDocumentRequest("http://gccko.org/"), { });
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/Gecko"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/gecko"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/GEcko"), { });
+}
+
+TEST_F(ContentExtensionTest, RangeExclusionGeneratingUniversalTransition)
+{
+    // Transition of the type ([^X]X) effictively transition on every input.
+    const char* rangeExclusionGeneratingUniversalTransitionFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*[^a]+afoobar\"}}]";
+    auto extensionData = ContentExtensions::compileRuleList(rangeExclusionGeneratingUniversalTransitionFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("PatternNestedGroupsFilter", extension);
+
+    testRequest(backend, mainDocumentRequest("http://w3c.org"), { });
+
+    testRequest(backend, mainDocumentRequest("http://w3c.org/foobafoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/foobarfoobar"), { });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/FOOBAFOOBAR"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/FOOBARFOOBAR"), { });
+
+    // The character before the "a" prefix cannot be another "a".
+    testRequest(backend, mainDocumentRequest("http://w3c.org/aafoobar"), { });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/Aafoobar"), { });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/aAfoobar"), { });
+    testRequest(backend, mainDocumentRequest("http://w3c.org/AAfoobar"), { });
+}
+
 const char* patternsStartingWithGroupFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]";
 
 TEST_F(ContentExtensionTest, PatternStartingWithGroup)
@@ -218,6 +268,26 @@ TEST_F(ContentExtensionTest, EndOfLineAssertion)
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/foobarfoo"), { });
     testRequest(backend, mainDocumentRequest("http://webkit.org/foobarf"), { });
+}
+
+TEST_F(ContentExtensionTest, EndOfLineAssertionWithInvertedCharacterSet)
+{
+    const char* endOfLineAssertionWithInvertedCharacterSetFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*[^y]$\"}}]";
+    auto extensionData = ContentExtensions::compileRuleList(endOfLineAssertionWithInvertedCharacterSetFilter);
+    auto extension = InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("EndOfLineAssertion", extension);
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/a"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/Ya"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/yFoobar"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/y"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/Y"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobary"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/foobarY"), { });
 }
     
 const char* loadTypeFilter = "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\",\"load-type\":[\"third-party\"]}},"

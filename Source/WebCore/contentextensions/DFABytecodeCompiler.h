@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "DFABytecode.h"
-#include "DFANode.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,6 +36,7 @@ namespace WebCore {
 namespace ContentExtensions {
 
 class DFA;
+class DFANode;
 
 class DFABytecodeCompiler {
 public:
@@ -50,11 +50,14 @@ public:
 
 private:
     void compileNode(unsigned);
+    void compileNodeTransitions(const DFANode&);
+    void compileCheckForRange(uint16_t lowValue, uint16_t highValue, unsigned destinationNodeIndex);
 
     void emitAppendAction(unsigned);
     void emitTestFlagsAndAppendAction(uint16_t flags, unsigned);
     void emitJump(unsigned destinationNodeIndex);
     void emitCheckValue(uint8_t value, unsigned destinationNodeIndex);
+    void emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex);
     void emitTerminate();
 
     Vector<DFABytecode>& m_bytecode;

@@ -83,8 +83,8 @@ void NFA::addTransitionsOnAnyCharacter(unsigned from, unsigned to)
 
 void NFA::setFinal(unsigned node, uint64_t ruleId)
 {
-    ASSERT(!m_nodes[node].finalRuleIds.contains(ruleId));
-    m_nodes[node].finalRuleIds.append(ruleId);
+    if (!m_nodes[node].finalRuleIds.contains(ruleId))
+        m_nodes[node].finalRuleIds.append(ruleId);
 }
 
 unsigned NFA::graphSize() const
