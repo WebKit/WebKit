@@ -470,9 +470,9 @@ public:
         }
 
         RefPtr<DataEntry> dataEntry = DataEntry::create()
-            .setKey(m_injectedScript.wrapObject(idbCursor->key(), String()))
-            .setPrimaryKey(m_injectedScript.wrapObject(idbCursor->primaryKey(), String()))
-            .setValue(m_injectedScript.wrapObject(idbCursor->value(), String()))
+            .setKey(m_injectedScript.wrapObject(idbCursor->key(), String(), true))
+            .setPrimaryKey(m_injectedScript.wrapObject(idbCursor->primaryKey(), String(), true))
+            .setValue(m_injectedScript.wrapObject(idbCursor->value(), String(), true))
             .release();
         m_result->addItem(WTF::move(dataEntry));
 

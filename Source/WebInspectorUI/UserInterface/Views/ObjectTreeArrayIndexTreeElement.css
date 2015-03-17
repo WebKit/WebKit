@@ -30,8 +30,8 @@
     margin-bottom: 1px;
 }
 
-.object-tree-array-index > .disclosure-button,
-.object-tree-array-index > .icon {
+.object-tree .object-tree-array-index > .disclosure-button,
+.object-tree .object-tree-array-index > .icon {
     display: none;
 }
 

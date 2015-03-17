@@ -1,5 +1,41 @@
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Object Previews in Indexed DB tables
+        https://bugs.webkit.org/show_bug.cgi?id=140813
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject):
+        Add a boolean param for ObjectTree construction if it should force allowing object expansion.
+
+        * UserInterface/Views/IndexedDatabaseEntryDataGridNode.js:
+        (WebInspector.IndexedDatabaseEntryDataGridNode.prototype.createCellContent):
+        Switch to creating an ObjectTree or FormattedValue.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+        (.content-view.indexed-database-object-store > .data-grid tr.selected):
+        Change row selection color to match the console's lighter blue instead of dark blue.
+
+        (.content-view.indexed-database-object-store > .data-grid .object-tree > :matches(.title, .object-preview)::before):
+        Adjust object tree disclosure triangle placement for larger line heights.
+
+        (.content-view.indexed-database-object-store > .data-grid td .section .header): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid td .section .header::before): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid td .section .header .title): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .section .header::before): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .section.expanded .header::before): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li.parent::before): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li.parent.expanded::before): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li *): Deleted.
+        Remove now unnecessary styles.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree .object-tree-array-index > .icon):
+        Increase the specificity to override ".data-grid td .icon" styles.
+
+2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Better Console Previews for Arrays / Small Objects
         https://bugs.webkit.org/show_bug.cgi?id=142322
 

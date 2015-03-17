@@ -31,20 +31,6 @@
     bottom: 0;
 }
 
-.content-view.indexed-database-object-store > .data-grid td .section .header {
-    padding: 0 0 0 18px;
-    min-height: initial;
-    color: inherit;
-}
-
-.content-view.indexed-database-object-store > .data-grid td .section .header::before {
-    top: 2px;
-}
-
-.content-view.indexed-database-object-store > .data-grid td .section .header .title {
-    line-height: initial;
-}
-
 .content-view.indexed-database-object-store > .data-grid table.data {
     background-image: none;
 }
@@ -62,22 +48,15 @@
     background-color: white;
 }
 
-.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .section .header::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
+.content-view.indexed-database-object-store > .data-grid tr.selected {
+    background-color: hsl(210, 90%, 90%) !important;
 }
 
-.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .section.expanded .header::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
+.content-view.indexed-database-object-store > .data-grid:focus tr.selected td:not(:last-child) {
+    border-right-color: hsl(210, 70%, 75%);
 }
 
-.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li.parent::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
-}
-
-.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li.parent.expanded::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
-}
-
-.content-view.indexed-database-object-store > .data-grid:focus tr.selected td .properties-tree li * {
-    color: inherit;
+.content-view.indexed-database-object-store > .data-grid .object-tree > :matches(.title, .object-preview)::before {
+ /* The line-height inside a data-grid is 17px instead of 13px, this will center vertically on the top line. */
+    top: 2px;
 }

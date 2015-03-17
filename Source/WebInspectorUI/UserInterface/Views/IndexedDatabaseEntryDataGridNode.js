@@ -44,22 +44,8 @@ WebInspector.IndexedDatabaseEntryDataGridNode.prototype = {
     createCellContent: function(columnIdentifier, cell)
     {
         var value = this._entry[columnIdentifier];
-
-        if (value instanceof WebInspector.RemoteObject) {
-            switch (value.type) {
-            case "object":
-            case "array":
-                var propertiesSection = new WebInspector.ObjectPropertiesSection(value, value.description);
-                propertiesSection.editable = false;
-                return propertiesSection.element;
-
-            case "string":
-                return "\"" + value.description + "\"";
-
-            default:
-                return value.description;
-            }
-        }
+        if (value instanceof WebInspector.RemoteObject)
+            return WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(value, null, true);
 
         return WebInspector.DataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
     }
