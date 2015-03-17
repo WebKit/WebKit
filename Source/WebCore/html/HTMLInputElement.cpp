@@ -166,7 +166,7 @@ HTMLInputElement::~HTMLInputElement()
         document().formController().checkedRadioButtons().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
-        document().didRemoveEventTargetNode(this);
+        document().didRemoveEventTargetNode(*this);
 #endif
 }
 
@@ -1506,7 +1506,7 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
             oldDocument->formController().checkedRadioButtons().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
         if (m_hasTouchEventHandler)
-            oldDocument->didRemoveEventTargetNode(this);
+            oldDocument->didRemoveEventTargetNode(*this);
 #endif
     }
 

@@ -1213,13 +1213,14 @@ unsigned Internals::touchEventHandlerCount(ExceptionCode& ec)
         return 0;
     }
 
-    const TouchEventTargetSet* touchHandlers = document->touchEventTargets();
+    auto touchHandlers = document->touchEventTargets();
     if (!touchHandlers)
         return 0;
 
     unsigned count = 0;
-    for (TouchEventTargetSet::const_iterator iter = touchHandlers->begin(); iter != touchHandlers->end(); ++iter)
-        count += iter->value;
+    for (auto& handler : *touchHandlers)
+        count += handler.value;
+
     return count;
 }
 

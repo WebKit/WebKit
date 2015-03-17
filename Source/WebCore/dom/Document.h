@@ -239,7 +239,7 @@ enum NodeListInvalidationType {
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 
-typedef HashCountedSet<Node*> TouchEventTargetSet;
+typedef HashCountedSet<Node*> EventTargetSet;
 
 enum DocumentClass {
     DefaultDocumentClass = 0,
@@ -1137,15 +1137,16 @@ public:
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&);
 
-#if ENABLE(TOUCH_EVENTS)
-    void didRemoveEventTargetNode(Node*);
-#endif
+    void didRemoveEventTargetNode(Node&);
 
+    const EventTargetSet* touchEventTargets() const
+    {
 #if ENABLE(TOUCH_EVENTS)
-    const TouchEventTargetSet* touchEventTargets() const { return m_touchEventTargets.get(); }
+        return m_touchEventTargets.get();
 #else
-    const TouchEventTargetSet* touchEventTargets() const { return 0; }
+        return nullptr;
 #endif
+    }
 
     bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
 
@@ -1558,7 +1559,7 @@ private:
     
     unsigned m_wheelEventHandlerCount;
 #if ENABLE(TOUCH_EVENTS)
-    std::unique_ptr<TouchEventTargetSet> m_touchEventTargets;
+    std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
 
     double m_lastHandledUserGestureTimestamp;

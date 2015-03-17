@@ -1933,7 +1933,7 @@ void DOMWindow::removeAllEventListeners()
 
 #if ENABLE(TOUCH_EVENTS)
     if (Document* document = this->document())
-        document->didRemoveEventTargetNode(document);
+        document->didRemoveEventTargetNode(*document);
 #endif
 
 #if ENABLE(PROXIMITY_EVENTS)

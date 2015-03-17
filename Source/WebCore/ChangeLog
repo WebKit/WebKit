@@ -1,3 +1,29 @@
+2015-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Generalize the Document code that maintains a set of nodes with event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=142762
+
+        Reviewed by Zalan Bujtas, Darin Adler.
+
+        Document.h defines a TouchEventTargetSet type, which will in future be used for
+        other event types too (wheel events), so rename it to EventTargetSet.
+        
+        Take didRemoveEventTargetNode() outside the TOUCH_EVENTS #ifdef, and change it
+        to take a reference.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): References
+        (WebCore::Document::didAddTouchEventHandler): Ditto.
+        (WebCore::Document::didRemoveEventTargetNode): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::touchEventTargets): No-one calls this; just remove the non
+        #ideffed one.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement): Pass a ref.
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Pass a ref.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::removeAllEventListeners): Pass a ref.
+
 2015-03-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Object Previews in Indexed DB tables

@@ -2239,7 +2239,7 @@ void Document::prepareForDestruction()
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
-        parentDocument()->didRemoveEventTargetNode(this);
+        parentDocument()->didRemoveEventTargetNode(*this);
 #endif
 
     if (m_mediaQueryMatcher)
@@ -6012,7 +6012,7 @@ void Document::didAddTouchEventHandler(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!m_touchEventTargets.get())
-        m_touchEventTargets = std::make_unique<TouchEventTargetSet>();
+        m_touchEventTargets = std::make_unique<EventTargetSet>();
     m_touchEventTargets->add(&handler);
     if (Document* parent = parentDocument()) {
         parent->didAddTouchEventHandler(*this);
@@ -6054,16 +6054,19 @@ void Document::didRemoveTouchEventHandler(Node& handler)
 #endif
 }
 
-#if ENABLE(TOUCH_EVENTS)
-void Document::didRemoveEventTargetNode(Node* handler)
+void Document::didRemoveEventTargetNode(Node& handler)
 {
+#if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets) {
-        m_touchEventTargets->removeAll(handler);
-        if ((handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
-            parentDocument()->didRemoveEventTargetNode(this);
+        m_touchEventTargets->removeAll(&handler);
+        if ((&handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
+            parentDocument()->didRemoveEventTargetNode(*this);
     }
-}
+#else
+    UNUSED_PARAM(handler);
 #endif
+}
+
 void Document::updateLastHandledUserGestureTimestamp()
 {
     m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
