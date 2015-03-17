@@ -1274,7 +1274,6 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     [self _dismissContentRelativeChildWindows];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController wkView:self willHandleMouseDown:event];
-    [_data->_immediateActionController wkView:self willHandleMouseDown:event];
 #endif
     [self mouseDownInternal:event];
 }
@@ -3666,6 +3665,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
         _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
         [_data->_immediateActionGestureRecognizer setDelegate:_data->_immediateActionController.get()];
+        [_data->_immediateActionGestureRecognizer setDelaysPrimaryMouseButtonEvents:NO];
     }
 #endif
 

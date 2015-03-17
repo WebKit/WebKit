@@ -88,11 +88,6 @@ using namespace WebKit;
     _hasActiveImmediateAction = NO;
 }
 
-- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event
-{
-    [self _clearImmediateActionState];
-}
-
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
@@ -218,6 +213,8 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    _page->immediateActionDidCancel();
+
     [_wkView _cancelImmediateActionAnimation];
 
     _page->setTextIndicatorAnimationProgress(0);
@@ -229,6 +226,8 @@ using namespace WebKit;
 {
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
+
+    _page->immediateActionDidComplete();
 
     [_wkView _completeImmediateActionAnimation];
 

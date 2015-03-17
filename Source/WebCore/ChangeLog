@@ -1,3 +1,30 @@
+2015-03-17  Beth Dakin  <bdakin@apple.com>
+
+        DOM mouse events have weird timing for force clickable elements in Safari 8.0.3 on 
+        10.10.2
+        https://bugs.webkit.org/show_bug.cgi?id=142700
+        -and corresponding-
+        rdar://problem/20165168
+
+        Reviewed by Tim Horton.
+
+        This patch adds a new enum and member variable so that EventHandler can keep track 
+        of the current immediate action state.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+
+        A new mouse press even is starting. We can re-set m_immediateActionStage to none 
+        unless a Hit Test has already been performed.
+        (WebCore::EventHandler::handleMousePressEvent):
+
+        If an immediate action was completed, then send mouse to the DOM and return early. 
+        This will prevent us from doing our own normal mouseup behaviors such as 
+        navigating to a link that was clicked — we only want to do that if the click was 
+        not used to perform an immediate action.
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h:
+        (WebCore::EventHandler::setImmediateActionStage):
+
 2015-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use a better parameter name for Document.getElementsByClassName

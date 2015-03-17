@@ -423,6 +423,7 @@ EventHandler::EventHandler(Frame& frame)
 #if ENABLE(CURSOR_VISIBILITY)
     , m_autoHideCursorTimer(*this, &EventHandler::autoHideCursorTimerFired)
 #endif
+    , m_immediateActionStage(ImmediateActionStage::None)
 {
 }
 
@@ -763,6 +764,9 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     m_mouseDownWasSingleClickInSelection = false;
 
     m_mouseDown = event.event();
+
+    if (m_immediateActionStage != ImmediateActionStage::PerformedHitTest)
+        m_immediateActionStage = ImmediateActionStage::None;
 
     if (event.isOverWidget() && passWidgetMouseDownEventToWidget(event))
         return true;
@@ -2056,6 +2060,14 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     if (m_frameSetBeingResized)
         return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, platformMouseEvent, false);
+
+    // If an immediate action was completed using this series of mouse events, then we should send mouseup to
+    // the DOM and return now so that we don't perform our own default behaviors.
+    if (m_immediateActionStage == ImmediateActionStage::ActionCompleted) {
+        m_immediateActionStage = ImmediateActionStage::None;
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), true, m_clickCount, platformMouseEvent, false);
+    }
+    m_immediateActionStage = ImmediateActionStage::None;
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();

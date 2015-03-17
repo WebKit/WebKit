@@ -1,3 +1,43 @@
+2015-03-17  Beth Dakin  <bdakin@apple.com>
+
+        DOM mouse events have weird timing for force clickable elements in Safari 8.0.3 on 
+        10.10.2
+        https://bugs.webkit.org/show_bug.cgi?id=142700
+        -and corresponding-
+        rdar://problem/20165168
+
+        Reviewed by Tim Horton.
+
+        No need to tell the WKImmediateActionController about mouse down any more since we 
+        are expecting it at the beginning of an immediate action interaction.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDown:]):
+
+        Set the delaysPrimaryMouseButtonEvents to NO for the 
+        _immediateActionGestureRecognizer. This will cause AppKit to send up the mouse 
+        events at the expected time.
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+
+        WebCore::EventHandler now needs to know if an immediate action cancelled or 
+        completed. This plumbs that information down.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::immediateActionDidCancel):
+        (WebKit::WebPageProxy::immediateActionDidComplete):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+        (-[WKImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+        (-[WKImmediateActionController wkView:willHandleMouseDown:]): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Call EventHandler::setImmediateActionStage() with the appropriate stage.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        (WebKit::WebPage::immediateActionDidCancel):
+        (WebKit::WebPage::immediateActionDidComplete):
+
 2015-03-17  Timothy Horton  <timothy_horton@apple.com>
 
         Reproducible null deref under ScriptedAnimationController::createDisplayRefreshMonitor

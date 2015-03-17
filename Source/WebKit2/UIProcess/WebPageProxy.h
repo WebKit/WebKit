@@ -985,6 +985,9 @@ public:
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
 
+    void immediateActionDidCancel();
+    void immediateActionDidComplete();
+
     void installViewStateChangeCompletionHandler(void(^completionHandler)());
 #endif
 

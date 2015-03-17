@@ -1024,6 +1024,9 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates));
     HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
 
+    if (forImmediateAction)
+        mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+
     ActionMenuHitTestResult actionMenuResult;
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
     actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
@@ -1143,6 +1146,16 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
     m_page->focusController().setFocusedElement(element, frame);
     VisiblePosition position = frame->visiblePositionForPoint(m_lastActionMenuHitTestResult.roundedPointInInnerNodeFrame());
     frame->selection().setSelection(position);
+}
+
+void WebPage::immediateActionDidCancel()
+{
+    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelled);
+}
+
+void WebPage::immediateActionDidComplete()
+{
+    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
 void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)

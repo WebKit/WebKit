@@ -5565,6 +5565,16 @@ void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
     m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
 }
 
+void WebPageProxy::immediateActionDidCancel()
+{
+    m_process->send(Messages::WebPage::ImmediateActionDidCancel(), m_pageID);
+}
+
+void WebPageProxy::immediateActionDidComplete()
+{
+    m_process->send(Messages::WebPage::ImmediateActionDidComplete(), m_pageID);
+}
+
 void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result, bool forImmediateAction, const UserData& userData)
 {
     m_pageClient.didPerformActionMenuHitTest(result, forImmediateAction, m_process->transformHandlesToObjects(userData.object()).get());
